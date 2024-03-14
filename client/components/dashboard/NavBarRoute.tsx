@@ -6,7 +6,7 @@ import {
 import { MenuProps } from "antd";
 import Link from "next/link";
 
-// key as like features 
+// key as like features
 
 const navbarRoute = [
   {
@@ -22,10 +22,23 @@ const navbarRoute = [
     route: true,
   },
   {
+    key: "orders",
+    icon: <VideoCameraOutlined />,
+    label: <Link href="/dashboard/orders">Orders</Link>,
+    route: true,
+  },
+  {
+    key: "kitchen_dashboard",
+    icon: <VideoCameraOutlined />,
+    label: <Link href="/dashboard/kitchen-dashboard">kitchen-dashboard</Link>,
+    route: true,
+  },
+
+  {
     key: "report",
     label: "Report",
     disabled: true,
-    route: true
+    route: true,
   },
   {
     key: "3",
@@ -61,44 +74,16 @@ const navbarRoute = [
   },
 ];
 
+
 const profileRoute: MenuProps["items"] = [
   {
     key: "1",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
-    ),
+    label: <Link href="/">Profile</Link>,
     icon: <UserOutlined />,
   },
   {
     key: "2",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.aliyun.com"
-      >
-        2nd menu item
-      </a>
-    ),
-    icon: <UserOutlined />,
-  },
-  {
-    key: "3",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.luohanacademy.com"
-      >
-        3rd menu item
-      </a>
-    ),
+    label: <Link href="/">Logout</Link>,
     icon: <UserOutlined />,
   },
 ];

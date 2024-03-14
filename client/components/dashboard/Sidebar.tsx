@@ -35,9 +35,7 @@ const Sidebar = ({
         placement={"left"}
         onClose={onClose}
         open={open}
-        styles={
-          { body: { margin: 0, padding: 0 } }
-        }
+        styles={{ body: { margin: 0, padding: 0 } }}
         extra={<Button onClick={onClose}>Close</Button>}
       >
         <Menu
@@ -54,22 +52,20 @@ const Sidebar = ({
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
         hidden={screenWidth <= 820}
-      // style={{ background: 'white' }}
+        // style={{ background: 'white' }}
       >
         <div className="bg-slate-300 flex justify-center items-center">
-          <Image
-            width={150}
-            height={35}
+          <Avatar
             // placeholder="blur"
             alt="logo"
-            src="/ict-garage.jpg"
+            size={50}
+            src="/pos_software.png"
           />
         </div>
         <Menu
           theme="dark"
           // defaultSelectedKeys={["1"]}
           mode="inline"
-
           items={filteredChildren}
         />
       </Sider>

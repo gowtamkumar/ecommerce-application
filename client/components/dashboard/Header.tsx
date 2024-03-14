@@ -2,6 +2,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { theme, Layout, Button, Dropdown, Avatar } from "antd";
 import React from "react";
 import { profileRoute } from "./NavBarRoute";
+import Link from "next/link";
 
 export default function DashboardHeader({
   screenWidth,
@@ -20,6 +21,7 @@ export default function DashboardHeader({
         padding: 0,
         margin: 0,
         height: 50,
+        marginRight: 10,
         background: colorBgContainer,
         display: "flex",
         justifyContent: "space-between",
@@ -37,13 +39,21 @@ export default function DashboardHeader({
         style={{
           fontSize: "16px",
           width: 50,
-          height: 50
+          height: 50,
         }}
       />
       <div className="md:flex gap-2 hidden">
-        <Button type="dashed" className="text-cyan-950">ORDER LIST</Button>
-        <Button type="dashed" className="text-cyan-950">POS</Button>
-        <Button type="dashed" className="text-cyan-950">KITCHEN DASHBOARD</Button>
+        <Button type="dashed" size="small" className="text-cyan-950">
+          <Link href="/dashboard/orders">ORDER LIST</Link>
+        </Button>
+
+        <Button type="dashed" size="small" className="text-cyan-950">
+          POS
+        </Button>
+
+        <Button type="dashed" size="small" className="text-cyan-950">
+          <Link href="/dashboard/kitchen-dashboard"> KITCHEN DASHBOARD</Link>
+        </Button>
       </div>
 
       {/* this button show only Mobile a  */}
