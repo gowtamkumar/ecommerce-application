@@ -25,7 +25,6 @@ export default function DashboardLayout({
     function updateScreenWidth() {
       setScreenWidth(window.innerWidth);
     }
-
     // Update screen width on mount
     updateScreenWidth();
 
