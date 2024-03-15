@@ -74,7 +74,6 @@ const navbarRoute = [
   },
 ];
 
-
 const profileRoute: MenuProps["items"] = [
   {
     key: "1",
