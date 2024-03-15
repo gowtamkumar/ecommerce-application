@@ -27,10 +27,7 @@ export class JwtAuthStrategy extends PassportStrategy(
       ]),
       ignoreExpiration: false,
       secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
-      // algorithms: ['RS256'], 
-      // signOptions: {
-      //   expiresIn: configService.get('JWT_ACCESS_TOKEN_EXPIRES')
-      // },
+    
     });
 
   }

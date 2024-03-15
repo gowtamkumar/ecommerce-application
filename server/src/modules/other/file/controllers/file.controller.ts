@@ -10,10 +10,8 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UploadedFile,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { CreateFileDto } from '../dtos/create-file.dto'
