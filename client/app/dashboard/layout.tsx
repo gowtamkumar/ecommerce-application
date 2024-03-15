@@ -1,10 +1,11 @@
 "use client";
 import { Layout, theme } from "antd";
-import React, { useLayoutEffect, useState } from "react";
+import React, { Suspense, useLayoutEffect, useState } from "react";
 import FooterOption from "@/components/dashboard/Footer";
 import BreadCrumb from "@/components/dashboard/BreadCrumb";
 import DashboardHeader from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
+import Loading from "../loading";
 const { Content } = Layout;
 
 export default function DashboardLayout({
@@ -46,37 +47,40 @@ export default function DashboardLayout({
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sidebar
-        setCollapsed={setCollapsed}
-        collapsed={collapsed}
-        screenWidth={screenWidth}
-        onClose={onClose}
-        open={open}
-      />
-
-      <Layout>
-        <DashboardHeader
-          screenWidth={screenWidth}
+    <Suspense fallback={<Loading />}>
+      <Layout style={{ minHeight: "100vh" }}>
+        <Sidebar
           setCollapsed={setCollapsed}
           collapsed={collapsed}
-          showDrawer={showDrawer}
+          screenWidth={screenWidth}
+          onClose={onClose}
+          open={open}
         />
-        <Content style={{ margin: "0 15px" }}>
-          <BreadCrumb />
-          <div
-            style={{
-              padding: 10,
-              minHeight: "80vh",
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {children}
-          </div>
-        </Content>
-        <FooterOption />
+
+        <Layout>
+          <DashboardHeader
+            screenWidth={screenWidth}
+            setCollapsed={setCollapsed}
+            collapsed={collapsed}
+            showDrawer={showDrawer}
+          />
+          <Content style={{ margin: "0 15px" }}>
+            <BreadCrumb />
+            <div
+              style={{
+                padding: 10,
+                minHeight: "80vh",
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
+              }}
+            >
+              {children}
+            </div>
+          </Content>
+          <FooterOption />
+        </Layout>
       </Layout>
-    </Layout>
+    </Suspense>
+
   );
 }
