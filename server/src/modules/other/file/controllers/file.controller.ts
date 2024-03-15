@@ -40,14 +40,14 @@ import { JwtAuthGuard } from '@admin/auth/guards/jwt-auth.guard'
 export class FileController {
   private logger = new Logger(FileController.name)
 
-  constructor(private fileService: FileService) { }
+  constructor(private fileService: FileService) {}
 
   @Get('/')
   getFiles(
     @RequestContext() ctx: RequestContextDto,
     @Query() filterFileDto: FilterFileDto,
   ): Promise<FileEntity[]> {
-    this.logger.verbose(`User "${ctx.user?.username}" retieving all Files`,)
+    this.logger.verbose(`User "${ctx.user?.username}" retieving all Files`)
     return this.fileService.getFiles(filterFileDto)
   }
 
@@ -56,7 +56,7 @@ export class FileController {
     @RequestContext() ctx: RequestContextDto,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<FileEntity> {
-    this.logger.verbose(`User "${ctx.user?.username}" retieving uesr File info. of Id: ${id}`)
+    this.logger.verbose(`User "${ctx.user?.username}" retieving File info. of Id: ${id}`)
     return this.fileService.getFile(id)
   }
   @UseInterceptors(
@@ -64,10 +64,7 @@ export class FileController {
       [
         { name: 'avatar', maxCount: 1 },
         { name: 'photo', maxCount: 1 },
-        { name: 'signature', maxCount: 1 },
-        { name: 'doc', maxCount: 1 },
-        { name: 'front', maxCount: 1 },
-        { name: 'back', maxCount: 1 },
+        { name: 'other', maxCount: 1 },
       ],
       CustomMulterOptions.getConfig(FileTypeEnum.ANY),
     ),
@@ -79,12 +76,6 @@ export class FileController {
     files: {
       avatar?: Express.Multer.File[]
       photo?: Express.Multer.File[]
-      signature?: Express.Multer.File[]
-      nid?: Express.Multer.File[]
-      birth_certificate?: Express.Multer.File[]
-      kyc?: Express.Multer.File[]
-      license?: Express.Multer.File[]
-      contact?: Express.Multer.File[]
       other?: Express.Multer.File[]
     },
     @Body() createFileDto: CreateFileDto,
@@ -125,10 +116,6 @@ export class FileController {
         { name: 'photo', maxCount: 1 },
         { name: 'images', maxCount: 6 },
         { name: 'file', maxCount: 1 },
-        { name: 'signature', maxCount: 1 },
-        { name: 'doc', maxCount: 1 },
-        { name: 'front', maxCount: 1 },
-        { name: 'back', maxCount: 1 },
       ],
       CustomMulterOptions.getConfig(FileTypeEnum.ANY),
     ),
@@ -141,12 +128,7 @@ export class FileController {
       avatar?: Express.Multer.File[]
       photo?: Express.Multer.File[]
       images?: Express.Multer.File[]
-      signature?: Express.Multer.File[]
-      nid?: Express.Multer.File[]
-      birth_certificate?: Express.Multer.File[]
-      kyc?: Express.Multer.File[]
-      license?: Express.Multer.File[]
-      contact?: Express.Multer.File[]
+
       other?: Express.Multer.File[]
     },
   ) {
@@ -219,13 +201,8 @@ export class FileController {
     return files
   }
 
-   
-
   @Post('/file-delete')
-  async deletePhotoWithFile(
-    @Body() deletePhotoWithFile: any,
-  ) {
-   
+  async deletePhotoWithFile(@Body() deletePhotoWithFile: any) {
     this.logger.verbose(`Photo with File Delete successfully`)
     const result = await this.fileService.deletePhotoWithFileByName(deletePhotoWithFile)
 
@@ -236,5 +213,4 @@ export class FileController {
       data: result,
     }
   }
-
 }

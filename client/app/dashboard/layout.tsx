@@ -81,6 +81,5 @@ export default function DashboardLayout({
         </Layout>
       </Layout>
     </Suspense>
-
   );
 }
