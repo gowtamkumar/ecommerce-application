@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-async-client-component */
 "use client";
 import { Layout, theme } from "antd";
 import React, { Suspense, useLayoutEffect, useState } from "react";
@@ -6,9 +7,10 @@ import BreadCrumb from "@/components/dashboard/BreadCrumb";
 import DashboardHeader from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Loading from "../loading";
+
 const { Content } = Layout;
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -45,9 +47,14 @@ export default function DashboardLayout({
   const onClose = () => {
     setOpen(false);
   };
+  // const session = await auth()
+  // console.log("🚀 ~ layout session:", session?.user)
 
   return (
+
     <Suspense fallback={<Loading />}>
+      {/* <SessionProvider session={session.data}> */}
+
       <Layout style={{ minHeight: "100vh" }}>
         <Sidebar
           setCollapsed={setCollapsed}
@@ -80,6 +87,7 @@ export default function DashboardLayout({
           <FooterOption />
         </Layout>
       </Layout>
+      {/* </SessionProvider> */}
     </Suspense>
   );
 }

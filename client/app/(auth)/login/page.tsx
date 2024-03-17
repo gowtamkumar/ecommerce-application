@@ -1,12 +1,45 @@
 "use client";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function Login() {
   const [fromData, setFromData] = useState({});
-  const handleSubmit = () => {
-    console.log(fromData);
-  };
+  const router = useRouter()
+
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault()
+
+    const { username, password }: any = fromData
+
+    try {
+      const result = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        console.log('Wrong username or password')
+        return
+      }
+
+      if (result) {
+        console.log('Login successfully')
+      }
+
+      if (result?.status === 200) {
+        setTimeout(() => {
+          router.push('/')
+        }, 1000)
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -34,12 +67,11 @@ export default function Login() {
             <div className="mt-2">
               <input
                 id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                name="username"
+                type="text"
                 required
                 onChange={(v) =>
-                  setFromData({ ...fromData, email: v.target.value })
+                  setFromData({ ...fromData, username: v.target.value })
                 }
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
