@@ -20,36 +20,23 @@ export const {
       // },
 
       async authorize(credentials, req) {
-        const res = await fetch(
-          `${process.env.NEXT_SERVER_URL}/api/v1/auth/login`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              username: credentials.username,
-              password: credentials.password,
-            }),
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        const user = await res.json();
-        console.log("🚀 ~ user:", user);
-        if (res.ok && user) {
-          return user.data.user;
+        const user = {
+          id: 2,
+          username: "gowtamkumar",
+          password: "admin",
+        } as any;
+
+        if (
+          user.username === credentials.username &&
+          user.password === credentials.password
+        ) {
+          return user;
         } else {
           return null;
-          // throw new Error("Invalid Login Credentials");
         }
-
       },
     }),
   ],
-  // pages: {
-  //   signIn: "/api/auth/signin",
-  //   signOut: "/auth/signout",
-  //   error: "/auth/error",
-  //   verifyRequest: "/auth/verify-request",
-  //   newUser: "/auth/new-user",
-  // },
   secret: process.env.NEXTAUTH_SECRET,
   // trustHost: true,
 });

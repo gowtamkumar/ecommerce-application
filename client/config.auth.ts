@@ -4,6 +4,14 @@ export const authConfig = {
   pages: {
     signIn: "/login",
   },
+
+  // pages: {
+  //   signIn: "/api/auth/signin",
+  //   signOut: "/auth/signout",
+  //   error: "/auth/error",
+  //   verifyRequest: "/auth/verify-request",
+  //   newUser: "/auth/new-user",
+  // },
   callbacks: {
     async authorized({ request, auth }) {
       const url = request.nextUrl;
