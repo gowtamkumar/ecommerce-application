@@ -1,7 +1,8 @@
 // import NextAuth from "next-auth";
-// import { authConfig } from "./config.auth"
+// import { authOptions } from "./lib/authOption";
+// // import { authConfig } from "./config.auth"
 
-// export default NextAuth(authConfig).auth
+// // export default NextAuth(authOptions)
 // export const config = {
 //   matcher: [
 //     /*

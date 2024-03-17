@@ -1,3 +1,4 @@
+import { authConfig } from "@/config.auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 interface AuthOptions {
@@ -17,6 +18,7 @@ interface AuthOptions {
   callbacks: {
     session: ({ session, token, apiToken }: any) => Promise<any>;
     jwt: ({ token, user, account, profile }: any) => Promise<any>;
+    authorized: ({ request, auth }: any) => Promise<any>;
   };
 }
 
@@ -25,7 +27,7 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "credentials",
       async authorize(credentials: any) {
-        console.log("🚀 ~ credentials:", credentials);
+        // console.log("🚀 ~ credentials:", credentials);
         const res = await fetch(
           `${process.env.NEXT_SERVER_URL}/api/v1/auth/login`,
           {
@@ -72,6 +74,21 @@ export const authOptions: AuthOptions = {
         return user;
       }
       return token;
+    },
+    async authorized({ request, auth }: any) {
+      console.log("auth", auth);
+      console.log("request", request);
+
+      const url = request.nextUrl;
+      const isLogined = auth?.user;
+      const isOnDashboard = url.pathname.startsWith("/dashboard");
+      if (isOnDashboard) {
+        if (isLogined) return true;
+        return false;
+      } else if (isLogined) {
+        return Response.redirect(new URL("/dashboard", url));
+      }
+      return true;
     },
   },
 };

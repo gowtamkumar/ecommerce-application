@@ -74,17 +74,17 @@ const navbarRoute = [
   },
 ];
 
-const profileRoute: MenuProps["items"] = [
-  {
-    key: "1",
-    label: <Link href="/">Profile</Link>,
-    icon: <UserOutlined />,
-  },
-  {
-    key: "2",
-    label: <Link href="/">Logout</Link>,
-    icon: <UserOutlined />,
-  },
-];
+// const profileRoute: MenuProps["items"] = [
+//   {
+//     key: "1",
+//     label: <Link href="/">Profile</Link>,
+//     icon: <UserOutlined />,
+//   },
+//   {
+//     key: "2",
+//     label: <Link href="/">Logout</Link>,
+//     icon: <UserOutlined />,
+//   },
+// ];
 
-export { navbarRoute, profileRoute };
+export { navbarRoute };
