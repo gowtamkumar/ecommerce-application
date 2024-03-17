@@ -6,39 +6,38 @@ import React, { useState } from "react";
 
 export default function Login() {
   const [fromData, setFromData] = useState({});
-  const router = useRouter()
+  const router = useRouter();
 
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault()
-
-    const { username, password }: any = fromData
+    const { username, password }: any = fromData;
 
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         username,
         password,
         redirect: false,
-      })
+      });
 
       if (result?.error) {
-        console.log('Wrong username or password')
-        return
+        console.log("Wrong username or password");
+        return;
       }
 
       if (result) {
-        console.log('Login successfully')
+        console.log("Login successfully");
       }
 
       if (result?.status === 200) {
         setTimeout(() => {
-          router.push('/')
-        }, 1000)
+          router.push("/");
+        }, 1000);
       }
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">

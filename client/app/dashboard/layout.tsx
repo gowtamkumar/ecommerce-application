@@ -7,6 +7,7 @@ import BreadCrumb from "@/components/dashboard/BreadCrumb";
 import DashboardHeader from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Loading from "../loading";
+import { useRouter } from "next/navigation";
 
 const { Content } = Layout;
 
@@ -18,6 +19,8 @@ export default async function DashboardLayout({
   const [collapsed, setCollapsed] = useState(false);
   const [open, setOpen] = useState(false);
   const [screenWidth, setScreenWidth] = useState(0);
+
+  const router = useRouter();
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -46,6 +49,10 @@ export default async function DashboardLayout({
   const onClose = () => {
     setOpen(false);
   };
+
+  // if (sessions) {
+  //   router.push("/");
+  // }
 
   return (
     <Suspense fallback={<Loading />}>

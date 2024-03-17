@@ -1,8 +1,9 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { theme, Layout, Button, Dropdown, Avatar } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
+import { theme, Layout, Button, Dropdown, Avatar, MenuProps } from "antd";
 import React from "react";
 import { profileRoute } from "./NavBarRoute";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 export default function DashboardHeader({
   screenWidth,
@@ -14,6 +15,21 @@ export default function DashboardHeader({
     token: { colorBgContainer },
   } = theme.useToken();
   const { Header } = Layout;
+
+
+  const profileRoute: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <Link href="/">Profile</Link>,
+      icon: <UserOutlined />,
+    },
+    {
+      key: "2",
+      label: <Link href="/">Logout</Link>,
+      icon: <UserOutlined />,
+      onClick: ()=> signOut()
+    },
+  ];
 
   return (
     <Header
