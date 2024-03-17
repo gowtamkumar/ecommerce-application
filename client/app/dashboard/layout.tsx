@@ -23,7 +23,6 @@ export default async function DashboardLayout({
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  //   const screenWidth = window.innerWidth;
   useLayoutEffect(() => {
     function updateScreenWidth() {
       setScreenWidth(window.innerWidth);
@@ -47,14 +46,9 @@ export default async function DashboardLayout({
   const onClose = () => {
     setOpen(false);
   };
-  // const session = await auth()
-  // console.log("🚀 ~ layout session:", session?.user)
 
   return (
-
     <Suspense fallback={<Loading />}>
-      {/* <SessionProvider session={session.data}> */}
-
       <Layout style={{ minHeight: "100vh" }}>
         <Sidebar
           setCollapsed={setCollapsed}
@@ -87,7 +81,6 @@ export default async function DashboardLayout({
           <FooterOption />
         </Layout>
       </Layout>
-      {/* </SessionProvider> */}
     </Suspense>
   );
 }
