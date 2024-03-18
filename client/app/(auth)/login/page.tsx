@@ -31,7 +31,7 @@ export default function Login() {
 
       if (result?.status === 200) {
         setTimeout(() => {
-          router.push("/");
+          router.push("/dashboard");
         }, 1000);
       }
     } catch (err) {

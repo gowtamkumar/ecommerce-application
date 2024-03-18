@@ -1,33 +1,50 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { theme, Layout, Button, Dropdown, Avatar, MenuProps } from "antd";
 import React from "react";
-import { profileRoute } from "./NavBarRoute";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-
-export default function DashboardHeader({
-  screenWidth,
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectLayout,
   setCollapsed,
-  collapsed,
-  showDrawer,
-}: any) {
+  setOpen,
+} from "@/redux/features/layout/layoutSlice";
+
+export default function DashboardHeader() {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const { Header } = Layout;
-
+  // redux hook
+  // const layout = useSelector((state: RootState) => state.layout);
+  const layout = useSelector(selectLayout);
+  const dispatch = useDispatch();
 
   const profileRoute: MenuProps["items"] = [
     {
       key: "1",
       label: <Link href="/">Profile</Link>,
-      icon: <UserOutlined />,
+      icon: (
+        <UserOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
     },
     {
       key: "2",
       label: <Link href="/">Logout</Link>,
-      icon: <UserOutlined />,
-      onClick: ()=> signOut()
+      icon: (
+        <UserOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+      onClick: () => signOut(),
     },
   ];
 
@@ -45,13 +62,12 @@ export default function DashboardHeader({
       }}
     >
       {/* this button show only desktop a  */}
-
       <Button
         type="text"
         className="hover:bg-none"
-        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        onClick={() => setCollapsed(!collapsed)}
-        hidden={screenWidth < 820}
+        icon={layout.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        onClick={() => dispatch(setCollapsed(!layout.collapsed))}
+        hidden={layout.screenWidth < 820}
         style={{
           fontSize: "16px",
           width: 50,
@@ -75,9 +91,9 @@ export default function DashboardHeader({
       {/* this button show only Mobile a  */}
       <Button
         type="text"
-        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        onClick={showDrawer}
-        hidden={screenWidth > 820}
+        icon={layout.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        onClick={() => dispatch(setOpen(true))}
+        hidden={layout.screenWidth > 820}
         style={{
           fontSize: "16px",
           width: 50,

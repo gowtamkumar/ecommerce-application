@@ -7,71 +7,27 @@ import BreadCrumb from "@/components/dashboard/BreadCrumb";
 import DashboardHeader from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Loading from "../loading";
-import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { selectLayout } from "@/redux/features/layout/layoutSlice";
 
 const { Content } = Layout;
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [screenWidth, setScreenWidth] = useState(0);
-
-  const router = useRouter();
-
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  useLayoutEffect(() => {
-    function updateScreenWidth() {
-      setScreenWidth(window.innerWidth);
-    }
-    // Update screen width on mount
-    updateScreenWidth();
-
-    // Add event listener to update screen width on resize
-    window.addEventListener("resize", updateScreenWidth);
-
-    // Remove event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", updateScreenWidth);
-    };
-  }, []);
-
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  // if (sessions) {
-  //   router.push("/");
-  // }
-
   return (
     <Suspense fallback={<Loading />}>
       <Layout style={{ minHeight: "100vh" }}>
-        <Sidebar
-          setCollapsed={setCollapsed}
-          collapsed={collapsed}
-          screenWidth={screenWidth}
-          onClose={onClose}
-          open={open}
-        />
+        <Sidebar />
 
         <Layout>
-          <DashboardHeader
-            screenWidth={screenWidth}
-            setCollapsed={setCollapsed}
-            collapsed={collapsed}
-            showDrawer={showDrawer}
-          />
+          <DashboardHeader />
           <Content style={{ margin: "0 15px" }}>
             <BreadCrumb />
             <div
