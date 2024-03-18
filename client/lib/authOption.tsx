@@ -1,28 +1,8 @@
-import { authConfig } from "@/config.auth";
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-interface AuthOptions {
-  providers: any[]; // Adjust the type based on the actual provider type
-  pages: {
-    signIn: string;
-    signOut: string;
-    error: string;
-    verifyRequest: string;
-    newUser: string;
-  };
-  secret: string;
-  session: {
-    strategy: any;
-    maxAge: any;
-  };
-  callbacks: {
-    session: ({ session, token, apiToken }: any) => Promise<any>;
-    jwt: ({ token, user, account, profile }: any) => Promise<any>;
-    authorized: ({ request, auth }: any) => Promise<any>;
-  };
-}
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -46,12 +26,15 @@ export const authOptions: AuthOptions = {
     } as any),
   ],
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
-    error: "/auth/error",
-    verifyRequest: "/auth/verify-request",
-    newUser: "/auth/new-user",
+    signIn: "/login",
   },
+  // pages: {
+  //   signIn: "/signin",
+  //   signOut: "/auth/signout",
+  //   error: "/auth/error",
+  //   verifyRequest: "/auth/verify-request",
+  //   newUser: "/auth/new-user",
+  // },
   secret: process.env.NEXTAUTH_SECRET || "", // Adjust the type based on your environment variable
   session: { strategy: "jwt", maxAge: 1 * 24 * 60 * 60 }, // 1 day
   callbacks: {
@@ -74,21 +57,7 @@ export const authOptions: AuthOptions = {
         return user;
       }
       return token;
-    },
-    async authorized({ request, auth }: any) {
-      console.log("auth", auth);
-      console.log("request", request);
+    }
 
-      const url = request.nextUrl;
-      const isLogined = auth?.user;
-      const isOnDashboard = url.pathname.startsWith("/dashboard");
-      if (isOnDashboard) {
-        if (isLogined) return true;
-        return false;
-      } else if (isLogined) {
-        return Response.redirect(new URL("/dashboard", url));
-      }
-      return true;
-    },
   },
 };
