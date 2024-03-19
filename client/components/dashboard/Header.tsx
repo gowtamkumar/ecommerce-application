@@ -6,13 +6,13 @@ import {
 import { theme, Layout, Button, Dropdown, Avatar, MenuProps } from "antd";
 import React from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectLayout,
   setCollapsed,
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
+import { profileRoute } from "./NavBarRoute";
 
 export default function DashboardHeader() {
   const {
@@ -24,29 +24,7 @@ export default function DashboardHeader() {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
-  const profileRoute: MenuProps["items"] = [
-    {
-      key: "1",
-      label: <Link href="/">Profile</Link>,
-      icon: (
-        <UserOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      key: "2",
-      label: <Link href="/">Logout</Link>,
-      icon: (
-        <UserOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      onClick: () => signOut(),
-    },
-  ];
+ 
 
   return (
     <Header

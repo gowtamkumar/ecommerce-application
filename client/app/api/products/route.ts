@@ -5,7 +5,7 @@ export async function GET(request: Request, context: any) {
   return NextResponse.json({
     status: 200,
     message: "success",
-    data: {name: "gowtam kumar"},
+    data: [{ name: "gowtam kumar" }],
   });
 }
 

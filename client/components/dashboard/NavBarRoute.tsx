@@ -4,6 +4,7 @@ import {
   VideoCameraOutlined,
 } from "@ant-design/icons";
 import { MenuProps } from "antd";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 
 // key as like features
@@ -74,17 +75,18 @@ const navbarRoute = [
   },
 ];
 
-// const profileRoute: MenuProps["items"] = [
-//   {
-//     key: "1",
-//     label: <Link href="/">Profile</Link>,
-//     icon: <UserOutlined />,
-//   },
-//   {
-//     key: "2",
-//     label: <Link href="/">Logout</Link>,
-//     icon: <UserOutlined />,
-//   },
-// ];
+const profileRoute: MenuProps["items"] = [
+  {
+    key: "1",
+    label: <Link href="/dashboard/profile">Profile</Link>,
+    icon: <UserOutlined />,
+  },
+  {
+    key: "2",
+    label: <Link href="/">Logout</Link>,
+    icon: <UserOutlined />,
+    onClick: () => signOut(),
+  },
+];
 
-export { navbarRoute };
+export { navbarRoute, profileRoute };
