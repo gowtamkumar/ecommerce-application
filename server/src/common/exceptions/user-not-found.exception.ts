@@ -1,8 +1,0 @@
-import { NotFoundException } from '@nestjs/common';
-
-// New
-export class UserNotFoundException extends NotFoundException {
-  constructor(error?: string) {
-    super('error.user_not_found', error);
-  }
-}
