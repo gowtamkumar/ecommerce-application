@@ -5,11 +5,6 @@ import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
-
-import {
-  CredentialInput,
-  CredentialsConfig,
-} from "next-auth/providers/credentials";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,20 +17,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  interface authOptionsInterface {
-    providers: CredentialsConfig<Record<string, CredentialInput>>[];
-    pages: {
-      signIn: string;
-      signOut: string;
-      error: string;
-      verifyRequest: string;
-      newUser: string;
-    };
-    secret: string | undefined;
-    session: {};
-    callbacks: {};
-  }
-
   const session = await getServerSession(authOptions);
 
   return (

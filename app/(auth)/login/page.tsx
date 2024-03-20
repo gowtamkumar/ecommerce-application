@@ -20,15 +20,12 @@ export default function Login() {
         redirect: false,
       });
 
-      console.log("🚀 ~ result:", result);
-
       if (result?.error) {
         console.log("Wrong username or password");
         return;
       }
 
       if (result?.status === 200) {
-        console.log("Login successfully");
         setTimeout(() => {
           router.push("/dashboard");
         }, 1000);

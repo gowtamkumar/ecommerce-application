@@ -1,4 +1,8 @@
-import { matchPassword } from "@/common/auth.middleware";
+import {
+  matchPassword,
+  getSignJwtToken,
+  sendCookiesResponse,
+} from "@/common/auth.middleware";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { UsersEntity } from "@/models/users/user-entity";
 import { loginDto } from "@/types/login";
@@ -28,6 +32,9 @@ export async function POST(request: Request) {
     });
     // throw new Error("Authorization is not Valid!");
   }
+
+  const token = await getSignJwtToken(oldUser);
+  await sendCookiesResponse(token, request);
 
   delete oldUser.password;
 
