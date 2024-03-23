@@ -1,12 +1,19 @@
+/* eslint-disable @next/next/no-async-client-component */
 "use client";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-export default function Login() {
+export default async function Login() {
   const [fromData, setFromData] = useState({});
   const router = useRouter();
+
+  // redirect daashboard page
+  const session = await getSession();
+  if (session) {
+    return router.push("/dashboard");
+  }
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();

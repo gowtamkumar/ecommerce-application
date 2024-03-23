@@ -1,14 +1,12 @@
-import {
-  matchPassword,
-  getSignJwtToken,
-  sendCookiesResponse,
-} from "@/common/auth.middleware";
+import { matchPassword, getSignJwtToken } from "@/common/auth.middleware";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { UsersEntity } from "@/models/users/user-entity";
 import { loginDto } from "@/types/login";
+import { cookies, headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: Request, response: Response) {
+  // console.log("🚀 ~ response:", response.headers.set())
   const connection = await getDBConnection();
   const data = await request.json();
 
@@ -33,8 +31,9 @@ export async function POST(request: Request) {
     // throw new Error("Authorization is not Valid!");
   }
 
-  const token = await getSignJwtToken(oldUser);
-  await sendCookiesResponse(token, request);
+  // const token = await getSignJwtToken(oldUser);
+
+  //  const cookietoken = await sendCookiesResponse(token);
 
   delete oldUser.password;
 

@@ -8,7 +8,6 @@ import { authOptions } from "@/lib/authOption";
 
 export async function POST(request: Request) {
   const data = await request.json();
-  // console.log("🚀 ~ data:", data)
   const connection = await getDBConnection();
 
   const user = await connection.getRepository(UsersEntity);
@@ -28,6 +27,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
+
   if (!session) {
     return NextResponse.json({
       status: 201,
