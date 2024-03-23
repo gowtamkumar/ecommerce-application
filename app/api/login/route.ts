@@ -28,11 +28,9 @@ export async function POST(request: Request, response: Response) {
       message: "Authorization is not Valid!",
       status: 401,
     });
-    // throw new Error("Authorization is not Valid!");
   }
 
   // const token = await getSignJwtToken(oldUser);
-
   //  const cookietoken = await sendCookiesResponse(token);
 
   delete oldUser.password;
