@@ -43,7 +43,7 @@ export default function DashboardHeader() {
       <Button
         type="text"
         className="hover:bg-none"
-        icon={layout.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        icon={layout.collapsed ? <MenuUnfoldOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> : <MenuFoldOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
         onClick={() => dispatch(setCollapsed(!layout.collapsed))}
         hidden={layout.screenWidth < 820}
         style={{
@@ -69,7 +69,7 @@ export default function DashboardHeader() {
       {/* this button show only Mobile a  */}
       <Button
         type="text"
-        icon={layout.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        icon={layout.collapsed ? <MenuUnfoldOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> : <MenuFoldOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
         onClick={() => dispatch(setOpen(true))}
         hidden={layout.screenWidth > 820}
         style={{

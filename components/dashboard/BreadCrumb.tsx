@@ -13,7 +13,7 @@ export default function BreadCrumb() {
   return (
     <Breadcrumb
       style={{ margin: "5px 0" }}
-      items={[{ title: <HomeOutlined /> }, ...newResutl]}
+      items={[{ title: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> }, ...newResutl]}
     />
   );
 }

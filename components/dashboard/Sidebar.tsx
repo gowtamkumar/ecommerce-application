@@ -47,11 +47,17 @@ const Sidebar = () => {
   };
 
   const filteredChildren = navbarRoute
-    ?.filter((item) => checkPermission(item))
+    ?.filter((item: any) => checkPermission(item))
     .map((item: any) => ({
       ...item,
       children: item?.children?.filter((child: any) => checkPermission(child)),
     }));
+
+  interface NavbarItem {
+    key: string;
+    label: string;
+  }
+
 
   return (
     <div className="bg-[#001529]">
@@ -68,7 +74,7 @@ const Sidebar = () => {
           defaultSelectedKeys={["1"]}
           mode="inline"
           onClick={onClose}
-          items={navbarRoute}
+          items={navbarRoute as NavbarItem[]}
         />
       </Drawer>
       <Sider
