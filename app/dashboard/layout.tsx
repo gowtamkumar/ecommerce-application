@@ -22,7 +22,7 @@ export default function DashboardLayout({
   } = theme.useToken();
 
   return (
-    <Suspense fallback={<Loading />}>
+    // <Suspense fallback={<Loading />}>
       <Layout style={{ minHeight: "100vh" }}>
         <Sidebar />
 
@@ -44,6 +44,6 @@ export default function DashboardLayout({
           <FooterOption />
         </Layout>
       </Layout>
-    </Suspense>
+    // </Suspense>
   );
 }

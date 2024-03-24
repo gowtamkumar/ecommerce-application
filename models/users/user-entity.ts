@@ -17,10 +17,13 @@ export class UsersEntity {
   password?: string;
 
   @Column({ nullable: true })
-  resetToken!: string;
+  email?: string;
 
   @Column({ nullable: true })
-  resetTokenExpire!: string;
+  resetToken?: string;
+
+  @Column({ nullable: true })
+  resetTokenExpire?: string;
 
   @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
   role!: RoleEnum;

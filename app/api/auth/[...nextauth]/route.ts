@@ -4,4 +4,4 @@ import type, { NextAuthOptions } from "next-auth";
 
 const handler: NextAuthOptions = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export { handler  };

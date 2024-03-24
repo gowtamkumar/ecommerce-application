@@ -1,4 +1,4 @@
-import { matchPassword, getSignJwtToken } from "@/common/auth.middleware";
+import { matchPassword, getSignJwtToken } from "@/middlewares/auth.middleware";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { UsersEntity } from "@/models/users/user-entity";
 import { loginDto } from "@/types/login";
