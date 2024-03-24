@@ -1,11 +1,8 @@
-// import "reflect-metadata";
 import { NextResponse } from "next/server";
 import { UsersEntity } from "@/models/users/user-entity";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { hashedPassword } from "@/middlewares/auth.middleware";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOption";
-import { userCreateDto } from "@/models/users/dtos/createUser.dto";
+import { CreateUserDto } from "@/models/users/dtos/createUser.dto";
 
 export async function POST(request: Request) {
   const data = await request.json();
@@ -16,7 +13,7 @@ export async function POST(request: Request) {
   const newUser = user.create({
     ...data,
     password: await hashedPassword(data.password),
-  } as userCreateDto);
+  } as CreateUserDto);
 
   await user.save(newUser);
 
@@ -40,7 +37,16 @@ export async function GET(request: Request) {
   const connection = await getDBConnection();
   const user = await connection.getRepository(UsersEntity);
 
-  const result = await user.find();
+  const result = await user.find({
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+      role: true,
+      status: true,
+    },
+  });
 
   return NextResponse.json({
     status: 200,

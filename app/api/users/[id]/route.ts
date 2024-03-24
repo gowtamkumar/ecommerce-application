@@ -1,5 +1,5 @@
 import { getDBConnection } from "@/config/db/dbconnection";
-import { updateUserDto } from "@/models/users/dtos/updateUser.dto";
+import { UpdateUserDto } from "@/models/users/dtos/updateUser.dto";
 import { UsersEntity } from "@/models/users/user-entity";
 import { NextResponse } from "next/server";
 
@@ -8,11 +8,7 @@ export async function GET(request: Request, context: any) {
   const {
     params: { id },
   } = context;
-
-  const data = await request.json();
-
   const user = await connection.getRepository(UsersEntity);
-
   const result = await user.findOneBy({ id });
 
   if (!result) {
@@ -72,9 +68,9 @@ export async function PATCH(request: Request, context: any) {
     });
   }
 
-  const updateData = await user.merge(result, data as updateUserDto);
+  const updateData = await user.merge(result, data as UpdateUserDto);
 
-  user.save(updateData);
+  await user.save(updateData);
 
   return NextResponse.json({
     starus: 200,

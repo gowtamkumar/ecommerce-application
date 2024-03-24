@@ -1,4 +1,4 @@
 export interface forgotPasswordDto {
   resetToken: string;
-  resetTokenExpire: string;
+  resetTokenExpire: number;
 }

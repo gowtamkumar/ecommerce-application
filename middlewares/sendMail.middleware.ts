@@ -1,10 +1,9 @@
-import { MailOptions } from "@/models/users/dtos/mailOptions.dto";
+import MailOptions from "@/models/users/dtos/mailOptions.dto";
 import nodemailer from "nodemailer";
 
 export const sendEmail = async (mailOptions: MailOptions): Promise<void> => {
   try {
     const transporter = nodemailer.createTransport({
-      // Use either 'service' or 'host' and 'port', not both
       // service: process.env.SERVICE, // Or set it to your email provider like 'gmail', 'outlook', etc.
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
@@ -16,7 +15,6 @@ export const sendEmail = async (mailOptions: MailOptions): Promise<void> => {
     });
 
     await transporter.sendMail(mailOptions);
-
     console.log("Email sent successfully");
   } catch (error) {
     console.error("Error sending email:", error);

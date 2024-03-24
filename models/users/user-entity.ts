@@ -22,12 +22,17 @@ export class UsersEntity {
   @Column({ nullable: true })
   resetToken?: string;
 
-  @Column({ nullable: true })
-  resetTokenExpire?: string;
+  @Column({ type: "bigint", nullable: true })
+  resetTokenExpire?: number;
 
   @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
   role!: RoleEnum;
 
   @Column({ type: "boolean", default: true })
   status!: boolean;
+
+  // tesnum!: number
+  // getTestNUmber() {
+  //   return this.tesnum = 100;
+  // }
 }
