@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { UsersEntity } from "@/models/users/user-entity";
+import { FileEntity } from "@/models/file/file.entity";
 
 const dbConnection = new DataSource({
   type: "postgres",
@@ -10,8 +11,8 @@ const dbConnection = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: true,
-  logging: true,
-  entities: [UsersEntity],
+  logging: false,
+  entities: [UsersEntity, FileEntity],
   subscribers: [],
   migrations: [],
 });
