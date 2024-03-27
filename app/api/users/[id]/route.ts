@@ -1,5 +1,5 @@
 import { getDBConnection } from "@/config/db/dbconnection";
-import { UpdateUserDto } from "@/models/users/dtos/updateUser.dto";
+import { UpdateUserDto } from "@/models/users/dtos";
 import { UsersEntity } from "@/models/users/user-entity";
 import { NextResponse } from "next/server";
 

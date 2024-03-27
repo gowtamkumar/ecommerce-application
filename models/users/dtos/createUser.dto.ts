@@ -1,13 +1,11 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { RoleEnum } from "../enums/role.enum";
 
-export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  name!: string;
-  username!: string;
-  password!: string;
+export interface CreateUserDto {
+  name: string;
+  username: string;
+  password: string;
   resetToken?: string;
   resetTokenExpire?: number;
-  role: any;
+  role?: RoleEnum;
   status?: boolean;
 }

@@ -1,15 +1,10 @@
-import { IsNotEmpty, IsString } from "class-validator";
-
-export class UpdateFileDto {
-  push(item: File) {
-    throw new Error("Method not implemented.");
-  }
+export interface UpdateFileDto {
   fieldname?: string;
-  originalname!: string;
+  originalname: string;
   encoding?: string;
   mimetype?: string;
   destination?: string;
-  filename!: string;
+  filename: string;
   path?: string;
-  size!: number;
+  size: number;
 }

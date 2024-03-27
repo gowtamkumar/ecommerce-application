@@ -2,13 +2,23 @@ import { NextResponse } from "next/server";
 import { UsersEntity } from "@/models/users/user-entity";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { hashedPassword } from "@/middlewares/auth.middleware";
-import { CreateUserDto } from "@/models/users/dtos/createUser.dto";
+import { UserValidationSchema } from "@/models/users/validation";
+import { CreateUserDto } from "@/models/users/dtos";
 
 export async function POST(request: Request) {
-  const data = await request.json();
   const connection = await getDBConnection();
+  const data = await request.json();
 
-  const user = await connection.getRepository(UsersEntity);
+  const validation = UserValidationSchema.safeParse(data);
+
+  if (!validation.success) {
+    return NextResponse.json({
+      status: 401,
+      message: validation.error.formErrors,
+    });
+  }
+
+  const user = connection.getRepository(UsersEntity);
 
   const newUser = user.create({
     ...data,

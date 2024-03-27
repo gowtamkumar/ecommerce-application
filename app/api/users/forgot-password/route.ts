@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { UsersEntity } from "@/models/users/user-entity";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { v4 as uuidv4 } from "uuid";
-import { sendEmail } from "@/middlewares/sendMail.middleware";
 import { forgotPasswordDto } from "@/models/users/dtos/forgot.dto";
-import MailOptions from "@/models/users/dtos/mailOptions.dto";
+import { sendEmail } from "@/common/sendMail";
+import { MailOptions } from "@/models/users/dtos";
 
 export async function POST(request: NextRequest) {
   const connection = await getDBConnection();
