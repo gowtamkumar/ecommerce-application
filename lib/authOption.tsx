@@ -5,7 +5,9 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
+      
       async authorize(credentials: any) {
+        console.log("🚀 ~ credentials:", credentials)
         const res = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
           method: "POST",
           body: JSON.stringify(credentials),

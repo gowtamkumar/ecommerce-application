@@ -5,15 +5,17 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-export default async function Login() {
+export default function Login() {
   const [fromData, setFromData] = useState({});
   const router = useRouter();
 
   // redirect daashboard page
-  const session = await getSession();
-  if (session) {
-    return router.push("/dashboard");
-  }
+  // const session = await getSession();
+
+  // console.log("🚀 ~ session:");
+  // if (session) {
+  //   return router.push("/dashboard");
+  // }
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -64,7 +66,7 @@ export default async function Login() {
               htmlFor="email"
               className="block text-sm font-medium leading-6 text-gray-900"
             >
-              Email address
+              username
             </label>
             <div className="mt-2">
               <input

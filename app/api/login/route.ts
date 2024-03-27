@@ -18,6 +18,7 @@ export async function POST(request: Request, response: Response) {
       email: true,
       role: true,
       status: true,
+      password: true,
     },
   });
 
@@ -27,6 +28,7 @@ export async function POST(request: Request, response: Response) {
       status: 404,
     });
   }
+
   const isMatch = await matchPassword(data.password, oldUser);
 
   if (!isMatch) {
