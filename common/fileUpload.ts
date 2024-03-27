@@ -6,19 +6,12 @@ import { NextResponse } from "next/server";
 // import { NextResponse } from "next/server";
 
 export const Upload = async (file: any) => {
-  // console.log("🚀 ~ file:", process.env.FILE_SIZE);
   try {
     const fileSizeLimit = 5 * 1024 * 1024;
 
     if (!file) {
       return new Error("File is not uploaded");
     }
-
-    // const spl = file.type
-    console.log(
-      "🚀 ~ file.type:",
-      !["jpeg", "jpg", "png"].includes(file.type?.split("/")[1])
-    );
 
     if (!["jpeg", "jpg", "png"].includes(file.type?.split("/")[1])) {
       // return new Error("File format is not supported");

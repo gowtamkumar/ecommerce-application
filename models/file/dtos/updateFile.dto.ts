@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class CreateFileDto {
+export class UpdateFileDto {
   push(item: File) {
     throw new Error("Method not implemented.");
   }
