@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterSlice from "./features/counter/counterSlice";
 import layoutSlice from "./features/layout/layoutSlice";
+import globalSlice from "./features/global/globalSlice";
 
 export const store = () => {
   return configureStore({
     reducer: {
       counter: counterSlice,
-      layout: layoutSlice
+      layout: layoutSlice,
+      global: globalSlice,
     },
   });
 };

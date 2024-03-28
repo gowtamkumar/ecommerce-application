@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   if (!finduser) {
     return NextResponse.json({
       status: 201,
-      message: "User with this email does not exist",
+      message: `this Email:- ${data.email} does not exist`,
     });
   }
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   await sendEmail(mailOptions as MailOptions);
 
   return NextResponse.json({
-    message: "Mail send successfully",
+    message: `Please check your ${data.email} address`,
     status: 200,
   });
 }

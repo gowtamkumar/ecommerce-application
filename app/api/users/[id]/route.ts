@@ -8,6 +8,7 @@ export async function GET(request: Request, context: any) {
   const {
     params: { id },
   } = context;
+
   const user = await connection.getRepository(UsersEntity);
   const result = await user.findOneBy({ id });
 

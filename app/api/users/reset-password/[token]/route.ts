@@ -13,7 +13,7 @@ export async function PATCH(request: NextRequest, context: any) {
 
   const finduser = await user.findOneBy({
     resetToken: token,
-    resetTokenExpire: Date.now(),
+    // resetTokenExpire: Date.now(),
   });
 
   if (!finduser) {

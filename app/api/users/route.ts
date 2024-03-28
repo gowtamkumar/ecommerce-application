@@ -19,7 +19,6 @@ export async function POST(request: Request) {
   }
 
   const user = connection.getRepository(UsersEntity);
-
   const newUser = user.create({
     ...data,
     password: await hashedPassword(data.password),
