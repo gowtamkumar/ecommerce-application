@@ -9,11 +9,11 @@ export default function BreadCrumb() {
   const newResutl = pathname
     .split("/")
     .slice(1)
-    .map((item) => ({ title: item }))
+    .map((item) => ({ title: item }));
   return (
     <Breadcrumb
       style={{ margin: "5px 0" }}
-      items={[{ title: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> }, ...newResutl]}
+      items={[{ title: <HomeOutlined /> }, ...newResutl]}
     />
   );
 }
