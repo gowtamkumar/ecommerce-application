@@ -34,20 +34,22 @@ export default function DashboardHeader() {
       }}
     >
       {/* this button show only desktop a  */}
-      <Button
-        type="text"
-        className="hover:bg-none"
-        icon={
-          layout.collapsed ? <AiOutlineMenuUnfold /> : <AiOutlineMenuUnfold />
-        }
-        onClick={() => dispatch(setCollapsed(!layout.collapsed))}
-        hidden={layout.screenWidth < 820}
-        style={{
-          fontSize: "16px",
-          width: 50,
-          height: 50,
-        }}
-      />
+
+      <div hidden={layout.screenWidth < 820}>
+        <Button
+          type="text"
+          className="hover:bg-none"
+          icon={
+            layout.collapsed ? <AiOutlineMenuUnfold /> : <AiOutlineMenuUnfold />
+          }
+          onClick={() => dispatch(setCollapsed(!layout.collapsed))}
+          style={{
+            fontSize: "16px",
+            width: 50,
+            height: 50,
+          }}
+        />
+      </div>
       <div className="md:flex gap-2 hidden">
         <Button type="dashed" size="small" className="text-cyan-950">
           <Link href="/dashboard/orders">ORDER LIST</Link>
@@ -63,19 +65,25 @@ export default function DashboardHeader() {
       </div>
 
       {/* this button show only Mobile a  */}
-      <Button
-        type="text"
-        icon={
-          layout.collapsed ? <AiOutlineMenuUnfold /> : <AiOutlineMenuUnfold />
-        }
-        onClick={() => dispatch(setOpen(true))}
-        hidden={layout.screenWidth > 820}
-        style={{
-          fontSize: "16px",
-          width: 50,
-          height: 50,
-        }}
-      />
+      <div hidden={layout.screenWidth > 820}>
+        <Button
+          type="text"
+          icon={
+            layout?.collapsed ? (
+              <AiOutlineMenuUnfold />
+            ) : (
+              <AiOutlineMenuUnfold />
+            )
+          }
+          onClick={() => dispatch(setOpen(true))}
+          style={{
+            fontSize: "16px",
+            width: 50,
+            height: 50,
+          }}
+        />
+      </div>
+
       <Dropdown
         menu={{ items: profileRoute as any }}
         placement="bottomLeft"

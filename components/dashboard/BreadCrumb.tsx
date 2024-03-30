@@ -3,7 +3,6 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { FaHome } from "react-icons/fa";
 
-
 export default function BreadCrumb() {
   const pathname = usePathname();
 
