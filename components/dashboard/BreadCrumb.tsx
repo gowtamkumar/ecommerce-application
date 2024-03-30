@@ -1,7 +1,8 @@
-import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React from "react";
+import { FaHome } from "react-icons/fa";
+
 
 export default function BreadCrumb() {
   const pathname = usePathname();
@@ -13,7 +14,7 @@ export default function BreadCrumb() {
   return (
     <Breadcrumb
       style={{ margin: "5px 0" }}
-      items={[{ title: <HomeOutlined /> }, ...newResutl]}
+      items={[{ title: <FaHome /> }, ...newResutl]}
     />
   );
 }

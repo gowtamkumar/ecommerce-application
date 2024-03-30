@@ -17,8 +17,7 @@ export const UserValidationSchema = z.object({
     .string({
       required_error: "email is required",
     })
-    .email()
-    .transform((val) => val.split("@")[1]),
+    .email(),
 
   resetToken: z.string().optional(),
   resetTokenExpire: z.number().optional(),

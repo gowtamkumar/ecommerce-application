@@ -1,8 +1,5 @@
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
+
+import { FaBeer } from "react-icons/fa";
 import { MenuProps } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -12,25 +9,25 @@ import Link from "next/link";
 const navbarRoute = [
   {
     key: "dashboard",
-    icon: <UserOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard">Dashboard</Link>,
     route: "true",
   },
   {
     key: "customers",
-    icon: <VideoCameraOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/customers">Customers</Link>,
     route: "true",
   },
   {
     key: "orders",
-    icon: <VideoCameraOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/orders">Orders</Link>,
     route: "true",
   },
   {
     key: "kitchen_dashboard",
-    icon: <VideoCameraOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/kitchen-dashboard">kitchen-dashboard</Link>,
     route: "true",
   },
@@ -43,31 +40,31 @@ const navbarRoute = [
   },
   {
     key: "3",
-    icon: <UploadOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: "nav 3",
     route: "true",
     children: [
       {
         key: "01",
-        icon: <UserOutlined />,
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
         label: "nav 1",
         route: "true",
       },
       {
         key: "02",
-        icon: <VideoCameraOutlined />,
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
         label: "nav 2",
         route: "true",
       },
       {
         key: "03",
-        icon: <UserOutlined />,
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
         label: "nav 1",
         route: "true",
       },
       {
         key: "04",
-        icon: <VideoCameraOutlined />,
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
         label: "nav 2",
         route: "true",
       },
@@ -79,12 +76,12 @@ const profileRoute: MenuProps["items"] = [
   {
     key: "1",
     label: <Link href="/dashboard/profile">Profile</Link>,
-    icon: <UserOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "2",
     label: <Link href="/">Logout</Link>,
-    icon: <UserOutlined />,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     onClick: () => signOut(),
   },
 ];

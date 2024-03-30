@@ -10,14 +10,14 @@ export class UsersEntity {
   @Column()
   name!: string;
 
-  @Column()
+  @Column({ unique: true })
   username!: string;
 
   @Column()
   password?: string;
 
-  @Column()
-  email?: string;
+  @Column({ unique: true })
+  email!: string;
 
   @Column({ nullable: true })
   resetToken?: string;

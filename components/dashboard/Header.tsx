@@ -1,9 +1,5 @@
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { theme, Layout, Button, Dropdown, Avatar, MenuProps } from "antd";
+import { AiOutlineMenuUnfold } from "react-icons/ai";
+import { theme, Layout, Button, Dropdown, Avatar } from "antd";
 import React from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,8 +20,6 @@ export default function DashboardHeader() {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
-
-
   return (
     <Header
       style={{
@@ -43,7 +37,9 @@ export default function DashboardHeader() {
       <Button
         type="text"
         className="hover:bg-none"
-        icon={layout.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        icon={
+          layout.collapsed ? <AiOutlineMenuUnfold /> : <AiOutlineMenuUnfold />
+        }
         onClick={() => dispatch(setCollapsed(!layout.collapsed))}
         hidden={layout.screenWidth < 820}
         style={{
@@ -69,7 +65,9 @@ export default function DashboardHeader() {
       {/* this button show only Mobile a  */}
       <Button
         type="text"
-        icon={layout.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        icon={
+          layout.collapsed ? <AiOutlineMenuUnfold /> : <AiOutlineMenuUnfold />
+        }
         onClick={() => dispatch(setOpen(true))}
         hidden={layout.screenWidth > 820}
         style={{
@@ -79,7 +77,7 @@ export default function DashboardHeader() {
         }}
       />
       <Dropdown
-        menu={{ items: profileRoute }}
+        menu={{ items: profileRoute as any }}
         placement="bottomLeft"
         trigger={["click"]}
       >

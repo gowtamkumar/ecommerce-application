@@ -1,5 +1,5 @@
-export async function sendForgotPassword(data: any) {
-  const res = await fetch(`http://localhost:3000/api/users/forgot-password`, {
+export async function register(data: any) {
+  const res = await fetch(`http://localhost:3000/api/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

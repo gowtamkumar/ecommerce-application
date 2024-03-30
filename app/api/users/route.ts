@@ -19,6 +19,29 @@ export async function POST(request: Request) {
   }
 
   const user = connection.getRepository(UsersEntity);
+
+  const userChecking = await user.findOne({
+    where: { username: data.username },
+  });
+
+  if (userChecking) {
+    return NextResponse.json({
+      message: "Username already exists",
+      status: 401,
+    });
+  }
+
+  const emailChecking = await user.findOne({
+    where: { email: data.email },
+  });
+
+  if (emailChecking) {
+    return NextResponse.json({
+      message: "email already exists",
+      status: 401,
+    });
+  }
+
   const newUser = user.create({
     ...data,
     password: await hashedPassword(data.password),
