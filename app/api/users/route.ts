@@ -7,6 +7,7 @@ import { CreateUserDto } from "@/models/users/dtos";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
+ 
   const data = await request.json();
 
   const validation = UserValidationSchema.safeParse(data);
@@ -67,6 +68,7 @@ export async function GET(request: Request) {
   // }
 
   const connection = await getDBConnection();
+  console.log("🚀 ~ connection:", connection)
   const user = await connection.getRepository(UsersEntity);
 
   const result = await user.find({

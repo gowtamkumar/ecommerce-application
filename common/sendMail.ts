@@ -1,4 +1,3 @@
-// import MailOptions from "@/models/users/dtos/mailOptions.dto";
 import { MailOptions } from "@/models/users/dtos";
 import nodemailer from "nodemailer";
 

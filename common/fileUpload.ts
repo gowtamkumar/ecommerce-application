@@ -3,12 +3,12 @@ import { v4 as uuidv4 } from "uuid";
 import fs from "fs/promises";
 import path from "path";
 import { NextResponse } from "next/server";
-// import { NextResponse } from "next/server";
 
 export const Upload = async (file: any) => {
-  try {
-    const fileSizeLimit = 5 * 1024 * 1024;
+  const FILE_SIZE = process.env.FILE_SIZE || 5;
+  const fileSizeLimit = Number(FILE_SIZE) * 1024 * 1024;
 
+  try {
     if (!file) {
       return new Error("File is not uploaded");
     }
@@ -19,9 +19,7 @@ export const Upload = async (file: any) => {
     }
 
     if (file.size > +fileSizeLimit) {
-      return new Error(
-        `File size Exceeds the limit fo ${process.env.FILE_SIZE || 5} mb`
-      );
+      return new Error(`File size Exceeds the limit fo ${FILE_SIZE} mb`);
     }
 
     const filename = Date.now() + file.name.replaceAll(" ", "_");
