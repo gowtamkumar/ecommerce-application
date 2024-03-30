@@ -68,7 +68,6 @@ export async function GET(request: Request) {
   // }
 
   const connection = await getDBConnection();
-  console.log("🚀 ~ connection:", connection)
   const user = await connection.getRepository(UsersEntity);
 
   const result = await user.find({
