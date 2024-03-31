@@ -31,6 +31,7 @@ export default function Login() {
       ...validatedFields.data,
       redirect: false,
     });
+
     dispatch(setResponse(result));
 
     setTimeout(() => {
@@ -63,14 +64,14 @@ export default function Login() {
           <div className="space-y-6">
             <div>
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Username
               </label>
               <div className="mt-2">
                 <input
-                  id="email"
+                  id="username"
                   name="username"
                   type="text"
                   placeholder="Enter username"
@@ -112,10 +113,7 @@ export default function Login() {
             <div className="text-center">
               {global.response.status ? <p> {global.response?.error}</p> : null}
             </div>
-
-            <div>
-              <Button before="Signing...." after="Sign in" />
-            </div>
+            <Button before="Signing...." after="Sign in" />
           </div>
         </div>
       </div>

@@ -70,7 +70,7 @@ export default function ForgotPassrod() {
 
             {global.response.status ? <p> {global.response?.message}</p> : null}
 
-            <Button before="Sending...." after="Send" />
+            <Button before="Signing...." after="Signin" />
 
             {/* <button
               type="submit"

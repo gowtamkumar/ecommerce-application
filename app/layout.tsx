@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import { getSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
+  console.log("🚀 ~ session root:", session)
 
   return (
     <html lang="en">
