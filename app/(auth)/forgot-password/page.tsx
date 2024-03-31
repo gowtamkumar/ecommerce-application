@@ -5,12 +5,14 @@ import { forgotPasswordValidationSchema } from "@/models/users/validation/forgot
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { sendForgotPassword } from "@/lib/apis/sendForgotPassword";
+import { useFormState } from "react-dom";
+import Button from "@/components/dashboard/Button";
 
 export default function ForgotPassrod() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const forgotPasswordAction = async (formData: FormData) => {
+  const forgotPasswordAction = async (prevState: any, formData: FormData) => {
     const validatedFields = forgotPasswordValidationSchema.safeParse({
       email: formData.get("email"),
     });
@@ -27,8 +29,10 @@ export default function ForgotPassrod() {
     }, 5000);
   };
 
+  const [state, fromAction] = useFormState(forgotPasswordAction, null);
+
   return (
-    <form action={forgotPasswordAction}>
+    <form action={fromAction}>
       <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
@@ -66,12 +70,14 @@ export default function ForgotPassrod() {
 
             {global.response.status ? <p> {global.response?.message}</p> : null}
 
-            <button
+            <Button before="Sending...." after="Send" />
+
+            {/* <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Send
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

@@ -7,6 +7,8 @@ import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { resetPasswordValidationSchema } from "@/models/users/validation/resetPasswordValidation";
 import { resetPassword } from "@/lib/apis/resetPassword";
 import { useRouter } from "next/navigation";
+import { useFormState } from "react-dom";
+import Button from "@/components/dashboard/Button";
 
 export default function ResetPassrod() {
   const params = useParams();
@@ -14,10 +16,11 @@ export default function ResetPassrod() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const resetPasswordAction = async (formData: FormData) => {
+  const resetPasswordAction = async (prevState: any, formData: FormData) => {
     const validatedFields = resetPasswordValidationSchema.safeParse({
       password: formData.get("password"),
     });
+
     // Return early if the form data is invalid
     if (!validatedFields.success) {
       return {
@@ -37,8 +40,10 @@ export default function ResetPassrod() {
     }, 5000);
   };
 
+  const [state, fromAction] = useFormState(resetPasswordAction, null);
+
   return (
-    <form action={resetPasswordAction}>
+    <form action={fromAction}>
       <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
@@ -77,12 +82,13 @@ export default function ResetPassrod() {
             {global.response.status ? <p> {global.response?.message}</p> : null}
 
             <div>
-              <button
+              <Button before="Submitting...." after="Submit" />
+              {/* <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Reset password
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

@@ -1,11 +1,12 @@
-/* eslint-disable @next/next/no-async-client-component */
 "use client";
+import Button from "@/components/dashboard/Button";
 import { register } from "@/lib/apis/register";
 import { UserValidationSchema } from "@/models/users/validation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Register() {
@@ -13,7 +14,7 @@ export default function Register() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const registerAction = async (formData: FormData) => {
+  const registerAction = async (prevState: any, formData: FormData) => {
     const validatedFields = UserValidationSchema.safeParse({
       name: formData.get("name"),
       email: formData.get("email"),
@@ -28,8 +29,6 @@ export default function Register() {
     }
 
     const result = await register(validatedFields.data);
-    console.log("🚀 ~ result:", result);
-
     dispatch(setResponse(result));
 
     setTimeout(() => {
@@ -40,8 +39,15 @@ export default function Register() {
     }, 5000);
   };
 
+  const [state, fromAction] = useFormState(registerAction, null);
+
   return (
-    <form action={registerAction}>
+    <form
+      action={fromAction}
+    // onChange={(v: any) => {
+    //   console.log("value", v.target?.name);
+    // }}
+    >
       <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
@@ -143,15 +149,7 @@ export default function Register() {
                 <p> {global.response?.message}</p>
               ) : null}
             </div>
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Register
-              </button>
-            </div>
+            <Button before="Submitting...." after="Submit" />
           </div>
         </div>
       </div>

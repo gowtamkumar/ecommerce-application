@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-async-client-component */
 "use client";
+import Button from "@/components/dashboard/Button";
 import { loginValidationSchema } from "@/models/users/validation/loginValidation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { signIn } from "next-auth/react";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Login() {
@@ -14,7 +15,7 @@ export default function Login() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const loginAction = async (formData: FormData) => {
+  const loginAction = async (prevState: any, formData: FormData) => {
     const validatedFields = loginValidationSchema.safeParse({
       username: formData.get("username"),
       password: formData.get("password"),
@@ -30,7 +31,6 @@ export default function Login() {
       ...validatedFields.data,
       redirect: false,
     });
-
     dispatch(setResponse(result));
 
     setTimeout(() => {
@@ -41,8 +41,10 @@ export default function Login() {
     }, 5000);
   };
 
+  const [state, fromAction] = useFormState(loginAction, null);
+
   return (
-    <form action={loginAction}>
+    <form action={fromAction}>
       <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
@@ -112,12 +114,7 @@ export default function Login() {
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign in
-              </button>
+              <Button before="Signing...." after="Sign in" />
             </div>
           </div>
         </div>
