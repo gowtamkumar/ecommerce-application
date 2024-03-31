@@ -2,18 +2,19 @@
 import Button from "@/components/dashboard/Button";
 import { loginValidationSchema } from "@/models/users/validation/loginValidation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
-import { signIn } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React from "react";
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Login() {
-  const router = useRouter();
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const router = useRouter();
+  const session = useSession();
 
   const loginAction = async (prevState: any, formData: FormData) => {
     const validatedFields = loginValidationSchema.safeParse({
@@ -34,15 +35,25 @@ export default function Login() {
 
     dispatch(setResponse(result));
 
-    setTimeout(() => {
-      dispatch(setResponse({}));
-      if (result?.status === 200) {
-        router.push("/dashboard");
-      }
-    }, 5000);
+    const getSesson = await getSession();
+
+    const isAdmin = false;
+
+    if (isAdmin && result?.status === 200) {
+      router.push("/dashboard");
+    }
+
+    if (!isAdmin && result?.status === 200) {
+      router.push("/");
+    }
+    dispatch(setResponse({}));
   };
 
   const [state, fromAction] = useFormState(loginAction, null);
+
+  if (session.status === "authenticated") {
+    redirect("/");
+  }
 
   return (
     <form action={fromAction}>

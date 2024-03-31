@@ -5,11 +5,9 @@ import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { getSession } from "next-auth/react";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const inter = Inter({ subsets: ["latin"] });
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,8 +19,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
-  console.log("🚀 ~ session root:", session)
+  const session = await getServerSession(authOptions);
 
   return (
     <html lang="en">

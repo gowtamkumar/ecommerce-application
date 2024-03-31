@@ -1,6 +1,6 @@
 
 export default function Loading() {
   return (
-    <div>loading...</div>
+    <div>dashboard loading...</div>
   )
 }

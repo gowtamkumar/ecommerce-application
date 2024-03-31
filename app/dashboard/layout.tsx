@@ -6,6 +6,8 @@ import FooterOption from "@/components/dashboard/Footer";
 import BreadCrumb from "@/components/dashboard/BreadCrumb";
 import DashboardHeader from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 const { Content } = Layout;
 
 export default function DashboardLayout({
@@ -16,6 +18,12 @@ export default function DashboardLayout({
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const admin = true;
+
+  const session: any = useSession();
+  if (!admin) {
+    redirect("/");
+  }
 
   return (
     // <Suspense fallback={<Loading />}>
