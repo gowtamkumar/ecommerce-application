@@ -16,7 +16,6 @@ export default function DashboardHeader() {
   } = theme.useToken();
   const { Header } = Layout;
   // redux hook
-  // const layout = useSelector((state: RootState) => state.layout);
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
@@ -50,6 +49,7 @@ export default function DashboardHeader() {
           }}
         />
       </div>
+
       <div className="md:flex gap-2 hidden">
         <Button type="dashed" size="small" className="text-cyan-950">
           <Link href="/dashboard/orders">ORDER LIST</Link>
