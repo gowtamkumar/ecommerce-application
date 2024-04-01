@@ -36,14 +36,26 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token, user }) {
       return {
         ...session,
+        user: token.user,
         token: { exp: token.exp, iat: token.iat, jti: token.jti },
       };
     },
-    // async jwt({ token, user, account, profile }: any) {
-    //   if (typeof user !== "undefined") {
-    //     return user;
-    //   }
-    //   return token;
-    // },
+    async jwt({ token, user, account, profile }: any) {
+      if (typeof user !== "undefined") {
+        return {
+          ...token,
+          user: {
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+            isAdmin: user.isAdmin,
+          },
+        };
+      }
+      return token;
+    },
   },
 };

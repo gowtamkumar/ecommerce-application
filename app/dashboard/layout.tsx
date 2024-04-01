@@ -19,10 +19,10 @@ export default function DashboardLayout({
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const admin = true;
 
   const session: any = useSession();
-  if (!admin) {
+  console.log("🚀 ~ session:", session)
+  if (session.data.user.role !== "Admin") {
     redirect("/");
   }
 

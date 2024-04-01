@@ -9,9 +9,8 @@ export default function ProfileLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = true;
-  const session = useSession();
-  if (!user) {
+  const session: any = useSession();
+  if (session.status === "unauthenticated") {
     redirect("/");
   }
 

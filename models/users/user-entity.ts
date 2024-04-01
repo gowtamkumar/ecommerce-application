@@ -19,14 +19,17 @@ export class UsersEntity {
   @Column({ unique: true })
   email!: string;
 
-  @Column({ nullable: true })
+  @Column({ name: "reset_token", nullable: true })
   resetToken?: string;
 
-  @Column({ type: "bigint", nullable: true })
+  @Column({ name: "reset_token_expire", type: "bigint", nullable: true })
   resetTokenExpire?: number;
 
   @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
   role!: RoleEnum;
+
+  @Column({ name: "is_admin", type: "boolean", default: false })
+  isAdmin!: boolean;
 
   @Column({ type: "boolean", default: true })
   status!: boolean;

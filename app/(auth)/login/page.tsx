@@ -35,15 +35,14 @@ export default function Login() {
 
     dispatch(setResponse(result));
 
-    const getSesson = await getSession();
+    const getSesson: any = await getSession();
+    console.log("🚀 ~ getSesson:", getSesson);
 
-    const isAdmin = false;
-
-    if (isAdmin && result?.status === 200) {
+    if (getSesson.user.role === "Admin" && result?.status === 200) {
       router.push("/dashboard");
     }
 
-    if (!isAdmin && result?.status === 200) {
+    if (getSesson.user.role === "User" && result?.status === 200) {
       router.push("/");
     }
     dispatch(setResponse({}));
