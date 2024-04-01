@@ -4,10 +4,12 @@ import { getDBConnection } from "@/config/db/dbconnection";
 import { hashedPassword } from "@/middlewares/auth.middleware";
 import { UserValidationSchema } from "@/models/users/validation";
 import { CreateUserDto } from "@/models/users/dtos";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOption";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
- 
+
   const data = await request.json();
 
   const validation = UserValidationSchema.safeParse(data);
@@ -57,18 +59,34 @@ export async function POST(request: Request) {
   });
 }
 
-export async function GET(request: Request) {
-  // const session = await getServerSession(authOptions);
-
-  // if (!session) {
-  //   return NextResponse.json({
-  //     status: 201,
-  //     message: "Authorized faild",
-  //   });
-  // }
-
+/**
+ * Get all users
+ * api/users
+ * @export
+ * @param {Request} request
+ * @return {*}
+ */
+export async function GET(request: Request): Promise<any> {
   const connection = await getDBConnection();
   const user = await connection.getRepository(UsersEntity);
+
+  // User authentication and role verification
+  const session: any = await getServerSession(authOptions);
+  // Check if the user is authenticated
+  if (!session) {
+    return NextResponse.json({
+      status: 401,
+      message: "User is not authenticated",
+    });
+  }
+
+  // Check if the user has the 'admin' role
+  if (session.user.role !== "Admin") {
+    return NextResponse.json({
+      status: 403,
+      message: "User is authenticated but does not have the right permissions",
+    });
+  }
 
   const result = await user.find({
     select: {
@@ -83,7 +101,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     status: 200,
-    message: "Get a users",
+    message: "Get all users",
     length: 100,
     data: result,
   });
