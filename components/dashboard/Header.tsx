@@ -8,7 +8,8 @@ import {
   setCollapsed,
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
-import { profileRoute } from "./NavBarRoute";
+import { profileRoute } from "@/NavBarRoute";
+// import { profileRoute } from "../NavBarRoute";
 
 export default function DashboardHeader() {
   const {

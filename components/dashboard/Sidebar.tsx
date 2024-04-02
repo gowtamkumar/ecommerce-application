@@ -1,6 +1,5 @@
 "use client";
 import { Avatar, Drawer, Layout, Menu, Button } from "antd";
-import { navbarRoute } from "./NavBarRoute";
 import { useSelector, useDispatch } from "react-redux";
 import { useLayoutEffect } from "react";
 import {
@@ -9,6 +8,7 @@ import {
   setOpen,
   setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
+import { navbarRoute } from "@/NavBarRoute";
 
 const { Sider } = Layout;
 

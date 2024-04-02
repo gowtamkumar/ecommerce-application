@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
   //   verifyRequest: "/auth/verify-request",
   //   newUser: "/auth/new-user",
   // },
-  secret: process.env.NEXTAUTH_SECRET || "", // Adjust the type based on your environment variable
+  secret: process.env.NEXTAUTH_SECRET, // Adjust the type based on your environment variable
   session: { strategy: "jwt", maxAge: 1 * 24 * 60 * 60 }, // 1 day
   callbacks: {
     async session({ session, token, user }) {

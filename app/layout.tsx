@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import Header from "@/components/website/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 

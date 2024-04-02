@@ -1,5 +1,4 @@
-
-import { FaBeer } from "react-icons/fa";
+import { FaBeer, FaRegUser } from "react-icons/fa";
 import { MenuProps } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -82,8 +81,76 @@ const profileRoute: MenuProps["items"] = [
     key: "2",
     label: <Link href="/">Logout</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    onClick: () => signOut(),
+    onClick: () => {
+      // "use server";
+      signOut();
+    },
   },
 ];
 
-export { navbarRoute, profileRoute };
+const webSiteNavbarItems: MenuProps["items"] = [
+  {
+    label: "Home",
+    key: "home",
+    icon: <FaRegUser />,
+  },
+  {
+    label: "About us",
+    key: "contact",
+    icon: <FaRegUser />,
+    // disabled: true,
+  },
+  {
+    label: "Contract",
+    key: "contact",
+    icon: <FaRegUser />,
+    // disabled: true,
+  },
+  {
+    label: "Category",
+    key: "category",
+    icon: <FaRegUser />,
+    children: [
+      {
+        type: "group",
+        label: "Item 1",
+        children: [
+          {
+            label: "Option 1",
+            key: "setting:1",
+            icon: <FaRegUser />,
+          },
+          {
+            label: "Option 2",
+            key: "setting:2",
+            icon: <FaRegUser />,
+          },
+        ],
+      },
+      {
+        type: "group",
+        label: "Item 2",
+        children: [
+          {
+            label: "Option 3",
+            key: "setting:3",
+          },
+          {
+            label: "Option 4",
+            key: "setting:4",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: (
+      <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
+        Navigation Four - Link
+      </a>
+    ),
+    key: "alipay",
+  },
+];
+
+export { navbarRoute, profileRoute, webSiteNavbarItems };

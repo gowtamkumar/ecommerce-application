@@ -1,6 +1,14 @@
-import React from 'react'
+import Banner from "@/components/website/Banner/Banner";
+import WebFooter from "@/components/website/Footer";
+import Header from "@/components/website/Header";
+import React from "react";
 export default function Home() {
   return (
-    <div>Home page</div>
-  )
+    <div className="container mx-auto">
+      <Header />
+      <Banner />
+      Home page
+      <WebFooter />
+    </div>
+  );
 }
