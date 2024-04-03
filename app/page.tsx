@@ -2,62 +2,37 @@ import Banner from "@/components/website/Banner/Banner";
 import CategoryCard from "@/components/website/Home/CategoryCard";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header";
-import ProductCard from "@/components/website/ProductCard";
+import ProductCard from "@/components/website/Home/ProductCard";
 import Image from "next/image";
 import React from "react";
+import Category from "@/components/website/Home/Category";
+import PopularProduct from "@/components/website/Home/PopularProduct";
 export default function Home() {
   return (
     <div className="container mx-auto">
       <Header />
       <Banner />
 
-      {/* Featured Products */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
-        {/* Display featured products */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {/* Product Cards */}
-          {/* Example Product Card: */}
-          {/* <div className="bg-white rounded-lg shadow-md p-4">
-            <Image
-              // placeholder="blur"
-              width={150}
-              height={150}
-              src="/product-01.jpg"
-              alt="Category Image"
-              className="w-full h-48 object-cover mb-4"
-            />
-            <h3 className="text-lg font-semibold mb-2">Product Name</h3>
-            <p className="text-gray-500 mb-2">$20.00</p>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Add to Cart
-            </button>
-            
-          </div> */}
-
-          {[2, 4, 7, 8].map((item, idx) => (
-            <ProductCard
-              key={idx}
-              imageUrl={""}
-              productName={"product "}
-              price={200}
-            />
-          ))}
+      <section className="mx-auto py-4">
+        <div className="flex justify-center p-3 gap-2">
+          <div className="border p-2">Safe Payment</div>
+          <div className="border p-2">Nationwide Delivery</div>
+          <div className="border p-2">Free & Easy Return</div>
+          <div className="border p-2">100% Authentic Product</div>
+          <div className="border p-2">Fast Delivery</div>
         </div>
       </section>
+
+      {/* all category show */}
+      <Category />
+
+      {/* Popular products */}
+      <PopularProduct />
+      {/* Featured Products */}
+      <ProductCard />
 
       {/* Categories */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Shop by Category</h2>
-        {/* Display categories */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {/* Example Category Card: */}
-          {[2, 4, 7, 8].map((item, idx) => (
-            <CategoryCard key={idx} imageUrl={""} categoryName={"T-shirt"} />
-          ))}
-        </div>
-      </section>
-
+      <CategoryCard />
       {/* Banners */}
       <section className="mb-8">
         <Image

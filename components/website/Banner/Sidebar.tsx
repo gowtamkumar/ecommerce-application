@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Menu, MenuProps } from "antd";
 import { webSiteNavbarItems } from "@/NavBarRoute";
 
-export default function Category() {
+export default function Sidebar() {
   const [current, setCurrent] = useState("mail");
 
   const onClick: MenuProps["onClick"] = (e) => {
@@ -11,11 +11,14 @@ export default function Category() {
     setCurrent(e.key);
   };
   return (
-    <Menu
-      onClick={onClick}
-      selectedKeys={[current]}
-      mode="vertical"
-      items={webSiteNavbarItems}
-    />
+    <div className="border rounded">
+      <Menu
+        onClick={onClick}
+        selectedKeys={[current]}
+        mode="vertical"
+        items={webSiteNavbarItems}
+      />
+    </div>
+
   );
 }
