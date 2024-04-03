@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const CategoryCard = () => {
   return (
@@ -9,8 +10,8 @@ const CategoryCard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {/* Example Category Card: */}
           {[2, 4, 7, 8].map((item, idx) => (
-            <>
-              <div key={idx} className="bg-white rounded-lg shadow-md p-4">
+            <Link key={idx} href={`category/${idx}`}>
+              <div className="bg-white rounded-lg shadow-md p-4">
                 <Image
                   // placeholder="blur"
                   width={150}
@@ -24,14 +25,11 @@ const CategoryCard = () => {
                   Shop Now
                 </button>
               </div>
-            </>
+            </Link>
           ))}
         </div>
       </section>
-
-
     </>
-
   );
 };
 

@@ -61,6 +61,7 @@ export default function CheckoutPage() {
                     type="text"
                     id="firstName"
                     name="firstName"
+                    required
                     className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -90,6 +91,7 @@ export default function CheckoutPage() {
                   type="email"
                   id="email"
                   name="email"
+                  required
                   className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -104,6 +106,7 @@ export default function CheckoutPage() {
                   type="text"
                   id="address"
                   name="address"
+                  required
                   className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -118,6 +121,7 @@ export default function CheckoutPage() {
                 <select
                   id="paymentMethod"
                   name="paymentMethod"
+                  required
                   className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 >
                   <option value="creditCard">Credit Card</option>
@@ -213,7 +217,7 @@ export default function CheckoutPage() {
 
             <div className="border p-3">
               {/* Display cart items and total */}
-              {[3,4,5,6,6,6].map((item, idx) => {
+              {[3, 4, 5, 6, 6, 6].map((item, idx) => {
                 return (
                   <>
                     <div

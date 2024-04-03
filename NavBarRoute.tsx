@@ -113,7 +113,7 @@ const webSiteNavbarItems: MenuProps["items"] = [
   },
   {
     label: "About us",
-    key: "contact",
+    key: "about",
     icon: <FaRegUser />,
     // disabled: true,
   },
@@ -124,7 +124,6 @@ const webSiteNavbarItems: MenuProps["items"] = [
     // disabled: true,
   },
 
-  
   {
     label: "Category",
     key: "category",
@@ -172,4 +171,4 @@ const webSiteNavbarItems: MenuProps["items"] = [
   },
 ];
 
-export { navbarRoute, profileRoute, webSiteNavbarItems, userProfileRoute};
+export { navbarRoute, profileRoute, webSiteNavbarItems, userProfileRoute };
