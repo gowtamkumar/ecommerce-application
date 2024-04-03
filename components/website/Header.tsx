@@ -1,11 +1,10 @@
 "use client";
 import { Avatar, Dropdown, Input, Select } from "antd";
-// import { profileRoute } from "../NavBarRoute";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FaRegUser, FaShoppingCart } from "react-icons/fa";
 import Image from "next/image";
-import { profileRoute } from "@/NavBarRoute";
+import { userProfileRoute } from "@/NavBarRoute";
 
 const Header: React.FC = () => {
   const session = useSession();
@@ -45,14 +44,14 @@ const Header: React.FC = () => {
 
       <div className="w-1/6 flex justify-between items-center">
         <div className="ml-3">
-          <Link href="/cart">
+          <Link href="/checkout">
             <FaShoppingCart size={20} />
           </Link>
         </div>
 
         {session.status === "authenticated" ? (
           <Dropdown
-            menu={{ items: profileRoute as any }}
+            menu={{ items: userProfileRoute as any }}
             placement="bottomLeft"
             trigger={["click"]}
           >
@@ -65,13 +64,11 @@ const Header: React.FC = () => {
         ) : (
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center justify-between">
-              <FaRegUser /> <Link href="/login">Login</Link> |{" "}
-              <Link href="/register">Sign up</Link>
+              <FaRegUser /> <Link className="mx-2" href="/login">Login</Link> |{" "}
+              <Link className="mx-2" href="/register">Sign up</Link>
             </div>
-
           </div>
         )}
-
       </div>
     </div>
   );

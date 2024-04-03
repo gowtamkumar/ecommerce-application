@@ -3,7 +3,7 @@ import Button from "@/components/dashboard/Button";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header";
 import { register } from "@/lib/apis/register";
-import { UserValidationSchema } from "@/models/users/validation";
+import { UserValidationSchema } from "@/validation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -47,12 +47,7 @@ export default function Register() {
   return (
     <>
       <Header />
-      <form
-        action={fromAction}
-      // onChange={(v: any) => {
-      //   console.log("value", v.target?.name);
-      // }}
-      >
+      <form action={fromAction}>
         <div className="flex min-h-full flex-col items-center justify-center px-6 py-6 lg:px-8 bg-white">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -79,7 +74,6 @@ export default function Register() {
                       required
                       className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
-
                   </div>
                 </div>
 

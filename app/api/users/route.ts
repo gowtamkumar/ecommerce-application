@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { UsersEntity } from "@/models/users/user-entity";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { hashedPassword } from "@/middlewares/auth.middleware";
-import { UserValidationSchema } from "@/models/users/validation";
+import { UserValidationSchema } from "@/validation";
 import { CreateUserDto } from "@/models/users/dtos";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";

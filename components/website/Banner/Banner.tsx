@@ -10,7 +10,7 @@ export default function Banner() {
         <div className="w-1/6">
           <Category />
         </div>
-        <div className="w-5/6  justify-center items-center ">
+        <div className="w-5/6 justify-center items-center ">
           <AntCarousel />
         </div>
       </div>

@@ -1,6 +1,4 @@
 "use client";
-import { Layout } from "antd";
-import Image from "next/image";
 
 function WebFooter() {
   return (

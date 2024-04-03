@@ -1,7 +1,7 @@
-'use client'
-import React, { useState } from 'react'
-import { Menu, MenuProps } from 'antd';
-import { webSiteNavbarItems } from '@/NavBarRoute';
+"use client";
+import React, { useState } from "react";
+import { Menu, MenuProps } from "antd";
+import { webSiteNavbarItems } from "@/NavBarRoute";
 
 export default function Category() {
   const [current, setCurrent] = useState("mail");
@@ -11,14 +11,11 @@ export default function Category() {
     setCurrent(e.key);
   };
   return (
-    <div>
-      <Menu
-        onClick={onClick}
-        selectedKeys={[current]}
-        mode="vertical"
-        items={webSiteNavbarItems}
-      />
-
-    </div>
-  )
+    <Menu
+      onClick={onClick}
+      selectedKeys={[current]}
+      mode="vertical"
+      items={webSiteNavbarItems}
+    />
+  );
 }

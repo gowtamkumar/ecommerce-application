@@ -88,6 +88,23 @@ const profileRoute: MenuProps["items"] = [
   },
 ];
 
+const userProfileRoute: MenuProps["items"] = [
+  {
+    key: "1",
+    label: <Link href="/profile">Profile</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "2",
+    label: <Link href="/">Logout</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    onClick: () => {
+      // "use server";
+      signOut();
+    },
+  },
+];
+
 const webSiteNavbarItems: MenuProps["items"] = [
   {
     label: "Home",
@@ -153,4 +170,4 @@ const webSiteNavbarItems: MenuProps["items"] = [
   },
 ];
 
-export { navbarRoute, profileRoute, webSiteNavbarItems };
+export { navbarRoute, profileRoute, webSiteNavbarItems, userProfileRoute};

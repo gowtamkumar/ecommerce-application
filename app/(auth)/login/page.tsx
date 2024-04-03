@@ -2,7 +2,7 @@
 import Button from "@/components/dashboard/Button";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header";
-import { loginValidationSchema } from "@/models/users/validation/loginValidation";
+import { loginValidationSchema } from "@/validation/user/loginValidation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { getSession, signIn, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -57,7 +57,7 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div className="container mx-auto">
       <Header />
       <form action={fromAction}>
         <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
@@ -133,6 +133,6 @@ export default function Login() {
         </div>
       </form>
       <WebFooter />
-    </>
+    </div>
   );
 }

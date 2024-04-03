@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
-import { resetPasswordValidationSchema } from "@/models/users/validation/resetPasswordValidation";
+import { resetPasswordValidationSchema } from "@/validation/user/resetPasswordValidation";
 import { resetPassword } from "@/lib/apis/resetPassword";
 import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";

@@ -1,0 +1,284 @@
+// pages/checkout.js
+"use client";
+import Link from "next/link";
+import Header from "../Header";
+import { useFormState } from "react-dom";
+import { checkoutValidationSchema } from "@/validation/checkout/checkoutValidation";
+import WebFooter from "../Footer";
+import Image from "next/image";
+
+export default function CheckoutPage() {
+  // State for form inputs
+  const checkoutAction = async (prevState: any, formData: FormData) => {
+    const validatedFields = checkoutValidationSchema.safeParse({
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      paymentMethod: formData.get("paymentMethod"),
+      email: formData.get("email"),
+      address: formData.get("address"),
+    });
+
+    console.log("🚀 ~ validatedFields:", validatedFields);
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.formErrors,
+      };
+    }
+
+    // const result = await register(validatedFields.data);
+
+    // dispatch(setResponse(result));
+
+    // setTimeout(() => {
+    //   dispatch(setResponse({}));
+    //   if (result?.status === 200) {
+    //     router.push("/login");
+    //   }
+    // }, 5000);
+  };
+
+  const [state, fromAction] = useFormState(checkoutAction, null);
+
+  return (
+    <div className="container mx-auto">
+      <Header />
+      <div className="container  flex mx-auto px-4 py-8">
+        <div className="w-4/6 px-6 space-y-4">
+          {/* Shipping Information */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-2">Shipping Information</h2>
+            <form action={fromAction} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="firstName"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Address
+                </label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+              {/* Add more fields as needed */}
+              <div>
+                <label
+                  htmlFor="paymentMethod"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Payment Method
+                </label>
+                <select
+                  id="paymentMethod"
+                  name="paymentMethod"
+                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="creditCard">Credit Card</option>
+                  <option value="paypal">PayPal</option>
+                  <option value="cash">Cash</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="cardNumber"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Card number
+                </label>
+                <input
+                  type="number"
+                  id="cardNumber"
+                  name="cardNumber"
+                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="cardName"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Card Name
+                </label>
+                <input
+                  type="text"
+                  id="cardName"
+                  name="cardName"
+                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+
+              <div className="flex justify-between">
+                <div className="w-2/3 mr-2">
+                  <label
+                    htmlFor="expirationDate"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Expiration Date
+                  </label>
+                  <input
+                    type="date"
+                    id="expirationDate"
+                    name="expirationDate"
+                    className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+                <div className="w-1/3">
+                  <label
+                    htmlFor="cvc"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    CVC
+                  </label>
+                  <input
+                    type="text"
+                    id="cvc"
+                    name="cvc"
+                    className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              {/* Add more payment options as needed */}
+              <div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Place Order
+                </button>
+              </div>
+            </form>
+          </div>
+          {/* Back to Shopping Link */}
+          <div>
+            <Link href="/products">
+              <div className="text-blue-500 hover:underline">
+                Back to Shopping
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div className="w-2/6">
+          <div className="mb-8 ">
+            <h2 className="text-xl font-semibold mb-2">Order summary</h2>
+
+            <div className="border p-3">
+              {/* Display cart items and total */}
+              {[3,4,5,6,6,6].map((item, idx) => {
+                return (
+                  <>
+                    <div
+                      className="flex w-full border-b-2 items-center "
+                      key={idx}
+                    >
+                      <div className="bg-slate-300">
+                        <Image
+                          width={50}
+                          height={50}
+                          // className="h-9 w-auto px-2"
+                          src="/pos_software.png"
+                          alt="Your Company"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between w-full p-2">
+                        <div>
+                          <span>Product Name</span>
+                          <p>size</p>
+                          <strong className="text-gray-900">$20.00</strong>
+                        </div>
+                        <div className="gap-y-5 grid text-end">
+                          <p>X</p>
+                          <div>
+                            <select className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })}
+
+              {/* Add more cart items as needed */}
+              <div className="grid gap-y-5 my-4">
+                <div className="flex justify-between">
+                  <span className="font-semibold">Subtotal:</span>
+                  <span className="font-semibold">$20.00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold">Shipping:</span>
+                  <span className="font-semibold">$20.00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-semibold">Tax:</span>
+                  <span className="font-semibold">$20.00</span>
+                </div>
+
+                <div className="flex justify-between border-t-2">
+                  <span className="font-semibold">Total:</span>
+                  <span className="font-semibold">$20.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <WebFooter />
+    </div>
+  );
+}
