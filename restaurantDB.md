@@ -1,4 +1,4 @@
-<!-- ### Modules -->
+<!-- ### Restaurants application Modules -->
 
 ## Dashboard
 
