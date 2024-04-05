@@ -1,5 +1,4 @@
 <!-- ## user_role
-
 id,
 name,
 created_at,
@@ -11,13 +10,11 @@ id,
 username:,
 password,
 email,
-firstName,
-lastName,
+name,
 type:[User, Vendor, Admin]
 phone,
 birthday,
-isAdmin,
-pre_address
+address,
 status(enum- active/inactive/block)
 imgUrl,
 createdAt
@@ -67,7 +64,9 @@ zip_code,
 id,
 order_id,
 price,
+
 <!-- parchase_price, -->
+
 total_amount,
 
 <!-- discount_id, -->
@@ -112,12 +111,13 @@ name,
 price,
 color,
 url_slug(unique),
+images:array
 brand_id,
 category_id,
 stock_qty,
 user_id,
 description
-isActive,
+status,
 createdAt
 updatedAt
 
@@ -140,7 +140,7 @@ value,
 start_date,
 expiry_date
 end_date,
-min_order_Amount,
+min_order_amount,
 min_user,
 usage_count
 is_single_use: Boolean
@@ -154,7 +154,7 @@ updatedAt
 id,
 product_id,
 user_id,
-product_variant_id
+<!-- product_variant_id -->
 createdAt,
 updatedAt
 

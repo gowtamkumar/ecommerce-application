@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import React from "react";
-import { forgotPasswordValidationSchema } from "@/validation/forgotPasswordValidation";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { sendForgotPassword } from "@/lib/apis/sendForgotPassword";
 import { useFormState } from "react-dom";
 import Button from "@/components/dashboard/Button";
+import { forgotPasswordValidationSchema } from "@/validation/user/forgotPasswordValidation";
 
 export default function ForgotPassrod() {
   const global = useSelector(selectGlobal);

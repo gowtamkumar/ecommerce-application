@@ -1,6 +1,12 @@
 import "reflect-metadata";
 import { RoleEnum } from "./enums/role.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity("users")
 export class UsersEntity {
@@ -19,20 +25,38 @@ export class UsersEntity {
   @Column({ unique: true })
   email!: string;
 
+  @Column({ unique: true })
+  phone?: string;
+
+  @Column({ name: "birth_day" })
+  birthday?: string;
+
+  @Column({ nullable: true })
+  address?: string;
+
+  @Column({ name: "img_url", nullable: true })
+  imgUrl?: string;
+
+  @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
+  role!: RoleEnum;
+
+  // @Column({ name: "is_admin", type: "boolean", default: false })
+  // isAdmin!: boolean;
+
+  @Column({ type: "boolean", default: true })
+  status!: boolean;
+
   @Column({ name: "reset_token", nullable: true })
   resetToken?: string;
 
   @Column({ name: "reset_token_expire", type: "bigint", nullable: true })
   resetTokenExpire?: number;
 
-  @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
-  role!: RoleEnum;
+  @CreateDateColumn({ name: "created_at", type: "time with time zone" })
+  createdAt?: string;
 
-  @Column({ name: "is_admin", type: "boolean", default: false })
-  isAdmin!: boolean;
-
-  @Column({ type: "boolean", default: true })
-  status!: boolean;
+  @UpdateDateColumn({ name: "updated_at", type: "time with time zone" })
+  updatedAt?: string;
 
   // tesnum!: number
   // getTestNUmber() {

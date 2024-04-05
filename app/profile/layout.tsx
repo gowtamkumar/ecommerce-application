@@ -17,10 +17,10 @@ export default function ProfileLayout({
   }
 
   return (
-    <div className='container mx-auto'>
+    <div className="container mx-auto">
       <Header />
       {children}
-      <WebFooter/>
+      <WebFooter />
     </div>
   );
 }

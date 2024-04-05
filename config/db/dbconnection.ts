@@ -3,6 +3,8 @@ import { DataSource } from "typeorm";
 import { UsersEntity } from "@/models/users/user-entity";
 import { FileEntity } from "@/models/file/file.entity";
 import { evnFileValidationSchema } from "../fileValidation";
+import { ProductEntity } from "@/models/products/product-entity";
+import { ProductVariantsEntity } from "@/models/product-variant/product-variant-entity";
 
 const inEnvFile = {
   DB_TYPE: process.env.DB_TYPE,
@@ -31,7 +33,7 @@ const dbConnection = new DataSource({
   // database: process.env.DB_DATABASE,
   synchronize: true,
   logging: false,
-  entities: [UsersEntity, FileEntity],
+  entities: [UsersEntity, FileEntity, ProductEntity, ProductVariantsEntity],
   subscribers: [],
   migrations: [],
 });
