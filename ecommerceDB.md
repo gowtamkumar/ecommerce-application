@@ -11,14 +11,27 @@ username:,
 password,
 email,
 name,
-type:[User, Vendor, Admin]
+type:[User, Vendor, Delivery_man, Admin]
 phone,
 birthday,
-address,
 status(Active/Inactive/Block)
 img_url,
+addresses:[come from address table]
+last_login: date with time zone
+last_logout: date with time zone
 createdAt
 updatedAt
+
+## address
+
+id,
+user_id,
+address_line_1:string(billing/home/office),
+address_line_2:string
+state,
+city,
+country:string
+zip_code,
 
 ## products:
 
@@ -71,14 +84,11 @@ id,
 name,
 url_slug(unique)
 parent_category_id,
-
-<!-- user_id, -->
-
+user_id,
 description
 status:(Active/Inactive)
 createdAt
 updatedAt
-
 
 ## wishlists:
 
@@ -110,20 +120,11 @@ status:(Active/Inactive),
 createdAt,
 updatedAt
 
-## shipping_address (user address)
-
-id,
-user_id,
-full_address
-state,
-city,
-zip_code,
-
 ## orders:
 
 id,
 user_id,
-date,
+order_date,
 tracking_no,
 is_paid,
 total_amount
@@ -139,7 +140,7 @@ status:(Processing/Pending/Completed/Failed),
 createdAt
 updatedAt
 
-## order_shipping_address
+<!-- ## order_shipping_address
 
 id,
 order_id,
@@ -147,7 +148,7 @@ shipping_address_id,
 full_address,
 state,
 city,
-zip_code,
+zip_code, -->
 
 ## orderItems:
 
@@ -169,14 +170,13 @@ size(optional)
 createdAt
 updatedAt
 
-
 ## reviews:
 
 id,
 product_id,
 user_id,
 rating,
-description,
+comment,
 status:(Reject/Approved),
 createdAt
 updatedAt
