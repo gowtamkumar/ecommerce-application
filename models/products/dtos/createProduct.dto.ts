@@ -3,10 +3,11 @@ export interface CreateProductDto {
   price: number;
   color: string;
   urlSlug: string;
-  brandId: string;
-  categoryId: string;
+  imageUrl: string;
+  brandId?: string;
+  categoryId?: string;
   stockQty: number;
-  userId: string;
+  userId?: string;
   description: string;
   status?: boolean;
 }

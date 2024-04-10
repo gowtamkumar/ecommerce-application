@@ -7,6 +7,7 @@ import Image from "next/image";
 import React from "react";
 import Category from "@/components/website/Home/Category";
 import PopularProduct from "@/components/website/Home/PopularProduct";
+
 export default function Home() {
   return (
     <div className="container mx-auto">
@@ -28,8 +29,20 @@ export default function Home() {
 
       {/* Popular products */}
       <PopularProduct />
+      {/* <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Popular Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <ProductCard />
+        </div>
+      </section> */}
+
       {/* Featured Products */}
-      <ProductCard />
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <ProductCard />
+        </div>
+      </section>
 
       {/* Categories */}
       <CategoryCard />

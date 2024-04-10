@@ -46,6 +46,7 @@ export const getDBConnection = async (): Promise<any> => {
         console.log("database connection successfully");
       })
       .catch((error) => {
+        console.log("🚀 ~ error:", error)
         console.log("Database connection error");
       });
   }

@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import counterSlice from "./features/counter/counterSlice";
 import layoutSlice from "./features/layout/layoutSlice";
 import globalSlice from "./features/global/globalSlice";
+import cartSlice from "./features/cart/cartSlice";
 
 export const store = () => {
   return configureStore({
@@ -9,6 +10,7 @@ export const store = () => {
       counter: counterSlice,
       layout: layoutSlice,
       global: globalSlice,
+      cart: cartSlice,
     },
   });
 };

@@ -3,8 +3,10 @@ import { Avatar, Button, Dropdown, Input, Select } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FaRegUser, FaShoppingCart } from "react-icons/fa";
+import { FcLike } from "react-icons/fc";
 import Image from "next/image";
 import { userProfileRoute } from "@/NavBarRoute";
+import TopBar from "./TopBar";
 
 const Header: React.FC = () => {
   const session = useSession();
@@ -21,26 +23,14 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center gap-5">
-        <div className="flex gap-5">
-          <small>Help & Support</small>
-          <small>
-            {" "}
-            <Link href="/about">About</Link>
-          </small>
-        </div>
-        <div>
-          <Button type="primary" size="small">
-            <Link href="/">Donwload App</Link>
-          </Button>
-        </div>
-      </div>
+      {/* top bar */}
+      <TopBar />
       <div className="flex items-center py-4">
-        <div className="w-1/6 text-center">
+        <div className="w-2/12 text-center">
           <Link href="/">
             <Image
               width={300}
-              height={300}
+              height={300} 
               className="mx-auto h-10 w-auto"
               src="/pos_software.png"
               alt="Your Company"
@@ -48,7 +38,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <div className="w-4/6">
+        <div className="w-8/12">
           <Search
             addonBefore={selectBefore}
             width={100}
@@ -57,12 +47,13 @@ const Header: React.FC = () => {
           />
         </div>
 
-        <div className="w-1/6 flex justify-between items-center">
-          <div className="ml-3">
-            <Link href="/checkout">
+        <div className="w-2/12 flex justify-between items-center">
+          <div className="ml-3 flex ">
+            <Link href="/checkout" className="mx-2">
               <FaShoppingCart size={20} />
             </Link>
           </div>
+          <FcLike size={20} color="black" />
 
           {session.status === "authenticated" ? (
             <Dropdown

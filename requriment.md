@@ -14,11 +14,14 @@
  -- user reset password'
  -- update passwrod
  -- user detail update
-  ## admin
+ 
+<!-- ## vendor
+ -- vendor can create category, brand, product add but approve korbe admin
+ -- report of vendor, loss profit, vendor can be own order handle -->
+## admin
  -- user list
  -- user report
  -- user orders list
- -- vender loss profit
  -- admin loss profit(owner of software company add application developer)
 
 5.product management,
@@ -29,8 +32,11 @@
  -- product review system
  -- review approved and reject system
  -- product discount (cupone code), expiry date, how many user take this discount?,
- -- product varitant add
- -- 
+ -- product variant add
+ -- product package option thakte hobe and package discount( need to study about)
+ -- brand discount thakte hobe, 
+ ## product and brand package system rakte hobe:
+ -- quick order(example: kisu product add kore thakbe and pashe image thakbe as like order ar moto but package moto hobe but check out page moto add kora thakle jate one click a order kora jai jano) note: ar jonno database alada kora lagbe
 
 3.order managment,
  -- create order

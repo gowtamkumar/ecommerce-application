@@ -1,6 +1,6 @@
 import { getDBConnection } from "@/config/db/dbconnection";
-import { UpdateUserDto } from "@/models/users/dtos";
-import { UsersEntity } from "@/models/users/user-entity";
+import { UpdateProductDto } from "@/models/products/dtos/updateProduct.dto";
+import { ProductEntity } from "@/models/products/product-entity";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, context: any) {
@@ -9,19 +9,19 @@ export async function GET(request: Request, context: any) {
     params: { id },
   } = context;
 
-  const user = await connection.getRepository(UsersEntity);
-  const result = await user.findOneBy({ id });
+  const product = await connection.getRepository(ProductEntity);
+  const result = await product.findOneBy({ id });
 
   if (!result) {
     return NextResponse.json({
       status: 400,
-      message: "user not found",
+      message: "product not found",
     });
   }
 
   return NextResponse.json({
     status: 200,
-    message: "get a single user successfull",
+    message: "get a single product successfull",
     data: result,
   });
 }
@@ -32,22 +32,22 @@ export async function DELETE(request: Request, context: any) {
     params: { id },
   } = context;
 
-  const user = await connection.getRepository(UsersEntity);
+  const product = await connection.getRepository(ProductEntity);
 
-  const result = await user.findOneBy({ id });
+  const result = await product.findOneBy({ id });
 
   if (!result) {
     return NextResponse.json({
       status: 400,
-      message: "user not found",
+      message: "product not found",
     });
   }
 
-  await user.delete({ id });
+  await product.delete({ id });
 
   return NextResponse.json({
     starus: 200,
-    message: "Delete a single user Successfull",
+    message: "Delete a single product Successfull",
     data: result,
   });
 }
@@ -60,24 +60,24 @@ export async function PATCH(request: Request, context: any) {
 
   const data = await request.json();
 
-  const user = await connection.getRepository(UsersEntity);
+  const product = await connection.getRepository(ProductEntity);
 
-  const result = await user.findOneBy({ id });
+  const result = await product.findOneBy({ id });
 
   if (!result) {
     return NextResponse.json({
       status: 400,
-      message: "User not found",
+      message: "Product not found",
     });
   }
 
-  const updateData = await user.merge(result, data as UpdateUserDto);
+  const updateData = await product.merge(result, data as UpdateProductDto);
 
-  await user.save(updateData);
+  await product.save(updateData);
 
   return NextResponse.json({
     starus: 200,
-    message: "Update a single user Successfull",
+    message: "Update a single product Successfull",
     data: updateData,
   });
 }

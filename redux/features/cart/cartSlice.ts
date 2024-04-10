@@ -2,26 +2,26 @@ import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-export interface globalState {
-  response: any;
+export interface cartState {
+  carts: any;
   // collapsed: boolean;
   // screenWidth: number;
 }
 
 // Define the initial state using that type
-const initialState: globalState = {
-  response: {},
+const initialState: cartState = {
+  carts: {},
   // collapsed: false,
   // screenWidth: 0,
 };
 
-export const globalSlice = createSlice({
-  name: "global",
+export const cartSlice = createSlice({
+  name: "cart",
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setResponse: (state, action: PayloadAction<any>): any => {
-      state.response = action.payload;
+    setCart: (state, action: PayloadAction<any>): any => {
+      state.carts = action.payload;
     },
 
     // setCollapsed: (state, action: PayloadAction<any>): any => {
@@ -34,8 +34,8 @@ export const globalSlice = createSlice({
   },
 });
 
-export const { setResponse } = globalSlice.actions;
+export const { setCart } = cartSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
-export const selectGlobal = (state: RootState) => state.global
+export const selectCart = (state: RootState) => state.cart
 
-export default globalSlice.reducer;
+export default cartSlice.reducer;

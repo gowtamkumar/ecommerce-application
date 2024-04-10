@@ -21,8 +21,11 @@ export class ProductEntity {
   @Column({ nullable: true })
   color?: string;
 
-  @Column({ name:'url_slug', unique: true })
+  @Column({ name: "url_slug", unique: true })
   urlSlug!: string;
+
+  @Column({ name: "image_url" })
+  imageUrl!: string;
 
   @Column({ name: "brand_id", nullable: true })
   brandId?: string;

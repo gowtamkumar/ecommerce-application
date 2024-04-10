@@ -25,10 +25,10 @@ export class UsersEntity {
   @Column({ unique: true })
   email!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   phone?: string;
 
-  @Column({ name: "birth_day" })
+  @Column({ name: "birth_day", nullable: true })
   birthday?: string;
 
   @Column({ nullable: true })
