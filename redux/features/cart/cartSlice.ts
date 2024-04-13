@@ -4,15 +4,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Define a type for the slice state
 export interface cartState {
   carts: any;
-  // collapsed: boolean;
-  // screenWidth: number;
 }
 
 // Define the initial state using that type
 const initialState: cartState = {
-  carts: {},
-  // collapsed: false,
-  // screenWidth: 0,
+  carts: [],
 };
 
 export const cartSlice = createSlice({
@@ -20,22 +16,39 @@ export const cartSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setCart: (state, action: PayloadAction<any>): any => {
-      state.carts = action.payload;
+    addCart: (state, action: PayloadAction<any>): any => {
+      const existingProductIndex = state.carts.findIndex(
+        (item: any) => item.id === action.payload.id
+      );
+      if (existingProductIndex !== -1) {
+        state.carts[existingProductIndex].qty++;
+      } else {
+        state.carts.push({ ...action.payload, qty: 1 });
+      }
     },
 
-    // setCollapsed: (state, action: PayloadAction<any>): any => {
-    //   state.collapsed = action.payload;
-    // },
-
-    // setScreenWidth: (state, action: PayloadAction<number>): any => {
-    //   state.screenWidth = action.payload;
-    // },
+    decrementCart: (state, action: PayloadAction<any>): any => {
+      const existingProductIndex = state.carts.findIndex(
+        (item: any) => item.id === action.payload.id
+      );
+      if (existingProductIndex !== -1) {
+        state.carts[existingProductIndex].qty--;
+      }
+    },
+    removeCart: (state, action: PayloadAction<any>): any => {
+      const findProduct = state.carts.find(
+        (item: any) => item.id === action.payload.id
+      );
+      if (findProduct) {
+        state.carts = state.carts.filter(
+          (item: any) => item.id !== findProduct.id
+        );
+      }
+    },
   },
 });
 
-export const { setCart } = cartSlice.actions;
-// Other code such as selectors can use the imported `RootState` type
-export const selectCart = (state: RootState) => state.cart
+export const { addCart, decrementCart, removeCart } = cartSlice.actions;
+export const selectCart = (state: RootState) => state.cart;
 
 export default cartSlice.reducer;

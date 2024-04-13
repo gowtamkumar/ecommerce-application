@@ -2,10 +2,8 @@
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header";
 import ProductCard from "@/components/website/Home/ProductCard";
-import { GetProducts } from "@/lib/apis/productApi";
-import { selectCart } from "@/redux/features/cart/cartSlice";
+import { GetProducts } from "@/lib/apis/product";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 export default async function Products() {
   const result = await GetProducts();

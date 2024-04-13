@@ -1,4 +1,4 @@
-// pages/checkout.js
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import Link from "next/link";
 import Header from "../Header";
@@ -6,8 +6,19 @@ import { useFormState } from "react-dom";
 import { checkoutValidationSchema } from "@/validation/checkout/checkoutValidation";
 import WebFooter from "../Footer";
 import Image from "next/image";
+import {
+  selectCart,
+  addCart,
+  decrementCart,
+  removeCart,
+} from "@/redux/features/cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { CiCirclePlus, CiCircleMinus, CiSquareRemove } from "react-icons/ci";
 
 export default function CheckoutPage() {
+  const cart = useSelector(selectCart);
+
+  const dispatch = useDispatch();
   // State for form inputs
   const checkoutAction = async (prevState: any, formData: FormData) => {
     const validatedFields = checkoutValidationSchema.safeParse({
@@ -26,6 +37,11 @@ export default function CheckoutPage() {
       };
     }
 
+    // const [optimisticState, addOptimistic] = useOptimistic(
+    //   state,
+    //   // updateFn
+    //   (state: any, newMessage) => {}
+    // );
     // const result = await register(validatedFields.data);
 
     // dispatch(setResponse(result));
@@ -217,13 +233,10 @@ export default function CheckoutPage() {
 
             <div className="border p-3">
               {/* Display cart items and total */}
-              {[3, 4, 5, 6, 6, 6].map((item, idx) => {
+              {cart.carts.map((item: any, idx: number) => {
                 return (
-                  <>
-                    <div
-                      className="flex w-full border-b-2 items-center "
-                      key={idx}
-                    >
+                  <div key={idx}>
+                    <div className="flex w-full border-b-2 items-center ">
                       <div className="bg-slate-300">
                         <Image
                           width={50}
@@ -235,26 +248,38 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex items-center justify-between w-full p-2">
                         <div>
-                          <span>Product Name</span>
+                          <span>{item?.name}</span>
                           <p>size</p>
-                          <strong className="text-gray-900">$20.00</strong>
+                          <strong className="text-gray-900">
+                            ${item?.price}
+                          </strong>
                         </div>
-                        <div className="gap-y-5 grid text-end">
-                          <p>X</p>
-                          <div>
-                            <select className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                            </select>
+                        <div className="gap-y-5 grid ">
+                          <div className=" flex justify-end">
+                            <CiSquareRemove
+                              className="cursor-pointer"
+                              onClick={() => dispatch(removeCart(item))}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <div
+                              className="cursor-pointer p-1"
+                              onClick={() => dispatch(decrementCart(item))}
+                            >
+                              <CiCircleMinus />
+                            </div>
+                            <div>{item?.qty}</div>
+                            <div
+                              className="cursor-pointer p-1"
+                              onClick={() => dispatch(addCart(item))}
+                            >
+                              <CiCirclePlus />
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </>
+                  </div>
                 );
               })}
 

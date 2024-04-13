@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, Button, Dropdown, Input, Select } from "antd";
+import { Avatar, Badge, Dropdown, Input, Select } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FaRegUser, FaShoppingCart } from "react-icons/fa";
@@ -7,9 +7,12 @@ import { FcLike } from "react-icons/fc";
 import Image from "next/image";
 import { userProfileRoute } from "@/NavBarRoute";
 import TopBar from "./TopBar";
+import { selectCart } from "@/redux/features/cart/cartSlice";
+import { useSelector } from "react-redux";
 
 const Header: React.FC = () => {
   const session = useSession();
+  const cart = useSelector(selectCart);
 
   const { Option } = Select;
   const { Search } = Input;
@@ -30,7 +33,7 @@ const Header: React.FC = () => {
           <Link href="/">
             <Image
               width={300}
-              height={300} 
+              height={300}
               className="mx-auto h-10 w-auto"
               src="/pos_software.png"
               alt="Your Company"
@@ -50,7 +53,11 @@ const Header: React.FC = () => {
         <div className="w-2/12 flex justify-between items-center">
           <div className="ml-3 flex ">
             <Link href="/checkout" className="mx-2">
-              <FaShoppingCart size={20} />
+              {/* <FaShoppingCart size={20}  title="dd" /> */}
+              <Badge size="default" count={cart.carts.length}>
+                {/* <Avatar shape="square" size="large" /> */}
+                <FaShoppingCart size={20} title="dd" />
+              </Badge>
             </Link>
           </div>
           <FcLike size={20} color="black" />
