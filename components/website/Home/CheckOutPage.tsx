@@ -18,24 +18,43 @@ import { CiCirclePlus, CiCircleMinus, CiSquareRemove } from "react-icons/ci";
 export default function CheckoutPage() {
   const cart = useSelector(selectCart);
 
+  const subTotal = cart.carts.reduce((pre: any, curr: any) => {
+    return pre + +curr.price * +curr.qty;
+  }, 0);
+
+  const shipping = 20;
+  const tax = 20;
+
   const dispatch = useDispatch();
   // State for form inputs
   const checkoutAction = async (prevState: any, formData: FormData) => {
+    
     const validatedFields = checkoutValidationSchema.safeParse({
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       paymentMethod: formData.get("paymentMethod"),
       email: formData.get("email"),
       address: formData.get("address"),
+      cardNumber: formData.get("cardNumber"),
+      cardName: formData.get("cardName"),
+      expirationDate: formData.get("expirationDate"),
+      cvc: formData.get("cvc"),
     });
 
-    console.log("🚀 ~ validatedFields:", validatedFields);
+    // console.log("🚀 ~ validatedFields:", validatedFields);
 
     if (!validatedFields.success) {
       return {
         errors: validatedFields.error.formErrors,
       };
     }
+
+    const order = {
+      ...validatedFields.data,
+      orderItems: cart.carts,
+    };
+
+    console.log("🚀 ~ order:", order);
 
     // const [optimisticState, addOptimistic] = useOptimistic(
     //   state,
@@ -257,6 +276,7 @@ export default function CheckoutPage() {
                         <div className="gap-y-5 grid ">
                           <div className=" flex justify-end">
                             <CiSquareRemove
+                              size={30}
                               className="cursor-pointer"
                               onClick={() => dispatch(removeCart(item))}
                             />
@@ -266,14 +286,14 @@ export default function CheckoutPage() {
                               className="cursor-pointer p-1"
                               onClick={() => dispatch(decrementCart(item))}
                             >
-                              <CiCircleMinus />
+                              <CiCircleMinus size={20} className="text-black" />
                             </div>
                             <div>{item?.qty}</div>
                             <div
                               className="cursor-pointer p-1"
                               onClick={() => dispatch(addCart(item))}
                             >
-                              <CiCirclePlus />
+                              <CiCirclePlus size={20} className="text-black" />
                             </div>
                           </div>
                         </div>
@@ -287,20 +307,28 @@ export default function CheckoutPage() {
               <div className="grid gap-y-5 my-4">
                 <div className="flex justify-between">
                   <span className="font-semibold">Subtotal:</span>
-                  <span className="font-semibold">$20.00</span>
+                  <span className="font-semibold">
+                    $ {(subTotal || 0).toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-semibold">Shipping:</span>
-                  <span className="font-semibold">$20.00</span>
+                  <span className="font-semibold">
+                    $ {(20 || 0).toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-semibold">Tax:</span>
-                  <span className="font-semibold">$20.00</span>
+                  <span className="font-semibold">
+                    $ {(20 || 0).toFixed(2)}
+                  </span>
                 </div>
 
                 <div className="flex justify-between border-t-2">
                   <span className="font-semibold">Total:</span>
-                  <span className="font-semibold">$20.00</span>
+                  <span className="font-semibold">
+                    $ {(subTotal + shipping + tax || 0).toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>

@@ -16,5 +16,10 @@ export const checkoutValidationSchema = z.object({
   address: z.string({
     required_error: "address is required",
   }),
+
+  cardNumber: z.string().optional(),
+  cardName: z.string().optional(),
+  expirationDate: z.string().optional(),
+  cvc: z.string().optional(),
   // .transform((val) => val.split("@")[1]),
 });
