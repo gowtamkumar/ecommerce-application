@@ -1,6 +1,6 @@
 import { getDBConnection } from "@/config/db/dbconnection";
-import { UpdateUserDto } from "@/models/users/dtos";
-import { UsersEntity } from "@/models/users/user.entity";
+import { AddressEntity } from "@/models/address/address.entity";
+import { UpdateAddressDto } from "@/models/address/dtos";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, context: any) {
@@ -9,19 +9,19 @@ export async function GET(request: Request, context: any) {
     params: { id },
   } = context;
 
-  const user = await connection.getRepository(UsersEntity);
-  const result = await user.findOneBy({ id });
+  const address = await connection.getRepository(AddressEntity);
+  const result = await address.findOneBy({ id });
 
   if (!result) {
     return NextResponse.json({
       status: 400,
-      message: "user not found",
+      message: "Address not found",
     });
   }
 
   return NextResponse.json({
     status: 200,
-    message: "get a single user successfull",
+    message: "get a single Address successfull",
     data: result,
   });
 }
@@ -32,22 +32,22 @@ export async function DELETE(request: Request, context: any) {
     params: { id },
   } = context;
 
-  const user = await connection.getRepository(UsersEntity);
+  const address = await connection.getRepository(AddressEntity);
 
-  const result = await user.findOneBy({ id });
+  const result = await address.findOneBy({ id });
 
   if (!result) {
     return NextResponse.json({
       status: 400,
-      message: "user not found",
+      message: "address not found",
     });
   }
 
-  await user.delete({ id });
+  await address.delete({ id });
 
   return NextResponse.json({
     starus: 200,
-    message: "Delete a single user Successfull",
+    message: "Delete a single product Successfull",
     data: result,
   });
 }
@@ -60,24 +60,24 @@ export async function PATCH(request: Request, context: any) {
 
   const data = await request.json();
 
-  const user = await connection.getRepository(UsersEntity);
+  const address = await connection.getRepository(AddressEntity);
 
-  const result = await user.findOneBy({ id });
+  const result = await address.findOneBy({ id });
 
   if (!result) {
     return NextResponse.json({
       status: 400,
-      message: "User not found",
+      message: "address not found",
     });
   }
 
-  const updateData = await user.merge(result, data as UpdateUserDto);
+  const updateData = await address.merge(result, data as UpdateAddressDto);
 
-  await user.save(updateData);
+  await address.save(updateData);
 
   return NextResponse.json({
     starus: 200,
-    message: "Update a single user Successfull",
+    message: "Update a single address Successfull",
     data: updateData,
   });
 }

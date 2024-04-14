@@ -11,7 +11,7 @@ username:,
 password,
 email,
 name,
-type:[User, Vendor, Delivery_man, Admin]
+type:[User, Vendor, DeliveryMan, Admin]
 phone,
 birthday,
 status(Active/Inactive/Block)

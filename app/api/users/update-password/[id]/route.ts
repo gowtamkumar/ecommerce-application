@@ -1,6 +1,6 @@
 import { getDBConnection } from "@/config/db/dbconnection";
 import { hashedPassword, matchPassword } from "@/middlewares/auth.middleware";
-import { UsersEntity } from "@/models/users/user-entity";
+import { UsersEntity } from "@/models/users/user.entity";
 import { NextResponse } from "next/server";
 
 export async function PATCH(request: Request, context: any) {

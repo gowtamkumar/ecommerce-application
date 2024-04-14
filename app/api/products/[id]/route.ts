@@ -1,6 +1,6 @@
 import { getDBConnection } from "@/config/db/dbconnection";
 import { UpdateProductDto } from "@/models/products/dtos/updateProduct.dto";
-import { ProductEntity } from "@/models/products/product-entity";
+import { ProductEntity } from "@/models/products/product.entity";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, context: any) {

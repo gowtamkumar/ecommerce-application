@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { UsersEntity } from "@/models/users/user-entity";
+import { UsersEntity } from "@/models/users/user.entity";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { hashedPassword } from "@/middlewares/auth.middleware";
 import { UserValidationSchema } from "@/validation";

@@ -10,7 +10,7 @@ import { GetProducts } from "@/lib/apis/product";
 
 export default async function Home() {
   const result = await GetProducts();
-  console.log("🚀 ~ result:", result)
+
   return (
     <div className="container mx-auto">
       <Header />
@@ -49,7 +49,7 @@ export default async function Home() {
       {/* Categories */}
       <CategoryCard />
       {/* Banners */}
-      <section className="mb-8">
+      {/* <section className="mb-8">
         <Image
           width={0}
           height={0}
@@ -70,7 +70,7 @@ export default async function Home() {
           sizes="100vw"
           style={{ width: "100%", height: "auto" }}
         />
-      </section>
+      </section> */}
       <WebFooter />
     </div>
   );

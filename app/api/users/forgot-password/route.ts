@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { UsersEntity } from "@/models/users/user-entity";
+import { UsersEntity } from "@/models/users/user.entity";
 import { getDBConnection } from "@/config/db/dbconnection";
 import { v4 as uuidv4 } from "uuid";
 import { forgotPasswordDto } from "@/models/users/dtos/forgot.dto";

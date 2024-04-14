@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDBConnection } from "@/config/db/dbconnection";
-import { productValidationSchema } from "@/validation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";
-import { ProductEntity } from "@/models/products/product.entity";
-import { CreateProductDto } from "@/models/products/dtos";
+import { addressValidationSchema } from "@/validation";
+import { AddressEntity } from "@/models/address/address.entity";
+import { CreateAddressDto } from "@/models/address/dtos";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
 
   const data = await request.json();
 
-  const validation = productValidationSchema.safeParse(data);
+  const validation = addressValidationSchema.safeParse(data);
 
   if (!validation.success) {
     return NextResponse.json({
@@ -20,25 +20,14 @@ export async function POST(request: Request) {
     });
   }
 
-  const product = connection.getRepository(ProductEntity);
+  const address = connection.getRepository(AddressEntity);
 
-  const urlSlugChecking = await product.findOne({
-    where: { urlSlug: data.urlSlug },
-  });
+  const newaddress = address.create(data as CreateAddressDto);
 
-  if (urlSlugChecking) {
-    return NextResponse.json({
-      message: "UrlSlug already exists",
-      status: 401,
-    });
-  }
-
-  const newProduct = product.create(data as CreateProductDto);
-
-  const save = await product.save(newProduct);
+  const save = await address.save(newaddress);
 
   return NextResponse.json({
-    message: "Create new Product",
+    message: "Create new Address",
     status: 200,
     data: save,
   });
@@ -53,19 +42,19 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request): Promise<any> {
   const connection = await getDBConnection();
-  const product = await connection.getRepository(ProductEntity);
+  const address = await connection.getRepository(AddressEntity);
 
-  // product authentication and role verification
+  // address authentication and role verification
   const session: any = await getServerSession(authOptions);
-  // // Check if the product is authenticated
+  // // Check if the address is authenticated
   // if (!session) {
   //   return NextResponse.json({
   //     status: 401,
-  //     message: "product is not authenticated",
+  //     message: "address is not authenticated",
   //   });
   // }
 
-  // Check if the product has the 'admin' role
+  // Check if the address has the 'admin' role
   // if (session.user.role !== "Admin") {
   //   return NextResponse.json({
   //     status: 403,
@@ -73,11 +62,11 @@ export async function GET(request: Request): Promise<any> {
   //   });
   // }
 
-  const result = await product.find();
+  const result = await address.find();
 
   return NextResponse.json({
     status: 200,
-    message: "Get all products",
+    message: "Get all addresss",
     length: 100,
     data: result,
   });
