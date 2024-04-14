@@ -54,11 +54,11 @@ updatedAt
 
 id,
 name,
+price,
 product_id
 size(option),
 color(option)
-price,
-stock_qty,
+qty,
 
 ## discounts:
 
@@ -73,10 +73,11 @@ min_order_amount,
 min_user,
 usage_count
 is_single_use: Boolean
-is_active,
+status:(Active/Inactive)
 user_id
 createdAt
 updatedAt
+
 
 ## categories:
 

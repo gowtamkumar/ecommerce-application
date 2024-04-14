@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDBConnection } from "@/config/db/dbconnection";
+import { productVariantValidationSchema } from "@/validation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";
-import { addressValidationSchema } from "@/validation";
-import { AddressEntity } from "@/models/address/address.entity";
-import { CreateAddressDto } from "@/models/address/dtos";
+import { ProductVariantEntity } from "@/models/product-variant/product-variant.entity";
+import { CareateProductVariantDto } from "@/models/product-variant/dtos";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
 
   const data = await request.json();
 
-  const validation = addressValidationSchema.safeParse(data);
+  const validation = productVariantValidationSchema.safeParse(data);
 
   if (!validation.success) {
     return NextResponse.json({
@@ -20,14 +20,25 @@ export async function POST(request: Request) {
     });
   }
 
-  const address = connection.getRepository(AddressEntity);
+  const productVariant = connection.getRepository(ProductVariantEntity);
 
-  const newaddress = address.create(data as CreateAddressDto);
+  // const urlSlugChecking = await productVariant.findOne({
+  //   where: { urlSlug: data.urlSlug },
+  // });
 
-  const save = await address.save(newaddress);
+  // if (urlSlugChecking) {
+  //   return NextResponse.json({
+  //     message: "UrlSlug already exists",
+  //     status: 401,
+  //   });
+  // }
+
+  const newProductV = productVariant.create(data as CareateProductVariantDto);
+
+  const save = await productVariant.save(newProductV);
 
   return NextResponse.json({
-    message: "Create new Address",
+    message: "Create new Product Variant",
     status: 200,
     data: save,
   });
@@ -42,19 +53,19 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request): Promise<any> {
   const connection = await getDBConnection();
-  const address = await connection.getRepository(AddressEntity);
+  const product = await connection.getRepository(ProductVariantEntity);
 
-  // address authentication and role verification
+  // product authentication and role verification
   const session: any = await getServerSession(authOptions);
-  // // Check if the address is authenticated
+  // // Check if the product is authenticated
   // if (!session) {
   //   return NextResponse.json({
   //     status: 401,
-  //     message: "address is not authenticated",
+  //     message: "product is not authenticated",
   //   });
   // }
 
-  // Check if the address has the 'admin' role
+  // Check if the product has the 'admin' role
   // if (session.user.role !== "Admin") {
   //   return NextResponse.json({
   //     status: 403,
@@ -62,11 +73,11 @@ export async function GET(request: Request): Promise<any> {
   //   });
   // }
 
-  const result = await address.find();
+  const result = await product.find();
 
   return NextResponse.json({
     status: 200,
-    message: "Get all address",
+    message: "Get all product Variant",
     length: 100,
     data: result,
   });

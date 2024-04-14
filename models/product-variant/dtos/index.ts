@@ -1,2 +1,2 @@
 export * from './createProductVariant.dto'
-export * from './updateProduct.dto'
+export * from './updateProductVariant.dto'

@@ -1,14 +1,12 @@
 import "reflect-metadata";
 import {
   Column,
-  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 
 @Entity("product_variants")
-export class ProductVariantsEntity {
+export class ProductVariantEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

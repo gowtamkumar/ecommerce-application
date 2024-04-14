@@ -2,6 +2,8 @@ export * from "./user/userValidaton";
 export * from "./checkout/checkoutValidation";
 export * from "./product/productValidation";
 export * from "./address/addressValidation";
+export * from "./product-variants/productVariantValidation";
+export * from "./discount/discountValidation";
 
 
 

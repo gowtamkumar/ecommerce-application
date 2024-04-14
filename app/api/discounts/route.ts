@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDBConnection } from "@/config/db/dbconnection";
+import { discountValidationSchema } from "@/validation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";
-import { addressValidationSchema } from "@/validation";
-import { AddressEntity } from "@/models/address/address.entity";
-import { CreateAddressDto } from "@/models/address/dtos";
+import { DiscountEntity } from "@/models/discount/discount.entity";
+import { CreateDiscountDto } from "@/models/discount/dtos";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
 
   const data = await request.json();
 
-  const validation = addressValidationSchema.safeParse(data);
+  const validation = discountValidationSchema.safeParse(data);
 
   if (!validation.success) {
     return NextResponse.json({
@@ -20,14 +20,15 @@ export async function POST(request: Request) {
     });
   }
 
-  const address = connection.getRepository(AddressEntity);
+  const discount = connection.getRepository(DiscountEntity);
 
-  const newaddress = address.create(data as CreateAddressDto);
 
-  const save = await address.save(newaddress);
+  const newDiscount = discount.create(data as CreateDiscountDto);
+
+  const save = await discount.save(newDiscount);
 
   return NextResponse.json({
-    message: "Create new Address",
+    message: "Create new discount",
     status: 200,
     data: save,
   });
@@ -42,19 +43,19 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request): Promise<any> {
   const connection = await getDBConnection();
-  const address = await connection.getRepository(AddressEntity);
+  const product = await connection.getRepository(DiscountEntity);
 
-  // address authentication and role verification
+  // product authentication and role verification
   const session: any = await getServerSession(authOptions);
-  // // Check if the address is authenticated
+  // // Check if the product is authenticated
   // if (!session) {
   //   return NextResponse.json({
   //     status: 401,
-  //     message: "address is not authenticated",
+  //     message: "product is not authenticated",
   //   });
   // }
 
-  // Check if the address has the 'admin' role
+  // Check if the product has the 'admin' role
   // if (session.user.role !== "Admin") {
   //   return NextResponse.json({
   //     status: 403,
@@ -62,11 +63,11 @@ export async function GET(request: Request): Promise<any> {
   //   });
   // }
 
-  const result = await address.find();
+  const result = await product.find();
 
   return NextResponse.json({
     status: 200,
-    message: "Get all address",
+    message: "Get all Discount",
     length: 100,
     data: result,
   });
