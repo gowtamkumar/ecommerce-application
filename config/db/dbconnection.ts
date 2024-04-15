@@ -2,11 +2,12 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { UsersEntity } from "@/models/users/user.entity";
 import { FileEntity } from "@/models/file/file.entity";
-import { evnFileValidationSchema } from "../fileValidation";
+import { evnFileValidationSchema } from "../../validation/fileValidation";
 import { ProductEntity } from "@/models/products/product.entity";
 import { ProductVariantEntity } from "@/models/product-variant/product-variant.entity";
 import { AddressEntity } from "@/models/address/address.entity";
 import { DiscountEntity } from "@/models/discount/discount.entity";
+import { CategoriesEntity } from "@/models/categories/categories.entity";
 
 const inEnvFile = {
   DB_TYPE: process.env.DB_TYPE,
@@ -41,7 +42,8 @@ const dbConnection = new DataSource({
     ProductEntity,
     ProductVariantEntity,
     AddressEntity,
-    DiscountEntity
+    DiscountEntity,
+    CategoriesEntity
   ],
   subscribers: [],
   migrations: [],

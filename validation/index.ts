@@ -4,6 +4,7 @@ export * from "./product/productValidation";
 export * from "./address/addressValidation";
 export * from "./product-variants/productVariantValidation";
 export * from "./discount/discountValidation";
+export * from "./fileValidation";
 
 
 

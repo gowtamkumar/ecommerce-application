@@ -87,6 +87,7 @@ url_slug(unique)
 parent_category_id,
 user_id,
 description
+image;
 status:(Active/Inactive)
 createdAt
 updatedAt
