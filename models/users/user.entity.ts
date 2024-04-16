@@ -52,10 +52,10 @@ export class UsersEntity {
   @Column({ name: "reset_token_expire", type: "bigint", nullable: true })
   resetTokenExpire?: number;
 
-  @CreateDateColumn({ name: "created_at", type: "time with time zone" })
+  @CreateDateColumn({ name: "created_at",type: "timestamp" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "time with time zone" })
+  @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
   updatedAt?: string;
 
   // tesnum!: number

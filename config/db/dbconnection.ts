@@ -8,6 +8,7 @@ import { ProductVariantEntity } from "@/models/product-variant/product-variant.e
 import { AddressEntity } from "@/models/address/address.entity";
 import { DiscountEntity } from "@/models/discount/discount.entity";
 import { CategoriesEntity } from "@/models/categories/categories.entity";
+import { WishListEntity } from "@/models/wishlist/wishlist.entity";
 
 const inEnvFile = {
   DB_TYPE: process.env.DB_TYPE,
@@ -43,7 +44,8 @@ const dbConnection = new DataSource({
     ProductVariantEntity,
     AddressEntity,
     DiscountEntity,
-    CategoriesEntity
+    CategoriesEntity,
+    WishListEntity
   ],
   subscribers: [],
   migrations: [],

@@ -53,9 +53,9 @@ export class CategoriesEntity {
   @TreeParent({ onDelete: "CASCADE" })
   parent!: CategoriesEntity;
 
-  @CreateDateColumn({ name: "created_at", type: "time with time zone" })
+  @CreateDateColumn({ name: "created_at",type: "timestamp" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "time with time zone" })
+  @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
   updatedAt?: string;
 }

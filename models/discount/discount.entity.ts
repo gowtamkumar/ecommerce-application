@@ -23,13 +23,13 @@ export class DiscountEntity {
   @Column({ type: "numeric" })
   value?: number;
 
-  @Column({ name: "start_date", type: "time with time zone" })
+  @Column({ name: "start_date",type: "timestamp" })
   startDate!: string;
 
-  @Column({ name: "expiry_date", type: "time with time zone" })
+  @Column({ name: "expiry_date",type: "timestamp" })
   expiryDate!: string;
 
-  @Column({ name: "end_date", type: "time with time zone" })
+  @Column({ name: "end_date",type: "timestamp" })
   endDate!: string;
 
   @Column({ name: "min_order_amount", type: "numeric" })
@@ -54,9 +54,9 @@ export class DiscountEntity {
   @Column({ name: "user_id"})
   userId?: string;
 
-  @CreateDateColumn({ name: "created_at", type: "time with time zone" })
+  @CreateDateColumn({ name: "created_at",type: "timestamp" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "time with time zone" })
+  @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
   updatedAt?: string;
 }

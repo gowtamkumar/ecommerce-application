@@ -45,9 +45,9 @@ export class ProductEntity {
   @Column({ type: "boolean", default: true })
   status!: boolean;
 
-  @CreateDateColumn({ name: "created_at", type: "time with time zone" })
+  @CreateDateColumn({ name: "created_at",type: "timestamp" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "time with time zone" })
+  @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
   updatedAt?: string;
 }

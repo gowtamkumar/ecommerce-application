@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDBConnection } from "@/config/db/dbconnection";
-import { discountValidationSchema } from "@/validation";
+import { WishListhValidationSchema } from "@/validation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";
-import { DiscountEntity } from "@/models/discount/discount.entity";
-import { CreateDiscountDto } from "@/models/discount/dtos";
+import { WishListEntity } from "@/models/wishlist/wishlist.entity";
+import { CreateWishlistDto } from "@/models/wishlist/dtos";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
 
   const data = await request.json();
 
-  const validation = discountValidationSchema.safeParse(data);
+  const validation = WishListhValidationSchema.safeParse(data);
 
   if (!validation.success) {
     return NextResponse.json({
@@ -20,15 +20,14 @@ export async function POST(request: Request) {
     });
   }
 
-  const discount = connection.getRepository(DiscountEntity);
+  const wishlist = connection.getRepository(WishListEntity);
 
+  const newwishlist = wishlist.create(data as CreateWishlistDto);
 
-  const newDiscount = discount.create(data as CreateDiscountDto);
-
-  const save = await discount.save(newDiscount);
+  const save = await wishlist.save(newwishlist);
 
   return NextResponse.json({
-    message: "Create new discount",
+    message: "Create new wishlist",
     status: 200,
     data: save,
   });
@@ -43,19 +42,19 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request): Promise<any> {
   const connection = await getDBConnection();
-  const discount = await connection.getRepository(DiscountEntity);
+  const wishlist = await connection.getRepository(WishListEntity);
 
-  // discount authentication and role verification
+  // wishlist authentication and role verification
   const session: any = await getServerSession(authOptions);
-  // // Check if the discount is authenticated
+  // // Check if the wishlist is authenticated
   // if (!session) {
   //   return NextResponse.json({
   //     status: 401,
-  //     message: "discount is not authenticated",
+  //     message: "wishlist is not authenticated",
   //   });
   // }
 
-  // Check if the discount has the 'admin' role
+  // Check if the wishlist has the 'admin' role
   // if (session.user.role !== "Admin") {
   //   return NextResponse.json({
   //     status: 403,
@@ -63,11 +62,11 @@ export async function GET(request: Request): Promise<any> {
   //   });
   // }
 
-  const result = await discount.find();
+  const result = await wishlist.find();
 
   return NextResponse.json({
     status: 200,
-    message: "Get all Discount",
+    message: "Get all wishlist",
     length: 100,
     data: result,
   });
