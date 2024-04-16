@@ -78,13 +78,12 @@ user_id
 createdAt
 updatedAt
 
-
 ## categories:
 
 id,
 name,
 url_slug(unique)
-parent_category_id,
+parent_id,
 user_id,
 description
 image;

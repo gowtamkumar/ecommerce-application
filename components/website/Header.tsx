@@ -28,7 +28,7 @@ const Header: React.FC = () => {
     <>
       {/* top bar */}
       <TopBar />
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 sticky">
         <div className="w-2/12 text-center">
           <Link href="/">
             <Image
