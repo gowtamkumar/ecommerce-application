@@ -37,15 +37,24 @@ zip_code,
 
 id,
 name,
-price,
+regular_price,
+sale_price,
+product_type: (simple product/variant_product)
+shipping_cost,
+tax,
+
 color,
 url_slug(unique),
 images:array
 brand_id,
 category_id,
-stock_qty,
+<!-- stock_qty, -->
+stock_status:(in stock/out stock)
+limit_purchase_qty
+
 user_id,
 description
+short_description,
 status,
 createdAt
 updatedAt
