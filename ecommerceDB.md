@@ -33,41 +33,60 @@ city,
 country:string
 zip_code,
 
-## products:
+## products table :
 
 id,
-name,
-regular_price,
-sale_price,
-product_type: (simple product/variant_product)
-shipping_cost,
-tax,
-
-color,
+name:string,
+shipping_cost:numeric,
+tax_id: number,
+discount_id: number(this copun number),
 url_slug(unique),
 images:array
+single_image,
 brand_id,
-category_id,
-<!-- stock_qty, -->
-stock_status:(in stock/out stock)
-limit_purchase_qty
-
+category_id
+limit_purchase_qty:number,
+product_tag: ['ddd','aa']
 user_id,
-description
+description,
 short_description,
-status,
-createdAt
+enable_review: boolean,
+status:['acitve/inactive/'],
+createdAt,
 updatedAt
 
-## product_variants (color) need to study about
+# product type: simple product
+
+regular_price:numeric,
+sale_price:numeric,
+size: (x, xl),
+color,
+weight(kg):numeric
+
+  <!-- stock qty thankle stock status hobe na -->
+
+stock_qty,
+stock_status:(in stock/out stock),
+
+# product type: varient product
+
+    product_variant:['2','3','5'],
+
+## variants table (color and size) need to study about
+
+# size ar upor price hobe
 
 id,
-name,
-price,
-product_id
-size(option),
-color(option)
-qty,
+regular_price:numeric,
+sale_price:numeric,
+size: (x, xl),
+color(red, green, yellow)
+weight(kg):numeric
+
+<!-- stock qty thankle stock status hobe na -->
+
+stock_qty,
+stock_status:(in stock/out stock),
 
 ## discounts:
 

@@ -40,11 +40,11 @@ export default function Login() {
     const getSesson: any = await getSession();
     // console.log("🚀 ~ getSesson:", getSesson);
 
-    if (getSesson.user.role === "Admin" && result?.status === 200) {
+    if (getSesson?.user?.role === "Admin" && result?.status === 200) {
       router.push("/dashboard");
     }
 
-    if (getSesson.user.role === "User" && result?.status === 200) {
+    if (getSesson?.user?.role === "User" && result?.status === 200) {
       router.push("/");
     }
     dispatch(setResponse({}));
@@ -125,7 +125,9 @@ export default function Login() {
                 </div>
               </div>
               <div className="text-center">
-                {global.response.status ? <p> {global.response?.error}</p> : null}
+                {global.response.status ? (
+                  <p> {global.response?.error}</p>
+                ) : null}
               </div>
               <Button before="Signing...." after="Sign in" />
             </div>
