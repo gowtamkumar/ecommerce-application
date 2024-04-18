@@ -7,6 +7,10 @@ import Image from "next/image";
 import React from "react";
 import Category from "@/components/website/Home/Category";
 import { GetProducts } from "@/lib/apis/product";
+import { FaAmazonPay } from "react-icons/fa";
+import { CiDeliveryTruck } from "react-icons/ci";
+import { TbTruckReturn } from "react-icons/tb";
+import { GiDeliveryDrone } from "react-icons/gi";
 
 export default async function Home() {
   const result = await GetProducts();
@@ -18,11 +22,26 @@ export default async function Home() {
 
       <section className="mx-auto py-4">
         <div className="flex justify-center p-3 gap-2">
-          <div className="border p-2">Safe Payment</div>
-          <div className="border p-2">Nationwide Delivery</div>
-          <div className="border p-2">Free & Easy Return</div>
-          <div className="border p-2">100% Authentic Product</div>
-          <div className="border p-2">Fast Delivery</div>
+          <div className="border p-2 text-end">
+            <FaAmazonPay size={40} color="red" />
+            <p>Safe Payment </p>
+          </div>
+          <div className="border p-2 ">
+            <CiDeliveryTruck size={40} color="red" />
+            <p>Nationwide Delivery</p>
+          </div>
+          <div className="border p-2 text-center">
+            <TbTruckReturn size={40} color="red" />
+            <p>Free & Easy Return</p>
+          </div>
+          <div className="border p-2 text-center">
+            <TbTruckReturn size={40} color="red" />
+            <p> 100% Authentic Product</p>
+          </div>
+          <div className="border p-2 text-center">
+            <GiDeliveryDrone size={40} color="red" />
+            <p>Fast Delivery</p>
+          </div>
         </div>
       </section>
 
@@ -30,7 +49,6 @@ export default async function Home() {
       <Category />
 
       {/* Popular products */}
-
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Popular Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

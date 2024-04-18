@@ -14,9 +14,8 @@ img_url,
 addresses:[come from address table]
 last_login: date with time zone
 last_logout: date with time zone
-ip_address(option),
-divice_id(option),
-
+ip_address(optional),
+divice_id(optional),
 createdAt
 updatedAt
 
@@ -116,7 +115,7 @@ product_id,
 createdAt,
 updatedAt
 
-## carts:(optional)
+## carts:(optionalal)
 
 id,
 product_id,

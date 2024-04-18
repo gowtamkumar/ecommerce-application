@@ -56,11 +56,14 @@ const Header: React.FC = () => {
               {/* <FaShoppingCart size={20}  title="dd" /> */}
               <Badge size="default" count={cart.carts.length}>
                 {/* <Avatar shape="square" size="large" /> */}
+
                 <FaShoppingCart size={20} title="dd" />
               </Badge>
             </Link>
           </div>
-          <FcLike size={20} color="black" />
+          <Link href="/wishlist" className="mx-2">
+            <FcLike size={20} color="black" />
+          </Link>
 
           {session.status === "authenticated" ? (
             <Dropdown
