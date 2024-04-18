@@ -1,9 +1,3 @@
-<!-- ## user_role
-id,
-name,
-created_at,
-update_at, -->
-
 ## users:
 
 id,
@@ -11,27 +5,20 @@ username:,
 password,
 email,
 name,
-type:[User, Vendor, DeliveryMan, Admin]
+type:[Customer, Vendor, DeliveryMan, Admin]
 phone,
 birthday,
+point:number
 status(Active/Inactive/Block)
 img_url,
 addresses:[come from address table]
 last_login: date with time zone
 last_logout: date with time zone
+ip_address(option),
+divice_id(option),
+
 createdAt
 updatedAt
-
-## address
-
-id,
-user_id,
-address_line_1:string(billing/home/office),
-address_line_2:string
-state,
-city,
-country:string
-zip_code,
 
 ## products table :
 
@@ -70,7 +57,7 @@ stock_status:(in stock/out stock),
 
 # product type: varient product
 
-    product_variant:['2','3','5'],
+product_variant:['2','3','5'],
 
 ## variants table (color and size) need to study about
 
@@ -123,19 +110,17 @@ updatedAt
 
 id,
 product_id,
-user_id,
 
-<!-- product_variant_id -->
+<!-- user_id, -->
 
 createdAt,
 updatedAt
 
-## carts:
+## carts:(optional)
 
 id,
 product_id,
 user_id,
-product_variant_id (optional)
 qty,
 createdAt,
 updatedAt
@@ -156,12 +141,17 @@ user_id,
 order_date,
 tracking_no,
 is_paid,
-total_amount
+order_total_amount
 is_shipped,
 discount_amount,
 net_amount,
 shiping_amount,
 tax,
+order_note,
+
+phone_no,
+email_address,
+shipping_address_id(this address come from address id),
 payment_status(Paid/NotPaid/PertialPaid),
 payment_type(Online/Offline)
 payment_transaction_id,
@@ -169,35 +159,26 @@ status:(Processing/Pending/Completed/Failed),
 createdAt
 updatedAt
 
-<!-- ## order_shipping_address
-
-id,
-order_id,
-shipping_address_id,
-full_address,
-state,
-city,
-zip_code, -->
-
 ## orderItems:
 
 id,
 order_id,
-price,
-
-<!-- parchase_price, -->
-
 total_amount,
-
-<!-- discount_id, -->
-
 product_id,
-product_variant_id(optional)
 qty,
-color(optional)
-size(optional)
 createdAt
 updatedAt
+
+## address
+
+id,
+user_id,
+address_line_1:string(billing/home/office),
+address_line_2:string
+state,
+city,
+country:string
+zip_code,
 
 ## reviews:
 
@@ -237,6 +218,7 @@ updatedAt
 ## logs:
 
 id,
+error:boolean,
 user_id,
 product_id,
 order_id,
@@ -248,7 +230,7 @@ review_id,
 shiping_cart_id,
 brand_id,
 payment_id,
-product_variant_id,
+variant_id,
 message/descripiton,
 createdAt
 updatedAt

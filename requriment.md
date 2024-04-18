@@ -49,7 +49,6 @@
 8.shopping cart management
 10.category managemnet
 9.payment managemnet
-10.inventory system
 11.Search and Filtering: 
 12.Performance Optimization
 2.chat option,
