@@ -35,19 +35,32 @@ export default function Login() {
       redirect: false,
     });
 
+    console.log("result", result);
+
+
+
+
     dispatch(setResponse(result));
+
+    console.log("global",);
+
 
     const getSesson: any = await getSession();
     // console.log("🚀 ~ getSesson:", getSesson);
 
     if (getSesson?.user?.role === "Admin" && result?.status === 200) {
       router.push("/dashboard");
+      return
     }
 
     if (getSesson?.user?.role === "User" && result?.status === 200) {
       router.push("/");
+      return
     }
-    dispatch(setResponse({}));
+
+    setTimeout(() => {
+      dispatch(setResponse({}));
+    }, 5000)
   };
 
   const [state, fromAction] = useFormState(loginAction, null);
@@ -126,7 +139,7 @@ export default function Login() {
               </div>
               <div className="text-center">
                 {global.response.status ? (
-                  <p> {global.response?.error}</p>
+                  <p className="text-red-600"> {global.response?.error}</p>
                 ) : null}
               </div>
               <Button before="Signing...." after="Sign in" />
