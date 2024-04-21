@@ -23,7 +23,7 @@ export class BrandEntity {
   })
   status!: BrandStatus;
 
-  @Column({ name: "user_id" })
+  @Column({ name: "user_id", nullable: true })
   userId?: string;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })

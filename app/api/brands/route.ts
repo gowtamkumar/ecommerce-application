@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { getDBConnection } from "@/config/db/dbconnection";
-import { discountValidationSchema } from "@/validation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOption";
 import { BrandEntity } from "@/models/brand/brand.entity";
 import { CreateBrandDto } from "@/models/brand/dtos";
+import { brandValidationSchema } from "@/validation";
 
 export async function POST(request: Request) {
   const connection = await getDBConnection();
 
   const data = await request.json();
 
-  const validation = discountValidationSchema.safeParse(data);
+  const validation = brandValidationSchema.safeParse(data);
 
   if (!validation.success) {
     return NextResponse.json({
