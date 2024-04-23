@@ -147,7 +147,7 @@ net_amount,
 shiping_amount,
 tax,
 order_note,
-
+<!-- order_items: array -->
 phone_no,
 email_address,
 shipping_address_id(this address come from address id),
@@ -165,8 +165,6 @@ order_id,
 total_amount,
 product_id,
 qty,
-createdAt
-updatedAt
 
 ## address
 
