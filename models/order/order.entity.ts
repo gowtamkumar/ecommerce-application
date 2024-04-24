@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { OrderStatus } from "./enums/order-status.enum";
 import { PaymentStatus, PaymentTypeStatus } from "./enums";
+import { OrderItemEntity } from "../order-item/order-item.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -37,10 +39,10 @@ export class OrderEntity {
   @Column({ name: "net_amount", type: "numeric" })
   netAmount!: number;
 
-  @Column({ name: "shiping_amount", type: "numeric" })
-  shipingAmount!: number;
+  @Column({ name: "shiping_amount", type: "numeric", nullable: true })
+  shipingAmount?: number;
 
-  @Column({ type: "numeric" })
+  @Column({ type: "numeric", nullable: true })
   tax!: number;
 
   @Column({ name: "order_note", nullable: true })
@@ -49,7 +51,7 @@ export class OrderEntity {
   @Column({ name: "phone_no" })
   phoneNo!: string;
 
-  @Column({ name: "email_address" })
+  @Column({ name: "email_address", nullable: true })
   emailAddress!: string;
 
   @Column({ name: "shipping_address_id", nullable: true })
@@ -86,4 +88,11 @@ export class OrderEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
+
+  // // // relations
+  // @OneToMany(() => OrderItemEntity, (orderitem) => orderitem.order)
+  // orderItems!: OrderItemEntity[];
+
+  // @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.order)
+  // orderItems?: OrderItemEntity[];
 }

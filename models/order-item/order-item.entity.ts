@@ -4,9 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { OrderEntity } from "../order/order.entity";
 
 @Entity("order_items")
 export class OrderItemEntity {
@@ -15,6 +18,9 @@ export class OrderItemEntity {
 
   @Column({ name: "order_id" })
   orderId!: string;
+  // @ManyToOne(() => OrderEntity)
+  // @JoinColumn({ name: "order_id" })
+  // order?: OrderEntity;
 
   @Column({ name: "total_amount", type: "numeric" })
   totalAmount!: number;

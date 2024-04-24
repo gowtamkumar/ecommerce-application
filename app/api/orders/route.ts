@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/authOption";
 import { orderValidationSchema } from "@/validation";
 import { CreateOrderDto } from "@/models/order/dtos";
 import { OrderEntity } from "@/models/order/order.entity";
+import { OrderItemEntity } from "@/models/order-item/order-item.entity";
+import { CreateOrderItemDto } from "@/models/order-item/dtos";
 
 /**
  * create order
@@ -27,19 +29,30 @@ export async function POST(request: Request) {
     });
   }
 
-if(!validation.data.orderItems){
-  return NextResponse.json({
-    status: 401,
-    message: "order items is required",
-  });
-}
+  // if (!validation.data.orderItems) {
+  //   return NextResponse.json({
+  //     status: 401,
+  //     message: "order items is required",
+  //   });
+  // }
 
   const createRepo = connection.getRepository(OrderEntity);
-
   const restult = createRepo.create(data as CreateOrderDto);
-
   const save = await createRepo.save(restult);
 
+  // insert order items data
+  if (validation.data.orderItems && save.id) {
+    const repoOrderitems = connection.getRepository(OrderItemEntity);
+    const newOrderItems = validation.data.orderItems.map((item) => {
+      return repoOrderitems.create({
+        totalAmount: +item.totalAmount,
+        productId: item.productId,
+        qty: item.qty,
+        orderId: save.id,
+      } as CreateOrderItemDto);
+    });
+    await repoOrderitems.save(newOrderItems);
+  }
 
   return NextResponse.json({
     message: "Create new Order",
