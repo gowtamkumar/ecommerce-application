@@ -1,12 +1,15 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+// http://localhost:3900/api/v1/auth/login
+// ${process.env.NEXTAUTH_URL}/api/users/login
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
       async authorize(credentials: any) {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/users/login`, {
+        const res = await fetch(`http://localhost:3900/api/v1/auth/login`, {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },

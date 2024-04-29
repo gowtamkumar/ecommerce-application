@@ -38,6 +38,7 @@ export class ProductEntity {
 
   @Column({ name: "user_id", nullable: true })
   userId?: string;
+  
 
   @Column({ nullable: true })
   description?: string;
