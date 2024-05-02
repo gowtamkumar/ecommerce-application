@@ -4,16 +4,17 @@ import {
   createProductVariant,
   updateProductVariant,
   deleteProductVariant,
+  getProductVariants,
 } from "../controller/product-variant.controller";
 
 const router = express.Router();
 
-router.route("/").get(getProductVariant).post(createProductVariant);
+router.route("/").get(getProductVariants).post(createProductVariant);
 
 router
   .route("/:id")
   .get(getProductVariant)
-  .put(updateProductVariant)
+  .patch(updateProductVariant)
   .delete(deleteProductVariant);
 
 export default router;

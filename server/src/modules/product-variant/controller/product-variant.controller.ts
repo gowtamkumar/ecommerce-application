@@ -6,18 +6,21 @@ import { ProductVariantEntity } from "../model/product-variant.entity";
 // @desc Get all ProductVariants
 // @route GET /api/v1/ProductVariants
 // @access Public
-export const getProductVariants = asyncHandler(async (req: Request, res: Response) => {
-  const connection = await getDBConnection();
-  const repository = connection.getRepository(ProductVariantEntity);
+export const getProductVariants = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(ProductVariantEntity);
 
-  const user = await repository.find();
+    const result = await repository.find();
 
-  return res.status(200).json({
-    success: true,
-    msg: "Get all ProductVariants",
-    data: user,
-  });
-});
+    console.log("🚀 ~ Variants:", result);
+    return res.status(200).json({
+      success: true,
+      msg: "Get all Product Variants",
+      data: result,
+    });
+  }
+);
 
 // @desc Get a single ProductVariant
 // @route GET /api/v1/ProductVariants/:id
@@ -44,19 +47,21 @@ export const getProductVariant = asyncHandler(
 // @desc Create a single ProductVariant
 // @route POST /api/v1/ProductVariants
 // @access Public
-export const createProductVariant = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
-  const repository = connection.getRepository(ProductVariantEntity);
+export const createProductVariant = asyncHandler(
+  async (req: any, res: Response) => {
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(ProductVariantEntity);
 
-  const result = await repository.create(req.body);
-  await repository.save(result);
+    const result = await repository.create(req.body);
+    await repository.save(result);
 
-  return res.status(200).json({
-    success: true,
-    msg: "Create a new Product Variant",
-    data: result,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new Product Variant",
+      data: result,
+    });
+  }
+);
 
 // @desc Update a single ProductVariant
 // @route PUT /api/v1/ProductVariants/:id

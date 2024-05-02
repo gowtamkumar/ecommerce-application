@@ -79,6 +79,10 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
 
   const result = await repository.findOneBy({ id });
 
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+  
   const updateData = await repository.merge(result, req.body);
 
   await repository.save(updateData);

@@ -20,7 +20,7 @@ router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/me").get(AuthGuard, getMe);
 router.route("/update-password").put(AuthGuard, updatePassword);
-router.route("/forgot-password").post(AuthGuard, forgotPassword);
+router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password/:token").post(AuthGuard, resetPassword);
 router.route("/users").get(AuthGuard, isAuthorize, getUsers);
 router

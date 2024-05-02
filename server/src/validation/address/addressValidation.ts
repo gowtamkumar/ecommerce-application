@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const addressValidationSchema = z.object({
-  user_id: z.string({
-    required_error: "user is required",
-  }),
+  // user_id: z.string({
+  //   required_error: "user is required",
+  // }),
 
-  address_line_1: z.string({
+  addressLine1: z.string({
     required_error: "address line 1 is required",
   }),
 
-  address_line_2: z.string({
+  addressLine2: z.string({
     required_error: "address line 2 is required",
   }),
 

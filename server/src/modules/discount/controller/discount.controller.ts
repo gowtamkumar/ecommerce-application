@@ -12,12 +12,12 @@ export const getDiscounts = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
 
-    const user = await repository.find();
+    const result = await repository.find();
 
     return res.status(200).json({
       success: true,
       msg: "Get all Discounts",
-      data: user,
+      data: result,
     });
   }
 );
@@ -47,28 +47,31 @@ export const getDiscount = asyncHandler(
 // @desc Create a single Discount
 // @route POST /api/v1/Discounts
 // @access Public
-export const createDiscount = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
-  const validation = discountValidationSchema.safeParse(req.body);
+export const createDiscount = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
 
-  if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const validation = discountValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
+    const repository = connection.getRepository(DiscountEntity);
+
+    const newDiscount = repository.create(validation.data);
+
+    const save = await repository.save(newDiscount);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new Discount",
+      data: save,
     });
   }
-
-  const repository = connection.getRepository(DiscountEntity);
-
-  const newDiscount = repository.create(validation.data);
-
-  const save = await repository.save(newDiscount);
-
-  return res.status(200).json({
-    success: true,
-    msg: "Create a new Discount",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single Discount
 // @route PUT /api/v1/Discounts/:id
@@ -82,6 +85,10 @@ export const updateDiscount = asyncHandler(
 
     const result = await repository.findOneBy({ id });
 
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
     const updateData = await repository.merge(result, req.body);
 
     await repository.save(updateData);
@@ -93,7 +100,6 @@ export const updateDiscount = asyncHandler(
     });
   }
 );
-
 
 // @desc Delete a single Discount
 // @route DELETE /api/v1/Discounts/:id

@@ -59,6 +59,7 @@ export const register = asyncHandler(
       throw new Error("Token not set in cookies");
     }
 
+    delete user.password;
     return res.status(200).json({
       success: true,
       msg: "Create a new Register",
@@ -82,6 +83,7 @@ export const getUsers = asyncHandler(
         products: true,
       },
     }); // populate is relation array data
+    console.log("🚀 ~ results yser:", results);
 
     return res.status(200).json({
       success: true,
@@ -141,6 +143,8 @@ export const login = asyncHandler(
     if (!cookies) {
       throw new Error("Token not set in cookies");
     }
+
+    delete oldUser.password;
 
     return res.status(200).json({
       success: true,
@@ -217,6 +221,8 @@ export const forgotPassword = asyncHandler(
     });
 
     await userRepository.save(updateData);
+
+    console.log("req host", req);
 
     const resetUrl = `${req.protocol}://${req.hostname}/reset-password/${resetToken}`;
 

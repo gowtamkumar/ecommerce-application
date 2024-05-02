@@ -8,3 +8,4 @@ export * from "./envfileValidation";
 export * from "./wishlist/wishlistValidation";
 export * from "./brand/brandValidation";
 export * from "./order/orderValidation";
+export * from "./order/orderUpdateValidation";

@@ -12,12 +12,12 @@ export const getWishlists = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(WishListEntity);
 
-    const user = await repository.find();
+    const result = await repository.find();
 
     return res.status(200).json({
       success: true,
       msg: "Get all Wishlists",
-      data: user,
+      data: result,
     });
   }
 );
@@ -78,18 +78,33 @@ export const updateWishlist = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
+    const validation = await wishListhValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
     const repository = await connection.getRepository(WishListEntity);
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body);
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
 
-    await repository.save(updateData);
+    const updateData = await repository.merge(result, req.body);
+    console.log("🚀 ~ updateData:", updateData);
+
+    const updateWishdata = await repository.save(updateData);
+
+    console.log("updateWishdata", updateWishdata);
 
     return res.status(200).json({
       success: true,
       msg: `Update a single Wishlist of id ${req.params.id}`,
-      data: updateData,
+      data: updateWishdata,
     });
   }
 );

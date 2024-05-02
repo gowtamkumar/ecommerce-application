@@ -20,7 +20,7 @@ export class CategoriesEntity {
   @Column({ nullable: true })
   name!: string;
 
-  @Column({ name: "url_slug" })
+  @Column({ name: "url_slug", nullable: true })
   urlSlug!: string;
 
   // @Column({ name: "parent_id", nullable: true })
@@ -45,17 +45,15 @@ export class CategoriesEntity {
   })
   status!: CategoryStatus;
 
-  
-
   @TreeChildren()
   children!: CategoriesEntity[];
 
   @TreeParent({ onDelete: "CASCADE" })
   parent!: CategoriesEntity;
 
-  @CreateDateColumn({ name: "created_at",type: "timestamp" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
 }

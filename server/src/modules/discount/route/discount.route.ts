@@ -14,7 +14,7 @@ router.route("/").get(getDiscounts).post(createDiscount);
 router
   .route("/:id")
   .get(getDiscount)
-  .put(updateDiscount)
+  .patch(updateDiscount)
   .delete(deleteDiscount);
 
 export default router;

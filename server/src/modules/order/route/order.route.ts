@@ -11,6 +11,6 @@ const router = express.Router();
 
 router.route("/").get(getOrders).post(createOrder);
 
-router.route("/:id").get(getOrder).put(updateOrder).delete(deleteOrder);
+router.route("/:id").get(getOrder).patch(updateOrder).delete(deleteOrder);
 
 export default router;

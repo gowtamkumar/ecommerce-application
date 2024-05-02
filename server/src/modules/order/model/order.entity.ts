@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { OrderStatus } from "./enums/order-status.enum";
 import { PaymentStatus, PaymentTypeStatus } from "./enums";
+import { OrderItemEntity } from "./order-item.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -88,8 +89,9 @@ export class OrderEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
 
-  // // // relations
+  // relations
   // @OneToMany(() => OrderItemEntity, (orderitem) => orderitem.order)
   // orderItems!: OrderItemEntity[];
-
+  @OneToMany((_type) => OrderItemEntity, (product) => product.order)
+  orderItems!: OrderItemEntity[];
 }

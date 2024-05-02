@@ -6,14 +6,14 @@ export class AddressEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "user_id" })
+  @Column({ name: "user_id", nullable: true })
   userId!: string;
 
-  @Column({ nullable: true })
-  address_line_1!: string;
+  @Column({ name: 'address_line_1', nullable: true })
+  addressLine1!: string;
 
-  @Column({ nullable: true })
-  address_line_2!: string;
+  @Column({ name: 'address_line_2', nullable: true })
+  addressLine2!: string;
 
   @Column({ nullable: true })
   state?: string;

@@ -60,7 +60,6 @@ export const getCategory = asyncHandler(
 // @access Public
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-
   const validation = categoriesValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -70,14 +69,13 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     });
   }
 
-  const categories = connection.getTreeRepository(CategoriesEntity);
+  const categories = await connection.getRepository(CategoriesEntity);
 
   if (validation.data.parentId) {
     const maxLevel = 3;
 
     const parent = await categories.findOne({
       where: { id: validation.data.parentId },
-      relations: { children: true },
     });
 
     if (parent.level >= maxLevel) {
@@ -96,6 +94,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     };
 
     const newCategories = categories.create(newCreateCategory);
+
     const save = await categories.save(newCategories);
 
     return res.status(200).json({
@@ -103,7 +102,15 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
       data: save,
     });
   } else {
-    const newCategories = categories.create();
+    const newCreateCategory = {
+      name: validation.data.name,
+      image: validation.data.image,
+      urlSlug: validation.data.urlSlug,
+      level: 1,
+      parent: null,
+    };
+
+    const newCategories = categories.create(newCreateCategory);
     const save = await categories.save(newCategories);
     return res.status(200).json({
       message: "Create new categories",
@@ -119,11 +126,17 @@ export const updateCategory = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
     const { id } = req.params;
-    const { par } = req.body;
 
     const categories = await connection.getRepository(CategoriesEntity);
 
     const result = await categories.findOneBy({ id });
+
+    const parent = await categories.findOne({
+      where: { id: req.body.parentId },
+      relations: { children: true },
+    });
+
+    console.log("🚀 ~ parent:", parent);
 
     if (!result) {
       return res.status(400).json({
@@ -132,46 +145,66 @@ export const updateCategory = asyncHandler(
       });
     }
 
-    if (categories.data.parentId) {
-      const maxLevel = 3;
+    const newCreateCategory = {
+      name: req.body.name,
+      image: req.body.image,
+      urlSlug: req.body.urlSlug,
+      level: parent.level,
+      parent: parent,
+    };
 
-      const parent = await categories.findOne({
-        where: { id: req.body.parentId },
-        relations: { children: true },
-      });
+    const updateData = await categories.merge(result, newCreateCategory);
 
-      if (parent.level >= maxLevel) {
-        return res.status(200).json({
-          message: "No new child allowed for this Category",
-        });
-      }
+    await categories.save(updateData);
 
-      const newCreateCategory = {
-        name: req.body.name,
-        image: req.body.image,
-        urlSlug: req.body.urlSlug,
-        level: parent.level + 1,
-        parent: parent,
-      };
+    return res.status(200).json({
+      message: "Update a categories Successfull",
+      data: updateData,
+    });
+    // }
 
-      const updateData = await categories.merge(result, newCreateCategory);
-      const save = await categories.save(updateData);
+    //   if (categories.data.parentId) {
+    //     const maxLevel = 3;
 
-      return res.status(200).json({
-        message: "update new categories",
-        status: 200,
-        data: save,
-      });
-    } else {
-      const newupdateData = await categories.merge(result, req.body);
+    //     console.log("categories.data.parentId", categories.data.parentId);
 
-      await categories.save(newupdateData);
+    //     const parent = await categories.findOne({
+    //       where: { id: req.body.parentId },
+    //       relations: { children: true },
+    //     });
 
-      return res.status(200).json({
-        message: "Update a categories Successfull",
-        data: newupdateData,
-      });
-    }
+    //     if (parent.level >= maxLevel) {
+    //       return res.status(200).json({
+    //         message: "No new child allowed for this Category",
+    //       });
+    //     }
+
+    //     const newCreateCategory = {
+    //       name: req.body.name,
+    //       image: req.body.image,
+    //       urlSlug: req.body.urlSlug,
+    //       level: parent.level + 1,
+    //       parent: parent,
+    //     };
+
+    //     const updateData = await categories.merge(result, newCreateCategory);
+    //     const save = await categories.save(updateData);
+
+    //     return res.status(200).json({
+    //       message: "update new categories",
+    //       status: 200,
+    //       data: save,
+    //     });
+    //   } else {
+    //     const updateData = await categories.merge(result, req.body);
+
+    //     await categories.save(updateData);
+
+    //     return res.status(200).json({
+    //       message: "Update a categories Successfull",
+    //       data: updateData,
+    //     });
+    //   }
   }
 );
 

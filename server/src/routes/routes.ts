@@ -3,7 +3,7 @@ import authRoutes from "../modules/auth/route/auth.route";
 import productRoutes from "../modules/product/route/product.route";
 import wishlistRoutes from "../modules/wishlist/route/wishlist.route";
 import orderRoutes from "../modules/order/route/order.route";
-import discountRoutes from "../modules/order/route/order.route";
+import discountRoutes from "../modules/discount/route/discount.route";
 import addressRoutes from "../modules/address/route/address.route";
 import brandRoutes from "../modules/brand/route/brand.route";
 import categoriesRoutes from "../modules/categories/route/category.route";
@@ -21,7 +21,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/address", addressRoutes);
   app.use("/api/v1/discounts", discountRoutes);
   app.use("/api/v1/orders", orderRoutes);
-  app.use("/api/v1/wishlist", wishlistRoutes);
+  app.use("/api/v1/wishlists", wishlistRoutes);
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/products", AuthGuard, productRoutes);
 };

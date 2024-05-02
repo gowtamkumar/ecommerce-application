@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { OrderEntity } from "./order.entity";
 
 @Entity("order_items")
 export class OrderItemEntity {
@@ -17,9 +18,12 @@ export class OrderItemEntity {
 
   @Column({ name: "order_id" })
   orderId!: string;
-  // @ManyToOne(() => OrderEntity)
-  // @JoinColumn({ name: "order_id" })
-  // order?: OrderEntity;
+
+  @ManyToOne((_type) => OrderEntity, (order) => order.orderItems, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "order_id" })
+  order!: OrderEntity;
 
   @Column({ name: "total_amount", type: "numeric" })
   totalAmount!: number;
