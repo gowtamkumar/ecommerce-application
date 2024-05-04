@@ -1,5 +1,5 @@
 export async function sendForgotPassword(data: any) {
-  const res = await fetch(`http://localhost:3900/api/v1/auth/forgot-password`, {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/auth/forgot-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

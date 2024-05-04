@@ -1,10 +1,9 @@
 export async function resetPassword(data: any, token: any) {
-  console.log("data, token", data, token);
   
   const res = await fetch(
-    `http://localhost:3900/api/v1/auth/forgot-password/${token}`,
+    `http://localhost:3900/api/v1/auth/reset-password/${token}`,
     {
-      method: "PATCH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

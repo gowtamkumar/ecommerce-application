@@ -1,11 +1,11 @@
 ## users:
 
 id,
+name,
 username:,
 password,
 email,
-name,
-type:[Customer, Vendor, DeliveryMan, Admin]
+type:[Customer, Vendor, Delivery Man, Admin]
 phone,
 birthday,
 point:number
@@ -16,6 +16,7 @@ last_login: date with time zone
 last_logout: date with time zone
 ip_address(optional),
 divice_id(optional),
+resetToken
 createdAt
 updatedAt
 

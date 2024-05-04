@@ -35,14 +35,7 @@ export default function Login() {
       redirect: false,
     });
 
-    console.log("result", result);
-
-
-
-
     dispatch(setResponse(result));
-
-    console.log("global",);
 
 
     const getSesson: any = await getSession();

@@ -23,5 +23,5 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/orders", orderRoutes);
   app.use("/api/v1/wishlists", wishlistRoutes);
   app.use("/api/v1/auth", authRoutes);
-  app.use("/api/v1/products", AuthGuard, productRoutes);
+  app.use("/api/v1/products", productRoutes);
 };

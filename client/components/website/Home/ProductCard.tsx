@@ -1,11 +1,16 @@
+/* eslint-disable @next/next/no-async-client-component */
 "use client";
+import { GetAllCategories } from "@/lib/apis/categories";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 
-const ProductCard = ({ products }: any) => {
+const ProductCard =  async ({ products }: any) => {
   // products data
+
+  // 
+  // console.log("🚀 ~ getAllCategories:", getAllCategories)
 
   const dispatch = useDispatch();
   // console.log("🚀 ~ result:", result);

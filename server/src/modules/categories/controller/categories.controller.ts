@@ -23,6 +23,21 @@ export const getCategories = asyncHandler(
   }
 );
 
+export const getAllCategories = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(CategoriesEntity);
+
+    const user = await repository.find();
+
+    return res.status(200).json({
+      success: true,
+      msg: "Get all categories",
+      data: user,
+    });
+  }
+);
+
 // @desc Get a single Category
 // @route GET /api/v1/Categorys/:id
 // @access Public

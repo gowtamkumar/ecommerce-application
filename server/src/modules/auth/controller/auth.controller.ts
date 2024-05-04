@@ -199,7 +199,6 @@ export const getMe = asyncHandler(
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email } = req.body;
-    const token = uuidv4();
 
     const connection = await getDBConnection();
     const userRepository = connection.getRepository(UserEntity);
@@ -222,9 +221,7 @@ export const forgotPassword = asyncHandler(
 
     await userRepository.save(updateData);
 
-    console.log("req host", req);
-
-    const resetUrl = `${req.protocol}://${req.hostname}/reset-password/${resetToken}`;
+    const resetUrl = `${req.protocol}://${req.headers.origin}/reset-password/${resetToken}`;
 
     let mailOptions = {
       to: findMail.email,

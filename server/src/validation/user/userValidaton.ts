@@ -20,7 +20,7 @@ export const UserValidationSchema = z.object({
     .email(),
 
   resetToken: z.string().optional(),
-  resetTokenExpire: z.number().optional(),
+  // resetTokenExpire: z.number().optional(),
   role: z.enum(["Admin", "User"]).optional(),
   status: z.boolean().optional(),
 });

@@ -81,9 +81,7 @@ export default function ResetPassrod() {
 
             {global.response.status ? <p> {global.response?.message}</p> : null}
 
-            <div>
-              <Button before="Submitting...." after="Submit" />
-            </div>
+            <Button before="Submitting...." after="Submit" />
           </div>
         </div>
       </div>

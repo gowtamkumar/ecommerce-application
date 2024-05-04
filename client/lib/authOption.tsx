@@ -9,7 +9,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       async authorize(credentials: any) {
-        const res = await fetch(`http://localhost:3900/api/v1/auth/login`, {
+        const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/auth/login`, {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },

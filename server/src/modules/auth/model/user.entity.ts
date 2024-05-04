@@ -9,6 +9,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
+import { TypeEnum } from "./enums";
+import { StatusEnum } from "./enums/status.enum";
 
 @Entity("users")
 export class UserEntity {
@@ -27,11 +29,17 @@ export class UserEntity {
   @Column({ unique: true })
   email!: string;
 
+  @Column({ type: "enum", enum: TypeEnum, default: TypeEnum.Customer })
+  type!: TypeEnum;
+
   @Column({ unique: true, nullable: true })
   phone?: string;
 
   @Column({ name: "birth_day", nullable: true })
   birthday?: string;
+
+  @Column({ nullable: true })
+  point?: string;
 
   @Column({ nullable: true })
   address?: string;
@@ -45,8 +53,20 @@ export class UserEntity {
   // @Column({ name: "is_admin", type: "boolean", default: false })
   // isAdmin!: boolean;
 
-  @Column({ type: "boolean", default: true })
-  status!: boolean;
+  @Column({ type: "enum", enum: StatusEnum, default: StatusEnum.Active })
+  status!: StatusEnum;
+
+  @Column({ name: "last_login", type: "timestamp", nullable: true })
+  lastLogin?: string;
+
+  @Column({ name: "last_logout", type: "timestamp", nullable: true })
+  lastLogout?: string;
+
+  @Column({ name: "ip_address", nullable: true })
+  ipAddress?: string;
+
+  @Column({ name: "divice_id", nullable: true })
+  diviceId?: string;
 
   @Column({ name: "reset_token", nullable: true })
   resetToken?: string;
