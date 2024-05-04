@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-async-client-component */
 "use client";
 import { Avatar, Badge, Dropdown, Input, Select } from "antd";
 import { useSession } from "next-auth/react";
@@ -9,18 +10,23 @@ import { userProfileRoute } from "@/NavBarRoute";
 import TopBar from "./TopBar";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useSelector } from "react-redux";
+import { GetAllCategories } from "@/lib/apis/categories";
+import Category from "./Home/Category";
 
-const Header: React.FC = () => {
+const Header = async ({ categories }: any) => {
+  // console.log("🚀 ~ categories:", categories)
   const session = useSession();
   const cart = useSelector(selectCart);
-
   const { Option } = Select;
   const { Search } = Input;
 
   const selectBefore = (
-    <Select defaultValue="http://">
-      <Option value="http://">http://</Option>
-      <Option value="https://">https://</Option>
+    <Select defaultValue="Select One">
+      {(categories || []).map((categoroy: any) => (
+        <Option key={categoroy.id} value={categoroy.id}>
+          {categoroy.name}
+        </Option>
+      ))}
     </Select>
   );
 
@@ -43,6 +49,7 @@ const Header: React.FC = () => {
 
         <div className="w-8/12">
           <Search
+
             addonBefore={selectBefore}
             width={100}
             size="middle"

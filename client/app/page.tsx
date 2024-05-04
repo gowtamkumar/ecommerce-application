@@ -3,7 +3,6 @@ import CategoryCard from "@/components/website/Home/CategoryCard";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header";
 import ProductCard from "@/components/website/Home/ProductCard";
-import Image from "next/image";
 import React from "react";
 import Category from "@/components/website/Home/Category";
 import { GetProducts } from "@/lib/apis/product";
@@ -11,13 +10,18 @@ import { FaAmazonPay } from "react-icons/fa";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";
 import { GiDeliveryDrone } from "react-icons/gi";
+import { GetAllCategories } from "@/lib/apis/categories";
 
 export default async function Home() {
   const result = await GetProducts();
 
+  const categories = await GetAllCategories();
+  // console.log("🚀 ~ categories header:", categories?.data);
+
+
   return (
     <div className="container mx-auto">
-      <Header />
+      <Header categories={categories.data} />
       <Banner />
 
       <section className="mx-auto py-4">

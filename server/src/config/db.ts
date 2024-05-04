@@ -14,7 +14,8 @@ import { OrderItemEntity } from "../modules/order/model/order-item.entity";
 import { ProductVariantEntity } from "../modules/product-variant/model/product-variant.entity";
 import { WishListEntity } from "../modules/wishlist/model/wishlist.entity";
 
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+// dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config();
 
 const inEnvFile = {
   DB_TYPE: process.env.DB_TYPE,
@@ -28,7 +29,7 @@ const inEnvFile = {
 const validation: any = evnFileValidationSchema.safeParse(inEnvFile);
 
 if (validation?.error) {
-  console.log(validation?.error?.formErrors.fieldErrors);
+  console.log("file validation", validation?.error?.formErrors.fieldErrors);
 }
 
 const dbConnection = new DataSource({

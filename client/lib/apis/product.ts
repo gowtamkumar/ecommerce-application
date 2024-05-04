@@ -1,11 +1,7 @@
-// const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
-// 'use clent'
-import { getSession } from "next-auth/react";
-
 export async function GetProducts() {
   try {
     // const { api } = params
-        // const session = await getSession()
+    // const session = await getSession()
 
     // const session = await getServerSession(authOptions);
     // console.log("🚀 ~ session:", session);
@@ -16,7 +12,6 @@ export async function GetProducts() {
       console.log("Failed to fetch data");
     }
     const result = await res.json();
-    console.log("🚀 ~ result products:", result);
     return result;
   } catch (error) {
     // console.log("🚀 ~ error:", error);

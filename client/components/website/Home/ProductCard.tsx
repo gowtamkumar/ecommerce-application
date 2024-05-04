@@ -1,19 +1,12 @@
 /* eslint-disable @next/next/no-async-client-component */
 "use client";
-import { GetAllCategories } from "@/lib/apis/categories";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 
-const ProductCard =  async ({ products }: any) => {
-  // products data
-
-  // 
-  // console.log("🚀 ~ getAllCategories:", getAllCategories)
-
+const ProductCard = async ({ products }: any) => {
   const dispatch = useDispatch();
-  // console.log("🚀 ~ result:", result);
   return (
     <>
       {products?.data?.map((item: any, idx: any) => (

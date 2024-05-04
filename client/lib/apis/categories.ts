@@ -14,11 +14,11 @@ export async function GetAllCategories() {
         next: { revalidate: 30 },
       }
     );
+
     if (!res.ok) {
       console.log("Failed to fetch data");
     }
     const result = await res.json();
-    console.log("🚀 ~ result:", result);
     return result;
   } catch (error) {
     // console.log("🚀 ~ error:", error);
