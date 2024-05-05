@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { DiscountType } from "./enums/discount-type.enum";
-import { DiscountStatus } from "./enums/discount-status.enum";
+import { DiscountType } from "../enums/discount-type.enum";
+import { DiscountStatus } from "../enums/discount-status.enum";
 
 @Entity("discounts")
 export class DiscountEntity {

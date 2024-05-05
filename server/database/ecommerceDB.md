@@ -157,7 +157,7 @@ shipping_address_id(this address come from address id),
 payment_status(Paid/NotPaid/PertialPaid),
 payment_type(Online/Offline)
 payment_transaction_id,
-status:(Processing/Pending/Completed/Failed),
+<!-- status:(Processing/Pending/Completed/Failed), -->
 createdAt
 updatedAt
 
@@ -168,6 +168,13 @@ order_id,
 total_amount,
 product_id,
 qty,
+
+## order_traking
+
+order_id,
+data: timestamp
+note:string,
+status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
 
 ## address
 

@@ -8,10 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { OrderStatus } from "./enums/order-status.enum";
-import { PaymentStatus, PaymentTypeStatus } from "./enums";
+import { OrderStatus } from "../enums/order-status.enum";
+import { PaymentStatus, PaymentTypeStatus } from "../enums";
 import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
+import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -55,8 +56,8 @@ export class OrderEntity {
   @Column({ name: "email_address", nullable: true })
   emailAddress!: string;
 
-  @Column({ name: "shipping_address_id", nullable: true })
-  shippingAddressId?: string;
+  @Column({ name: "delivery_address", nullable: true })
+  deliveryAddress!: string;
 
   @Column({
     name: "payment_status",
@@ -98,4 +99,10 @@ export class OrderEntity {
 
   @OneToMany((_type) => PaymentEntity, (payment) => payment.order)
   payments!: PaymentEntity[];
+
+  @OneToMany(
+    (_type) => OrderTrackingEntity,
+    (orderTracking) => orderTracking.order
+  )
+  orderTrackings!: OrderTrackingEntity[];
 }

@@ -1,5 +1,5 @@
-import { PaymentStatus, PaymentTypeStatus } from "../enums";
-import { OrderStatus } from "../enums/order-status.enum";
+import { PaymentStatus, PaymentTypeStatus } from "../../enums";
+import { OrderStatus } from "../../enums/order-status.enum";
 
 export interface CreateOrderDto {
   orderDate?: string;

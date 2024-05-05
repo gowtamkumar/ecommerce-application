@@ -1,4 +1,4 @@
-import { CategoryStatus } from "../enums/category-status.enum";
+import { CategoryStatus } from "../../enums/category-status.enum";
 
 export interface UpdateCategoriesDto {
   name: string;

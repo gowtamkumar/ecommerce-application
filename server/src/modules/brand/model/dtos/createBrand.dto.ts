@@ -1,4 +1,4 @@
-import { BrandStatus } from "../enums/brand-status.enum";
+import { BrandStatus } from "../../enums/brand-status.enum";
 
 export interface CreateBrandDto {
   name: string;

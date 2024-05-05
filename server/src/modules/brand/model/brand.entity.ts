@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { BrandStatus } from "./enums/brand-status.enum";
+import { BrandStatus } from "../enums/brand-status.enum";
 
 @Entity("brands")
 export class BrandEntity {

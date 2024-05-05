@@ -18,6 +18,7 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     },
     relations: {
       user: true,
+      reviews: true,
     },
   });
 

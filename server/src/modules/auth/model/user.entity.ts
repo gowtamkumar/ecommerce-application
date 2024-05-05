@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { RoleEnum } from "./enums/role.enum";
+import { RoleEnum } from "../enums/role.enum";
 import {
   Column,
   CreateDateColumn,
@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
-import { TypeEnum } from "./enums";
-import { StatusEnum } from "./enums/status.enum";
+import { TypeEnum } from "../enums";
+import { StatusEnum } from "../enums/status.enum";
 
 @Entity("users")
 export class UserEntity {

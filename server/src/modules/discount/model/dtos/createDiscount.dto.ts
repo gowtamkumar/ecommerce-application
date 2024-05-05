@@ -1,5 +1,5 @@
-import { DiscountType } from "../enums";
-import { DiscountStatus } from "../enums/discount-status.enum";
+import { DiscountType } from "../../enums";
+import { DiscountStatus } from "../../enums/discount-status.enum";
 
 export interface CreateDiscountDto {
   name: string;

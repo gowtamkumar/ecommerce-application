@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { UserEntity } from "../../auth/model/user.entity";
+import { ReviewEntity } from "../../review/model/review.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -56,4 +58,7 @@ export class ProductEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
+
+  @OneToMany((_type) => ReviewEntity, (review) => review.product)
+  reviews!: ReviewEntity[];
 }

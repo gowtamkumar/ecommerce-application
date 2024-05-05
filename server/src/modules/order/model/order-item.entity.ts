@@ -1,13 +1,10 @@
 import "reflect-metadata";
 import {
   Column,
-  CreateDateColumn,
   Entity,
-  Generated,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  PrimaryGeneratedColumn
 } from "typeorm";
 import { OrderEntity } from "./order.entity";
 

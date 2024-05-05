@@ -9,7 +9,7 @@ import {
   TreeParent,
   UpdateDateColumn,
 } from "typeorm";
-import { CategoryStatus } from "./enums/category-status.enum";
+import { CategoryStatus } from "../enums/category-status.enum";
 
 @Entity("categories")
 @Tree("materialized-path")

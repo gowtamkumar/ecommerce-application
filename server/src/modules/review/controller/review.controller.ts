@@ -1,37 +1,33 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
-import { PaymentEntity } from "../model/payment.entity";
-import { paymentValidationSchema } from "../../../validation";
+import { ReviewEntity } from "../model/review.entity";
+import { reviewValidationSchema } from "../../../validation";
 
-// @desc Get all Payment
-// @route GET /api/v1/Payment
+// @desc Get all Review
+// @route GET /api/v1/Review
 // @access Public
-export const getPayments = asyncHandler(async (req: Request, res: Response) => {
+export const getReviews = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
-  const repository = connection.getRepository(PaymentEntity);
+  const repository = connection.getRepository(ReviewEntity);
 
-  const user = await repository.find({
-    relations: {
-      order: true,
-    },
-  });
+  const user = await repository.find();
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Payment",
+    msg: "Get all Review",
     data: user,
   });
 });
 
-// @desc Get a single Payment
-// @route GET /api/v1/Payment/:id
+// @desc Get a single Review
+// @route GET /api/v1/Review/:id
 // @access Public
-export const getPayment = asyncHandler(
+export const getReview = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(PaymentEntity);
+    const repository = await connection.getRepository(ReviewEntity);
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -40,18 +36,18 @@ export const getPayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Payment of id ${req.params.id}`,
+      msg: `Get a single Review of id ${req.params.id}`,
       data: result,
     });
   }
 );
 
-// @desc Create a single Payment
-// @route POST /api/v1/Payment
+// @desc Create a single Review
+// @route POST /api/v1/Review
 // @access Public
-export const createPayment = asyncHandler(async (req: any, res: Response) => {
+export const createReview = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = paymentValidationSchema.safeParse(req.body);
+  const validation = reviewValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
     return res.status(401).json({
@@ -59,28 +55,28 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
     });
   }
 
-  const repository = connection.getRepository(PaymentEntity);
+  const repository = connection.getRepository(ReviewEntity);
 
-  const newPayment = repository.create(validation.data);
+  const newReview = repository.create(validation.data);
 
-  const save = await repository.save(newPayment);
+  const save = await repository.save(newReview);
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Payment",
+    msg: "Create a new Review",
     data: save,
   });
 });
 
-// @desc Update a single Payment
-// @route PUT /api/v1/Payment/:id
+// @desc Update a single Review
+// @route PUT /api/v1/Review/:id
 // @access Public
-export const updatePayment = asyncHandler(
+export const updateReview = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const repository = await connection.getRepository(PaymentEntity);
+    const repository = await connection.getRepository(ReviewEntity);
 
     const result = await repository.findOneBy({ id });
 
@@ -90,20 +86,20 @@ export const updatePayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Payment of id ${req.params.id}`,
+      msg: `Update a single Review of id ${req.params.id}`,
       data: updateData,
     });
   }
 );
 
-// @desc Delete a single Payment
-// @route DELETE /api/v1/Payment/:id
+// @desc Delete a single Review
+// @route DELETE /api/v1/Review/:id
 // @access Public
-export const deletePayment = asyncHandler(
+export const deleteReview = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(PaymentEntity);
+    const repository = await connection.getRepository(ReviewEntity);
 
     const result = await repository.findOneBy({ id });
     if (!result) {
@@ -114,7 +110,7 @@ export const deletePayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Payment of id ${req.params.id}`,
+      msg: `Delete a single Review of id ${req.params.id}`,
       data: result,
     });
   }

@@ -15,17 +15,18 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(OrderEntity);
 
-  const user = await repository.find({
+  const order = await repository.find({
     relations: {
       orderItems: true,
       payments: true,
+      orderTrackings: true,
     },
   });
 
   return res.status(200).json({
     success: true,
     msg: "Get all Order",
-    data: user,
+    data: order,
   });
 });
 
