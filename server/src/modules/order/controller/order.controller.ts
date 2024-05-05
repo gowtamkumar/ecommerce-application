@@ -18,6 +18,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   const user = await repository.find({
     relations: {
       orderItems: true,
+      payments: true,
     },
   });
 

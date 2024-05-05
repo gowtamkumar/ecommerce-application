@@ -11,6 +11,7 @@ import {
 import { OrderStatus } from "./enums/order-status.enum";
 import { PaymentStatus, PaymentTypeStatus } from "./enums";
 import { OrderItemEntity } from "./order-item.entity";
+import { PaymentEntity } from "../../payment/model/payment.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -94,4 +95,7 @@ export class OrderEntity {
   // orderItems!: OrderItemEntity[];
   @OneToMany((_type) => OrderItemEntity, (product) => product.order)
   orderItems!: OrderItemEntity[];
+
+  @OneToMany((_type) => PaymentEntity, (payment) => payment.order)
+  payments!: PaymentEntity[];
 }

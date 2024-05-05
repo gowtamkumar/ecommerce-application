@@ -20,7 +20,7 @@ export class DiscountEntity {
   @Column({ type: "enum", enum: DiscountType })
   type!: DiscountType;
 
-  @Column({ type: "numeric" })
+  @Column({ type: "numeric", precision: 15, scale: 2  })
   value?: number;
 
   @Column({ name: "start_date", type: "timestamp" })

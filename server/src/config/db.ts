@@ -13,6 +13,7 @@ import { OrderEntity } from "../modules/order/model/order.entity";
 import { OrderItemEntity } from "../modules/order/model/order-item.entity";
 import { ProductVariantEntity } from "../modules/product-variant/model/product-variant.entity";
 import { WishListEntity } from "../modules/wishlist/model/wishlist.entity";
+import { PaymentEntity } from "../modules/payment/model/payment.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -58,6 +59,7 @@ const dbConnection = new DataSource({
     OrderItemEntity,
     ProductVariantEntity,
     WishListEntity,
+    PaymentEntity,
   ],
   subscribers: [],
   migrations: [],

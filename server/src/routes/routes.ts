@@ -6,6 +6,7 @@ import orderRoutes from "../modules/order/route/order.route";
 import discountRoutes from "../modules/discount/route/discount.route";
 import addressRoutes from "../modules/address/route/address.route";
 import brandRoutes from "../modules/brand/route/brand.route";
+import paymentRoute from "../modules/payment/route/payment.route";
 import categoriesRoutes from "../modules/categories/route/category.route";
 import productVariantRoutes from "../modules/product-variant/route/product-variant.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
@@ -24,4 +25,5 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/wishlists", wishlistRoutes);
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/products", productRoutes);
+  app.use("/api/v1/payments", paymentRoute);
 };
