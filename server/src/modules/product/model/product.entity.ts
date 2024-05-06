@@ -13,6 +13,7 @@ import { UserEntity } from "../../auth/model/user.entity";
 import { ReviewEntity } from "../../review/model/review.entity";
 import { ProductStatus } from "../enums/product-status.enum";
 import { ProductType } from "../enums/product-type.enum";
+import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -49,13 +50,10 @@ export class ProductEntity {
   @Column({ nullable: true })
   color?: string;
 
-  @Column({ name: "image_url" })
-  imageUrl!: string;
-
-  @Column({ name: "limit_purchase_qty" })
+  @Column({ name: "limit_purchase_qty", nullable:true })
   limitPurchaseQty?: number;
 
-  @Column({ name: "product_tag", nullable: true })
+  @Column({ name: "product_tag", type: 'simple-array', nullable: true })
   productTag!: string[];
 
   @Column({ nullable: true })
@@ -82,6 +80,11 @@ export class ProductEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
 
+  // Relations
+
   @OneToMany((_type) => ReviewEntity, (review) => review.product)
   reviews!: ReviewEntity[];
+
+  @OneToMany((_type) => ProductVariantEntity, (productVaritant) => productVaritant.product)
+  productVariants!: ProductVariantEntity[];
 }

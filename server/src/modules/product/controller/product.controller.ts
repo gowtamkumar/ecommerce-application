@@ -3,6 +3,8 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { ProductEntity } from "../model/product.entity";
 import { getDBConnection } from "../../../config/db";
 import { productValidationSchema } from "../../../validation";
+import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
+import { DataSource } from "typeorm";
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -11,17 +13,15 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
-  const results = await productRepository.find({
-    select: {
-      user: {
-        name: true,
-      },
-    },
-    relations: {
-      user: true,
-      reviews: true,
-    },
-  });
+  const qb = productRepository.createQueryBuilder("product");
+
+  qb.select(["product", "user", "reviews", "productVariants", "size"]);
+  qb.leftJoin("product.user", "user");
+  qb.leftJoin("product.reviews", "reviews");
+  qb.leftJoin("product.productVariants", "productVariants");
+  qb.leftJoin("productVariants.size", "size");
+
+  const results = await qb.getMany();
 
   return res.status(200).json({
     success: true,
@@ -56,19 +56,38 @@ export const getProduct = asyncHandler(
 // @route POST /api/v1/products
 // @access Public
 export const createProduct = asyncHandler(async (req: any, res: Response) => {
+  const { id } = req;
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
   const validation = productValidationSchema.safeParse(req.body);
-
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
     });
   }
 
-  const result = await productRepository.create(validation.data);
-  await productRepository.save(result);
+  const count = await productRepository.count();
+  const urlSlug = `SKU-${count.toString().padStart(6, "0")}`;
+  const result = await productRepository.create({
+    ...validation.data,
+    urlSlug,
+  });
+
+  result.userId = id;
+  const productSave = await productRepository.save(result);
+
+  if (validation.data?.productVariants && productSave.id) {
+    const repository = connection.getRepository(ProductVariantEntity);
+    const newProductVarientItems = await repository.create(
+      validation.data?.productVariants.map((item) => ({
+        ...item,
+        productId: productSave.id,
+      }))
+    );
+
+    await repository.save(newProductVarientItems);
+  }
 
   return res.status(200).json({
     success: true,

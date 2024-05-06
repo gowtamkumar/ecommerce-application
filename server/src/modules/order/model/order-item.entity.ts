@@ -15,7 +15,6 @@ export class OrderItemEntity {
 
   @Column({ name: "order_id" })
   orderId!: string;
-
   @ManyToOne((_type) => OrderEntity, (order) => order.orderItems, {
     onDelete: "CASCADE",
   })

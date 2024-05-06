@@ -10,7 +10,7 @@ export const paymentValidationSchema = z.object({
   }),
 
   paymentMethod: z.string({
-    required_error: "Order is required",
+    required_error: "Payment method is required",
   }),
   amount: z.number({ required_error: "Amount is Required" }),
 });

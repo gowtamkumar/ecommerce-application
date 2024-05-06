@@ -22,5 +22,5 @@ export const UserValidationSchema = z.object({
   resetToken: z.string().optional(),
   // resetTokenExpire: z.number().optional(),
   role: z.enum(["Admin", "User"]).optional(),
-  status: z.boolean().optional(),
+  status: z.enum(["Active", "Inactive", "Block"]).optional(),
 });

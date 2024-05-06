@@ -4,6 +4,9 @@ export const productValidationSchema = z.object({
   name: z.string({
     required_error: "name is required",
   }),
+  
+
+  
 
   shippingCost: z.number({
     required_error: "Shipping Cost is required",

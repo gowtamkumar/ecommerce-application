@@ -13,7 +13,7 @@ type MiddlewareFunction = (
 interface TokenPayload {
   name: string;
   username: string;
-  _id: string;
+  id: string;
   role: string;
 }
 
@@ -28,11 +28,11 @@ const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
-    const { name, username, _id, role } = decoded;
+    const { name, username, id, role } = decoded;
     req.name = name;
     req.username = username;
     req.role = role;
-    req._id = _id;
+    req.id = id;
     next();
   } catch (err) {
     next({ message: "Authentication Failed" });
@@ -71,7 +71,7 @@ const sendCookiesResponse = (token: string, res: Response) => {
 // Function to generate signed JWT token
 const getSignJwtToken = (user: any): string => {
   return jwt.sign(
-    { id: user.id, name: user.name, username: user.username },
+    { id: user.id, name: user.name, username: user.username, role: user.role },
     process.env.JWT_SECRET!,
     {
       expiresIn: process.env.JWT_EXPIRES,

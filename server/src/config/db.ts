@@ -17,6 +17,7 @@ import { PaymentEntity } from "../modules/payment/model/payment.entity";
 import { ReviewEntity } from "../modules/review/model/review.entity";
 import { OrderTrackingEntity } from "../modules/order-tracking/model/order-tracking.entity";
 import { TaxEntity } from "../modules/tax/model/tax.entity";
+import { SizeEntity } from "../modules/size/model/size.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -65,7 +66,8 @@ const dbConnection = new DataSource({
     PaymentEntity,
     ReviewEntity,
     OrderTrackingEntity,
-    TaxEntity
+    TaxEntity,
+    SizeEntity,
   ],
   subscribers: [],
   migrations: [],
