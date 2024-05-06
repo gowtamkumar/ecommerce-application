@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { ProductVariantEntity } from "../model/product-variant.entity";
+import { productVariantValidationSchema } from "../../../validation";
 
 // @desc Get all ProductVariants
 // @route GET /api/v1/ProductVariants
@@ -51,7 +52,15 @@ export const createProductVariant = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductVariantEntity);
 
-    const result = await repository.create(req.body);
+    const validation = productVariantValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
+    const result = await repository.create(validation.data);
     await repository.save(result);
 
     return res.status(200).json({

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { ProductEntity } from "../model/product.entity";
 import { getDBConnection } from "../../../config/db";
+import { productValidationSchema } from "../../../validation";
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -58,7 +59,15 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
-  const result = await productRepository.create(req.body);
+  const validation = productValidationSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(401).json({
+      message: validation.error.formErrors,
+    });
+  }
+
+  const result = await productRepository.create(validation.data);
   await productRepository.save(result);
 
   return res.status(200).json({

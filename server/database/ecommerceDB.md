@@ -26,7 +26,9 @@ id,
 name:string,
 shipping_cost:numeric,
 tax_id: number,
-discount_id: number(this copun number),
+
+<!-- discount_id: number(this copun number), -->
+
 url_slug(unique),
 images:array
 single_image,
@@ -38,42 +40,34 @@ user_id,
 description,
 short_description,
 enable_review: boolean,
-status:['acitve/inactive/'],
+status:['acitve/inactive'],
 createdAt,
 updatedAt
 
-# product type: simple product
+<!-- product single and varient hole array get hobe product variant a -->
 
+type: ['Simple Product', "Varient Product"]
+
+## product variants
+
+id,
 regular_price:numeric,
 sale_price:numeric,
-size: (x, xl),
-color,
+size_id,
+size: string(this field only for single product)
+color(red, green, yellow)
 weight(kg):numeric
 
   <!-- stock qty thankle stock status hobe na -->
 
 stock_qty,
-stock_status:(in stock/out stock),
+stock_status:(In Stock/Out Stock),
 
-# product type: varient product
-
-product_variant:['2','3','5'],
-
-## variants table (color and size) need to study about
-
-# size ar upor price hobe
+## size
 
 id,
-regular_price:numeric,
-sale_price:numeric,
-size: (x, xl),
-color(red, green, yellow)
-weight(kg):numeric
-
-<!-- stock qty thankle stock status hobe na -->
-
-stock_qty,
-stock_status:(in stock/out stock),
+name,
+status,
 
 ## discounts:
 
@@ -146,18 +140,19 @@ is_shipped,
 discount_amount,
 net_amount,
 shiping_amount,
-tax_id,
 order_note,
 
 <!-- order_items: array -->
 
 phone_no,
 email_address,
-shipping_address_id(this address come from address id),
+delivery_address,
 payment_status(Paid/NotPaid/PertialPaid),
 payment_type(Online/Offline)
 payment_transaction_id,
+
 <!-- status:(Processing/Pending/Completed/Failed), -->
+
 createdAt
 updatedAt
 
@@ -177,11 +172,11 @@ note:string,
 status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
 
 ## tax
+
 id,
 type: (Percentage, FixedAmount)
 value,
 status:boolean
-
 
 ## address
 

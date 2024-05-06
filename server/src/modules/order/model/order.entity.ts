@@ -61,9 +61,6 @@ export class OrderEntity {
   })
   shipingAmount?: number;
 
-  @Column({ name: "tax_id", nullable: true })
-  taxId?: string;
-
   @Column({ name: "order_note", nullable: true })
   orderNote!: string;
 
