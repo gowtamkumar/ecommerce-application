@@ -12,12 +12,12 @@ export const getOrderTrackings = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(OrderTrackingEntity);
 
-    const user = await repository.find();
+    const results = await repository.find();
 
     return res.status(200).json({
       success: true,
       msg: "Get all OrderTracking",
-      data: user,
+      data: results,
     });
   }
 );

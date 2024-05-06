@@ -13,12 +13,12 @@ export const getCategories = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getTreeRepository(CategoriesEntity);
 
-    const user = await repository.findTrees();
+    const result = await repository.findTrees();
 
     return res.status(200).json({
       success: true,
       msg: "Get all Categorys",
-      data: user,
+      data: result,
     });
   }
 );

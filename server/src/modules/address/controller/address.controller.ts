@@ -7,23 +7,23 @@ import { addressValidationSchema } from "../../../validation";
 // @desc Get all Address
 // @route GET /api/v1/Address
 // @access Public
-export const getAddress = asyncHandler(async (req: Request, res: Response) => {
+export const getAddresses = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(AddressEntity);
 
-  const user = await repository.find();
+  const result = await repository.find();
 
   return res.status(200).json({
     success: true,
     msg: "Get all Address",
-    data: user,
+    data: result,
   });
 });
 
 // @desc Get a single Address
 // @route GET /api/v1/Address/:id
 // @access Public
-export const getAddres = asyncHandler(
+export const getAddress = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const connection = await getDBConnection();

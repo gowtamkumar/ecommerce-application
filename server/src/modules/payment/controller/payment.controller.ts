@@ -11,7 +11,7 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(PaymentEntity);
 
-  const user = await repository.find({
+  const result = await repository.find({
     relations: {
       order: true,
     },
@@ -20,7 +20,7 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
     msg: "Get all Payment",
-    data: user,
+    data: result,
   });
 });
 

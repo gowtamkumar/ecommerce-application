@@ -32,20 +32,37 @@ export class OrderEntity {
   @Column({ name: "is_shipped", type: "boolean" })
   isShipped!: boolean;
 
-  @Column({ name: "order_total_amount", type: "numeric" })
+  @Column({
+    name: "order_total_amount",
+    type: "numeric",
+    precision: 15,
+    scale: 2,
+  })
   orderTotalAmount!: number;
 
-  @Column({ name: "discount_amount", type: "numeric", nullable: true })
+  @Column({
+    name: "discount_amount",
+    type: "numeric",
+    precision: 15,
+    scale: 2,
+    nullable: true,
+  })
   discountAmount!: number;
 
-  @Column({ name: "net_amount", type: "numeric" })
+  @Column({ name: "net_amount", type: "numeric", precision: 15, scale: 2 })
   netAmount!: number;
 
-  @Column({ name: "shiping_amount", type: "numeric", nullable: true })
+  @Column({
+    name: "shiping_amount",
+    type: "numeric",
+    precision: 15,
+    scale: 2,
+    nullable: true,
+  })
   shipingAmount?: number;
 
-  @Column({ type: "numeric", nullable: true })
-  tax!: number;
+  @Column({ name: "tax_id", nullable: true })
+  taxId?: string;
 
   @Column({ name: "order_note", nullable: true })
   orderNote!: string;

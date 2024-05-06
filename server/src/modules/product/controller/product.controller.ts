@@ -10,7 +10,7 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
-  const user = await productRepository.find({
+  const results = await productRepository.find({
     select: {
       user: {
         name: true,
@@ -25,7 +25,7 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
     msg: "Get all Products",
-    data: user,
+    data: results,
   });
 });
 

@@ -116,7 +116,7 @@ product_id,
 createdAt,
 updatedAt
 
-## carts:(optionalal)
+## carts:(optional)
 
 id,
 product_id,
@@ -146,7 +146,7 @@ is_shipped,
 discount_amount,
 net_amount,
 shiping_amount,
-tax,
+tax_id,
 order_note,
 
 <!-- order_items: array -->
@@ -175,6 +175,13 @@ order_id,
 data: timestamp
 note:string,
 status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
+
+## tax
+id,
+type: (Percentage, FixedAmount)
+value,
+status:boolean
+
 
 ## address
 

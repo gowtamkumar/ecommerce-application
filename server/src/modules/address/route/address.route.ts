@@ -2,15 +2,15 @@ import express from "express";
 import {
   createAddress,
   deleteAddress,
-  getAddres,
   getAddress,
+  getAddresses,
   updateAddress,
 } from "../controller/address.controller";
 
 const router = express.Router();
 
-router.route("/").get(getAddress).post(createAddress);
+router.route("/").get(getAddresses).post(createAddress);
 
-router.route("/:id").get(getAddres).put(updateAddress).delete(deleteAddress);
+router.route("/:id").get(getAddress).put(updateAddress).delete(deleteAddress);
 
 export default router;

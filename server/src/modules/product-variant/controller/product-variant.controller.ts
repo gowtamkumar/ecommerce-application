@@ -13,7 +13,6 @@ export const getProductVariants = asyncHandler(
 
     const result = await repository.find();
 
-    console.log("🚀 ~ Variants:", result);
     return res.status(200).json({
       success: true,
       msg: "Get all Product Variants",

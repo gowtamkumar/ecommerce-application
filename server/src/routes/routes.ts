@@ -9,6 +9,7 @@ import addressRoutes from "../modules/address/route/address.route";
 import brandRoutes from "../modules/brand/route/brand.route";
 import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
+import taxRoute from "../modules/tax/route/tax.route";
 import categoriesRoutes from "../modules/categories/route/category.route";
 import productVariantRoutes from "../modules/product-variant/route/product-variant.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
@@ -30,4 +31,5 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/products", productRoutes);
   app.use("/api/v1/payments", paymentRoute);
   app.use("/api/v1/reviews", reviewRoute);
+  app.use("/api/v1/taxs", taxRoute);
 };

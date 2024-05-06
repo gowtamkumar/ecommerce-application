@@ -15,7 +15,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(OrderEntity);
 
-  const order = await repository.find({
+  const results = await repository.find({
     relations: {
       orderItems: true,
       payments: true,
@@ -26,7 +26,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
     msg: "Get all Order",
-    data: order,
+    data: results,
   });
 });
 
@@ -42,6 +42,8 @@ export const getOrder = asyncHandler(
       where: { id },
       relations: {
         orderItems: true,
+        payments: true,
+        orderTrackings: true,
       },
     });
 

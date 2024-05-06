@@ -11,12 +11,12 @@ export const getReviews = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(ReviewEntity);
 
-  const user = await repository.find();
+  const result = await repository.find();
 
   return res.status(200).json({
     success: true,
     msg: "Get all Review",
-    data: user,
+    data: result,
   });
 });
 
