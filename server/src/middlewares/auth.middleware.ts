@@ -20,7 +20,9 @@ interface TokenPayload {
 // AuthGuard middleware
 const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
   const { authorization } = req.headers;
-  let token = authorization?.split(" ")[1] || req.cookies.accessToken;
+  // let token = authorization?.split(" ")[1] || req.cookies.accessToken;
+  let token = req.cookies.accessToken;
+  console.log("🚀 ~ token:", token);
 
   if (!token) {
     return next({ message: "Authentication Failed" });
@@ -35,7 +37,7 @@ const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
     req.id = id;
     next();
   } catch (err) {
-    next({ message: "Authentication Failed" });
+    next({ message: "Token validation faild!" });
   }
 };
 
@@ -55,17 +57,14 @@ const isAuthorize: MiddlewareFunction = async (req: any, res, next) => {
 // Function to send cookies response
 
 const sendCookiesResponse = (token: string, res: Response) => {
+  const maxAge = Number(process.env.JWT_EXPIRES) * 60 * 60 * 1000; // would expire in 1 day
   let options = {
-    maxAge: 20 * 60 * 1000, // would expire in 20 minutes
+    maxAge,
     httpOnly: true, // The cookie is only accessible by the web server
     secure: false, // Set to true if you're using HTTPS
   };
-
   // Set the cookie
   return res.cookie(process.env.COOKIE_NAME!, token, options);
-
-  // Optionally, you can also send a response back
-  // res.status(200).json({ success: true, token });
 };
 
 // Function to generate signed JWT token
@@ -74,7 +73,7 @@ const getSignJwtToken = (user: any): string => {
     { id: user.id, name: user.name, username: user.username, role: user.role },
     process.env.JWT_SECRET!,
     {
-      expiresIn: process.env.JWT_EXPIRES,
+      expiresIn: process.env.JWT_EXPIRES + "h",
     }
   );
 };

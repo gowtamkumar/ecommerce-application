@@ -10,7 +10,7 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getProducts).post(AuthGuard, createProduct);
+router.route("/").get(AuthGuard, getProducts).post(AuthGuard, createProduct);
 // router.route("/active").get(getActiveProducts);
 // router.route("/findbyname").get(getFindByName);
 // router.route("/queryhelper").get(getQueryHelper);
