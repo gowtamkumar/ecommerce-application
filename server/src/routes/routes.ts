@@ -11,6 +11,7 @@ import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
 import taxRoute from "../modules/tax/route/tax.route";
 import sizeRoute from "../modules/size/route/size.route";
+import fileRoute from "../modules/file/route/file.route";
 import categoriesRoutes from "../modules/categories/route/category.route";
 import productVariantRoutes from "../modules/product-variant/route/product-variant.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
@@ -34,4 +35,5 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/reviews", reviewRoute);
   app.use("/api/v1/taxs", taxRoute);
   app.use("/api/v1/sizes", sizeRoute);
+  app.use("/api/v1/files", fileRoute);
 };

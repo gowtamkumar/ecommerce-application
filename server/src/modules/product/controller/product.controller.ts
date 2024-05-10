@@ -154,13 +154,13 @@ export const updateProduct = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const productRepository = await connection.getRepository(ProductEntity);
+    const repository = await connection.getRepository(ProductEntity);
 
-    const result = await productRepository.findOneBy({ id });
+    const result = await repository.findOneBy({ id });
 
-    const updateData = await productRepository.merge(result, req.body);
+    const updateData = await repository.merge(result, req.body);
 
-    await productRepository.save(updateData);
+    await repository.save(updateData);
 
     return res.status(200).json({
       success: true,

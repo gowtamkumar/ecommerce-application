@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to nodejs server!");
 });
 
-//not found route
+// not found route
 // app.get("*", (req, res) => {
 //   res.send("Not found route, Please right route hite");
 // });

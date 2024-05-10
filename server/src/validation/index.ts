@@ -15,6 +15,7 @@ export * from "./order-tracking/orderTrackingValidation";
 export * from "./tax/taxValidation";
 export * from "./size/sizeValidation";
 export * from "./product-category/productCategoryValidation";
+export * from "./file/fileValidation";
 
 
 
