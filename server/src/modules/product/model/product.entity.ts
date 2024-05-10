@@ -14,6 +14,9 @@ import { ReviewEntity } from "../../review/model/review.entity";
 import { ProductStatus } from "../enums/product-status.enum";
 import { ProductType } from "../enums/product-type.enum";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
+import { TaxEntity } from "../../tax/model/tax.entity";
+import { BrandEntity } from "../../brand/model/brand.entity";
+import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -31,6 +34,9 @@ export class ProductEntity {
 
   @Column({ name: "tax_id", nullable: true })
   taxId?: string;
+  @ManyToOne((_type) => TaxEntity, (tax) => tax.products)
+  @JoinColumn({ name: "tax_id" })
+  tax?: TaxEntity;
 
   @Column({ name: "url_slug", unique: true })
   urlSlug!: string;
@@ -43,18 +49,21 @@ export class ProductEntity {
 
   @Column({ name: "brand_id", nullable: true })
   brandId?: string;
+  @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
+  @JoinColumn({ name: "brand_id" })
+  brand?: BrandEntity;
 
-  @Column({ name: "category_id", nullable: true })
-  categoryId?: string;
+  // @Column({ name: "category_id", nullable: true })
+  // categoryId?: string;
 
   @Column({ nullable: true })
   color?: string;
 
-  @Column({ name: "limit_purchase_qty", nullable:true })
+  @Column({ name: "limit_purchase_qty", nullable: true })
   limitPurchaseQty?: number;
 
-  @Column({ name: "product_tag", type: 'simple-array', nullable: true })
-  productTag!: string[];
+  @Column({ type: "simple-array", nullable: true })
+  tags!: string[];
 
   @Column({ nullable: true })
   description?: string;
@@ -81,10 +90,18 @@ export class ProductEntity {
   updatedAt?: string;
 
   // Relations
-
   @OneToMany((_type) => ReviewEntity, (review) => review.product)
   reviews!: ReviewEntity[];
 
-  @OneToMany((_type) => ProductVariantEntity, (productVaritant) => productVaritant.product)
+  @OneToMany(
+    (_type) => ProductVariantEntity,
+    (productVaritant) => productVaritant.product
+  )
   productVariants!: ProductVariantEntity[];
+
+  @OneToMany(
+    (_type) => ProductCategoryEntity,
+    (productCategory) => productCategory.product
+  )
+  productCategories!: ProductCategoryEntity[];
 }

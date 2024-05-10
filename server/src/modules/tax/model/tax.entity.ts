@@ -1,6 +1,7 @@
 import "reflect-metadata";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TaxTypeEnum } from "../enums/tax-type.enum";
+import { ProductEntity } from "../../product/model/product.entity";
 
 @Entity("taxs")
 export class TaxEntity {
@@ -18,4 +19,7 @@ export class TaxEntity {
 
   @Column({ type: "boolean", default: true })
   status!: boolean;
+
+  @OneToMany((_type) => ProductEntity, (product) => product.tax)
+  products!: ProductEntity[];
 }

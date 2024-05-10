@@ -4,9 +4,6 @@ export const productValidationSchema = z.object({
   name: z.string({
     required_error: "name is required",
   }),
-  
-
-  
 
   shippingCost: z.number({
     required_error: "Shipping Cost is required",
@@ -23,12 +20,8 @@ export const productValidationSchema = z.object({
     required_error: "Brand is required",
   }),
 
-  categoryId: z.string({
-    required_error: "category is required",
-  }),
-
   limitPurchaseQty: z.number().optional(),
-  productTag: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
 
   description: z.string().optional(),
   shortDescription: z.string().optional(),
@@ -48,6 +41,13 @@ export const productValidationSchema = z.object({
         size: z.string().optional(),
         stockQty: z.number().optional(),
         stockStatus: z.enum(["In Stock", "Out Stock"]).optional(),
+      })
+    )
+    .nonempty({ message: "can't be empty!" }),
+  productCategories: z
+    .array(
+      z.object({
+        categoryId: z.string({ required_error: "Category is required" }),
       })
     )
     .nonempty({ message: "can't be empty!" }),

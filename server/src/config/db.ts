@@ -18,6 +18,7 @@ import { ReviewEntity } from "../modules/review/model/review.entity";
 import { OrderTrackingEntity } from "../modules/order-tracking/model/order-tracking.entity";
 import { TaxEntity } from "../modules/tax/model/tax.entity";
 import { SizeEntity } from "../modules/size/model/size.entity";
+import { ProductCategoryEntity } from "../modules/product-category/model/product-category.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -68,6 +69,7 @@ const dbConnection = new DataSource({
     OrderTrackingEntity,
     TaxEntity,
     SizeEntity,
+    ProductCategoryEntity
   ],
   subscribers: [],
   migrations: [],

@@ -33,7 +33,7 @@ export class ProductVariantEntity {
   @Column({ name: "size_id", nullable: true })
   sizeId?: string;
   @ManyToOne((_type) => SizeEntity, (size) => size.productVariants, {
-    onDelete: "CASCADE",
+    onDelete: "SET NULL",
   })
   @JoinColumn({ name: "size_id" })
   size!: SizeEntity;

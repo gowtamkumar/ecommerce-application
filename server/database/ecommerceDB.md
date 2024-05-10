@@ -100,6 +100,11 @@ status:(Active/Inactive)
 createdAt
 updatedAt
 
+## product_category
+  id,
+  category_id,
+  product_id
+
 ## wishlists:
 
 id,

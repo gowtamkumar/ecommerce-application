@@ -3,10 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { BrandStatus } from "../enums/brand-status.enum";
+import { ProductEntity } from "../../product/model/product.entity";
 
 @Entity("brands")
 export class BrandEntity {
@@ -31,4 +33,7 @@ export class BrandEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
+
+  @OneToMany((_type) => ProductEntity, (product) => product.brand)
+  products!: ProductEntity[];
 }

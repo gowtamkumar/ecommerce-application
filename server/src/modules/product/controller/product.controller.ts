@@ -5,6 +5,7 @@ import { getDBConnection } from "../../../config/db";
 import { productValidationSchema } from "../../../validation";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { DataSource } from "typeorm";
+import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -15,12 +16,26 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 
   const qb = productRepository.createQueryBuilder("product");
 
-  qb.select(["product", "user", "reviews", "productVariants", "size"]);
+  qb.select([
+    "product",
+    "user",
+    "reviews",
+    "productVariants",
+    "productCategories",
+    "category",
+    "size",
+    "tax",
+    "brand",
+  ]);
   qb.leftJoin("product.user", "user");
+  qb.leftJoin("product.brand", "brand");
   qb.leftJoin("product.reviews", "reviews");
+  qb.leftJoin("product.tax", "tax");
   qb.leftJoin("product.productVariants", "productVariants");
-  qb.leftJoin("productVariants.size", "size");
+  qb.leftJoin("product.productCategories", "productCategories");
+  qb.leftJoin("productCategories.category", "category");
 
+  qb.leftJoin("productVariants.size", "size");
   const results = await qb.getMany();
 
   return res.status(200).json({
@@ -37,8 +52,32 @@ export const getProduct = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const connection = await getDBConnection();
-    const productRepository = await connection.getRepository(ProductEntity);
-    const result = await productRepository.findOneBy({ id });
+    const repository = await connection.getRepository(ProductEntity);
+    const qb = repository.createQueryBuilder("product");
+
+    qb.select([
+      "product",
+      "user",
+      "reviews",
+      "productVariants",
+      "productCategories",
+      "category",
+      "size",
+      "tax",
+      "brand",
+    ]);
+    qb.leftJoin("product.user", "user");
+    qb.leftJoin("product.brand", "brand");
+    qb.leftJoin("product.reviews", "reviews");
+    qb.leftJoin("product.tax", "tax");
+    qb.leftJoin("product.productVariants", "productVariants");
+    qb.leftJoin("product.productCategories", "productCategories");
+    qb.leftJoin("productCategories.category", "category");
+
+    qb.leftJoin("productVariants.size", "size");
+    qb.where({ id });
+
+    const result = await qb.getOne();
 
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
@@ -61,6 +100,7 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
   const productRepository = connection.getRepository(ProductEntity);
 
   const validation = productValidationSchema.safeParse(req.body);
+
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
@@ -85,8 +125,18 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
         productId: productSave.id,
       }))
     );
-
     await repository.save(newProductVarientItems);
+  }
+
+  if (validation.data?.productCategories && productSave.id) {
+    const repository = connection.getRepository(ProductCategoryEntity);
+    const productCategoryItem = await repository.create(
+      validation.data?.productCategories.map((item) => ({
+        ...item,
+        productId: productSave.id,
+      }))
+    );
+    await repository.save(productCategoryItem);
   }
 
   return res.status(200).json({

@@ -37,7 +37,7 @@ const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
     req.id = id;
     next();
   } catch (err) {
-    next({ message: "Token validation faild!" });
+    next({ message: "authorized faild!" });
   }
 };
 

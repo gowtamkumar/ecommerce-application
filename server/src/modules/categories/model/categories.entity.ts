@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Tree,
   TreeChildren,
@@ -10,6 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { CategoryStatus } from "../enums/category-status.enum";
+import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 
 @Entity("categories")
 @Tree("materialized-path")
@@ -56,4 +58,13 @@ export class CategoriesEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
+
+
+  @OneToMany(
+    (_type) => ProductCategoryEntity,
+    (productCategory) => productCategory.category
+  )
+  productCategories!: ProductCategoryEntity[];
+
+
 }
