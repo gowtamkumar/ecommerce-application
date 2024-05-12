@@ -2,8 +2,52 @@ import { FaBeer, FaRegUser } from "react-icons/fa";
 import { MenuProps } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { backupDB } from "./lib/apis/backupDB";
 
 // key as like features
+
+
+
+
+const handleBackup = async () => {
+  const date = new Date();
+  const currentDate = `${date.getFullYear()}.${date.getMonth() + 1
+    }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
+
+
+  try {
+
+    const response = await backupDB()
+    console.log("🚀 ~ res:", response)
+
+    // const response = await fetch(
+    //   `http://localhost:3900/api/v1/settings/db-backup`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ a: 1, b: "Textual content" }),
+    //   }
+    // );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(new Blob([blob]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `backup-${currentDate}.sql`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+  } catch (error) {
+    console.error("Backup failed:", error);
+    alert("Backup failed");
+  }
+};
 
 const navbarRoute = [
   {
@@ -82,8 +126,15 @@ const profileRoute: MenuProps["items"] = [
     label: <Link href="/">Logout</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     onClick: () => {
-      // "use server";
       signOut();
+    },
+  },
+  {
+    key: "3",
+    label: "Database Backup",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    onClick: () => {
+      handleBackup();
     },
   },
 ];

@@ -35,7 +35,7 @@ single_image,
 brand_id,
 category_id
 limit_purchase_qty:number,
-product_tag: ['ddd','aa']
+tags: ['ddd','aa']
 user_id,
 description,
 short_description,
@@ -101,9 +101,10 @@ createdAt
 updatedAt
 
 ## product_category
-  id,
-  category_id,
-  product_id
+
+id,
+category_id,
+product_id
 
 ## wishlists:
 
