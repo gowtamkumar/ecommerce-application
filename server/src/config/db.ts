@@ -71,7 +71,7 @@ const dbConnection = new DataSource({
     TaxEntity,
     SizeEntity,
     ProductCategoryEntity,
-    FileEntity
+    FileEntity,
   ],
   subscribers: [],
   migrations: [],

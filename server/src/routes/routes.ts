@@ -35,7 +35,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/payments", paymentRoute);
   app.use("/api/v1/reviews", reviewRoute);
   app.use("/api/v1/taxs", taxRoute);
-  app.use("/api/v1/sizes", sizeRoute);
+  app.use("/api/v1/sizes", AuthGuard, sizeRoute);
   app.use("/api/v1/files", fileRoute);
   app.use("/api/v1/settings", settingRoute);
 };
