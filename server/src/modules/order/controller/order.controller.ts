@@ -69,9 +69,9 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
   const validation = orderValidationSchema.safeParse(req.body);
 
   // SSLCommerzPayment
-  const store_id = "ecomm6648b03fa5d37";
-  const store_passwd = "ecomm6648b03fa5d37@ssl";
-  const is_live = false; //true for live, false for sandbox
+  const store_id = process.env.STORE_ID;
+  const store_passwd = process.env.STORE_PASSWD;
+  const is_live = process.env.IS_LIVE; //true for live, false for sandbox
 
   if (!validation.success) {
     return res.status(401).json({
