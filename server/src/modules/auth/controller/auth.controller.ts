@@ -124,6 +124,10 @@ export const login = asyncHandler(
     const connection = await getDBConnection();
     const { username, password } = req.body;
 
+    const ip =
+      req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
+    console.log("🚀 ~ ip:", ip);
+
     const userRepository = connection.getRepository(UserEntity);
 
     const oldUser = await userRepository.findOne({ where: { username } });
@@ -143,6 +147,13 @@ export const login = asyncHandler(
     if (!cookies) {
       throw new Error("Token not set in cookies");
     }
+
+    const updateData = await userRepository.merge(
+      oldUser,
+      { lastLogin: new Date() }
+    );
+
+    await userRepository.save(updateData);
 
     delete oldUser.password;
 

@@ -20,6 +20,26 @@ resetToken
 createdAt
 updatedAt
 
+<!-- ## login_tracking
+id,
+last_login: date with time zone
+last_logout: date with time zone,
+ip_address(optional),
+divice_id(optional),
+ -->
+
+## address
+
+id,
+user_id,
+address_line_1:string(billing/home/office),
+address_line_2:string
+state,
+city,
+country:string
+zip_code,
+
+
 ## products table :
 
 id,
@@ -33,7 +53,6 @@ url_slug(unique),
 images:array
 single_image,
 brand_id,
-category_id
 limit_purchase_qty:number,
 tags: ['ddd','aa']
 user_id,
@@ -47,6 +66,13 @@ updatedAt
 <!-- product single and varient hole array get hobe product variant a -->
 
 type: ['Simple Product', "Varient Product"]
+
+## product_category
+
+id,
+category_id,
+product_id
+
 
 ## product variants
 
@@ -100,11 +126,6 @@ status:(Active/Inactive)
 createdAt
 updatedAt
 
-## product_category
-
-id,
-category_id,
-product_id
 
 ## wishlists:
 
@@ -184,16 +205,6 @@ type: (Percentage, FixedAmount)
 value,
 status:boolean
 
-## address
-
-id,
-user_id,
-address_line_1:string(billing/home/office),
-address_line_2:string
-state,
-city,
-country:string
-zip_code,
 
 ## reviews:
 
@@ -206,7 +217,7 @@ status:(Reject/Approved),
 createdAt
 updatedAt
 
-## payments:
+## payments:(need to implement sslecommerce)
 
 id,
 order_id,
@@ -249,3 +260,8 @@ variant_id,
 message/descripiton,
 createdAt
 updatedAt
+
+## event module(need to study)
+ 1. all email send,
+ 2. mobile sms,
+ 3. notification(optional) 
