@@ -16,7 +16,7 @@ export const dbBackup = asyncHandler(async (req: Request, res: Response) => {
 
   const backupCommand = `PGPASSWORD="${process.env.DB_PASSWORD}" pg_dump -U ${process.env.DB_USERNAME} -p ${process.env.DB_PORT} -h ${process.env.DB_HOST} ${process.env.DB_DATABASE} > ${backupFile}`;
 
-  console.log("🚀 ~ backupCommand:", backupCommand)
+  console.log("🚀 ~ backupCommand:", backupCommand);
   exec(backupCommand, (error, stdout, stderr) => {
     if (error) {
       console.error(`Backup process failed: ${error.message}`);
@@ -34,20 +34,20 @@ export const dbBackup = asyncHandler(async (req: Request, res: Response) => {
       // Stream the file to the response
       const fileStream = fs.createReadStream(backupFile);
       fileStream.pipe(res);
+      fileStream.on("end", () => {
+        fs.unlink(backupFile, (err) => {
+          if (err) {
+            console.error("Error deleting backup file", err);
+          } else {
+            console.log("Backup file Deleted");
+          }
+        });
+      });
     } else {
       // If file doesn't exist, return 404
       res.status(404).send("File not found");
     }
   });
-
-  setTimeout(() => {
-    fs.unlink(backupFile, (err) => {
-      if (err) {
-        console.error("Error deleting backup file:", err);
-      }
-      console.log("Backup file deleted");
-    });
-  }, 2000);
 });
 
 // @desc Get a single Address
