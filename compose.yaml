@@ -1,0 +1,36 @@
+version: "3.8" # Use the latest version if possible
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # Use Docker secrets or env files
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - "5431:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    container_name: backend
+    build: ./server
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./server:/usr/src/app
+    env_file:
+      - .env
+    # environment:
+    #   DB_TYPE: postgres
+    #   DB_USERNAME: postgres
+    #   DB_PASSWORD: postgres # Use Docker secrets or env files
+    #   DB_DATABASE: db_postgres
+    #   DB_HOST: postgres
+    #   DB_PORT: 5432
+    depends_on:
+      - postgres
+
+volumes:
+  pg_data:

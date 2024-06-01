@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
 //   res.send("Not found route, Please right route hite");
 // });
 // Port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3900;
 
 const server = app.listen(PORT, () => {
   console.log(
