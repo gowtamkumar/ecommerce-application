@@ -14,27 +14,27 @@ export default function Profile() {
             {
               label: `Dashboard`,
               children: `Dashboard`,
-              icon: <AppleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}  />,
+              icon: <AppleOutlined />,
             },
             {
               label: `Account Details`,
               children: `Account Details and update account details`,
-              icon: <AppleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+              icon: <AppleOutlined />,
             },
             {
               label: `Orders`,
               children: `List of orders`,
-              icon: <AndroidOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+              icon: <AndroidOutlined />,
             },
             {
               label: `Track your order`,
               children: `Track your order`,
-              icon: <AndroidOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+              icon: <AndroidOutlined />,
             },
             {
               label: `Passwrod`,
               children: `update password`,
-              icon: <AndroidOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+              icon: <AndroidOutlined />,
             },
           ].map((item: any, i) => {
             const id = String(i + 1);
