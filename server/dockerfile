@@ -1,8 +1,8 @@
 ARG DEFAULT_PORT=3900
 ### Stage 1 ###
-FROM node:21.6.2-alpine3.18
+FROM node:20-alpine3.20
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package.json ./
 

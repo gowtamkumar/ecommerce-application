@@ -21,7 +21,7 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto">
-      <Header categories={categories.data} />
+      <Header categories={categories?.data} />
       <Banner />
 
       <section className="mx-auto py-4">

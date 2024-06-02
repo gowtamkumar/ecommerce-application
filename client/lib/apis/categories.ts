@@ -2,6 +2,8 @@
 // 'use clent'
 
 export async function GetAllCategories() {
+  console.log("test server", process.env.NEXT_SERVER_URL);
+
   try {
     // const { api } = params
     // const session = await getSession()

@@ -5,30 +5,49 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD} # Use Docker secrets or env files
-      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres # Use Docker secrets or env files
+      POSTGRES_DB: db_postgres
     ports:
       - "5431:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+  frontend:
+    container_name: frontend
+    build: ./client
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    # environment:
+    #   - NEXTAUTH_URL="http://localhost:3000"
+    #   - NEXT_SERVER_URL="http://localhost:3900"
+    #   - NEXTAUTH_SECRET=resturant-application
+    #   - AUTH_SECRET=AwZLoFadutg7Efmiz5OhAGEzZOSsVQOySI8eTBarztM
+    restart: always
+    volumes:
+      - ./client:/app
+    depends_on:
+      - backend
+
   backend:
     container_name: backend
     build: ./server
     ports:
-      - ${PORT}:${PORT}
+      - 5432:5432
     volumes:
-      - ./server:/usr/src/app
-    env_file:
-      - .env
-    # environment:
-    #   DB_TYPE: postgres
-    #   DB_USERNAME: postgres
-    #   DB_PASSWORD: postgres # Use Docker secrets or env files
-    #   DB_DATABASE: db_postgres
-    #   DB_HOST: postgres
-    #   DB_PORT: 5432
+      # - ./server/app/node_modules
+      - ./server:/app
+    # env_file:
+    #   - .env
+    environment:
+      DB_TYPE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres # Use Docker secrets or env files
+      DB_DATABASE: db_postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
     depends_on:
       - postgres
 
