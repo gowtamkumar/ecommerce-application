@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres # Use Docker secrets or env files
       POSTGRES_DB: db_postgres
+      TZ: "GMT"
+      PGTZ: "GMT"
     ports:
       - "5431:5432"
     volumes:
@@ -18,13 +20,11 @@ services:
     build: ./client
     ports:
       - "3000:3000"
-    env_file:
-      - .env
-    # environment:
-    #   - NEXTAUTH_URL="http://localhost:3000"
-    #   - NEXT_SERVER_URL="http://localhost:3900"
-    #   - NEXTAUTH_SECRET=resturant-application
-    #   - AUTH_SECRET=AwZLoFadutg7Efmiz5OhAGEzZOSsVQOySI8eTBarztM
+    environment:
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXT_SERVER_URL=http://backend:3900 # Updated to use backend service name
+      - NEXTAUTH_SECRET=resturant-application
+      - AUTH_SECRET=AwZLoFadutg7Efmiz5OhAGEzZOSsVQOySI8eTBarztM
     restart: always
     volumes:
       - ./client:/app
@@ -35,7 +35,7 @@ services:
     container_name: backend
     build: ./server
     ports:
-      - 5432:5432
+      - 3900:3900
     volumes:
       # - ./server/app/node_modules
       - ./server:/app
