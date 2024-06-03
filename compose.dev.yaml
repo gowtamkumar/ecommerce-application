@@ -18,7 +18,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      dockerfile: dockerfile.prod
+      dockerfile: dockerfile.dev
       context: ./client
     ports:
       - "3000:3000"
@@ -29,25 +29,26 @@ services:
     #   - NEXT_SERVER_URL=http://backend:3900 # Updated to use backend service name
     #   - NEXTAUTH_SECRET=resturant-application
     #   - AUTH_SECRET=AwZLoFadutg7Efmiz5OhAGEzZOSsVQOySI8eTBarztM
-    #   - NODE_ENV=production
+    #   - NODE_ENV=development
     restart: always
-    # volumes:
-    #   - ./client:/app
+    volumes:
+      - /client/app/node_modules
+      - ./client:/app
     depends_on:
       - backend
 
   backend:
     container_name: backend
     build:
-      dockerfile: dockerfile.prod
+      dockerfile: dockerfile.dev
       context: ./server
     ports:
       - 3900:3900
-    # volumes:
-    #   # - ./server/app/node_modules
-    #   - ./server:/app
+    volumes:
+      - /server/app/node_modules
+      - ./server:/app
     env_file:
-      - .env.production
+      - .env.dev
     # environment:
     #   DB_TYPE: postgres
     #   DB_USERNAME: postgres
@@ -55,7 +56,7 @@ services:
     #   DB_DATABASE: db_postgres
     #   DB_HOST: postgres
     #   DB_PORT: 5432
-    #   NODE_ENV: production
+    #   NODE_ENV: development
     #   JWT_SECRET: dsafasd
     #   JWT_EXPIRES: 24
     depends_on:

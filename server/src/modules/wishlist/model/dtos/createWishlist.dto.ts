@@ -1,6 +1,4 @@
-
-
-export interface CreateWishlistDto {  
+export interface CreateWishlistDto {
   productId: string;
   userId: string;
 }
