@@ -23,7 +23,7 @@ export default function ForgotPassrod() {
       };
     }
     const result = await sendForgotPassword(validatedFields.data);
-    // console.log("🚀 ~ result fogot:", result)
+    console.log("🚀 ~ result forgot:", result)
     
     dispatch(setResponse(result));
     setTimeout(() => {

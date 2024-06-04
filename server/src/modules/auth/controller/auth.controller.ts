@@ -148,10 +148,9 @@ export const login = asyncHandler(
       throw new Error("Token not set in cookies");
     }
 
-    const updateData = await userRepository.merge(
-      oldUser,
-      { lastLogin: new Date() }
-    );
+    const updateData = await userRepository.merge(oldUser, {
+      lastLogin: new Date(),
+    });
 
     await userRepository.save(updateData);
 
@@ -230,7 +229,7 @@ export const forgotPassword = asyncHandler(
       resetToken: resetToken,
     });
 
-    await userRepository.save(updateData);
+    await userRepository.save(updateData);    
 
     const resetUrl = `${req.protocol}://${req.headers.origin}/reset-password/${resetToken}`;
 

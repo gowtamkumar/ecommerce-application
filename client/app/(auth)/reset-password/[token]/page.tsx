@@ -29,12 +29,13 @@ export default function ResetPassrod() {
     }
 
     const result = await resetPassword(validatedFields.data, params.token);
+    console.log("🚀 ~ result:", result)
 
     dispatch(setResponse(result));
 
     setTimeout(() => {
       dispatch(setResponse({}));
-      if (result.status === 200) {
+      if (result.success) {
         router.push("/dashboard");
       }
     }, 5000);
