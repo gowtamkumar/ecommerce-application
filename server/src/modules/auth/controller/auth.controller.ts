@@ -229,7 +229,9 @@ export const forgotPassword = asyncHandler(
       resetToken: resetToken,
     });
 
-    await userRepository.save(updateData);    
+    await userRepository.save(updateData);
+    console.log("req.hostname", req);
+    console.log("req.psot", req.get("host"));
 
     const resetUrl = `${req.protocol}://${req.headers.origin}/reset-password/${resetToken}`;
 

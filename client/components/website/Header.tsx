@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { GetAllCategories } from "@/lib/apis/categories";
 import Category from "./Home/Category";
 
-const Header = async ({ categories }: any) => {
+const Header = ({ categories }: any) => {
   // console.log("🚀 ~ categories:", categories)
   const session = useSession();
   const cart = useSelector(selectCart);

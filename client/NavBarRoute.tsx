@@ -181,20 +181,12 @@ const webSiteNavbarItems: MenuProps["items"] = [
     icon: <FaRegUser />,
     children: [
       {
-        type: "group",
-        label: "Item 1",
-        children: [
-          {
-            label: "Option 1",
-            key: "setting:1",
-            icon: <FaRegUser />,
-          },
-          {
-            label: "Option 2",
-            key: "setting:2",
-            icon: <FaRegUser />,
-          },
-        ],
+        label: (
+          <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
+           Option 1
+          </a>
+        ),
+        key: "alipay",
       },
       {
         type: "group",

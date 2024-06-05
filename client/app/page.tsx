@@ -16,8 +16,6 @@ export default async function Home() {
   const result = await GetProducts();
 
   const categories = await GetAllCategories();
-  // console.log("🚀 ~ categories header:", categories?.data);
-
 
   return (
     <div className="container mx-auto">
