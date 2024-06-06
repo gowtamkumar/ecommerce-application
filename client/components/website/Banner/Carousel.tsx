@@ -28,6 +28,5 @@ export default function AntCarousel() {
         </div>
       </Carousel>
     </div>
-
   );
 }

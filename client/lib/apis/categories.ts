@@ -1,4 +1,3 @@
-import { getCategories } from './../../../server/src/modules/categories/controller/categories.controller';
 // const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
 // 'use clent'
 

@@ -58,7 +58,6 @@ const Sidebar = () => {
     label: string;
   }
 
-
   return (
     <div className="bg-[#001529]">
       <Drawer

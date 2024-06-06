@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 
-const ProductCard = async ({ products }: any) => {
+const ProductCard = ({ products }: any) => {
   const dispatch = useDispatch();
   return (
     <>

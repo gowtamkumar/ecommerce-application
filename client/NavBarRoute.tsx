@@ -18,8 +18,6 @@ const handleBackup = async () => {
   try {
 
     const response = await backupDB()
-    console.log("🚀 ~ res:", response)
-
     // const response = await fetch(
     //   `http://localhost:3900/api/v1/settings/db-backup`,
     //   {
@@ -54,6 +52,12 @@ const navbarRoute = [
     key: "dashboard",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard">Dashboard</Link>,
+    route: "true",
+  },
+  {
+    key: "Size",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/size">Size</Link>,
     route: "true",
   },
   {
