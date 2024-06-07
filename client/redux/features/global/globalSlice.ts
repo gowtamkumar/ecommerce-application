@@ -4,15 +4,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Define a type for the slice state
 export interface globalState {
   response: any;
-  // collapsed: boolean;
-  // screenWidth: number;
+  loading: any;
+  action: any;
+  searchText: string;
+  searchedColumn: string;
+  formValues: any;
 }
 
 // Define the initial state using that type
 const initialState: globalState = {
   response: {},
-  // collapsed: false,
-  // screenWidth: 0,
+  loading: {},
+  action: {},
+  searchText: "",
+  searchedColumn: "",
+  formValues:{}
 };
 
 export const globalSlice = createSlice({
@@ -24,18 +30,27 @@ export const globalSlice = createSlice({
       state.response = action.payload;
     },
 
-    // setCollapsed: (state, action: PayloadAction<any>): any => {
-    //   state.collapsed = action.payload;
-    // },
+    setLoading: (state, action: PayloadAction<any>): any => {
+      state.loading = action.payload;
+    },
 
-    // setScreenWidth: (state, action: PayloadAction<number>): any => {
-    //   state.screenWidth = action.payload;
-    // },
+    setAction: (state, action: PayloadAction<any>): any => {
+      state.action = action.payload;
+    },
+    setSearchText: (state, action: PayloadAction<any>): any => {
+      state.searchText = action.payload;
+    },
+    setSearchedColumn: (state, action: PayloadAction<any>): any => {
+      state.searchedColumn = action.payload;
+    },
+    setFormValues: (state, action: PayloadAction<any>): any => {
+      state.formValues = action.payload;
+    },
   },
 });
 
-export const { setResponse } = globalSlice.actions;
+export const { setResponse, setLoading, setAction, setSearchText, setSearchedColumn, setFormValues } = globalSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
-export const selectGlobal = (state: RootState) => state.global
+export const selectGlobal = (state: RootState) => state.global;
 
 export default globalSlice.reducer;

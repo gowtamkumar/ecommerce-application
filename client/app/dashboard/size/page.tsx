@@ -1,23 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import SizeList from "@/components/dashboard/size/SizeList";
 import { ActionType } from "@/constants/constants";
 import AddSize from "@/components/dashboard/size/AddSize";
-import { getSizes } from "@/lib/apis/size";
+import { useDispatch } from "react-redux";
+import { setAction } from "@/redux/features/global/globalSlice";
+import SizeList from "@/components/dashboard/size/SizeList";
 
 export default function Size() {
   const [tabKey, setTabKey] = useState("size_list");
-  const [action, setAction] = useState({});
-  const [sizes, setSize] = useState([]);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    (async () => {
-      const res = await getSizes();
-      setSize(res?.data);
-    })();
-  }, [action]);
 
   return (
     <div className="container-fluid bg-white p-3  ">
@@ -28,23 +22,26 @@ export default function Size() {
           {
             label: "Sizes",
             key: "size_list",
-            children: <SizeList setAction={setAction} sizes={sizes} />,
+            children: <SizeList />,
           },
         ]}
         tabBarExtraContent={
           <Button
             size="small"
             className="capitalize"
-            onClick={() => setAction({ type: ActionType.CREATE })}
+            onClick={() =>
+              dispatch(
+                setAction({
+                  type: ActionType.CREATE,
+                })
+              )
+            }
           >
             <PlusOutlined className="mx-1" /> New size
           </Button>
         }
       />
-      <AddSize action={action} setAction={setAction} />
-
-      {/* {action.type === ActionType.CREATE && <AddBrand action={action} setAction={setAction} />}
-      {action.type === ActionType.UPDATE && <AddBrand action={action} setAction={setAction} />} */}
+      <AddSize />
     </div>
   );
 }
