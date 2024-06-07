@@ -14,6 +14,7 @@ import { Column } from "primereact/column";
 import { Button, Tag, Popconfirm, Empty, Image, Input, Spin } from "antd";
 import { toast } from "react-toastify";
 import { deleteSize } from "@/lib/apis/size";
+import CustomTable from "./Table";
 
 const SizeList = ({ sizes, setAction }: any) => {
   const [globalFilter, setGlobalFilter] = useState("");
@@ -119,7 +120,8 @@ const SizeList = ({ sizes, setAction }: any) => {
           />
         </div>
       </div>
-      <DataTable
+      <CustomTable />
+      {/* <DataTable
         value={sizes || []}
         paginator={true}
         rows={20}
@@ -165,7 +167,7 @@ const SizeList = ({ sizes, setAction }: any) => {
             bodyTemplate({ rowData, rowIndex, field: "action" })
           }
         />
-      </DataTable>
+      </DataTable> */}
     </main>
   );
 };

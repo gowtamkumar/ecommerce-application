@@ -19,8 +19,6 @@ export default function Size() {
     })();
   }, [action]);
 
-  console.log("🚀 ~ res:", sizes)
-
   return (
     <div className="container-fluid bg-white p-3  ">
       <Tabs
@@ -28,7 +26,7 @@ export default function Size() {
         onChange={(key) => setTabKey(key)}
         items={[
           {
-            label: "All Size",
+            label: "Sizes",
             key: "size_list",
             children: <SizeList setAction={setAction} sizes={sizes} />,
           },
