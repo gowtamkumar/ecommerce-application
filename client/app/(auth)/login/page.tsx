@@ -37,23 +37,22 @@ export default function Login() {
 
     dispatch(setResponse(result));
 
-
     const getSesson: any = await getSession();
     // console.log("🚀 ~ getSesson:", getSesson);
 
     if (getSesson?.user?.role === "Admin" && result?.status === 200) {
       router.push("/dashboard");
-      return
+      return;
     }
 
     if (getSesson?.user?.role === "User" && result?.status === 200) {
       router.push("/");
-      return
+      return;
     }
 
     setTimeout(() => {
       dispatch(setResponse({}));
-    }, 5000)
+    }, 5000);
   };
 
   const [state, fromAction] = useFormState(loginAction, null);
@@ -135,7 +134,7 @@ export default function Login() {
                   <p className="text-red-600"> {global.response?.error}</p>
                 ) : null}
               </div>
-              <Button before="Signing...." after="Sign in" />
+              <Button before="Signing...." after="Sign in" size="w-full" />
             </div>
           </div>
         </div>
