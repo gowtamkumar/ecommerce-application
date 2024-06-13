@@ -39,7 +39,6 @@ city,
 country:string
 zip_code,
 
-
 ## products table :
 
 id,
@@ -72,7 +71,6 @@ type: ['Simple Product', "Varient Product"]
 id,
 category_id,
 product_id
-
 
 ## product variants
 
@@ -126,7 +124,6 @@ status:(Active/Inactive)
 createdAt
 updatedAt
 
-
 ## wishlists:
 
 id,
@@ -149,10 +146,12 @@ updatedAt
 ## brands:
 
 id,
+name,
+photo,
+description
+status:(Active/Inactive),,
 user_id,
-name
-status:(Active/Inactive),
-createdAt,
+createdAt
 updatedAt
 
 ## orders:
@@ -205,7 +204,6 @@ type: (Percentage, FixedAmount)
 value,
 status:boolean
 
-
 ## reviews:
 
 id,
@@ -230,17 +228,6 @@ transaction_id,
 createdAt
 updatedAt
 
-## brands:
-
-id,
-name,
-photo,
-description
-status:(Active/Inactive),,
-user_id,
-createdAt
-updatedAt
-
 ## logs:
 
 id,
@@ -260,8 +247,3 @@ variant_id,
 message/descripiton,
 createdAt
 updatedAt
-
-## event module(need to study)
- 1. all email send,
- 2. mobile sms,
- 3. notification(optional) 
