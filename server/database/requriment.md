@@ -16,7 +16,7 @@
 14. discount and promotion management
 15. sales reports
 16. reporting tools
-17. multiple mayment option(stripe etc)
+17. multiple mayment option(sslecommerce etc)
 18. wishlist managemneet
 19. Search and Filtering:
 20. chat option,
@@ -76,3 +76,5 @@ task and logic:
 -- quick order(example: kisu product add kore thakbe and pashe image thakbe as like order ar moto but package moto hobe but check out page moto add kora thakle jate one click a order kora jai jano) note: ar jonno database alada kora lagbe
 
 ## deploy with docker and ci/cd
+
+

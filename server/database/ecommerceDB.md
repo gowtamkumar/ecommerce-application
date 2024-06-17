@@ -103,9 +103,7 @@ start_date,
 expiry_date
 end_date,
 min_order_amount,
-min_user,
-usage_count
-is_single_use: Boolean
+max_user,
 status:(Active/Inactive)
 user_id
 createdAt

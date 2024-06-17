@@ -35,14 +35,14 @@ export class DiscountEntity {
   @Column({ name: "min_order_amount", type: "numeric" })
   minOrderAmount!: number;
 
-  @Column({ name: "min_user", nullable: true })
-  minUser!: number;
+  @Column({ name: "max_user", nullable: true })
+  maxUser!: number;
 
   @Column({ name: "usage_count", nullable: true })
   usageCount!: number;
 
-  @Column({ name: "is_single_use", type: "boolean", default: false })
-  isSingleUse!: boolean;
+  // @Column({ name: "is_single_use", type: "boolean", default: false })
+  // isSingleUse!: boolean;
 
   @Column({
     type: "enum",

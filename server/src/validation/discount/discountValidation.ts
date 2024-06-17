@@ -25,17 +25,17 @@ export const discountValidationSchema = z.object({
     required_error: "end Date is required",
   }),
 
-  minOrderAmount: z.string({
+  minOrderAmount: z.number({
     required_error: "min Order Amount is required",
   }),
 
-  minUser: z.string().optional(),
+  maxUser: z.number().optional(),
 
-  usageCount: z.number({
-    required_error: "usage Count is required",
-  }),
+  // usageCount: z.number({
+  //   required_error: "usage Count is required",
+  // }),
 
-  isSingleUse: z.boolean().optional(),
+  // isSingleUse: z.boolean().optional(),
 
   status: z.enum(["Active", "Inactive"]).optional(),
 });
