@@ -1,5 +1,6 @@
 "use server";
 export async function saveSize(data: any) {
+  console.log("🚀 ~ data:", data)
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes`, {
     method: "POST",
     cache: "no-cache",
