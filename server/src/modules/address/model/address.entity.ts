@@ -27,8 +27,8 @@ export class AddressEntity {
   @Column({ name: "zip_code", nullable: true })
   zipCode?: string;
 
-  @Column({ type: "boolean", default: true })
-  status!: boolean;
+  // @Column({ type: "boolean", default: true })
+  // status!: boolean;
 
   // @CreateDateColumn({ name: "created_at",type: "timestamp" })
   // createdAt?: string;

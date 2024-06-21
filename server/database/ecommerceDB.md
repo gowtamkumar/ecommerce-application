@@ -126,9 +126,7 @@ updatedAt
 
 id,
 product_id,
-
-<!-- user_id, -->
-
+user_id,
 createdAt,
 updatedAt
 
