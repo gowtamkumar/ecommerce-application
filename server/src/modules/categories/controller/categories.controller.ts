@@ -6,14 +6,35 @@ import { CategoriesEntity } from "../model/categories.entity";
 import { categoriesValidationSchema } from "../../../validation/categories/categoriesValidation";
 
 // @desc Get all Categorys
+// @route GET /api/v1/categories/all
+// @access Public
+
+export const getAllCategories = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(CategoriesEntity);
+
+    const user = await repository.find();
+
+    return res.status(200).json({
+      success: true,
+      msg: "Get all categories",
+      data: user,
+    });
+  }
+);
+
+// @desc Get all Categorys
 // @route GET /api/v1/Categorys
 // @access Public
+
 export const getCategories = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
     const repository = connection.getTreeRepository(CategoriesEntity);
 
     const result = await repository.findTrees();
+    console.log("🚀 ~ result:", result);
 
     return res.status(200).json({
       success: true,
@@ -61,6 +82,8 @@ export const getCategory = asyncHandler(
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
   const validation = categoriesValidationSchema.safeParse(req.body);
+  console.log("req.body", req.body);
+  
 
   if (!validation.success) {
     return res.status(401).json({
@@ -88,7 +111,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     const newCreateCategory = {
       name: validation.data.name,
       image: validation.data.image,
-      urlSlug: validation.data.urlSlug,
+      // urlSlug: validation.data.urlSlug,
       level: parent.level + 1,
       parent: parent,
     };
@@ -105,7 +128,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     const newCreateCategory = {
       name: validation.data.name,
       image: validation.data.image,
-      urlSlug: validation.data.urlSlug,
+      // urlSlug: validation.data.urlSlug,
       level: 1,
       parent: null,
     };
@@ -118,21 +141,6 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     });
   }
 });
-
-export const getAllCategories = asyncHandler(
-  async (req: Request, res: Response) => {
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(CategoriesEntity);
-
-    const user = await repository.find();
-
-    return res.status(200).json({
-      success: true,
-      msg: "Get all categories",
-      data: user,
-    });
-  }
-);
 
 // @desc Update a single Category
 // @route PUT /api/v1/Categorys/:id

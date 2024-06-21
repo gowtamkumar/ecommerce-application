@@ -28,7 +28,7 @@ ip_address(optional),
 divice_id(optional),
  -->
 
-## address
+## address (done)
 
 id,
 user_id,
@@ -87,13 +87,13 @@ weight(kg):numeric
 stock_qty,
 stock_status:(In Stock/Out Stock),
 
-## size
+## size (done)
 
 id,
 name,
 status,
 
-## discounts:
+## discounts:(done)
 
 id,
 coupon_code,

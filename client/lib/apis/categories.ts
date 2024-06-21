@@ -1,9 +1,7 @@
 // const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
-// 'use clent'
+"use server";
 
 export async function GetAllCategories() {
-  console.log("test server", process.env.NEXT_SERVER_URL);
-
   try {
     // const { api } = params
     // const session = await getSession()
@@ -29,7 +27,6 @@ export async function GetAllCategories() {
 }
 
 export async function GetCategories() {
-
   try {
     // const { api } = params
     // const session = await getSession()
@@ -40,6 +37,7 @@ export async function GetCategories() {
       `${process.env.NEXT_SERVER_URL}/api/v1/categories`,
       {
         next: { revalidate: 30 },
+        // cache: "no-cache",
       }
     );
 
@@ -54,5 +52,43 @@ export async function GetCategories() {
   }
 }
 
+export async function saveCategory(data: any) {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/categories`, {
+    method: "POST",
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
 
+export async function updateCategory(data: any) {
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/categories/${data.id}`,
+    {
+      method: "PUT",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  return res.json();
+}
 
+export async function deleteCategory(id: string) {
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/categories/${id}`,
+    {
+      method: "DELETE",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.json();
+}
