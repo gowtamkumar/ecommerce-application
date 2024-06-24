@@ -13,17 +13,8 @@ export const discountValidationSchema = z.object({
     required_error: "value is required",
   }),
 
-  startDate: z.string({
-    required_error: "start Date is required",
-  }),
-
-  expiryDate: z.string({
-    required_error: "expiry Date is required",
-  }),
-
-  endDate: z.string({
-    required_error: "end Date is required",
-  }),
+  startDate:z.string().datetime(),
+  expiryDate: z.string().datetime(),
 
   minOrderAmount: z.number({
     required_error: "min Order Amount is required",

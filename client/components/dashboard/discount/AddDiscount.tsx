@@ -21,6 +21,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveDiscount, updateDiscount } from "@/lib/apis/discount";
+import dayjs from "dayjs";
 
 const AddDiscount = () => {
   const global = useSelector(selectGlobal);
@@ -56,7 +57,8 @@ const AddDiscount = () => {
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
-      toast.error(err);
+      console.log(err);
+      toast.error(err.message);
     }
   };
 
@@ -67,18 +69,24 @@ const AddDiscount = () => {
 
   const setFormData = (v: any) => {
     const newData = { ...v };
+    if (newData.startDate) newData.startDate = dayjs(newData.startDate);
+    if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
     form.setFieldsValue(newData);
     dispatch(setFormValues(form.getFieldsValue()));
   };
 
-  const resetFormData = () => {
-    if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+  const resetFormData = (value:any) => {
+    const newData = { ...value };
+    if (newData.startDate) newData.startDate = dayjs(newData.startDate);
+    if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
+    if (newData?.id) {
+      form.setFieldsValue(newData);
+      dispatch(setFormValues(newData));
     } else {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
+
   };
 
   return (
@@ -193,23 +201,8 @@ const AddDiscount = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item
-              name="endDate"
-              label="End Date"
-              rules={[
-                {
-                  required: true,
-                  message: "Date is required",
-                },
-              ]}
-            >
-              <DatePicker placeholder="Enter" />
-            </Form.Item>
-          </div>
-
-          <div className="col-span-1">
             <Form.Item name="minOrderAmount" label="Min Order Amount">
-              <InputNumber placeholder="Enter" />
+              <InputNumber placeholder="Enter" className="w-auto" />
             </Form.Item>
           </div>
 
@@ -218,8 +211,6 @@ const AddDiscount = () => {
               <InputNumber placeholder="Enter" />
             </Form.Item>
           </div>
-
-        
 
           <div className={`col-span-1 `}>
             <Form.Item hidden={!payload?.id} name="status" label="Status">
@@ -234,30 +225,29 @@ const AddDiscount = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                <Select.Option value={true}>Active</Select.Option>
-                <Select.Option value={false}>Inactive</Select.Option>
+                <Select.Option value={"Active"}>Active</Select.Option>
+                <Select.Option value={"Inactive"}>Inactive</Select.Option>
               </Select>
             </Form.Item>
           </div>
-
-          <div className="col-span-1 text-end">
-            <Button
-              className="mx-2 capitalize"
-              size="small"
-              onClick={resetFormData}
-            >
-              Reset
-            </Button>
-            <Button
-              size="small"
-              color="blue"
-              htmlType="submit"
-              className="capitalize"
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
+        </div>
+        <div className="col-span-1 text-end">
+          <Button
+            className="mx-2 capitalize"
+            size="small"
+            onClick={()=>resetFormData(global.action?.payload)}
+          >
+            Reset
+          </Button>
+          <Button
+            size="small"
+            color="blue"
+            htmlType="submit"
+            className="capitalize"
+            loading={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
         </div>
       </Form>
     </Modal>

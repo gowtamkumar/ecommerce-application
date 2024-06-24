@@ -101,9 +101,9 @@ type:(Percentage, FixedAmount, FreeShipping).
 value,
 start_date,
 expiry_date
-end_date,
 min_order_amount,
 max_user,
+usageCount,
 status:(Active/Inactive)
 user_id
 createdAt

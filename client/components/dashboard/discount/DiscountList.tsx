@@ -20,18 +20,19 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteDiscount, getDiscounts } from "@/lib/apis/discount";
+import dayjs from "dayjs";
 
 interface DataType {
   key: string;
   couponCode: string;
   type: any;
   value: number;
-  startDate: string;
-  expiryDate: string;
-  endDate: string;
+  startDate: any;
+  expiryDate: any;
   minOrderAmount: number;
   usageCount: number;
-  status: any;
+  maxUser: number;
+  status: "Active" | "Inactive";
 }
 
 type DataIndex = keyof DataType;
@@ -44,10 +45,12 @@ const DiscountList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      dispatch(setLoading({ loading: true }));
       const res = await getDiscounts();
       setDiscounts(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
-  }, [global.action]);
+  }, [dispatch, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -68,6 +71,10 @@ const DiscountList: React.FC = () => {
     confirm: FilterDropdownProps["confirm"],
     dataIndex: DataIndex
   ) => {
+    // console.log(selectedKeys[0]);
+    // console.log(confirm());
+    // console.log(dataIndex);
+    
     confirm();
     dispatch(setSearchText(selectedKeys[0]));
     dispatch(setSearchedColumn(dataIndex));
@@ -171,29 +178,66 @@ const DiscountList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Coupon Code",
+      ...getColumnSearchProps("couponCode"),
+      title: "Coupon",
       dataIndex: "couponCode",
       key: "couponCode",
-      width: "30%",
       sorter: (a, b) => a.couponCode.length - b.couponCode.length,
-      ...getColumnSearchProps("couponCode"),
     },
     {
+      ...getColumnSearchProps("type"),
       title: "Type",
       dataIndex: "type",
       key: "type",
-      width: "30%",
       sorter: (a, b) => a.type.length - b.type.length,
-      ...getColumnSearchProps("type"),
+      render: (value) => <Tag color="cyan">{value}</Tag>,
     },
 
     {
       title: "value",
       dataIndex: "value",
       key: "value",
-      width: "30%",
-      // sorter: (a, b) => a.value.length - b.value.length,
+      sorter: (a, b) => a.value - b.value,
       ...getColumnSearchProps("value"),
+    },
+
+    {
+      ...getColumnSearchProps("startDate"),
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      // sorter: (a, b) => a.startDate - b.startDate,
+    },
+
+    {
+      ...getColumnSearchProps("expiryDate"),
+      title: "Expiry Date",
+      dataIndex: "expiryDate",
+      key: "expiryDate",
+      render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      // sorter: (a, b) => a.expiryDate - b.expiryDate,
+    },
+    {
+      ...getColumnSearchProps("minOrderAmount"),
+      title: "Min Order Amount",
+      dataIndex: "minOrderAmount",
+      key: "minOrderAmount",
+      sorter: (a, b) => a.minOrderAmount - b.minOrderAmount,
+    },
+    {
+      title: "Max User",
+      dataIndex: "maxUser",
+      key: "maxUser",
+      sorter: (a, b) => a.maxUser - b.maxUser,
+      ...getColumnSearchProps("maxUser"),
+    },
+    {
+      title: "Usage Count",
+      dataIndex: "usageCount",
+      key: "usageCount",
+      sorter: (a, b) => a.usageCount - b.usageCount,
+      ...getColumnSearchProps("usageCount"),
     },
 
     {
@@ -201,9 +245,10 @@ const DiscountList: React.FC = () => {
       key: "status",
       ...getColumnSearchProps("status"),
       sortDirections: ["descend", "ascend"],
+      sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
-        <Tag color={value.status ? "green" : "red"}>
-          {value.status ? "Active" : "Inactive"}
+        <Tag color={value.status === "Active" ? "green" : "red"}>
+          {value.status}
         </Tag>
       ),
     },
@@ -213,7 +258,6 @@ const DiscountList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "10%",
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -258,7 +302,7 @@ const DiscountList: React.FC = () => {
 
   return (
     <Table
-      loading={!discounts.length}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={discounts}
       pagination={{ pageSize: 10 }}

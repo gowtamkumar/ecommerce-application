@@ -20,17 +20,17 @@ export class DiscountEntity {
   @Column({ type: "enum", enum: DiscountType })
   type!: DiscountType;
 
-  @Column({ type: "numeric", precision: 15, scale: 2  })
-  value?: number;
+  @Column({nullable: true})
+  value!: number;
 
-  @Column({ name: "start_date", type: "timestamp" })
+  @Column({ name: "start_date", type: "timestamp with time zone" })
   startDate!: string;
 
-  @Column({ name: "expiry_date", type: "timestamp" })
+  @Column({ name: "expiry_date", type: "timestamp with time zone" })
   expiryDate!: string;
 
-  @Column({ name: "end_date", type: "timestamp" })
-  endDate!: string;
+  // @Column({ name: "end_date", type: "timestamp" })
+  // endDate!: string;
 
   @Column({ name: "min_order_amount", type: "numeric" })
   minOrderAmount!: number;
