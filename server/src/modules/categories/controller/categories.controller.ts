@@ -82,8 +82,6 @@ export const getCategory = asyncHandler(
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
   const validation = categoriesValidationSchema.safeParse(req.body);
-  console.log("req.body", req.body);
-  
 
   if (!validation.success) {
     return res.status(401).json({
@@ -124,22 +122,22 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
       message: "Create new categories",
       data: save,
     });
-  } else {
-    const newCreateCategory = {
-      name: validation.data.name,
-      image: validation.data.image,
-      // urlSlug: validation.data.urlSlug,
-      level: 1,
-      parent: null,
-    };
-
-    const newCategories = categories.create(newCreateCategory);
-    const save = await categories.save(newCategories);
-    return res.status(200).json({
-      message: "Create new categories",
-      data: save,
-    });
   }
+
+  const newCreateCategory = {
+    name: validation.data.name,
+    image: validation.data.image,
+    // urlSlug: validation.data.urlSlug,
+    level: 1,
+    parent: null,
+  };
+
+  const newCategories = categories.create(newCreateCategory);
+  const save = await categories.save(newCategories);
+  return res.status(200).json({
+    message: "Create new categories",
+    data: save,
+  });
 });
 
 // @desc Update a single Category

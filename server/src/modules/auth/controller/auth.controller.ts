@@ -82,8 +82,24 @@ export const getUsers = asyncHandler(
       relations: {
         products: true,
       },
+      select: {
+        name: true,
+        username: true,
+        email: true,
+        phone: true,
+        type: true,
+        point: true,
+        imgUrl: true,
+        role: true,
+        status: true,
+        lastLogin: true,
+        lastLogout: true,
+        ipAddress: true,
+        diviceId: true,
+        birthday: true,
+        // products: true,
+      },
     }); // populate is relation array data
-    console.log("🚀 ~ results yser:", results);
 
     return res.status(200).json({
       success: true,

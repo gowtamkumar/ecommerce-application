@@ -22,7 +22,7 @@ router.route("/me").get(AuthGuard, getMe);
 router.route("/update-password").put(AuthGuard, updatePassword);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password/:token").post(resetPassword);
-router.route("/users").get(AuthGuard, isAuthorize, getUsers);
+router.route("/users").get(getUsers);
 router
   .route("/users/:id")
   .get(AuthGuard, getUser)

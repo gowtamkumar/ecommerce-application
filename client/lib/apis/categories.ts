@@ -28,16 +28,11 @@ export async function GetAllCategories() {
 
 export async function GetCategories() {
   try {
-    // const { api } = params
-    // const session = await getSession()
-
-    // const session = await getServerSession(authOptions);
-    // console.log("🚀 ~ session:", session);
     const res = await fetch(
       `${process.env.NEXT_SERVER_URL}/api/v1/categories`,
       {
-        next: { revalidate: 30 },
-        // cache: "no-cache",
+        // next: { revalidate: 30 },
+        cache: "no-cache",
       }
     );
 

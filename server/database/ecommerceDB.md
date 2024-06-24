@@ -1,4 +1,4 @@
-## users:
+## users:(done)
 
 id,
 name,
@@ -109,7 +109,7 @@ user_id
 createdAt
 updatedAt
 
-## categories:
+## categories:(done)
 
 id,
 name,

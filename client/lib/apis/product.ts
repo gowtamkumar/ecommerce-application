@@ -1,3 +1,4 @@
+'use server'
 export async function GetProducts() {
   try {
     // const { api } = params

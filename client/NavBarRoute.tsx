@@ -6,18 +6,14 @@ import { backupDB } from "./lib/apis/backupDB";
 
 // key as like features
 
-
-
-
 const handleBackup = async () => {
   const date = new Date();
-  const currentDate = `${date.getFullYear()}.${date.getMonth() + 1
-    }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
-
+  const currentDate = `${date.getFullYear()}.${
+    date.getMonth() + 1
+  }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
 
   try {
-
-    const response = await backupDB()
+    const response = await backupDB();
     // const response = await fetch(
     //   `http://localhost:3900/api/v1/settings/db-backup`,
     //   {
@@ -91,9 +87,9 @@ const navbarRoute = [
     route: "true",
   },
   {
-    key: "kitchen_dashboard",
+    key: "wishlists",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/kitchen-dashboard">kitchen-dashboard</Link>,
+    label: <Link href="/dashboard/wishlists">Wishlists</Link>,
     route: "true",
   },
 
@@ -134,6 +130,12 @@ const navbarRoute = [
         route: "true",
       },
     ],
+  },
+  {
+    key: "user",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/user">User</Link>,
+    route: "true",
   },
 ];
 
@@ -204,8 +206,12 @@ const webSiteNavbarItems: MenuProps["items"] = [
     children: [
       {
         label: (
-          <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-           Option 1
+          <a
+            href="https://ant.design"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Option 1
           </a>
         ),
         key: "alipay",

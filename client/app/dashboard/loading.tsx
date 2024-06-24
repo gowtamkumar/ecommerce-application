@@ -1,6 +1,7 @@
+import { Spin } from "antd";
 
 export default function Loading() {
   return (
-    <div>dashboard loading...</div>
+    <div><Spin/></div>
   )
 }
