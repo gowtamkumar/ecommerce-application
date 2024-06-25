@@ -39,38 +39,31 @@ city,
 country:string
 zip_code,
 
-## products table :
+## products :
 
 id,
 name:string,
-shipping_cost:numeric,
-tax_id: number,
-
-<!-- discount_id: number(this copun number), -->
-
 url_slug(unique),
-images:array
 single_image,
+shipping_cost:numeric,
 brand_id,
 limit_purchase_qty:number,
+tax_id: number,
+discount_id:number
 tags: ['ddd','aa']
 user_id,
 description,
 short_description,
 enable_review: boolean,
 status:['acitve/inactive'],
+
 createdAt,
 updatedAt
 
-<!-- product single and varient hole array get hobe product variant a -->
+product_varient:array come from onther table
+product_category:array come from onther table
 
 type: ['Simple Product', "Varient Product"]
-
-## product_category
-
-id,
-category_id,
-product_id
 
 ## product variants
 
@@ -78,14 +71,19 @@ id,
 regular_price:numeric,
 sale_price:numeric,
 size_id,
-size: string(this field only for single product)
-color(red, green, yellow)
+color:[red, green, yellow]
 weight(kg):numeric
+product_id
+images:array
+stock_qty:number,
 
-  <!-- stock qty thankle stock status hobe na -->
+## product_category
 
-stock_qty,
-stock_status:(In Stock/Out Stock),
+id,
+category_id,
+product_id
+
+
 
 ## size (done)
 
@@ -193,7 +191,7 @@ data: timestamp
 note:string,
 status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
 
-## tax
+## tax:(done)
 
 id,
 type: (Percentage, FixedAmount)

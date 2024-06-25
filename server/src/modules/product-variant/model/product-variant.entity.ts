@@ -4,10 +4,8 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { StackStatus } from "../enums/stock-status.enum";
 import { ProductEntity } from "../../product/model/product.entity";
 import { SizeEntity } from "../../size/model/size.entity";
 
@@ -38,24 +36,15 @@ export class ProductVariantEntity {
   @JoinColumn({ name: "size_id" })
   size!: SizeEntity;
 
-  @Column({ nullable: true })
-  sizes?: string;
+  @Column({ type: "simple-array", nullable: true })
+  color!: string[];
+
+  @Column({ type: "simple-array", nullable: true })
+  images!: string[];
 
   @Column({ nullable: true })
-  color!: string;
+  weight?: string;
 
-  @Column({ nullable: true })
-  weight?: number;
-
-  //  stock qty thankle stock status hobe na
   @Column({ name: "stock_qty", nullable: true })
   stockQty?: number;
-
-  @Column({
-    name: "stock_status",
-    type: "enum",
-    enum: StackStatus,
-    nullable: true,
-  })
-  stockStatus?: StackStatus;
 }

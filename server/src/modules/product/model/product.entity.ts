@@ -41,8 +41,8 @@ export class ProductEntity {
   @Column({ name: "url_slug", unique: true })
   urlSlug!: string;
 
-  @Column({ type: "simple-array", nullable: true })
-  images!: string[];
+  // @Column({ type: "simple-array", nullable: true })
+  // images!: string[];
 
   @Column({ name: "single_image", nullable: true })
   singleImage!: string;
