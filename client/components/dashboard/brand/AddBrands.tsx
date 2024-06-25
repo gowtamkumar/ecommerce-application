@@ -1,15 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-} from "antd";
+import React, { useEffect } from "react";
+import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -20,14 +11,9 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  GetAllCategories,
-  saveCategory,
-  updateCategory,
-} from "@/lib/apis/categories";
+import { saveBrand, updateBrand } from "@/lib/apis/brand";
 
-const AddCategory = () => {
-  const [categories, setCategories] = useState([]);
+const AddBrand = () => {
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -36,13 +22,8 @@ const AddCategory = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      const newData = { ...payload };
-      const categories = await GetAllCategories();
-      setCategories(categories.data);
-      setFormData(newData);
-    })();
-
+    const newData = { ...payload };
+    setFormData(newData);
     return () => {
       dispatch(setFormValues({}));
       form.resetFields();
@@ -55,16 +36,18 @@ const AddCategory = () => {
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
-        ? await updateCategory(newData)
-        : await saveCategory(newData);
+        ? await updateBrand(newData)
+        : await saveBrand(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
+        router.refresh();
         toast.success(
-          `Category ${newData?.id ? "Updated" : "Created"} Successfully`
+          `Brand ${newData?.id ? "Updated" : "Created"} Successfully`
         );
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
+      console.log("🚀 ~ err:", err);
       toast.error(err);
     }
   };
@@ -94,10 +77,10 @@ const AddCategory = () => {
     <Modal
       title={
         global.action.type === ActionType.UPDATE
-          ? "Update Category"
-          : "Create Category"
+          ? "Update Brand"
+          : "Create Brand"
       }
-      width={850}
+      width={550}
       zIndex={1050}
       open={
         global.action.type === ActionType.CREATE ||
@@ -118,54 +101,19 @@ const AddCategory = () => {
           <Input />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid gap-5">
           <div className="col-span-1">
-            <Form.Item
-              name="name"
-              label="name"
-              rules={[
-                {
-                  required: true,
-                  message: "name is required",
-                },
-              ]}
-            >
+            <Form.Item name="name" label="Name">
               <Input placeholder="Enter " />
             </Form.Item>
           </div>
-
           <div className="col-span-1">
-            <Form.Item name="parentId" label="parent">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Status"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {(categories || []).map((category: any) => (
-                  <Select.Option key={category.id} value={category.id}>
-                    {category.name}
-                  </Select.Option>
-                ))}
-
-                {/* <Select.Option value={false}>Inactive</Select.Option> */}
-              </Select>
+            <Form.Item name="photo" label="Photo">
+              <Input placeholder="Enter " />
             </Form.Item>
           </div>
-
           <div className="col-span-1">
             <Form.Item name="description" label="Description">
-              <Input placeholder="Enter " />
-            </Form.Item>
-          </div>
-
-          <div className="col-span-1">
-            <Form.Item name="image" label="Image">
               <Input placeholder="Enter " />
             </Form.Item>
           </div>
@@ -180,7 +128,7 @@ const AddCategory = () => {
               <Select
                 showSearch
                 allowClear
-                placeholder="Select"
+                placeholder="Select Status"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   (option?.children as any)
@@ -217,4 +165,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default AddBrand;

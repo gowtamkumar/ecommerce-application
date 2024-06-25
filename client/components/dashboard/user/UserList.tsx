@@ -20,14 +20,15 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteUser, getUsers } from "@/lib/apis/user";
+import dayjs from "dayjs";
 
 interface DataType {
   key: string;
   name: string;
-  username: number;
+  username: string;
   type: any;
   email: string;
-  birthday: string;
+  dob: string;
   phone: string;
   point: number;
   imgUrl: string;
@@ -48,11 +49,12 @@ const UserList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      dispatch(setLoading({ loading: true }));
       const res = await getUsers();
-      console.log("🚀 ~ res:", res);
       setUsers(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
-  }, [global.action]);
+  }, [dispatch, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -179,17 +181,15 @@ const UserList: React.FC = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // width: "30%",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
     },
 
     {
-      title: "username",
+      title: "Username",
       dataIndex: "username",
       key: "username",
-      // width: "30%",
-      // sorter: (a, b) => a.value.length - b.value.length,
+      sorter: (a, b) => a.username.length - b.username.length,
       ...getColumnSearchProps("username"),
     },
 
@@ -197,42 +197,38 @@ const UserList: React.FC = () => {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      // width: "30%",
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
     },
 
     {
-      title: "email",
+      title: "E-mail",
       dataIndex: "email",
       key: "email",
-      // width: "30%",
       sorter: (a, b) => a.email.length - b.email.length,
       ...getColumnSearchProps("email"),
     },
 
     {
-      title: "phone",
+      title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      // width: "30%",
-      sorter: (a, b) => a.phone.length - b.phone.length,
-      ...getColumnSearchProps("phone"),
     },
 
     {
-      title: "birthday",
-      dataIndex: "birthday",
-      key: "birthday",
-      // width: "30%",
-      sorter: (a, b) => a.birthday.length - b.birthday.length,
-      ...getColumnSearchProps("birthday"),
+      ...getColumnSearchProps("dob"),
+      title: "Date of Birth",
+      dataIndex: "dob",
+      key: "dob",
+      render: (value) => (
+        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+      ),
+      sorter: (a, b) => a.dob?.length - b.dob?.length,
     },
     {
-      title: "point",
+      title: "Point",
       dataIndex: "point",
       key: "point",
-      // width: "30%",
       // sorter: (a, b) => a.point.length - b.point.length,
       ...getColumnSearchProps("point"),
     },
@@ -240,51 +236,51 @@ const UserList: React.FC = () => {
       title: "Image",
       dataIndex: "imgUrl",
       key: "imgUrl",
-      // width: "30%",
-      // sorter: (a, b) => a.point.length - b.point.length,
-      ...getColumnSearchProps("imgUrl"),
     },
     {
+      ...getColumnSearchProps("lastLogin"),
       title: "last Login",
       dataIndex: "lastLogin",
       key: "lastLogin",
-      // width: "30%",
-      // sorter: (a, b) => a.point.length - b.point.length,
-      ...getColumnSearchProps("lastLogin"),
+      sorter: (a, b) => a.lastLogin?.length - b.lastLogin?.length,
+      render: (value) => (
+        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+      ),
     },
     {
       title: "last Logout",
       dataIndex: "lastLogout",
       key: "lastLogout",
-      // width: "30%",
-      // sorter: (a, b) => a.point.length - b.point.length,
+      sorter: (a, b) => a.lastLogout?.length - b.lastLogout?.length,
       ...getColumnSearchProps("lastLogout"),
+      render: (value) => (
+        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+      ),
     },
 
     {
       title: "IP Address",
       dataIndex: "ipAddress",
       key: "ipAddress",
-      // width: "30%",
-      sorter: (a, b) => a.ipAddress.length - b.ipAddress.length,
+      sorter: (a, b) => a.ipAddress?.length - b.ipAddress?.length,
       ...getColumnSearchProps("ipAddress"),
     },
     {
       title: "Divice IP",
       dataIndex: "diviceId",
       key: "diviceId",
-      // width: "30%",
-      sorter: (a, b) => a.diviceId.length - b.diviceId.length,
+      sorter: (a, b) => a.diviceId?.length - b.diviceId?.length,
       ...getColumnSearchProps("diviceId"),
     },
     {
+      ...getColumnSearchProps("status"),
       title: "Status",
       key: "status",
-      ...getColumnSearchProps("status"),
       sortDirections: ["descend", "ascend"],
+      sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
-        <Tag color={value.status ? "green" : "red"}>
-          {value.status ? "Active" : "Inactive"}
+        <Tag color={value.status === "Active" ? "green" : "red"}>
+          {value.status}
         </Tag>
       ),
     },
@@ -294,7 +290,6 @@ const UserList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "10%",
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -339,11 +334,8 @@ const UserList: React.FC = () => {
 
   return (
     <Table
-    scroll={{
-      x: 2000,
-      y: 400,
-    }}
-      loading={!user.length}
+      scroll={{ x: 1300, y: 500 }}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={user}
       pagination={{ pageSize: 10 }}

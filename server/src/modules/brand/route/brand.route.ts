@@ -14,7 +14,7 @@ router.route("/").get(getBrands).post(createBrand);
 router
   .route("/:id")
   .get(getBrand)
-  .put(updateBrand)
+  .patch(updateBrand)
   .delete(deleteBrand);
 
 export default router;

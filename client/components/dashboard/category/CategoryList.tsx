@@ -39,11 +39,14 @@ const CategoryList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+
     (async () => {
+      dispatch(setLoading({ loading: true }));
       const res = await GetCategories();
       setCategories(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
-  }, [global.action]);
+  }, [dispatch, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -186,7 +189,7 @@ const CategoryList: React.FC = () => {
       ...getColumnSearchProps("urlSlug"),
     },
 
-    
+
 
     {
       title: "Image",
@@ -210,12 +213,15 @@ const CategoryList: React.FC = () => {
 
     {
       title: "Status",
-      dataIndex: "status",
       key: "status",
-      // width: "15%",
-      // responsive: ['md'],
-      sorter: (a, b) => a.status.length - b.status.length,
       ...getColumnSearchProps("status"),
+      sortDirections: ["descend", "ascend"],
+      sorter: (a, b) => a.status.length - b.status.length,
+      render: (value) => (
+        <Tag color={value.status === "Active" ? "green" : "red"}>
+          {value.status}
+        </Tag>
+      ),
     },
 
     {
@@ -268,8 +274,8 @@ const CategoryList: React.FC = () => {
 
   return (
     <Table
-      // scroll={{ x: 2000, y: 500 }}
-      loading={!categories.length}
+      scroll={{ x: 1300, y: 500 }}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={categories}
       pagination={{ pageSize: 10 }}

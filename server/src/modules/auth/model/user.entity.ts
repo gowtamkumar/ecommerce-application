@@ -35,8 +35,8 @@ export class UserEntity {
   @Column({ unique: true, nullable: true })
   phone?: string;
 
-  @Column({ name: "birth_day", nullable: true })
-  birthday?: string;
+  @Column({ nullable: true })
+  dob?: string;
 
   @Column({ nullable: true })
   point?: string;

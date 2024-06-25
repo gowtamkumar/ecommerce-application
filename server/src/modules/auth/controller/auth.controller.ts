@@ -83,6 +83,7 @@ export const getUsers = asyncHandler(
         products: true,
       },
       select: {
+        id:true,
         name: true,
         username: true,
         email: true,
@@ -96,7 +97,7 @@ export const getUsers = asyncHandler(
         lastLogout: true,
         ipAddress: true,
         diviceId: true,
-        birthday: true,
+        dob: true,
         // products: true,
       },
     }); // populate is relation array data
@@ -166,6 +167,7 @@ export const login = asyncHandler(
 
     const updateData = await userRepository.merge(oldUser, {
       lastLogin: new Date(),
+      ipAddress:ip,
     });
 
     await userRepository.save(updateData);
@@ -348,9 +350,8 @@ export const updatePassword = asyncHandler(
 export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const connection = await getDBConnection();
-
     const { id } = req.params;
-
+    
     const userRepository = await connection.getRepository(UserEntity);
 
     const user = await userRepository.findOneBy({ id });

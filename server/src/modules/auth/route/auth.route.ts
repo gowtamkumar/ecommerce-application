@@ -26,7 +26,7 @@ router.route("/users").get(getUsers);
 router
   .route("/users/:id")
   .get(AuthGuard, getUser)
-  .put(AuthGuard, updateUser)
+  .patch(updateUser)
   .delete(AuthGuard, deleteUser);
 
 router.route("/logout").delete(AuthGuard, logout);

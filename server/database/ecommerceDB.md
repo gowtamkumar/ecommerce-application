@@ -7,7 +7,7 @@ password,
 email,
 type:[Customer, Vendor, Delivery Man, Admin]
 phone,
-birthday,
+dob,
 point:number
 status(Active/Inactive/Block)
 img_url,
@@ -139,7 +139,7 @@ qty,
 createdAt,
 updatedAt
 
-## brands:
+## brands:(done)
 
 id,
 name,

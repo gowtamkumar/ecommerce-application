@@ -71,10 +71,6 @@ const DiscountList: React.FC = () => {
     confirm: FilterDropdownProps["confirm"],
     dataIndex: DataIndex
   ) => {
-    // console.log(selectedKeys[0]);
-    // console.log(confirm());
-    // console.log(dataIndex);
-    
     confirm();
     dispatch(setSearchText(selectedKeys[0]));
     dispatch(setSearchedColumn(dataIndex));
@@ -207,7 +203,6 @@ const DiscountList: React.FC = () => {
       dataIndex: "startDate",
       key: "startDate",
       render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
-      // sorter: (a, b) => a.startDate - b.startDate,
     },
 
     {
@@ -302,6 +297,7 @@ const DiscountList: React.FC = () => {
 
   return (
     <Table
+      scroll={{ x: 1300, y: 500 }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={discounts}

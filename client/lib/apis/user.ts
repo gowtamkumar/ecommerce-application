@@ -25,7 +25,7 @@ export async function updateUser(data: any) {
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/auth/users/${data.id}`,
     {
-      method: "PUT",
+      method: "PATCH",
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",

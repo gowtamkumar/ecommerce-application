@@ -19,40 +19,40 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import { deleteAddress, getAddresss } from "@/lib/apis/address";
+import { deleteBrand, getBrands } from "@/lib/apis/brand";
 
 interface DataType {
   key: string;
-  addressLine1: string;
-  addressLine2: string;
-  state: string;
-  city: string;
-  country: string;
-  zipCode: string;
+  name: string;
+  photo: string;
+  description: string;
+  status: string
 }
 
 type DataIndex = keyof DataType;
 
-const AddressList: React.FC = () => {
-  const [address, setAddress] = useState([]);
+const BrandList: React.FC = () => {
+  const [brands, setBrands] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      const res = await getAddresss();
-      setAddress(res?.data);
+      dispatch(setLoading({ loading: true }));
+      const res = await getBrands();
+      setBrands(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
-  }, [global.action]);
+  }, [dispatch, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteAddress(id);
+      await deleteBrand(id);
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
-        toast.success("Address deleted successfully");
+        toast.success("Brand deleted successfully");
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
@@ -168,65 +168,30 @@ const AddressList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Address Line 1",
-      dataIndex: "addressLine1",
-      key: "addressLine1",
-      // width: "15%",
-      // responsive: ['sm'],
-      sorter: (a, b) => a.addressLine1.length - b.addressLine1.length,
-      ...getColumnSearchProps("addressLine1"),
+      title: "name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
+      ...getColumnSearchProps("name"),
     },
     {
-      title: "Address Line 2",
-      dataIndex: "addressLine2",
-      key: "addressLine2",
-      // width: "15%",
-      // responsive: ['md'],
-      sorter: (a, b) => a.addressLine2.length - b.addressLine2.length,
-      ...getColumnSearchProps("addressLine2"),
+      title: "Photo",
+      dataIndex: "photo",
+      key: "photo",
     },
 
     {
-      title: "State",
-      dataIndex: "state",
-      key: "state",
-      // width: "15%",
-      // responsive: ['md'],
-      sorter: (a, b) => a.state.length - b.state.length,
-      ...getColumnSearchProps("state"),
+      title: "Status",
+      key: "status",
+      ...getColumnSearchProps("status"),
+      sortDirections: ["descend", "ascend"],
+      sorter: (a, b) => a.status.length - b.status.length,
+      render: (value) => (
+        <Tag color={value.status === "Active" ? "green" : "red"}>
+          {value.status}
+        </Tag>
+      ),
     },
-
-    {
-      title: "City",
-      dataIndex: "city",
-      key: "city",
-      // width: "15%",
-      // responsive: ['md'],
-      sorter: (a, b) => a.city.length - b.city.length,
-      ...getColumnSearchProps("city"),
-    },
-
-    {
-      title: "Country",
-      dataIndex: "country",
-      key: "country",
-      // width: "15%",
-      // responsive: ['md'],
-      sorter: (a, b) => a.country.length - b.country.length,
-      ...getColumnSearchProps("country"),
-    },
-
-    {
-      title: "Zip Code",
-      dataIndex: "zipCode",
-      key: "zipCode",
-      // width: "15%",
-      // responsive: ['md'],
-
-      sorter: (a, b) => a.zipCode.length - b.zipCode.length,
-      ...getColumnSearchProps("zipCode"),
-    },
-
     {
       title: "Action",
       key: "action",
@@ -253,7 +218,7 @@ const AddressList: React.FC = () => {
             title={
               <span>
                 Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Address?
+                this Brand?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -278,15 +243,14 @@ const AddressList: React.FC = () => {
   return (
     <Table
       scroll={{ x: 1300, y: 500 }}
-      loading={!address.length}
+      loading={global.loading.loading}
       columns={columns}
-      dataSource={address}
+      dataSource={brands}
       pagination={{ pageSize: 10 }}
       bordered
       size="small"
-
     />
   );
 };
 
-export default AddressList;
+export default BrandList;

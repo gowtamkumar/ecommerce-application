@@ -1,15 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-} from "antd";
+import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -21,6 +12,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveUser, updateUser } from "@/lib/apis/user";
+import dayjs from "dayjs";
 
 const AddUser = () => {
   const global = useSelector(selectGlobal);
@@ -32,7 +24,7 @@ const AddUser = () => {
 
   useEffect(() => {
     const newData = { ...payload };
-    delete newData.birthday;
+    if (newData.dob) newData.dob = dayjs(newData.dob);
     setFormData(newData);
     return () => {
       dispatch(setFormValues({}));
@@ -68,16 +60,16 @@ const AddUser = () => {
 
   const setFormData = (v: any) => {
     const newData = { ...v };
-    console.log("🚀 ~ newData:", newData);
-    delete newData.birthDay;
     form.setFieldsValue(newData);
     dispatch(setFormValues(form.getFieldsValue()));
   };
 
-  const resetFormData = () => {
-    if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+  const resetFormData = (value: any) => {
+    const newData = { ...value };
+    if (newData.dob) newData.dob = dayjs(newData.dob);
+    if (newData?.id) {
+      form.setFieldsValue(newData);
+      dispatch(setFormValues(newData));
     } else {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
@@ -114,7 +106,7 @@ const AddUser = () => {
           <div className="col-span-1">
             <Form.Item
               name="name"
-              label="name"
+              label="Name"
               rules={[
                 {
                   required: true,
@@ -128,7 +120,7 @@ const AddUser = () => {
           <div className="col-span-1">
             <Form.Item
               name="username"
-              label="username"
+              label="Username"
               rules={[
                 {
                   required: true,
@@ -142,7 +134,7 @@ const AddUser = () => {
           <div className="col-span-1">
             <Form.Item
               name="password"
-              label="password"
+              label="Password"
               rules={[
                 {
                   required: true,
@@ -156,7 +148,7 @@ const AddUser = () => {
           <div className="col-span-1">
             <Form.Item
               name="email"
-              label="email"
+              label="E-mail"
               rules={[
                 {
                   required: true,
@@ -167,12 +159,12 @@ const AddUser = () => {
               <Input placeholder="Enter " />
             </Form.Item>
           </div>
-          <div className={`col-span-1 `}>
+          <div className='col-span-1'>
             <Form.Item name="type" label="Type">
               <Select
                 showSearch
                 allowClear
-                placeholder="Select Type"
+                placeholder="Select"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   (option?.children as any)
@@ -207,13 +199,17 @@ const AddUser = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="birthday" label="Birth day">
+            <Form.Item name="dob" label="Date of Brith">
               <DatePicker placeholder="Enter Birth day" />
             </Form.Item>
           </div>
 
-          <div className={`col-span-1 `}>
-            <Form.Item hidden={!payload?.id} name="status" label="Status">
+          <div className='col-span-1'>
+            <Form.Item
+              hidden={!global.action.payload?.id}
+              name="status"
+              label="Status"
+            >
               <Select
                 showSearch
                 allowClear
@@ -225,8 +221,8 @@ const AddUser = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                <Select.Option value={true}>Active</Select.Option>
-                <Select.Option value={false}>Inactive</Select.Option>
+                <Select.Option value={"Active"}>Active</Select.Option>
+                <Select.Option value={"Inactive"}>Inactive</Select.Option>
               </Select>
             </Form.Item>
           </div>
@@ -235,7 +231,7 @@ const AddUser = () => {
           <Button
             className="mx-2 capitalize"
             size="small"
-            onClick={resetFormData}
+            onClick={() => resetFormData(global.action?.payload)}
           >
             Reset
           </Button>
@@ -246,7 +242,7 @@ const AddUser = () => {
             className="capitalize"
             loading={global.loading.save}
           >
-            {payload?.id ? "Update" : "Save"}
+            {global.action.payload?.id ? "Update" : "Save"}
           </Button>
         </div>
       </Form>
