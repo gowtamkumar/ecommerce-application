@@ -81,6 +81,12 @@ const navbarRoute = [
     route: "true",
   },
   {
+    key: "taxs",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/taxs">Taxs</Link>,
+    route: "true",
+  },
+  {
     key: "orders",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/orders">Orders</Link>,

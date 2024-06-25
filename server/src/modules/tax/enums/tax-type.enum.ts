@@ -1,4 +1,4 @@
 export enum TaxTypeEnum {
   Percentage = "Percentage",
-  FixedAmount = "Fixed Amount",
+  FixedAmount = "FixedAmount",
 }

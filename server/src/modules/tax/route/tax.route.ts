@@ -11,6 +11,6 @@ const router = express.Router();
 
 router.route("/").get(getTaxs).post(createTax);
 
-router.route("/:id").get(getTax).put(updateTax).delete(deleteTax);
+router.route("/:id").get(getTax).patch(updateTax).delete(deleteTax);
 
 export default router;

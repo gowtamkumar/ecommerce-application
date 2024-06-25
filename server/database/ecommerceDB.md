@@ -198,7 +198,7 @@ status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover
 id,
 type: (Percentage, FixedAmount)
 value,
-status:boolean
+status:acitve/inactive
 
 ## reviews:
 
