@@ -1,7 +1,9 @@
+import { getAllCategories } from "@/lib/apis/categories";
 import Image from "next/image";
 import Link from "next/link";
 
-const CategoryCard = () => {
+const CategoryCard = async () => {
+  const categories = await getAllCategories()
   return (
     <>
       <section className="mb-8">
@@ -9,8 +11,8 @@ const CategoryCard = () => {
         {/* Display categories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {/* Example Category Card: */}
-          {[2, 4, 7, 8].map((item, idx) => (
-            <Link key={idx} href={`category/${idx}`}>
+          {categories?.data.map((item: any) => (
+            <Link key={item.id} href={`category/${item.id}`}>
               <div className="bg-white rounded-lg shadow-md p-4">
                 <Image
                   // placeholder="blur"
@@ -20,7 +22,7 @@ const CategoryCard = () => {
                   alt="Category Image"
                   className="w-full h-48 object-cover mb-4"
                 />
-                <h3 className="text-lg font-semibold mb-2">{item}</h3>
+                <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                   Shop Now
                 </button>

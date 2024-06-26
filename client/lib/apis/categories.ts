@@ -1,7 +1,7 @@
 // const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
 "use server";
 
-export async function GetAllCategories() {
+export async function getAllCategories() {
   try {
     // const { api } = params
     // const session = await getSession()
@@ -26,7 +26,7 @@ export async function GetAllCategories() {
   }
 }
 
-export async function GetCategories() {
+export async function getCategories() {
   try {
     const res = await fetch(
       `${process.env.NEXT_SERVER_URL}/api/v1/categories`,

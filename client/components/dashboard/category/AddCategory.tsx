@@ -21,7 +21,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  GetAllCategories,
+  getAllCategories,
   saveCategory,
   updateCategory,
 } from "@/lib/apis/categories";
@@ -38,7 +38,7 @@ const AddCategory = () => {
   useEffect(() => {
     (async () => {
       const newData = { ...payload };
-      const categories = await GetAllCategories();
+      const categories = await getAllCategories();
       setCategories(categories.data);
       setFormData(newData);
     })();

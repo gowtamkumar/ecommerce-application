@@ -19,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import { deleteCategory, GetCategories } from "@/lib/apis/categories";
+import { deleteCategory, getCategories } from "@/lib/apis/categories";
 
 interface DataType {
   key: string;
@@ -42,7 +42,7 @@ const CategoryList: React.FC = () => {
 
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await GetCategories();
+      const res = await getCategories();
       setCategories(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -274,7 +274,7 @@ const CategoryList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 1300, y: 500 }}
+      scroll={{ x: 'auto' }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={categories}

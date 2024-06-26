@@ -2,11 +2,11 @@
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header";
 import ProductCard from "@/components/website/Home/ProductCard";
-import { GetProducts } from "@/lib/apis/product";
+import { getProducts } from "@/lib/apis/product";
 import React, { Suspense } from "react";
 
 export default async function Products() {
-  const result = await GetProducts();
+  const result = await getProducts();
 
   return (
     <div className="container mx-auto">

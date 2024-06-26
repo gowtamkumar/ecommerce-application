@@ -5,17 +5,17 @@ import Header from "@/components/website/Header";
 import ProductCard from "@/components/website/Home/ProductCard";
 import React from "react";
 import Category from "@/components/website/Home/Category";
-import { GetProducts } from "@/lib/apis/product";
 import { FaAmazonPay } from "react-icons/fa";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";
 import { GiDeliveryDrone } from "react-icons/gi";
-import { GetAllCategories } from "@/lib/apis/categories";
+import { getAllCategories } from "@/lib/apis/categories";
+import { getProducts } from "@/lib/apis/product";
 
 export default async function Home() {
-  const result = await GetProducts();
+  const result = await getProducts();
 
-  const categories = await GetAllCategories();
+  const categories = await getAllCategories();
 
   return (
     <div className="container mx-auto">

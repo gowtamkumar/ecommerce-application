@@ -142,7 +142,7 @@ export default function Register() {
                   <p> {global.response?.message}</p>
                 ) : null}
               </div>
-              <Button before="Submitting...." after="Submit" />
+              <Button size="w-full" before="Submitting...." after="Submit" />
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@ import { userProfileRoute } from "@/NavBarRoute";
 import TopBar from "./TopBar";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useSelector } from "react-redux";
-import { GetAllCategories } from "@/lib/apis/categories";
+import { getAllCategories } from "@/lib/apis/categories";
 import Category from "./Home/Category";
 
 const Header = ({ categories }: any) => {

@@ -1,10 +1,10 @@
-import { GetAllCategories } from "@/lib/apis/categories";
+import { getAllCategories } from "@/lib/apis/categories";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export default async function Category() {
-  const categories = await GetAllCategories();
+  const categories = await getAllCategories();
   // console.log("🚀 ~ categories:", categories?.data)
   return (
     <section className="py-6">

@@ -1,12 +1,12 @@
-import { GetCategories } from "@/lib/apis/categories";
+import { getCategories } from "@/lib/apis/categories";
 import SidebarMenu from "./SidebarMenu";
 import { Suspense } from "react";
 
 export default async function Sidebar() {
-  const categories = await GetCategories();
+  const categories = await getCategories();
   return (
     <Suspense fallback={<div>loading...</div>}>
-      <SidebarMenu categories={categories?.data} />;
+      <SidebarMenu categories={categories} />;
     </Suspense>
   );
 }

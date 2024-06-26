@@ -32,7 +32,7 @@ import { saveProduct, updateProduct } from "@/lib/apis/product";
 import dayjs from "dayjs";
 import { getBrands } from "@/lib/apis/brand";
 import { getTaxs } from "@/lib/apis/tax";
-import { GetAllCategories } from "@/lib/apis/categories";
+import { getAllCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
 import { getDiscounts } from "@/lib/apis/discount";
 
@@ -56,7 +56,7 @@ const AddProduct = () => {
       const resBrand = await getBrands();
       const resSize = await getSizes();
       const resDiscount = await getDiscounts();
-      const resCategory = await GetAllCategories();
+      const resCategory = await getAllCategories();
       const resTax = await getTaxs();
       setSizes(resSize.data);
       setDiscounts(resDiscount.data);

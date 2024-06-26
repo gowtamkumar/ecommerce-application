@@ -34,7 +34,6 @@ export const getCategories = asyncHandler(
     const repository = connection.getTreeRepository(CategoriesEntity);
 
     const result = await repository.findTrees();
-    console.log("🚀 ~ result:", result);
 
     return res.status(200).json({
       success: true,
