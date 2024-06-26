@@ -2,11 +2,8 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Checkbox,
-  DatePicker,
   Form,
   Input,
-  InputNumber,
   Modal,
   Select,
 } from "antd";
@@ -20,8 +17,8 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { GetProducts } from "@/lib/apis/product";
 import { saveWishlist, updateWishlist } from "@/lib/apis/wishlist";
+import { getProducts } from "@/lib/apis/product";
 
 const AddWishlists = () => {
   const [products, setProducts] = useState([]);
@@ -34,16 +31,15 @@ const AddWishlists = () => {
 
   useEffect(() => {
     (async () => {
-      const products = await GetProducts();
-      console.log("🚀 ~ wishlists:", products);
+      const products = await getProducts();
       setProducts(products.data);
       const newData = { ...payload };
       setFormData(newData);
-      return () => {
-        dispatch(setFormValues({}));
-        form.resetFields();
-      };
     })();
+    return () => {
+      dispatch(setFormValues({}));
+      form.resetFields();
+    };
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
@@ -130,8 +126,8 @@ const AddWishlists = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {(products || []).map((item: any) => (
-                  <Select.Option key={item.id} value={item.id}>
+                {(products || []).map((item: any, idx) => (
+                  <Select.Option key={idx} value={item.id}>
                     {item.name}
                   </Select.Option>
                 ))}

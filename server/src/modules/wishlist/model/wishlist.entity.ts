@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ProductEntity } from "../../product/model/product.entity";
 
 @Entity("wishlists")
 export class WishListEntity {
@@ -13,9 +16,12 @@ export class WishListEntity {
   id!: number;
 
   @Column({ name: "product_id" })
-  productId!: string;
+  productId!: number;
+  @ManyToOne((_type) => ProductEntity, (product) => product.wishlists,  { onDelete: "CASCADE" })
+  @JoinColumn({ name: "product_id" })
+  product!: ProductEntity;
 
-  @Column({ name: "user_id" })
+  @Column({ name: "user_id", nullable: true })
   userId!: string;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })

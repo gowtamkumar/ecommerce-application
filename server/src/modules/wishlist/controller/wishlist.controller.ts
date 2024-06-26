@@ -12,7 +12,11 @@ export const getWishlists = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(WishListEntity);
 
-    const result = await repository.find();
+    const result = await repository.find({
+      relations: {
+        product: true,
+      },
+    });
 
     return res.status(200).json({
       success: true,

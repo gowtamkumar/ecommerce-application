@@ -39,12 +39,13 @@ city,
 country:string
 zip_code,
 
-## products :
+## products :(done)
 
 id,
 name:string,
 url_slug(unique),
 single_image,
+images:array
 shipping_cost:numeric,
 brand_id,
 limit_purchase_qty:number,
@@ -65,7 +66,7 @@ product_category:array come from onther table
 
 type: ['Simple Product', "Varient Product"]
 
-## product variants
+## product variants:(done)
 
 id,
 regular_price:numeric,
@@ -74,16 +75,14 @@ size_id,
 color:[red, green, yellow]
 weight(kg):numeric
 product_id
-images:array
+<!-- images:array -->
 stock_qty:number,
 
-## product_category
+## product_category:(done)
 
 id,
 category_id,
 product_id
-
-
 
 ## size (done)
 
@@ -120,7 +119,7 @@ status:(Active/Inactive)
 createdAt
 updatedAt
 
-## wishlists:
+## wishlists:(done)
 
 id,
 product_id,

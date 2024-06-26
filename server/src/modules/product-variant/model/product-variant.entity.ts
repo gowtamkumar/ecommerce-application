@@ -39,8 +39,8 @@ export class ProductVariantEntity {
   @Column({ type: "simple-array", nullable: true })
   color!: string[];
 
-  @Column({ type: "simple-array", nullable: true })
-  images!: string[];
+  // @Column({ type: "simple-array", nullable: true })
+  // images!: string[];
 
   @Column({ nullable: true })
   weight?: string;

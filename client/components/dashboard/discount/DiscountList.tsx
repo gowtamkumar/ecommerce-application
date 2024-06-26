@@ -297,7 +297,7 @@ const DiscountList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 1300, y: 500 }}
+      scroll={{ x: 1300 }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={discounts}

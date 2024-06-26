@@ -19,39 +19,49 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import { deleteWishlist, getWishlists } from "@/lib/apis/wishlist";
 import dayjs from "dayjs";
+import { deleteProduct, getProducts } from "@/lib/apis/product";
 
 interface DataType {
   key: string;
-  product: any;
-  user: any;
-  createdAt: string;
+  name: string;
+  type: string;
+  urlSlug: string;
+  singleImage: string;
+  shippingCost: number;
+  limitPurchaseQty: number;
+  tags: any;
+
+  description: string;
+  shortDescription: string;
+  enableReview: boolean;
+  status: string;
 }
 
 type DataIndex = keyof DataType;
 
-const WishlistsList: React.FC = () => {
-  const [wishlists, setWishLists] = useState([]);
+const ProductList: React.FC = () => {
+  const [products, setProducts] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      const res = await getWishlists();
-      console.log("🚀 ~ res:", res);
-      setWishLists(res?.data);
+      dispatch(setLoading({ loading: true }));
+      const res = await getProducts();
+      setProducts(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
-  }, [global.action]);
+  }, [dispatch, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteWishlist(id);
+      await deleteProduct(id);
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
-        toast.success("wishlist deleted successfully");
+        toast.success("Product deleted successfully");
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
@@ -167,27 +177,87 @@ const WishlistsList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Product",
-      dataIndex: "product",
-      key: "product",
-      sorter: (a, b) => a.product.length - b.product.length,
-      ...getColumnSearchProps("product"),
-      render: (value) => <span>{value.name}</span>,
+      ...getColumnSearchProps("name"),
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
     },
     {
-      ...getColumnSearchProps("user"),
-      title: "User",
-      dataIndex: "user",
-      key: "user",
-      sorter: (a, b) => a.user.length - b.user.length,
+      ...getColumnSearchProps("type"),
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      sorter: (a, b) => a.type.length - b.type.length,
+      render: (value) => <Tag color="cyan">{value}</Tag>,
+    },
+
+    {
+      ...getColumnSearchProps("urlSlug"),
+      title: "Url Slug",
+      dataIndex: "urlSlug",
+      key: "urlSlug",
+      sorter: (a, b) => a.urlSlug.length - b.urlSlug.length,
+    },
+
+    {
+      ...getColumnSearchProps("singleImage"),
+      title: "Single Image",
+      dataIndex: "singleImage",
+      key: "singleImage",
+    },
+
+    {
+      ...getColumnSearchProps("shippingCost"),
+      title: "Shipping Cost",
+      dataIndex: "shippingCost",
+      key: "shippingCost",
+      sorter: (a, b) => a.shippingCost - b.shippingCost,
     },
     {
-      ...getColumnSearchProps("createdAt"),
-      title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      sorter: (a, b) => a.createdAt.length - b.createdAt.length,
-      render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      ...getColumnSearchProps("limitPurchaseQty"),
+      title: "Limit Purchase Qty",
+      dataIndex: "limitPurchaseQty",
+      key: "limitPurchaseQty",
+      sorter: (a, b) => a.limitPurchaseQty - b.limitPurchaseQty,
+    },
+    {
+      title: "Tags",
+      dataIndex: "tags",
+      key: "tags",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Short Description",
+      dataIndex: "shortDescription",
+      key: "shortDescription",
+    },
+
+    {
+      title: "Enable Review",
+      key: "enableReview",
+      ...getColumnSearchProps("enableReview"),
+      sortDirections: ["descend", "ascend"],
+      render: (value) => (
+        <Tag color={value.enableReview ? "green" : "red"}>{value.enableReview ? "Yes" : "No"}</Tag>
+      ),
+    },
+
+    {
+      title: "Status",
+      key: "status",
+      ...getColumnSearchProps("status"),
+      sortDirections: ["descend", "ascend"],
+      sorter: (a, b) => a.status.length - b.status.length,
+      render: (value) => (
+        <Tag color={value.status === "Active" ? "green" : "red"}>
+          {value.status}
+        </Tag>
+      ),
     },
 
     {
@@ -195,7 +265,6 @@ const WishlistsList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "12%",
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -216,7 +285,7 @@ const WishlistsList: React.FC = () => {
             title={
               <span>
                 Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Wishlist?
+                this Product?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -240,10 +309,10 @@ const WishlistsList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: "auto" }}
-      loading={!wishlists.length}
+      scroll={{ x: 1300 }}
+      loading={global.loading.loading}
       columns={columns}
-      dataSource={wishlists}
+      dataSource={products}
       pagination={{ pageSize: 10 }}
       bordered
       size="small"
@@ -251,4 +320,4 @@ const WishlistsList: React.FC = () => {
   );
 };
 
-export default WishlistsList;
+export default ProductList;

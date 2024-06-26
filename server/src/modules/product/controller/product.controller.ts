@@ -129,14 +129,15 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
   }
 
   if (validation.data?.productCategories && productSave.id) {
-    const repository = connection.getRepository(ProductCategoryEntity);
-    const productCategoryItem = await repository.create(
+    const repoPCategory = connection.getRepository(ProductCategoryEntity);
+    const productCategoryItem = await repoPCategory.create(
       validation.data?.productCategories.map((item) => ({
-        ...item,
+        // ...item,
+        categoryId: item,
         productId: productSave.id,
       }))
     );
-    await repository.save(productCategoryItem);
+    await repoPCategory.save(productCategoryItem);
   }
 
   return res.status(200).json({

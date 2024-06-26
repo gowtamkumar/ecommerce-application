@@ -1,21 +1,48 @@
-'use server'
-export async function GetProducts() {
-  try {
-    // const { api } = params
-    // const session = await getSession()
+"use server";
+export async function saveProduct(data: any) {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
+    method: "POST",
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
 
-    // const session = await getServerSession(authOptions);
-    // console.log("🚀 ~ session:", session);
-    const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
-      next: { revalidate: 30 },
-    });
-    if (!res.ok) {
-      console.log("Failed to fetch data");
+export async function getProducts() {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
+    cache: "no-cache",
+  });
+  return res.json();
+}
+
+export async function updateProduct(data: any) {
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/products/${data.id}`,
+    {
+      method: "PATCH",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     }
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    // console.log("🚀 ~ error:", error);
-    console.log("Failed to fetch data");
-  }
+  );
+  return res.json();
+}
+
+export async function deleteProduct(id: string) {
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/products/${id}`,
+    {
+      method: "DELETE",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res.json();
 }

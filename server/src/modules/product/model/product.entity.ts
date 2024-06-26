@@ -17,6 +17,7 @@ import { ProductVariantEntity } from "../../product-variant/model/product-varian
 import { TaxEntity } from "../../tax/model/tax.entity";
 import { BrandEntity } from "../../brand/model/brand.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
+import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -33,7 +34,7 @@ export class ProductEntity {
   shippingCost!: string;
 
   @Column({ name: "tax_id", nullable: true })
-  taxId?: string;
+  taxId?: number;
   @ManyToOne((_type) => TaxEntity, (tax) => tax.products)
   @JoinColumn({ name: "tax_id" })
   tax?: TaxEntity;
@@ -41,20 +42,20 @@ export class ProductEntity {
   @Column({ name: "url_slug", unique: true })
   urlSlug!: string;
 
-  // @Column({ type: "simple-array", nullable: true })
-  // images!: string[];
+  @Column({ type: "simple-array", nullable: true })
+  images!: string[];
 
   @Column({ name: "single_image", nullable: true })
   singleImage!: string;
 
   @Column({ name: "brand_id", nullable: true })
-  brandId?: string;
+  brandId?: number;
   @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
   @JoinColumn({ name: "brand_id" })
   brand?: BrandEntity;
 
-  // @Column({ name: "category_id", nullable: true })
-  // categoryId?: string;
+  @Column({ name: "discount_id", nullable: true })
+  discountId?: number;
 
   @Column({ nullable: true })
   color?: string;
@@ -75,7 +76,7 @@ export class ProductEntity {
   enableReview?: boolean;
 
   @Column({ name: "user_id", nullable: true })
-  userId?: string;
+  userId?: number;
   @ManyToOne((_type) => UserEntity, (user) => user.products)
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
@@ -104,4 +105,10 @@ export class ProductEntity {
     (productCategory) => productCategory.product
   )
   productCategories!: ProductCategoryEntity[];
+
+  @OneToMany(
+    (_type) => WishListEntity,
+    (wishList) => wishList.product
+  )
+  wishlists!: WishListEntity[];
 }
