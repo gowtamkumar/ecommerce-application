@@ -243,7 +243,9 @@ const ProductList: React.FC = () => {
       ...getColumnSearchProps("enableReview"),
       sortDirections: ["descend", "ascend"],
       render: (value) => (
-        <Tag color={value.enableReview ? "green" : "red"}>{value.enableReview ? "Yes" : "No"}</Tag>
+        <Tag color={value.enableReview ? "green" : "red"}>
+          {value.enableReview ? "Yes" : "No"}
+        </Tag>
       ),
     },
 
@@ -272,14 +274,37 @@ const ProductList: React.FC = () => {
             icon={<FormOutlined />}
             title="Edit"
             className="me-1"
-            onClick={() =>
+            onClick={() => {
+              const productCategories = value?.productCategories?.map(
+                ({ categoryId }: any) => categoryId
+              );
+              const productVariants = value?.productVariants?.map(
+                ({
+                  regularPrice,
+                  salePrice,
+                  productId,
+                  sizeId,
+                  color,
+                  weight,
+                  stockQty,
+                }: any) => ({
+                  regularPrice,
+                  salePrice,
+                  productId,
+                  sizeId,
+                  color,
+                  weight,
+                  stockQty,
+                })
+              );
+
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  payload: value,
+                  payload: { ...value, productCategories, productVariants },
                 })
-              )
-            }
+              );
+            }}
           />
           <Popconfirm
             title={
@@ -309,7 +334,7 @@ const ProductList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 1300 }}
+      scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={products}

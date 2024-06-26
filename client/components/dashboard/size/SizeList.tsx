@@ -37,9 +37,12 @@ const SizeList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      dispatch(setLoading({ loading: true }));
       const res = await getSizes();
       setSize(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [global.action]);
 
   const handleDelete = async (id: string) => {
@@ -234,10 +237,12 @@ const SizeList: React.FC = () => {
 
   return (
     <Table
-      loading={!sizes.length}
+    scroll={{ x: 1300 }}
+    loading={global.loading.loading}
+
       columns={columns}
       dataSource={sizes}
-      pagination={{ pageSize: 1 }}
+      pagination={{ pageSize: 10 }}
       bordered
       size="small"
     />

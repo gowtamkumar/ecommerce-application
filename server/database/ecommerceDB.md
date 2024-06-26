@@ -75,7 +75,6 @@ size_id,
 color:[red, green, yellow]
 weight(kg):numeric
 product_id
-<!-- images:array -->
 stock_qty:number,
 
 ## product_category:(done)

@@ -10,84 +10,119 @@ import { ProductCategoryEntity } from "../../product-category/model/product-cate
 // @desc Get all Products
 // @route GET /api/v1/products
 // @access Public
-export const getProducts = asyncHandler(async (req: Request, res: Response) => {
-  const connection = await getDBConnection();
-  const productRepository = connection.getRepository(ProductEntity);
+export const getProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
+    const productRepository = connection.getRepository(ProductEntity);
 
-  const qb = productRepository.createQueryBuilder("product");
+    const qb = productRepository
+      .createQueryBuilder("product")
+      .select([
+        "product",
+        "user.id",
+        "user.name",
+        "brand.id",
+        "brand.name",
+        "reviews.id",
+        "reviews.rating",
+        "reviews.comment",
+        "tax",
+        "productVariants",
+        "productCategories",
+        "category.id",
+        "category.name",
+        "size.id",
+        "size.name",
+      ])
+      .leftJoin("product.user", "user")
+      .leftJoin("product.brand", "brand")
+      .leftJoin("product.reviews", "reviews")
+      .leftJoin("product.tax", "tax")
+      .leftJoin("product.productVariants", "productVariants")
+      .leftJoin("product.productCategories", "productCategories")
+      .leftJoin("productCategories.category", "category")
+      .leftJoin("productVariants.size", "size");
 
-  qb.select([
-    "product",
-    "user",
-    "reviews",
-    "productVariants",
-    "productCategories",
-    "category",
-    "size",
-    "tax",
-    "brand",
-  ]);
-  qb.leftJoin("product.user", "user");
-  qb.leftJoin("product.brand", "brand");
-  qb.leftJoin("product.reviews", "reviews");
-  qb.leftJoin("product.tax", "tax");
-  qb.leftJoin("product.productVariants", "productVariants");
-  qb.leftJoin("product.productCategories", "productCategories");
-  qb.leftJoin("productCategories.category", "category");
+    const results = await qb.getMany();
 
-  qb.leftJoin("productVariants.size", "size");
-  const results = await qb.getMany();
-
-  return res.status(200).json({
-    success: true,
-    msg: "Get all Products",
-    data: results,
-  });
-});
-
+    res.status(200).json({
+      success: true,
+      message: "Fetched all products successfully",
+      data: results,
+    });
+  } catch (error: any) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the products.",
+      error: error.message,
+    });
+  }
+};
 // @desc Get a single Product
 // @route GET /api/v1/products/:id
 // @access Public
 export const getProduct = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(ProductEntity);
-    const qb = repository.createQueryBuilder("product");
+    try {
+      const { id } = req.params;
+      const connection = await getDBConnection();
+      const repository = connection.getRepository(ProductEntity);
 
-    qb.select([
-      "product",
-      "user",
-      "reviews",
-      "productVariants",
-      "productCategories",
-      "category",
-      "size",
-      "tax",
-      "brand",
-    ]);
-    qb.leftJoin("product.user", "user");
-    qb.leftJoin("product.brand", "brand");
-    qb.leftJoin("product.reviews", "reviews");
-    qb.leftJoin("product.tax", "tax");
-    qb.leftJoin("product.productVariants", "productVariants");
-    qb.leftJoin("product.productCategories", "productCategories");
-    qb.leftJoin("productCategories.category", "category");
+      const qb = repository
+        .createQueryBuilder("product")
+        .select([
+          "product",
+          "user.id",
+          "user.name",
+          "brand.id",
+          "brand.name",
+          "reviews.id",
+          "reviews.rating",
+          "reviews.comment",
+          "tax",
+          "productVariants",
+          "productCategories.id",
+          "category.id",
+          "category.name",
+          "size.id",
+          "size.name",
+        ])
+        .leftJoin("product.user", "user")
+        .leftJoin("product.brand", "brand")
+        .leftJoin("product.reviews", "reviews")
+        .leftJoin("product.tax", "tax")
+        .leftJoin("product.productVariants", "productVariants")
+        .leftJoin("product.productCategories", "productCategories")
+        .leftJoin("productCategories.category", "category")
+        .leftJoin("productVariants.size", "size")
+        .where("product.id = :id", { id });
 
-    qb.leftJoin("productVariants.size", "size");
-    qb.where({ id });
+      const result = await qb.getOne();
 
-    const result = await qb.getOne();
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          message: `Resource not found with id #${id}`,
+        });
+      }
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+      return res.status(200).json({
+        success: true,
+        message: `Fetched product with id #${id}`,
+        data: result,
+      });
+    } catch (error: any) {
+      console.error("Error fetching product:", error);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while fetching the product.",
+        error: error.message,
+      });
     }
-
-    return res.status(200).json({
-      success: true,
-      msg: `Get a single Product of id ${req.params.id}`,
-      data: result,
-    });
   }
 );
 
@@ -95,56 +130,68 @@ export const getProduct = asyncHandler(
 // @route POST /api/v1/products
 // @access Public
 export const createProduct = asyncHandler(async (req: any, res: Response) => {
-  const { id } = req;
-  const connection = await getDBConnection();
-  const productRepository = connection.getRepository(ProductEntity);
+  try {
+    const connection = await getDBConnection();
+    const productRepository = connection.getRepository(ProductEntity);
 
-  const validation = productValidationSchema.safeParse(req.body);
+    // Validate request body
+    const validation = productValidationSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ message: validation.error.formErrors });
+    }
 
-  if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const { productVariants, productCategories, ...restData } = validation.data;
+
+    // Generate URL slug
+    const count = await productRepository.count();
+    const urlSlug = `SKU-${count.toString().padStart(6, "0")}`;
+
+    // Create product entity
+    const product = productRepository.create({ ...restData, urlSlug });
+
+    // Save product to database
+    const savedProduct = await productRepository.save(product);
+
+    // Prepare promises for saving product variants and categories
+    const promises = [];
+
+    if (productVariants?.length) {
+      const productVariantRepository =
+        connection.getRepository(ProductVariantEntity);
+      const productVariantEntities = productVariants.map((variant) => ({
+        ...variant,
+        productId: savedProduct.id,
+      }));
+      promises.push(productVariantRepository.save(productVariantEntities));
+    }
+
+    if (productCategories?.length) {
+      const productCategoryRepository = connection.getRepository(
+        ProductCategoryEntity
+      );
+      const productCategoryEntities = productCategories.map((categoryId) => ({
+        categoryId,
+        productId: savedProduct.id,
+      }));
+      promises.push(productCategoryRepository.save(productCategoryEntities));
+    }
+
+    // Execute all promises concurrently
+    await Promise.all(promises);
+
+    return res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      data: savedProduct,
+    });
+  } catch (error: any) {
+    console.error("Error creating product:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while creating the product.",
+      error: error.message,
     });
   }
-
-  const count = await productRepository.count();
-  const urlSlug = `SKU-${count.toString().padStart(6, "0")}`;
-  const result = await productRepository.create({
-    ...validation.data,
-    urlSlug,
-  });
-
-  result.userId = id;
-  const productSave = await productRepository.save(result);
-
-  if (validation.data?.productVariants && productSave.id) {
-    const repository = connection.getRepository(ProductVariantEntity);
-    const newProductVarientItems = await repository.create(
-      validation.data?.productVariants.map((item) => ({
-        ...item,
-        productId: productSave.id,
-      }))
-    );
-    await repository.save(newProductVarientItems);
-  }
-
-  if (validation.data?.productCategories && productSave.id) {
-    const repoPCategory = connection.getRepository(ProductCategoryEntity);
-    const productCategoryItem = await repoPCategory.create(
-      validation.data?.productCategories.map((item) => ({
-        // ...item,
-        categoryId: item,
-        productId: productSave.id,
-      }))
-    );
-    await repoPCategory.save(productCategoryItem);
-  }
-
-  return res.status(200).json({
-    success: true,
-    msg: "Create a new Product",
-    data: result,
-  });
 });
 
 // @desc Update a single Product
@@ -152,22 +199,85 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateProduct = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
+    try {
+      const { id } = req.params;
+      const { productVariants, productCategories, ...restData } = req.body;
 
-    const repository = await connection.getRepository(ProductEntity);
+      // Get DB connection
+      const connection = await getDBConnection();
+      const repository = connection.getRepository(ProductEntity);
 
-    const result = await repository.findOneBy({ id });
+      // Find the existing product
+      const product = await repository.findOneBy({ id });
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
 
-    const updateData = await repository.merge(result, req.body);
+      // Handle product variants
+      let productVariantPromise = Promise.resolve();
+      if (productVariants) {
+        productVariantPromise = (async () => {
+          const repoProductVariant =
+            connection.getRepository(ProductVariantEntity);
 
-    await repository.save(updateData);
+          const existingVariants = await repoProductVariant.find({
+            where: { productId: id },
+          });
+          await repoProductVariant.remove(existingVariants);
 
-    return res.status(200).json({
-      success: true,
-      msg: `Update a single Product of id ${req.params.id}`,
-      data: updateData,
-    });
+          const newProductVariantItems = productVariants.map((item: any) => ({
+            ...item,
+            productId: id,
+          }));
+
+          await repoProductVariant.save(newProductVariantItems);
+        })();
+      }
+
+      // Handle product categories
+      let productCategoryPromise = Promise.resolve();
+      if (productCategories) {
+        productCategoryPromise = (async () => {
+          const repoPCategory = connection.getRepository(ProductCategoryEntity);
+
+          const existingCategories = await repoPCategory.find({
+            where: { productId: id },
+          });
+          await repoPCategory.remove(existingCategories);
+
+          const productCategoryItems = productCategories.map(
+            (item: number) => ({
+              categoryId: item,
+              productId: id,
+            })
+          );
+
+          await repoPCategory.save(productCategoryItems);
+        })();
+      }
+
+      // Wait for both operations to complete
+      await Promise.all([productVariantPromise, productCategoryPromise]);
+
+      // Merge and save the updated product data
+      const updatedProduct = repository.merge(product, restData);
+      await repository.save(updatedProduct);
+
+      return res.status(200).json({
+        success: true,
+        message: `Updated product with id ${id}`,
+        data: updatedProduct,
+      });
+    } catch (error: any) {
+      console.error("Error updating product:", error);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while updating the product.",
+        error: error.message,
+      });
+    }
   }
 );
 

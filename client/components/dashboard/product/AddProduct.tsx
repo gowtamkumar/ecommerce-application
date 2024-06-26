@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
-  DatePicker,
   Divider,
   Form,
   Input,
@@ -11,6 +10,7 @@ import {
   Modal,
   Select,
   Space,
+  Tag,
   Upload,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -29,7 +29,6 @@ import {
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { saveProduct, updateProduct } from "@/lib/apis/product";
-import dayjs from "dayjs";
 import { getBrands } from "@/lib/apis/brand";
 import { getTaxs } from "@/lib/apis/tax";
 import { getAllCategories } from "@/lib/apis/categories";
@@ -42,16 +41,23 @@ const AddProduct = () => {
   const [discounts, setDiscounts] = useState([]);
   const [taxs, setTaxs] = useState([]);
   const [categories, setCategories] = useState([]);
-  const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const [array, setArray] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
+
   // hook
   const [form] = Form.useForm();
   const router = useRouter();
   const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
+  const { payload } = global.action;
 
   useEffect(() => {
     (async () => {
       const newData = { ...payload };
+      console.log("newData", newData);
+      if (newData.id) {
+        setArray(newData.tags);
+      }
       setFormData(newData);
       const resBrand = await getBrands();
       const resSize = await getSizes();
@@ -71,8 +77,9 @@ const AddProduct = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
+
     try {
-      let newData = { ...values };
+      let newData = { ...values, tags: array };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
@@ -92,6 +99,16 @@ const AddProduct = () => {
     }
   };
 
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      if (inputValue.trim() !== "") {
+        setArray([...array, inputValue]);
+        setInputValue(" ");
+        console.log("ss");
+      }
+    }
+  };
+
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
@@ -99,16 +116,12 @@ const AddProduct = () => {
 
   const setFormData = (v: any) => {
     const newData = { ...v };
-    if (newData.startDate) newData.startDate = dayjs(newData.startDate);
-    if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
     form.setFieldsValue(newData);
     dispatch(setFormValues(form.getFieldsValue()));
   };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
-    if (newData.startDate) newData.startDate = dayjs(newData.startDate);
-    if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
     if (newData?.id) {
       form.setFieldsValue(newData);
       dispatch(setFormValues(newData));
@@ -137,8 +150,8 @@ const AddProduct = () => {
       <Form
         layout="vertical"
         form={form}
-        onFinish={handleSubmit}
-        onValuesChange={(_v, values) => setFormValues(values)}
+        // onFinish={handleSubmit}
+        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -219,7 +232,6 @@ const AddProduct = () => {
               <Select
                 showSearch
                 allowClear
-               
                 placeholder="Select"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
@@ -300,26 +312,33 @@ const AddProduct = () => {
           </div>
 
           <div className={`col-span-1 `}>
-            <Form.Item name="tags" label="Tag">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select"
-                optionFilterProp="children"
-                mode="multiple"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {["tag-1", "tag-2"].map((item, idx) => (
-                  <Select.Option key={idx} value={item}>
-                    {item}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
+            <label htmlFor="tags">Tags</label>
+
+            <Input
+              type="text"
+              id="tags"
+              value={inputValue}
+              onPressEnter={handleKeyPress}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Type something and press Enter"
+            />
+            <div className="flex mt-2">
+              {array.map((item, index) => (
+                <Tag key={index}>
+                  {item}{" "}
+                  <span
+                    onClick={() =>
+                      setArray(
+                        array.filter((item: any, idex) => idex !== index)
+                      )
+                    }
+                    className="cursor-pointer"
+                  >
+                    X
+                  </span>
+                </Tag>
+              ))}
+            </div>
           </div>
 
           <div className={`col-span-1 `}>
@@ -453,6 +472,10 @@ const AddProduct = () => {
                       onClick={() => add()}
                       block
                       icon={<PlusOutlined />}
+                      disabled={
+                        global.formValues.type === "SimpleProduct" &&
+                        global.formValues.productVariants?.length === 1
+                      }
                     >
                       Add field
                     </Button>
@@ -474,7 +497,8 @@ const AddProduct = () => {
           <Button
             size="small"
             color="blue"
-            htmlType="submit"
+            onClick={() => handleSubmit(global.formValues)}
+            // htmlType="submit"
             className="capitalize"
             loading={global.loading.save}
           >
