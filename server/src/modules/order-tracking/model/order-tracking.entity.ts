@@ -22,8 +22,8 @@ export class OrderTrackingEntity {
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  @Column()
-  date!: string;
+  // @Column({ type: "timestamp with time zone" })
+  // date!: string;
 
   @Column({ nullable: true })
   note!: string;

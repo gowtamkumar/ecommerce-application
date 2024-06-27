@@ -151,6 +151,7 @@ updatedAt
 id,
 user_id,
 order_date,
+deliveryId,
 tracking_no,
 is_paid,
 order_total_amount
@@ -158,7 +159,7 @@ is_shipped,
 discount_amount,
 net_amount,
 shiping_amount,
-order_note,
+note,
 
 <!-- order_items: array -->
 
@@ -185,7 +186,6 @@ qty,
 ## order_traking
 
 order_id,
-data: timestamp
 note:string,
 status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
 

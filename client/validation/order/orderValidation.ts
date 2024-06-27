@@ -16,8 +16,8 @@ export const orderValidationSchema = z.object({
     required_error: "net Amount is Required",
   }),
   shipingAmount: z.number().optional(),
-  tax: z.number().optional(),
-  orderNote: z.string().optional(),
+  deliveryId: z.number().optional(),
+  note: z.string().optional(),
   phoneNo: z.string({
     required_error: "Phone no is Required",
   }),
@@ -29,10 +29,13 @@ export const orderValidationSchema = z.object({
 
   paymentType: z.enum(["Oneline", "Offline"]).optional(),
   status: z.enum(["Processing", "Pending", "Completed", "Failed"]).optional(),
-  orderItems: z.array(z.object({
-    totalAmount: z.string({required_error: "total Amount is required"}),
-    productId: z.string({required_error: "Product is required"}),
-    qty: z.number({required_error: "qty is required"})
-  }))
+  orderItems: z
+    .array(
+      z.object({
+        totalAmount: z.string({ required_error: "total Amount is required" }),
+        productId: z.number({ required_error: "Product is required" }),
+        qty: z.number({ required_error: "qty is required" }),
+      })
+    )
     .nonempty({ message: "can't be empty!" }),
 });

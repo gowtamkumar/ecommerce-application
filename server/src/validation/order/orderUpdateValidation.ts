@@ -17,7 +17,7 @@ export const orderUpdateValidationSchema = z.object({
   }),
   shipingAmount: z.number().optional(),
   tax: z.number().optional(),
-  orderNote: z.string().optional(),
+  note: z.string().optional(),
   phoneNo: z.string({
     required_error: "Phone no is Required",
   }),

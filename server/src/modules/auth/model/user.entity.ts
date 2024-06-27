@@ -11,6 +11,7 @@ import {
 import { ProductEntity } from "../../product/model/product.entity";
 import { TypeEnum } from "../enums";
 import { StatusEnum } from "../enums/status.enum";
+import { OrderEntity } from "../../order/model/order.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -77,9 +78,20 @@ export class UserEntity {
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;
 
+  // Relation
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
 
   @OneToMany((_type) => ProductEntity, (product) => product.user)
   products!: ProductEntity[];
+
+  @OneToMany((_type) => OrderEntity, (product) => product.user)
+  orders!: OrderEntity[];
+
+  
+
+  @OneToMany((_type) => OrderEntity, (order) => order.deliveryMan)
+  OrderDeliveries!: OrderEntity[];
+
+
 }

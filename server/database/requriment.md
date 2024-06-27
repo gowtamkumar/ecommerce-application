@@ -12,6 +12,8 @@
 10. product rating and comments ratings
 11. customer relationship managemen
 12. order and delivery managemnet
+    1. delivery man assign and add delivery charge
+    2. dashboard total delivery  
 13. discount and promotion management
 14. multiple mayment option(sslecommerce etc)
 15. Search and Filtering
@@ -21,7 +23,8 @@
 19. report
 20. website edit option
 21. event module(need to study)
-     1. all email send,
-     2. mobile sms,
-     3. notification(optional) 
+    1. all email send,
+    2. mobile sms,
+    3. notification(optional)
 
+#Todo 1. error handling, 2. error message show 3.

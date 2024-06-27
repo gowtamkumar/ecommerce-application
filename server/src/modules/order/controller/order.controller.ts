@@ -8,6 +8,8 @@ import {
 } from "../../../validation";
 import { OrderItemEntity } from "../model/order-item.entity";
 import axios from "axios";
+import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
+import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -22,6 +24,16 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
       orderItems: true,
       payments: true,
       orderTrackings: true,
+      deliveryMan: true,
+      user: true,
+    },
+    select: {
+      deliveryMan: {
+        name: true,
+      },
+      user: {
+        name: true,
+      },
     },
   });
 
@@ -79,22 +91,36 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     });
   }
 
-  const repository = connection.getRepository(OrderEntity);
-  const newOrder = repository.create(validation.data);
-  const savedOrder = await repository.save(newOrder);
+  const { orderItems, ...orderData } = validation.data;
 
-  // // insert order items data
-  if (validation.data.orderItems && savedOrder.id) {
+  const repository = connection.getRepository(OrderEntity);
+  // Generate URL slug
+  const count = (await repository.count()) + 1;
+
+  const trackingNo = `#N${count.toString().padStart(6, "0")}`;
+  const newOrder = repository.create(orderData);
+  const savedOrder = await repository.save({ ...newOrder, trackingNo });
+
+  // insert order items data
+  if (orderItems && savedOrder.id) {
     const repoOrderitems = connection.getRepository(OrderItemEntity);
     const newOrderItems = await repoOrderitems.create(
-      validation.data.orderItems.map((item) => ({
+      orderItems.map((item) => ({
         totalAmount: +item.totalAmount,
         productId: item.productId,
         qty: item.qty,
         orderId: savedOrder.id,
       }))
     );
+
     await repoOrderitems.save(newOrderItems);
+    // Order Tracking Insert
+    const repositoryOrderTracking =
+      connection.getRepository(OrderTrackingEntity);
+    const newOrderTracking = repositoryOrderTracking.create({
+      orderId: savedOrder.id,
+    });
+    await repositoryOrderTracking.save(newOrderTracking);
   }
 
   // if (savedOrder) {
@@ -172,7 +198,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const reqBodyData = {
-    orderDate: validation.data.orderDate,
+    // orderDate: validation.data.orderDate,
     isPaid: validation.data.isPaid,
     isShipped: validation.data.isShipped,
     orderTotalAmount: validation.data.orderTotalAmount,
@@ -180,7 +206,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     phoneNo: validation.data.phoneNo,
     paymentStatus: validation.data.paymentStatus,
     paymentType: validation.data.paymentType,
-    orderNote: validation.data.orderNote,
+    note: validation.data.note,
   };
 
   const updateData = await repository.merge(result, reqBodyData);

@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -13,15 +15,15 @@ import { PaymentStatus, PaymentTypeStatus } from "../enums";
 import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
+import { UserEntity } from "../../auth/model/user.entity";
 
 @Entity("orders")
 export class OrderEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Generated("increment")
-  @Column({ name: "tracking_no", unique: true })
-  trackingNo!: number;
+  @Column({ name: "tracking_no" })
+  trackingNo!: string;
 
   @Column({ name: "order_date" })
   orderDate!: string;
@@ -61,8 +63,8 @@ export class OrderEntity {
   })
   shipingAmount?: number;
 
-  @Column({ name: "order_note", nullable: true })
-  orderNote!: string;
+  @Column({ nullable: true })
+  note!: string;
 
   @Column({ name: "phone_no" })
   phoneNo!: string;
@@ -97,7 +99,28 @@ export class OrderEntity {
   status!: OrderStatus;
 
   @Column({ name: "user_id", nullable: true })
-  userId?: string;
+  userId?: number;
+  @ManyToOne(
+    (_type) => UserEntity,
+    (user) => user.orders,
+    {
+      onDelete: "SET NULL",
+    }
+  )
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
+
+  @Column({ name: "delivery_id", nullable: true })
+  deliveryId?: number;
+  @ManyToOne(
+    (_type) => UserEntity,
+    (orderDalivery) => orderDalivery.OrderDeliveries,
+    {
+      onDelete: "SET NULL",
+    }
+  )
+  @JoinColumn({ name: "delivery_id" })
+  deliveryMan!: UserEntity;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;

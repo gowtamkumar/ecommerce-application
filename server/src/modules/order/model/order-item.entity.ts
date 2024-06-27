@@ -14,14 +14,14 @@ export class OrderItemEntity {
   id!: number;
 
   @Column({ name: "order_id" })
-  orderId!: string;
+  orderId!: number;
   @ManyToOne((_type) => OrderEntity, (order) => order.orderItems, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  @Column({ name: "total_amount", type: "numeric" })
+  @Column({ name: "total_amount", type: "numeric", precision: 14, scale: 2 })
   totalAmount!: number;
 
   @Column()

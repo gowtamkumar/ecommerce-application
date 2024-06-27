@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const orderTrackingValidationSchema = z.object({
-  date: z.string({
-    required_error: "Date is required",
-  }),
+  // date: z.string({
+  //   required_error: "Date is required",
+  // }),
 
-  orderId: z.string({
+  orderId: z.number({
     required_error: "order id is required",
   }),
   note: z.string({ required_error: "Note is Required" }),
