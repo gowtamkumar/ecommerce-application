@@ -225,7 +225,6 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     const existingVariants = await repoOrderitems.find({
       where: { orderId: id },
     });
-    console.log("existingVariants", existingVariants);
     
     await repoOrderitems.remove(existingVariants);
     // new order items data
