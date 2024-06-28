@@ -2,7 +2,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Badge, Dropdown, Input, Space, Table, Button, Popconfirm } from "antd";
+import {
+  Badge,
+  Dropdown,
+  Input,
+  Space,
+  Table,
+  Button,
+  Popconfirm,
+  Tag,
+} from "antd";
 import {
   FormOutlined,
   RestOutlined,
@@ -22,6 +31,7 @@ import Highlighter from "react-highlight-words";
 import { ActionType } from "@/constants/constants";
 import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 interface DataType {
   key: React.Key;
   name: string;
@@ -189,19 +199,19 @@ const App: React.FC = () => {
   });
 
   const expandedRowRender = (value: any) => {
-    const columns: TableColumnsType<ExpandedDataType> = [
-      { title: "Date", dataIndex: "date", key: "date" },
-      { title: "Name", dataIndex: "name", key: "name" },
+    const childColumns: TableColumnsType<ExpandedDataType> = [
       {
-        title: "Status",
-        key: "state",
-        render: () => <Badge status="success" text="Finished" />,
+        title: "Product",
+        dataIndex: "product",
+        key: "product",
+        render: (v) => <span>{v.name}</span>,
       },
-      { title: "Upgrade Status", dataIndex: "upgradeNum", key: "upgradeNum" },
+      { title: "Price", dataIndex: "price", key: "price" },
+      { title: "Qty", dataIndex: "qty", key: "qty" },
+      { title: "Total Amount", dataIndex: "totalAmount", key: "totalAmount" },
       {
         title: "Action",
         key: "operation",
-
         render: () => (
           <div className="gap-2">
             <Button
@@ -250,32 +260,79 @@ const App: React.FC = () => {
 
     return (
       <Table
-        columns={columns}
+        columns={childColumns}
         size="small"
         scroll={{ x: "auto" }}
         dataSource={value.orderItems}
         pagination={false}
+        bordered
       />
     );
   };
 
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("name"),
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
+      // ...getColumnSearchProps("trackingNo"),
+      title: "Tracking No",
+      dataIndex: "trackingNo",
+      key: "trackingNo",
+      // sorter: (a, b) => a.trackingNo.length - b.trackingNo.length,
+      render: (value) => <span className="bg-green-200">{value}</span>,
     },
-    { title: "Platform", dataIndex: "platform", key: "platform" },
-    { title: "Version", dataIndex: "version", key: "version" },
-    { title: "Upgraded", dataIndex: "upgradeNum", key: "upgradeNum" },
-    { title: "Creator", dataIndex: "creator", key: "creator" },
-    { title: "Date", dataIndex: "createdAt", key: "createdAt" },
+
+    { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
+    {
+      title: "Delivery Address",
+      dataIndex: "deliveryAddress",
+      key: "deliveryAddress",
+    },
+
+    {
+      title: "Customer",
+      dataIndex: "user",
+      key: "user",
+      render: (customer) => <span>{customer.name}</span>,
+    },
+    // { title: "Delivered Man", dataIndex: "delivery", key: "user.name" },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date) => date && dayjs(date).format("DD-MM-YYYY"),
+    },
+
+    {
+      title: "Total Amount",
+      dataIndex: "orderTotalAmount",
+      key: "orderTotalAmount",
+      render: (value) => <span className="bg-green-200">{value}</span>,
+    },
+    {
+      title: "Discount",
+      dataIndex: "discountAmount",
+      key: "discountAmount",
+      render: (value) => <span className="bg-green-200">{value}</span>,
+    },
+
+    {
+      title: "Shiping Amount",
+      dataIndex: "shipingAmount",
+      key: "shipingAmount",
+      render: (value) => <span className="bg-green-200">{value}</span>,
+    },
+    {
+      title: "P. Status",
+      dataIndex: "paymentStatus",
+      key: "paymentStatus",
+    },
+    {
+      title: "Status",
+      key: "status",
+      render: (orderStatus) => <Tag>{orderStatus.status}</Tag>,
+    },
     {
       title: "Action",
       key: "operation",
-
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -318,31 +375,17 @@ const App: React.FC = () => {
     },
   ];
 
-  // const data: DataType[] = [];
-
-  // for (let i = 0; i < 3; ++i) {
-  //   data.push({
-  //     key: i.toString(),
-  //     name: "Screen",
-  //     platform: "iOS",
-  //     version: "10.3.4.5654",
-  //     upgradeNum: 500,
-  //     creator: "Jack",
-  //     createdAt: "2014-12-24 23:12:00",
-  //   });
-  // }
-
   return (
     <>
       <Table
-        scroll={{ x: "auto" }}
+        scroll={{ x: 1200 }}
         dataSource={orders}
         columns={columns}
-        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
+        expandable={{ expandedRowRender }}
         loading={global.loading.loading}
         pagination={{ pageSize: 10 }}
         bordered
-        size="small"
+        size="large"
       />
     </>
   );

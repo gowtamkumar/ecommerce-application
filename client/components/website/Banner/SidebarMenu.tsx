@@ -9,7 +9,7 @@ export default function SidebarMenu({ categories }: any) {
     setCurrent(e.key);
   };
 
-  if (!categories.data.length) {
+  if (!categories.data?.length) {
     return <Spin />;
   }
 

@@ -57,13 +57,11 @@ description,
 short_description,
 enable_review: boolean,
 status:['acitve/inactive'],
-
 createdAt,
 updatedAt
 
 product_varient:array come from onther table
 product_category:array come from onther table
-
 type: ['Simple Product', "Varient Product"]
 
 ## product variants:(done)
@@ -154,24 +152,20 @@ order_date,
 deliveryId,
 tracking_no,
 shiping_amount,
-is_paid,
+<!-- is_paid, -->
 order_total_amount
-is_shipped,
+<!-- is_shipped, -->
 discount_amount,
-net_amount,
+<!-- net_amount, -->
 note,
-
 <!-- order_items: array -->
-
 phone_no,
 email_address,
 delivery_address,
 payment_status(Paid/NotPaid/PertialPaid),
 payment_type(Online/Offline)
 payment_transaction_id,
-
-<!-- status:(Processing/Pending/Completed/Failed), -->
-
+status:(Processing/Pending/Completed/Failed),
 createdAt
 updatedAt
 
@@ -182,9 +176,10 @@ order_id,
 total_amount,
 product_id,
 price,
+tax,
 qty,
 
-## order_status
+## order_status (optional)
   id,
   status:string,
   <!-- ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"] -->

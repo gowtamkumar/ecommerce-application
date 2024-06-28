@@ -93,7 +93,6 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
   }
 
   const { orderItems, ...orderData } = validation.data;
-  console.log("validation.data", validation.data);
 
   const repository = connection.getRepository(OrderEntity);
   // Generate URL slug
@@ -111,6 +110,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
         totalAmount: +item.totalAmount,
         productId: item.productId,
         price: item.price,
+        tax: item.tax,
         qty: item.qty,
         orderId: savedOrder.id,
       }))
