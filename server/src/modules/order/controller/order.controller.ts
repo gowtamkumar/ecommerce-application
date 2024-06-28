@@ -16,25 +16,27 @@ const SSLCommerzPayment = require("sslcommerz-lts");
 // @access Public
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
-  const repository = connection.getRepository(OrderEntity);
+  const orderRepository = connection.getRepository(OrderEntity);
 
-  const results = await repository.find({
-    relations: {
-      orderItems: true,
-      payments: true,
-      orderTrackings: true,
-      deliveryMan: true,
-      user: true,
-    },
-    select: {
-      deliveryMan: {
-        name: true,
-      },
-      user: {
-        name: true,
-      },
-    },
-  });
+  const qb = orderRepository.createQueryBuilder("order");
+  qb.select([
+    "order",
+    "orderItems",
+    "product",
+    "payments",
+    "orderTrackings",
+    "deliveryMan.name",
+    "user.name",
+  ]);
+
+  qb.leftJoin("order.orderItems", "orderItems");
+  qb.leftJoin("orderItems.product", "product");
+  qb.leftJoin("order.orderTrackings", "orderTrackings");
+  qb.leftJoin("order.deliveryMan", "deliveryMan");
+  qb.leftJoin("order.user", "user");
+  qb.leftJoin("order.payments", "payments");
+
+  const results = await qb.getMany();
 
   return res.status(200).json({
     success: true,
@@ -221,11 +223,11 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
   if (orderItems && save.id) {
     const repoOrderitems = connection.getRepository(OrderItemEntity);
 
-  // remove order items
+    // remove order items
     const existingVariants = await repoOrderitems.find({
       where: { orderId: id },
     });
-    
+
     await repoOrderitems.remove(existingVariants);
     // new order items data
     const newOrderItems = await repoOrderitems.create(

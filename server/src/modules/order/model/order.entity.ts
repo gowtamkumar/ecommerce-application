@@ -100,13 +100,9 @@ export class OrderEntity {
 
   @Column({ name: "user_id", nullable: true })
   userId?: number;
-  @ManyToOne(
-    (_type) => UserEntity,
-    (user) => user.orders,
-    {
-      onDelete: "SET NULL",
-    }
-  )
+  @ManyToOne((_type) => UserEntity, (user) => user.orders, {
+    onDelete: "SET NULL",
+  })
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
 

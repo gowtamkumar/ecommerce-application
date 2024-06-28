@@ -92,12 +92,7 @@ const navbarRoute = [
     label: <Link href="/dashboard/taxs">Taxs</Link>,
     route: "true",
   },
-  {
-    key: "orders",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/orders">Orders</Link>,
-    route: "true",
-  },
+ 
   {
     key: "wishlists",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
@@ -118,35 +113,25 @@ const navbarRoute = [
     route: "true",
   },
   {
-    key: "3",
+    key: "order",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: "nav 3",
+    label: "Order Manage",
     route: "true",
     children: [
+    
       {
-        key: "01",
+        key: "neworders",
         icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: "nav 1",
+        label: <Link href="/dashboard/orders/new">New Order</Link>,
         route: "true",
       },
       {
-        key: "02",
+        key: "Order",
         icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: "nav 2",
+        label: <Link href="/dashboard/orders">Orders</Link>,
         route: "true",
       },
-      {
-        key: "03",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: "nav 1",
-        route: "true",
-      },
-      {
-        key: "04",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: "nav 2",
-        route: "true",
-      },
+      
     ],
   },
   {

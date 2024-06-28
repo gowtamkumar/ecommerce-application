@@ -54,7 +54,6 @@ const AddProduct = () => {
   useEffect(() => {
     (async () => {
       const newData = { ...payload };
-      console.log("newData", newData);
       if (newData.id) {
         setArray(newData.tags);
       }

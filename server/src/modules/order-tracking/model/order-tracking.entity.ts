@@ -18,7 +18,8 @@ export class OrderTrackingEntity {
 
   @Column({ name: "order_id", nullable: true })
   orderId!: string;
-  @ManyToOne((_type) => OrderEntity, (order) => order.orderTrackings)
+  @ManyToOne((_type) => OrderEntity, (order) => order.orderTrackings,
+  { onDelete: "CASCADE" })
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
