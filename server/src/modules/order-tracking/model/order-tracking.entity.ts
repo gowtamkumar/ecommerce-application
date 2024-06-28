@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { OrderTrackingStatusEnum } from "../enums/order-tracking-status.enum";
 import { OrderEntity } from "../../order/model/order.entity";
+import { OrderTrackingStatusEnum } from "../enums/order-tracking-status.enum";
 
 @Entity("order_trackings")
 export class OrderTrackingEntity {
@@ -26,7 +26,7 @@ export class OrderTrackingEntity {
   // date!: string;
 
   @Column({ nullable: true })
-  note!: string;
+  location!: string;
 
   @Column({
     type: "enum",

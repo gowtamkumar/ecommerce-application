@@ -4,13 +4,13 @@ export const orderValidationSchema = z.object({
   orderDate: z.string({
     required_error: "order Date is required",
   }),
-
   isPaid: z.boolean(),
   isShipped: z.boolean(),
   orderTotalAmount: z.number({
     required_error: "order total Amount is Required",
   }),
   deliveryId: z.number().optional(),
+  statusId: z.number().optional(),
   discountAmount: z.number().optional(),
   netAmount: z.number({
     required_error: "net Amount is Required",
@@ -40,7 +40,8 @@ export const orderValidationSchema = z.object({
   orderItems: z
     .array(
       z.object({
-        totalAmount: z.string({ required_error: "total Amount is required" }),
+        totalAmount: z.number({ required_error: "total Amount is required" }),
+        price: z.number({ required_error: "Price is required" }),
         productId: z.number({ required_error: "Product is required" }),
         qty: z.number({ required_error: "qty is required" }),
       })

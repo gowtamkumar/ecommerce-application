@@ -84,7 +84,7 @@ export const updateOrderTracking = asyncHandler(
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body);
+    const updateData = await repository.merge(result, req.body); // orderId update hobe na    
 
     await repository.save(updateData);
 

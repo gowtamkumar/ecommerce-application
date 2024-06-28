@@ -4,9 +4,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { OrderEntity } from "./order.entity";
+import { ProductEntity } from "../../product/model/product.entity";
 
 @Entity("order_items")
 export class OrderItemEntity {
@@ -24,9 +25,18 @@ export class OrderItemEntity {
   @Column({ name: "total_amount", type: "numeric", precision: 14, scale: 2 })
   totalAmount!: number;
 
+  @Column({ type: "numeric", precision: 10, scale: 2 })
+  price!: number;
+
   @Column()
   qty!: number;
 
   @Column({ name: "product_id" })
-  productId!: string;
+  productId!: number;
+  @ManyToOne((_type) => ProductEntity, (product) => product.orderItems, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "product_id" })
+  product!: ProductEntity;
+
 }

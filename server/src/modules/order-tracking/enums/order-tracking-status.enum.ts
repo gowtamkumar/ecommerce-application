@@ -4,8 +4,4 @@ export enum OrderTrackingStatusEnum {
   orderReadytoShip = "Order Ready to Ship",
   OrderHandoverToCourier = "Order Handover to Courier",
   OrderDelivered = "Order Delivered",
-
-  
 }
-
-status: ["", "", "", "", ""];

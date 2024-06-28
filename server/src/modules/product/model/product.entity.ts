@@ -18,6 +18,7 @@ import { TaxEntity } from "../../tax/model/tax.entity";
 import { BrandEntity } from "../../brand/model/brand.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
+import { OrderItemEntity } from "../../order/model/order-item.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -111,4 +112,11 @@ export class ProductEntity {
     (wishList) => wishList.product
   )
   wishlists!: WishListEntity[];
+  
+  @OneToMany(
+    (_type) => OrderItemEntity,
+    (items) => items.product
+  )
+  orderItems!: OrderItemEntity[];
+
 }

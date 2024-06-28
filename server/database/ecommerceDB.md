@@ -181,13 +181,22 @@ id,
 order_id,
 total_amount,
 product_id,
+price,
 qty,
+
+## order_status
+  id,
+  status:string,
+  <!-- ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"] -->
 
 ## order_traking
 
 order_id,
-note:string,
-status:["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
+location:string,
+status_id,
+createdAt
+updatedAt
+
 
 ## tax:(done)
 

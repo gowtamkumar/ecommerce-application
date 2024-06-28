@@ -9,7 +9,6 @@ import {
 import { OrderItemEntity } from "../model/order-item.entity";
 import axios from "axios";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
-import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -92,6 +91,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
   }
 
   const { orderItems, ...orderData } = validation.data;
+  console.log("validation.data", validation.data);
 
   const repository = connection.getRepository(OrderEntity);
   // Generate URL slug
@@ -108,6 +108,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
       orderItems.map((item) => ({
         totalAmount: +item.totalAmount,
         productId: item.productId,
+        price: item.price,
         qty: item.qty,
         orderId: savedOrder.id,
       }))
@@ -190,6 +191,10 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
+  const { orderItems, ...orderData } = validation.data;
+
+  console.log("validation.data", validation.data);
+
   const repository = await connection.getRepository(OrderEntity);
 
   const result = await repository.findOne({ where: { id } });
@@ -197,36 +202,42 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  const reqBodyData = {
-    // orderDate: validation.data.orderDate,
-    isPaid: validation.data.isPaid,
-    isShipped: validation.data.isShipped,
-    orderTotalAmount: validation.data.orderTotalAmount,
-    netAmount: validation.data.netAmount,
-    phoneNo: validation.data.phoneNo,
-    paymentStatus: validation.data.paymentStatus,
-    paymentType: validation.data.paymentType,
-    note: validation.data.note,
-  };
+  // const reqBodyData = {
+  //   // orderDate: validation.data.orderDate,
+  //   isPaid: validation.data.isPaid,
+  //   isShipped: validation.data.isShipped,
+  //   orderTotalAmount: validation.data.orderTotalAmount,
+  //   netAmount: validation.data.netAmount,
+  //   phoneNo: validation.data.phoneNo,
+  //   paymentStatus: validation.data.paymentStatus,
+  //   paymentType: validation.data.paymentType,
+  //   note: validation.data.note,
+  // };
 
-  const updateData = await repository.merge(result, reqBodyData);
+  const updateData = await repository.merge(result, orderData);
 
   const save = await repository.save(updateData);
 
-  if (validation.data.orderItems && save.id) {
+  if (orderItems && save.id) {
     const repoOrderitems = connection.getRepository(OrderItemEntity);
-    // remove order items
-    await repoOrderitems.remove(validation.data.orderItems);
+
+  // remove order items
+    const existingVariants = await repoOrderitems.find({
+      where: { orderId: id },
+    });
+    console.log("existingVariants", existingVariants);
+    
+    await repoOrderitems.remove(existingVariants);
     // new order items data
     const newOrderItems = await repoOrderitems.create(
-      validation.data.orderItems.map((item) => ({
+      orderItems.map((item) => ({
         totalAmount: +item.totalAmount,
         productId: item.productId,
         qty: item.qty,
+        price: item.price,
         orderId: save.id,
       }))
     );
-
     await repoOrderitems.save(newOrderItems);
   }
 
