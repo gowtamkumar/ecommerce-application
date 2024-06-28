@@ -104,6 +104,12 @@ const navbarRoute = [
     label: <Link href="/dashboard/wishlists">Wishlists</Link>,
     route: "true",
   },
+  {
+    key: "status",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/status">Status</Link>,
+    route: "true",
+  },
 
   {
     key: "report",

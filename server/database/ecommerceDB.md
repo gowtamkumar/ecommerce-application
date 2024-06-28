@@ -153,12 +153,12 @@ user_id,
 order_date,
 deliveryId,
 tracking_no,
+shiping_amount,
 is_paid,
 order_total_amount
 is_shipped,
 discount_amount,
 net_amount,
-shiping_amount,
 note,
 
 <!-- order_items: array -->
