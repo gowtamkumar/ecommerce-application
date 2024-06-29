@@ -31,9 +31,6 @@ export class OrderEntity {
   // @Column({ name: "is_paid", type: "boolean" })
   // isPaid!: boolean;
 
-  // @Column({ name: "is_shipped", type: "boolean" })
-  // isShipped!: boolean;
-
   @Column({
     name: "order_total_amount",
     type: "numeric",
@@ -51,8 +48,11 @@ export class OrderEntity {
   })
   discountAmount!: number;
 
-  // @Column({ name: "net_amount", type: "numeric", precision: 15, scale: 2 })
-  // netAmount!: number;
+  @Column({ type: "numeric", precision: 15, scale: 2 })
+  tax!: number;
+
+  @Column({ name: "net_amount", type: "numeric", precision: 15, scale: 2 })
+  netAmount!: number;
 
   @Column({
     name: "shiping_amount",

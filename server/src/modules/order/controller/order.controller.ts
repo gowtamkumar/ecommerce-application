@@ -122,6 +122,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
       connection.getRepository(OrderTrackingEntity);
     const newOrderTracking = repositoryOrderTracking.create({
       orderId: savedOrder.id,
+      location: 'অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।'
     });
     await repositoryOrderTracking.save(newOrderTracking);
   }

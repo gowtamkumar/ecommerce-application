@@ -9,6 +9,8 @@ export const orderValidationSchema = z.object({
   }),
   deliveryId: z.number().optional(),
   discountAmount: z.number().optional(),
+  netAmount: z.number().optional(),
+  tax: z.number().optional(),
   shipingAmount: z.number().optional(),
   note: z.string().optional(),
   phoneNo: z.string({

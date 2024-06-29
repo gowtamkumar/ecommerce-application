@@ -11,12 +11,15 @@ import {
   Button,
   Popconfirm,
   Tag,
+  Timeline,
+  Divider,
 } from "antd";
 import {
   FormOutlined,
   RestOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,22 +40,18 @@ interface DataType {
   name: string;
   platform: string;
   version: string;
-  upgradeNum: number;
+
+  type: string;
   creator: string;
   createdAt: string;
 }
 
 interface ExpandedDataType {
   key: React.Key;
-  date: string;
-  name: string;
-  upgradeNum: string;
+  title: string;
+  dataIndex: string;
+  render?: undefined;
 }
-
-const items = [
-  { key: "1", label: "Action 1" },
-  { key: "2", label: "Action 2" },
-];
 
 type DataIndex = keyof DataType;
 
@@ -199,74 +198,99 @@ const App: React.FC = () => {
   });
 
   const expandedRowRender = (value: any) => {
-    const childColumns: TableColumnsType<ExpandedDataType> = [
+    const childColumns: any = [
       {
         title: "Product",
         dataIndex: "product",
         key: "product",
-        render: (v) => <span>{v.name}</span>,
+        render: (v: any) => <span>{v.name}</span>,
       },
       { title: "Price", dataIndex: "price", key: "price" },
       { title: "Qty", dataIndex: "qty", key: "qty" },
-      { title: "Total Amount", dataIndex: "totalAmount", key: "totalAmount" },
       {
-        title: "Action",
-        key: "operation",
-        render: () => (
-          <div className="gap-2">
-            <Button
-              size="small"
-              icon={<FormOutlined />}
-              title="Edit"
-              className="me-1"
-              onClick={
-                () => {
-                  console.log("ddddd");
-                }
-                // dispatch(
-                //   setAction({
-                //     type: ActionType.UPDATE,
-                //     payload: value,
-                //   })
-                // )
-              }
-            />
-            <Popconfirm
-              title={
-                <span>
-                  Are you sure{" "}
-                  <span className="text-danger fw-bold">delete</span> this
-                  Discount?
-                </span>
-              }
-              onConfirm={() => handleDelete(value.id)}
-              placement="left"
-              okText="Yes"
-              okType="danger"
-              cancelText="No"
-              icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-            >
-              <Button
-                size="small"
-                danger
-                loading={global.loading?.delete}
-                icon={<RestOutlined />}
-              />
-            </Popconfirm>
-          </div>
-        ),
+        title: "Total Amount",
+        key: "totalAmount",
+        dataIndex: "totalAmount",
       },
+      ,
     ];
 
     return (
-      <Table
-        columns={childColumns}
-        size="small"
-        scroll={{ x: "auto" }}
-        dataSource={value.orderItems}
-        pagination={false}
-        bordered
-      />
+      <div className="grid grid-cols-4 p-2">
+        <div className="col-span-1 p-2">
+          <h1 className="font-bold">Order No:{value.trackingNo}</h1>
+          <Divider dashed />
+          <Timeline
+            items={(value?.orderTrackings || []).map(
+              (timeline: any, idx: number) => ({
+                // dot: <ClockCircleOutlined className="timeline-clock-icon" />,
+                // color: "red",
+                children: (
+                  <div key={idx}>
+                    <div> {timeline.status}</div>
+                    <div>
+                      {" "}
+                      {dayjs(timeline.createdAt).format("MMMM D, YYYY h:mm A")}
+                    </div>
+                    <div> {timeline.location}</div>
+                  </div>
+                ),
+              })
+            )}
+          />
+        </div>
+        <div className="col-span-3">
+          <div className="p-4 bg-white">
+            <h1 className="font-semibold">List of Order Products</h1>
+            <Table
+              columns={childColumns}
+              size="small"
+              scroll={{ x: "auto" }}
+              dataSource={value.orderItems}
+              pagination={false}
+              bordered
+            />
+          </div>
+          <div className="grid grid-cols-3 mt-5">
+            <div className="col-span-2">dasdf</div>
+            <div className="grid gap-y-3 col-span-1">
+              <div className="flex justify-between">
+                <h1>Net Amount:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.netAmount).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Shipping:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.shipingAmount || 0).toFixed(2)}
+                </h1>
+              </div>
+              <div className="flex justify-between">
+                <h1>Tax</h1>
+                <h1 className="font-semibold">
+                  ${(+value.tax || 0).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Discount:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.discountAmount || 0).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between border-t-2">
+                <h1>Total Amount:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.orderTotalAmount || 0).toFixed(2)}
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -281,44 +305,29 @@ const App: React.FC = () => {
     },
 
     { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
-    {
-      title: "Delivery Address",
-      dataIndex: "deliveryAddress",
-      key: "deliveryAddress",
-    },
 
     {
       title: "Customer",
       dataIndex: "user",
       key: "user",
-      render: (customer) => <span>{customer.name}</span>,
+      render: (customer) => <span>{customer?.name}</span>,
     },
-    // { title: "Delivered Man", dataIndex: "delivery", key: "user.name" },
+    {
+      title: "Delivery Address",
+      dataIndex: "deliveryAddress",
+      key: "deliveryAddress",
+    },
+    {
+      title: "Delivered Man",
+      dataIndex: "deliveryMan",
+      key: "deliveryMan",
+      render: (deliveryMan) => <span>{deliveryMan.name}</span>,
+    },
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (date) => date && dayjs(date).format("DD-MM-YYYY"),
-    },
-
-    {
-      title: "Total Amount",
-      dataIndex: "orderTotalAmount",
-      key: "orderTotalAmount",
-      render: (value) => <span className="bg-green-200">{value}</span>,
-    },
-    {
-      title: "Discount",
-      dataIndex: "discountAmount",
-      key: "discountAmount",
-      render: (value) => <span className="bg-green-200">{value}</span>,
-    },
-
-    {
-      title: "Shiping Amount",
-      dataIndex: "shipingAmount",
-      key: "shipingAmount",
-      render: (value) => <span className="bg-green-200">{value}</span>,
+      render: (date) => date && dayjs(date).format("DD-MM-YYYY h:mm A"),
     },
     {
       title: "P. Status",
@@ -376,7 +385,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <>
+    <div className="p-3">
       <Table
         scroll={{ x: 1200 }}
         dataSource={orders}
@@ -387,7 +396,7 @@ const App: React.FC = () => {
         bordered
         size="large"
       />
-    </>
+    </div>
   );
 };
 

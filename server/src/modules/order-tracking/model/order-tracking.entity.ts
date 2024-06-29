@@ -16,15 +16,13 @@ export class OrderTrackingEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "order_id", nullable: true })
+  @Column({ name: "order_id" })
   orderId!: string;
   @ManyToOne((_type) => OrderEntity, (order) => order.orderTrackings,
   { onDelete: "CASCADE" })
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  // @Column({ type: "timestamp with time zone" })
-  // date!: string;
 
   @Column({ nullable: true })
   location!: string;

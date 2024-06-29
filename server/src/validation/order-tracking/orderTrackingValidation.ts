@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 export const orderTrackingValidationSchema = z.object({
+  orderId: z.number({
+    required_error: "Order is required",
+  }),
+
   location: z.string().optional(),
   status: z.enum([
     "Order Placed",

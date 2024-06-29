@@ -156,7 +156,7 @@ shiping_amount,
 order_total_amount
 <!-- is_shipped, -->
 discount_amount,
-<!-- net_amount, -->
+net_amount,
 note,
 <!-- order_items: array -->
 phone_no,

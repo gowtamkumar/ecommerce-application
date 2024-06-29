@@ -5,7 +5,7 @@ export const paymentValidationSchema = z.object({
     required_error: "Date is required",
   }),
 
-  orderId: z.string({
+  orderId: z.number({
     required_error: "Order is required",
   }),
 
