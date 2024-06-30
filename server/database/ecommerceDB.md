@@ -28,15 +28,17 @@ ip_address(optional),
 divice_id(optional),
  -->
 
-## address (done)
+## shipping_address (done)
 
 id,
 user_id,
-address_line_1:string(billing/home/office),
-address_line_2:string
+name,
+phone_no,
+address:string
+country:string
 state,
 city,
-country:string
+union,
 zip_code,
 
 ## products :(done)

@@ -55,7 +55,7 @@ export class OrderEntity {
   netAmount!: number;
 
   @Column({
-    name: "shiping_amount",
+    name: "shipping_amount",
     type: "numeric",
     precision: 15,
     scale: 2,
@@ -69,8 +69,8 @@ export class OrderEntity {
   @Column({ name: "phone_no" })
   phoneNo!: string;
 
-  @Column({ name: "email_address", nullable: true })
-  emailAddress!: string;
+  @Column({  nullable: true })
+  email!: string;
 
   @Column({ name: "delivery_address", nullable: true })
   deliveryAddress!: string;

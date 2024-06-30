@@ -16,7 +16,7 @@ export const orderValidationSchema = z.object({
   phoneNo: z.string({
     required_error: "Phone no is Required",
   }),
-  emailAddress: z.string().optional(),
+  email: z.string().optional(),
   deliveryAddress: z.string({ required_error: "Delivery Address is Required" }),
   paymentStatus: z.enum(["Paid", "NotPaid", "PertialPaid"], {
     required_error: "Payment Status is required",

@@ -107,7 +107,6 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     const repoOrderitems = connection.getRepository(OrderItemEntity);
     const newOrderItems = await repoOrderitems.create(
       orderItems.map((item) => ({
-        totalAmount: +item.totalAmount,
         productId: item.productId,
         price: item.price,
         tax: item.tax,
@@ -233,7 +232,6 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     // new order items data
     const newOrderItems = await repoOrderitems.create(
       orderItems.map((item) => ({
-        totalAmount: +item.totalAmount,
         productId: item.productId,
         qty: item.qty,
         price: item.price,

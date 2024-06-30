@@ -3,8 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import {
-  Badge,
-  Dropdown,
   Input,
   Space,
   Table,
@@ -18,8 +16,7 @@ import {
   FormOutlined,
   RestOutlined,
   QuestionCircleOutlined,
-  SearchOutlined,
-  ClockCircleOutlined,
+  SearchOutlined
 } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +37,6 @@ interface DataType {
   name: string;
   platform: string;
   version: string;
-
   type: string;
   creator: string;
   createdAt: string;
@@ -208,12 +204,14 @@ const App: React.FC = () => {
       { title: "Price", dataIndex: "price", key: "price" },
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
-        title: "Total Amount",
-        key: "totalAmount",
-        dataIndex: "totalAmount",
+        title: "Tax",
+        key: "tax",
+        dataIndex: "tax",
       },
       ,
     ];
+
+    console.log("value", value);
 
     return (
       <div className="grid grid-cols-4 p-2">
@@ -284,7 +282,10 @@ const App: React.FC = () => {
               <div className="flex justify-between border-t-2">
                 <h1>Total Amount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.orderTotalAmount || 0).toFixed(2)}
+                  ${" "}
+                  {(
+                    +value.orderTotalAmount + +value.shippingAmount || 0
+                  ).toFixed(2)}
                 </h1>
               </div>
             </div>
@@ -321,7 +322,7 @@ const App: React.FC = () => {
       title: "Delivered Man",
       dataIndex: "deliveryMan",
       key: "deliveryMan",
-      render: (deliveryMan) => <span>{deliveryMan.name}</span>,
+      render: (deliveryMan) => <span>{deliveryMan?.name}</span>,
     },
     {
       title: "Date",

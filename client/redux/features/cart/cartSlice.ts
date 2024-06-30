@@ -17,13 +17,22 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addCart: (state, action: PayloadAction<any>): any => {
+      const { tax, id } = action.payload;
+      
       const existingProductIndex = state.carts.findIndex(
         (item: any) => item.id === action.payload.id
       );
       if (existingProductIndex !== -1) {
         state.carts[existingProductIndex].qty++;
       } else {
-        state.carts.push({ ...action.payload, qty: 1 });
+        state.carts.push({
+          ...action.payload,
+          tax: tax.value,
+          taxType: tax.type,
+          price: 300,
+          productId: +id,
+          qty: 1,
+        });
       }
     },
 
