@@ -8,7 +8,7 @@ export const orderUpdateValidationSchema = z.object({
     required_error: "order total Amount is Required",
   }),
   discountAmount: z.number().optional(),
-  shipingAmount: z.number().optional(),
+  shippingAmount: z.number().optional(),
   tax: z.number().optional(),
   netAmount: z.number().optional(),
   note: z.string().optional(),
@@ -26,7 +26,7 @@ export const orderUpdateValidationSchema = z.object({
   orderItems: z
     .array(
       z.object({
-        totalAmount: z.number({ required_error: "total Amount is required" }),
+        // totalAmount: z.number({ required_error: "total Amount is required" }),
         price: z.number({ required_error: "Price is required" }),
         tax: z.number().optional(),
         productId: z.number({ required_error: "Product is required" }),

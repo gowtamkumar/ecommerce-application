@@ -18,17 +18,31 @@ import { CiCirclePlus, CiCircleMinus, CiSquareRemove } from "react-icons/ci";
 export default function CheckoutPage() {
   const cart = useSelector(selectCart);
 
-  const subTotal = cart.carts.reduce((pre: any, curr: any) => {
-    return pre + +curr.price * +curr.qty;
-  }, 0);
+  console.log("🚀 ~ cart:", cart.carts);
 
-  const shipping = 20;
-  const tax = 20;
+  const { netAmount, tax, orderTotalAmount, shippingAmount } =
+    cart.carts.reduce(
+      (pre: any, curr: any) => {
+        let sutotal =
+          pre.netAmount + +curr.productVariants[0]?.salePrice * +curr.qty;
+        let taxAmount =
+          curr.tax.type === "FixedAmount"
+            ? curr.tax.value || 0
+            : (+sutotal * (+curr.tax.value || 0)) / 100;
+
+        return {
+          netAmount: sutotal,
+          tax: +pre.tax + +taxAmount,
+          shippingAmount: +pre.shippingAmount + +curr.shippingCost,
+          orderTotalAmount: sutotal + +pre.tax + +taxAmount,
+        };
+      },
+      { netAmount: 0, tax: 0, orderTotalAmount: 0, shippingAmount: 0 }
+    );
 
   const dispatch = useDispatch();
   // State for form inputs
   const checkoutAction = async (prevState: any, formData: FormData) => {
-    
     const validatedFields = checkoutValidationSchema.safeParse({
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
@@ -308,26 +322,26 @@ export default function CheckoutPage() {
                 <div className="flex justify-between">
                   <span className="font-semibold">Subtotal:</span>
                   <span className="font-semibold">
-                    $ {(subTotal || 0).toFixed(2)}
+                    $ {(netAmount || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-semibold">Shipping:</span>
                   <span className="font-semibold">
-                    $ {(20 || 0).toFixed(2)}
+                    $ {(shippingAmount || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-semibold">Tax:</span>
                   <span className="font-semibold">
-                    $ {(20 || 0).toFixed(2)}
+                    $ {(tax || 0).toFixed(2)}
                   </span>
                 </div>
 
                 <div className="flex justify-between border-t-2">
                   <span className="font-semibold">Total:</span>
                   <span className="font-semibold">
-                    $ {(subTotal + shipping + tax || 0).toFixed(2)}
+                    $ {(orderTotalAmount + shippingAmount || 0).toFixed(2)}
                   </span>
                 </div>
               </div>

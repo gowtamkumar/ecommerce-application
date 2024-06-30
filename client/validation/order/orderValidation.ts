@@ -13,7 +13,7 @@ export const orderValidationSchema = z.object({
   netAmount: z.number({
     required_error: "net Amount is Required",
   }),
-  shipingAmount: z.number().optional(),
+  shippingAmount: z.number().optional(),
   deliveryId: z.number().optional(),
   note: z.string().optional(),
   phoneNo: z.string({

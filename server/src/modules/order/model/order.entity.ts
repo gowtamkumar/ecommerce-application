@@ -61,7 +61,7 @@ export class OrderEntity {
     scale: 2,
     nullable: true,
   })
-  shipingAmount?: number;
+  shippingAmount?: number;
 
   @Column({ nullable: true })
   note!: string;

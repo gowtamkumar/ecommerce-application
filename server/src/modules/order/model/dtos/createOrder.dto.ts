@@ -14,7 +14,7 @@ export interface CreateOrderDto {
 
   netAmount: number;
 
-  shipingAmount?: number;
+  shippingAmount?: number;
 
   tax?: number;
 

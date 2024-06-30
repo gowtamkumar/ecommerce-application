@@ -13,7 +13,7 @@ export interface UpdateOrderDto {
 
   netAmount: number;
 
-  shipingAmount?: number;
+  shippingAmount?: number;
 
   tax?: number;
 

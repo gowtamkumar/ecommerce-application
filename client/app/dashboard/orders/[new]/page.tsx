@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
+  DatePicker,
   Divider,
   Form,
   Input,
@@ -28,18 +29,19 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { saveProduct, updateProduct } from "@/lib/apis/product";
-import { getBrands } from "@/lib/apis/brand";
+import { getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
+
 import { getTaxs } from "@/lib/apis/tax";
 import { getAllCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
-import { getDiscounts } from "@/lib/apis/discount";
+
 import { getUsers } from "@/lib/apis/user";
 
+
 const AddOrder = () => {
-  const [delivery, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [sizes, setSizes] = useState([]);
-  const [discounts, setDiscounts] = useState([]);
   const [taxs, setTaxs] = useState([]);
   const [categories, setCategories] = useState([]);
   const [array, setArray] = useState<string[]>([]);
@@ -60,20 +62,19 @@ const AddOrder = () => {
       if (newData.id) {
         setArray(newData.tags);
       }
-
       setFormData(newData);
 
       const users = await getUsers();
-      setUser(users.data);
+      setUsers(users.data);
 
       const resSize = await getSizes();
-      const resDiscount = await getDiscounts();
+      const resProducts = await getProducts();
       const resCategory = await getAllCategories();
       const resTax = await getTaxs();
       setSizes(resSize.data);
-      setDiscounts(resDiscount.data);
+      setProducts(resProducts.data);
       setCategories(resCategory.data);
-    
+
       setTaxs(resTax.data);
 
       if (params.new === "new") {
@@ -91,7 +92,8 @@ const AddOrder = () => {
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values, tags: array };
-      // return console.log("newData:", newData);
+
+      return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updateProduct(newData)
@@ -142,58 +144,165 @@ const AddOrder = () => {
     }
   };
 
+  const handleProductSelect = (value: any) => {
+    if (!value) return
+    const newData = { ...global.formValues, orderItems: [...global.formValues.orderItems] }
+
+    const product = (products || []).find(
+      (item: {id: number, price: string,}) => item.id === value
+    )
+    
+    console.log("product", product);
+    
+    if (!product) return
+
+    // const itemInCart = (global.formValues.orderItems || []).find((item: any) => item.productId === product.id)
+
+    // if (itemInCart) {
+    //   newData.orderItems = newData.orderItems.map((item: any) =>
+    //     item.productId === itemInCart.productId ? { ...item, quantity: item.quantity + 1 } : item,
+    //   )
+    // } else {
+    //   const orderItem = {
+    //     quantity: 1,
+    //     productId: 12,
+    //     product,
+    //     price: product.price || 0,
+    //     itemBarcode: product.itemBarcode,
+    //     taxId: product.taxId,
+    //     // productTax: product.tax ? ((product.salePrice || 0) * (product.tax.rate || 0)) / 100 : 0,
+    //     // discountId: product.discountId,
+    //     // productDiscount: product.discount
+    //     //   ? product.discount.type === 'Fixed'
+    //     //     ? product.discount.rate
+    //     //     : (product.salePrice * product.discount.rate) / 100
+    //     //   : 0,
+    //   } as any
+
+    //   orderItem.subTotal = orderItem.price + orderItem.productTax - orderItem.productDiscount
+    //   newData.orderItems = [...(newData.orderItems || []), orderItem]
+    // }
+    // newData.productId = null
+    // newData.itemBarcode = null
+    // setFormData(newData)
+  }
+
   return (
-    <Form
-      layout="vertical"
-      form={form}
-      // onFinish={handleSubmit}
-      onValuesChange={(_v, values) => dispatch(setFormValues(values))}
-      autoComplete="off"
-      scrollToFirstError={true}
-      initialValues={{ orderItems: [{}]}}
-    >
-      <Form.Item name="id" hidden>
-        <Input />
-      </Form.Item>
+    <div className="container mx-auto p-3">
+      <h2 className="mb-5">Create New Order</h2>
+      <Form
+        layout="vertical"
+        form={form}
+        // onFinish={handleSubmit}
+        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
+        autoComplete="off"
+        scrollToFirstError={true}
+        initialValues={{ orderItems: [{}] }}
+      >
+        <Form.Item name="id" hidden>
+          <Input />
+        </Form.Item>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="col-span-1">
-          <Form.Item name="paymentType" label="Payment Type" className="p-0">
-            <Select allowClear placeholder="Select Type">
-              <Select.Option value="Online">Online</Select.Option>
-              <Select.Option value="Offline">Offline</Select.Option>
-            </Select>
-          </Form.Item>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="col-span-1">
+            <Form.Item
+              name="orderDate"
+              label="Order Date"
+              rules={[
+                {
+                  required: true,
+                  message: "Order Date is required",
+                },
+              ]}
+            >
+              <DatePicker placeholder="Enter Order Date" />
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item name="paymentType" label="Payment Type" className="p-0">
+              <Select allowClear placeholder="Select Type">
+                <Select.Option value="Online">Online</Select.Option>
+                <Select.Option value="Offline">Offline</Select.Option>
+              </Select>
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item
+              name="paymentStatus"
+              label="Payment Status"
+              className="p-0"
+            >
+              <Select allowClear placeholder="Select">
+                <Select.Option value="Paid">Paid</Select.Option>
+                <Select.Option value="NotPaid">Not Paid</Select.Option>
+                <Select.Option value="PertialPaid">Pertial Paid</Select.Option>
+              </Select>
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item
+              name="phoneNo"
+              label="Phone No"
+              rules={[
+                {
+                  required: true,
+                  message: "Phone No is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter name" />
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item
+              name="email"
+              label="E-Mail"
+              rules={[
+                {
+                  required: true,
+                  message: "E-Mail is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter" />
+            </Form.Item>
+          </div>
+          <div className="col-span-1">
+            <Form.Item
+              name="deliveryAddress"
+              label="Full Address"
+              rules={[
+                {
+                  required: true,
+                  message: "Full Address is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter name" />
+            </Form.Item>
+          </div>
         </div>
 
-        <div className="col-span-1">
-          <Form.Item
-            name="paymentStatus"
-            label="Payment Status"
-            className="p-0"
-          >
-            <Select allowClear placeholder="Select">
-              <Select.Option value="Paid">Paid</Select.Option>
-              <Select.Option value="NotPaid">Not Paid</Select.Option>
-              <Select.Option value="PertialPaid">Pertial Paid</Select.Option>
-            </Select>
-          </Form.Item>
-        </div>
-
-        <div className="col-span-1">
-          <Form.Item name="deliveryId" label="Delivery Man" className="p-0">
+        <div>
+          <Form.Item label="Product">
             <Select
               showSearch
               allowClear
               placeholder="Select"
+              value={null}
               optionFilterProp="children"
+              onChange={handleProductSelect}
               filterOption={(input, option) =>
                 (option?.children as any)
                   .toLowerCase()
                   .indexOf(input.toLowerCase()) >= 0
               }
             >
-              {delivery.map((item: any, idx) => (
+              {products.map((item: any, idx) => (
                 <Select.Option key={idx} value={item.id}>
                   {item.name}
                 </Select.Option>
@@ -201,181 +310,144 @@ const AddOrder = () => {
             </Select>
           </Form.Item>
         </div>
-
-      
-
-
-        <div className="col-span-1">
-          <Form.Item
-            name="phoneNo"
-            label="Phone No"
-            rules={[
-              {
-                required: true,
-                message: "Phone No is required",
-              },
-            ]}
-          >
-            <Input placeholder="Enter name" />
-          </Form.Item>
-        </div>
-
-        <div className="col-span-1">
-          <Form.Item
-            name="email"
-            label="E-Mail"
-            rules={[
-              {
-                required: true,
-                message: "E-Mail is required",
-              },
-            ]}
-          >
-            <Input placeholder="Enter" />
-          </Form.Item>
-        </div>
-        
-
-      </div>
-
-        <div className="col-span-1">
-          <Form.Item  label="Product">
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children as any)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {categories.map((item: any, idx) => (
-                <Select.Option key={idx} value={item.id}>
-                  {item.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </div>
-        <div className="col-span-1 bg-slate-400">
+        <div className="bg-slate-500">
           <Divider orientation="center">Order Items</Divider>
-          <Form.List name="orderItems">
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="baseline"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "regularPrice"]}
-                      rules={[{ required: true, message: "Regular Price" }]}
-                    >
-                      <InputNumber placeholder="Enter Regular Price" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "salePrice"]}
-                      rules={[{ required: true, message: "sale price" }]}
-                    >
-                      <InputNumber placeholder="Enter sale price" />
-                    </Form.Item>
+          <table width={"100%"}>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Tax</th>
+                <th>Sub Total</th>
+              </tr>
+            </thead>
 
-                    <Form.Item
-                      {...restField}
-                      name={[name, "sizeId"]}
-                      rules={[{ required: true, message: "Size Is Required" }]}
-                    >
-                      <Select allowClear showSearch placeholder="Select">
-                        {(sizes || []).map((item: any, index) => (
-                          <Select.Option key={index} value={item.id}>
-                            {`${item.id} ${item.name}`}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                    {/*#Todo need to dynamic color */}
-                    <Form.Item
-                      {...restField}
-                      name={[name, "color"]}
-                      rules={[{ required: true, message: "color Is Required" }]}
-                    >
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Select"
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                          (option?.children as any)
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                      >
-                        {["Red", "Green"].map((item: any, idx) => (
-                          <Select.Option key={idx} value={item}>
-                            {item}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                    <Form.Item {...restField} name={[name, "weight"]}>
-                      <Input placeholder="Enter weight" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "stockQty"]}
-                      rules={[{ required: true, message: "Stock Qty" }]}
-                    >
-                      <InputNumber placeholder="Enter" />
-                    </Form.Item>
+            <Form.List name="orderItems">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <tbody key={key}>
+                      <tr>
+                        <td>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "regularPrice"]}
+                            rules={[
+                              { required: true, message: "Regular Price" },
+                            ]}
+                          >
+                            <InputNumber placeholder="Enter Regular Price" />
+                          </Form.Item>
+                        </td>
+                        <td>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "salePrice"]}
+                            rules={[{ required: true, message: "sale price" }]}
+                          >
+                            <InputNumber placeholder="Enter sale price" />
+                          </Form.Item>
+                        </td>
+                        <td>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "sizeId"]}
+                            rules={[
+                              { required: true, message: "Size Is Required" },
+                            ]}
+                          >
+                            <Select allowClear showSearch placeholder="Select">
+                              {(sizes || []).map((item: any, index) => (
+                                <Select.Option key={index} value={item.id}>
+                                  {`${item.id} ${item.name}`}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </td>
+                        <td>
+                          {" "}
+                          <Form.Item
+                            {...restField}
+                            name={[name, "color"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "color Is Required",
+                              },
+                            ]}
+                          >
+                            <Select
+                              showSearch
+                              allowClear
+                              placeholder="Select"
+                              optionFilterProp="children"
+                              filterOption={(input, option) =>
+                                (option?.children as any)
+                                  .toLowerCase()
+                                  .indexOf(input.toLowerCase()) >= 0
+                              }
+                            >
+                              {["Red", "Green"].map((item: any, idx) => (
+                                <Select.Option key={idx} value={item}>
+                                  {item}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </td>
+                        <td>
+                          <Form.Item {...restField} name={[name, "weight"]}>
+                            <Input placeholder="Enter weight" />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "stockQty"]}
+                            rules={[{ required: true, message: "Stock Qty" }]}
+                          >
+                            <InputNumber placeholder="Enter" />
+                          </Form.Item>
+                        </td>
+                        <MinusCircleOutlined onClick={() => remove(name)} />
+                      </tr>
+                    </tbody>
+                  ))}
+                </>
+              )}
+            </Form.List>
 
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-                {/* <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                    disabled={
-                      global.formValues.type === "SimpleProduct" &&
-                      global.formValues.productVariants?.length === 1
-                    }
-                  >
-                    Add field
-                  </Button>
-                </Form.Item> */}
-              </>
-            )}
-          </Form.List>
+            {/* <tfoot>
+              <tr>
+                <td>Centro comercial Moctezuma</td>
+                <td>Francisco Chang</td>
+                <td>Mexico</td>
+              </tr>
+            </tfoot> */}
+          </table>
         </div>
 
-
-      <div className="col-span-1 text-end">
-        <Button
-          className="mx-2 capitalize"
-          size="small"
-          onClick={() => resetFormData(global.action?.payload)}
-        >
-          Reset
-        </Button>
-        <Button
-          size="small"
-          color="blue"
-          onClick={() => handleSubmit(global.formValues)}
-          // htmlType="submit"
-          className="capitalize"
-          loading={global.loading.save}
-        >
-          {payload?.id ? "Update" : "Save"}
-        </Button>
-      </div>
-    </Form>
+        <div className="col-span-1 text-end">
+          <Button
+            className="mx-2 capitalize"
+            size="small"
+            onClick={() => resetFormData(global.action?.payload)}
+          >
+            Reset
+          </Button>
+          <Button
+            size="small"
+            color="blue"
+            onClick={() => handleSubmit(global.formValues)}
+            // htmlType="submit"
+            className="capitalize"
+            loading={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 };
 
