@@ -6,7 +6,7 @@ export default function HeaderSearch({ categories }: any) {
   const { Search } = Input;
 
   const selectBefore = (
-    <Select defaultValue="Select One">
+    <Select defaultValue="Select Category">
       {(categories.data || []).map((categoroy: any) => (
         <Option key={categoroy.id} value={categoroy.id}>
           {categoroy.name}

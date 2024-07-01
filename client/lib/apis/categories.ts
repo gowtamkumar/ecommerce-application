@@ -1,6 +1,5 @@
 // const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
 "use server";
-
 export async function getAllCategories() {
   try {
     // const { api } = params

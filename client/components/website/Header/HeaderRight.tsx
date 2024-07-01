@@ -1,33 +1,25 @@
-'use client'
-import { userProfileRoute } from '@/NavBarRoute'
-import { selectCart } from '@/redux/features/cart/cartSlice'
-import { Avatar, Badge, Dropdown } from 'antd'
-import { useSession } from 'next-auth/react'
-import Link from 'next/link'
-import React from 'react'
-import { FaRegUser, FaShoppingCart } from 'react-icons/fa'
-import { FcLike } from 'react-icons/fc'
-import { useSelector } from 'react-redux'
+"use client";
+import { userProfileRoute } from "@/NavBarRoute";
+import { selectCart } from "@/redux/features/cart/cartSlice";
+import { Avatar, Badge, Dropdown } from "antd";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import React from "react";
+import { FaRegUser, FaShoppingCart } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export default function HeaderRight() {
   const cart = useSelector(selectCart);
   const session = useSession();
   return (
     <div className="w-2/12 flex justify-between items-center">
-      <div className="ml-3 flex ">
+       <div className="ml-3 flex ">
         <Link href="/checkout" className="mx-2">
-          {/* <FaShoppingCart size={20}  title="dd" /> */}
           <Badge size="default" count={cart.carts.length}>
-            {/* <Avatar shape="square" size="large" /> */}
-
-            <FaShoppingCart size={20} title="dd" />
+            <FaShoppingCart size={25} title="dd" />
           </Badge>
         </Link>
       </div>
-      <Link href="/wishlist" className="mx-2">
-        <FcLike size={20} color="black" />
-      </Link>
-
       {session.status === "authenticated" ? (
         <Dropdown
           menu={{ items: userProfileRoute as any }}
@@ -45,15 +37,16 @@ export default function HeaderRight() {
           <div className="flex items-center justify-between">
             <FaRegUser />{" "}
             <Link className="mx-2" href="/login">
-              Login
+              <span className="text-sm">Login</span>
             </Link>{" "}
             |{" "}
             <Link className="mx-2" href="/register">
-              Sign up
+              <span className="text-sm">Sign up</span>
             </Link>
           </div>
         </div>
       )}
+     
     </div>
-  )
+  );
 }

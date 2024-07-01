@@ -19,14 +19,12 @@ export default function SidebarMenu({ categories }: any) {
         onClick={onClick}
         selectedKeys={[current]}
         mode="vertical"
-        // items={webSiteNavbarItems}
         items={categories.data?.map((item: any, idx: number) => ({
           key: idx,
           label: item.name,
           children:
             item.children.length &&
             item.children.map((childrenItem: any, idx: number) => ({
-              // ...childrenItem,
               type: "group",
               label: (
                 <a

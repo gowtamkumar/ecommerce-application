@@ -25,11 +25,11 @@ export default async function RootLayout({
     <html lang="en">
        {/* className={`${inter.className} bg-white`} */}
       <body suppressHydrationWarning={true}>
-        <AntdRegistry>
+        {/* <AntdRegistry> */}
           <AuthProvider session={session}>
             <StoreProvider>{children}</StoreProvider>
           </AuthProvider>
-        </AntdRegistry>
+        {/* </AntdRegistry> */}
       </body>
     </html>
   );
