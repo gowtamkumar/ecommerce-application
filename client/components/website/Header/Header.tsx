@@ -1,0 +1,23 @@
+import TopBar from "./TopBar";
+import HeaderLogo from "./HeaderLogo";
+import HeaderRight from "./HeaderRight";
+import HeaderSearch from "./HeaderSearch";
+import { getAllCategories } from "@/lib/apis/categories";
+
+const Header = async () => {
+  const categories = await getAllCategories();
+  return (
+    <div className="bg-rose-400">
+      <div className="lg:w-8/12 mx-auto">
+        <TopBar />
+        <div className="flex items-center py-4 sticky">
+          <HeaderLogo />
+          <HeaderSearch categories={categories} />
+          <HeaderRight />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Header;

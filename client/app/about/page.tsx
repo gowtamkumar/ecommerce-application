@@ -1,5 +1,5 @@
 import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/Header";
+import Header from "@/components/website/Header/Header";
 
 export default function About() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 import Button from "@/components/dashboard/Button";
 import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/Header";
+import Header from "@/components/website/Header/Header";
 import { register } from "@/lib/apis/register";
 import { UserValidationSchema } from "@/validation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";

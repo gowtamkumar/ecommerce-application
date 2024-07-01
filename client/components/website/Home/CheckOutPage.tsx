@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import Link from "next/link";
-import Header from "../Header";
 import { useFormState } from "react-dom";
 import WebFooter from "../Footer";
 import Image from "next/image";
@@ -91,8 +90,7 @@ export default function CheckoutPage() {
   const [state, fromAction] = useFormState(checkoutAction, null);
 
   return (
-    <div className="container mx-auto">
-      <Header />
+    <>
       {/* <div className="bg-gray-100 min-h-screen">
         <div className="p-4 md:p-8 grid grid-cols-3 gap-4">
           <div className=" col-span-2 bg-white shadow-md rounded-md overflow-hidden">
@@ -437,6 +435,6 @@ export default function CheckoutPage() {
         </div>
       </div>
       <WebFooter />
-    </div>
+    </>
   );
 }

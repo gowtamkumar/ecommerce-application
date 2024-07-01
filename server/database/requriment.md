@@ -1,5 +1,7 @@
 <!-- important feature:  -->
 
+note: delivery change depend for location
+
 1. user and auth management
 2. login opt system
 3. email/sms marketing

@@ -1,11 +1,13 @@
-'use client'
-import { useParams } from 'next/navigation'
-import React from 'react'
-
-export default function Product() {
-  const param = useParams()
-  console.log("🚀 ~ param:", param)
+import Header from "@/components/website/Header/Header";
+import SingleProduct from "@/components/website/Product/SingleProduct";
+export default async function Product() {
   return (
-    <div> Single Product</div>
-  )
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-100">
+        <SingleProduct />
+      </div>
+    </>
+
+  );
 }
