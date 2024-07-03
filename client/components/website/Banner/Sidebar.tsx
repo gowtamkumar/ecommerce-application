@@ -6,7 +6,7 @@ export default async function Sidebar() {
   const categories = await getCategories();  
   return (
     <Suspense fallback={<div>loading...</div>}>
-      <SidebarMenu categories={categories} />;
+      <SidebarMenu categories={categories} />
     </Suspense>
   );
 }

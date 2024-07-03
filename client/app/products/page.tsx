@@ -1,25 +1,30 @@
+import CategoryHeader from "@/components/website/category/CategoryHeader";
+import CategorySidebar from "@/components/website/category/CategorySidebar";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header/Header";
 import ProductCard from "@/components/website/Home/ProductCard";
 import { getProducts } from "@/lib/apis/product";
-import React, { Suspense } from "react";
+import { Divider } from "antd";
+import React from "react";
 
 export default async function Products() {
   const result = await getProducts();
   return (
     <>
       <Header />
-      <div className="w-8/12 mx-auto">
-        <section className="mb-8">
-          {/* <h2 className="text-2xl font-semibold mb-4">Featured Products</h2> */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <Suspense fallback={"loading... products"}>
-              <ProductCard products={result} />
-            </Suspense>
+      <section className="lg:w-8/12 mx-auto">
+        <div className="grid grid-cols-6">
+          <div className="col-span-1">
+            <CategorySidebar />
           </div>
-        </section>
-        <WebFooter />
-      </div>
+          <div className="col-span-5">
+            <CategoryHeader />
+            <Divider />
+            <ProductCard products={result} />
+          </div>
+        </div>
+      </section>
+      <WebFooter/>
     </>
   );
 }

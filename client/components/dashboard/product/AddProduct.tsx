@@ -41,7 +41,7 @@ const AddProduct = () => {
   const [discounts, setDiscounts] = useState([]);
   const [taxs, setTaxs] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [array, setArray] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
 
   // hook
@@ -55,7 +55,7 @@ const AddProduct = () => {
     (async () => {
       const newData = { ...payload };
       if (newData.id) {
-        setArray(newData.tags);
+        setTags(newData.tags);
       }
       setFormData(newData);
       const resBrand = await getBrands();
@@ -72,13 +72,14 @@ const AddProduct = () => {
     return () => {
       dispatch(setFormValues({}));
       form.resetFields();
+      setTags([])
     };
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
 
     try {
-      let newData = { ...values, tags: array };
+      let newData = { ...values, tags };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
@@ -101,9 +102,8 @@ const AddProduct = () => {
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       if (inputValue.trim() !== "") {
-        setArray([...array, inputValue]);
+        setTags([...tags, inputValue]);
         setInputValue(" ");
-        console.log("ss");
       }
     }
   };
@@ -322,13 +322,13 @@ const AddProduct = () => {
               placeholder="Type something and press Enter"
             />
             <div className="flex mt-2">
-              {array.map((item, index) => (
+              {tags.map((item, index) => (
                 <Tag key={index}>
                   {item}{" "}
                   <span
                     onClick={() =>
-                      setArray(
-                        array.filter((item: any, idex) => idex !== index)
+                      setTags(
+                        tags.filter((item: any, idex) => idex !== index)
                       )
                     }
                     className="cursor-pointer"

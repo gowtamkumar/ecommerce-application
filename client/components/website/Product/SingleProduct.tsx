@@ -66,8 +66,8 @@ export default function SingleProduct() {
         </div>
       </div>
       <RatingProduct />
-      <RelatedProducts products={[product]} />
       <DescriptionProduct />
+      <RelatedProducts products={[product]} />
     </div>
   );
 }

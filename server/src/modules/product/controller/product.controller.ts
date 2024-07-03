@@ -136,7 +136,9 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 
     // Validate request body
     const validation = productValidationSchema.safeParse(req.body);
+    
     if (!validation.success) {
+      console.log("validation.error.formErrors", validation.error.formErrors);
       return res.status(400).json({ message: validation.error.formErrors });
     }
 

@@ -9,6 +9,7 @@ export interface globalState {
   searchText: string;
   searchedColumn: string;
   formValues: any;
+  productView:boolean
 }
 
 // Define the initial state using that type
@@ -18,7 +19,8 @@ const initialState: globalState = {
   action: {},
   searchText: "",
   searchedColumn: "",
-  formValues:{}
+  formValues:{},
+  productView:false
 };
 
 export const globalSlice = createSlice({
@@ -46,10 +48,13 @@ export const globalSlice = createSlice({
     setFormValues: (state, action: PayloadAction<any>): any => {
       state.formValues = action.payload;
     },
+    setProductView: (state, action: PayloadAction<any>): any => {
+      state.productView = action.payload;
+    },
   },
 });
 
-export const { setResponse, setLoading, setAction, setSearchText, setSearchedColumn, setFormValues } = globalSlice.actions;
+export const { setResponse, setLoading, setAction, setSearchText, setSearchedColumn, setFormValues, setProductView} = globalSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
 export const selectGlobal = (state: RootState) => state.global;
 

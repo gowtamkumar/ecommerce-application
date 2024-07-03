@@ -10,7 +10,7 @@ export default function SidebarMenu({ categories }: any) {
   };
 
   if (!categories.data?.length) {
-    return <Spin />;
+    return <Spin />
   }
 
   return (
@@ -30,7 +30,6 @@ export default function SidebarMenu({ categories }: any) {
                 <a
                   key={idx}
                   href={`category/${childrenItem.id}`}
-                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   {childrenItem.name}
@@ -40,5 +39,5 @@ export default function SidebarMenu({ categories }: any) {
         }))}
       />
     </div>
-  );
+  )
 }

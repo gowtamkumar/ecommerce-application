@@ -49,17 +49,14 @@ export default async function Home() {
         {/* Popular products */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Popular Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <ProductCard products={result} />
-          </div>
         </section>
 
         {/* Featured Products */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <ProductCard products={result} />
-          </div>
+         
         </section>
 
         {/* Categories */}
