@@ -29,4 +29,4 @@ note: delivery change depend for location
     2. mobile sms,
     3. notification(optional)
 
-#Todo 1. error handling, 2. error message show 3.
+#Todo 1. error handling, 2. error message show 3. all api a userid input kora
