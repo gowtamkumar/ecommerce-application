@@ -18,6 +18,16 @@ export async function getDiscounts() {
   return res.json();
 }
 
+export async function getFilterDiscounts(params?: { type: string }) {
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/discounts?type=${params?.type}`,
+    {
+      cache: "no-cache",
+    }
+  );
+  return res.json();
+}
+
 export async function updateDiscount(data: any) {
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/discounts/${data.id}`,

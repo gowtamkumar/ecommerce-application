@@ -42,7 +42,7 @@ const SizeList: React.FC = () => {
       setSize(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [global.action]);
 
   const handleDelete = async (id: string) => {
@@ -191,8 +191,8 @@ const SizeList: React.FC = () => {
       title: "Action",
       key: "action",
       sortDirections: ["descend", "ascend"],
-      className:'text-end',
-      width:"10%",
+      className: "text-end",
+      width: "10%",
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -237,9 +237,8 @@ const SizeList: React.FC = () => {
 
   return (
     <Table
-    scroll={{ x: 1300 }}
-    loading={global.loading.loading}
-
+      scroll={{ x: "auto" }}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={sizes}
       pagination={{ pageSize: 10 }}

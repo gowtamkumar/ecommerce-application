@@ -9,11 +9,12 @@ import { discountValidationSchema } from "../../../validation";
 // @access Public
 export const getDiscounts = asyncHandler(
   async (req: Request, res: Response) => {
+    const { type } = req.query;
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
-
-    const result = await repository.find();
-
+    const newQuery = {} as any;
+    if (type) newQuery.type = type;
+    const result = await repository.find({ where: newQuery });
     return res.status(200).json({
       success: true,
       msg: "Get all Discounts",
@@ -47,31 +48,33 @@ export const getDiscount = asyncHandler(
 // @desc Create a single Discount
 // @route POST /api/v1/Discounts
 // @access Public
-export const createDiscount = asyncHandler(
-  async (req: Request, res: Response) => {
-    const connection = await getDBConnection();
+export const createDiscount = asyncHandler(async (req: any, res: Response) => {
+  console.log("🚀 ~ req:", req.id);
+  const connection = await getDBConnection();
 
-    const validation = discountValidationSchema.safeParse(req.body);
+  const validation = discountValidationSchema.safeParse(req.body);
 
-    if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors ,
-      });
-    }
-
-    const repository = connection.getRepository(DiscountEntity);
-
-    const newDiscount = repository.create(validation.data);
-
-    const save = await repository.save(newDiscount);
-
-    return res.status(200).json({
-      success: true,
-      msg: "Create a new Discount",
-      data: save,
+  if (!validation.success) {
+    return res.status(401).json({
+      message: validation.error.formErrors,
     });
   }
-);
+
+  console.log("validation.data", validation.data);
+  
+
+  const repository = connection.getRepository(DiscountEntity);
+
+  const newDiscount = repository.create(validation.data);
+
+  const save = await repository.save(newDiscount);
+
+  return res.status(200).json({
+    success: true,
+    msg: "Create a new Discount",
+    data: save,
+  });
+});
 
 // @desc Update a single Discount
 // @route PUT /api/v1/Discounts/:id

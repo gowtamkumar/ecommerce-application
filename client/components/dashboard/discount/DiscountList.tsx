@@ -25,14 +25,15 @@ import dayjs from "dayjs";
 interface DataType {
   key: string;
   couponCode: string;
-  type: any;
+  type: string;
+  discountType: string;
   value: number;
   startDate: any;
   expiryDate: any;
   minOrderAmount: number;
   usageCount: number;
   maxUser: number;
-  status: "Active" | "Inactive";
+  status: string;
 }
 
 type DataIndex = keyof DataType;
@@ -151,7 +152,7 @@ const DiscountList: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
@@ -178,7 +179,7 @@ const DiscountList: React.FC = () => {
       title: "Coupon",
       dataIndex: "couponCode",
       key: "couponCode",
-      sorter: (a, b) => a.couponCode.length - b.couponCode.length,
+      sorter: (a, b) => a.couponCode?.length - b.couponCode?.length,
     },
     {
       ...getColumnSearchProps("type"),
@@ -186,6 +187,15 @@ const DiscountList: React.FC = () => {
       dataIndex: "type",
       key: "type",
       sorter: (a, b) => a.type.length - b.type.length,
+      render: (value) => <Tag color="cyan">{value}</Tag>,
+    },
+
+    {
+      ...getColumnSearchProps("discountType"),
+      title: "Discount Type",
+      dataIndex: "discountType",
+      key: "discountType",
+      sorter: (a, b) => a.discountType.length - b.discountType.length,
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
 
@@ -202,7 +212,7 @@ const DiscountList: React.FC = () => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      render: (value) => <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
     },
 
     {
@@ -210,7 +220,7 @@ const DiscountList: React.FC = () => {
       title: "Expiry Date",
       dataIndex: "expiryDate",
       key: "expiryDate",
-      render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      render: (value) => <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
       // sorter: (a, b) => a.expiryDate - b.expiryDate,
     },
     {
@@ -297,7 +307,7 @@ const DiscountList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 1300 }}
+      scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={discounts}

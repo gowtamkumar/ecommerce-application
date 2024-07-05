@@ -6,6 +6,7 @@ import {
   getDiscounts,
   updateDiscount,
 } from "../controller/discount.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 

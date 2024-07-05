@@ -94,7 +94,7 @@ status,
 id,
 type:discount/couponCode
 coupon_code,
-type:(Percentage, FixedAmount, FreeShipping).
+discount_type:(Percentage, FixedAmount, FreeShipping).
 value,
 start_date,
 expiry_date

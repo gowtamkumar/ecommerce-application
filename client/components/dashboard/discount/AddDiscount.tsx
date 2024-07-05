@@ -75,7 +75,7 @@ const AddDiscount = () => {
     dispatch(setFormValues(form.getFieldsValue()));
   };
 
-  const resetFormData = (value:any) => {
+  const resetFormData = (value: any) => {
     const newData = { ...value };
     if (newData.startDate) newData.startDate = dayjs(newData.startDate);
     if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
@@ -86,7 +86,6 @@ const AddDiscount = () => {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
-
   };
 
   return (
@@ -109,7 +108,7 @@ const AddDiscount = () => {
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        onValuesChange={(_v, values) => setFormValues(values)}
+        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -118,40 +117,62 @@ const AddDiscount = () => {
         </Form.Item>
 
         <div className="grid grid-cols-2 gap-5">
-          <div className="col-span-1">
+          <div className={`col-span-1 `}>
             <Form.Item
-              name="couponCode"
-              label="Coupon code"
+              name="type"
+              label="Type"
               rules={[
                 {
                   required: true,
-                  message: "Name is required",
+                  message: "Type is required",
                 },
               ]}
             >
-              <Input placeholder="Enter coupon code" />
+              <Select allowClear placeholder="Select">
+                <Select.Option value="Discount">Discount</Select.Option>
+                <Select.Option value="CouponCode">Coupon Code</Select.Option>
+              </Select>
             </Form.Item>
           </div>
+
+          {global.formValues.type === "CouponCode" && (
+            <div className="col-span-1">
+              <Form.Item
+                name="couponCode"
+                label="Coupon code"
+                rules={[
+                  {
+                    required: true,
+                    message: "Name is required",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter coupon code" />
+              </Form.Item>
+            </div>
+          )}
+
           <div className={`col-span-1 `}>
-            <Form.Item name="type" label="Type">
+            <Form.Item
+              name="discountType"
+              label="Discount Type"
+              rules={[
+                {
+                  required: true,
+                  message: "Discount Type is required",
+                },
+              ]}
+            >
               <Select
-                showSearch
                 allowClear
                 placeholder="Select Type"
                 optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
               >
-                {["Percentage", "FixedAmount", "FreeShipping"].map(
-                  (item, idx) => (
-                    <Select.Option key={idx} value={item}>
-                      {item}
-                    </Select.Option>
-                  )
-                )}
+                <Select.Option value="Percentage">Percentage</Select.Option>
+                <Select.Option value="FixedAmount">Fixed Amount</Select.Option>
+                <Select.Option value="FreeShipping">
+                  Free Shipping
+                </Select.Option>
               </Select>
             </Form.Item>
           </div>
@@ -166,51 +187,54 @@ const AddDiscount = () => {
                 },
               ]}
             >
-              <InputNumber placeholder="Enter Value" />
+              <InputNumber placeholder="Enter Value" className="w-96" />
             </Form.Item>
           </div>
 
-          <div className="col-span-1">
-            <Form.Item
-              name="startDate"
-              label="Start Date"
-              rules={[
-                {
-                  required: true,
-                  message: "Start Date is required",
-                },
-              ]}
-            >
-              <DatePicker placeholder="Enter Start Date" />
-            </Form.Item>
-          </div>
+          {global.formValues.type === "CouponCode" && (
+            <>
+              <div className="col-span-1">
+                <Form.Item
+                  name="startDate"
+                  label="Start Date"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Start Date is required",
+                    },
+                  ]}
+                >
+                  <DatePicker placeholder="Enter Start Date" />
+                </Form.Item>
+              </div>
+              <div className="col-span-1">
+                <Form.Item
+                  name="expiryDate"
+                  label="Expiry Date"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Expiry Date is required",
+                    },
+                  ]}
+                >
+                  <DatePicker placeholder="Enter" className="w-auto" />
+                </Form.Item>
+              </div>
 
-          <div className="col-span-1">
-            <Form.Item
-              name="expiryDate"
-              label="Expiry Date"
-              rules={[
-                {
-                  required: true,
-                  message: "Expiry Date is required",
-                },
-              ]}
-            >
-              <DatePicker placeholder="Enter" className="w-auto" />
-            </Form.Item>
-          </div>
+              <div className="col-span-1">
+                <Form.Item name="minOrderAmount" label="Min Order Amount">
+                  <InputNumber placeholder="Enter" className="w-auto" />
+                </Form.Item>
+              </div>
 
-          <div className="col-span-1">
-            <Form.Item name="minOrderAmount" label="Min Order Amount">
-              <InputNumber placeholder="Enter" className="w-auto" />
-            </Form.Item>
-          </div>
-
-          <div className="col-span-1">
-            <Form.Item name="maxUser" label="Max user">
-              <InputNumber placeholder="Enter" />
-            </Form.Item>
-          </div>
+              <div className="col-span-1">
+                <Form.Item name="maxUser" label="Max user">
+                  <InputNumber placeholder="Enter" />
+                </Form.Item>
+              </div>
+            </>
+          )}
 
           <div className={`col-span-1 `}>
             <Form.Item hidden={!payload?.id} name="status" label="Status">
@@ -235,7 +259,7 @@ const AddDiscount = () => {
           <Button
             className="mx-2 capitalize"
             size="small"
-            onClick={()=>resetFormData(global.action?.payload)}
+            onClick={() => resetFormData(global.action?.payload)}
           >
             Reset
           </Button>

@@ -33,7 +33,7 @@ import { getBrands } from "@/lib/apis/brand";
 import { getTaxs } from "@/lib/apis/tax";
 import { getAllCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
-import { getDiscounts } from "@/lib/apis/discount";
+import { getDiscounts, getFilterDiscounts } from "@/lib/apis/discount";
 
 const AddProduct = () => {
   const [brands, setBrands] = useState([]);
@@ -60,7 +60,7 @@ const AddProduct = () => {
       setFormData(newData);
       const resBrand = await getBrands();
       const resSize = await getSizes();
-      const resDiscount = await getDiscounts();
+      const resDiscount = await getFilterDiscounts({ type: "Discount" });
       const resCategory = await getAllCategories();
       const resTax = await getTaxs();
       setSizes(resSize.data);
@@ -72,12 +72,11 @@ const AddProduct = () => {
     return () => {
       dispatch(setFormValues({}));
       form.resetFields();
-      setTags([])
+      setTags([]);
     };
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-
     try {
       let newData = { ...values, tags };
       // return console.log("newData:", newData);
@@ -86,13 +85,11 @@ const AddProduct = () => {
         ? await updateProduct(newData)
         : await saveProduct(newData);
 
-        if(result.message.fieldErrors){
-          
-          return toast.error("some thing wrong")
-        }
-        console.log("errror", result);
-        
-        
+      if (result.message.fieldErrors) {
+        return toast.error("some thing wrong");
+      }
+      console.log("errror", result);
+
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         router.refresh();
@@ -249,7 +246,7 @@ const AddProduct = () => {
               >
                 {discounts.map((item: any, idx) => (
                   <Select.Option key={idx} value={item.id}>
-                    {`${item.value} - ${item.type}`}
+                    {`${item.value} - ${item.discountType}`}
                   </Select.Option>
                 ))}
               </Select>
@@ -335,9 +332,7 @@ const AddProduct = () => {
                   {item}{" "}
                   <span
                     onClick={() =>
-                      setTags(
-                        tags.filter((item: any, idex) => idex !== index)
-                      )
+                      setTags(tags.filter((item: any, idex) => idex !== index))
                     }
                     className="cursor-pointer"
                   >
