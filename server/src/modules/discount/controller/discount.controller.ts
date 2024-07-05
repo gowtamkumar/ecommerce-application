@@ -55,7 +55,7 @@ export const createDiscount = asyncHandler(
 
     if (!validation.success) {
       return res.status(401).json({
-        message: validation.error.formErrors,
+        message: validation.error.formErrors ,
       });
     }
 

@@ -23,16 +23,14 @@ export const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const connection = await getDBConnection();
     const { password, username } = req.body;
-
     const validation = UserValidationSchema.safeParse(req.body);
+
     if (!validation.success) {
       return res.status(401).json({
-        message: validation.error.formErrors.fieldErrors,
+        message: validation.error.formErrors,
       });
     }
-
     const userRepository = connection.getRepository(UserEntity);
-
     const findUser = await userRepository.findOne({
       where: { username },
     });
@@ -83,7 +81,7 @@ export const getUsers = asyncHandler(
         products: true,
       },
       select: {
-        id:true,
+        id: true,
         name: true,
         username: true,
         email: true,
@@ -167,7 +165,7 @@ export const login = asyncHandler(
 
     const updateData = await userRepository.merge(oldUser, {
       lastLogin: new Date(),
-      ipAddress:ip,
+      ipAddress: ip,
     });
 
     await userRepository.save(updateData);
@@ -351,7 +349,7 @@ export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const connection = await getDBConnection();
     const { id } = req.params;
-    
+
     const userRepository = await connection.getRepository(UserEntity);
 
     const user = await userRepository.findOneBy({ id });

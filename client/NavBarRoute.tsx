@@ -65,7 +65,7 @@ const navbarRoute = [
   {
     key: "discount",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/discounts">Discounts</Link>,
+    label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
     route: "true",
   },
   {

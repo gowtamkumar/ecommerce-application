@@ -85,6 +85,14 @@ const AddProduct = () => {
       const result = newData.id
         ? await updateProduct(newData)
         : await saveProduct(newData);
+
+        if(result.message.fieldErrors){
+          
+          return toast.error("some thing wrong")
+        }
+        console.log("errror", result);
+        
+        
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         router.refresh();

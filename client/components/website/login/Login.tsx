@@ -33,7 +33,6 @@ export default function Login() {
       ...validatedFields.data,
       redirect: false,
     });
-
     dispatch(setResponse(result));
 
     const getSesson: any = await getSession();

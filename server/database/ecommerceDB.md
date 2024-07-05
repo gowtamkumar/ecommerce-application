@@ -92,6 +92,7 @@ status,
 ## discounts:(done)
 
 id,
+type:discount/couponCode
 coupon_code,
 type:(Percentage, FixedAmount, FreeShipping).
 value,

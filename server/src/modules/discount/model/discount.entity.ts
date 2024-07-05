@@ -8,31 +8,43 @@ import {
 } from "typeorm";
 import { DiscountType } from "../enums/discount-type.enum";
 import { DiscountStatus } from "../enums/discount-status.enum";
+import { Type } from "../enums";
 
 @Entity("discounts")
 export class DiscountEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "coupon_code", unique: true })
+  @Column({ name: "discount_type", type: "enum", enum: DiscountType })
+  discountType!: DiscountType;
+
+  @Column({ name: "coupon_code", unique: true, nullable: true })
   couponCode!: string;
 
-  @Column({ type: "enum", enum: DiscountType })
-  type!: DiscountType;
+  @Column({ type: "enum", enum: Type })
+  type!: Type;
 
-  @Column({nullable: true})
+  @Column()
   value!: number;
 
-  @Column({ name: "start_date", type: "timestamp with time zone" })
+  @Column({
+    name: "start_date",
+    type: "timestamp with time zone",
+    nullable: true,
+  })
   startDate!: string;
 
-  @Column({ name: "expiry_date", type: "timestamp with time zone" })
+  @Column({
+    name: "expiry_date",
+    type: "timestamp with time zone",
+    nullable: true,
+  })
   expiryDate!: string;
 
   // @Column({ name: "end_date", type: "timestamp" })
   // endDate!: string;
 
-  @Column({ name: "min_order_amount", type: "numeric" })
+  @Column({ name: "min_order_amount", type: "numeric", nullable: true })
   minOrderAmount!: number;
 
   @Column({ name: "max_user", nullable: true })
