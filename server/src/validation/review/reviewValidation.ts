@@ -9,9 +9,9 @@ export const reviewValidationSchema = z.object({
     required_error: "Product is required",
   }),
 
-  // user_id: z.string({
-  //   required_error: "User is required",
-  // }),
+  userId: z.number({
+    required_error: "User is required",
+  }),
 
   rating: z.number({ required_error: "Rating is Required" }),
   comment: z.string().optional(),

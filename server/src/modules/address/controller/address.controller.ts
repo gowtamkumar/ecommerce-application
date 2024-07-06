@@ -7,18 +7,20 @@ import { addressValidationSchema } from "../../../validation";
 // @desc Get all Address
 // @route GET /api/v1/Address
 // @access Public
-export const getAddresses = asyncHandler(async (req: Request, res: Response) => {
-  const connection = await getDBConnection();
-  const repository = connection.getRepository(AddressEntity);
+export const getAddresses = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(AddressEntity);
 
-  const result = await repository.find();
+    const result = await repository.find();
 
-  return res.status(200).json({
-    success: true,
-    msg: "Get all Address",
-    data: result,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      msg: "Get all Address",
+      data: result,
+    });
+  }
+);
 
 // @desc Get a single Address
 // @route GET /api/v1/Address/:id
@@ -47,7 +49,7 @@ export const getAddress = asyncHandler(
 // @access Public
 export const createAddress = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = addressValidationSchema.safeParse(req.body);
+  const validation = addressValidationSchema.safeParse({...req.body, userId:req.id});
 
   if (!validation.success) {
     return res.status(401).json({
@@ -58,7 +60,6 @@ export const createAddress = asyncHandler(async (req: any, res: Response) => {
   const repository = connection.getRepository(AddressEntity);
 
   const newAddress = repository.create(validation.data);
-
   const save = await repository.save(newAddress);
 
   return res.status(200).json({

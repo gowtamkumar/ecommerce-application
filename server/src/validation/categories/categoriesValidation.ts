@@ -8,7 +8,9 @@ export const categoriesValidationSchema = z.object({
   //   required_error: "url slug is required",
   // }),
 
-  userId: z.string().optional(),
+  userId: z.number({
+    required_error: "User is required",
+  }),
 
   parentId: z.number().optional(),
   image: z.string().optional(),

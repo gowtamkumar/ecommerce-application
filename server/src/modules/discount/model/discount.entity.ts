@@ -63,8 +63,8 @@ export class DiscountEntity {
   })
   status!: DiscountStatus;
 
-  @Column({ name: "user_id", nullable: true })
-  userId?: string;
+  @Column({ name: "user_id" })
+  userId?: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;

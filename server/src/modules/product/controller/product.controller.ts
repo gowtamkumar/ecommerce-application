@@ -135,10 +135,12 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     const productRepository = connection.getRepository(ProductEntity);
 
     // Validate request body
-    const validation = productValidationSchema.safeParse(req.body);
-    
+    const validation = productValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
+
     if (!validation.success) {
-      console.log("validation.error.formErrors", validation.error.formErrors);
       return res.status(400).json({ message: validation.error.formErrors });
     }
 
@@ -171,8 +173,8 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       const productCategoryRepository = connection.getRepository(
         ProductCategoryEntity
       );
-      const productCategoryEntities = productCategories.map((categoryId) => ({
-        categoryId,
+      const productCategoryEntities = productCategories.map((item) => ({
+        categoryId: item,
         productId: savedProduct.id,
       }));
       promises.push(productCategoryRepository.save(productCategoryEntities));

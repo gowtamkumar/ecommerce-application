@@ -13,6 +13,9 @@ export class SizeEntity {
   @Column({ type: "boolean", default: true })
   status!: boolean;
 
+  @Column({ name: "user_id" })
+  userId!: number;
+
   @OneToMany(
     (_type) => ProductVariantEntity,
     (productVarients) => productVarients.size

@@ -6,9 +6,6 @@ export class AddressEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "user_id", nullable: true })
-  userId!: string;
-
   @Column({ name: 'address_line_1', nullable: true })
   addressLine1!: string;
 
@@ -26,6 +23,9 @@ export class AddressEntity {
 
   @Column({ name: "zip_code", nullable: true })
   zipCode?: string;
+
+  @Column({ name: "user_id" })
+  userId!: number;
 
   // @Column({ type: "boolean", default: true })
   // status!: boolean;

@@ -50,7 +50,10 @@ export const getOrderTracking = asyncHandler(
 export const createOrderTracking = asyncHandler(
   async (req: any, res: Response) => {
     const connection = await getDBConnection();
-    const validation = orderTrackingValidationSchema.safeParse(req.body);
+    const validation = orderTrackingValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
     if (!validation.success) {
       return res.status(401).json({
@@ -84,7 +87,7 @@ export const updateOrderTracking = asyncHandler(
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body); // orderId update hobe na    
+    const updateData = await repository.merge(result, req.body); // orderId update hobe na
 
     await repository.save(updateData);
 

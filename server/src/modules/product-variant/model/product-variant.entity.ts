@@ -21,7 +21,7 @@ export class ProductVariantEntity {
   salePrice!: number;
 
   @Column({ name: "product_id" })
-  productId!: string;
+  productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.productVariants, {
     onDelete: "CASCADE",
   })
@@ -29,7 +29,7 @@ export class ProductVariantEntity {
   product!: ProductEntity;
 
   @Column({ name: "size_id", nullable: true })
-  sizeId?: string;
+  sizeId?: number;
   @ManyToOne((_type) => SizeEntity, (size) => size.productVariants, {
     onDelete: "SET NULL",
   })

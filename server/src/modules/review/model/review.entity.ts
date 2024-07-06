@@ -17,13 +17,10 @@ export class ReviewEntity {
   id!: number;
 
   @Column({ name: "product_id", nullable: true })
-  productId!: string;
+  productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.reviews)
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
-
-  @Column({ name: "user_id", nullable: true })
-  userId!: string;
 
   @Column({ nullable: true })
   rating!: string;
@@ -37,6 +34,9 @@ export class ReviewEntity {
     default: reviewStatusEnum.Pending,
   })
   status!: reviewStatusEnum;
+
+  @Column({ name: "user_id" })
+  userId!: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;

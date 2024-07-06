@@ -28,9 +28,6 @@ export class CategoriesEntity {
   // @Column({ name: "parent_id", nullable: true })
   // parentId!: string;
 
-  @Column({ name: "user_id", nullable: true })
-  userId!: string;
-
   @Column({ nullable: true })
   image?: string;
 
@@ -53,18 +50,18 @@ export class CategoriesEntity {
   @TreeParent({ onDelete: "CASCADE" })
   parent!: CategoriesEntity;
 
+  @Column({ name: "user_id" })
+  userId!: number;
+
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
 
-
   @OneToMany(
     (_type) => ProductCategoryEntity,
     (productCategory) => productCategory.category
   )
   productCategories!: ProductCategoryEntity[];
-
-
 }

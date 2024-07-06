@@ -12,15 +12,14 @@ export class TaxEntity {
   @Column()
   name!: string;
 
-
   @Column({ type: "enum", enum: TaxTypeEnum })
   type!: TaxTypeEnum;
 
   @Column()
   value!: number;
 
-  @Column({ name: "user_id", nullable: true })
-  userId!: string;
+  @Column({ name: "user_id" })
+  userId!: number;
 
   @Column({ type: "enum", enum: Status, default: Status.Active })
   status!: Status;

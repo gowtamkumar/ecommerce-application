@@ -47,7 +47,10 @@ export const getBrand = asyncHandler(
 // @access Public
 export const createBrand = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = brandValidationSchema.safeParse(req.body);
+  const validation = brandValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({
@@ -58,7 +61,6 @@ export const createBrand = asyncHandler(async (req: any, res: Response) => {
   const repository = connection.getRepository(BrandEntity);
 
   const newBrand = repository.create(validation.data);
-
   const save = await repository.save(newBrand);
 
   return res.status(200).json({
@@ -82,7 +84,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
-  
+
   const updateData = await repository.merge(result, req.body);
 
   await repository.save(updateData);

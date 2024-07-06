@@ -91,7 +91,7 @@ export const fileUpload = asyncHandler(async (req: any, res: Response) => {
   const repository = connection.getRepository(FileEntity);
 
   const newFile = repository.create(newarray);
-
+  newFile.userId = req.id;
   const save = await repository.save(newFile);
 
   return res.status(200).json({

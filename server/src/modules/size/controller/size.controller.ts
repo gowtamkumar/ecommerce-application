@@ -47,7 +47,10 @@ export const getSize = asyncHandler(
 // @access Public
 export const createSize = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = sizeValidationSchema.safeParse(req.body);
+  const validation = sizeValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({
@@ -58,7 +61,6 @@ export const createSize = asyncHandler(async (req: any, res: Response) => {
   const repository = connection.getRepository(SizeEntity);
 
   const newSize = repository.create(validation.data);
-
   const save = await repository.save(newSize);
 
   return res.status(200).json({

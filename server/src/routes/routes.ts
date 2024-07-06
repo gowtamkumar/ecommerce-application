@@ -23,21 +23,21 @@ type ExpressApp = Express;
 
 // Export the routes setup function
 export const setupRoutes = (app: ExpressApp): void => {
-  app.use("/api/v1/product-variants", productVariantRoutes);
-  app.use("/api/v1/categories", categoriesRoutes);
-  app.use("/api/v1/brands", brandRoutes);
-  app.use("/api/v1/address", addressRoutes);
-  app.use("/api/v1/discounts", discountRoutes);
-  app.use("/api/v1/orders", orderRoutes);
-  app.use("/api/v1/order-tracking", orderTrackingRoutes);
-  app.use("/api/v1/wishlists", wishlistRoutes);
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/products", productRoutes);
-  app.use("/api/v1/payments", paymentRoute);
-  app.use("/api/v1/reviews", reviewRoute);
-  app.use("/api/v1/taxs", taxRoute);
-  app.use("/api/v1/sizes", sizeRoute);
-  app.use("/api/v1/status", statusRoute);
   app.use("/api/v1/files", fileRoute);
   app.use("/api/v1/settings", settingRoute);
+  app.use("/api/v1/product-variants", AuthGuard, productVariantRoutes);
+  app.use("/api/v1/categories", categoriesRoutes);
+  app.use("/api/v1/brands", AuthGuard, brandRoutes);
+  app.use("/api/v1/address", AuthGuard, addressRoutes);
+  app.use("/api/v1/discounts", AuthGuard, discountRoutes);
+  app.use("/api/v1/orders", AuthGuard, orderRoutes);
+  app.use("/api/v1/order-tracking", AuthGuard, orderTrackingRoutes);
+  app.use("/api/v1/wishlists", AuthGuard, wishlistRoutes);
+  app.use("/api/v1/payments", AuthGuard, paymentRoute);
+  app.use("/api/v1/reviews", AuthGuard, reviewRoute);
+  app.use("/api/v1/taxs", AuthGuard, taxRoute);
+  app.use("/api/v1/sizes", AuthGuard, sizeRoute);
+  app.use("/api/v1/status", AuthGuard, statusRoute);
 };

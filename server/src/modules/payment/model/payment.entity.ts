@@ -15,12 +15,11 @@ export class PaymentEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "order_id", nullable: true })
-  orderId!: string;
+  @Column({ name: "order_id" })
+  orderId!: number;
   @ManyToOne((_type) => OrderEntity, (order) => order.payments)
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
-
 
   @Column()
   date!: string;
@@ -31,9 +30,8 @@ export class PaymentEntity {
   @Column({ type: "numeric", precision: 15, scale: 2 })
   amount!: number;
 
-  @Column({ name: "user_id", nullable: true })
-  userId!: string;
-
+  @Column({ name: "user_id" })
+  userId!: number;
 
   @Column({ type: "boolean", default: true })
   is_successfull!: boolean;

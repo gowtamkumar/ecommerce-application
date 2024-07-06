@@ -49,19 +49,18 @@ export const getDiscount = asyncHandler(
 // @route POST /api/v1/Discounts
 // @access Public
 export const createDiscount = asyncHandler(async (req: any, res: Response) => {
-  console.log("🚀 ~ req:", req.id);
   const connection = await getDBConnection();
 
-  const validation = discountValidationSchema.safeParse(req.body);
+  const validation = discountValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
     });
   }
-
-  console.log("validation.data", validation.data);
-  
 
   const repository = connection.getRepository(DiscountEntity);
 

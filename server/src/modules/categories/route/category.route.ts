@@ -7,16 +7,17 @@ import {
   getCategory,
   updateCategory,
 } from "../controller/categories.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getCategories).post(createCategory);
+router.route("/").get(getCategories).post(AuthGuard, createCategory);
 router.route("/all").get(getAllCategories);
 
 router
   .route("/:id")
   .get(getCategory)
-  .put(updateCategory)
-  .delete(deleteCategory);
+  .put(AuthGuard, updateCategory)
+  .delete(AuthGuard, deleteCategory);
 
 export default router;

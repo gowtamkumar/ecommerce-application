@@ -8,7 +8,9 @@ export const paymentValidationSchema = z.object({
   orderId: z.number({
     required_error: "Order is required",
   }),
-
+  userId: z.number({
+    required_error: "User is required",
+  }),
   paymentMethod: z.string({
     required_error: "Payment method is required",
   }),

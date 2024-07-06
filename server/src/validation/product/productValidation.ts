@@ -8,7 +8,9 @@ export const productValidationSchema = z.object({
   shippingCost: z.number({
     required_error: "Shipping Cost is required",
   }),
-
+  userId: z.number({
+    required_error: "User is required",
+  }),
   taxId: z.number({
     required_error: "Tax is required",
   }),
@@ -16,9 +18,7 @@ export const productValidationSchema = z.object({
   brandId: z.number({
     required_error: "Brand is required",
   }),
-  discountId: z.number({
-    required_error: "Discount is required",
-  }),
+  discountId: z.number().optional(),
 
   limitPurchaseQty: z.number().optional(),
   tags: z.array(z.string()).optional(),

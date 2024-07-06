@@ -8,10 +8,11 @@ import {
   getFiles,
   updateFile,
 } from "../controller/file.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getFiles).post(createFile);
+router.route("/").get(getFiles).post(AuthGuard, createFile);
 router.route("/upload").post(
   upload.fields([
     {

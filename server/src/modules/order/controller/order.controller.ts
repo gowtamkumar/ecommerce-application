@@ -79,7 +79,10 @@ export const getOrder = asyncHandler(
 // @access Public
 export const createOrder = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = orderValidationSchema.safeParse(req.body);
+  const validation = orderValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   // SSLCommerzPayment
   const store_id = process.env.STORE_ID;
@@ -121,7 +124,8 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
       connection.getRepository(OrderTrackingEntity);
     const newOrderTracking = repositoryOrderTracking.create({
       orderId: savedOrder.id,
-      location: 'অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।'
+      userId: req.id,
+      location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
     });
     await repositoryOrderTracking.save(newOrderTracking);
   }

@@ -29,4 +29,7 @@ export class FileEntity {
 
   @Column({ nullable: true })
   size?: number;
+
+  @Column({ name: "user_id" })
+  userId!: number;
 }

@@ -79,8 +79,8 @@ export class ProductEntity {
   @Column({ name: "enable_review", type: "boolean", default: true })
   enableReview?: boolean;
 
-  @Column({ name: "user_id", nullable: true })
-  userId?: number;
+  @Column({ name: "user_id" })
+  userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.products)
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
@@ -110,16 +110,9 @@ export class ProductEntity {
   )
   productCategories!: ProductCategoryEntity[];
 
-  @OneToMany(
-    (_type) => WishListEntity,
-    (wishList) => wishList.product
-  )
+  @OneToMany((_type) => WishListEntity, (wishList) => wishList.product)
   wishlists!: WishListEntity[];
-  
-  @OneToMany(
-    (_type) => OrderItemEntity,
-    (items) => items.product
-  )
-  orderItems!: OrderItemEntity[];
 
+  @OneToMany((_type) => OrderItemEntity, (items) => items.product)
+  orderItems!: OrderItemEntity[];
 }

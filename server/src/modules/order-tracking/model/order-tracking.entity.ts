@@ -17,12 +17,15 @@ export class OrderTrackingEntity {
   id!: number;
 
   @Column({ name: "order_id" })
-  orderId!: string;
-  @ManyToOne((_type) => OrderEntity, (order) => order.orderTrackings,
-  { onDelete: "CASCADE" })
+  orderId!: number;
+  @ManyToOne((_type) => OrderEntity, (order) => order.orderTrackings, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
+  @Column({ name: "user_id" })
+  userId!: number;
 
   @Column({ nullable: true })
   location!: string;

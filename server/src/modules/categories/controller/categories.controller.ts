@@ -80,7 +80,10 @@ export const getCategory = asyncHandler(
 // @access Public
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = categoriesValidationSchema.safeParse(req.body);
+  const validation = categoriesValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({
@@ -114,7 +117,6 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     };
 
     const newCategories = categories.create(newCreateCategory);
-
     const save = await categories.save(newCategories);
 
     return res.status(200).json({
@@ -132,6 +134,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
   };
 
   const newCategories = categories.create(newCreateCategory);
+  newCategories.userId = req.id;
   const save = await categories.save(newCategories);
   return res.status(200).json({
     message: "Create new categories",

@@ -17,12 +17,14 @@ export class WishListEntity {
 
   @Column({ name: "product_id" })
   productId!: number;
-  @ManyToOne((_type) => ProductEntity, (product) => product.wishlists,  { onDelete: "CASCADE" })
+  @ManyToOne((_type) => ProductEntity, (product) => product.wishlists, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-  @Column({ name: "user_id", nullable: true })
-  userId!: string;
+  @Column({ name: "user_id" })
+  userId!: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt!: string;

@@ -69,7 +69,7 @@ export class OrderEntity {
   @Column({ name: "phone_no" })
   phoneNo!: string;
 
-  @Column({  nullable: true })
+  @Column({ nullable: true })
   email!: string;
 
   @Column({ name: "delivery_address", nullable: true })
@@ -98,10 +98,10 @@ export class OrderEntity {
   })
   status!: OrderStatus;
 
-  @Column({ name: "user_id", nullable: true })
+  @Column({ name: "user_id" })
   userId?: number;
   @ManyToOne((_type) => UserEntity, (user) => user.orders, {
-    onDelete: "SET NULL",
+    onDelete: "CASCADE",
   })
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;

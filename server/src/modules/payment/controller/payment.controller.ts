@@ -51,8 +51,10 @@ export const getPayment = asyncHandler(
 // @access Public
 export const createPayment = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = paymentValidationSchema.safeParse(req.body);
-  console.log("🚀 ~ validation:", validation)
+  const validation = paymentValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({

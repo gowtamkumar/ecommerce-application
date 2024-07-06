@@ -47,7 +47,10 @@ export const getTax = asyncHandler(
 // @access Public
 export const createTax = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = taxValidationSchema.safeParse(req.body);
+  const validation = taxValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({
@@ -58,7 +61,6 @@ export const createTax = asyncHandler(async (req: any, res: Response) => {
   const repository = connection.getRepository(TaxEntity);
 
   const newTax = repository.create(validation.data);
-
   const save = await repository.save(newTax);
 
   return res.status(200).json({

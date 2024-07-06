@@ -47,7 +47,10 @@ export const getReview = asyncHandler(
 // @access Public
 export const createReview = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = reviewValidationSchema.safeParse(req.body);
+  const validation = reviewValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({

@@ -141,7 +141,7 @@ export const login = asyncHandler(
 
     const ip =
       req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
-    console.log("🚀 ~ ip:", ip);
+    // console.log("🚀 ~ ip:", ip);
 
     const userRepository = connection.getRepository(UserEntity);
 
@@ -185,8 +185,19 @@ export const login = asyncHandler(
 // // @route GET /api/v1/auth/logout
 // // @access Private
 export const logout = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: any, res: Response, next: NextFunction) => {
+    const connection = await getDBConnection();
+    const userRepository = await connection.getRepository(UserEntity);
+
     Object.entries(req.cookies).forEach(([key, value]) => res.clearCookie(key));
+
+    const user = await userRepository.findOne({ where: { id: req.id } });
+
+    if (!user) {
+      throw new Error("User is not found");
+    }
+
+    await userRepository.save({ id: user.id, lastLogout: new Date() });
 
     return res.status(200).json({
       success: true,
@@ -246,8 +257,8 @@ export const forgotPassword = asyncHandler(
     });
 
     await userRepository.save(updateData);
-    console.log("req.hostname", req);
-    console.log("req.psot", req.get("host"));
+    // console.log("req.hostname", req);
+    // console.log("req.psot", req.get("host"));
 
     const resetUrl = `${req.protocol}://${req.headers.origin}/reset-password/${resetToken}`;
 

@@ -53,7 +53,10 @@ export const getWishlist = asyncHandler(
 // @access Public
 export const createWishlist = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = wishListhValidationSchema.safeParse(req.body);
+  const validation = wishListhValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
   if (!validation.success) {
     return res.status(401).json({
@@ -62,9 +65,7 @@ export const createWishlist = asyncHandler(async (req: any, res: Response) => {
   }
 
   const repository = connection.getRepository(WishListEntity);
-
   const newwishlist = repository.create(validation.data);
-
   const save = await repository.save(newwishlist);
 
   return res.status(200).json({

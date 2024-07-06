@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const addressValidationSchema = z.object({
-  // user_id: z.string({
-  //   required_error: "user is required",
-  // }),
+  userId: z.string({
+    required_error: "user is required",
+  }),
 
   addressLine1: z.string({
     required_error: "address line 1 is required",
@@ -16,6 +16,5 @@ export const addressValidationSchema = z.object({
   state: z.string().optional(),
   city: z.string().optional(),
   country: z.string().optional(),
-
   zipCode: z.string().optional(),
 });
