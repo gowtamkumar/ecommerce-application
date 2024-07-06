@@ -9,14 +9,19 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       async authorize(credentials: any) {
-        const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/auth/login`, {
-          method: "POST",
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_SERVER_URL}/api/v1/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify(credentials),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
         const user = await res.json();
+        // console.log("🚀 ~ user:", user)
         if (res.ok && user.data) {
-          return user.data;
+          const newuser = { ...user.data, accessToken: user.accessToken };
+          return newuser;
         } else {
           throw new Error("Invalid Login Credentials");
         }
@@ -40,6 +45,7 @@ export const authOptions: NextAuthOptions = {
       return {
         ...session,
         user: token.user,
+        // token,
         token: { exp: token.exp, iat: token.iat, jti: token.jti },
       };
     },
@@ -47,15 +53,7 @@ export const authOptions: NextAuthOptions = {
       if (typeof user !== "undefined") {
         return {
           ...token,
-          user: {
-            id: user.id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            status: user.status,
-            isAdmin: user.isAdmin,
-          },
+          user,
         };
       }
       return token;
