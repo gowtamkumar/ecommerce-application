@@ -42,8 +42,20 @@ const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
 
 // isAuthorize middleware
 const isAuthorize: MiddlewareFunction = async (req: any, res, next) => {
+  const { authorization } = req.headers;
+  let token = authorization?.split(" ")[1] || req.cookies.accessToken;
+
   try {
     if (req.role === "Admin") {
+      jwt.verify(
+        token,
+        process.env.JWT_SECRET!,
+        (error: any, decodedToken: any) => {
+          if (error) {
+            throw new Error("Invalid or expired reset token new");
+          }
+        }
+      );
       return next();
     } else {
       return next({ statusCode: 401, message: "Authorize Failed!" });
