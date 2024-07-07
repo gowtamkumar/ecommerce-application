@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -41,8 +42,10 @@ const AddressList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      dispatch(setLoading({ loading: true }));
       const res = await getAddresss();
       setAddress(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
   }, [global.action]);
 
@@ -277,14 +280,13 @@ const AddressList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 1300, y: 500 }}
-      loading={!address.length}
+      scroll={{ x: "auto" }}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={address}
       pagination={{ pageSize: 10 }}
       bordered
       size="small"
-
     />
   );
 };

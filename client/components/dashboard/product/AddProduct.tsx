@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
+  ColorPicker,
   Divider,
   Form,
   Input,
@@ -14,7 +15,6 @@ import {
   Upload,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
   selectGlobal,
@@ -33,13 +33,18 @@ import { getBrands } from "@/lib/apis/brand";
 import { getTaxs } from "@/lib/apis/tax";
 import { getAllCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
-import { getDiscounts, getFilterDiscounts } from "@/lib/apis/discount";
+import { getFilterDiscounts } from "@/lib/apis/discount";
+import { toast } from "react-toastify";
+import { getColors } from "@/lib/apis/color";
+import { getUnits } from "@/lib/apis/unit";
 
 const AddProduct = () => {
   const [brands, setBrands] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [discounts, setDiscounts] = useState([]);
+  const [colors, setColors] = useState([]);
   const [taxs, setTaxs] = useState([]);
+  const [units, setUnits] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
@@ -60,10 +65,14 @@ const AddProduct = () => {
       setFormData(newData);
       const resBrand = await getBrands();
       const resSize = await getSizes();
+      const resUnit = await getUnits();
+      const resColor = await getColors();
       const resDiscount = await getFilterDiscounts({ type: "Discount" });
       const resCategory = await getAllCategories();
       const resTax = await getTaxs();
+      setUnits(resUnit.data);
       setSizes(resSize.data);
+      setColors(resColor.data);
       setDiscounts(resDiscount.data);
       setCategories(resCategory.data);
       setBrands(resBrand.data);
@@ -76,19 +85,23 @@ const AddProduct = () => {
     };
   }, [global.action]);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async () => {
+    const values = await form.validateFields();
     try {
       let newData = { ...values, tags };
+
       // return console.log("newData:", newData);
+
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updateProduct(newData)
         : await saveProduct(newData);
 
       if (result.message.fieldErrors) {
-        return toast.error("some thing wrong");
+        dispatch(setLoading({ save: false }));
+        console.log("error", result.message.fieldErrors);
+        return;
       }
-      console.log("errror", result);
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
@@ -133,6 +146,7 @@ const AddProduct = () => {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
+    dispatch(setLoading({ save: false }));
   };
 
   return (
@@ -158,6 +172,7 @@ const AddProduct = () => {
         onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
+        initialValues={{ productVariants: [{}] }}
       >
         <Form.Item name="id" hidden>
           <Input />
@@ -165,7 +180,17 @@ const AddProduct = () => {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="col-span-1">
-            <Form.Item name="type" label="Type" className="p-0">
+            <Form.Item
+              name="type"
+              label="Type"
+              className="p-0"
+              rules={[
+                {
+                  required: true,
+                  message: "Type is required",
+                },
+              ]}
+            >
               <Select
                 showSearch
                 allowClear
@@ -188,7 +213,17 @@ const AddProduct = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="brandId" label="Brand" className="p-0">
+            <Form.Item
+              name="brandId"
+              label="Brand"
+              className="p-0"
+              rules={[
+                {
+                  required: true,
+                  message: "Brand is required",
+                },
+              ]}
+            >
               <Select
                 showSearch
                 allowClear
@@ -210,7 +245,17 @@ const AddProduct = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="taxId" label="Tax" className="p-0">
+            <Form.Item
+              name="taxId"
+              label="Tax"
+              className="p-0"
+              rules={[
+                {
+                  required: true,
+                  message: "Brand is required",
+                },
+              ]}
+            >
               <Select
                 showSearch
                 allowClear
@@ -343,6 +388,37 @@ const AddProduct = () => {
             </div>
           </div>
 
+          <div className="col-span-1">
+            <Form.Item
+              name="unitId"
+              label="Unit"
+              rules={[
+                {
+                  required: true,
+                  message: "Unit is required",
+                },
+              ]}
+            >
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {units.map((item: any) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+
           <div className={`col-span-1 `}>
             <Form.Item hidden={!payload?.id} name="status" label="Status">
               <Select
@@ -356,17 +432,26 @@ const AddProduct = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                <Select.Option value={"Active"}>Active</Select.Option>
-                <Select.Option value={"Inactive"}>Inactive</Select.Option>
+                <Select.Option value="Active">Active</Select.Option>
+                <Select.Option value="Inactive">Inactive</Select.Option>
               </Select>
             </Form.Item>
           </div>
         </div>
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-4 gap-2">
           <div className="col-span-1">
             <Divider orientation="left">Product Category</Divider>
 
-            <Form.Item name="productCategories" label="Category">
+            <Form.Item
+              name="productCategories"
+              label="Category"
+              rules={[
+                {
+                  required: true,
+                  message: "Category is required",
+                },
+              ]}
+            >
               <Select
                 showSearch
                 allowClear
@@ -387,101 +472,145 @@ const AddProduct = () => {
               </Select>
             </Form.Item>
           </div>
-          <div className="col-span-2">
-            <Divider orientation="center">Product Variants</Divider>
+          <div className="col-span-3">
             <Form.List name="productVariants">
               {(fields, { add, remove }) => (
                 <>
-                  {fields.map(({ key, name, ...restField }) => (
-                    <Space
-                      key={key}
-                      style={{ display: "flex", marginBottom: 8 }}
-                      align="baseline"
-                    >
-                      <Form.Item
-                        {...restField}
-                        name={[name, "regularPrice"]}
-                        rules={[{ required: true, message: "Regular Price" }]}
+                  <div className="grid grid-cols-4 justify-center items-center gap-1">
+                    <div className="col-span-3">
+                      <Divider
+                        orientation="center"
+                        style={{ margin: "0px", padding: "0px" }}
                       >
-                        <InputNumber placeholder="Enter Regular Price" />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "salePrice"]}
-                        rules={[{ required: true, message: "sale price" }]}
-                      >
-                        <InputNumber placeholder="Enter sale price" />
-                      </Form.Item>
-
-                      <Form.Item
-                        {...restField}
-                        name={[name, "sizeId"]}
-                        rules={[
-                          { required: true, message: "Size Is Required" },
-                        ]}
-                      >
-                        <Select allowClear showSearch placeholder="Select">
-                          {(sizes || []).map((item: any, index) => (
-                            <Select.Option key={index} value={item.id}>
-                              {`${item.id} ${item.name}`}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                      {/*#Todo need to dynamic color */}
-                      <Form.Item
-                        {...restField}
-                        name={[name, "color"]}
-                        rules={[
-                          { required: true, message: "color Is Required" },
-                        ]}
-                      >
-                        <Select
-                          showSearch
-                          allowClear
-                          placeholder="Select"
-                          optionFilterProp="children"
-                          filterOption={(input, option) =>
-                            (option?.children as any)
-                              .toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0
+                        Product Variants{" "}
+                      </Divider>
+                    </div>
+                    <div className="col-span-1">
+                      {/* <Button>asdfasdf</Button> */}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                          disabled={
+                            global.formValues.type === "SimpleProduct" &&
+                            global.formValues.productVariants?.length === 1
                           }
                         >
-                          {["Red", "Green"].map((item: any, idx) => (
-                            <Select.Option key={idx} value={item}>
-                              {item}
-                            </Select.Option>
-                          ))}
-                        </Select>
+                          Add field
+                        </Button>
                       </Form.Item>
-                      <Form.Item {...restField} name={[name, "weight"]}>
-                        <Input placeholder="Enter weight" />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "stockQty"]}
-                        rules={[{ required: true, message: "Stock Qty" }]}
-                      >
-                        <InputNumber placeholder="Enter" />
-                      </Form.Item>
+                    </div>
+                  </div>
 
-                      <MinusCircleOutlined onClick={() => remove(name)} />
-                    </Space>
-                  ))}
-                  <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      block
-                      icon={<PlusOutlined />}
-                      disabled={
-                        global.formValues.type === "SimpleProduct" &&
-                        global.formValues.productVariants?.length === 1
-                      }
-                    >
-                      Add field
-                    </Button>
-                  </Form.Item>
+                  <table width={"100%"}>
+                    <thead>
+                      <tr>
+                        <th>Regular Price</th>
+                        <th>Sale Price</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th>Weight</th>
+                        <th>Qty</th>
+                      </tr>
+                    </thead>
+
+                    {fields.map(({ key, name, ...restField }) => (
+                      <tbody key={key}>
+                        <tr>
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "regularPrice"]}
+                              rules={[
+                                { required: true, message: "Regular Price" },
+                              ]}
+                            >
+                              <InputNumber placeholder="Regular Price" />
+                            </Form.Item>
+                          </td>
+
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "salePrice"]}
+                              rules={[
+                                { required: true, message: "sale price" },
+                              ]}
+                            >
+                              <InputNumber placeholder="Sale price" />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "sizeId"]}
+                              rules={[
+                                { required: true, message: "Size Is Required" },
+                              ]}
+                            >
+                              <Select
+                                allowClear
+                                showSearch
+                                placeholder="Select"
+                              >
+                                {sizes.map((item: any, index) => (
+                                  <Select.Option key={index} value={item.id}>
+                                    {`${item.id} ${item.name}`}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item {...restField} name={[name, "colorId"]}>
+                              <Select
+                                showSearch
+                                allowClear
+                                placeholder="Select"
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                  (option?.children as any)
+                                    .toLowerCase()
+                                    .indexOf(input.toLowerCase()) >= 0
+                                }
+                              >
+                                {colors.map((item: any, idx) => (
+                                  <Select.Option key={item.id} value={item.id}>
+                                    <ColorPicker
+                                      size="small"
+                                      value={item.color}
+                                    />{" "}
+                                    {item.name}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </td>
+
+                          <td>
+                            {" "}
+                            <Form.Item {...restField} name={[name, "weight"]}>
+                              <Input placeholder="Weight" />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            {" "}
+                            <Form.Item
+                              {...restField}
+                              name={[name, "stockQty"]}
+                              rules={[{ required: true, message: "Stock Qty" }]}
+                            >
+                              <InputNumber placeholder="Enter" />
+                            </Form.Item>
+                          </td>
+
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </tr>
+                      </tbody>
+                    ))}
+                  </table>
                 </>
               )}
             </Form.List>
@@ -499,7 +628,7 @@ const AddProduct = () => {
           <Button
             size="small"
             color="blue"
-            onClick={() => handleSubmit(global.formValues)}
+            onClick={handleSubmit}
             // htmlType="submit"
             className="capitalize"
             loading={global.loading.save}

@@ -1,18 +1,16 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use server";
-
-// import { useSession } from "next-auth/react";
+import { authOptions } from "../authOption";
+import { getServerSession } from "next-auth";
 
 export async function saveBrand(data: any) {
-  // const session = useSession();
-  // console.log("🚀 ~ session brand:", session)
-
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/brands`, {
     method: "POST",
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      // 'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${session?.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -20,13 +18,19 @@ export async function saveBrand(data: any) {
 }
 
 export async function getBrands() {
+  const session = await getServerSession(authOptions);
+
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/brands`, {
     cache: "no-cache",
+    headers: {
+      'Authorization': `Bearer ${session?.user.accessToken}`,
+    },
   });
   return res.json();
 }
 
 export async function updateBrand(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/brands/${data.id}`,
     {
@@ -34,6 +38,7 @@ export async function updateBrand(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -42,6 +47,7 @@ export async function updateBrand(data: any) {
 }
 
 export async function deleteBrand(id: string) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/brands/${id}`,
     {
@@ -49,6 +55,7 @@ export async function deleteBrand(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${session?.user.accessToken}`,
       },
     }
   );

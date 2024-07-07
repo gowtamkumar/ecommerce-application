@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import ToastProvider from "@/components/Notification/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,16 +21,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  console.log("session", session)
-
   return (
     <html lang="en">
-       {/* className={`${inter.className} bg-white`} */}
+      {/* className={`${inter.className} bg-white`} */}
       <body suppressHydrationWarning={true}>
         <AntdRegistry>
+          {/* <ToastProvider> */}
           <AuthProvider session={session}>
             <StoreProvider>{children}</StoreProvider>
           </AuthProvider>
+          {/* </ToastProvider> */}
         </AntdRegistry>
       </body>
     </html>

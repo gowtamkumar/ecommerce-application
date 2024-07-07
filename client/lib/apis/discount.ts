@@ -1,10 +1,15 @@
 "use server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../authOption";
+
 export async function saveDiscount(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/discounts`, {
     method: "POST",
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -12,23 +17,32 @@ export async function saveDiscount(data: any) {
 }
 
 export async function getDiscounts() {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/discounts`, {
     cache: "no-cache",
+    headers: {
+      Authorization: `Bearer ${session?.user.accessToken}`,
+    },
   });
   return res.json();
 }
 
 export async function getFilterDiscounts(params?: { type: string }) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/discounts?type=${params?.type}`,
     {
       cache: "no-cache",
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
     }
   );
   return res.json();
 }
 
 export async function updateDiscount(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/discounts/${data.id}`,
     {
@@ -36,6 +50,7 @@ export async function updateDiscount(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -44,6 +59,7 @@ export async function updateDiscount(data: any) {
 }
 
 export async function deleteDiscount(id: string) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/discounts/${id}`,
     {
@@ -51,6 +67,7 @@ export async function deleteDiscount(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     }
   );

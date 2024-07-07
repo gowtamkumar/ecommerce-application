@@ -9,9 +9,9 @@ export default function SidebarMenu({ categories }: any) {
     setCurrent(e.key);
   };
 
-  if (!categories.data?.length) {
-    return <Spin />
-  }
+  // if (!categories.data?.length) {
+  //   return <Spin />
+  // }
 
   return (
     <div className="border rounded">

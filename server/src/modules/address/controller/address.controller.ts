@@ -49,13 +49,19 @@ export const getAddress = asyncHandler(
 // @access Public
 export const createAddress = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = addressValidationSchema.safeParse({...req.body, userId:req.id});
+  const validation = addressValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
+
+  console.log("validation", validation);
 
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
     });
   }
+ 
 
   const repository = connection.getRepository(AddressEntity);
 

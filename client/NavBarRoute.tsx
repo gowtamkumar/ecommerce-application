@@ -63,6 +63,18 @@ const navbarRoute = [
     route: "true",
   },
   {
+    key: "unit",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/unit">Unit</Link>,
+    route: "true",
+  },
+  {
+    key: "color",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/color">Color</Link>,
+    route: "true",
+  },
+  {
     key: "discount",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,

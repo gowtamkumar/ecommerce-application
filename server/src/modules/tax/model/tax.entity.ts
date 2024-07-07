@@ -8,7 +8,7 @@ import { Status } from "../../../enums/status.enum";
 export class TaxEntity {
   @PrimaryGeneratedColumn()
   id!: number;
-  
+
   @Column()
   name!: string;
 

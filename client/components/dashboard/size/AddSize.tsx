@@ -90,7 +90,7 @@ const AddSize = () => {
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        onValuesChange={(_v, values) => setFormValues(values)}
+        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
       >

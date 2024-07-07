@@ -96,7 +96,6 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
 
   if (validation.data.parentId) {
     const maxLevel = 3;
-
     const parent = await categories.findOne({
       where: { id: validation.data.parentId },
     });
@@ -111,6 +110,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     const newCreateCategory = {
       name: validation.data.name,
       image: validation.data.image,
+      userId: validation.data.userId,
       // urlSlug: validation.data.urlSlug,
       level: parent.level + 1,
       parent: parent,
@@ -128,13 +128,13 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const newCreateCategory = {
     name: validation.data.name,
     image: validation.data.image,
+    userId: validation.data.userId,
     // urlSlug: validation.data.urlSlug,
     level: 1,
     parent: null,
   };
 
   const newCategories = categories.create(newCreateCategory);
-  newCategories.userId = req.id;
   const save = await categories.save(newCategories);
   return res.status(200).json({
     message: "Create new categories",

@@ -16,6 +16,8 @@ export * from "./tax/taxValidation";
 export * from "./size/sizeValidation";
 export * from "./product-category/productCategoryValidation";
 export * from "./file/fileValidation";
+export * from "./color/colorValidation";
+export * from "./unit/unitValidation";
 
 
 

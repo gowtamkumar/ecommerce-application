@@ -50,6 +50,7 @@ single_image,
 images:array
 shipping_cost:numeric,
 brand_id,
+unit_id,
 limit_purchase_qty:number,
 tax_id: number,
 discount_id:number
@@ -72,7 +73,7 @@ id,
 regular_price:numeric,
 sale_price:numeric,
 size_id,
-color:[red, green, yellow]
+colorId,
 weight(kg):numeric
 product_id
 stock_qty:number,
@@ -88,6 +89,17 @@ product_id
 id,
 name,
 status,
+
+## color (done)
+
+id,
+name,
+color,
+
+## unit (done)
+
+id,
+name,
 
 ## discounts:(done)
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -39,9 +40,10 @@ const WishlistsList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      dispatch(setLoading({ loading: true }));
       const res = await getWishlists();
-      console.log("🚀 ~ res:", res);
       setWishLists(res?.data);
+      dispatch(setLoading({ loading: false }));
     })();
   }, [global.action]);
 
@@ -241,7 +243,7 @@ const WishlistsList: React.FC = () => {
   return (
     <Table
       scroll={{ x: "auto" }}
-      loading={!wishlists.length}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={wishlists}
       pagination={{ pageSize: 10 }}

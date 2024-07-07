@@ -1,10 +1,16 @@
 "use server";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "../authOption";
+
 export async function saveOrder(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/orders`, {
     method: "POST",
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -12,13 +18,18 @@ export async function saveOrder(data: any) {
 }
 
 export async function getOrders() {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/orders`, {
     cache: "no-cache",
+    headers: {
+      Authorization: `Bearer ${session?.user.accessToken}`,
+    },
   });
   return res.json();
 }
 
 export async function updateOrder(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/orders/${data.id}`,
     {
@@ -26,6 +37,7 @@ export async function updateOrder(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -34,6 +46,7 @@ export async function updateOrder(data: any) {
 }
 
 export async function deleteOrder(id: string) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/orders/${id}`,
     {
@@ -41,6 +54,7 @@ export async function deleteOrder(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     }
   );

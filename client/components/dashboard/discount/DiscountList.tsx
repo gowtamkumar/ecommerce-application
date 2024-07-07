@@ -175,13 +175,6 @@ const DiscountList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("couponCode"),
-      title: "Coupon",
-      dataIndex: "couponCode",
-      key: "couponCode",
-      sorter: (a, b) => a.couponCode?.length - b.couponCode?.length,
-    },
-    {
       ...getColumnSearchProps("type"),
       title: "Type",
       dataIndex: "type",
@@ -190,6 +183,8 @@ const DiscountList: React.FC = () => {
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
 
+  
+    
     {
       ...getColumnSearchProps("discountType"),
       title: "Discount Type",
@@ -198,9 +193,16 @@ const DiscountList: React.FC = () => {
       sorter: (a, b) => a.discountType.length - b.discountType.length,
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
+    {
+      ...getColumnSearchProps("couponCode"),
+      title: "Coupon",
+      dataIndex: "couponCode",
+      key: "couponCode",
+      sorter: (a, b) => a.couponCode?.length - b.couponCode?.length,
+    },
 
     {
-      title: "value",
+      title: "Value",
       dataIndex: "value",
       key: "value",
       sorter: (a, b) => a.value - b.value,

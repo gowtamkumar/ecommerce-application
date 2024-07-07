@@ -18,6 +18,9 @@ export const productValidationSchema = z.object({
   brandId: z.number({
     required_error: "Brand is required",
   }),
+  unitId: z.number({
+    required_error: "Unit is required",
+  }),
   discountId: z.number().optional(),
 
   limitPurchaseQty: z.number().optional(),
@@ -39,7 +42,7 @@ export const productValidationSchema = z.object({
         salePrice: z.number({ required_error: "Sale Price is required" }),
         sizeId: z.number().optional(),
         images: z.array(z.string()).optional(),
-        color: z.string().optional(),
+        colorId: z.number().optional(),
         weight: z.string().optional(),
         stockQty: z.number().optional(),
       })

@@ -3,7 +3,6 @@ import { DataSource } from "typeorm";
 import { UserEntity } from "../modules/auth/model/user.entity";
 import { ProductEntity } from "../modules/product/model/product.entity";
 import { evnFileValidationSchema } from "../validation";
-import path from "path";
 import dotenv from "dotenv";
 import { AddressEntity } from "../modules/address/model/address.entity";
 import { BrandEntity } from "../modules/brand/model/brand.entity";
@@ -21,6 +20,8 @@ import { SizeEntity } from "../modules/size/model/size.entity";
 import { ProductCategoryEntity } from "../modules/product-category/model/product-category.entity";
 import { FileEntity } from "../modules/file/model/file.entity";
 import { StatusEntity } from "../modules/status/model/status.entity";
+import { ColorEntity } from "../modules/color/model/color.entity";
+import { UnitEntity } from "../modules/unit/model/unit.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -71,6 +72,8 @@ const dbConnection = new DataSource({
     OrderTrackingEntity,
     TaxEntity,
     SizeEntity,
+    ColorEntity,
+    UnitEntity,
     StatusEntity,
     ProductCategoryEntity,
     FileEntity,

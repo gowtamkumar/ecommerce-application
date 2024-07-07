@@ -1,12 +1,12 @@
 "use client";
 import Button from "@/components/dashboard/Button";
-import { register } from "@/lib/apis/register";
 import { UserValidationSchema } from "@/validation";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useFormState } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { saveUser } from "@/lib/apis/user";
 
 export default function Register() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function Register() {
         errors: validatedFields.error.formErrors,
       };
     }
-    const result = await register(validatedFields.data);
+    const result = await saveUser(validatedFields.data);
     dispatch(setResponse(result));
     setTimeout(() => {
       dispatch(setResponse({}));

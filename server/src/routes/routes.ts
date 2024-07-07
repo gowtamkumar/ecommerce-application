@@ -1,4 +1,4 @@
-import { Express, Request, Response, NextFunction } from "express";
+import { Express } from "express";
 import authRoutes from "../modules/auth/route/auth.route";
 import productRoutes from "../modules/product/route/product.route";
 import wishlistRoutes from "../modules/wishlist/route/wishlist.route";
@@ -11,6 +11,8 @@ import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
 import taxRoute from "../modules/tax/route/tax.route";
 import sizeRoute from "../modules/size/route/size.route";
+import unitRoute from "../modules/unit/route/unit.route";
+import colorRoute from "../modules/color/route/color.route";
 import statusRoute from "../modules/status/route/status.route";
 import settingRoute from "../modules/setting/route/setting.route";
 import fileRoute from "../modules/file/route/file.route";
@@ -39,5 +41,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/reviews", AuthGuard, reviewRoute);
   app.use("/api/v1/taxs", AuthGuard, taxRoute);
   app.use("/api/v1/sizes", AuthGuard, sizeRoute);
+  app.use("/api/v1/units", AuthGuard, unitRoute);
+  app.use("/api/v1/colors", AuthGuard, colorRoute);
   app.use("/api/v1/status", AuthGuard, statusRoute);
 };

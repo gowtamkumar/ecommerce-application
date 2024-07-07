@@ -1,16 +1,19 @@
 // const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
 "use server";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "../authOption";
+
 export async function getAllCategories() {
   try {
-    // const { api } = params
-    // const session = await getSession()
-
-    // const session = await getServerSession(authOptions);
-    // console.log("🚀 ~ session:", session);
+    const session = await getServerSession(authOptions);
     const res = await fetch(
       `${process.env.NEXT_SERVER_URL}/api/v1/categories/all`,
       {
         next: { revalidate: 30 },
+        headers: {
+          Authorization: `Bearer ${session?.user.accessToken}`,
+        },
       }
     );
 
@@ -20,18 +23,21 @@ export async function getAllCategories() {
     const result = await res.json();
     return result;
   } catch (error) {
-    // console.log("🚀 ~ error:", error);
     console.log("Failed to fetch data");
   }
 }
 
 export async function getCategories() {
+  const session = await getServerSession(authOptions);
   try {
     const res = await fetch(
       `${process.env.NEXT_SERVER_URL}/api/v1/categories`,
       {
         // next: { revalidate: 30 },
         cache: "no-cache",
+        headers: {
+          Authorization: `Bearer ${session?.user.accessToken}`,
+        },
       }
     );
 
@@ -47,11 +53,13 @@ export async function getCategories() {
 }
 
 export async function saveCategory(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/categories`, {
     method: "POST",
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -59,6 +67,7 @@ export async function saveCategory(data: any) {
 }
 
 export async function updateCategory(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/categories/${data.id}`,
     {
@@ -66,6 +75,7 @@ export async function updateCategory(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -74,6 +84,7 @@ export async function updateCategory(data: any) {
 }
 
 export async function deleteCategory(id: string) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/categories/${id}`,
     {
@@ -81,6 +92,7 @@ export async function deleteCategory(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     }
   );

@@ -20,7 +20,7 @@ export default function Address() {
         onChange={(key) => setTabKey(key)}
         items={[
           {
-            label: "addresss",
+            label: "Address List",
             key: "address_list",
             children: <AddressList />,
           },

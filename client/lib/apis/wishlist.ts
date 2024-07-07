@@ -1,10 +1,16 @@
 "use server";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "../authOption";
+
 export async function saveWishlist(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/wishlists`, {
     method: "POST",
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -12,13 +18,18 @@ export async function saveWishlist(data: any) {
 }
 
 export async function getWishlists() {
+  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/wishlists`, {
     cache: "no-cache",
+    headers: {
+      Authorization: `Bearer ${session?.user.accessToken}`,
+    }
   });
   return res.json();
 }
 
 export async function updateWishlist(data: any) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/wishlists/${data.id}`,
     {
@@ -26,6 +37,7 @@ export async function updateWishlist(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -34,6 +46,7 @@ export async function updateWishlist(data: any) {
 }
 
 export async function deleteWishlist(id: string) {
+  const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/wishlists/${id}`,
     {
@@ -41,6 +54,7 @@ export async function deleteWishlist(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     }
   );

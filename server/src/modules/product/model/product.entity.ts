@@ -19,6 +19,7 @@ import { BrandEntity } from "../../brand/model/brand.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 import { OrderItemEntity } from "../../order/model/order-item.entity";
+import { UnitEntity } from "../../unit/model/unit.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -37,11 +38,17 @@ export class ProductEntity {
   @Column({ name: "shipping_cost", type: "numeric", precision: 15, scale: 2 })
   shippingCost!: number;
 
-  @Column({ name: "tax_id", nullable: true })
+  @Column({ name: "tax_id" })
   taxId?: number;
   @ManyToOne((_type) => TaxEntity, (tax) => tax.products)
   @JoinColumn({ name: "tax_id" })
   tax?: TaxEntity;
+
+  @Column({ name: "unit_id" })
+  unitId!: number;
+  @ManyToOne((_type) => UnitEntity, (unit) => unit.products)
+  @JoinColumn({ name: "unit_id" })
+  unit!: UnitEntity;
 
   @Column({ name: "url_slug", unique: true })
   urlSlug!: string;
@@ -52,7 +59,7 @@ export class ProductEntity {
   @Column({ name: "single_image", nullable: true })
   singleImage!: string;
 
-  @Column({ name: "brand_id", nullable: true })
+  @Column({ name: "brand_id" })
   brandId?: number;
   @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
   @JoinColumn({ name: "brand_id" })
@@ -61,8 +68,8 @@ export class ProductEntity {
   @Column({ name: "discount_id", nullable: true })
   discountId?: number;
 
-  @Column({ nullable: true })
-  color?: string;
+  // @Column({ nullable: true })
+  // color?: string;
 
   @Column({ name: "limit_purchase_qty", nullable: true })
   limitPurchaseQty?: number;

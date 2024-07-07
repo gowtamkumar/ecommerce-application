@@ -253,7 +253,7 @@ const TaxList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 1300 }}
+      scroll={{ x: 'auto' }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={taxs}

@@ -36,8 +36,8 @@ export class ProductVariantEntity {
   @JoinColumn({ name: "size_id" })
   size!: SizeEntity;
 
-  @Column({ nullable: true })
-  color!: string;
+  @Column({ name: "color_id", nullable: true })
+  colorId!: number;
 
   // @Column({ type: "simple-array", nullable: true })
   // images!: string[];
