@@ -35,10 +35,33 @@ export const getCategories = asyncHandler(
 
     const result = await repository.findTrees();
 
+    const ress = result.map((lavel_1: any) => ({
+      ...lavel_1,
+      key: lavel_1.id,
+      value: lavel_1.id,
+      title: lavel_1.name,
+      children:
+        lavel_1?.children &&
+        lavel_1?.children.map((lavel_2: any) => ({
+          ...lavel_2,
+          key: lavel_2.id,
+          value: lavel_2.id,
+          title: lavel_2.name,
+          children:
+            lavel_2.children &&
+            lavel_2?.children.map((lavel_3: any) => ({
+              ...lavel_3,
+              key: lavel_3.id,
+              value: lavel_3.id,
+              title: lavel_3.name,
+            })),
+        })),
+    }));
+
     return res.status(200).json({
       success: true,
       msg: "Get all Categorys",
-      data: result,
+      data: ress,
     });
   }
 );

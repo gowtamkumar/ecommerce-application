@@ -9,6 +9,7 @@ import {
   InputNumber,
   Modal,
   Select,
+  TreeSelect,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
@@ -22,6 +23,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllCategories,
+  getCategories,
   saveCategory,
   updateCategory,
 } from "@/lib/apis/categories";
@@ -38,7 +40,8 @@ const AddCategory = () => {
   useEffect(() => {
     (async () => {
       const newData = { ...payload };
-      const categories = await getAllCategories();
+      const categories = await getCategories();
+      console.log("🚀 ~ newData:", newData)
       setCategories(categories.data);
       setFormData(newData);
     })();
@@ -90,6 +93,8 @@ const AddCategory = () => {
     }
   };
 
+
+
   return (
     <Modal
       title={
@@ -136,25 +141,21 @@ const AddCategory = () => {
 
           <div className="col-span-1">
             <Form.Item name="parentId" label="parent">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Status"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {(categories || []).map((category: any) => (
-                  <Select.Option key={category.id} value={category.id}>
-                    {category.name}
-                  </Select.Option>
-                ))}
+            
+                <TreeSelect
+                  showSearch
+                  style={{ width: "100%" }}
+                  // value={value}
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  placeholder="Please select"
+                  allowClear
+                  treeDefaultExpandAll
+                  // onChange={onChange}
+                  treeData={categories}
+                  // onPopupScroll={onPopupScroll}
+                />
 
                 {/* <Select.Option value={false}>Inactive</Select.Option> */}
-              </Select>
             </Form.Item>
           </div>
 

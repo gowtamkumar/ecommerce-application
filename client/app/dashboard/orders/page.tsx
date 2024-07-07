@@ -211,8 +211,6 @@ const App: React.FC = () => {
       ,
     ];
 
-    console.log("value", value);
-
     return (
       <div className="grid grid-cols-4 p-2">
         <div className="col-span-1 p-2">
@@ -388,7 +386,7 @@ const App: React.FC = () => {
   return (
     <div className="p-3">
       <Table
-        scroll={{ x: 1200 }}
+        scroll={{ x: 'auto' }}
         dataSource={orders}
         columns={columns}
         expandable={{ expandedRowRender }}

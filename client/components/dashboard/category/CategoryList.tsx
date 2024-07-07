@@ -22,12 +22,13 @@ import { toast } from "react-toastify";
 import { deleteCategory, getCategories } from "@/lib/apis/categories";
 
 interface DataType {
-  key: string;
+  key: React.ReactNode;
   name: string;
   urlSlug: string;
   description: string;
   image: string;
   status: string;
+  children?: DataType[];
 }
 
 type DataIndex = keyof DataType;
@@ -39,7 +40,6 @@ const CategoryList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getCategories();
@@ -145,9 +145,9 @@ const CategoryList: React.FC = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value, record) =>
+    onFilter: (value: any, record: any) =>
       record[dataIndex]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
@@ -168,36 +168,26 @@ const CategoryList: React.FC = () => {
       ),
   });
 
-
   const columns: TableColumnsType<DataType> = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // width: "15%",
-      // responsive: ['sm'],
+
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
     },
-    {
-      title: "Url Slug",
-      dataIndex: "urlSlug",
-      key: "urlSlug",
-      // width: "15%",
-      // responsive: ['md'],
-      // sorter: (a, b) => a.urlSlug.length - b.urlSlug.length,
-      ...getColumnSearchProps("urlSlug"),
-    },
-
-
+    // {
+    //   title: "Url Slug",
+    //   dataIndex: "urlSlug",
+    //   key: "urlSlug",
+    //   ...getColumnSearchProps("urlSlug"),
+    // },
 
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      // width: "15%",
-      // responsive: ['md'],
-      // sorter: (a, b) => a.image.length - b.image.length,
       ...getColumnSearchProps("image"),
     },
 
@@ -205,9 +195,6 @@ const CategoryList: React.FC = () => {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      // width: "15%",
-      // responsive: ['md'],
-      // sorter: (a, b) => a.description.length - b.description.length,
       ...getColumnSearchProps("description"),
     },
 
@@ -274,7 +261,7 @@ const CategoryList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 'auto' }}
+      scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={categories}
