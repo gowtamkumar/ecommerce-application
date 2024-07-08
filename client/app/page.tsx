@@ -49,14 +49,13 @@ export default async function Home() {
         {/* Popular products */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Popular Products</h2>
-            <ProductCard products={result} />
+          <ProductCard products={result} />
         </section>
 
         {/* Featured Products */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
-            <ProductCard products={result} />
-         
+          <ProductCard products={result} />
         </section>
 
         {/* Categories */}
@@ -84,8 +83,8 @@ export default async function Home() {
           style={{ width: "100%", height: "auto" }}
         />
       </section> */}
-        <WebFooter />
       </div>
+      <WebFooter />
     </>
   );
 }

@@ -2,7 +2,7 @@
 
 function WebFooter() {
   return (
-    <footer className="bg-white ">
+    <footer>
       <div className="md:w-8/12 mx-auto w-full">
         <div className="grid grid-cols-2 gap-8 px-4 py-6 lg:py-8 md:grid-cols-4">
           <div>
@@ -207,7 +207,6 @@ function WebFooter() {
           </div>
         </div>
       </div>
-      {/* </footer> */}
     </footer>
   );
 }

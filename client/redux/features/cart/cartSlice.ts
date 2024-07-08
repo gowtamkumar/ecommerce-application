@@ -18,7 +18,7 @@ export const cartSlice = createSlice({
   reducers: {
     addCart: (state, action: PayloadAction<any>): any => {
       const { tax, id } = action.payload;
-      
+
       const existingProductIndex = state.carts.findIndex(
         (item: any) => item.id === action.payload.id
       );
@@ -31,8 +31,17 @@ export const cartSlice = createSlice({
           taxType: tax.type,
           price: 300,
           productId: +id,
-          qty: 1,
+          // qty: 1,
         });
+      }
+    },
+
+    incrementCart: (state, action: PayloadAction<any>): any => {
+      const existingProductIndex = state.carts.findIndex(
+        (item: any) => item.id === action.payload.id
+      );
+      if (existingProductIndex !== -1) {
+        state.carts[existingProductIndex].qty++;
       }
     },
 
@@ -57,7 +66,8 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { addCart, decrementCart, removeCart } = cartSlice.actions;
+export const { addCart, decrementCart, removeCart, incrementCart } =
+  cartSlice.actions;
 export const selectCart = (state: RootState) => state.cart;
 
 export default cartSlice.reducer;

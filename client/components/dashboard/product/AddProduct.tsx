@@ -57,32 +57,36 @@ const AddProduct = () => {
   const { payload } = global.action;
 
   useEffect(() => {
-    (async () => {
-      const newData = { ...payload };
-      if (newData.id) {
-        setTags(newData.tags);
-      }
-      setFormData(newData);
-      const resBrand = await getBrands();
-      const resSize = await getSizes();
-      const resUnit = await getUnits();
-      const resColor = await getColors();
-      const resDiscount = await getFilterDiscounts({ type: "Discount" });
-      const resCategory = await getAllCategories();
-      const resTax = await getTaxs();
-      setUnits(resUnit.data);
-      setSizes(resSize.data);
-      setColors(resColor.data);
-      setDiscounts(resDiscount.data);
-      setCategories(resCategory.data);
-      setBrands(resBrand.data);
-      setTaxs(resTax.data);
-    })();
-    return () => {
-      dispatch(setFormValues({}));
-      form.resetFields();
-      setTags([]);
-    };
+    try {
+      (async () => {
+        const newData = { ...payload };
+        if (newData.id) {
+          setTags(newData.tags);
+        }
+        setFormData(newData);
+        const resBrand = await getBrands();
+        const resSize = await getSizes();
+        const resUnit = await getUnits();
+        const resColor = await getColors();
+        const resDiscount = await getFilterDiscounts({ type: "Discount" });
+        const resCategory = await getAllCategories();
+        const resTax = await getTaxs();
+        setUnits(resUnit.data);
+        setSizes(resSize.data);
+        setColors(resColor.data);
+        setDiscounts(resDiscount.data);
+        setCategories(resCategory.data);
+        setBrands(resBrand.data);
+        setTaxs(resTax.data);
+      })();
+      return () => {
+        dispatch(setFormValues({}));
+        form.resetFields();
+        setTags([]);
+      };
+    } catch (err) {
+      console.log(err);
+    }
   }, [global.action]);
 
   const handleSubmit = async () => {
@@ -235,7 +239,7 @@ const AddProduct = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {brands.map((item: any, idx) => (
+                {(brands || []).map((item: any, idx) => (
                   <Select.Option key={idx} value={item.id}>
                     {item.name}
                   </Select.Option>
@@ -267,7 +271,7 @@ const AddProduct = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {taxs.map((item: any, idx) => (
+                {(taxs || []).map((item: any, idx) => (
                   <Select.Option key={idx} value={item.id}>
                     {`${item.name} - ${item.type}`}
                   </Select.Option>
@@ -289,7 +293,7 @@ const AddProduct = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {discounts.map((item: any, idx) => (
+                {(discounts || []).map((item: any, idx) => (
                   <Select.Option key={idx} value={item.id}>
                     {`${item.value} - ${item.discountType}`}
                   </Select.Option>
@@ -372,7 +376,7 @@ const AddProduct = () => {
               placeholder="Type something and press Enter"
             />
             <div className="flex mt-2">
-              {tags.map((item, index) => (
+              {(tags || []).map((item, index) => (
                 <Tag key={index}>
                   {item}{" "}
                   <span
@@ -410,7 +414,7 @@ const AddProduct = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {units.map((item: any) => (
+                {(units || []).map((item: any) => (
                   <Select.Option key={item.id} value={item.id}>
                     {item.name}
                   </Select.Option>
@@ -464,7 +468,7 @@ const AddProduct = () => {
                     .indexOf(input.toLowerCase()) >= 0
                 }
               >
-                {categories.map((item: any, idx) => (
+                {(categories || []).map((item: any, idx) => (
                   <Select.Option key={idx} value={item.id}>
                     {item.name}
                   </Select.Option>
@@ -527,7 +531,7 @@ const AddProduct = () => {
                                 { required: true, message: "Regular Price" },
                               ]}
                             >
-                              <InputNumber placeholder="Regular Price" />
+                              <InputNumber placeholder="Regular Price" min={1} />
                             </Form.Item>
                           </td>
 
@@ -539,7 +543,7 @@ const AddProduct = () => {
                                 { required: true, message: "sale price" },
                               ]}
                             >
-                              <InputNumber placeholder="Sale price" />
+                              <InputNumber placeholder="Sale price"  min={1}/>
                             </Form.Item>
                           </td>
                           <td>
@@ -555,7 +559,7 @@ const AddProduct = () => {
                                 showSearch
                                 placeholder="Select"
                               >
-                                {sizes.map((item: any, index) => (
+                                {(sizes || []).map((item: any, index) => (
                                   <Select.Option key={index} value={item.id}>
                                     {`${item.id} ${item.name}`}
                                   </Select.Option>
@@ -576,7 +580,7 @@ const AddProduct = () => {
                                     .indexOf(input.toLowerCase()) >= 0
                                 }
                               >
-                                {colors.map((item: any, idx) => (
+                                {(colors || []).map((item: any, idx) => (
                                   <Select.Option key={item.id} value={item.id}>
                                     <ColorPicker
                                       size="small"
@@ -601,8 +605,9 @@ const AddProduct = () => {
                               {...restField}
                               name={[name, "stockQty"]}
                               rules={[{ required: true, message: "Stock Qty" }]}
+                            
                             >
-                              <InputNumber placeholder="Enter" />
+                              <InputNumber placeholder="Enter" min={1} />
                             </Form.Item>
                           </td>
 

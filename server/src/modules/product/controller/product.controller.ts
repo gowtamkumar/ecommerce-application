@@ -78,18 +78,17 @@ export const getProduct = asyncHandler(
           "product",
           "user.id",
           "user.name",
-          "brand.id",
-          "brand.name",
+          "brand",
           "reviews.id",
           "reviews.rating",
           "reviews.comment",
           "tax",
           "productVariants",
-          "productCategories.id",
           "category.id",
           "category.name",
           "size.id",
           "size.name",
+          "color",
         ])
         .leftJoin("product.user", "user")
         .leftJoin("product.brand", "brand")
@@ -99,6 +98,7 @@ export const getProduct = asyncHandler(
         .leftJoin("product.productCategories", "productCategories")
         .leftJoin("productCategories.category", "category")
         .leftJoin("productVariants.size", "size")
+        .leftJoin("productVariants.color", "color")
         .where("product.id = :id", { id });
 
       const result = await qb.getOne();
@@ -141,7 +141,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     });
 
     console.log("validation", validation.error);
-    
 
     if (!validation.success) {
       return res.status(400).json({ message: validation.error.formErrors });

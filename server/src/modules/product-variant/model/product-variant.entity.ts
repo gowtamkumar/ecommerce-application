@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
 import { SizeEntity } from "../../size/model/size.entity";
+import { ColorEntity } from "../../color/model/color.entity";
 
 @Entity("product_variants")
 export class ProductVariantEntity {
@@ -38,6 +39,11 @@ export class ProductVariantEntity {
 
   @Column({ name: "color_id", nullable: true })
   colorId!: number;
+  @ManyToOne((_type) => ColorEntity, (color) => color.productVariants, {
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "color_id" })
+  color!: ColorEntity;
 
   // @Column({ type: "simple-array", nullable: true })
   // images!: string[];

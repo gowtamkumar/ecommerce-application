@@ -11,7 +11,7 @@ dob,
 point:number
 status(Active/Inactive/Block)
 img_url,
-addresses:[come from address table]
+shippingAddresses:[come from address table]
 last_login: date with time zone
 last_logout: date with time zone
 ip_address(optional),
@@ -32,14 +32,15 @@ divice_id(optional),
 
 id,
 user_id,
-name,
-phone_no,
-address:string
 country:string
 state,
 city,
 union,
 zip_code,
+description
+createdAt
+updatedAt
+
 
 ## products :(done)
 

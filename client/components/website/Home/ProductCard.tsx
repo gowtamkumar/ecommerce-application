@@ -4,12 +4,12 @@ import { addCart } from "@/redux/features/cart/cartSlice";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 const ProductCard = ({ products }: any) => {
-  const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-
+  const route = useRouter();
 
   return (
     <div
@@ -19,7 +19,7 @@ const ProductCard = ({ products }: any) => {
     >
       {products?.data?.map((item: any, idx: any) => (
         <div className="bg-white rounded-lg shadow-md p-4" key={item.id}>
-          <a href={`products/${item.id}`}>
+          <Link href={`/products/${item.id}`}>
             <Image
               width={150}
               height={150}
@@ -29,13 +29,7 @@ const ProductCard = ({ products }: any) => {
             />
             <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
             <p className="text-gray-500 mb-2">${item.name}</p>
-          </a>
-          <button
-            onClick={() => dispatch(addCart(item))}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Add to Cart
-          </button>
+          </Link>
         </div>
       ))}
     </div>

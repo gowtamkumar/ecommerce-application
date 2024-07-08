@@ -23,8 +23,25 @@ export async function getProducts() {
     cache: "no-cache",
     headers: {
       Authorization: `Bearer ${session?.user.accessToken}`,
-    }
+    },
   });
+  return res.json();
+}
+
+export async function getProduct(id: string) {
+  console.log("🚀 ~ id:", id);
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/products/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
+  console.log("🚀 ~ res:", res);
   return res.json();
 }
 

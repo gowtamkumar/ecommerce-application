@@ -59,7 +59,7 @@ export default function SingleProduct() {
           <ProductImageGallery images={product.images} />
         </div>
         <div className="col-span-2">
-          <ProductDetails product={product} />
+          <ProductDetails />
         </div>
         <div>
           <DeliveryInfo delivery={product.delivery} />
@@ -67,7 +67,9 @@ export default function SingleProduct() {
       </div>
       <RatingProduct />
       <DescriptionProduct />
-      <RelatedProducts products={[product]} />
+      <section className="py-5">
+        <RelatedProducts products={[product]} />
+      </section>
     </div>
   );
 }
