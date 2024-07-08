@@ -103,7 +103,14 @@ const AddBrand = () => {
 
         <div className="grid gap-5">
           <div className="col-span-1">
-            <Form.Item name="name" label="Name">
+            <Form.Item name="name" label="Name"
+
+              rules={[
+                {
+                  required: true,
+                  message: "name is required",
+                },
+              ]}>
               <Input placeholder="Enter " />
             </Form.Item>
           </div>

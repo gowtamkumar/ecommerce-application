@@ -1,143 +1,135 @@
 "use client";
-import Button from "@/components/dashboard/Button";
-import { UserValidationSchema } from "@/validation";
-import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
+import React, { useEffect } from "react";
+import { Button, Form, Input } from "antd";
+
 import { useRouter } from "next/navigation";
-import React from "react";
-import { useFormState } from "react-dom";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { getSession, signIn } from "next-auth/react";
 import { saveUser } from "@/lib/apis/user";
 
-export default function Register() {
-  const router = useRouter();
+const Register = () => {
   const global = useSelector(selectGlobal);
+  // hook
+  const [form] = Form.useForm();
+  const router = useRouter();
   const dispatch = useDispatch();
 
-  const registerAction = async (prevState: any, formData: FormData) => {
-    const validatedFields = UserValidationSchema.safeParse({
-      name: formData.get("name"),
-      email: formData.get("email"),
-      username: formData.get("username"),
-      password: formData.get("password"),
-    });
+  useEffect(() => {
+    (async () => {
+      const session = await getSession();
+      console.log("🚀 ~ session:", session)
+      if (session) {
+        router.replace("/");
+      }
+    })();
+  }, [dispatch, router]);
 
-    if (!validatedFields.success) {
-      return {
-        errors: validatedFields.error.formErrors,
-      };
-    }
-    const result = await saveUser(validatedFields.data);
-    dispatch(setResponse(result));
-    setTimeout(() => {
-      dispatch(setResponse({}));
+  const handleSubmit = async (values: any) => {
+    dispatch(setLoading({ save: true }));
+    try {
+      // return console.log("newData:", newData);
+      const result = await saveUser(values);
+
       if (result?.success) {
         router.push("/login");
       }
-    }, 5000);
+
+
+      setTimeout(async () => {
+        dispatch(setLoading({ save: false }));
+        // toast.success(
+        //   `Address ${newData?.id ? "Updated" : "Created"} Successfully`
+        // );
+      }, 100);
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
-  const [state, fromAction] = useFormState(registerAction, null);
-
   return (
-    <form action={fromAction}>
-      <div className="flex min-h-full flex-col items-center justify-center px-6 py-6 lg:px-8 bg-white">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Create your Account
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter name"
-                    required
-                    className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Email
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter Email"
-                    required
-                    className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium leading-6 text-gray-900"
+    <>
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleSubmit}
+        autoComplete="off"
+        scrollToFirstError={true}
+      >
+        <div className="flex min-h-full flex-col items-center justify-center px-6 py-6 lg:px-8 bg-white">
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+              Welcome to site! Create your Account.
+            </h2>
+            <div className="flex gap-3">
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Name is required",
+                  },
+                ]}
               >
-                Username
-              </label>
-              <div className="mt-2">
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Enter Username"
-                  required
-                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+                <Input placeholder="Enter " />
+              </Form.Item>
+
+              <Form.Item
+                name="email"
+                label="E-mail"
+                rules={[
+                  {
+                    required: true,
+                    message: "E-mail is required",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter " />
+              </Form.Item>
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  required
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Enter password"
-                  autoComplete="current-password"
-                  className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              <Form.Item
+                name="username"
+                label="Username"
+                rules={[
+                  {
+                    required: true,
+                    message: "Username is required",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter " />
+              </Form.Item>
+
+              <Form.Item
+                name="password"
+                label="Password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Password is required",
+                  },
+                ]}
+              >
+                <Input.Password placeholder="Enter " />
+              </Form.Item>
             </div>
-            <div className="text-center">
-              {global.response.status ? (
-                <p> {global.response?.message}</p>
-              ) : null}
-            </div>
-            <Button size="w-full" before="Submitting...." after="Submit" />
+
+            <Button
+              className="w-full"
+              type="primary"
+              htmlType="submit"
+              loading={global.loading.save}
+            >
+              Register
+            </Button>
           </div>
         </div>
-      </div>
-    </form>
+      </Form>
+    </>
   );
-}
+};
+
+export default Register;

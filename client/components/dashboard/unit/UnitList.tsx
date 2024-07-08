@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { deleteUnit, getUnits } from "@/lib/apis/unit";
@@ -30,7 +30,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const UnitList: React.FC = () => {
-  const [Units, setUnits] = useState([]);
+  const [units, setUnits] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -228,7 +228,7 @@ const UnitList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={Units}
+      dataSource={units}
       pagination={{ pageSize: 10 }}
       bordered
       size="small"
