@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "ecommerce-front-end",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "proxy": "http://localhost:3900",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gowtamkumar/ecommerce-application.git"
+  },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.0",
     "@reduxjs/toolkit": "^2.2.1",

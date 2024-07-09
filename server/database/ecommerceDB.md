@@ -11,7 +11,7 @@ dob,
 point:number
 status(Active/Inactive/Block)
 img_url,
-shippingAddresses:[come from address table]
+shippingAddresses:[from shipping_address table]
 last_login: date with time zone
 last_logout: date with time zone
 ip_address(optional),
@@ -28,19 +28,22 @@ ip_address(optional),
 divice_id(optional),
  -->
 
-## shipping_address (done)
+## shipping_address
 
 id,
-user_id,
+type:[Home/Ofice]
+name:
+phone_no,
+alternative_phone_no,
 country:string
-state,
+user_id,
 city,
+thana
 union,
 zip_code,
-description
+address
 createdAt
 updatedAt
-
 
 ## products :(done)
 
@@ -168,13 +171,19 @@ order_date,
 deliveryId,
 tracking_no,
 shiping_amount,
+
 <!-- is_paid, -->
+
 order_total_amount
+
 <!-- is_shipped, -->
+
 discount_amount,
 net_amount,
 note,
+
 <!-- order_items: array -->
+
 phone_no,
 email_address,
 delivery_address,
@@ -196,8 +205,10 @@ tax,
 qty,
 
 ## order_status (optional)
-  id,
-  status:string,
+
+id,
+status:string,
+
   <!-- ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"] -->
 
 ## order_traking
@@ -207,7 +218,6 @@ location:string,
 status_id,
 createdAt
 updatedAt
-
 
 ## tax:(done)
 
@@ -228,6 +238,7 @@ createdAt
 updatedAt
 
 ## payments:(need to implement sslecommerce)
+
 id,
 order_id,
 date,

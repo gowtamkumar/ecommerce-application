@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== "test") {
 app.use(cookieParser()); // cookie parser when we needed the cookies value then we simply get and set
 app.use(express.json()); // you ensure that your express application can handle json data sent in the request body automatically
 app.use(express.urlencoded({ extended: true })); // it parses incoming request with url-encoded payloads and is based on a body parser.
-app.use(cors()); // cros for different http method enable
+app.use(cors()); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
 
 // Dev logging middleware
 if (process.env.NODE_ENV === "development") {

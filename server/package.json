@@ -1,7 +1,7 @@
 {
-  "name": "express-typescript-posgresql-typeorm",
+  "name": "e-commerce-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is exrpess project. this is ecommerce server",
   "main": "index.ts",
   "scripts": {
     "build": "npx tsc",
@@ -10,9 +10,17 @@
     "ext": "ts",
     "exec": "concurrently \"npx tsc --watch\" \"ts-node index.ts\""
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "express",
+    "posgresql"
+  ],
+  "author": "Gowtam kumar",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gowtamkumar/ecommerce-application.git"
+  },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
