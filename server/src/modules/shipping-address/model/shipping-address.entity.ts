@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("addresses")
-export class AddressEntity {
+@Entity("shipping_addresses")
+export class ShippingAddressEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

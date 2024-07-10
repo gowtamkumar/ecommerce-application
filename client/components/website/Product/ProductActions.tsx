@@ -1,30 +1,41 @@
 // src/components/ProductActions.js
-import { Button, Input, InputNumber } from "antd";
-import React, { useState } from "react";
+import { decrementCart, incrementCart } from "@/redux/features/cart/cartSlice";
+import { Button, Input } from "antd";
+import React from "react";
+import { useDispatch } from "react-redux";
 
-const ProductActions = () => {
-  const [quantity, setQuantity] = useState(1);
-
-  const increaseQuantity = () => setQuantity(quantity + 1);
-  const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
+const ProductActions = ({ product, setProduct }: any) => {
+  const dispatch = useDispatch();
 
   return (
     <div className="w-60 flex items-center mb-4">
       <span className="text-gray-600"> Quantity: </span>
       <Button
-        onClick={decreaseQuantity}
+        onClick={() => {
+          dispatch(decrementCart(product));
+          setProduct({
+            ...product,
+            qty: product?.qty - 1,
+          });
+        }}
         className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300 focus:outline-none"
       >
         -
       </Button>
       <Input
         type="number"
-        value={quantity}
+        value={product?.qty}
         readOnly
         className="w-12 text-center border-t border-b border-gray-300"
       />
       <Button
-        onClick={increaseQuantity}
+        onClick={() => {
+          dispatch(incrementCart(product));
+          setProduct({
+            ...product,
+            qty: product?.qty + 1,
+          });
+        }}
         className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300 focus:outline-none"
       >
         +

@@ -4,7 +4,7 @@ import { UserEntity } from "../modules/auth/model/user.entity";
 import { ProductEntity } from "../modules/product/model/product.entity";
 import { evnFileValidationSchema } from "../validation";
 import dotenv from "dotenv";
-import { AddressEntity } from "../modules/address/model/address.entity";
+import { ShippingAddressEntity } from "../modules/shipping-address/model/shipping-address.entity";
 import { BrandEntity } from "../modules/brand/model/brand.entity";
 import { CategoriesEntity } from "../modules/categories/model/categories.entity";
 import { DiscountEntity } from "../modules/discount/model/discount.entity";
@@ -59,7 +59,7 @@ const dbConnection = new DataSource({
   entities: [
     UserEntity,
     ProductEntity,
-    AddressEntity,
+    ShippingAddressEntity,
     BrandEntity,
     CategoriesEntity,
     DiscountEntity,

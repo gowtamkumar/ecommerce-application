@@ -5,7 +5,7 @@ import wishlistRoutes from "../modules/wishlist/route/wishlist.route";
 import orderRoutes from "../modules/order/route/order.route";
 import orderTrackingRoutes from "../modules/order-tracking/route/order-tracking.route";
 import discountRoutes from "../modules/discount/route/discount.route";
-import addressRoutes from "../modules/address/route/address.route";
+import shippingAddressRoutes from "../modules/shipping-address/route/shipping-address.route";
 import brandRoutes from "../modules/brand/route/brand.route";
 import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
@@ -32,7 +32,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/product-variants", AuthGuard, productVariantRoutes);
   app.use("/api/v1/categories", categoriesRoutes);
   app.use("/api/v1/brands", AuthGuard, brandRoutes);
-  app.use("/api/v1/address", AuthGuard, addressRoutes);
+  app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
   app.use("/api/v1/discounts", AuthGuard, discountRoutes);
   app.use("/api/v1/orders", AuthGuard, orderRoutes);
   app.use("/api/v1/order-tracking", AuthGuard, orderTrackingRoutes);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const addressValidationSchema = z.object({
+export const shippingAddressValidationSchema = z.object({
   userId: z.number({
     required_error: "user is required",
   }),

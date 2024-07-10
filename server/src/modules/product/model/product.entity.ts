@@ -20,6 +20,7 @@ import { ProductCategoryEntity } from "../../product-category/model/product-cate
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 import { OrderItemEntity } from "../../order/model/order-item.entity";
 import { UnitEntity } from "../../unit/model/unit.entity";
+import { DiscountEntity } from "../../discount/model/discount.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -67,6 +68,9 @@ export class ProductEntity {
 
   @Column({ name: "discount_id", nullable: true })
   discountId?: number;
+  @ManyToOne((_type) => DiscountEntity, (discount) => discount.products)
+  @JoinColumn({ name: "discount_id" })
+  discount?: DiscountEntity;
 
   // @Column({ nullable: true })
   // color?: string;

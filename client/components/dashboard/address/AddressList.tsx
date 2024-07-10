@@ -20,7 +20,7 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import { deleteAddress, getAddresss } from "@/lib/apis/address";
+import { deleteShippingAddress, getShippingAddress } from "@/lib/apis/address";
 
 interface DataType {
   key: string;
@@ -43,7 +43,7 @@ const AddressList: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getAddresss();
+      const res = await getShippingAddress();
       setAddress(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -52,7 +52,7 @@ const AddressList: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteAddress(id);
+      await deleteShippingAddress(id);
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
         toast.success("Address deleted successfully");

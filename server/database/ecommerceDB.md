@@ -75,7 +75,7 @@ type: ['Simple Product', "Varient Product"]
 
 id,
 regular_price:numeric,
-sale_price:numeric,
+sale_price:numeric,(optional)
 size_id,
 colorId,
 weight(kg):numeric

@@ -1,35 +1,35 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
-import { AddressEntity } from "../model/address.entity";
-import { addressValidationSchema } from "../../../validation";
+import { shippingAddressValidationSchema } from "../../../validation";
+import { ShippingAddressEntity } from "../model/shipping-address.entity";
 
-// @desc Get all Address
-// @route GET /api/v1/Address
+// @desc Get all ShippingAddress
+// @route GET /api/v1/ShippingAddress
 // @access Public
-export const getAddresses = asyncHandler(
+export const getShippingAddresses = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
-    const repository = connection.getRepository(AddressEntity);
+    const repository = connection.getRepository(ShippingAddressEntity);
 
     const result = await repository.find();
 
     return res.status(200).json({
       success: true,
-      msg: "Get all Address",
+      msg: "Get all ShippingAddress",
       data: result,
     });
   }
 );
 
-// @desc Get a single Address
-// @route GET /api/v1/Address/:id
+// @desc Get a single ShippingAddress
+// @route GET /api/v1/ShippingAddress/:id
 // @access Public
-export const getAddress = asyncHandler(
+export const getShippingAddress = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(AddressEntity);
+    const repository = await connection.getRepository(ShippingAddressEntity);
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -38,23 +38,21 @@ export const getAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Address of id ${req.params.id}`,
+      msg: `Get a single ShippingAddress of id ${req.params.id}`,
       data: result,
     });
   }
 );
 
-// @desc Create a single Address
-// @route POST /api/v1/Address
+// @desc Create a single ShippingAddress
+// @route POST /api/v1/ShippingAddress
 // @access Public
-export const createAddress = asyncHandler(async (req: any, res: Response) => {
+export const createShippingAddress = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = addressValidationSchema.safeParse({
+  const validation = shippingAddressValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
   });
-
-  console.log("validation", validation);
 
   if (!validation.success) {
     return res.status(401).json({
@@ -63,27 +61,27 @@ export const createAddress = asyncHandler(async (req: any, res: Response) => {
   }
  
 
-  const repository = connection.getRepository(AddressEntity);
+  const repository = connection.getRepository(ShippingAddressEntity);
 
-  const newAddress = repository.create(validation.data);
-  const save = await repository.save(newAddress);
+  const newShippingAddress = repository.create(validation.data);
+  const save = await repository.save(newShippingAddress);
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Address",
+    msg: "Create a new ShippingAddress",
     data: save,
   });
 });
 
-// @desc Update a single Address
-// @route PUT /api/v1/Address/:id
+// @desc Update a single ShippingAddress
+// @route PUT /api/v1/ShippingAddress/:id
 // @access Public
-export const updateAddress = asyncHandler(
+export const updateShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const repository = await connection.getRepository(AddressEntity);
+    const repository = await connection.getRepository(ShippingAddressEntity);
 
     const result = await repository.findOneBy({ id });
 
@@ -93,20 +91,20 @@ export const updateAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Address of id ${req.params.id}`,
+      msg: `Update a single ShippingAddress of id ${req.params.id}`,
       data: updateData,
     });
   }
 );
 
-// @desc Delete a single Address
-// @route DELETE /api/v1/Address/:id
+// @desc Delete a single ShippingAddress
+// @route DELETE /api/v1/ShippingAddress/:id
 // @access Public
-export const deleteAddress = asyncHandler(
+export const deleteShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(AddressEntity);
+    const repository = await connection.getRepository(ShippingAddressEntity);
 
     const result = await repository.findOneBy({ id });
     if (!result) {
@@ -117,7 +115,7 @@ export const deleteAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Address of id ${req.params.id}`,
+      msg: `Delete a single ShippingAddress of id ${req.params.id}`,
       data: result,
     });
   }

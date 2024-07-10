@@ -1,16 +1,32 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
 import RelatedProducts from "./RelatedProducts";
 import DeliveryInfo from "./DeliveryInfo";
-import { Breadcrumb, Divider, Rate } from "antd";
+import { Breadcrumb } from "antd";
 import RatingProduct from "./RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
+import { getProduct } from "@/lib/apis/product";
 
 export default function SingleProduct() {
-  const product = {
+  const [product, setProduct] = useState({} as any);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    (async () => {
+      const newProduct = await getProduct(id.toString());
+      setProduct({
+        ...newProduct?.data,
+        qty: 1,
+        selectProductVarient: newProduct?.data?.productVariants[0],
+      });
+    })();
+  }, [id]);
+
+  const products = {
     name: "New LED Watch",
     description: "A stylish watch available in multiple colors.",
     price: 199,
@@ -56,19 +72,19 @@ export default function SingleProduct() {
       </div>
       <div className=" bg-white  grid grid-cols-1 md:grid-cols-4">
         <div className="col-span-1">
-          <ProductImageGallery images={product.images} />
+          <ProductImageGallery images={products.images} />
         </div>
         <div className="col-span-2">
-          <ProductDetails />
+          <ProductDetails product={product} setProduct={setProduct} />
         </div>
         <div>
-          <DeliveryInfo delivery={product.delivery} />
+          <DeliveryInfo delivery={products.delivery} />
         </div>
       </div>
       <RatingProduct />
-      <DescriptionProduct />
+      <DescriptionProduct product={product} />
       <section className="py-5">
-        <RelatedProducts products={[product]} />
+        <RelatedProducts products={[products]} />
       </section>
     </div>
   );

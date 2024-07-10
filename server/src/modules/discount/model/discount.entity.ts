@@ -3,12 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { DiscountType } from "../enums/discount-type.enum";
 import { DiscountStatus } from "../enums/discount-status.enum";
 import { Type } from "../enums";
+import { ProductEntity } from "../../product/model/product.entity";
 
 @Entity("discounts")
 export class DiscountEntity {
@@ -71,4 +73,7 @@ export class DiscountEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
+
+  @OneToMany((_type) => ProductEntity, (product) => product.discount)
+  products!: ProductEntity[];
 }

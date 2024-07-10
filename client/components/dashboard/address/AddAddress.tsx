@@ -20,7 +20,7 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveAddress, updateAddress } from "@/lib/apis/address";
+import { saveShippingAddress, updateShippingAddress } from "@/lib/apis/address";
 
 const AddAddress = () => {
   const global = useSelector(selectGlobal);
@@ -45,8 +45,8 @@ const AddAddress = () => {
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
-        ? await updateAddress(newData)
-        : await saveAddress(newData);
+        ? await updateShippingAddress(newData)
+        : await saveShippingAddress(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         router.refresh();

@@ -72,36 +72,40 @@ export const getProduct = asyncHandler(
       const connection = await getDBConnection();
       const repository = connection.getRepository(ProductEntity);
 
-      const qb = repository
-        .createQueryBuilder("product")
-        .select([
-          "product",
-          "user.id",
-          "user.name",
-          "brand",
-          "reviews.id",
-          "reviews.rating",
-          "reviews.comment",
-          "tax",
-          "productVariants",
-          "category.id",
-          "category.name",
-          "size.id",
-          "size.name",
-          "color",
-        ])
-        .leftJoin("product.user", "user")
-        .leftJoin("product.brand", "brand")
-        .leftJoin("product.reviews", "reviews")
-        .leftJoin("product.tax", "tax")
-        .leftJoin("product.productVariants", "productVariants")
-        .leftJoin("product.productCategories", "productCategories")
-        .leftJoin("productCategories.category", "category")
-        .leftJoin("productVariants.size", "size")
-        .leftJoin("productVariants.color", "color")
-        .where("product.id = :id", { id });
+      const qb = repository.createQueryBuilder("product");
+      qb.select([
+        "product",
+        "user.id",
+        "user.name",
+        "brand",
+        "reviews.id",
+        "reviews.rating",
+        "reviews.comment",
+        "tax",
+        "productVariants",
+        "category.id",
+        "category.name",
+        "size.id",
+        "size.name",
+        "color",
+        "discount.discountType",
+        "discount.value",
+        "discount.type",
+      ]);
+      qb.leftJoin("product.user", "user");
+      qb.leftJoin("product.brand", "brand");
+      qb.leftJoin("product.reviews", "reviews");
+      qb.leftJoin("product.tax", "tax");
+      qb.leftJoin("product.discount", "discount");
+      qb.leftJoin("product.productVariants", "productVariants");
+      qb.leftJoin("product.productCategories", "productCategories");
+      qb.leftJoin("productCategories.category", "category");
+      qb.leftJoin("productVariants.size", "size");
+      qb.leftJoin("productVariants.color", "color");
+      qb.where("product.id = :id", { id });
 
       const result = await qb.getOne();
+      console.log("🚀 ~ result:", result);
 
       if (!result) {
         return res.status(404).json({
@@ -139,8 +143,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       ...req.body,
       userId: req.id,
     });
-
-    console.log("validation", validation.error);
 
     if (!validation.success) {
       return res.status(400).json({ message: validation.error.formErrors });

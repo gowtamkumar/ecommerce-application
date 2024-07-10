@@ -1,33 +1,30 @@
 "use client";
-import { Button, Divider, Input, Rate, Tag } from "antd";
-import React, { useEffect, useState } from "react";
-import ProductActions from "./ProductActions";
+import { Button, Divider, Input, Rate } from "antd";
+import React from "react";
 import { useDispatch } from "react-redux";
 import {
   addCart,
   decrementCart,
   incrementCart,
 } from "@/redux/features/cart/cartSlice";
-import { useParams, useRouter } from "next/navigation";
-import { getProduct } from "@/lib/apis/product";
 import Link from "next/link";
+import ProductActions from "./ProductActions";
 
-const ProductDetails = () => {
-  const [product, setProduct] = useState({} as any);
+const ProductDetails = ({ product, setProduct }: any) => {
   const dispatch = useDispatch();
-  const route = useRouter();
-  const { id } = useParams();
 
-  useEffect(() => {
-    (async () => {
-      const newProduct = await getProduct(id.toString());
-      setProduct({
-        ...newProduct?.data,
-        qty: 1,
-        selectProductVarient: newProduct?.data?.productVariants[0],
-      });
-    })();
-  }, [dispatch, id]);
+  function discountCalculation(value: {
+    selectProductVarient: { regularPrice: string | number };
+    discount: { discountType: string; value: number };
+  }) {
+    const regularPrice = +value.selectProductVarient?.regularPrice;
+    const discount = value.discount;
+    const dis =
+      discount?.discountType === "Percentage"
+        ? (regularPrice * (discount.value || 0)) / 100
+        : +discount?.value;
+    return dis;
+  }
 
   return (
     <div className="p-4 ">
@@ -46,12 +43,25 @@ const ProductDetails = () => {
 
       <div className="flex items-center mb-4">
         <span className="text-2xl font-semibold text-blue-600 mr-4">
-          ৳ {product.selectProductVarient?.salePrice}
+          ৳{" "}
+          {product.discountId
+            ? (
+                +product.selectProductVarient?.regularPrice -
+                discountCalculation(product)
+              ).toFixed(2)
+            : (+product.selectProductVarient?.regularPrice || 0).toFixed(2)}
         </span>
-        <span className="line-through text-gray-500">
-          ৳ {product.selectProductVarient?.regularPrice}
-        </span>
-        <span className="text-green-600 ml-2">- {product?.discount}%</span>
+        {product?.discountId ? (
+          <>
+            <span className="line-through text-gray-500">
+              ৳ {(+product.selectProductVarient?.regularPrice || 0).toFixed(2)}
+            </span>
+            <span className="text-green-600 ml-2">
+              - {product?.discount?.value}
+              {product?.discount?.discountType === "Percentage" ? "%" : "BDT"}
+            </span>
+          </>
+        ) : null}
       </div>
       <Divider />
       {product?.productVariants?.length && (
@@ -96,6 +106,7 @@ const ProductDetails = () => {
       )}
 
       {/* product Action section */}
+      {/* <ProductActions  /> */}
       <div className="w-60 flex items-center mb-4">
         <span className="text-gray-600"> Quantity: </span>
         <Button
@@ -130,7 +141,6 @@ const ProductDetails = () => {
         </Button>
       </div>
 
-      {/* <ProductActions /> */}
       <Divider />
       <div className="flex gap-x-5">
         <Button
