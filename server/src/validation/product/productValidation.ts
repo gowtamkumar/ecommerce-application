@@ -38,7 +38,7 @@ export const productValidationSchema = z.object({
   productVariants: z
     .array(
       z.object({
-        regularPrice: z.number({ required_error: "Regular Price is required" }),
+        price: z.number({ required_error: "Regular Price is required" }),
         salePrice: z.number({ required_error: "Sale Price is required" }),
         sizeId: z.number().optional(),
         images: z.array(z.string()).optional(),

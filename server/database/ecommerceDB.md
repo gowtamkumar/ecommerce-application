@@ -34,6 +34,7 @@ id,
 type:[Home/Ofice]
 name:
 phone_no,
+email,
 alternative_phone_no,
 country:string
 user_id,
@@ -41,9 +42,8 @@ city,
 thana
 union,
 zip_code,
-address
-createdAt
-updatedAt
+address,
+status,
 
 ## products :(done)
 
@@ -168,7 +168,7 @@ updatedAt
 id,
 user_id,
 order_date,
-deliveryId,
+deliveryId(assing addmin),
 tracking_no,
 shiping_amount,
 
@@ -184,9 +184,7 @@ note,
 
 <!-- order_items: array -->
 
-phone_no,
-email_address,
-delivery_address,
+shipping_address_id,
 payment_status(Paid/NotPaid/PertialPaid),
 payment_type(Online/Offline)
 payment_transaction_id,

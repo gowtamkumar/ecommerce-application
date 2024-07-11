@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
 import RelatedProducts from "./RelatedProducts";
-import DeliveryInfo from "./DeliveryInfo";
 import { Breadcrumb } from "antd";
 import RatingProduct from "./RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
@@ -12,7 +11,6 @@ import { getProduct } from "@/lib/apis/product";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
-
   const { id } = useParams();
 
   useEffect(() => {
@@ -77,8 +75,9 @@ export default function SingleProduct() {
         <div className="col-span-2">
           <ProductDetails product={product} setProduct={setProduct} />
         </div>
-        <div>
-          <DeliveryInfo delivery={products.delivery} />
+        <div className="bg-slate-400">
+          We can show any thing
+          {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>
       </div>
       <RatingProduct />

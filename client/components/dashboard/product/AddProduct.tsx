@@ -526,7 +526,7 @@ const AddProduct = () => {
                           <td>
                             <Form.Item
                               {...restField}
-                              name={[name, "regularPrice"]}
+                              name={[name, "price"]}
                               rules={[
                                 { required: true, message: "Regular Price" },
                               ]}

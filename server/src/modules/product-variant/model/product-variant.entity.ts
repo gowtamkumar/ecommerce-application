@@ -15,8 +15,14 @@ export class ProductVariantEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "regular_price", type: "numeric", precision: 15, scale: 2 })
-  regularPrice!: number;
+  @Column({
+    name: "regular_price",
+    type: "numeric",
+    precision: 15,
+    scale: 2,
+    nullable: true,
+  })
+  price!: number;
 
   @Column({ name: "sale_price", type: "numeric", precision: 15, scale: 2 })
   salePrice!: number;

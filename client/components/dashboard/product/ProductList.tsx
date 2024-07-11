@@ -280,7 +280,7 @@ const ProductList: React.FC = () => {
               );
               const productVariants = value?.productVariants?.map(
                 ({
-                  regularPrice,
+                  price,
                   salePrice,
                   productId,
                   sizeId,
@@ -288,7 +288,7 @@ const ProductList: React.FC = () => {
                   weight,
                   stockQty,
                 }: any) => ({
-                  regularPrice,
+                  price,
                   salePrice,
                   productId,
                   sizeId,

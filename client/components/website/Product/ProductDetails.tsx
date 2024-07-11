@@ -8,23 +8,11 @@ import {
   incrementCart,
 } from "@/redux/features/cart/cartSlice";
 import Link from "next/link";
-import ProductActions from "./ProductActions";
+import { productDiscountCalculation } from "@/lib/share";
 
 const ProductDetails = ({ product, setProduct }: any) => {
   const dispatch = useDispatch();
 
-  function discountCalculation(value: {
-    selectProductVarient: { regularPrice: string | number };
-    discount: { discountType: string; value: number };
-  }) {
-    const regularPrice = +value.selectProductVarient?.regularPrice;
-    const discount = value.discount;
-    const dis =
-      discount?.discountType === "Percentage"
-        ? (regularPrice * (discount.value || 0)) / 100
-        : +discount?.value;
-    return dis;
-  }
 
   return (
     <div className="p-4 ">
@@ -46,15 +34,15 @@ const ProductDetails = ({ product, setProduct }: any) => {
           ৳{" "}
           {product.discountId
             ? (
-                +product.selectProductVarient?.regularPrice -
-                discountCalculation(product)
+                +product.selectProductVarient?.price -
+                productDiscountCalculation(product)
               ).toFixed(2)
-            : (+product.selectProductVarient?.regularPrice || 0).toFixed(2)}
+            : (+product.selectProductVarient?.price || 0).toFixed(2)}
         </span>
         {product?.discountId ? (
           <>
             <span className="line-through text-gray-500">
-              ৳ {(+product.selectProductVarient?.regularPrice || 0).toFixed(2)}
+              ৳ {(+product.selectProductVarient?.price || 0).toFixed(2)}
             </span>
             <span className="text-green-600 ml-2">
               - {product?.discount?.value}
@@ -146,7 +134,14 @@ const ProductDetails = ({ product, setProduct }: any) => {
         <Button
           type="primary"
           size="large"
-          onClick={() => dispatch(addCart(product))}
+          onClick={() =>
+            dispatch(
+              addCart({
+                ...product,
+                dis: productDiscountCalculation(product),
+              })
+            )
+          }
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Add to Cart

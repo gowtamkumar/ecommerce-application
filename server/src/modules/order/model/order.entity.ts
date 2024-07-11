@@ -66,14 +66,8 @@ export class OrderEntity {
   @Column({ nullable: true })
   note!: string;
 
-  @Column({ name: "phone_no" })
-  phoneNo!: string;
-
-  @Column({ nullable: true })
-  email!: string;
-
-  @Column({ name: "delivery_address", nullable: true })
-  deliveryAddress!: string;
+  // @Column({ name: "delivery_address", nullable: true })
+  // deliveryAddress!: string;
 
   @Column({
     name: "payment_status",

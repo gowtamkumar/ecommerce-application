@@ -1,34 +1,47 @@
 import "reflect-metadata";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AddressType } from "../enums/address-type.enum";
 
 @Entity("shipping_addresses")
 export class ShippingAddressEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'address_line_1', nullable: true })
-  addressLine1!: string;
+  @Column({ type: "enum", enum: AddressType })
+  type!: AddressType;
 
-  @Column({ name: 'address_line_2', nullable: true })
-  addressLine2!: string;
+  @Column()
+  name!: string;
 
+  @Column({ name: "phone_no" })
+  phoneNo!: string;
+  
   @Column({ nullable: true })
-  state?: string;
+  email?: string;
 
-  @Column({ nullable: true })
-  city?: string;
+  @Column({ name: "alternative_phone_no", nullable: true })
+  alternativePhoneNo?: string;
 
-  @Column({ name: "country", nullable: true })
+  @Column({ name: "country" })
   country!: string;
+
+  @Column()
+  city!: string;
+
+  @Column()
+  thana!: string;
 
   @Column({ name: "zip_code", nullable: true })
   zipCode?: string;
 
+  @Column()
+  address!: string;
+
   @Column({ name: "user_id" })
   userId!: number;
 
-  // @Column({ type: "boolean", default: true })
-  // status!: boolean;
+  @Column({ type: "boolean", default: true })
+  status!: boolean;
 
   // @CreateDateColumn({ name: "created_at",type: "timestamp" })
   // createdAt?: string;

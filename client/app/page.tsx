@@ -2,7 +2,6 @@ import Banner from "@/components/website/Banner/Banner";
 import CategoryCard from "@/components/website/Home/CategoryCard";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header/Header";
-import ProductCard from "@/components/website/Home/ProductCard";
 import React from "react";
 import Category from "@/components/website/Home/Category";
 import { FaAmazonPay } from "react-icons/fa";
@@ -10,6 +9,7 @@ import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";
 import { GiDeliveryDrone } from "react-icons/gi";
 import { getProducts } from "@/lib/apis/product";
+import ProductCard from "@/components/website/Product/ProductCard/ProductCard";
 
 export default async function Home() {
   const result = await getProducts();
@@ -49,13 +49,13 @@ export default async function Home() {
         {/* Popular products */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Popular Products</h2>
-          <ProductCard products={result} />
+          <ProductCard />
         </section>
 
         {/* Featured Products */}
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
-          <ProductCard products={result} />
+          <ProductCard />
         </section>
 
         {/* Categories */}

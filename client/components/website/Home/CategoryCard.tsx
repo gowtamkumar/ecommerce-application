@@ -7,7 +7,6 @@ const CategoryCard = async () => {
   return (
     <section className="mb-8">
       <h2 className="text-2xl font-semibold mb-4">Shop by Category</h2>
-      {/* Display categories */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {/* Example Category Card: */}
         {categories?.data.map((item: any) => (

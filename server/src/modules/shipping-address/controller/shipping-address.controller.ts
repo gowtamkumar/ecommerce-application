@@ -5,7 +5,7 @@ import { shippingAddressValidationSchema } from "../../../validation";
 import { ShippingAddressEntity } from "../model/shipping-address.entity";
 
 // @desc Get all ShippingAddress
-// @route GET /api/v1/ShippingAddress
+// @route GET /api/v1/shipping-address
 // @access Public
 export const getShippingAddresses = asyncHandler(
   async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ export const getShippingAddresses = asyncHandler(
 );
 
 // @desc Get a single ShippingAddress
-// @route GET /api/v1/ShippingAddress/:id
+// @route GET /api/v1/shipping-address/:id
 // @access Public
 export const getShippingAddress = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -45,36 +45,37 @@ export const getShippingAddress = asyncHandler(
 );
 
 // @desc Create a single ShippingAddress
-// @route POST /api/v1/ShippingAddress
+// @route POST /api/v1/shipping-address
 // @access Public
-export const createShippingAddress = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
-  const validation = shippingAddressValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+export const createShippingAddress = asyncHandler(
+  async (req: any, res: Response) => {
+    const connection = await getDBConnection();
+    const validation = shippingAddressValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
+    const repository = connection.getRepository(ShippingAddressEntity);
+
+    const newShippingAddress = repository.create(validation.data);
+    const save = await repository.save(newShippingAddress);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new ShippingAddress",
+      data: save,
     });
   }
- 
-
-  const repository = connection.getRepository(ShippingAddressEntity);
-
-  const newShippingAddress = repository.create(validation.data);
-  const save = await repository.save(newShippingAddress);
-
-  return res.status(200).json({
-    success: true,
-    msg: "Create a new ShippingAddress",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single ShippingAddress
-// @route PUT /api/v1/ShippingAddress/:id
+// @route PUT /api/v1/shipping-address/:id
 // @access Public
 export const updateShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {
@@ -98,7 +99,7 @@ export const updateShippingAddress = asyncHandler(
 );
 
 // @desc Delete a single ShippingAddress
-// @route DELETE /api/v1/ShippingAddress/:id
+// @route DELETE /api/v1/shipping-address/:id
 // @access Public
 export const deleteShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {

@@ -4,7 +4,6 @@ import { ProductEntity } from "../model/product.entity";
 import { getDBConnection } from "../../../config/db";
 import { productValidationSchema } from "../../../validation";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
-import { DataSource } from "typeorm";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 
 // @desc Get all Products
@@ -18,33 +17,36 @@ export const getProducts = async (
     const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
     const productRepository = connection.getRepository(ProductEntity);
 
-    const qb = productRepository
-      .createQueryBuilder("product")
-      .select([
-        "product",
-        "user.id",
-        "user.name",
-        "brand.id",
-        "brand.name",
-        "reviews.id",
-        "reviews.rating",
-        "reviews.comment",
-        "tax",
-        "productVariants",
-        "productCategories",
-        "category.id",
-        "category.name",
-        "size.id",
-        "size.name",
-      ])
-      .leftJoin("product.user", "user")
-      .leftJoin("product.brand", "brand")
-      .leftJoin("product.reviews", "reviews")
-      .leftJoin("product.tax", "tax")
-      .leftJoin("product.productVariants", "productVariants")
-      .leftJoin("product.productCategories", "productCategories")
-      .leftJoin("productCategories.category", "category")
-      .leftJoin("productVariants.size", "size");
+    const qb = productRepository.createQueryBuilder("product");
+    qb.select([
+      "product",
+      "user.id",
+      "user.name",
+      "brand.id",
+      "brand.name",
+      "reviews.id",
+      "reviews.rating",
+      "reviews.comment",
+      "tax",
+      "productVariants",
+      "productCategories",
+      "category.id",
+      "category.name",
+      "size.id",
+      "size.name",
+      "discount.discountType",
+      "discount.value",
+      "discount.type",
+    ]);
+    qb.leftJoin("product.user", "user");
+    qb.leftJoin("product.brand", "brand");
+    qb.leftJoin("product.reviews", "reviews");
+    qb.leftJoin("product.tax", "tax");
+    qb.leftJoin("product.discount", "discount");
+    qb.leftJoin("product.productVariants", "productVariants");
+    qb.leftJoin("product.productCategories", "productCategories");
+    qb.leftJoin("productCategories.category", "category");
+    qb.leftJoin("productVariants.size", "size");
 
     const results = await qb.getMany();
 
@@ -105,7 +107,6 @@ export const getProduct = asyncHandler(
       qb.where("product.id = :id", { id });
 
       const result = await qb.getOne();
-      console.log("🚀 ~ result:", result);
 
       if (!result) {
         return res.status(404).json({

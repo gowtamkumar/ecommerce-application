@@ -4,7 +4,7 @@ import CategoryHeader from "@/components/website/category/CategoryHeader";
 import CategorySidebar from "@/components/website/category/CategorySidebar";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/Header/Header";
-import ProductCard from "@/components/website/Home/ProductCard";
+import ProductCard from "@/components/website/Product/ProductCard/ProductCard";
 import { getProducts } from "@/lib/apis/product";
 import { Divider } from "antd";
 import React from "react";
@@ -23,7 +23,7 @@ export default async function SingleCategory() {
           <div className="col-span-5">
             <CategoryHeader />
             <Divider />
-            <ProductCard products={result} />
+            <ProductCard  />
           </div>
         </div>
       </section>

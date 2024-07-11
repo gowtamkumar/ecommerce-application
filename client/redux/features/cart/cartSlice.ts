@@ -29,9 +29,7 @@ export const cartSlice = createSlice({
           ...action.payload,
           tax: tax.value,
           taxType: tax.type,
-          price: 300,
           productId: +id,
-          // qty: 1,
         });
       }
     },

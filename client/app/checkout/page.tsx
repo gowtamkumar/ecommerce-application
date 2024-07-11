@@ -6,7 +6,7 @@ export default function CheckOut() {
   return (
     <>
       <Header />
-      <div className="lg:w-8/12 mx-auto">
+      <div className=" bg-gray-100">
         <CheckoutPage />
       </div>
     </>
