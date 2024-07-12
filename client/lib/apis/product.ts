@@ -29,7 +29,6 @@ export async function getProducts() {
 }
 
 export async function getProduct(id: string) {
-  console.log("🚀 ~ id:", id);
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/products/${id}`,
@@ -41,7 +40,6 @@ export async function getProduct(id: string) {
       },
     }
   );
-  console.log("🚀 ~ res:", res);
   return res.json();
 }
 

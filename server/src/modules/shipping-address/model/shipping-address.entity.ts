@@ -1,6 +1,7 @@
 import "reflect-metadata";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AddressType } from "../enums/address-type.enum";
+import { UserEntity } from "../../auth/model/user.entity";
 
 @Entity("shipping_addresses")
 export class ShippingAddressEntity {
@@ -31,6 +32,9 @@ export class ShippingAddressEntity {
   @Column()
   thana!: string;
 
+  @Column()
+  union!: string;
+
   @Column({ name: "zip_code", nullable: true })
   zipCode?: string;
 
@@ -39,6 +43,11 @@ export class ShippingAddressEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
+  @ManyToOne((_type) => UserEntity, (user) => user.shippingAddress, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
 
   @Column({ type: "boolean", default: true })
   status!: boolean;

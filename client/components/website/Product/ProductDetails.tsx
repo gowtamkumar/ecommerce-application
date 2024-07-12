@@ -1,7 +1,7 @@
 "use client";
-import { Button, Divider, Input, Rate } from "antd";
+import { Button, Divider, Input, Rate, Spin } from "antd";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addCart,
   decrementCart,
@@ -9,13 +9,18 @@ import {
 } from "@/redux/features/cart/cartSlice";
 import Link from "next/link";
 import { productDiscountCalculation } from "@/lib/share";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 
 const ProductDetails = ({ product, setProduct }: any) => {
   const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
 
+  if (global.loading.loading) {
+    return <Spin />;
+  }
 
   return (
-    <div className="p-4 ">
+    <div className="p-4">
       <h1 className="text-2xl font-bold mb-2">{product?.name}</h1>
       <h2>
         <Rate allowHalf defaultValue={2.5} />
@@ -27,7 +32,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
           {product?.brand?.name}
         </Link>
       </h2>
-      <p className="text-gray-700 mb-4">{product?.description}</p>
+      <p className="text-gray-700 mb-4">{product?.shortDescription}</p>
 
       <div className="flex items-center mb-4">
         <span className="text-2xl font-semibold text-blue-600 mr-4">
@@ -139,6 +144,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
               addCart({
                 ...product,
                 dis: productDiscountCalculation(product),
+                price: +product.selectProductVarient.price,
               })
             )
           }

@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { OrderStatus } from "../enums/order-status.enum";
-import { PaymentStatus, PaymentTypeStatus } from "../enums";
+import { PaymentStatus, paymentMothodStatus } from "../enums";
 import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
@@ -48,7 +48,7 @@ export class OrderEntity {
   })
   discountAmount!: number;
 
-  @Column({ type: "numeric", precision: 15, scale: 2 })
+  @Column({ type: "numeric", precision: 15, scale: 2, nullable: true })
   tax!: number;
 
   @Column({ name: "net_amount", type: "numeric", precision: 15, scale: 2 })
@@ -77,13 +77,12 @@ export class OrderEntity {
   })
   paymentStatus!: PaymentStatus;
 
-  @Column({
-    name: "payment_type",
-    type: "enum",
-    enum: PaymentTypeStatus,
-    default: PaymentTypeStatus.Online,
-  })
-  paymentType!: PaymentTypeStatus;
+  // @Column({
+  //   name: "payment_type",
+  //   type: "enum",
+  //   enum: paymentMothodStatus
+  // })
+  // paymentMothod!: paymentMothodStatus;
 
   @Column({
     type: "enum",

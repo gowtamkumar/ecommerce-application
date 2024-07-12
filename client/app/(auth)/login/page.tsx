@@ -1,5 +1,5 @@
 import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/Header/Header";
+import Header from "@/components/website/header/Header";
 import Login from "@/components/website/login/Login";
 import React from "react";
 

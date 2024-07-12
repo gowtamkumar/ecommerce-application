@@ -21,7 +21,15 @@ export default function SidebarMenu({ categories }: any) {
         mode="vertical"
         items={categories.data?.map((item: any, idx: number) => ({
           key: idx,
-          label: item.name,
+          label: (
+            <a
+              key={idx}
+              href={`/category/${item.id}`}
+              rel="noopener noreferrer"
+            >
+              {item.name}
+            </a>
+          ),
           children:
             item.children.length &&
             item.children.map((childrenItem: any, idx: number) => ({
@@ -29,7 +37,7 @@ export default function SidebarMenu({ categories }: any) {
               label: (
                 <a
                   key={idx}
-                  href={`category/${childrenItem.id}`}
+                  href={`/category/${childrenItem.id}`}
                   rel="noopener noreferrer"
                 >
                   {childrenItem.name}
@@ -39,5 +47,5 @@ export default function SidebarMenu({ categories }: any) {
         }))}
       />
     </div>
-  )
+  );
 }

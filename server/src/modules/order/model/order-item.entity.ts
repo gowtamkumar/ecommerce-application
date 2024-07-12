@@ -31,8 +31,8 @@ export class OrderItemEntity {
   @Column()
   qty!: number;
 
-  @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
-  tax!: number;
+  // @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
+  // tax!: number;
 
   @Column({ name: "product_id" })
   productId!: number;

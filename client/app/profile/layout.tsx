@@ -1,5 +1,5 @@
 import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/Header/Header";
+import Header from "@/components/website/header/Header";
 // import { useSession } from "next-auth/react";
 // import { redirect } from "next/navigation";
 import React from "react";

@@ -8,12 +8,16 @@ import { Breadcrumb } from "antd";
 import RatingProduct from "./RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
 import { getProduct } from "@/lib/apis/product";
+import { setLoading } from "@/redux/features/global/globalSlice";
+import { useDispatch } from "react-redux";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
   const { id } = useParams();
+  const dispatch = useDispatch()
 
   useEffect(() => {
+    dispatch(setLoading({ loading: true }));
     (async () => {
       const newProduct = await getProduct(id.toString());
       setProduct({
@@ -21,6 +25,7 @@ export default function SingleProduct() {
         qty: 1,
         selectProductVarient: newProduct?.data?.productVariants[0],
       });
+      dispatch(setLoading({ loading: false }));
     })();
   }, [id]);
 

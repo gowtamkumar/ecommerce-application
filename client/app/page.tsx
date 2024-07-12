@@ -1,9 +1,9 @@
-import Banner from "@/components/website/Banner/Banner";
-import CategoryCard from "@/components/website/Home/CategoryCard";
+import Banner from "@/components/website/banner/Banner";
+import CategoryCard from "@/components/website/home/CategoryCard";
 import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/Header/Header";
+import Header from "@/components/website/header/Header";
 import React from "react";
-import Category from "@/components/website/Home/Category";
+import Category from "@/components/website/home/Category";
 import { FaAmazonPay } from "react-icons/fa";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";

@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import Banner from "@/components/website/Banner/Banner";
+import Banner from "@/components/website/banner/Banner";
 import CategoryHeader from "@/components/website/category/CategoryHeader";
 import CategorySidebar from "@/components/website/category/CategorySidebar";
 import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/Header/Header";
+import Header from "@/components/website/header/Header";
 import ProductCard from "@/components/website/Product/ProductCard/ProductCard";
 import { getProducts } from "@/lib/apis/product";
 import { Divider } from "antd";

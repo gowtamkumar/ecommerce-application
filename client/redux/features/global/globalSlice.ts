@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
 export interface globalState {
+  [x: string]: any;
   response: any;
   loading: any;
   action: any;

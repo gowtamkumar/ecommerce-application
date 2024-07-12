@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import Link from "next/link";
-import { useFormState } from "react-dom";
 import WebFooter from "../Footer";
 import Image from "next/image";
 import {
@@ -12,58 +11,67 @@ import {
   removeCart,
 } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { CiSquareRemove } from "react-icons/ci";
+import { CiEdit, CiSquareRemove } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
 import { saveOrder } from "@/lib/apis/orders";
-import { Breadcrumb, Button, Checkbox, Radio } from "antd";
+import { Breadcrumb, Button, Checkbox, Input, Radio, Space } from "antd";
+import { setAction, setFormValues } from "@/redux/features/global/globalSlice";
+import { ActionType } from "@/constants/constants";
+import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
-export default function CheckoutPage() {
-  const cart = useSelector(selectCart);
-
-  const { subTotal, tax, orderTotalAmount, shippingAmount, discount } =
-    cart.carts.reduce(
-      (pre: any, curr: any) => {
-        let price = +curr.selectProductVarient?.price;
-        let sutotal = +price * +curr.qty;
-        return {
-          subTotal: +pre.subTotal + sutotal - curr.dis,
-          discount: +pre.discount + +curr.dis,
-          orderTotalAmount: +pre.orderTotalAmount + sutotal - +curr.dis,
-        };
-      },
-      {
-        subTotal: 0,
-        tax: 0,
-        discount: 0,
-        orderTotalAmount: 0,
-        shippingAmount: 0,
-      }
-    );
-
+export default function CheckoutPage({ shippingAddress }: any) {
+  const [checkoutFormData, setCheckoutFormData] = useState({} as any);
   const dispatch = useDispatch();
-  // firstName: formData.get("firstName"),
-  // lastName: formData.get("lastName"),
-  // paymentMethod: formData.get("paymentMethod"),
-  // email: formData.get("email"),
-  // address: formData.get("address"),
-  // cardNumber: formData.get("cardNumber"),
-  // cardName: formData.get("cardName"),
-  // expirationDate: formData.get("expirationDate"),
-  // cvc: formData.get("cvc"),
+  const cart = useSelector(selectCart);
+    // const currentUrl = window.location.pathname
+    // // const router = useRouter()
+    // console.log("🚀 ~ currentUrl:", currentUrl)
+
+  // useEffect(() => {
+  //   (async () => {
+  //     dispatch(
+  //       setFormValues({
+  //         paymentMethod: "Cash",
+  //         shippingAddressId: shippingAddress[0].id, //need to logic implements
+  //       })
+  //     );
+  //   })();
+  // }, [dispatch, shippingAddress]);
+
+  const { netAmount, orderTotalAmount, discountAmount } = cart.carts.reduce(
+    (pre: any, curr: any) => {
+      let sutotal = +curr.price * +curr.qty;
+      return {
+        netAmount: +pre.netAmount + sutotal - (+curr.dis || 0),
+        discountAmount: +pre.discountAmount + (+curr.dis || 0),
+        orderTotalAmount: +pre.orderTotalAmount + +sutotal - (+curr.dis || 0),
+      };
+    },
+    {
+      netAmount: 0,
+      discountAmount: 0,
+      orderTotalAmount: 0,
+    }
+  );
 
   // State for form inputs
-  const checkoutAction = async (prevState: any, formData: FormData) => {
+  const checkoutAction = async () => {
     const validatedFields = orderValidationSchema.safeParse({
       orderItems: cart.carts,
       orderDate: "2024-06-27",
-      phoneNo: "0178523654",
-      deliveryAddress: formData.get("address"),
       paymentStatus: "Paid",
-      subTotal,
-      tax,
+      netAmount,
+      tax: 24,
       orderTotalAmount,
-      shippingAmount,
+      shippingAmount: 150,
+      discountAmount,
+      paymentMethod: checkoutFormData.paymentMethod,
+      shippingAddressId: checkoutFormData.shippingAddressId,
     });
+
+    console.log(validatedFields);
 
     if (!validatedFields.success) {
       return {
@@ -71,26 +79,14 @@ export default function CheckoutPage() {
       };
     }
 
+    return;
+
     await saveOrder(validatedFields.data);
-
-    // const [optimisticState, addOptimistic] = useOptimistic(
-    //   state,
-    //   // updateFn
-    //   (state: any, newMessage) => {}
-    // );
-    // const result = await register(validatedFields.data);
-
-    // dispatch(setResponse(result));
-
-    // setTimeout(() => {
-    //   dispatch(setResponse({}));
-    //   if (result?.status === 200) {
-    //     router.push("/login");
-    //   }
-    // }, 5000);
   };
 
-  const [state, fromAction] = useFormState(checkoutAction, null);
+  const findAddress = shippingAddress.find(
+    (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 lg:w-8/12 mx-auto items-center">
@@ -121,7 +117,6 @@ export default function CheckoutPage() {
           <div className="p-4 border-b">
             <h2 className="text-2xl font-semibold">Order summary</h2>
           </div>
-
           <div>
             {cart.carts.map((item: any, idx: number) => {
               return (
@@ -136,34 +131,44 @@ export default function CheckoutPage() {
                     <span>Size: {item.selectProductVarient?.size?.name}</span>
                     <span>Color: {item.selectProductVarient?.color?.name}</span>
                     <div className="mt-2 flex items-center">
-                      <button
+                      <Button
                         className="px-2 py-1 bg-gray-200"
                         onClick={() => dispatch(decrementCart(item))}
                       >
                         -
-                      </button>
+                      </Button>
                       <input
                         type="text"
-                        className="mx-2 w-12 text-center border"
+                        className="mx-2 w-10 text-center border"
                         value={item?.qty}
                         readOnly
                       />
-                      <button
+                      <Button
                         className="px-2 py-1 bg-gray-200"
                         onClick={() => dispatch(addCart(item))}
                       >
                         +
-                      </button>
-                      <span className="ml-4 text-xl font-semibold text-green-600">
+                      </Button>
+
+                      <span className="ml-4 text-base font-semibold text-green-600">
                         ৳{" "}
-                        {item.discountId &&
-                          (
-                            +item.selectProductVarient?.price - item.dis
-                          ).toFixed(2)}
+                        {item.discountId
+                          ? (+item?.price - item?.dis).toFixed(2)
+                          : (+item?.price || 0).toFixed(2)}
                       </span>
-                      <span className="line-through text-gray-500">
-                        ৳ {(+item.selectProductVarient?.price || 0).toFixed(2)}
-                      </span>{" "}
+                      {item?.discountId ? (
+                        <div className="text-base">
+                          <span className="line-through text-gray-500">
+                            ৳ {(+item?.price || 0).toFixed(2)}
+                          </span>
+                          <span className="text-green-600 ml-2">
+                            - {item?.discount?.value}
+                            {item?.discount?.discountType === "Percentage"
+                              ? "%"
+                              : "BDT"}
+                          </span>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
@@ -179,21 +184,31 @@ export default function CheckoutPage() {
 
           <div className="mx-auto bg-white overflow-hidden">
             <div className="p-4 border-b">
-              <h2 className="text-xl font-semibold">Payment Method</h2>
+              <h2 className="text-lg font-semibold">Payment Method</h2>
               {/* <p className="mb-4 text-gray-600">(Please select a payment method)</p> */}
             </div>
             <div className=" mx-auto bg-white p-6 rounded-lg ">
-              <Radio.Group name="radiogroup" defaultValue={1} size="large">
+              <Radio.Group
+                name="paymentMethod"
+                onChange={({ target }) =>
+                  setCheckoutFormData({
+                    ...checkoutFormData,
+                    paymentMethod: target.value,
+                  })
+                }
+                value={checkoutFormData.paymentMethod}
+                size="large"
+              >
                 <div className="mb-4 font-semibold border p-5">
-                  <Radio value={1}>ক্যাশ অন ডেলিভারি</Radio>
+                  <Radio value="Cash">ক্যাশ অন ডেলিভারি</Radio>
                 </div>
 
                 <div className="mb-4 font-semibold border p-5">
-                  <Radio value={2}>SSLCOMMERZ</Radio>
+                  <Radio value="SSLCOMMERZ">SSLCOMMERZ</Radio>
                 </div>
 
                 <div className="mb-4 font-semibold border p-5">
-                  <Radio value={3}>
+                  <Radio value="Stripe">
                     ডেবিট / ক্রেডিট কার্ড
                     <div className="flex gap-2 items-center">
                       <img src="visa-logo.png" alt="Visa" className="h-8" />
@@ -236,23 +251,87 @@ export default function CheckoutPage() {
               type="primary"
               size="large"
               className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md"
+              onClick={() => checkoutAction()}
             >
               Confirm Order {(orderTotalAmount + 150 || 0).toFixed(2)} TK.
             </Button>
           </div>
         </div>
 
-        <div className="col-span-1 gap-2   rounded-md overflow-hidden">
+        <div className="col-span-1 gap-2 rounded-md overflow-hidden">
           <div className="mx-auto bg-white  rounded-md overflow-hidden">
             <div className="p-4 border-b">
               <h2 className="text-xl font-semibold">Shipping Address</h2>
             </div>
-            <div className="p-4">
-              <p className="text-gray-600">Name: Gowtam Kumar</p>
-              <p className="text-gray-600">Phone: 8801767163576</p>
-              <p className="text-gray-600">
-                Monoharpur, kayemkola bazar, Jhikargacha, Jashore
-              </p>
+            <div className="p-2">
+              <Radio.Group
+                name="shippingAddressId"
+                onChange={({ target }) => {
+                  setCheckoutFormData({
+                    ...checkoutFormData,
+                    shippingAddressId: target.value,
+                  });
+                  // dispatch(
+                  //   setFormValues({
+                  //     ...checkoutFormData,
+                  //     shippingAddressId: target.value,
+                  //   })
+                  // );
+                }}
+                value={checkoutFormData?.shippingAddressId}
+              >
+                {shippingAddress.map(
+                  (item: { id: number; type: string; status: boolean }) => (
+                    <Space direction="vertical" key={item.id}>
+                      <Radio value={item.id}>{item.type}</Radio>
+                    </Space>
+                  )
+                )}
+              </Radio.Group>
+
+              {findAddress?.name && (
+                <div className="text-sm flex justify-between">
+                  <div className="overflow-hidden">
+                    <p className="text-gray-600">Name: {findAddress?.name}</p>
+                    <p className="text-gray-600">
+                      Phone: {findAddress?.phoneNo}
+                    </p>
+                    <p className="text-gray-600">
+                      Address: {findAddress?.address}
+                    </p>
+                  </div>
+                  <div>
+                    <CiEdit
+                      className="cursor-pointer"
+                      onClick={() =>
+                        dispatch(
+                          setAction({
+                            type: ActionType.UPDATE,
+                            payload: findAddress,
+                          })
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Button
+                className="mt-2"
+                size="small"
+                type="default"
+                style={{ width: "100%" }}
+                onClick={() =>
+                  dispatch(
+                    setAction({
+                      type: ActionType.CREATE,
+                    })
+                  )
+                }
+              >
+                New Address
+              </Button>
+              <AddShippingAddress />
             </div>
           </div>
 
@@ -263,7 +342,7 @@ export default function CheckoutPage() {
             <div className="p-4">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span>৳ {(subTotal || 0).toFixed(2)}</span>
+                <span>৳ {(netAmount || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-600 mt-2">
                 <span>Shipping</span>

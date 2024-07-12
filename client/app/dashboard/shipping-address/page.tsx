@@ -5,11 +5,11 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import AddressList from "@/components/dashboard/address/AddressList";
-import AddAddress from "@/components/dashboard/address/AddAddress";
+import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
+import ShippingAddressList from "@/components/dashboard/shipping-address/ShippingAddresslist";
 
-export default function Address() {
-  const [tabKey, setTabKey] = useState("address_list");
+export default function ShippingAddress() {
+  const [tabKey, setTabKey] = useState("shipping_address_list");
   const dispatch = useDispatch();
 
 
@@ -20,9 +20,9 @@ export default function Address() {
         onChange={(key) => setTabKey(key)}
         items={[
           {
-            label: "Address List",
-            key: "address_list",
-            children: <AddressList />,
+            label: "Shipping Address List",
+            key: "shipping_address_list",
+            children: <ShippingAddressList />,
           },
         ]}
         tabBarExtraContent={
@@ -41,7 +41,7 @@ export default function Address() {
           </Button>
         }
       />
-      <AddAddress />
+      <AddShippingAddress />
     </div>
   );
 }

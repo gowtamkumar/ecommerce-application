@@ -20,7 +20,7 @@ export default function HeaderSearch({ categories }: any) {
         addonBefore={selectBefore}
         width={100}
         size="large"
-        defaultValue="mysite"
+        // defaultValue="mysite"
       />
     </div>
   );

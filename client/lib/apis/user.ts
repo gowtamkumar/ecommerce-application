@@ -17,6 +17,21 @@ export async function saveUser(data: any) {
   return res.json();
 }
 
+export async function getMe() {
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/auth/me`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
+  return res.json();
+}
+
 export async function getUsers() {
   const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/auth/users`, {

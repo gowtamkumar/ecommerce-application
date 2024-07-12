@@ -220,7 +220,7 @@ const AddOrder = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="paymentType" label="Payment Type" className="p-0">
+            <Form.Item name="paymentMothod" label="Payment Type" className="p-0">
               <Select allowClear placeholder="Select Type">
                 <Select.Option value="Online">Online</Select.Option>
                 <Select.Option value="Offline">Offline</Select.Option>

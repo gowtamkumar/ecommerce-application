@@ -8,6 +8,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Radio,
   Select,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -22,7 +23,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { saveShippingAddress, updateShippingAddress } from "@/lib/apis/address";
 
-const AddAddress = () => {
+const AddShippingAddress = () => {
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -112,26 +113,38 @@ const AddAddress = () => {
         <div className="grid grid-cols-2 gap-5">
           <div className="col-span-1">
             <Form.Item
-              name="addressLine1"
-              label="Address Line 1"
+              name="type"
+              label="Type"
               rules={[
                 {
                   required: true,
-                  message: "Address is required",
+                  message: "Type is required",
                 },
               ]}
             >
-              <Input placeholder="Enter " />
+              <Select
+                placeholder="Select"
+                // optionFilterProp="children"
+                // filterOption={(input, option) =>
+                //   (option?.children as any)
+                //     .toLowerCase()
+                //     .indexOf(input.toLowerCase()) >= 0
+                // }
+              >
+                <Select.Option value={"Home"}>Home</Select.Option>
+                <Select.Option value={"Office"}>Office</Select.Option>
+              </Select>
             </Form.Item>
           </div>
+
           <div className="col-span-1">
             <Form.Item
-              name="addressLine2"
-              label="Address Line 2"
+              name="name"
+              label="Name"
               rules={[
                 {
                   required: true,
-                  message: "Address is required",
+                  message: "name is required",
                 },
               ]}
             >
@@ -141,12 +154,12 @@ const AddAddress = () => {
 
           <div className="col-span-1">
             <Form.Item
-              name="state"
-              label="State"
+              name="phoneNo"
+              label="Phone No"
               rules={[
                 {
                   required: true,
-                  message: "state is required",
+                  message: "phone No is required",
                 },
               ]}
             >
@@ -156,12 +169,12 @@ const AddAddress = () => {
 
           <div className="col-span-1">
             <Form.Item
-              name="city"
-              label="City"
+              name="email"
+              label="E-mail"
               rules={[
                 {
                   required: true,
-                  message: "city is required",
+                  message: "email No is required",
                 },
               ]}
             >
@@ -186,12 +199,62 @@ const AddAddress = () => {
 
           <div className="col-span-1">
             <Form.Item
-              name="zipCode"
-              label="Zip Code"
+              name="city"
+              label="City"
               rules={[
                 {
                   required: true,
-                  message: "zipCode is required",
+                  message: "city is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter " />
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item
+              name="thana"
+              label="Thana"
+              rules={[
+                {
+                  required: true,
+                  message: "thana is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter " />
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item
+              name="union"
+              label="Union"
+              rules={[
+                {
+                  required: true,
+                  message: "union is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter " />
+            </Form.Item>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item name="zipCode" label="Zip Code">
+              <Input placeholder="Enter " />
+            </Form.Item>
+          </div>
+          <div className="col-span-1">
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[
+                {
+                  required: true,
+                  message: "address is required",
                 },
               ]}
             >
@@ -222,4 +285,4 @@ const AddAddress = () => {
   );
 };
 
-export default AddAddress;
+export default AddShippingAddress;

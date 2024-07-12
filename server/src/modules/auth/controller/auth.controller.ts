@@ -14,7 +14,7 @@ import { sendEmail } from "../../../middlewares/sendMail.middleware";
 import { UserEntity } from "../model/user.entity";
 import { getDBConnection } from "../../../config/db";
 import { UpdateUserDto } from "../model/dtos";
-import { UserValidationSchema } from "../../../validation";
+import { userValidationSchema } from "../../../validation";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -23,7 +23,7 @@ export const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const connection = await getDBConnection();
     const { password, username } = req.body;
-    const validation = UserValidationSchema.safeParse(req.body);
+    const validation = userValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
       return res.status(401).json({
@@ -216,7 +216,15 @@ export const getMe = asyncHandler(
 
     const userRepository = connection.getRepository(UserEntity);
 
-    const user = await userRepository.findOne({ where: { id: req.id } });
+    const user = await userRepository.findOne({
+      where: { id: req.id },
+      relations: {
+        products: true,
+        shippingAddress: true,
+        OrderDeliveries: true,
+        orders: true,
+      },
+    });
 
     if (!user) {
       throw new Error("Authorization is not Valid!");

@@ -31,7 +31,7 @@ divice_id(optional),
 ## shipping_address
 
 id,
-type:[Home/Ofice]
+type:[Home/Office]
 name:
 phone_no,
 email,
@@ -171,9 +171,7 @@ order_date,
 deliveryId(assing addmin),
 tracking_no,
 shiping_amount,
-
 <!-- is_paid, -->
-
 order_total_amount
 
 <!-- is_shipped, -->

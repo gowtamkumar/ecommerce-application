@@ -21,44 +21,54 @@ const ProductCardDetails = ({ products }: any) => {
 
   return (
     <div
-      className={`grid ${
-        global.productView ? "grid-cols-2" : "grid-cols-5"
-      } gap-4`}
+      className={`grid ${global.productView ? "grid-cols-2" : "grid-cols-5"
+        } gap-4`}
     >
-      {(products.data || []).map((item: any, idx: any) => (
-        <div className="bg-white rounded-lg shadow-md p-4" key={item.id}>
-          <Link href={`/products/${item.id}`}>
-            <Image
-              width={150}
-              height={150}
-              src="/product-01.jpg"
-              alt="Category Image"
-              className="w-full h-40 object-cover mb-4"
-            />
-            <h3 className="text-sm font-semibold mb-2">{item.name}</h3>
-            <p className="text-gray-500 mb-2">
-              $
-              {(
-                item.productVariants[0].price -
-                +productDiscountCalculation(item)
-              ).toFixed(2)}
-            </p>
+      {(products.data || []).map((item: any, idx: any) => {
 
-            {item?.discountId ? (
-              <>
-                <span className="line-through text-gray-500">
-                  ৳ {(+item.productVariants[0].price || 0).toFixed(2)}
-                </span>
-                <span className="text-green-600 ml-2">
-                  -{item?.discount?.value}
-                  {item?.discount?.discountType === "Percentage" ? "%" : "BDT"}
-                </span>
-              </>
-            ) : null}
-            <Rate allowHalf disabled defaultValue={2.5} />
-          </Link>
-        </div>
-      ))}
+        const price = +item.productVariants[0]?.price;
+        const discount = item.discount;
+        const disAmount =
+          discount?.discountType === "Percentage"
+            ? (price * (discount.value || 0)) / 100
+            : +discount?.value;
+
+        return (
+          <div className="bg-white rounded-lg shadow-md p-4" key={item.id}>
+            <Link href={`/products/${item.id}`}>
+              <Image
+                width={150}
+                height={150}
+                src="/product-01.jpg"
+                alt="Category Image"
+                className="w-full h-40 object-cover mb-4"
+              />
+              <h3 className="text-sm font-semibold mb-2">{item.name}</h3>
+              <p className="text-gray-500 mb-2">
+                ৳
+                {item?.discountId
+                  ? (+item.productVariants[0].price - +disAmount).toFixed(2)
+                  : (+item.productVariants[0].price).toFixed(2)}
+              </p>
+
+              {item?.discountId ? (
+                <>
+                  <span className="line-through text-gray-500">
+                    ৳ {(+item.productVariants[0].price || 0).toFixed(2)}
+                  </span>
+                  <span className="text-green-600 ml-2">
+                    -{item?.discount?.value}
+                    {item?.discount?.discountType === "Percentage"
+                      ? "%"
+                      : "BDT"}
+                  </span>
+                </>
+              ) : null}
+              <Rate allowHalf disabled defaultValue={2.5} />
+            </Link>
+          </div>
+        );
+      })}
     </div>
   );
 };

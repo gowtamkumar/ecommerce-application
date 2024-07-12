@@ -12,6 +12,7 @@ import { ProductEntity } from "../../product/model/product.entity";
 import { TypeEnum } from "../enums";
 import { StatusEnum } from "../enums/status.enum";
 import { OrderEntity } from "../../order/model/order.entity";
+import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -92,6 +93,9 @@ export class UserEntity {
 
   @OneToMany((_type) => OrderEntity, (order) => order.deliveryMan)
   OrderDeliveries!: OrderEntity[];
+
+  @OneToMany((_type) => ShippingAddressEntity, (shipping) => shipping.user)
+  shippingAddress!: ShippingAddressEntity[];
 
 
 }

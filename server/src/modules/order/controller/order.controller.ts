@@ -112,7 +112,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
       orderItems.map((item) => ({
         productId: item.productId,
         price: item.price,
-        tax: item.tax,
+        // tax: item.tax,
         qty: item.qty,
         orderId: savedOrder.id,
       }))
@@ -199,8 +199,6 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
 
   const { orderItems, ...orderData } = validation.data;
 
-  console.log("validation.data", validation.data);
-
   const repository = await connection.getRepository(OrderEntity);
 
   const result = await repository.findOne({ where: { id } });
@@ -216,7 +214,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
   //   netAmount: validation.data.netAmount,
   //   phoneNo: validation.data.phoneNo,
   //   paymentStatus: validation.data.paymentStatus,
-  //   paymentType: validation.data.paymentType,
+  //   paymentMothod: validation.data.paymentMothod,
   //   note: validation.data.note,
   // };
 

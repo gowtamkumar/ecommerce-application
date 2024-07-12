@@ -34,7 +34,7 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const AddressList: React.FC = () => {
+const ShippingAddressList: React.FC = () => {
   const [address, setAddress] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
@@ -291,4 +291,4 @@ const AddressList: React.FC = () => {
   );
 };
 
-export default AddressList;
+export default ShippingAddressList;

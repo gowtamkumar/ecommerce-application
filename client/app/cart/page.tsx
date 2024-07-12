@@ -1,5 +1,5 @@
 import WebFooter from '@/components/website/Footer'
-import Header from '@/components/website/Header/Header'
+import Header from '@/components/website/header/Header'
 import React from 'react'
 
 export default function Cart() {
