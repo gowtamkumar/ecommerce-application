@@ -65,7 +65,10 @@ export const createWishlist = asyncHandler(async (req: any, res: Response) => {
   }
 
   const repository = connection.getRepository(WishListEntity);
-  const result = await repository.findOneBy({ productId: req.body.productId });
+  const result = await repository.findOneBy({
+    userId: req.id,
+    productId: req.body.productId,
+  });
   console.log("🚀 ~ result:", result);
 
   if (result) {
