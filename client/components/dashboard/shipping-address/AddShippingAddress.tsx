@@ -50,7 +50,7 @@ const AddShippingAddress = () => {
         : await saveShippingAddress(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Address ${newData?.id ? "Updated" : "Created"} Successfully`
         );

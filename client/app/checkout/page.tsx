@@ -11,7 +11,7 @@ export default async function CheckOut() {
     <>
       <Header />
       <div className="bg-gray-100">
-        <CheckoutPage shippingAddress={user.data.shippingAddress} />
+        <CheckoutPage shippingAddress={user.data?.shippingAddress} />
       </div>
     </>
   );

@@ -52,7 +52,7 @@ const AddWishlists = () => {
         : await saveWishlist(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Wishlist ${newData?.id ? "Updated" : "Created"} Successfully`
         );

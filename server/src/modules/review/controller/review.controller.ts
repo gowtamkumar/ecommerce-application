@@ -11,7 +11,16 @@ export const getReviews = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(ReviewEntity);
 
-  const result = await repository.find();
+  const result = await repository.find({
+    relations: {
+      product: true,
+    },
+    select: {
+      product: {
+        name: true,
+      },
+    },
+  });
 
   return res.status(200).json({
     success: true,
@@ -52,11 +61,16 @@ export const createReview = asyncHandler(async (req: any, res: Response) => {
     userId: req.id,
   });
 
+  console.log("validation", validation.error);
+  
+
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
     });
   }
+
+
 
   const repository = connection.getRepository(ReviewEntity);
 
@@ -78,10 +92,13 @@ export const updateReview = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
-
+    console.log("req.body", req.body);
     const repository = await connection.getRepository(ReviewEntity);
 
     const result = await repository.findOneBy({ id });
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
 
     const updateData = await repository.merge(result, req.body);
 

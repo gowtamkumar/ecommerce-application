@@ -40,7 +40,7 @@ const AddUnit = () => {
         : await saveUnit(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Unit ${newData?.id ? "Updated" : "Created"} Successfully`
         );

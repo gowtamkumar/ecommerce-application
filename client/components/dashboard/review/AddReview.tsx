@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
+"use client";
+import React, { useEffect, useState } from "react";
+import { Button, Form, Input, Modal, Rate, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { saveSize, updateSize } from "@/lib/apis/size";
 import {
   selectGlobal,
   setAction,
@@ -12,8 +12,11 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { saveReview, updateReview } from "@/lib/apis/review";
+import { getProducts } from "@/lib/apis/product";
 
-const AddSize = () => {
+const AddReview = () => {
+  const [products, setProducts] = useState([]);
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -22,12 +25,16 @@ const AddSize = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
-    setFormData(newData);
-    return () => {
-      dispatch(setFormValues({}));
-      form.resetFields();
-    };
+    (async () => {
+      const newData = { ...payload };
+      setFormData(newData);
+      const products = await getProducts();
+      setProducts(products.data);
+      return () => {
+        dispatch(setFormValues({}));
+        form.resetFields();
+      };
+    })();
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
@@ -36,13 +43,13 @@ const AddSize = () => {
       // return console.log('newData:', newData)
       dispatch(setLoading({ save: true }));
       const result = newData.id
-        ? await updateSize(newData)
-        : await saveSize(newData);
+        ? await updateReview(newData)
+        : await saveReview(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         
         toast.success(
-          `Size ${newData?.id ? "Updated" : "Created"} Successfully`
+          `Review ${newData?.id ? "Updated" : "Created"} Successfully`
         );
         dispatch(setAction({}));
       }, 100);
@@ -75,7 +82,9 @@ const AddSize = () => {
   return (
     <Modal
       title={
-        global.action.type === ActionType.UPDATE ? "Update Size" : "Create Size"
+        global.action.type === ActionType.UPDATE
+          ? "Update Review"
+          : "Create Review"
       }
       width={500}
       zIndex={1050}
@@ -101,31 +110,11 @@ const AddSize = () => {
         <div className="my-5 flex items-start justify-between gap-4">
           <div className="grid flex-grow grid-cols-1 gap-5">
             <div className="col-span-1">
-              <Form.Item
-                name="name"
-                className="mb-1"
-                label="Size Name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Name is required",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter Size Name" />
-              </Form.Item>
-            </div>
-            <div className={`col-span-1 `}>
-              <Form.Item
-                hidden={!payload?.id}
-                name="status"
-                label="Status"
-                className="mb-1"
-              >
+              <Form.Item name="productId" label="Product" className="mb-1">
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Select Status"
+                  placeholder="Select"
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     (option?.children as any)
@@ -133,8 +122,45 @@ const AddSize = () => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  <Select.Option value={true}>Active</Select.Option>
-                  <Select.Option value={false}>Inactive</Select.Option>
+                  {(products || []).map(
+                    ({ name, id }: { name: string; id: number }) => (
+                      <Select.Option key={id} value={id}>
+                        {name}
+                      </Select.Option>
+                    )
+                  )}
+                </Select>
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item name="rating" className="mb-1" label="Rating">
+                <Rate allowHalf />
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item name="comment" className="mb-1" label="Comment">
+                <Input.TextArea placeholder="Enter" />
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item name="status" label="Status" className="mb-1">
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Select"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children as any)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  <Select.Option value="Pending">Pending</Select.Option>
+                  <Select.Option value="Rejected">Rejected</Select.Option>
+                  <Select.Option value="Approved">Approved</Select.Option>
                 </Select>
               </Form.Item>
             </div>
@@ -164,4 +190,4 @@ const AddSize = () => {
   );
 };
 
-export default AddSize;
+export default AddReview;

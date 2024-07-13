@@ -65,6 +65,13 @@ export const createWishlist = asyncHandler(async (req: any, res: Response) => {
   }
 
   const repository = connection.getRepository(WishListEntity);
+  const result = await repository.findOneBy({ productId: req.body.productId });
+  console.log("🚀 ~ result:", result);
+
+  if (result) {
+    throw new Error(`Product Already in Wishlist`);
+  }
+
   const newwishlist = repository.create(validation.data);
   const save = await repository.save(newwishlist);
 

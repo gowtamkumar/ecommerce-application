@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+
 import 'swiper/css';
 import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
@@ -8,6 +9,7 @@ import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import ToastProvider from "@/components/Notification/ToastProvider";
+import dayjs from "dayjs";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

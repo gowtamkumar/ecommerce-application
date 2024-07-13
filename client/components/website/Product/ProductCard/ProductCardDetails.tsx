@@ -21,11 +21,11 @@ const ProductCardDetails = ({ products }: any) => {
 
   return (
     <div
-      className={`grid ${global.productView ? "grid-cols-2" : "grid-cols-5"
-        } gap-4`}
+      className={`grid ${
+        global.productView ? "grid-cols-2" : "grid-cols-5"
+      } gap-4`}
     >
       {(products.data || []).map((item: any, idx: any) => {
-
         const price = +item.productVariants[0]?.price;
         const discount = item.discount;
         const disAmount =
@@ -43,7 +43,9 @@ const ProductCardDetails = ({ products }: any) => {
                 alt="Category Image"
                 className="w-full h-40 object-cover mb-4"
               />
-              <h3 className="text-sm font-semibold mb-2">{item.name}</h3>
+              <h3 className="text-sm font-semibold mb-2">
+                {item.name.slice(0, 70)}
+              </h3>
               <p className="text-gray-500 mb-2">
                 ৳
                 {item?.discountId

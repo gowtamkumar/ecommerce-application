@@ -40,7 +40,7 @@ const AddStatus = () => {
         : await saveStatus(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Status ${newData?.id ? "Updated" : "Created"} Successfully`
         );

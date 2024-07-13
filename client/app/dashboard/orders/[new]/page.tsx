@@ -100,7 +100,7 @@ const AddOrder = () => {
         : await saveProduct(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Product ${newData?.id ? "Updated" : "Created"} Successfully`
         );

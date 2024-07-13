@@ -79,6 +79,7 @@ export const getProduct = asyncHandler(
         "product",
         "user.id",
         "user.name",
+        "reviewUser.name",
         "brand",
         "reviews.id",
         "reviews.rating",
@@ -97,6 +98,7 @@ export const getProduct = asyncHandler(
       qb.leftJoin("product.user", "user");
       qb.leftJoin("product.brand", "brand");
       qb.leftJoin("product.reviews", "reviews");
+      qb.leftJoin("reviews.user", "reviewUser");
       qb.leftJoin("product.tax", "tax");
       qb.leftJoin("product.discount", "discount");
       qb.leftJoin("product.productVariants", "productVariants");

@@ -1,5 +1,5 @@
 "use client";
-import { Button, Divider, Input, Rate, Spin } from "antd";
+import { Alert, Button, Divider, Input, message, Rate, Spin } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,14 +9,60 @@ import {
 } from "@/redux/features/cart/cartSlice";
 import Link from "next/link";
 import { productDiscountCalculation } from "@/lib/share";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
+import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
+import { saveWishlist } from "@/lib/apis/wishlist";
+
+interface Product {}
 
 const ProductDetails = ({ product, setProduct }: any) => {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
-  if (global.loading.loading) {
-    return <Spin />;
+  async function addToCart(value: any) {
+    dispatch(
+      addCart({
+        ...value,
+        dis: productDiscountCalculation(value),
+        price: +value.selectProductVarient.price,
+      })
+    );
+  }
+
+  async function incrementToCart(product: any) {
+    dispatch(incrementCart(product));
+    setProduct({
+      ...product,
+      qty: product.qty + 1,
+    });
+  }
+
+  async function decrementToCart(product: any) {
+    dispatch(decrementCart(product));
+    setProduct({
+      ...product,
+      qty: product.qty - 1,
+    });
+  }
+
+  async function AddToWishlist(productId: number) {
+    try {
+      const res = await saveWishlist({
+        productId: productId,
+      });
+
+      if (res.status === 500) {
+        dispatch(setResponse({ type: "error", message: res.message }));
+      } else {
+        dispatch(
+          setResponse({ type: "success", message: "successfully Added" })
+        );
+      }
+      setTimeout(() => {
+        dispatch(setResponse({}));
+      }, 2000);
+    } catch (error) {
+      console.log("error", error);
+    }
   }
 
   return (
@@ -61,7 +107,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
         <div className="mb-4">
           <span className="text-gray-600">Color Family: </span>
           {product?.productVariants?.map((item: any, idx: number) => (
-            <button
+            <Button
               key={idx}
               onClick={() =>
                 setProduct({
@@ -73,7 +119,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
               className="mr-2 px-2 py-1 rounded bg-gray-200 text-white hover:bg-gray-300 focus:outline-none"
             >
               {item.color?.name}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -103,13 +149,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
       <div className="w-60 flex items-center mb-4">
         <span className="text-gray-600"> Quantity: </span>
         <Button
-          onClick={() => {
-            dispatch(decrementCart(product));
-            setProduct({
-              ...product,
-              qty: product.qty - 1,
-            });
-          }}
+          onClick={() => decrementToCart(product)}
           className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300 focus:outline-none"
         >
           -
@@ -121,13 +161,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
           className="w-12 text-center border-t border-b border-gray-300"
         />
         <Button
-          onClick={() => {
-            dispatch(incrementCart(product));
-            setProduct({
-              ...product,
-              qty: product.qty + 1,
-            });
-          }}
+          onClick={() => incrementToCart(product)}
           className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300 focus:outline-none"
         >
           +
@@ -139,22 +173,25 @@ const ProductDetails = ({ product, setProduct }: any) => {
         <Button
           type="primary"
           size="large"
-          onClick={() =>
-            dispatch(
-              addCart({
-                ...product,
-                dis: productDiscountCalculation(product),
-                price: +product.selectProductVarient.price,
-              })
-            )
-          }
+          onClick={() => addToCart(product)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Add to Cart
         </Button>
-        <Button size="large" type="default">
+        <Button
+          size="large"
+          type="default"
+          onClick={() => AddToWishlist(product.id)}
+        >
           Add to Wishlist
         </Button>
+        {global.response.type && (
+          <Alert
+            className="p-0 m-0"
+            message={`${global.response.message}`}
+            type={global.response.type}
+          />
+        )}
       </div>
       <Divider />
     </div>

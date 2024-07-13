@@ -8,9 +8,8 @@ import { backupDB } from "./lib/apis/backupDB";
 
 const handleBackup = async () => {
   const date = new Date();
-  const currentDate = `${date.getFullYear()}.${
-    date.getMonth() + 1
-  }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
+  const currentDate = `${date.getFullYear()}.${date.getMonth() + 1
+    }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
 
   try {
     const response = await backupDB();
@@ -125,6 +124,12 @@ const navbarRoute = [
     route: "true",
   },
   {
+    key: "review",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/review">Review</Link>,
+    route: "true",
+  },
+  {
     key: "order",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: "Order Manage",
@@ -144,6 +149,7 @@ const navbarRoute = [
       },
     ],
   },
+
   {
     key: "user",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,

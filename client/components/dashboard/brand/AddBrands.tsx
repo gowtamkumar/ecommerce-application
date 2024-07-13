@@ -40,7 +40,7 @@ const AddBrand = () => {
         : await saveBrand(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Brand ${newData?.id ? "Updated" : "Created"} Successfully`
         );

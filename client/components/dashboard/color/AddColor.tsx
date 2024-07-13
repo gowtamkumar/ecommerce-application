@@ -70,7 +70,7 @@ const AddColor = () => {
         : await saveColor(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Color ${newData?.id ? "Updated" : "Created"} Successfully`
         );

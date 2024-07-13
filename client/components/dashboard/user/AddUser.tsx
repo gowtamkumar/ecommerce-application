@@ -42,7 +42,7 @@ const AddUser = () => {
         : await saveUser(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `User ${newData?.id ? "Updated" : "Created"} Successfully`
         );

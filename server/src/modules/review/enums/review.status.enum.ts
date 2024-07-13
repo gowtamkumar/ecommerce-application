@@ -1,5 +1,5 @@
 export enum reviewStatusEnum {
-  Reject = "Reject",
+  Rejected = "Rejected",
   Approved = "Approved",
   Pending = "Pending",
 }

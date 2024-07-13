@@ -19,7 +19,6 @@ import { setAction, setFormValues } from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
 import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
 import { useState } from "react";
-import { useRouter } from "next/router";
 
 export default function CheckoutPage({ shippingAddress }: any) {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
@@ -68,7 +67,7 @@ export default function CheckoutPage({ shippingAddress }: any) {
       shippingAmount: 150,
       discountAmount,
       paymentMethod: checkoutFormData.paymentMethod,
-      shippingAddressId: checkoutFormData.shippingAddressId,
+      shippingAddressId: checkoutFormData?.shippingAddressId,
     });
 
     console.log(validatedFields);
@@ -79,12 +78,14 @@ export default function CheckoutPage({ shippingAddress }: any) {
       };
     }
 
-    return;
+    // return;
 
     await saveOrder(validatedFields.data);
+
+    
   };
 
-  const findAddress = shippingAddress.find(
+  const findAddress = shippingAddress?.find(
     (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
   );
 
@@ -280,7 +281,7 @@ export default function CheckoutPage({ shippingAddress }: any) {
                 }}
                 value={checkoutFormData?.shippingAddressId}
               >
-                {shippingAddress.map(
+                {shippingAddress?.map(
                   (item: { id: number; type: string; status: boolean }) => (
                     <Space direction="vertical" key={item.id}>
                       <Radio value={item.id}>{item.type}</Radio>

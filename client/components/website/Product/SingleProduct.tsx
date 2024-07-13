@@ -4,17 +4,20 @@ import { useParams } from "next/navigation";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
 import RelatedProducts from "./RelatedProducts";
-import { Breadcrumb } from "antd";
-import RatingProduct from "./RatingProducts";
+import { Breadcrumb, Spin } from "antd";
+import RatingProduct from "./review-rating/RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
 import { getProduct } from "@/lib/apis/product";
-import { setLoading } from "@/redux/features/global/globalSlice";
-import { useDispatch } from "react-redux";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { useDispatch, useSelector } from "react-redux";
+import ReviewTable from "./review-rating/ReviewTable";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
+  console.log("🚀 ~ product:", product);
   const { id } = useParams();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
 
   useEffect(() => {
     dispatch(setLoading({ loading: true }));
@@ -27,7 +30,7 @@ export default function SingleProduct() {
       });
       dispatch(setLoading({ loading: false }));
     })();
-  }, [id]);
+  }, [dispatch, id]);
 
   const products = {
     name: "New LED Watch",
@@ -49,6 +52,14 @@ export default function SingleProduct() {
       estimatedDate: "6 Jul - 10 Jul",
     },
   };
+
+  if (global.loading.loading) {
+    return (
+      <div className="text-center">
+        <Spin />
+      </div>
+    );
+  }
 
   return (
     <div className="lg:w-8/12 mx-auto">
@@ -85,7 +96,8 @@ export default function SingleProduct() {
           {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>
       </div>
-      <RatingProduct />
+      <RatingProduct product={product} />
+      <ReviewTable reviews={product.reviews} />
       <DescriptionProduct product={product} />
       <section className="py-5">
         <RelatedProducts products={[products]} />

@@ -50,7 +50,7 @@ const AddDiscount = () => {
         : await saveDiscount(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Discount ${newData?.id ? "Updated" : "Created"} Successfully`
         );

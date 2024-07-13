@@ -171,7 +171,9 @@ order_date,
 deliveryId(assing addmin),
 tracking_no,
 shiping_amount,
+
 <!-- is_paid, -->
+
 order_total_amount
 
 <!-- is_shipped, -->
@@ -229,7 +231,9 @@ product_id,
 user_id,
 rating,
 comment,
-status:(Reject/Approved),
+status:(Reject/Approved, Pending),
+like:number,
+dislike:number
 createdAt
 updatedAt
 

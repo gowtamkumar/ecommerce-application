@@ -23,7 +23,7 @@ export async function getWishlists() {
     cache: "no-cache",
     headers: {
       Authorization: `Bearer ${session?.user.accessToken}`,
-    }
+    },
   });
   return res.json();
 }

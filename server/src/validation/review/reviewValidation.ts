@@ -1,11 +1,7 @@
 import { z } from "zod";
 
 export const reviewValidationSchema = z.object({
-  date: z.string({
-    required_error: "Date is required",
-  }),
-
-  productId: z.string({
+  productId: z.number({
     required_error: "Product is required",
   }),
 
@@ -15,4 +11,5 @@ export const reviewValidationSchema = z.object({
 
   rating: z.number({ required_error: "Rating is Required" }),
   comment: z.string().optional(),
+  status: z.enum(["Pending", "Rejected", "Approved"]).optional(),
 });

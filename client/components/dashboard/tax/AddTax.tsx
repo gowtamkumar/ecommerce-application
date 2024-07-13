@@ -50,7 +50,7 @@ const AddTax = () => {
         : await saveTax(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        router.refresh();
+        
         toast.success(
           `Tax ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -159,7 +159,7 @@ const AddTax = () => {
                 },
               ]}
             >
-              <InputNumber placeholder="Enter Value" />
+              <InputNumber placeholder="Enter Value" style={{width: '100%'}} />
             </Form.Item>
           </div>
 
