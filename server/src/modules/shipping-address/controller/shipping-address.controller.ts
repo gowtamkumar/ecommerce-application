@@ -38,7 +38,7 @@ export const getShippingAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single ShippingAddress of id ${req.params.id}`,
+      msg: `Get a single Shipping Address of id ${req.params.id}`,
       data: result,
     });
   }
@@ -60,15 +60,24 @@ export const createShippingAddress = asyncHandler(
         message: validation.error.formErrors,
       });
     }
- 
-    const repository = connection.getRepository(ShippingAddressEntity);
 
+    const repository = connection.getRepository(ShippingAddressEntity);
+    const result = await repository.findOneBy({ userId: req.id, status: true });
+
+    if (result) {
+      await repository.save({ id: result.id, status: false });
+    }
+    // await repository.save(
+    //   result.map((item: { id: number; status: boolean }) => ({
+    //     id: item.id,
+    //     status: false,
+    //   }))
+    // );
     const newShippingAddress = repository.create(validation.data);
     const save = await repository.save(newShippingAddress);
-
     return res.status(200).json({
       success: true,
-      msg: "Create a new ShippingAddress",
+      msg: "Create a new Shipping Address",
       data: save,
     });
   }
@@ -94,6 +103,38 @@ export const updateShippingAddress = asyncHandler(
       success: true,
       msg: `Update a single ShippingAddress of id ${req.params.id}`,
       data: updateData,
+    });
+  }
+);
+
+// @desc Update a single ShippingAddress
+// @route PUT /api/v1/shipping-address/:id
+// @access Public
+export const activeShippingAddress = asyncHandler(
+  async (req: any, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+
+    const repository = await connection.getRepository(ShippingAddressEntity);
+    const findOneAddress = await repository.findOneBy({ id });
+
+    const result = await repository.find({ where: { userId: req.id } });
+
+    if (result) {
+      await repository.save(
+        result.map((item: { id: number; status: boolean }) => ({
+          id: item.id,
+          status: false,
+        }))
+      );
+    }
+
+    await repository.save({ id: findOneAddress.id, status: true });
+
+    return res.status(200).json({
+      success: true,
+      msg: `Active Shipping address of id ${req.params.id}`,
+      data: findOneAddress,
     });
   }
 );

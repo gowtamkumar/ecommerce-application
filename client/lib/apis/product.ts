@@ -34,6 +34,7 @@ export async function getProduct(id: string) {
     `${process.env.NEXT_SERVER_URL}/api/v1/products/${id}`,
     {
       method: "GET",
+      cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user.accessToken}`,

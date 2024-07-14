@@ -84,6 +84,8 @@ export const getProduct = asyncHandler(
         "reviews.id",
         "reviews.rating",
         "reviews.comment",
+        "reviews.like",
+        "reviews.disLike",
         "tax",
         "productVariants",
         "category.id",

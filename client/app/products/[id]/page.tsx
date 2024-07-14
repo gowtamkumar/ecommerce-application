@@ -1,6 +1,6 @@
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/header/Header";
-import SingleProduct from "@/components/website/Product/SingleProduct";
+import SingleProduct from "@/components/website/product/SingleProduct";
 import { Suspense } from "react";
 export default async function Product() {
   return (

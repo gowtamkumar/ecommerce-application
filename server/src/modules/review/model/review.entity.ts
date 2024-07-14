@@ -32,8 +32,8 @@ export class ReviewEntity {
   @Column({ nullable: true })
   like!: number;
 
-  @Column({ nullable: true })
-  dislike!: number;
+  @Column({ name: "dis_like", nullable: true })
+  disLike!: number;
 
   @Column({
     type: "enum",

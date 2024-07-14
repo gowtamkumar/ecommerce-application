@@ -5,7 +5,12 @@ import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Rate, Row, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
-import { deleteReview, getReviews } from "@/lib/apis/review";
+import {
+  deleteReview,
+  getReviews,
+  reviewDisLike,
+  reviewLike,
+} from "@/lib/apis/review";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -39,7 +44,6 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ReviewTable = ({ reviews }: any) => {
-  console.log("🚀 ~ reviews:", reviews);
   // const [reviews, setReviews] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
@@ -55,19 +59,19 @@ const ReviewTable = ({ reviews }: any) => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [global.action]);
 
-  const handleDelete = async (id: string) => {
-    try {
-      dispatch(setLoading({ delete: true }));
-      await deleteReview(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Review deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
-    } catch (error: any) {
-      toast.error(error);
-    }
-  };
+  // const handleDelete = async (id: string) => {
+  //   try {
+  //     dispatch(setLoading({ delete: true }));
+  //     await deleteReview(id);
+  //     setTimeout(async () => {
+  //       dispatch(setLoading({ delete: false }));
+  //       toast.success("Review deleted successfully");
+  //       dispatch(setAction({}));
+  //     }, 500);
+  //   } catch (error: any) {
+  //     toast.error(error);
+  //   }
+  // };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -84,13 +88,20 @@ const ReviewTable = ({ reviews }: any) => {
     dispatch(setSearchText(""));
   };
 
-  function reviewIncrement(value: any) {
-
-    console.log("🚀 ~ reviewIncrement:", value);
+  async function reviewIncrement(value: any) {
+    try {
+      await reviewLike({ id: value.id });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  function reviewDecrement(value: any) {
-    console.log("🚀 ~ reviewDecrement:", value);
+  async function reviewDecrement(value: any) {
+    try {
+      await reviewDisLike({ id: value.id });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const getColumnSearchProps = (
@@ -221,14 +232,14 @@ const ReviewTable = ({ reviews }: any) => {
                     className="size-4 font-bold cursor-pointer"
                     onClick={() => reviewIncrement(value)}
                   />{" "}
-                  <span>5</span>
+                  <span>{value.like}</span>
                 </div>
                 <div>
                   <BiDislike
                     className="size-4 font-bold cursor-pointer"
                     onClick={() => reviewDecrement(value)}
                   />{" "}
-                  <span>10</span>
+                  <span>{value.disLike}</span>
                 </div>
               </div>
             </div>
@@ -285,11 +296,7 @@ const ReviewTable = ({ reviews }: any) => {
   return (
     <Table
       scroll={{ x: "auto" }}
-      // components={{
-      //   body: {
-      //     row: Row,
-      //   },
-      // }}
+    
       // loading={global.loading.loading}
       columns={columns}
       dataSource={reviews}

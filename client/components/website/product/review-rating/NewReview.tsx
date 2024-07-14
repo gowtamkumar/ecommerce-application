@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
   selectGlobal,
-  setAction,
   setFormValues,
   setLoading,
+  setProductRating,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveReview, updateReview } from "@/lib/apis/review";
@@ -16,7 +16,7 @@ import { ActionType } from "@/constants/constants";
 
 const NewReview = () => {
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload } = global.productRating;
   // hook
   const [form] = Form.useForm();
   const router = useRouter();
@@ -29,7 +29,7 @@ const NewReview = () => {
       dispatch(setFormValues({}));
       form.resetFields();
     };
-  }, [global.action]);
+  }, [global.productRating]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -42,11 +42,11 @@ const NewReview = () => {
         : await saveReview(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        // 
+        //
         toast.success(
           `Review ${newData?.id ? "Updated" : "Created"} Successfully`
         );
-        dispatch(setAction({}));
+        dispatch(setProductRating({}));
       }, 100);
     } catch (err: any) {
       toast.error(err);
@@ -54,7 +54,7 @@ const NewReview = () => {
   };
 
   const handleClose = () => {
-    dispatch(setAction({}));
+    dispatch(setProductRating({}));
     dispatch(setLoading({}));
   };
 
@@ -66,8 +66,8 @@ const NewReview = () => {
 
   const resetFormData = () => {
     if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+      form.setFieldsValue(global.productRating?.payload);
+      dispatch(setFormValues(global.productRating?.payload));
     } else {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
@@ -77,15 +77,15 @@ const NewReview = () => {
   return (
     <Modal
       title={
-        global.action.type === ActionType.UPDATE
+        global.productRating.type === ActionType.UPDATE
           ? "Update Review"
           : "New Review"
       }
       width={500}
       zIndex={1050}
       open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+        global.productRating.type === ActionType.CREATE ||
+        global.productRating.type === ActionType.UPDATE
       }
       onCancel={handleClose}
       footer={null}
@@ -109,7 +109,7 @@ const NewReview = () => {
           <div className="grid flex-grow grid-cols-1 gap-5">
             <div className="col-span-1">
               <Form.Item name="rating" className="mb-1" label="Rating">
-                <Rate allowHalf />
+                <Rate />
               </Form.Item>
             </div>
 

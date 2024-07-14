@@ -9,7 +9,7 @@ import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";
 import { GiDeliveryDrone } from "react-icons/gi";
 import { getProducts } from "@/lib/apis/product";
-import ProductCard from "@/components/website/Product/ProductCard/ProductCard";
+import ProductCard from "@/components/website/product/productcard/ProductCard";
 
 export default async function Home() {
   const result = await getProducts();

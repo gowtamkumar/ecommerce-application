@@ -62,15 +62,12 @@ export const createReview = asyncHandler(async (req: any, res: Response) => {
   });
 
   console.log("validation", validation.error);
-  
 
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
     });
   }
-
-
 
   const repository = connection.getRepository(ReviewEntity);
 
@@ -92,7 +89,9 @@ export const updateReview = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
+
     console.log("req.body", req.body);
+
     const repository = await connection.getRepository(ReviewEntity);
 
     const result = await repository.findOneBy({ id });
@@ -108,6 +107,59 @@ export const updateReview = asyncHandler(
       success: true,
       msg: `Update a single Review of id ${req.params.id}`,
       data: updateData,
+    });
+  }
+);
+
+// @desc Update a single Review
+// @route PUT /api/v1/reviews/increage:id
+// @access Public
+export const reviewLike = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+
+  const repository = await connection.getRepository(ReviewEntity);
+
+  const result = await repository.findOneBy({ id });
+  console.log("🚀 ~ result:", result);
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  // const updateData = await repository.merge(result, req.body);
+
+  await repository.save({ id: result.id, like: result.like + 1 });
+
+  return res.status(200).json({
+    success: true,
+    msg: `Update a single Review of id ${req.params.id}`,
+    data: result,
+  });
+});
+
+export const reviewDisLike = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+
+    const repository = await connection.getRepository(ReviewEntity);
+
+    const result = await repository.findOneBy({ id });
+    console.log("🚀 ~ result:", result);
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    // const updateData = await repository.merge(result, req.body);
+
+    await repository.save({ id: result.id, disLike: result.disLike + 1 });
+
+    return res.status(200).json({
+      success: true,
+      msg: `Update a single Review of id ${req.params.id}`,
+      data: result,
     });
   }
 );

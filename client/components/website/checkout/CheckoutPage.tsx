@@ -14,30 +14,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { CiEdit, CiSquareRemove } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
 import { saveOrder } from "@/lib/apis/orders";
-import { Breadcrumb, Button, Checkbox, Input, Radio, Space } from "antd";
-import { setAction, setFormValues } from "@/redux/features/global/globalSlice";
+import { Alert, Breadcrumb, Button, Checkbox, Input, Radio, Space } from "antd";
+import {
+  selectGlobal,
+  setAction,
+  setFormValues,
+  setLoading,
+  setResponse,
+} from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
 import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getMe } from "@/lib/apis/user";
 
-export default function CheckoutPage({ shippingAddress }: any) {
+export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
+  const [shippingAddress, setShippingAddress] = useState([] as any);
   const dispatch = useDispatch();
   const cart = useSelector(selectCart);
-    // const currentUrl = window.location.pathname
-    // // const router = useRouter()
-    // console.log("🚀 ~ currentUrl:", currentUrl)
+  const global = useSelector(selectGlobal);
+  // const currentUrl = window.location.pathname
+  // // const router = useRouter()
+  // console.log("🚀 ~ currentUrl:", currentUrl)
 
-  // useEffect(() => {
-  //   (async () => {
-  //     dispatch(
-  //       setFormValues({
-  //         paymentMethod: "Cash",
-  //         shippingAddressId: shippingAddress[0].id, //need to logic implements
-  //       })
-  //     );
-  //   })();
-  // }, [dispatch, shippingAddress]);
+  useEffect(() => {
+    (async () => {
+      const user = await getMe();
+      const activeShippingAddress = user.data?.shippingAddress.find(
+        (item: { status: boolean }) => item.status
+      );
+      setShippingAddress(user.data?.shippingAddress);
+      setCheckoutFormData({
+        paymentMethod: "Cash",
+        shippingAddressId: activeShippingAddress.id, //need to logic implements
+      });
+    })();
+  }, [global.action]);
 
   const { netAmount, orderTotalAmount, discountAmount } = cart.carts.reduce(
     (pre: any, curr: any) => {
@@ -56,33 +68,50 @@ export default function CheckoutPage({ shippingAddress }: any) {
   );
 
   // State for form inputs
-  const checkoutAction = async () => {
-    const validatedFields = orderValidationSchema.safeParse({
-      orderItems: cart.carts,
-      orderDate: "2024-06-27",
-      paymentStatus: "Paid",
-      netAmount,
-      tax: 24,
-      orderTotalAmount,
-      shippingAmount: 150,
-      discountAmount,
-      paymentMethod: checkoutFormData.paymentMethod,
-      shippingAddressId: checkoutFormData?.shippingAddressId,
-    });
+  const handleOrder = async () => {
+    try {
+      dispatch(setLoading({ save: true }));
+      const validatedFields = orderValidationSchema.safeParse({
+        orderItems: cart.carts,
+        orderDate: "2024-06-27",
+        paymentStatus: "Paid",
+        netAmount,
+        tax: 24,
+        orderTotalAmount,
+        shippingAmount: 150,
+        discountAmount,
+        paymentMethod: checkoutFormData.paymentMethod,
+        shippingAddressId: checkoutFormData?.shippingAddressId,
+      });
 
-    console.log(validatedFields);
+      if (!validatedFields.success) {
+        return {
+          errors: validatedFields.error.formErrors,
+        };
+      }
 
-    if (!validatedFields.success) {
-      return {
-        errors: validatedFields.error.formErrors,
-      };
+      // return console.log("newData:", validatedFields.data);
+
+      const res = await saveOrder(validatedFields.data);
+
+      if (res.status === 500) {
+        dispatch(setResponse({ type: "error", message: res.message }));
+      } else {
+        dispatch(
+          setResponse({ type: "success", message: "successfully Added" })
+        );
+      }
+
+      setTimeout(async () => {
+        dispatch(setAction({}));
+        dispatch(setResponse({}));
+        dispatch(setLoading({ save: false }));
+      }, 2000);
+    } catch (err: any) {
+      console.log("🚀 ~ err:", err);
     }
 
     // return;
-
-    await saveOrder(validatedFields.data);
-
-    
   };
 
   const findAddress = shippingAddress?.find(
@@ -235,14 +264,23 @@ export default function CheckoutPage({ shippingAddress }: any) {
 
               {/* <!-- Terms and Conditions --> */}
               <div className="mb-4">
-                <label className="flex items-center gap-x-2">
-                  <Checkbox type="checkbox" className="mr-2" />
+                <label className="flex items-center justify-between gap-x-2">
                   <span>
-                    রফকারির শর্তাবলীতো সম্মতি প্রদান করছি।{" "}
-                    <a href="#" className="text-blue-500 underline">
-                      শর্তাবলী
-                    </a>
+                    <Checkbox type="checkbox" />
+                    <span className="ml-1">
+                      রফকারির শর্তাবলীতো সম্মতি প্রদান করছি।{" "}
+                      <a href="#" className="text-blue-500 underline">
+                        শর্তাবলী
+                      </a>
+                    </span>
                   </span>
+                  {global.response.type && (
+                    <Alert
+                      className="p-0 m-0"
+                      message={`${global.response.message}`}
+                      type={global.response.type}
+                    />
+                  )}
                 </label>
               </div>
             </div>
@@ -252,7 +290,9 @@ export default function CheckoutPage({ shippingAddress }: any) {
               type="primary"
               size="large"
               className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md"
-              onClick={() => checkoutAction()}
+              onClick={() => handleOrder()}
+              loading={global.loading.save}
+              disabled={global.loading.save}
             >
               Confirm Order {(orderTotalAmount + 150 || 0).toFixed(2)} TK.
             </Button>
@@ -272,12 +312,6 @@ export default function CheckoutPage({ shippingAddress }: any) {
                     ...checkoutFormData,
                     shippingAddressId: target.value,
                   });
-                  // dispatch(
-                  //   setFormValues({
-                  //     ...checkoutFormData,
-                  //     shippingAddressId: target.value,
-                  //   })
-                  // );
                 }}
                 value={checkoutFormData?.shippingAddressId}
               >

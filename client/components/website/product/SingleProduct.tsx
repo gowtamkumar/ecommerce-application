@@ -5,7 +5,7 @@ import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
 import RelatedProducts from "./RelatedProducts";
 import { Breadcrumb, Spin } from "antd";
-import RatingProduct from "./review-rating/RatingProducts";
+import RatingProduct from "./RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
 import { getProduct } from "@/lib/apis/product";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
@@ -14,7 +14,6 @@ import ReviewTable from "./review-rating/ReviewTable";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
-  console.log("🚀 ~ product:", product);
   const { id } = useParams();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
@@ -30,7 +29,7 @@ export default function SingleProduct() {
       });
       dispatch(setLoading({ loading: false }));
     })();
-  }, [dispatch, id]);
+  }, [dispatch, global.action, id]);
 
   const products = {
     name: "New LED Watch",
@@ -96,7 +95,9 @@ export default function SingleProduct() {
           {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>
       </div>
-      <RatingProduct product={product} />
+      {
+        product.reviews && <RatingProduct product={product} />
+      }
       <ReviewTable reviews={product.reviews} />
       <DescriptionProduct product={product} />
       <section className="py-5">
