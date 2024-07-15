@@ -13,7 +13,7 @@ export default function HeaderRight() {
   const session = useSession();
   return (
     <div className="w-2/12 flex justify-between items-center">
-       <div className="ml-3 flex ">
+      <div className="ml-3 flex ">
         <Link href="/checkout" className="mx-2">
           <Badge size="default" count={cart.carts.length}>
             <FaShoppingCart size={25} title="dd" />
@@ -46,7 +46,6 @@ export default function HeaderRight() {
           </div>
         </div>
       )}
-     
     </div>
   );
 }

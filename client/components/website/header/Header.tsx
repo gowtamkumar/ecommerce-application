@@ -1,11 +1,13 @@
-import TopBar from "./TopBar";
-import HeaderLogo from "./HeaderLogo";
-import HeaderRight from "./HeaderRight";
-import HeaderSearch from "./HeaderSearch";
-import { getAllCategories } from "@/lib/apis/categories";
 
-const Header = async () => {
-  const categories = await getAllCategories();
+import React from 'react'
+import TopBar from './TopBar'
+import HeaderLogo from './HeaderLogo'
+import HeaderRight from './HeaderRight'
+import HeaderSearch from './HeaderSearch'
+import { getAllCategories } from '@/lib/apis/categories'
+
+export default async function Header() {
+  const categories = await getAllCategories()
   return (
     <div className="bg-rose-400">
       <div className="lg:w-8/12 mx-auto">
@@ -17,7 +19,5 @@ const Header = async () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default Header;
+  )
+}

@@ -9,7 +9,6 @@ export default function TopBar() {
         <div className="flex gap-5">
           <small>Help & Support</small>
           <small>
-            {" "}
             <Link href="/about">About</Link>
           </small>
         </div>

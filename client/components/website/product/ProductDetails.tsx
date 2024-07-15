@@ -147,7 +147,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
       {/* product Action section */}
       {/* <ProductActions  /> */}
       <div className="w-60 flex items-center mb-4">
-        <span className="text-gray-600"> Quantity: </span>
+        <span className="text-gray-600">Quantity: </span>
         <Button
           onClick={() => decrementToCart(product)}
           className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300 focus:outline-none"

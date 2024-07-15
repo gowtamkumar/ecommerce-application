@@ -2,13 +2,16 @@ import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-export interface cartState {
+export interface CartState {
   carts: any;
 }
 
 // Define the initial state using that type
-const initialState: cartState = {
-  carts: [],
+const initialState: CartState = {
+  carts:
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("carts") || "[]")
+      : [],
 };
 
 export const cartSlice = createSlice({
@@ -32,6 +35,7 @@ export const cartSlice = createSlice({
           productId: +id,
         });
       }
+      localStorage.setItem("carts", JSON.stringify(state.carts));
     },
 
     incrementCart: (state, action: PayloadAction<any>): any => {
@@ -41,6 +45,7 @@ export const cartSlice = createSlice({
       if (existingProductIndex !== -1) {
         state.carts[existingProductIndex].qty++;
       }
+      localStorage.setItem("carts", JSON.stringify(state.carts));
     },
 
     decrementCart: (state, action: PayloadAction<any>): any => {
@@ -50,6 +55,7 @@ export const cartSlice = createSlice({
       if (existingProductIndex !== -1) {
         state.carts[existingProductIndex].qty--;
       }
+      localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     removeCart: (state, action: PayloadAction<any>): any => {
       const findProduct = state.carts.find(
@@ -60,6 +66,7 @@ export const cartSlice = createSlice({
           (item: any) => item.id !== findProduct.id
         );
       }
+      localStorage.setItem("carts", JSON.stringify(state.carts));
     },
   },
 });

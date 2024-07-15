@@ -1,13 +1,14 @@
 "use client";
 import { Input, Select } from "antd";
+export default function HeaderSearch({ categories = [] }: any) {
 
-export default function HeaderSearch({ categories }: any) {
+
   const { Option } = Select;
   const { Search } = Input;
 
   const selectBefore = (
     <Select defaultValue="Select Category">
-      {(categories.data || []).map((categoroy: any) => (
+      {(categories?.data || []).map((categoroy: any) => (
         <Option key={categoroy.id} value={categoroy.id}>
           {categoroy.name}
         </Option>
@@ -20,7 +21,7 @@ export default function HeaderSearch({ categories }: any) {
         addonBefore={selectBefore}
         width={100}
         size="large"
-        // defaultValue="mysite"
+      // defaultValue="mysite"
       />
     </div>
   );
