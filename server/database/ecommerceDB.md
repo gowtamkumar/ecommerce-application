@@ -269,3 +269,12 @@ variant_id,
 message/descripiton,
 createdAt
 updatedAt
+
+## setting
+id,
+logo,
+address,
+social_link: array
+email,
+
+

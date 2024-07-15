@@ -11,6 +11,7 @@ import { GiDeliveryDrone } from "react-icons/gi";
 import ProductCard from "@/components/website/product/productcard/ProductCard";
 
 export default function Home() {
+  
   return (
     <>
       <Header />

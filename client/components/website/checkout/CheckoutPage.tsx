@@ -11,7 +11,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { CiEdit, CiSquareRemove } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
 import { saveOrder } from "@/lib/apis/orders";
-import { Alert, Breadcrumb, Button, Checkbox, Radio, Space } from "antd";
+import {
+  Alert,
+  Breadcrumb,
+  Button,
+  Checkbox,
+  Popconfirm,
+  Radio,
+  Space,
+} from "antd";
 import {
   selectGlobal,
   setAction,
@@ -23,6 +31,7 @@ import AddShippingAddress from "@/components/dashboard/shipping-address/AddShipp
 import { useEffect, useState } from "react";
 import { getMe } from "@/lib/apis/user";
 import Image from "next/image";
+import { MdDelete } from "react-icons/md";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
@@ -114,6 +123,19 @@ export default function CheckoutPage() {
     (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
   );
 
+  function removeFromCart(value: { id: number }) {
+    try {
+      dispatch(setLoading({ remove: true }));
+      dispatch(removeCart(value));
+
+      setTimeout(async () => {
+        dispatch(setLoading({ remove: false }));
+      }, 1000);
+    } catch (err) {
+      console.log("err");
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 lg:w-8/12 mx-auto items-center">
       <div className="pt-2">
@@ -146,7 +168,7 @@ export default function CheckoutPage() {
           <div>
             {cart.carts.map((item: any, idx: number) => {
               return (
-                <div key={idx} className="p-4 flex">
+                <div key={idx} className="p-3 flex border-b">
                   <Image
                     width={100}
                     height={100}
@@ -186,25 +208,40 @@ export default function CheckoutPage() {
                       </div>
                       {item?.discountId ? (
                         <div className="text-base">
-                          <div className="line-through text-gray-500">
+                          <span className="line-through text-gray-500">
                             ৳ {(+item?.price || 0).toFixed(2)}
-                          </div>
-                          <div className="text-green-600 ml-2">
+                          </span>
+                          <span className="text-green-600 ml-2">
                             - {item?.discount?.value}
                             {item?.discount?.discountType === "Percentage"
                               ? "%"
                               : "BDT"}
-                          </div>
+                          </span>
                         </div>
                       ) : null}
                     </div>
                   </div>
 
+                  <div>
+                    <Popconfirm
+                      title="Delete the task"
+                      description="Are you sure to delete this task?"
+                      onConfirm={() => removeFromCart(item)}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{ loading: global.loading.remove }}
+                      placement="left"
+                    >
+                      <MdDelete size={20} className="cursor-pointer" />
+                    </Popconfirm>
+                  </div>
+
+                  {/* 
                   <CiSquareRemove
                     size={30}
                     className="cursor-pointer"
                     onClick={() => dispatch(removeCart(item))}
-                  />
+                  /> */}
                 </div>
               );
             })}
@@ -364,6 +401,17 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               )}
+
+              <Link href="/profile">
+                <Button
+                  className="mt-2"
+                  size="small"
+                  type="default"
+                  style={{ width: "100%" }}
+                >
+                  All Address
+                </Button>
+              </Link>
 
               <Button
                 className="mt-2"

@@ -22,6 +22,10 @@ import { FileEntity } from "../modules/file/model/file.entity";
 import { StatusEntity } from "../modules/status/model/status.entity";
 import { ColorEntity } from "../modules/color/model/color.entity";
 import { UnitEntity } from "../modules/unit/model/unit.entity";
+import { DivisionEntity } from "../modules/geo-location/divisions/model/division.entity";
+import { DistrictEntity } from "../modules/geo-location/districts/model/district.entity";
+import { UpazilaEntity } from "../modules/geo-location/upazilas/model/upazila.entity";
+import { UnionEntity } from "../modules/geo-location/unions/model/union.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -77,6 +81,10 @@ const dbConnection = new DataSource({
     StatusEntity,
     ProductCategoryEntity,
     FileEntity,
+    DivisionEntity,
+    DistrictEntity,
+    UpazilaEntity,
+    UnionEntity
   ],
   subscribers: [],
   migrations: [],
