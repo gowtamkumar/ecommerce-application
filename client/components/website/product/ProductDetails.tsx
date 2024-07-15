@@ -1,6 +1,15 @@
 "use client";
-import { Alert, Button, Divider, Input, message, Rate, Spin } from "antd";
-import React from "react";
+import {
+  Alert,
+  Button,
+  Divider,
+  Input,
+  message,
+  Modal,
+  Rate,
+  Spin,
+} from "antd";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addCart,
@@ -11,12 +20,18 @@ import Link from "next/link";
 import { productDiscountCalculation } from "@/lib/share";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { saveWishlist } from "@/lib/apis/wishlist";
+import { useSession } from "next-auth/react";
+import ModalLogin from "../login/ModalLogin";
 
 interface Product {}
 
 const ProductDetails = ({ product, setProduct }: any) => {
+  const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
+  const session = useSession();
+
+  console.log("unAuthorize", unAuthorize);
 
   async function addToCart(value: any) {
     dispatch(
@@ -173,27 +188,42 @@ const ProductDetails = ({ product, setProduct }: any) => {
         <Button
           type="primary"
           size="large"
-          onClick={() => addToCart(product)}
+          onClick={() => {
+            if (session.status === "unauthenticated") {
+              setUnAuthorize(true);
+            } else {
+              addToCart(product);
+            }
+          }}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Add to Cart
         </Button>
+
         <Button
           size="large"
           type="default"
-          onClick={() => AddToWishlist(product.id)}
+          onClick={() => {
+            if (session.status === "unauthenticated") {
+              setUnAuthorize(true);
+            } else {
+              AddToWishlist(product.id);
+            }
+          }}
         >
           Add to Wishlist
         </Button>
-        {global.response.type && (
+        {/* {global.response.type && (
           <Alert
             className="p-0 m-0"
             message={`${global.response.message}`}
             type={global.response.type}
           />
-        )}
+        )} */}
       </div>
       <Divider />
+
+      <ModalLogin unAuthorize={unAuthorize} setUnAuthorize={setUnAuthorize} />
     </div>
   );
 };

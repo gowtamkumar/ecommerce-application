@@ -95,9 +95,7 @@ export default function SingleProduct() {
           {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>
       </div>
-      {
-        product.reviews && <RatingProduct product={product} />
-      }
+      {product.reviews && <RatingProduct product={product} />}
       <ReviewTable reviews={product.reviews} />
       <DescriptionProduct product={product} />
       <section className="py-5">
