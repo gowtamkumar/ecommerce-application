@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TaxTypeEnum } from "../enums/tax-type.enum";
 import { ProductEntity } from "../../product/model/product.entity";
 import { Status } from "../../../enums/status.enum";
 
@@ -11,9 +10,6 @@ export class TaxEntity {
 
   @Column()
   name!: string;
-
-  @Column({ type: "enum", enum: TaxTypeEnum })
-  type!: TaxTypeEnum;
 
   @Column()
   value!: number;

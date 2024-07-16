@@ -109,7 +109,7 @@ const AddProduct = () => {
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `Product ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -273,7 +273,7 @@ const AddProduct = () => {
               >
                 {(taxs || []).map((item: any, idx) => (
                   <Select.Option key={idx} value={item.id}>
-                    {`${item.name} - ${item.type}`}
+                    {`${item.name}`}
                   </Select.Option>
                 ))}
               </Select>
@@ -531,7 +531,10 @@ const AddProduct = () => {
                                 { required: true, message: "Regular Price" },
                               ]}
                             >
-                              <InputNumber placeholder="Regular Price" min={1} />
+                              <InputNumber
+                                placeholder="Regular Price"
+                                min={1}
+                              />
                             </Form.Item>
                           </td>
 
@@ -543,7 +546,7 @@ const AddProduct = () => {
                                 { required: true, message: "sale price" },
                               ]}
                             >
-                              <InputNumber placeholder="Sale price"  min={1}/>
+                              <InputNumber placeholder="Sale price" min={1} />
                             </Form.Item>
                           </td>
                           <td>
@@ -605,7 +608,6 @@ const AddProduct = () => {
                               {...restField}
                               name={[name, "stockQty"]}
                               rules={[{ required: true, message: "Stock Qty" }]}
-                            
                             >
                               <InputNumber placeholder="Enter" min={1} />
                             </Form.Item>

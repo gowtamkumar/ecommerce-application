@@ -26,11 +26,14 @@ const ProductCardDetails = ({ products }: any) => {
       } gap-4`}
     >
       {(products.data || []).map((item: any, idx: any) => {
-        const price = +item.productVariants[0]?.price;
-        const discount = item.discount;
-        const disAmount =
+        let price = +item.productVariants[0]?.price;
+        let discount = item.discount;
+
+        let taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
+
+        let disAmount =
           discount?.discountType === "Percentage"
-            ? (price * (discount.value || 0)) / 100
+            ? ((price + taxAmount) * (discount.value || 0)) / 100
             : +discount?.value;
 
         return (
@@ -49,14 +52,14 @@ const ProductCardDetails = ({ products }: any) => {
               <p className="text-gray-500 mb-2">
                 ৳
                 {item?.discountId
-                  ? (+item.productVariants[0].price - +disAmount).toFixed(2)
-                  : (+item.productVariants[0].price).toFixed(2)}
+                  ? (price + taxAmount - disAmount).toFixed(2)
+                  : (price + taxAmount).toFixed(2)}
               </p>
 
               {item?.discountId ? (
                 <>
                   <span className="line-through text-gray-500">
-                    ৳ {(+item.productVariants[0].price || 0).toFixed(2)}
+                    ৳ {(+price + +taxAmount || 0).toFixed(2)}
                   </span>
                   <span className="text-green-600 ml-2">
                     -{item?.discount?.value}

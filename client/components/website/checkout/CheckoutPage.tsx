@@ -42,10 +42,8 @@ export default function CheckoutPage() {
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
-  const router = useRouter();
+  // const router = useRouter();
   // console.log("🚀 ~ currentUrl:", currentUrl)
-
-  console.log("cart.carts", cart.carts);
 
   useEffect(() => {
     async function fetchData() {
@@ -62,32 +60,37 @@ export default function CheckoutPage() {
     fetchData();
   }, [global.action, dispatch]);
 
-  const { netAmount, orderTotalAmount, discountAmount } = cart.carts.reduce(
-    (pre: any, curr: any) => {
-      let sutotal = +curr.price * +curr.qty;
-      return {
-        netAmount: +pre.netAmount + sutotal - (+curr.dis || 0),
-        discountAmount: +pre.discountAmount + (+curr.dis || 0),
-        orderTotalAmount: +pre.orderTotalAmount + +sutotal - (+curr.dis || 0),
-      };
-    },
-    {
-      netAmount: 0,
-      discountAmount: 0,
-      orderTotalAmount: 0,
-    }
-  );
+  const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
+    cart.carts.reduce(
+      (pre: any, curr: any) => {
+        let sutotal = (+curr.price + curr?.tax) * +curr.qty;
+        return {
+          taxAmount: +pre.taxAmount + curr?.tax,
+          netAmount: +pre.netAmount + sutotal - (+curr.dis || 0),
+          discountAmount: +pre.discountAmount + (+curr.dis || 0),
+          orderTotalAmount: +pre.orderTotalAmount + +sutotal - (+curr.dis || 0),
+        };
+      },
+      {
+        taxAmount: 0,
+        netAmount: 0,
+        discountAmount: 0,
+        orderTotalAmount: 0,
+      }
+    );
 
   // State for form inputs
   const handleOrder = async () => {
     try {
       dispatch(setLoading({ save: true }));
+      console.log("cart.carts", cart.carts);
+
       const validatedFields = orderValidationSchema.safeParse({
         orderItems: cart.carts,
         orderDate: "2024-02",
         paymentStatus: "Paid",
         netAmount,
-        tax: 24,
+        tax: taxAmount,
         orderTotalAmount,
         shippingAmount: 150,
         discountAmount,
@@ -102,7 +105,7 @@ export default function CheckoutPage() {
         };
       }
 
-      // return    console.log("newData:", validatedFields.data);
+      return console.log("newData:", validatedFields.data);
       const res = await saveOrder(validatedFields.data);
 
       if (res.status === 500) {
@@ -113,15 +116,15 @@ export default function CheckoutPage() {
         );
       }
 
-      dispatch(setAction({}));
-      dispatch(setResponse({}));
-      dispatch(clearCart());
-      setCheckoutFormData({});
-      setShippingAddress([]);
       // router.refresh();
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
+        dispatch(setAction({}));
+        dispatch(setResponse({}));
+        dispatch(clearCart());
+        setCheckoutFormData({});
+        setShippingAddress([]);
       }, 2000);
     } catch (err: any) {
       console.log("🚀 ~ err:", err);
@@ -176,6 +179,7 @@ export default function CheckoutPage() {
           </div>
           <div>
             {cart.carts.map((item: any, idx: number) => {
+              let taxAmount = (+item.price * (item?.tax?.value || 0)) / 100;
               return (
                 <div key={idx} className="p-3 flex border-b">
                   <Image
@@ -212,13 +216,13 @@ export default function CheckoutPage() {
                       <div className="ml-4 text-base font-semibold text-green-600">
                         ৳{" "}
                         {item.discountId
-                          ? (+item?.price - item?.dis).toFixed(2)
-                          : (+item?.price || 0).toFixed(2)}
+                          ? (+item?.price + item?.tax - item?.dis).toFixed(2)
+                          : (+item?.price + item?.tax || 0).toFixed(2)}
                       </div>
                       {item?.discountId ? (
                         <div className="text-base">
                           <span className="line-through text-gray-500">
-                            ৳ {(+item?.price || 0).toFixed(2)}
+                            ৳ {(+item?.price + +item?.tax || 0).toFixed(2)}
                           </span>
                           <span className="text-green-600 ml-2">
                             - {item?.discount?.value}

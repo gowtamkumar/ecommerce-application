@@ -1,12 +1,12 @@
-export function productDiscountCalculation(value: {
-  selectProductVarient: { price: string | number };
-  discount: { discountType: string; value: number };
-}) {
+export function productDiscountCalculation(value: any) {
+  console.log("🚀 ~ value:", value);
   const price = +value.selectProductVarient?.price;
   const discount = value.discount;
-  const dis =
+  let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
+
+  let disAmount =
     discount?.discountType === "Percentage"
-      ? (price * (discount.value || 0)) / 100
+      ? ((+price + +taxAmount) * (discount.value || 0)) / 100
       : +discount?.value;
-  return dis;
+  return disAmount;
 }

@@ -9,11 +9,7 @@ export const taxValidationSchema = z.object({
   userId: z.number({
     required_error: "User is required",
   }),
-
-  type: z.enum(["Percentage", "FixedAmount"], {
-    required_error: "Type is Required",
-  }),
-
+  
   value: z.number({
     required_error: "Value is required",
   }),

@@ -27,7 +27,8 @@ export const getProducts = async (
       "reviews.id",
       "reviews.rating",
       "reviews.comment",
-      "tax",
+      "tax.name",
+      "tax.value",
       "productVariants",
       "productCategories",
       "category.id",
@@ -47,7 +48,7 @@ export const getProducts = async (
     qb.leftJoin("product.productCategories", "productCategories");
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
-
+    qb.orderBy("productVariants.id", "DESC");
     const results = await qb.getMany();
 
     res.status(200).json({
@@ -108,6 +109,7 @@ export const getProduct = asyncHandler(
       qb.leftJoin("productCategories.category", "category");
       qb.leftJoin("productVariants.size", "size");
       qb.leftJoin("productVariants.color", "color");
+      qb.orderBy("productVariants.id", "DESC");
       qb.where("product.id = :id", { id });
 
       const result = await qb.getOne();

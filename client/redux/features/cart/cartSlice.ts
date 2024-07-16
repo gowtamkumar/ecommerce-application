@@ -23,6 +23,7 @@ export const cartSlice = createSlice({
   reducers: {
     addCart: (state, action: PayloadAction<any>): any => {
       const { tax, id } = action.payload;
+      console.log("🚀 ~ action.payload:", action.payload);
 
       const existingProductIndex = state.carts.findIndex(
         (item: any) => item.id === action.payload.id
@@ -32,8 +33,6 @@ export const cartSlice = createSlice({
       } else {
         state.carts.push({
           ...action.payload,
-          tax: tax?.value,
-          taxType: tax?.type,
           productId: +id,
         });
       }

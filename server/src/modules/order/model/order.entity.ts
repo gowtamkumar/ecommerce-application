@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -11,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { OrderStatus } from "../enums/order-status.enum";
-import { PaymentStatus, paymentMothodStatus } from "../enums";
+import { OrderPaymentMethod, PaymentStatus } from "../enums";
 import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
@@ -87,12 +86,12 @@ export class OrderEntity {
   })
   paymentStatus!: PaymentStatus;
 
-  // @Column({
-  //   name: "payment_type",
-  //   type: "enum",
-  //   enum: paymentMothodStatus
-  // })
-  // paymentMothod!: paymentMothodStatus;
+  @Column({
+    name: "payment_method",
+    type: "enum",
+    enum: OrderPaymentMethod,
+  })
+  paymentMethod!: OrderPaymentMethod;
 
   @Column({
     type: "enum",

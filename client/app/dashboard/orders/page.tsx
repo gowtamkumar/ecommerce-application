@@ -14,9 +14,12 @@ import {
 } from "antd";
 import {
   FormOutlined,
+  PlusOutlined,
+  UserAddOutlined,
   RestOutlined,
+  CheckOutlined,
   QuestionCircleOutlined,
-  SearchOutlined
+  SearchOutlined,
 } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,7 +71,6 @@ const App: React.FC = () => {
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [global.action]);
 
   const handleDelete = async (id: string) => {
@@ -237,7 +239,7 @@ const App: React.FC = () => {
         </div>
         <div className="col-span-3">
           <div className="p-4 bg-white">
-            <h1 className="font-semibold">List of Order Products</h1>
+            <h1 className="font-semibold">List of Order Items</h1>
             <Table
               columns={childColumns}
               size="small"
@@ -312,9 +314,16 @@ const App: React.FC = () => {
       render: (customer) => <span>{customer?.name}</span>,
     },
     {
-      title: "Delivery Address",
-      dataIndex: "deliveryAddress",
-      key: "deliveryAddress",
+      title: "Shipping Address",
+      dataIndex: "shippingAddress",
+      key: "shippingAddress",
+      render: (value) => <span>{value.address}</span>,
+    },
+    {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      // render: (value) => <span>{value.address}</span>,
     },
     {
       title: "Delivered Man",
@@ -342,11 +351,39 @@ const App: React.FC = () => {
       title: "Action",
       key: "operation",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2 justify-end">
           <Button
             size="small"
-            icon={<FormOutlined />}
-            title="Edit"
+            icon={<PlusOutlined />}
+            title="Add Order Tracking"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  type: ActionType.UPDATE,
+                  payload: value,
+                })
+              )
+            }
+          />
+          <Button
+            size="small"
+            icon={<UserAddOutlined />}
+            title="Assign Delivery man"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  type: ActionType.UPDATE,
+                  payload: value,
+                })
+              )
+            }
+          />
+          <Button
+            size="small"
+            icon={<CheckOutlined />}
+            title="Order Status Change"
             className="me-1"
             onClick={() =>
               dispatch(
@@ -386,7 +423,7 @@ const App: React.FC = () => {
   return (
     <div className="p-3">
       <Table
-        scroll={{ x: 'auto' }}
+        scroll={{ x: "auto" }}
         dataSource={orders}
         columns={columns}
         expandable={{ expandedRowRender }}

@@ -186,6 +186,7 @@ note,
 
 shipping_address_id,
 payment_status(Paid/NotPaid/PertialPaid),
+payment_method(cash/ssecommer/strip)
 payment_type(Online/Offline)
 payment_transaction_id,
 status:(Processing/Pending/Completed/Failed),
@@ -220,7 +221,7 @@ updatedAt
 ## tax:(done)
 
 id,
-type: (Percentage, FixedAmount)
+name
 value,
 status:acitve/inactive
 

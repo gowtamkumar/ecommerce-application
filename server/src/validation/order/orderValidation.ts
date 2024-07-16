@@ -26,7 +26,9 @@ export const orderValidationSchema = z.object({
   paymentStatus: z.enum(["Paid", "NotPaid", "PertialPaid"], {
     required_error: "Payment Status is required",
   }),
-  // paymentMothod: z.enum(["Oneline", "Offline"]).optional(),
+  paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
+    required_error: "Payment Method is Required",
+  }),
   status: z
     .enum([
       "Processing",

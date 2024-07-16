@@ -31,14 +31,15 @@ const ProductDetails = ({ product, setProduct }: any) => {
   const global = useSelector(selectGlobal);
   const session = useSession();
 
-  console.log("unAuthorize", unAuthorize);
-
   async function addToCart(value: any) {
+    const price = +value.selectProductVarient.price;
+    let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
     dispatch(
       addCart({
         ...value,
         dis: productDiscountCalculation(value),
-        price: +value.selectProductVarient.price,
+        tax: taxAmount,
+        price,
       })
     );
   }
@@ -80,6 +81,10 @@ const ProductDetails = ({ product, setProduct }: any) => {
     }
   }
 
+  const price = product.selectProductVarient?.price;
+
+  let taxAmount = (+price * (product.tax?.value || 0)) / 100;
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-2">{product?.name}</h1>
@@ -100,15 +105,16 @@ const ProductDetails = ({ product, setProduct }: any) => {
           ৳{" "}
           {product.discountId
             ? (
-                +product.selectProductVarient?.price -
+                +price +
+                +taxAmount -
                 productDiscountCalculation(product)
               ).toFixed(2)
-            : (+product.selectProductVarient?.price || 0).toFixed(2)}
+            : (+price + +taxAmount || 0).toFixed(2)}
         </span>
         {product?.discountId ? (
           <>
             <span className="line-through text-gray-500">
-              ৳ {(+product.selectProductVarient?.price || 0).toFixed(2)}
+              ৳ {(+price + +taxAmount || 0).toFixed(2)}
             </span>
             <span className="text-green-600 ml-2">
               - {product?.discount?.value}

@@ -24,7 +24,6 @@ import { deleteTax, getTaxs } from "@/lib/apis/tax";
 interface DataType {
   key: string;
   name: string;
-  type: any;
   value: number;
   status: "Active" | "Inactive";
 }
@@ -174,14 +173,6 @@ const TaxList: React.FC = () => {
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
     },
-    {
-      ...getColumnSearchProps("type"),
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      sorter: (a, b) => a.type.length - b.type.length,
-      render: (value) => <Tag color="cyan">{value}</Tag>,
-    },
 
     {
       title: "Value",
@@ -253,7 +244,7 @@ const TaxList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 'auto' }}
+      scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={taxs}
