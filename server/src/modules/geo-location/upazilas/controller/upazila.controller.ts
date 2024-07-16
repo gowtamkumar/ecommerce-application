@@ -20,6 +20,7 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+
 // @desc Get a single Upazila
 // @route GET /api/v1/Upazila/:id
 // @access Public

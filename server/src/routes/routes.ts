@@ -52,6 +52,4 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/districts", districtRoute);
   app.use("/api/v1/upazilas", upazilaRoute);
   app.use("/api/v1/unions", unionsRoute);
-
-  
 };

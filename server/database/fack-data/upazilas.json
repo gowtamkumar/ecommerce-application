@@ -3470,6 +3470,1016 @@
         "name": "Dasar",
         "bn_name": "ডাসার",
         "url": "null"
+      },
+      {
+        "id": "495",
+        "name": "Uttara- Sector 4",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " উওরা- সেক্টর -৪"
+      },
+      {
+        "id": "496",
+        "name": "Uttara- Sector 6",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " উওরা- সেক্টর -৬"
+      },
+      {
+        "id": "497",
+        "name": "Uttara- Sector 8",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " উওরা- সেক্টর -৮"
+      },
+      {
+        "id": "498",
+        "name": "Dhanmondi-27",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " ধানমন্ডি-২৭"
+      },
+      {
+        "id": "499",
+        "name": "Dhanmondi-32",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " ধানমন্ডি-৩২"
+      },
+      {
+        "id": "500",
+        "name": "Mirpur Estern Housing",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " মিরপুর ইস্টার্ণ হাউজিং"
+      },
+      {
+        "id": "501",
+        "name": "Mirpur-Alubdi",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " মিরপুর- আলুব্দি "
+      },
+      {
+        "id": "502",
+        "name": "Mirpur-7",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " মিরপুর-৭"
+      },
+      {
+        "id": "503",
+        "name": "Shyamoli - Road No 01- 04",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": " শ্যামলী - রোড ১থেকে ৪ "
+      },
+      {
+        "id": "504",
+        "name": "Agargaon",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "আগারগাঁও"
+      },
+      {
+        "id": "505",
+        "name": "Azimpur ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "আজিমপুর"
+      },
+      {
+        "id": "506",
+        "name": "Adabar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "আদাবর"
+      },
+      {
+        "id": "507",
+        "name": "Aftabnagar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "আফতাবনগর"
+      },
+      {
+        "id": "508",
+        "name": "Ibrahimpur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ইব্রাহিমপুর"
+      },
+      {
+        "name": "Islampur ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ইসলামপুর "
+      },
+      {
+        "name": "Eskaton",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ইস্কাটন "
+      },
+      {
+        "name": "Uttara- Sector 2",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উওরা- সেক্টর -২"
+      },
+      {
+        "name": "Uttara- Sector 17",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উওরা- সেক্টর ১৭"
+      },
+      {
+        "name": "Uttara- Sector 18 ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উওরা- সেক্টর ১৮"
+      },
+      {
+        "name": "UttarKhan ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তর খান "
+      },
+      {
+        "name": "Uttara  ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা   "
+      },
+      {
+        "name": "Uttara - Ranavola",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা - রানাভোলা  "
+      },
+      {
+        "name": "Uttara-Abdullahpur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা-আব্দুল্লাহপর"
+      },
+      {
+        "name": "Uttara-Kaola",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা-কাওলা"
+      },
+      {
+        "name": "Uttara-Kamarpara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা-কামারপাড়া"
+      },
+      {
+        "name": "Uttara-Diabari",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা-দিয়াবাড়ি"
+      },
+      {
+        "name": "Uttara-Baunia",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "উত্তরা-বাউনিয়া"
+      },
+      {
+        "name": "Elephant Road ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "এ্যালিফেন্ট রোড"
+      },
+      {
+        "name": "Wari  ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ওয়ারী "
+      },
+      {
+        "name": "Kadamtoli",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কদমতলী"
+      },
+      {
+        "name": "Kamalapur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কমলাপুর"
+      },
+      {
+        "name": "Kalabagan",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কলাবাগান"
+      },
+      {
+        "name": "Kalyanpur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কল্যাণপুর"
+      },
+      {
+        "name": "Kawranbazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কাওরানবাজার"
+      },
+      {
+        "name": "Kakrail",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কাকরাইল"
+      },
+      {
+        "name": "Kazipara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কাজীপাড়া"
+      },
+      {
+        "name": "KathalBagan",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কাঠালবাগান"
+      },
+      {
+        "name": "Kafrul",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কাফরুল "
+      },
+      {
+        "name": "Kamrangirchar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কামরঙ্গীরচর     "
+      },
+      {
+        "name": "Kuril Bisshoroad",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কুড়িল বিশ্বরোড"
+      },
+      {
+        "name": "Kotwali",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "কোতয়ালী"
+      },
+      {
+        "name": "Cantonment",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ক্যান্টনমেন্ট"
+      },
+      {
+        "name": "Cantonment-ECB",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ক্যান্টনমেন্ট- ইসিবি"
+      },
+      {
+        "name": "Cantonment-Balughat",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ক্যান্টনমেন্ট-বালুঘাট"
+      },
+      {
+        "name": "Cantonment-Matikata",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ক্যান্টনমেন্ট-মাটিকাটা"
+      },
+      {
+        "name": "Cantonment-Manikdi",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ক্যান্টনমেন্ট-মানিকদি"
+      },
+      {
+        "name": "Khilkhet",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলখেত"
+      },
+      {
+        "name": "Khilkhet-Dumni",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলখেত-ডুমনী"
+      },
+      {
+        "name": "Khilkhet-Namapara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলখেত-নামাপাড়া"
+      },
+      {
+        "name": "Khilkhet-Patira",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলখেত-পাতিরা"
+      },
+      {
+        "name": "Khilkhet-Pink City",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলখেত-পিংসিটি"
+      },
+      {
+        "name": "Khilkhet-Barua",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলখেত-বরুয়া"
+      },
+      {
+        "name": "Khilgaon",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও"
+      },
+      {
+        "name": "Khilgaon - Goran",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - গোড়ান"
+      },
+      {
+        "name": "Khilgaon - Thrimohni",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - ত্রিমোহনী"
+      },
+      {
+        "name": "Khilgaon - Dakkhingaon",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - দক্ষিনগাঁও"
+      },
+      {
+        "name": "Khilgaon - Nandipara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - নন্দিপাড়া"
+      },
+      {
+        "name": "Khilgaon - Nasirabad",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - নাসিরাবাদ"
+      },
+      {
+        "name": "Khilgaon - Begunbari",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - বেগুনবাড়ি"
+      },
+      {
+        "name": "Khilgaon - Meradia",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - মেরাদিয়া"
+      },
+      {
+        "name": "Khilgaon - Shekher Jayga",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "খিলগাঁও - শেখের জায়গা"
+      },
+      {
+        "name": "Gabtali",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "গাবতলী"
+      },
+      {
+        "name": "Gulshan-1",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "গুলশান-১"
+      },
+      {
+        "name": "Gulshan-2",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "গুলশান-২"
+      },
+      {
+        "name": "Gulistan",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "গুলিস্থান"
+      },
+      {
+        "name": "Gandaria",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "গেন্ডারিয়া"
+      },
+      {
+        "name": "Green Road",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "গ্রীন রোড"
+      },
+      {
+        "name": "Choukbazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "চকবাজার"
+      },
+      {
+        "name": "Jigatala",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "জিগাতলা"
+      },
+      {
+        "name": "Jurain",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "জুরাইন"
+      },
+      {
+        "name": "Tikatuli",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "টিকাটুলি"
+      },
+      {
+        "name": "DU campus ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ডিইউ ক্যাম্পাস"
+      },
+      {
+        "name": "Demra",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ডেমরা"
+      },
+      {
+        "name": "Demra - Amulia",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ডেমরা - আমুলিয়া"
+      },
+      {
+        "name": "Demra - Kayetpara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ডেমরা - কায়েতপাড়া"
+      },
+      {
+        "name": "Demra - Vabani",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ডেমরা - ভাবানি"
+      },
+      {
+        "name": "Demra Bazer",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ডেমরা বাজার"
+      },
+      {
+        "name": "Turag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "তুরাগ "
+      },
+      {
+        "name": "Tejkunipara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "তেজকুনিপাড়া"
+      },
+      {
+        "name": "Tejgaon",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "তেজগাঁও"
+      },
+      {
+        "name": "DakhinKhan",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "দক্ষিণখান"
+      },
+      {
+        "name": "Dayaganj",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "দয়াগঞ্জ"
+      },
+      {
+        "name": "Daraz Office",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "দারাজ অফিস"
+      },
+      {
+        "name": "Dhanmondi ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ধানমন্ডি "
+      },
+      {
+        "name": "NayaPaltan",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নয়া পল্টন"
+      },
+      {
+        "name": "Nardda",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নর্দ্দা"
+      },
+      {
+        "name": "Nakhalpara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নাখালপাড়া"
+      },
+      {
+        "name": "Narinda",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নারিন্দা  "
+      },
+      {
+        "name": "New Eskaton",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নিউ ইস্কাটন "
+      },
+      {
+        "name": "New Market",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নিউ মার্কেট "
+      },
+      {
+        "name": "Nikunjo",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নিকুঞ্জ    "
+      },
+      {
+        "name": "Niketon",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নিকেতন   "
+      },
+      {
+        "name": "Nilkhet",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "নীলক্ষেত "
+      },
+      {
+        "name": "Polashi",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "পলাশী"
+      },
+      {
+        "name": "Pallabi ",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "পল্লবী"
+      },
+      {
+        "name": "Panthapath",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "পান্থপথ"
+      },
+      {
+        "name": "Purana Paltan",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "পুরানা পল্টন"
+      },
+      {
+        "name": "Purbachal",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "পূর্বাচল"
+      },
+      {
+        "name": "Postagola",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "পোস্তগোলা"
+      },
+      {
+        "name": "Farmgate",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ফার্মগেট"
+      },
+      {
+        "name": "Bakshibazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বকশীবাজার"
+      },
+      {
+        "name": "Banasree",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বনশ্রী"
+      },
+      {
+        "name": "Banani",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বনানী  "
+      },
+      {
+        "name": "Banani DOHS",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বনানী ডিওএইচএস"
+      },
+      {
+        "name": "Bangshal",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বংশাল "
+      },
+      {
+        "name": "Basundhara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বসুন্ধরা  "
+      },
+      {
+        "name": "Basundhara -Joyarsahar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বসুন্ধরা- জোয়ারসাহার"
+      },
+      {
+        "name": "Badda",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাড্ডা "
+      },
+      {
+        "name": "Badda - United City",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাড্ডা - ইউনাইটেড সিটি"
+      },
+      {
+        "name": "Badda - Beraid",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাড্ডা - বেরাইদ"
+      },
+      {
+        "name": "Badda - Mogardia",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাড্ডা - মগারদিয়া"
+      },
+      {
+        "name": "Badda - Middle Badda",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাড্ডা - মধ্য বাড্ডা"
+      },
+      {
+        "name": "Badda - Saterkul",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাড্ডা - সাতারকুল"
+      },
+      {
+        "name": "Baridhara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বারিধারা  "
+      },
+      {
+        "name": "Baridhara DOHS",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বারিধারা ডিওএইচএস"
+      },
+      {
+        "name": "Banglabazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাংলাবাজার"
+      },
+      {
+        "name": "Banglamotor",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাংলামটর"
+      },
+      {
+        "name": "Basabo",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বাসাবো"
+      },
+      {
+        "name": "Airport Thana",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বিমানবন্দর থানা"
+      },
+      {
+        "name": "BUET campus",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "বুয়েট ক্যাম্পাস"
+      },
+      {
+        "name": "Vatara",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ভাটারা"
+      },
+      {
+        "name": "Vashantek",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "ভাষানটেক"
+      },
+      {
+        "name": "Maghbazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মগবাজার"
+      },
+      {
+        "name": "Motijheel",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মতিঝিল"
+      },
+      {
+        "name": "Mohakhali",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মহাখালী"
+      },
+      {
+        "name": "Mohakhali DOHS",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মহাখালী ডিওএইচএস"
+      },
+      {
+        "name": "Maniknagar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মানিকনগর"
+      },
+      {
+        "name": "Malibag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মালিবাগ"
+      },
+      {
+        "name": "Mirpur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর"
+      },
+      {
+        "name": "Mirpur DOHS",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর ডিওএইচএস "
+      },
+      {
+        "name": "Mirpur-1",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-১"
+      },
+      {
+        "name": "Mirpur-10",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-১০"
+      },
+      {
+        "name": "Mirpur-11",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-১১"
+      },
+      {
+        "name": "Mirpur-12",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-১২"
+      },
+      {
+        "name": "Mirpur-13",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-১৩"
+      },
+      {
+        "name": "Mirpur-14",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-১৪"
+      },
+      {
+        "name": "Mirpur-2",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মিরপুর-২"
+      },
+      {
+        "name": "Mughda",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মুগদা"
+      },
+      {
+        "name": "Mohammadpur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "মোহাম্মদপুর"
+      },
+      {
+        "name": "Jatrabari",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "যাত্রাবাড়ী"
+      },
+      {
+        "name": "Ramna",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রমনা"
+      },
+      {
+        "name": "Rajabazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রাজাবাজার"
+      },
+      {
+        "name": "Rajarbag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রাজারবাগ"
+      },
+      {
+        "name": "Rampura",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রামপুরা"
+      },
+      {
+        "name": "Rayerbag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রায়েরবাগ"
+      },
+      {
+        "name": "Rayerbazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রায়েরবাজার"
+      },
+      {
+        "name": "Rupnagar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "রূপনগর"
+      },
+      {
+        "name": "Lakshmibazar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "লক্ষীবাজার"
+      },
+      {
+        "name": "Lalbag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "লালবাগ"
+      },
+      {
+        "name": "Lalmatia",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "লালমাটিয়া"
+      },
+      {
+        "name": "Shonirakhra",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শনিরআখড়া"
+      },
+      {
+        "name": "Shantinagar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শান্তিনগর"
+      },
+      {
+        "name": "Shajahanpur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শাহজানপুর"
+      },
+      {
+        "name": "Shahbag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শাহবাগ"
+      },
+      {
+        "name": "Shimrail",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শিমরাইল"
+      },
+      {
+        "name": "Shukrabad",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শুক্রাবাদ"
+      },
+      {
+        "name": "Sher-e-Bangla Nagar",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শেরে বাংলা নগর"
+      },
+      {
+        "name": "Shampur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শ্যামপুর"
+      },
+      {
+        "name": "Shyamoli",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "শ্যামলী"
+      },
+      {
+        "name": "Sadarghat",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "সদরঘাট"
+      },
+      {
+        "name": "Sabujbag",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "সবুজবাগ"
+      },
+      {
+        "name": "Siddeswary",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "সিদ্ধেশ্বরী"
+      },
+      {
+        "name": "Sutrapur",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "সূত্রাপুর"
+      },
+      {
+        "name": "Segunbagicha",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "সেগুনবাগিচা"
+      },
+      {
+        "name": "Hazaribagh",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "হাজারীবাগ"
+      },
+      {
+        "name": "Hatirpul",
+        "district_id": "47",
+        "url": "null",
+        "bn_name": "হাতিরপুল"
       }
     ]
   }
