@@ -9,15 +9,15 @@ import { useSelector } from "react-redux";
 const ProductCardDetails = ({ products }: any) => {
   const global = useSelector(selectGlobal);
 
-  function productDiscountCalculation(value: any) {
-    const price = +value.productVariants[0]?.price;
-    const discount = value.discount;
-    const dis =
-      discount?.discountType === "Percentage"
-        ? (price * (discount.value || 0)) / 100
-        : +discount?.value;
-    return dis;
-  }
+  // function productDiscountCalculation(value: any) {
+  //   const price = +value.productVariants[0]?.price;
+  //   const discount = value.discount;
+  //   const dis =
+  //     discount?.discountType === "Percentage"
+  //       ? (price * (discount.value || 0)) / 100
+  //       : +discount?.value;
+  //   return dis;
+  // }
 
   return (
     <div

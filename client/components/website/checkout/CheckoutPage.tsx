@@ -6,6 +6,7 @@ import {
   addCart,
   decrementCart,
   removeCart,
+  clearCart,
 } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { CiEdit, CiSquareRemove } from "react-icons/ci";
@@ -32,6 +33,7 @@ import { useEffect, useState } from "react";
 import { getMe } from "@/lib/apis/user";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
@@ -40,8 +42,10 @@ export default function CheckoutPage() {
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
-  // // const router = useRouter()
+  const router = useRouter();
   // console.log("🚀 ~ currentUrl:", currentUrl)
+
+  console.log("cart.carts", cart.carts);
 
   useEffect(() => {
     async function fetchData() {
@@ -56,7 +60,7 @@ export default function CheckoutPage() {
       });
     }
     fetchData();
-  }, [global.action]);
+  }, [global.action, dispatch]);
 
   const { netAmount, orderTotalAmount, discountAmount } = cart.carts.reduce(
     (pre: any, curr: any) => {
@@ -80,7 +84,7 @@ export default function CheckoutPage() {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
         orderItems: cart.carts,
-        orderDate: new Date(),
+        orderDate: "2024-02",
         paymentStatus: "Paid",
         netAmount,
         tax: 24,
@@ -92,13 +96,13 @@ export default function CheckoutPage() {
       });
 
       if (!validatedFields.success) {
+        dispatch(setLoading({ save: false }));
         return {
           errors: validatedFields.error.formErrors,
         };
       }
 
-      // return console.log("newData:", validatedFields.data);
-
+      // return    console.log("newData:", validatedFields.data);
       const res = await saveOrder(validatedFields.data);
 
       if (res.status === 500) {
@@ -109,9 +113,14 @@ export default function CheckoutPage() {
         );
       }
 
+      dispatch(setAction({}));
+      dispatch(setResponse({}));
+      dispatch(clearCart());
+      setCheckoutFormData({});
+      setShippingAddress([]);
+      // router.refresh();
+
       setTimeout(async () => {
-        dispatch(setAction({}));
-        dispatch(setResponse({}));
         dispatch(setLoading({ save: false }));
       }, 2000);
     } catch (err: any) {
@@ -224,8 +233,8 @@ export default function CheckoutPage() {
 
                   <div>
                     <Popconfirm
-                      title="Delete the task"
-                      description="Are you sure to delete this task?"
+                      title="Delete Order item"
+                      description="Are you sure to delete this Order item?"
                       onConfirm={() => removeFromCart(item)}
                       okText="Yes"
                       cancelText="No"

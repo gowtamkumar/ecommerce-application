@@ -1,7 +1,8 @@
 import "reflect-metadata";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AddressType } from "../enums/address-type.enum";
 import { UserEntity } from "../../auth/model/user.entity";
+import { OrderEntity } from "../../order/model/order.entity";
 
 @Entity("shipping_addresses")
 export class ShippingAddressEntity {
@@ -57,4 +58,8 @@ export class ShippingAddressEntity {
 
   // @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
   // updatedAt?: string;
+
+
+  @OneToMany((_type) => OrderEntity, (order) => order.shippingAddress)
+  orders!: OrderEntity[];
 }

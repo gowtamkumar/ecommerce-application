@@ -1,16 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Radio,
-  Select,
-} from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -22,8 +11,16 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveShippingAddress, updateShippingAddress } from "@/lib/apis/address";
+import { getDivisions } from "@/lib/apis/geo-location/division";
+import { getDistricts } from "@/lib/apis/geo-location/district";
+import { getUpazilas } from "@/lib/apis/geo-location/upazila";
+import { getUnions } from "@/lib/apis/geo-location/union";
 
 const AddShippingAddress = () => {
+  const [divisions, setDivision] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [upazilas, setUpazilas] = useState([]);
+  const [unions, setUnions] = useState([]);
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -32,25 +29,36 @@ const AddShippingAddress = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
-    setFormData(newData);
+    (async () => {
+      const newData = { ...payload };
+      setFormData(newData);
+      const disvision = await getDivisions();
+      // const district = await getDistricts();
+      // const upazila = await getUpazilas();
+      // const union = await getUnions();
+      // setDivision(disvision.data);
+      // setDistricts(district.data);
+      // setUpazilas(upazila.data);
+      // setUnions(union.data);
+    })();
     return () => {
       dispatch(setFormValues({}));
       form.resetFields();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
-      // return console.log("newData:", newData);
+      return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updateShippingAddress(newData)
         : await saveShippingAddress(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `Address ${newData?.id ? "Updated" : "Created"} Successfully`
         );

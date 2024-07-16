@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Define a type for the slice state
 export interface CartState {
   carts: any;
+  setCarts: any;
 }
 
 // Define the initial state using that type
@@ -12,6 +13,7 @@ const initialState: CartState = {
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("carts") || "[]")
       : [],
+  setCarts: [],
 };
 
 export const cartSlice = createSlice({
@@ -30,12 +32,16 @@ export const cartSlice = createSlice({
       } else {
         state.carts.push({
           ...action.payload,
-          tax: tax.value,
-          taxType: tax.type,
+          tax: tax?.value,
+          taxType: tax?.type,
           productId: +id,
         });
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
+    },
+    clearCart: (state): any => {
+      state.carts = [];
+      localStorage.removeItem("carts");
     },
 
     incrementCart: (state, action: PayloadAction<any>): any => {
@@ -71,7 +77,7 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { addCart, decrementCart, removeCart, incrementCart } =
+export const { addCart, decrementCart, removeCart, incrementCart, clearCart } =
   cartSlice.actions;
 export const selectCart = (state: RootState) => state.cart;
 

@@ -27,6 +27,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
     "orderTrackings",
     "deliveryMan.name",
     "user.name",
+    "shippingAddress",
   ]);
 
   qb.leftJoin("order.orderItems", "orderItems");
@@ -35,6 +36,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   qb.leftJoin("order.deliveryMan", "deliveryMan");
   qb.leftJoin("order.user", "user");
   qb.leftJoin("order.payments", "payments");
+  qb.leftJoin("order.shippingAddress", "shippingAddress");
 
   const results = await qb.getMany();
 

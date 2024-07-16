@@ -13,6 +13,11 @@ export const orderValidationSchema = z.object({
   tax: z.number().optional(),
   shippingAmount: z.number().optional(),
   note: z.string().optional(),
+
+  shippingAddressId: z.number({
+    required_error: "Shipping Address is Required",
+  }),
+
   // phoneNo: z.string({
   //   required_error: "Phone no is Required",
   // }),

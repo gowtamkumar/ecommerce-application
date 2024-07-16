@@ -16,6 +16,7 @@ import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { UserEntity } from "../../auth/model/user.entity";
+import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -63,11 +64,20 @@ export class OrderEntity {
   })
   shippingAmount?: number;
 
+  @Column({ name: "shipping_address_id" })
+  shippingAddressId?: number;
+  @ManyToOne(
+    (_type) => ShippingAddressEntity,
+    (shippingAddress) => shippingAddress.orders,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  @JoinColumn({ name: "shipping_address_id" })
+  shippingAddress!: ShippingAddressEntity;
+
   @Column({ nullable: true })
   note!: string;
-
-  // @Column({ name: "delivery_address", nullable: true })
-  // deliveryAddress!: string;
 
   @Column({
     name: "payment_status",
