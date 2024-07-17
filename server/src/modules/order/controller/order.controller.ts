@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { OrderEntity } from "../model/order.entity";
 import {
+  orderStatusUpdateValidationSchema,
   orderUpdateValidationSchema,
   orderValidationSchema,
 } from "../../../validation";
@@ -248,6 +249,42 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     data: updateData,
   });
 });
+
+export const orderStatusUpdate = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
+
+    console.log("validation.error", validation.error);
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
+    console.log("tesitn.....");
+
+    const repository = await connection.getRepository(OrderEntity);
+
+    const result = await repository.findOne({ where: { id } });
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const updateData = await repository.merge(result, validation.data);
+
+    const save = await repository.save(updateData);
+
+    return res.status(200).json({
+      success: true,
+      msg: `Order Status Update of id ${req.params.id}`,
+      data: save,
+    });
+  }
+);
 
 // @desc Delete a single Order
 // @route DELETE /api/v1/Order/:id

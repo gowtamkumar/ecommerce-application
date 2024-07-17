@@ -35,6 +35,8 @@ import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
+import OrderStatusChange from "@/components/dashboard/order/OrderStatusChange";
+import { getStatus } from "@/lib/share/getStatus";
 interface DataType {
   key: React.Key;
   name: string;
@@ -362,7 +364,9 @@ const App: React.FC = () => {
     {
       title: "Status",
       key: "status",
-      render: (orderStatus) => <Tag>{orderStatus.status}</Tag>,
+      render: (orderStatus) => (
+        <Tag color={getStatus(orderStatus.status)}>{orderStatus.status}</Tag>
+      ),
     },
     {
       title: "Action",
@@ -407,7 +411,8 @@ const App: React.FC = () => {
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  payload: value,
+                  orderStatusChange: true,
+                  payload: { id: value.id },
                 })
               )
             }
@@ -452,6 +457,7 @@ const App: React.FC = () => {
       />
 
       <AddOrderTracking />
+      <OrderStatusChange />
     </div>
   );
 };

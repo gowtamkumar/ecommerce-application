@@ -53,7 +53,9 @@ name:string,
 url_slug(unique),
 single_image,
 images:array
+
 <!-- shipping_cost:numeric, -->
+
 brand_id,
 unit_id,
 limit_purchase_qty:number,
@@ -172,10 +174,12 @@ order_date,
 deliveryId(assing addmin),
 tracking_no,
 shiping_amount,
+
 <!-- is_paid, -->
 
 order_total_amount
 orderTax,
+
 <!-- is_shipped, -->
 
 discount_amount,
@@ -191,7 +195,7 @@ payment_status(Paid/NotPaid/PertialPaid),
 payment_method(cash/ssecommer/strip)
 payment_type(Online/Offline)
 payment_transaction_id,
-status:(Processing/Pending/Completed/Failed),
+status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned"],
 createdAt
 updatedAt
 
@@ -199,7 +203,9 @@ updatedAt
 
 id,
 order_id,
+
 <!-- total_amount, -->
+
 product_id,
 price,
 tax,
@@ -275,10 +281,9 @@ createdAt
 updatedAt
 
 ## setting
+
 id,
 logo,
 address,
 social_link: array
 email,
-
-

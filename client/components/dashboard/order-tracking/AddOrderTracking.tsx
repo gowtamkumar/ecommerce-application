@@ -83,8 +83,9 @@ const AddOrderTracking = () => {
       width={500}
       zIndex={1050}
       open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+        (global.action.type === ActionType.CREATE ||
+          global.action.type === ActionType.UPDATE) &&
+        global.action.addOrderTracking
       }
       onCancel={handleClose}
       footer={null}
