@@ -5,9 +5,9 @@ export const productValidationSchema = z.object({
     required_error: "name is required",
   }),
 
-  shippingCost: z.number({
-    required_error: "Shipping Cost is required",
-  }),
+  // shippingCost: z.number({
+  //   required_error: "Shipping Cost is required",
+  // }),
 
   taxId: z.number({
     required_error: "Tax is required",
@@ -36,7 +36,9 @@ export const productValidationSchema = z.object({
     .array(
       z.object({
         price: z.number({ required_error: "Regular Price is required" }),
-        salePrice: z.number({ required_error: "Sale Price is required" }),
+        // purchasePrice: z.number({
+        //   required_error: "Purchase Price is required",
+        // }),
         sizeId: z.number().optional(),
         images: z.array(z.string()).optional(),
         color: z.string().optional(),

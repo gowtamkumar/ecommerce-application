@@ -9,40 +9,42 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import NewReview from "./review-rating/NewReview";
 
-const RatingProduct = ({ product }: any) => {
+const RatingProduct = ({ product, productRating }: any) => {
   const dispatch = useDispatch();
-
   const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
-    product?.reviews?.reduce(
-      (
-        pre: {
-          totalReview: number;
-          rating1: number;
-          rating2: number;
-          rating3: number;
-          rating4: number;
-          rating5: number;
-        },
-        curr: { rating: string }
-      ) => {
-        return {
-          totalReview: +pre.totalReview + +curr.rating,
-          rating1: +curr.rating === 1 ? +pre.rating1 + 1 : pre.rating1,
-          rating2: +curr.rating === 2 ? +pre.rating2 + 1 : pre.rating2,
-          rating3: +curr.rating === 3 ? +pre.rating3 + 1 : pre.rating3,
-          rating4: +curr.rating === 4 ? +pre.rating4 + 1 : pre.rating4,
-          rating5: +curr.rating === 5 ? +pre.rating5 + 1 : pre.rating5,
-        };
-      },
-      {
-        totalReview: 0,
-        rating1: 0,
-        rating2: 0,
-        rating3: 0,
-        rating4: 0,
-        rating5: 0,
-      }
-    );
+    productRating;
+
+  // const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
+  //   product?.reviews?.reduce(
+  //     (
+  //       pre: {
+  //         totalReview: number;
+  //         rating1: number;
+  //         rating2: number;
+  //         rating3: number;
+  //         rating4: number;
+  //         rating5: number;
+  //       },
+  //       curr: { rating: string }
+  //     ) => {
+  //       return {
+  //         totalReview: +pre.totalReview + +curr.rating,
+  //         rating1: +curr.rating === 1 ? +pre.rating1 + 1 : pre.rating1,
+  //         rating2: +curr.rating === 2 ? +pre.rating2 + 1 : pre.rating2,
+  //         rating3: +curr.rating === 3 ? +pre.rating3 + 1 : pre.rating3,
+  //         rating4: +curr.rating === 4 ? +pre.rating4 + 1 : pre.rating4,
+  //         rating5: +curr.rating === 5 ? +pre.rating5 + 1 : pre.rating5,
+  //       };
+  //     },
+  //     {
+  //       totalReview: 0,
+  //       rating1: 0,
+  //       rating2: 0,
+  //       rating3: 0,
+  //       rating4: 0,
+  //       rating5: 0,
+  //     }
+  //   );
 
   return (
     <div className="mt-8">
@@ -84,7 +86,7 @@ const RatingProduct = ({ product }: any) => {
         </div>
         <div className="basis-1/3">
           <p>Rate this product</p>
-          <Rate allowHalf defaultValue={2.5} disabled />
+          <Rate defaultValue={2.5} disabled />
           <br />
           <Button
             type="primary"

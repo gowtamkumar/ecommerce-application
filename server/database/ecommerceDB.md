@@ -8,6 +8,7 @@ email,
 type:[Customer, Vendor, Delivery Man, Admin]
 phone,
 dob,
+gender,
 point:number
 status(Active/Inactive/Block)
 img_url,
@@ -52,7 +53,7 @@ name:string,
 url_slug(unique),
 single_image,
 images:array
-shipping_cost:numeric,
+<!-- shipping_cost:numeric, -->
 brand_id,
 unit_id,
 limit_purchase_qty:number,
@@ -171,16 +172,17 @@ order_date,
 deliveryId(assing addmin),
 tracking_no,
 shiping_amount,
-
 <!-- is_paid, -->
 
 order_total_amount
-
+orderTax,
 <!-- is_shipped, -->
 
 discount_amount,
 net_amount,
 note,
+
+<!-- should be add delivery amount -->
 
 <!-- order_items: array -->
 
@@ -197,10 +199,11 @@ updatedAt
 
 id,
 order_id,
-total_amount,
+<!-- total_amount, -->
 product_id,
 price,
 tax,
+discountA,
 qty,
 
 ## order_status (optional)

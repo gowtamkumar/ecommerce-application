@@ -10,7 +10,7 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveShippingAddress, updateShippingAddress } from "@/lib/apis/address";
+import { saveShippingAddress, updateShippingAddress } from "@/lib/apis/shipping-address";
 import { getDivisions } from "@/lib/apis/geo-location/division";
 import { getDistricts } from "@/lib/apis/geo-location/district";
 import { getUpazilas } from "@/lib/apis/geo-location/upazila";

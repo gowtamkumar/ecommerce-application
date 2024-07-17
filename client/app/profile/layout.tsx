@@ -19,8 +19,8 @@ export default function ProfileLayout({
       <Header />
       <div className="lg:w-8/12  mx-auto">
         {children}
-        <WebFooter />
       </div>
+      <WebFooter />
     </>
   );
 }

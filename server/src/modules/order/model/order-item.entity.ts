@@ -22,17 +22,17 @@ export class OrderItemEntity {
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  // @Column({ name: "total_amount", type: "numeric", precision: 14, scale: 2 })
-  // totalAmount!: number;
-
   @Column({ type: "numeric", precision: 10, scale: 2 })
   price!: number;
 
   @Column()
   qty!: number;
 
-  // @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
-  // tax!: number;
+  @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
+  tax!: number;
+
+  @Column({ name: 'discout_amount', type: "numeric", precision: 10, scale: 2, nullable: true })
+  discountA!: number;
 
   @Column({ name: "product_id" })
   productId!: number;

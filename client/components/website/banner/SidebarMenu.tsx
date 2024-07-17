@@ -2,6 +2,7 @@
 import React, { Suspense, useState } from "react";
 import { Menu, MenuProps, Spin } from "antd";
 import { webSiteNavbarItems } from "@/NavBarRoute";
+import Link from "next/link";
 
 export default function SidebarMenu({ categories }: any) {
   const [current, setCurrent] = useState("mail");
@@ -22,26 +23,26 @@ export default function SidebarMenu({ categories }: any) {
         items={categories.data?.map((item: any, idx: number) => ({
           key: idx,
           label: (
-            <a
+            <Link
               key={idx}
               href={`/category/${item.id}`}
               rel="noopener noreferrer"
             >
               {item.name}
-            </a>
+            </Link>
           ),
           children:
             item.children.length &&
             item.children.map((childrenItem: any, idx: number) => ({
               type: "group",
               label: (
-                <a
+                <Link
                   key={idx}
                   href={`/category/${childrenItem.id}`}
                   rel="noopener noreferrer"
                 >
                   {childrenItem.name}
-                </a>
+                </Link>
               ),
             })),
         }))}

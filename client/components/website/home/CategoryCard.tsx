@@ -7,15 +7,15 @@ const CategoryCard = async () => {
   return (
     <section className="mb-8">
       <h2 className="text-2xl font-semibold mb-4">Shop by Category</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 clear-both">
         {/* Example Category Card: */}
         {categories?.data.map((item: any) => (
-          <Link key={item.id} href={`category/${item.id}`}>
+          <Link key={item.id} href={`/category/${item.id}`}>
             <div className="bg-white rounded-lg shadow-md p-4">
               <Image
                 // placeholder="blur"
-                width={150}
-                height={150}
+                width={80}
+                height={80}
                 src="/product-02.jpg"
                 alt="Category Image"
                 className="w-full h-48 object-cover mb-4"

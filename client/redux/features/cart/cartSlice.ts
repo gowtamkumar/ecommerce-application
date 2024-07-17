@@ -22,8 +22,7 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addCart: (state, action: PayloadAction<any>): any => {
-      const { tax, id } = action.payload;
-      console.log("🚀 ~ action.payload:", action.payload);
+      const { id } = action.payload;
 
       const existingProductIndex = state.carts.findIndex(
         (item: any) => item.id === action.payload.id

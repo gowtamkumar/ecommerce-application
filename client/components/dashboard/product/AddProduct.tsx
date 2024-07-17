@@ -323,11 +323,11 @@ const AddProduct = () => {
             </Form.Item>
           </div>
 
-          <div className="col-span-1">
+          {/* <div className="col-span-1">
             <Form.Item name="shippingCost" label="Shipping Cost">
               <InputNumber placeholder="Enter" className="w-auto" />
             </Form.Item>
-          </div>
+          </div> */}
 
           <div className="col-span-1">
             <Form.Item name="singleImage" label="Single image">
@@ -358,11 +358,7 @@ const AddProduct = () => {
             </Form.Item>
           </div>
 
-          <div className="col-span-1">
-            <Form.Item name="enableReview" valuePropName="checked">
-              <Checkbox>Enable Review</Checkbox>
-            </Form.Item>
-          </div>
+
 
           <div className={`col-span-1 `}>
             <label htmlFor="tags">Tags</label>
@@ -390,6 +386,12 @@ const AddProduct = () => {
                 </Tag>
               ))}
             </div>
+          </div>
+
+          <div className="col-span-1">
+            <Form.Item name="enableReview" valuePropName="checked">
+              <Checkbox>Enable Review</Checkbox>
+            </Form.Item>
           </div>
 
           <div className="col-span-1">
@@ -509,10 +511,10 @@ const AddProduct = () => {
                   </div>
 
                   <table width={"100%"}>
-                    <thead>
-                      <tr>
-                        <th>Regular Price</th>
+                    <thead className="mb-1 text-start">
+                      <tr className="text-start">
                         <th>Sale Price</th>
+                        {/* <th>Purchase Price</th> */}
                         <th>Size</th>
                         <th>Color</th>
                         <th>Weight</th>
@@ -538,17 +540,20 @@ const AddProduct = () => {
                             </Form.Item>
                           </td>
 
-                          <td>
+                          {/* <td>
                             <Form.Item
                               {...restField}
-                              name={[name, "salePrice"]}
+                              name={[name, "purchasePrice"]}
                               rules={[
-                                { required: true, message: "sale price" },
+                                { required: true, message: "Purchase price" },
                               ]}
                             >
-                              <InputNumber placeholder="Sale price" min={1} />
+                              <InputNumber
+                                placeholder="Purchase price"
+                                min={1}
+                              />
                             </Form.Item>
-                          </td>
+                          </td> */}
                           <td>
                             <Form.Item
                               {...restField}

@@ -36,8 +36,8 @@ export class ProductEntity {
   // @Column({ type: "numeric", precision: 15, scale: 2 })
   // price!: number;
 
-  @Column({ name: "shipping_cost", type: "numeric", precision: 15, scale: 2 })
-  shippingCost!: number;
+  // @Column({ name: "shipping_cost", type: "numeric", precision: 15, scale: 2 })
+  // shippingCost!: number;
 
   @Column({ name: "tax_id" })
   taxId?: number;

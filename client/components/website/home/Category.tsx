@@ -5,16 +5,17 @@ import React from "react";
 
 export default async function Category() {
   const categories = await getAllCategories();
-  // console.log("🚀 ~ categories:", categories?.data)
   return (
     <section className="py-6">
       <h3 className="text-2xl font-semibold mb-4">All Category</h3>
       <div className="grid grid-cols-6 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-8">
-        {/* this map should be all category */}
         {categories?.data.map((item: any, idx: number) => {
           return (
-            <Link key={idx} href={`category/${idx}`}>
-              <div className=" border mx-auto text-center hover:shadow-xl cursor-pointer p-3">
+            <div
+              key={idx}
+              className="border mx-auto text-center hover:shadow-xl cursor-pointer p-3"
+            >
+              <Link href={`category/${idx}`}>
                 <Image
                   width={0}
                   height={0}
@@ -24,8 +25,8 @@ export default async function Category() {
                   style={{ width: "100%", height: "auto", padding: "15px" }}
                 />
                 <p>{item.name}</p>
-              </div>
-            </Link>
+              </Link>
+            </div>
           );
         })}
       </div>

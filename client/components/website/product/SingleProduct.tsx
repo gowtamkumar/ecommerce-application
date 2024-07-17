@@ -31,6 +31,41 @@ export default function SingleProduct() {
     })();
   }, [dispatch, global.action, id]);
 
+
+  const productRating =
+    product?.reviews?.reduce(
+      (
+        pre: {
+          totalReview: number;
+          rating1: number;
+          rating2: number;
+          rating3: number;
+          rating4: number;
+          rating5: number;
+        },
+        curr: { rating: string }
+      ) => {
+        return {
+          totalReview: +pre.totalReview + +curr.rating,
+          rating1: +curr.rating === 1 ? +pre.rating1 + 1 : pre.rating1,
+          rating2: +curr.rating === 2 ? +pre.rating2 + 1 : pre.rating2,
+          rating3: +curr.rating === 3 ? +pre.rating3 + 1 : pre.rating3,
+          rating4: +curr.rating === 4 ? +pre.rating4 + 1 : pre.rating4,
+          rating5: +curr.rating === 5 ? +pre.rating5 + 1 : pre.rating5,
+        };
+      },
+      {
+        totalReview: 0,
+        rating1: 0,
+        rating2: 0,
+        rating3: 0,
+        rating4: 0,
+        rating5: 0,
+      }
+    );
+
+
+
   const products = {
     name: "New LED Watch",
     description: "A stylish watch available in multiple colors.",
@@ -88,14 +123,14 @@ export default function SingleProduct() {
           <ProductImageGallery images={products.images} />
         </div>
         <div className="col-span-2">
-          <ProductDetails product={product} setProduct={setProduct} />
+          <ProductDetails product={product} setProduct={setProduct}  productRating={productRating}/>
         </div>
         <div className="bg-slate-400">
           We can show any thing
           {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>
       </div>
-      {product.reviews && <RatingProduct product={product} />}
+      {product.reviews && <RatingProduct product={product}  productRating={productRating}/>}
       <ReviewTable reviews={product.reviews} />
       <DescriptionProduct product={product} />
       <section className="py-5">

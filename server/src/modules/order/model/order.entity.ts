@@ -48,8 +48,8 @@ export class OrderEntity {
   })
   discountAmount!: number;
 
-  @Column({ type: "numeric", precision: 15, scale: 2, nullable: true })
-  tax!: number;
+  @Column({ name: 'order_tax', type: "numeric", precision: 15, scale: 2, nullable: true })
+  orderTax!: number;
 
   @Column({ name: "net_amount", type: "numeric", precision: 15, scale: 2 })
   netAmount!: number;

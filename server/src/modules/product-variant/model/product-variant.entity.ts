@@ -24,8 +24,8 @@ export class ProductVariantEntity {
   })
   price!: number;
 
-  @Column({ name: "sale_price", type: "numeric", precision: 15, scale: 2 })
-  salePrice!: number;
+  // @Column({ name: "sale_price", type: "numeric", precision: 15, scale: 2 })
+  // salePrice!: number;
 
   @Column({ name: "product_id" })
   productId!: number;

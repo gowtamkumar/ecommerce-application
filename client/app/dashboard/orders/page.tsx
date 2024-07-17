@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { DownOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import {
   Input,
@@ -38,11 +37,7 @@ import dayjs from "dayjs";
 interface DataType {
   key: React.Key;
   name: string;
-  platform: string;
-  version: string;
-  type: string;
-  creator: string;
-  createdAt: string;
+  trackingNo: string
 }
 
 interface ExpandedDataType {
@@ -71,7 +66,7 @@ const App: React.FC = () => {
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
-  }, [global.action]);
+  }, [dispatch, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -183,7 +178,7 @@ const App: React.FC = () => {
       }
     },
     render: (text) =>
-      global.searchedColumn === dataIndex ? (
+      global?.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[global.searchText]}
@@ -201,16 +196,35 @@ const App: React.FC = () => {
         title: "Product",
         dataIndex: "product",
         key: "product",
-        render: (v: any) => <span>{v.name}</span>,
+        render: (v: { name: string }) => <span>{v.name}</span>,
       },
       { title: "Price", dataIndex: "price", key: "price" },
-      { title: "Qty", dataIndex: "qty", key: "qty" },
+
+      { title: "Discount", dataIndex: "discountA", key: "discountA" },
       {
         title: "Tax",
         key: "tax",
         dataIndex: "tax",
       },
-      ,
+      {
+        title: "Sale Price",
+        render: (v: { price: number; tax: number; discountA: number }) => (
+          <span>{(+v.price + +v.tax - +v.discountA).toFixed(2)}</span>
+        ),
+      },
+      { title: "Qty", dataIndex: "qty", key: "qty" },
+
+      {
+        title: "Total item Price",
+        render: (v: {
+          price: number;
+          tax: number;
+          discountA: number;
+          qty: number;
+        }) => (
+          <span>{((+v.price + +v.tax - +v.discountA) * v.qty).toFixed(2)}</span>
+        ),
+      },
     ];
 
     return (
@@ -253,7 +267,10 @@ const App: React.FC = () => {
             <div className="col-span-2">dasdf</div>
             <div className="grid gap-y-3 col-span-1">
               <div className="flex justify-between">
-                <h1>Net Amount:</h1>
+                <h1>
+                  Net Amount: (+tax {value.orderTax}, - Discount{" "}
+                  {value.discountAmount})
+                </h1>
                 <h1 className="font-semibold">
                   ${(+value.netAmount).toFixed(2)}
                 </h1>
@@ -262,22 +279,22 @@ const App: React.FC = () => {
               <div className="flex justify-between">
                 <h1>Shipping:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.shippingAmount || 0).toFixed(2)}
+                  + ${(+value.shippingAmount || 0).toFixed(2)}
                 </h1>
               </div>
-              <div className="flex justify-between">
-                <h1>Tax</h1>
+              {/* <div className="flex justify-between">
+                <h1>Total Order Tax</h1>
                 <h1 className="font-semibold">
-                  ${(+value.tax || 0).toFixed(2)}
+                  + ${(+value.orderTax || 0).toFixed(2)}
                 </h1>
               </div>
 
               <div className="flex justify-between">
                 <h1>Discount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.discountAmount || 0).toFixed(2)}
+                  - ${(+value.discountAmount || 0).toFixed(2)}
                 </h1>
-              </div>
+              </div> */}
 
               <div className="flex justify-between border-t-2">
                 <h1>Total Amount:</h1>
@@ -297,11 +314,10 @@ const App: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      // ...getColumnSearchProps("trackingNo"),
+      ...getColumnSearchProps("trackingNo"),
       title: "Tracking No",
       dataIndex: "trackingNo",
       key: "trackingNo",
-      // sorter: (a, b) => a.trackingNo.length - b.trackingNo.length,
       render: (value) => <span className="bg-green-200">{value}</span>,
     },
 

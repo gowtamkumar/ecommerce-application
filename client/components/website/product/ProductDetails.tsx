@@ -1,16 +1,7 @@
 "use client";
-import {
-  Alert,
-  Button,
-  Divider,
-  Input,
-  message,
-  Modal,
-  Rate,
-  Spin,
-} from "antd";
+import { Button, Divider, Input, Rate } from "antd";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   addCart,
   decrementCart,
@@ -18,18 +9,19 @@ import {
 } from "@/redux/features/cart/cartSlice";
 import Link from "next/link";
 import { productDiscountCalculation } from "@/lib/share";
-import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
+import { setResponse } from "@/redux/features/global/globalSlice";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
 
-interface Product {}
-
-const ProductDetails = ({ product, setProduct }: any) => {
+const ProductDetails = ({ product, setProduct, productRating }: any) => {
   const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
-  const global = useSelector(selectGlobal);
   const session = useSession();
+
+  const price = product.selectProductVarient?.price;
+
+  let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
   async function addToCart(value: any) {
     const price = +value.selectProductVarient.price;
@@ -37,7 +29,7 @@ const ProductDetails = ({ product, setProduct }: any) => {
     dispatch(
       addCart({
         ...value,
-        dis: productDiscountCalculation(value),
+        discountA: productDiscountCalculation(value),
         tax: taxAmount,
         price,
       })
@@ -81,16 +73,20 @@ const ProductDetails = ({ product, setProduct }: any) => {
     }
   }
 
-  const price = product.selectProductVarient?.price;
-
-  let taxAmount = (+price * (product.tax?.value || 0)) / 100;
-
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-2">{product?.name}</h1>
       <h2>
-        <Rate allowHalf defaultValue={2.5} />
-        37 Ratings
+        <Rate
+          disabled
+          value={
+            +(
+              (productRating?.totalReview || 0) /
+              (product?.reviews?.length || 0)
+            )
+          }
+        />
+        {product?.reviews?.length || 0} Ratings
       </h2>
       <h2>
         Brand:
@@ -105,10 +101,10 @@ const ProductDetails = ({ product, setProduct }: any) => {
           ৳{" "}
           {product.discountId
             ? (
-                +price +
-                +taxAmount -
-                productDiscountCalculation(product)
-              ).toFixed(2)
+              +price +
+              +taxAmount -
+              productDiscountCalculation(product)
+            ).toFixed(2)
             : (+price + +taxAmount || 0).toFixed(2)}
         </span>
         {product?.discountId ? (
@@ -228,7 +224,6 @@ const ProductDetails = ({ product, setProduct }: any) => {
         )} */}
       </div>
       <Divider />
-
       <ModalLogin unAuthorize={unAuthorize} setUnAuthorize={setUnAuthorize} />
     </div>
   );

@@ -112,10 +112,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     const repoOrderitems = connection.getRepository(OrderItemEntity);
     const newOrderItems = await repoOrderitems.create(
       orderItems.map((item) => ({
-        productId: item.productId,
-        price: item.price,
-        // tax: item.tax,
-        qty: item.qty,
+        ...item,
         orderId: savedOrder.id,
       }))
     );

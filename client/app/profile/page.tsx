@@ -17,20 +17,27 @@ export default function Profile() {
               icon: <AppleOutlined />,
             },
             {
-              label: `Account Details`,
-              children: `Account Details and update account details`,
+              label: `Profile`,
+              children: `My account`,
               icon: <AppleOutlined />,
             },
+
             {
               label: `Orders`,
-              children: `List of orders`,
+              children: `My Orders`,
               icon: <AndroidOutlined />,
             },
             {
-              label: `Track your order`,
-              children: `Track your order`,
+              label: `Wishlist`,
+              children: `My Wishlist`,
               icon: <AndroidOutlined />,
             },
+            {
+              label: `Rating and Review`,
+              children: `My Rating and Review`,
+              icon: <AndroidOutlined />,
+            },
+
             {
               label: `Passwrod`,
               children: `update password`,
