@@ -34,10 +34,11 @@ import { ActionType } from "@/constants/constants";
 import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
 interface DataType {
   key: React.Key;
   name: string;
-  trackingNo: string
+  trackingNo: string;
 }
 
 interface ExpandedDataType {
@@ -376,8 +377,9 @@ const App: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  type: ActionType.UPDATE,
-                  payload: value,
+                  type: ActionType.CREATE,
+                  addOrderTracking: true,
+                  payload: { orderId: value.id },
                 })
               )
             }
@@ -414,7 +416,7 @@ const App: React.FC = () => {
             title={
               <span>
                 Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Discount?
+                this Order?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -448,6 +450,8 @@ const App: React.FC = () => {
         bordered
         size="large"
       />
+
+      <AddOrderTracking />
     </div>
   );
 };

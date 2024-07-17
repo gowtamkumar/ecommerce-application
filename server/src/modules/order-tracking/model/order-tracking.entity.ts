@@ -24,7 +24,7 @@ export class OrderTrackingEntity {
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  @Column({ name: "user_id" })
+  @Column({ name: "user_id", nullable: true })
   userId!: number;
 
   @Column({ nullable: true })

@@ -213,11 +213,11 @@ status:string,
 
   <!-- ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"] -->
 
-## order_traking
+## order_tracking
 
 order_id,
 location:string,
-status_id,
+status: ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
 createdAt
 updatedAt
 
