@@ -13,7 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { orderStatusUpdate, updateOrder } from "@/lib/apis/orders";
 
-const OrderStatusChange = () => {
+const OrderStatusUpdate = () => {
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -39,8 +39,7 @@ const OrderStatusChange = () => {
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         toast.success(
-          `Order Status Change${
-            newData?.id ? "Updated" : "Created"
+          `Order Status Change${newData?.id ? "Updated" : "Created"
           } Successfully`
         );
         dispatch(setAction({}));
@@ -83,7 +82,7 @@ const OrderStatusChange = () => {
       open={
         (global.action.type === ActionType.CREATE ||
           global.action.type === ActionType.UPDATE) &&
-        global.action.orderStatusChange
+        global.action.orderStatusUpdate
       }
       onCancel={handleClose}
       footer={null}
@@ -142,4 +141,4 @@ const OrderStatusChange = () => {
   );
 };
 
-export default OrderStatusChange;
+export default OrderStatusUpdate;

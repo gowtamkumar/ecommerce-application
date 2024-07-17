@@ -104,7 +104,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
   // Generate URL slug
   const count = (await repository.count()) + 1;
 
-  const trackingNo = `#N${count.toString().padStart(6, "0")}`;
+  const trackingNo = `#N${count.toString().padStart(10, "0")}`;
   const newOrder = repository.create(orderData);
   const savedOrder = await repository.save({ ...newOrder, trackingNo });
 

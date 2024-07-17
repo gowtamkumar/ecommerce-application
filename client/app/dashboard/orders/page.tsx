@@ -35,7 +35,7 @@ import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
-import OrderStatusChange from "@/components/dashboard/order/OrderStatusChange";
+import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/share/getStatus";
 interface DataType {
   key: React.Key;
@@ -216,9 +216,8 @@ const App: React.FC = () => {
         ),
       },
       { title: "Qty", dataIndex: "qty", key: "qty" },
-
       {
-        title: "Total item Price",
+        title: "Total item Amount",
         render: (v: {
           price: number;
           tax: number;
@@ -256,7 +255,7 @@ const App: React.FC = () => {
         </div>
         <div className="col-span-3">
           <div className="p-4 bg-white">
-            <h1 className="font-semibold">List of Order Items</h1>
+            <h1 className="font-semibold">Order Items</h1>
             <Table
               columns={childColumns}
               size="small"
@@ -411,7 +410,7 @@ const App: React.FC = () => {
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  orderStatusChange: true,
+                  orderStatusUpdate: true,
                   payload: { id: value.id },
                 })
               )
@@ -455,9 +454,8 @@ const App: React.FC = () => {
         bordered
         size="large"
       />
-
-      <AddOrderTracking />
-      <OrderStatusChange />
+      {global.action.orderStatusUpdate && <OrderStatusChange />}
+      {global.action.addOrderTracking && <AddOrderTracking />}
     </div>
   );
 };
