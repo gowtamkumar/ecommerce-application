@@ -53,15 +53,13 @@ const RatingProduct = ({ product, productRating }: any) => {
         <div className="flex basis-2/3 items-center">
           <div>
             <p className="text-2xl font-bold">
-              {
-                +((totalReview || 0) / (product?.reviews?.length || 0)).toFixed(
-                  1
-                )
-              }
+              {(
+                (totalReview || 0) / (product?.reviews?.length || 0) || 0
+              ).toFixed(1)}
             </p>
             <Rate
               allowHalf
-              value={+((totalReview || 0) / (product?.reviews?.length || 0))}
+              value={(totalReview || 0) / (product?.reviews?.length || 0) || 0}
               disabled
             />
             <p>{product?.reviews?.length || 0} ratings</p>

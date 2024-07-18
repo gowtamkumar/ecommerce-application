@@ -216,15 +216,68 @@ export const getMe = asyncHandler(
 
     const userRepository = connection.getRepository(UserEntity);
 
-    const user = await userRepository.findOne({
-      where: { id: req.id },
-      relations: {
-        products: true,
-        shippingAddress: true,
-        OrderDeliveries: true,
-        orders: true,
-      },
-    });
+    const qb = userRepository.createQueryBuilder("user");
+    qb.select([
+      "user.name",
+      "user.username",
+      "user.email",
+      "user.phone",
+      "user.type",
+      "user.point",
+      "user.role",
+      "user.dob",
+      "user.gender",
+      "user.status",
+      "user.lastLogin",
+      "user.lastLogout",
+      "user.lastLogout",
+      "orders",
+      "products",
+      "product",
+      "shippingAddress",
+      "orderDeliveries",
+      "wishlists",
+    ]);
+
+    qb.leftJoin("user.orders", "orders");
+    qb.leftJoin("user.products", "products");
+    qb.leftJoin("user.shippingAddress", "shippingAddress");
+    qb.leftJoin("user.orderDeliveries", "orderDeliveries");
+    qb.leftJoin("user.wishlists", "wishlists");
+    qb.leftJoin("wishlists.product", "product");
+
+    qb.where({ id: req.id });
+
+    const user = await qb.getOne();
+
+    // const user = await userRepository.findOne({
+    //   where: { id: req.id },
+    //   relations: {
+    //     products: true,
+    //     shippingAddress: true,
+    //     orderDeliveries: true,
+    //     wishlists: {},
+    //     orders: true,
+    //   },
+    //   select: {
+    //     id: true,
+    //     name: true,
+    //     username: true,
+    //     email: true,
+    //     phone: true,
+    //     type: true,
+    //     point: true,
+    //     imgUrl: true,
+    //     role: true,
+    //     status: true,
+    //     lastLogin: true,
+    //     lastLogout: true,
+    //     ipAddress: true,
+    //     diviceId: true,
+    //     dob: true,
+    //     gender: true,
+    //   },
+    // });
 
     if (!user) {
       throw new Error("Authorization is not Valid!");
@@ -232,7 +285,7 @@ export const getMe = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get Me Successful",
+      msg: "I am Here",
       data: user,
     });
   }

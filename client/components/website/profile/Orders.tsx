@@ -6,53 +6,35 @@ import {
   Space,
   Table,
   Button,
-  Popconfirm,
   Tag,
   Timeline,
   Divider,
 } from "antd";
-import {
-  FormOutlined,
-  PlusOutlined,
-  UserAddOutlined,
-  RestOutlined,
-  CheckOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
-  setAction,
   setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import Highlighter from "react-highlight-words";
-import { ActionType } from "@/constants/constants";
-import { deleteOrder, getOrders } from "@/lib/apis/orders";
-import { toast } from "react-toastify";
+import { getUserOrders } from "@/lib/apis/orders";
 import dayjs from "dayjs";
 import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
 import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/share/getStatus";
+
 interface DataType {
   key: React.Key;
   name: string;
   trackingNo: string;
 }
 
-interface ExpandedDataType {
-  key: React.Key;
-  title: string;
-  dataIndex: string;
-  render?: undefined;
-}
-
 type DataIndex = keyof DataType;
 
-const Page: React.FC = () => {
+const Orders = () => {
   const [orders, setOrders] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
@@ -61,8 +43,8 @@ const Page: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getOrders();
-      const newOrders = res.data.map((items: any, idx: number) => ({
+      const res = await getUserOrders();
+      const newOrders = res.data?.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
       }));
@@ -70,22 +52,6 @@ const Page: React.FC = () => {
       dispatch(setLoading({ loading: false }));
     })();
   }, [dispatch, global.action]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      dispatch(setLoading({ delete: true }));
-      await deleteOrder(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Discount deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
-    } catch (error: any) {
-      console.log("v", error);
-
-      toast.error(error);
-    }
-  };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -201,20 +167,13 @@ const Page: React.FC = () => {
         key: "product",
         render: (v: { name: string }) => <span>{v.name}</span>,
       },
-      { title: "Price", dataIndex: "price", key: "price" },
-
-      { title: "Discount", dataIndex: "discountA", key: "discountA" },
       {
-        title: "Tax",
-        key: "tax",
-        dataIndex: "tax",
-      },
-      {
-        title: "Sale Price",
+        title: "Price",
         render: (v: { price: number; tax: number; discountA: number }) => (
           <span>{(+v.price + +v.tax - +v.discountA).toFixed(2)}</span>
         ),
       },
+
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
         title: "Total item Amount",
@@ -269,10 +228,7 @@ const Page: React.FC = () => {
             <div className="col-span-2">dasdf</div>
             <div className="grid gap-y-3 col-span-1">
               <div className="flex justify-between">
-                <h1>
-                  Net Amount: (+tax {value.orderTax}, - Discount{" "}
-                  {value.discountAmount})
-                </h1>
+                <h1>Net Amount: </h1>
                 <h1 className="font-semibold">
                   ${(+value.netAmount).toFixed(2)}
                 </h1>
@@ -326,29 +282,23 @@ const Page: React.FC = () => {
     { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
 
     {
-      title: "Customer",
-      dataIndex: "user",
-      key: "user",
-      render: (customer) => <span>{customer?.name}</span>,
-    },
-    {
       title: "Shipping Address",
       dataIndex: "shippingAddress",
       key: "shippingAddress",
       render: (value) => <span>{value.address}</span>,
     },
-    {
-      title: "Payment Method",
-      dataIndex: "paymentMethod",
-      key: "paymentMethod",
-      // render: (value) => <span>{value.address}</span>,
-    },
-    {
-      title: "Delivered Man",
-      dataIndex: "deliveryMan",
-      key: "deliveryMan",
-      render: (deliveryMan) => <span>{deliveryMan?.name}</span>,
-    },
+    // {
+    //   title: "Payment Method",
+    //   dataIndex: "paymentMethod",
+    //   key: "paymentMethod",
+    //   // render: (value) => <span>{value.address}</span>,
+    // },
+    // {
+    //   title: "Delivered Man",
+    //   dataIndex: "deliveryMan",
+    //   key: "deliveryMan",
+    //   render: (deliveryMan) => <span>{deliveryMan?.name}</span>,
+    // },
     {
       title: "Date",
       dataIndex: "createdAt",
@@ -365,79 +315,6 @@ const Page: React.FC = () => {
       key: "status",
       render: (orderStatus) => (
         <Tag color={getStatus(orderStatus.status)}>{orderStatus.status}</Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "operation",
-      render: (value) => (
-        <div className="flex gap-2 justify-end">
-          <Button
-            size="small"
-            icon={<PlusOutlined />}
-            title="Add Order Tracking"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                  addOrderTracking: true,
-                  payload: { orderId: value.id },
-                })
-              )
-            }
-          />
-          <Button
-            size="small"
-            icon={<UserAddOutlined />}
-            title="Assign Delivery man"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
-          <Button
-            size="small"
-            icon={<CheckOutlined />}
-            title="Order Status Change"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  orderStatusUpdate: true,
-                  payload: { id: value.id },
-                })
-              )
-            }
-          />
-          <Popconfirm
-            title={
-              <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Order?
-              </span>
-            }
-            onConfirm={() => handleDelete(value.id)}
-            placement="left"
-            okText="Yes"
-            okType="danger"
-            cancelText="No"
-            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-          >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
-          </Popconfirm>
-        </div>
       ),
     },
   ];
@@ -460,4 +337,4 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default Orders;

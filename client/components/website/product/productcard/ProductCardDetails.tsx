@@ -26,6 +26,9 @@ const ProductCardDetails = ({ products }: any) => {
       } gap-4`}
     >
       {(products.data || []).map((item: any, idx: any) => {
+        // console.log("🚀 ~ item:", item.reviews.length);
+        // need to calculation review
+
         let price = +item.productVariants[0]?.price;
         let discount = item.discount;
 
@@ -69,7 +72,10 @@ const ProductCardDetails = ({ products }: any) => {
                   </span>
                 </>
               ) : null}
-              <Rate allowHalf disabled defaultValue={2.5} />
+              <span className="flex gap-1 items-center">
+                <Rate allowHalf disabled defaultValue={2.5} />(
+                {item.reviews.length})
+              </span>
             </Link>
           </div>
         );

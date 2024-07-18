@@ -1,7 +1,8 @@
+
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/header/Header";
-// import { useSession } from "next-auth/react";
-// import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export default function ProfileLayout({
@@ -9,7 +10,8 @@ export default function ProfileLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const session: any = useSession();
+  // const session = useSession();
+  // console.log("🚀 ~ session:", session)
   // if (session.status === "unauthenticated") {
   //   redirect("/");
   // }
@@ -17,9 +19,7 @@ export default function ProfileLayout({
   return (
     <>
       <Header />
-      <div className="lg:w-8/12  mx-auto">
-        {children}
-      </div>
+      <div className="lg:w-8/12 mx-auto">{children}</div>
       <WebFooter />
     </>
   );

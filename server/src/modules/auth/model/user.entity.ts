@@ -9,11 +9,12 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
-import { TypeEnum } from "../enums";
+import { GenderEnum, TypeEnum } from "../enums";
 import { StatusEnum } from "../enums/status.enum";
 import { OrderEntity } from "../../order/model/order.entity";
 import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
 import { ReviewEntity } from "../../review/model/review.entity";
+import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -40,6 +41,9 @@ export class UserEntity {
 
   @Column({ nullable: true })
   dob?: string;
+
+  @Column({ type: "enum", enum: GenderEnum, nullable: true })
+  gender!: GenderEnum;
 
   @Column({ nullable: true })
   point?: string;
@@ -90,10 +94,8 @@ export class UserEntity {
   @OneToMany((_type) => OrderEntity, (product) => product.user)
   orders!: OrderEntity[];
 
-  
-
   @OneToMany((_type) => OrderEntity, (order) => order.deliveryMan)
-  OrderDeliveries!: OrderEntity[];
+  orderDeliveries!: OrderEntity[];
 
   @OneToMany((_type) => ShippingAddressEntity, (shipping) => shipping.user)
   shippingAddress!: ShippingAddressEntity[];
@@ -101,7 +103,6 @@ export class UserEntity {
   @OneToMany((_type) => ReviewEntity, (review) => review.user)
   reviews!: ReviewEntity[];
 
-  
-
-
+  @OneToMany((_type) => WishListEntity, (wishlist) => wishlist.user)
+  wishlists!: WishListEntity[];
 }

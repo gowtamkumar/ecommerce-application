@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
+import { UserEntity } from "../../auth/model/user.entity";
 
 @Entity("wishlists")
 export class WishListEntity {
@@ -25,6 +26,11 @@ export class WishListEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
+  @ManyToOne((_type) => UserEntity, (user) => user.wishlists, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt!: string;

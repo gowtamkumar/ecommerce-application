@@ -19,11 +19,11 @@ export default function Products() {
           <div className="col-span-5">
             <CategoryHeader />
             <Divider />
-            <ProductCard/>
+            <ProductCard />
           </div>
         </div>
       </section>
-      <WebFooter/>
+      <WebFooter />
     </>
   );
 }

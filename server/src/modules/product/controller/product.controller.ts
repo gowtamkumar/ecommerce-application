@@ -150,6 +150,7 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       ...req.body,
       userId: req.id,
     });
+    console.log("validation", validation.data);
 
     if (!validation.success) {
       return res.status(400).json({ message: validation.error.formErrors });
@@ -158,7 +159,7 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     const { productVariants, productCategories, ...restData } = validation.data;
 
     // Generate URL slug
-    const count = await productRepository.count();
+    const count = (await productRepository.count()) + 1;
     const urlSlug = `SKU-${count.toString().padStart(6, "0")}`;
 
     // Create product entity

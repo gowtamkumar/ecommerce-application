@@ -118,7 +118,7 @@ export class OrderEntity {
   deliveryId?: number;
   @ManyToOne(
     (_type) => UserEntity,
-    (orderDalivery) => orderDalivery.OrderDeliveries,
+    (orderDalivery) => orderDalivery.orderDeliveries,
     {
       onDelete: "SET NULL",
     }
