@@ -5,6 +5,7 @@ import { getDBConnection } from "../../../config/db";
 import { productValidationSchema } from "../../../validation";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
+import { Brackets } from "typeorm";
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -16,6 +17,16 @@ export const getProducts = async (
   try {
     const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
     const productRepository = connection.getRepository(ProductEntity);
+    const {
+      search,
+      lowPrice,
+      highPrice,
+      maxPrice,
+      minPrice,
+      brandId,
+      status,
+      categoryId,
+    } = req.query;
 
     const qb = productRepository.createQueryBuilder("product");
     qb.select([
@@ -49,6 +60,33 @@ export const getProducts = async (
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
     qb.orderBy("productVariants.id", "DESC");
+
+    if (search) {
+      qb.andWhere(
+        new Brackets((db) => {
+          db.orWhere("LOWER(product.name) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+          db.orWhere("LOWER(product.description) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+          db.orWhere("LOWER(product.shortDescription) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+          db.orWhere("LOWER(brand.name) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+        })
+      );
+    }
+
+    if (brandId) qb.andWhere({ brandId });
+    if (status) qb.andWhere({ status });
+    // if (minPrice && maxPrice) qb.andWhere(`product.price BETWEEN ${minPrice} AND ${maxPrice}`)
+    // if (minPrice && maxPrice) qb.andWhere(`product.price BETWEEN ${minPrice} AND ${maxPrice}`)
+    // if (lowPrice) qb.orderBy('productVariants.price', "ASC")
+    // if (highPrice) qb.orderBy('productVariants.price', "DESC")
+
     const results = await qb.getMany();
 
     res.status(200).json({

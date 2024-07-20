@@ -17,15 +17,55 @@ export async function saveProduct(data: any) {
   return res.json();
 }
 
-export async function getProducts() {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
-    cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-  });
-  return res.json();
+export async function getProducts(params: any) {
+  // const session = await getServerSession(authOptions);
+  const { brandId, maxPrice, minPrice, search, lowPrice, highPrice, status } =
+    params;
+
+  let queryString = "status=Approved&";
+
+  if (brandId?.length > 0) {
+    queryString += `brandId=${brandId.join(",")}${brandId && "&"}`;
+  }
+
+  if (maxPrice) {
+    queryString += `maxPrice=${maxPrice}&`;
+  }
+
+  if (minPrice) {
+    queryString += `minPrice=${minPrice}&`;
+  }
+
+  if (lowPrice) {
+    queryString += `lowPrice=${lowPrice}&`;
+  }
+
+  if (highPrice) {
+    queryString += `highPrice=${highPrice}&`;
+  }
+
+  if (search) {
+    queryString += `search=${search}&`;
+  }
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`,
+      {
+        cache: "no-cache",
+        // headers: {
+        //   Authorization: `Bearer ${session?.user.accessToken}`,
+        // },
+      }
+    );
+    if (!res.ok) {
+      console.log("Failed to fetch data");
+    }
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.log("Failed to fetch data");
+  }
 }
 
 export async function getProduct(id: string) {
