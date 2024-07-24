@@ -17,7 +17,37 @@ export async function saveProduct(data: any) {
   return res.json();
 }
 
+interface GetParams {
+  brandId: any;
+  maxPrice: string;
+  minPrice: string;
+  search: string;
+  lowPrice: string;
+  highPrice: string;
+  status: boolean;
+}
+
 export async function getProducts(params: any) {
+  // const session = await getServerSession(authOptions);
+
+  try {
+    const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
+      cache: "no-cache",
+      // headers: {
+      //   Authorization: `Bearer ${session?.user.accessToken}`,
+      // },
+    });
+    if (!res.ok) {
+      console.log("Failed to fetch data");
+    }
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.log("Failed to fetch data");
+  }
+}
+
+export async function getPublicProducts(params: GetParams) {
   // const session = await getServerSession(authOptions);
   const { brandId, maxPrice, minPrice, search, lowPrice, highPrice, status } =
     params;
