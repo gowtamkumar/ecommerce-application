@@ -5,9 +5,17 @@ import Orders from "@/components/website/profile/Orders";
 import MyAccount from "@/components/website/profile/MyAccount";
 import { getMe } from "@/lib/apis/user";
 import MyWishlist from "@/components/website/profile/MyWishlist";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default async function Profile() {
   const user = await getMe();
+
+  //   const session = useSession();
+  // console.log("🚀 ~ session:", session);
+  // if (session.status === "unauthenticated") {
+  //   redirect("/");
+  // }
 
   return (
     <div>

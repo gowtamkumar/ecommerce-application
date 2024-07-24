@@ -47,9 +47,10 @@ export default function MyAccount({ user }: any) {
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
-      return console.log("newData:", newData);
+      // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id && (await updateUser(newData));
+      console.log("🚀 ~ result:", result);
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
@@ -84,8 +85,15 @@ export default function MyAccount({ user }: any) {
     }
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 12 },
+  };
+  const tailLayout = {
+    wrapperCol: { offset: 5, span: 12 },
+  };
   return (
-    <div className="py-10 w-1/2">
+    <div className="py-10">
       <div className="flex justify-between items-center gap-2">
         <Divider orientation="left"> Personal Information</Divider>
         <div hidden={edit}>
@@ -104,7 +112,7 @@ export default function MyAccount({ user }: any) {
       </div>
       <div>
         <Form
-          layout="vertical"
+          {...layout}
           form={form}
           onFinish={handleSubmit}
           onValuesChange={(_v, values) => dispatch(setFormValues(values))}
@@ -114,7 +122,6 @@ export default function MyAccount({ user }: any) {
           <Form.Item name="id" hidden>
             <Input />
           </Form.Item>
-
           <Form.Item
             name="name"
             label="Name"
@@ -130,7 +137,6 @@ export default function MyAccount({ user }: any) {
           <Form.Item name="username" label="Username">
             <Input placeholder="Enter" disabled />
           </Form.Item>
-
           <Form.Item
             name="email"
             label="E-mail"
@@ -149,7 +155,6 @@ export default function MyAccount({ user }: any) {
               <Radio value="Female">Female</Radio>
             </Radio.Group>
           </Form.Item>
-
           <Form.Item
             name="phone"
             label="Phone No"
@@ -162,11 +167,9 @@ export default function MyAccount({ user }: any) {
           >
             <Input placeholder="Enter phone" disabled={!edit} />
           </Form.Item>
-
           <Form.Item name="dob" label="Date of Brith">
             <DatePicker placeholder="Enter Birth day" disabled={!edit} />
           </Form.Item>
-
           <Form.Item
             hidden={!global.action.payload?.id}
             name="status"
@@ -188,7 +191,6 @@ export default function MyAccount({ user }: any) {
               <Select.Option value={"Inactive"}>Inactive</Select.Option>
             </Select>
           </Form.Item>
-
           <div>
             <Form.Item
               name="imgUrl"
@@ -200,23 +202,24 @@ export default function MyAccount({ user }: any) {
               </Upload>
             </Form.Item>
           </div>
-
-          <Button
-            className="mx-2"
-            size="small"
-            type="default"
-            onClick={() => resetFormData(global.action?.payload)}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            loading={global.loading.save}
-          >
-            {global.action.payload?.id ? "Update" : "Save"}
-          </Button>
+          <Form.Item {...tailLayout}>
+            <Button
+              className="mx-2"
+              size="small"
+              type="default"
+              onClick={() => resetFormData(global.action?.payload)}
+            >
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              loading={global.loading.save}
+            >
+              {global.action.payload?.id ? "Update" : "Save"}
+            </Button>
+          </Form.Item>
         </Form>
       </div>
 
@@ -236,7 +239,7 @@ export default function MyAccount({ user }: any) {
         </div>
       </div> */}
 
-      <ChangePassword/>
+      <ChangePassword />
     </div>
   );
 }

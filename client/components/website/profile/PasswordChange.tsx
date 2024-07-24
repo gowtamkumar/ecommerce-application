@@ -61,7 +61,7 @@ export default function ChangePassword() {
   };
 
   const tailLayout = {
-    wrapperCol: { offset: 4, span: 12 },
+    wrapperCol: { offset: 5, span: 12 },
   };
 
   return (
