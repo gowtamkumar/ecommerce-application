@@ -42,7 +42,7 @@ const AddUser = () => {
         : await saveUser(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `User ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -159,7 +159,7 @@ const AddUser = () => {
               <Input placeholder="Enter " />
             </Form.Item>
           </div>
-          <div className='col-span-1'>
+          <div className="col-span-1">
             <Form.Item name="type" label="Type">
               <Select
                 showSearch
@@ -204,7 +204,7 @@ const AddUser = () => {
             </Form.Item>
           </div>
 
-          <div className='col-span-1'>
+          <div className="col-span-1">
             <Form.Item
               hidden={!global.action.payload?.id}
               name="status"

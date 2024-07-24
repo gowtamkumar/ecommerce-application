@@ -13,7 +13,6 @@ export const orderValidationSchema = z.object({
   orderTax: z.number().optional(),
   shippingAmount: z.number().optional(),
   note: z.string().optional(),
-
   shippingAddressId: z.number({
     required_error: "Shipping Address is Required",
   }),
@@ -45,7 +44,7 @@ export const orderValidationSchema = z.object({
       z.object({
         price: z.number({ required_error: "Price is required" }),
         tax: z.number({ required_error: "Tax is required" }),
-        discountA: z.number({ required_error: "Discount is required" }),
+        discountA: z.number().optional(),
         productId: z.number({ required_error: "Product is required" }),
         qty: z.number({ required_error: "qty is required" }),
       })

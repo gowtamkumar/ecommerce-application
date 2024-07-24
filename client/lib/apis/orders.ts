@@ -28,6 +28,21 @@ export async function getOrders() {
   return res.json();
 }
 
+export async function getUserOrders() {
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/orders/user-orders`,
+    {
+      method: "GET",
+      cache: "no-cache",
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
+  return res.json();
+}
+
 export async function updateOrder(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(

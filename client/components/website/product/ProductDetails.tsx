@@ -29,7 +29,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
     dispatch(
       addCart({
         ...value,
-        discountA: productDiscountCalculation(value),
+        discountA: (productDiscountCalculation(value) || 0),
         tax: taxAmount,
         price,
       })

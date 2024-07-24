@@ -66,9 +66,11 @@ export default function CheckoutPage() {
         return {
           taxAmount: (+pre.taxAmount + curr?.tax) * +curr.qty,
           netAmount:
-            +pre.netAmount + sutotal - (+curr.discountA * +curr.qty || 0),
+            +pre.netAmount +
+            sutotal -
+            (+curr.discountA || 0) * (+curr.qty || 0),
           discountAmount:
-            +pre.discountAmount + (+curr.discountA * +curr.qty || 0),
+            +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
           orderTotalAmount:
             +pre.orderTotalAmount +
             +sutotal -
@@ -107,7 +109,7 @@ export default function CheckoutPage() {
         };
       }
 
-      // return console.log("newData:", validatedFields.data);
+      // return console.log("newData:", validatedFields);
       const res = await saveOrder(validatedFields.data);
 
       if (res.status === 500) {
