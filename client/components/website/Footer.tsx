@@ -1,5 +1,3 @@
-// "use client";
-
 function WebFooter() {
   return (
     <footer className="bg-slate-500">

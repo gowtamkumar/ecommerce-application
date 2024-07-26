@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-import Banner from "@/components/website/banner/Banner";
 import CategoryHeader from "@/components/website/category/CategoryHeader";
 import CategorySidebar from "@/components/website/category/CategorySidebar";
 import WebFooter from "@/components/website/Footer";
@@ -9,9 +7,7 @@ import { getProducts } from "@/lib/apis/product";
 import { Divider } from "antd";
 import React from "react";
 
-export default async function SingleCategory() {
-  const result = await getProducts();
-
+export default function SingleCategory() {
   return (
     <>
       <Header />
@@ -23,11 +19,11 @@ export default async function SingleCategory() {
           <div className="col-span-5">
             <CategoryHeader />
             <Divider />
-            <ProductCard  />
+            <ProductCard />
           </div>
         </div>
       </section>
-      <WebFooter/>
+      <WebFooter />
     </>
   );
 }

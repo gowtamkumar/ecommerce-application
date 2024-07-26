@@ -21,11 +21,7 @@ import {
 import dayjs from "dayjs";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  MinusCircleOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import ChangePassword from "./PasswordChange";
 import { getSession } from "next-auth/react";
 
@@ -42,16 +38,16 @@ interface User {
 
 export default function MyAccount({ user }: any) {
   const [edit, setEdit] = useState(false);
-
+  // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
   if (user.dob) user.dob = dayjs(user.dob);
   form.setFieldsValue(user);
+
   const handleSubmit = async (values: any) => {
     const session = await getSession();
-    console.log("🚀 ~ session:", session?.user.id);
     try {
       let newData = { ...values, id: session?.user.id };
 
@@ -72,11 +68,11 @@ export default function MyAccount({ user }: any) {
         dispatch(setLoading({ saveProfile: false }));
         dispatch(setLoading({ save: false }));
       }
-      console.log("🚀 ~ result:", result);
-
+      // console.log("🚀 ~ result:", result);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setResponse({}));
+        dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
       console.log(err);
@@ -141,118 +137,115 @@ export default function MyAccount({ user }: any) {
           type={global.response.type}
         />
       )}
-      <div>
-        <Form
-          {...layout}
-          form={form}
-          onFinish={handleSubmit}
-          onValuesChange={(_v, values) => dispatch(setFormValues(values))}
-          scrollToFirstError={true}
-          initialValues={user}
+
+      <Form
+        {...layout}
+        form={form}
+        onFinish={handleSubmit}
+        scrollToFirstError={true}
+      >
+        <Form.Item name="id" hidden>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="name"
+          label="Name"
+          rules={[
+            {
+              required: true,
+              message: "Name is required",
+            },
+          ]}
         >
-          <Form.Item name="id" hidden>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[
-              {
-                required: true,
-                message: "Name is required",
-              },
-            ]}
+          <Input placeholder="Enter name" disabled={!edit} />
+        </Form.Item>
+        <Form.Item name="username" label="Username">
+          <Input placeholder="Enter" disabled />
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label="E-mail"
+          rules={[
+            {
+              required: true,
+              message: "E-mail is required",
+            },
+          ]}
+        >
+          <Input placeholder="Enter " disabled={!edit} />
+        </Form.Item>
+        <Form.Item name="gender" label="Gender">
+          <Radio.Group disabled={!edit}>
+            <Radio value="Male">Male</Radio>
+            <Radio value="Female">Female</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          name="phone"
+          label="Phone No"
+          rules={[
+            {
+              required: true,
+              message: "Phone is required",
+            },
+          ]}
+        >
+          <Input placeholder="Enter phone" disabled={!edit} />
+        </Form.Item>
+        <Form.Item name="dob" label="Date of Brith">
+          <DatePicker placeholder="Enter Birth day" disabled={!edit} />
+        </Form.Item>
+        <Form.Item
+          hidden={!global.action.payload?.id}
+          name="status"
+          label="Status"
+        >
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select Status"
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.children as any)
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+            disabled={!edit}
           >
-            <Input placeholder="Enter name" disabled={!edit} />
-          </Form.Item>
-          <Form.Item name="username" label="Username">
-            <Input placeholder="Enter" disabled />
-          </Form.Item>
+            <Select.Option value="Active">Active</Select.Option>
+            <Select.Option value="Inactive">Inactive</Select.Option>
+          </Select>
+        </Form.Item>
+        <div>
           <Form.Item
-            name="email"
-            label="E-mail"
-            rules={[
-              {
-                required: true,
-                message: "E-mail is required",
-              },
-            ]}
+            name="imgUrl"
+            label="Photo"
+            tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
           >
-            <Input placeholder="Enter " disabled={!edit} />
+            <Upload>
+              <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
           </Form.Item>
-          <Form.Item name="gender" label="Gender">
-            <Radio.Group disabled={!edit}>
-              <Radio value="Male">Male</Radio>
-              <Radio value="Female">Female</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="Phone No"
-            rules={[
-              {
-                required: true,
-                message: "Phone is required",
-              },
-            ]}
+        </div>
+        <Form.Item {...tailLayout}>
+          <Button
+            className="mx-2"
+            size="small"
+            type="default"
+            onClick={() => resetFormData(global.action?.payload)}
           >
-            <Input placeholder="Enter phone" disabled={!edit} />
-          </Form.Item>
-          <Form.Item name="dob" label="Date of Brith">
-            <DatePicker placeholder="Enter Birth day" disabled={!edit} />
-          </Form.Item>
-          <Form.Item
-            hidden={!global.action.payload?.id}
-            name="status"
-            label="Status"
+            Reset
+          </Button>
+          <Button
+            size="small"
+            type="primary"
+            htmlType="submit"
+            loading={global.loading.save}
           >
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select Status"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children as any)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              disabled={!edit}
-            >
-              <Select.Option value="Active">Active</Select.Option>
-              <Select.Option value="Inactive">Inactive</Select.Option>
-            </Select>
-          </Form.Item>
-          <div>
-            <Form.Item
-              name="imgUrl"
-              label="Photo"
-              tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
-            >
-              <Upload>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
-            </Form.Item>
-          </div>
-          <Form.Item {...tailLayout}>
-            <Button
-              className="mx-2"
-              size="small"
-              type="default"
-              onClick={() => resetFormData(global.action?.payload)}
-            >
-              Reset
-            </Button>
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              loading={global.loading.save}
-            >
-              {global.action.payload?.id ? "Update" : "Save"}
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
+            {global.action.payload?.id ? "Update" : "Save"}
+          </Button>
+        </Form.Item>
+      </Form>
 
       {/* section password */}
 

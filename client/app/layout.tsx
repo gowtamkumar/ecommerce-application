@@ -22,11 +22,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  console.log("🚀 ~ session:", session)
   return (
     <html lang="en">
-      {/* className={`${inter.className} bg-white`} */}
-      <body suppressHydrationWarning={true}>
+      <body suppressHydrationWarning={true} className={`${inter.className}`}>
         <AuthProvider session={session}>
           <StoreProvider>
             <AntdRegistry>{children}</AntdRegistry>

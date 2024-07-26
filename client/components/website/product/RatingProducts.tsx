@@ -1,10 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import { ActionType } from "@/constants/constants";
-import {
-  setAction,
-  setProductRating,
-} from "@/redux/features/global/globalSlice";
-import { Button, Divider, Progress, Rate } from "antd";
+import { setProductRating } from "@/redux/features/global/globalSlice";
+import { Button, Divider, Rate } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import NewReview from "./review-rating/NewReview";
@@ -13,39 +9,6 @@ const RatingProduct = ({ product, productRating }: any) => {
   const dispatch = useDispatch();
   const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
     productRating;
-
-  // const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
-  //   product?.reviews?.reduce(
-  //     (
-  //       pre: {
-  //         totalReview: number;
-  //         rating1: number;
-  //         rating2: number;
-  //         rating3: number;
-  //         rating4: number;
-  //         rating5: number;
-  //       },
-  //       curr: { rating: string }
-  //     ) => {
-  //       return {
-  //         totalReview: +pre.totalReview + +curr.rating,
-  //         rating1: +curr.rating === 1 ? +pre.rating1 + 1 : pre.rating1,
-  //         rating2: +curr.rating === 2 ? +pre.rating2 + 1 : pre.rating2,
-  //         rating3: +curr.rating === 3 ? +pre.rating3 + 1 : pre.rating3,
-  //         rating4: +curr.rating === 4 ? +pre.rating4 + 1 : pre.rating4,
-  //         rating5: +curr.rating === 5 ? +pre.rating5 + 1 : pre.rating5,
-  //       };
-  //     },
-  //     {
-  //       totalReview: 0,
-  //       rating1: 0,
-  //       rating2: 0,
-  //       rating3: 0,
-  //       rating4: 0,
-  //       rating5: 0,
-  //     }
-  //   );
-
   return (
     <div className="mt-8">
       <h3 className="text-lg font-bold mb-4">Ratings & Reviews</h3>

@@ -17,17 +17,6 @@ export default function ChangePassword() {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
-  // mutations
-
-  // effect hook
-  // useEffect(() => {
-  //   setLoading({ ...loading, tableData: true });
-  //   form.setFieldsValue({ id: id });
-  //   return () => {
-  //     resetFormData();
-  //   };
-  // }, []);
-
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };

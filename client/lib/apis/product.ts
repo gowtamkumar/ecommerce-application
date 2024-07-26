@@ -27,15 +27,15 @@ interface GetParams {
   status: boolean;
 }
 
-export async function getProducts(params: any) {
-  // const session = await getServerSession(authOptions);
+export async function getProducts() {
+  const session = await getServerSession(authOptions);
 
   try {
     const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
       cache: "no-cache",
-      // headers: {
-      //   Authorization: `Bearer ${session?.user.accessToken}`,
-      // },
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
     });
     if (!res.ok) {
       console.log("Failed to fetch data");
@@ -51,8 +51,7 @@ export async function getPublicProducts(params: GetParams) {
   // const session = await getServerSession(authOptions);
   const { brandId, maxPrice, minPrice, search, lowPrice, highPrice, status } =
     params;
-
-  let queryString = "status=Approved&";
+  let queryString = "";
 
   if (brandId?.length > 0) {
     queryString += `brandId=${brandId.join(",")}${brandId && "&"}`;
@@ -80,13 +79,7 @@ export async function getPublicProducts(params: GetParams) {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`,
-      {
-        cache: "no-cache",
-        // headers: {
-        //   Authorization: `Bearer ${session?.user.accessToken}`,
-        // },
-      }
+      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`
     );
     if (!res.ok) {
       console.log("Failed to fetch data");

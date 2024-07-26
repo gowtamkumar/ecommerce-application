@@ -49,7 +49,6 @@ const ReviewTable = ({ reviews }: any) => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -224,56 +223,11 @@ const ReviewTable = ({ reviews }: any) => {
         );
       },
     },
-
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (value) => (
-    //     <div className="gap-2">
-    //       <Button
-    //         size="small"
-    //         icon={<FormOutlined />}
-    //         title="Edit"
-    //         className="me-1"
-    //         onClick={() =>
-    //           dispatch(
-    //             setAction({
-    //               type: ActionType.UPDATE,
-    //               payload: value,
-    //             })
-    //           )
-    //         }
-    //       />
-    //       <Popconfirm
-    //         title={
-    //           <span>
-    //             Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-    //             this Review?
-    //           </span>
-    //         }
-    //         onConfirm={() => handleDelete(value.id)}
-    //         placement="left"
-    //         okText="Yes"
-    //         okType="danger"
-    //         cancelText="No"
-    //         icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-    //       >
-    //         <Button
-    //           size="small"
-    //           danger
-    //           loading={global.loading?.delete}
-    //           icon={<RestOutlined />}
-    //         />
-    //       </Popconfirm>
-    //     </div>
-    //   ),
-    // },
   ];
 
   return (
     <Table
       scroll={{ x: "auto" }}
-
       // loading={global.loading.loading}
       columns={columns}
       dataSource={reviews}

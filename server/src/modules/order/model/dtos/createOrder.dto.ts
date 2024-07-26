@@ -1,4 +1,4 @@
-import { PaymentStatus, paymentMothodStatus } from "../../enums";
+import { OrderPaymentMethod, PaymentStatus } from "../../enums";
 import { OrderStatus } from "../../enums/order-status.enum";
 
 export interface CreateOrderDto {
@@ -28,7 +28,7 @@ export interface CreateOrderDto {
 
   paymentStatus: PaymentStatus;
 
-  paymentMothod: paymentMothodStatus;
+  paymentMothod: OrderPaymentMethod;
 
   status: OrderStatus;
 

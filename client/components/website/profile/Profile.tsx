@@ -8,7 +8,6 @@ import { getMe } from "@/lib/apis/user";
 import MyWishlist from "@/components/website/profile/MyWishlist";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import ShippingAddressList from "@/components/dashboard/shipping-address/ShippingAddresslist";
 
 export default function Profile() {
   const [user, setUser] = useState({});
@@ -67,8 +66,6 @@ export default function Profile() {
           },
         ].map((item: any, i) => {
           const id = String(i + 1);
-          // console.log("dd", item);
-
           return {
             key: id,
             label: item.label,

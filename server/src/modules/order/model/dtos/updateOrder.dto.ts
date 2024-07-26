@@ -1,4 +1,4 @@
-import { PaymentStatus, paymentMothodStatus, OrderStatus } from "../../enums";
+import { PaymentStatus, OrderStatus, OrderPaymentMethod } from "../../enums";
 
 export interface UpdateOrderDto {
   orderDate?: string;
@@ -27,7 +27,7 @@ export interface UpdateOrderDto {
 
   paymentStatus: PaymentStatus;
 
-  paymentMothod: paymentMothodStatus;
+  paymentMothod: OrderPaymentMethod;
 
   status: OrderStatus;
 

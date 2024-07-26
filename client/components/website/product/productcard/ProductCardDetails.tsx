@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-async-client-component */
 "use client";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { Rate } from "antd";
@@ -9,16 +8,6 @@ import { useSelector } from "react-redux";
 const ProductCardDetails = ({ products }: any) => {
   const global = useSelector(selectGlobal);
 
-  // function productDiscountCalculation(value: any) {
-  //   const price = +value.productVariants[0]?.price;
-  //   const discount = value.discount;
-  //   const dis =
-  //     discount?.discountType === "Percentage"
-  //       ? (price * (discount.value || 0)) / 100
-  //       : +discount?.value;
-  //   return dis;
-  // }
-
   return (
     <div
       className={`grid ${
@@ -26,9 +15,6 @@ const ProductCardDetails = ({ products }: any) => {
       } gap-4`}
     >
       {(products.data || []).map((item: any, idx: any) => {
-        // console.log("🚀 ~ item:", item.reviews.length);
-        // need to calculation review
-
         let price = +item.productVariants[0]?.price;
         let discount = item.discount;
 

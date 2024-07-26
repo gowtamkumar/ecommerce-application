@@ -42,7 +42,6 @@ export default function CheckoutPage() {
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
   // const router = useRouter();
-  console.log("🚀 ~  cart.carts:",  cart.carts)
 
   useEffect(() => {
     async function fetchData() {

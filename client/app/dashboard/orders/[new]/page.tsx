@@ -29,7 +29,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
+import {  getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
 
 import { getTaxs } from "@/lib/apis/tax";
 import { getAllCategories } from "@/lib/apis/categories";
