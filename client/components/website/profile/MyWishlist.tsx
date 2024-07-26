@@ -2,15 +2,30 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button, Rate } from "antd";
+import { Button, Popconfirm, Rate } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { productDiscountCalculation } from "@/lib/share";
+import { deleteWishlist } from "@/lib/apis/wishlist";
+import {
+  FormOutlined,
+  PlusOutlined,
+  UserAddOutlined,
+  RestOutlined,
+  CheckOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { FaShoppingCart } from "react-icons/fa";
 
 export default function MyWishlist({ user }: any) {
-  const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
 
   async function addToCart(value: any) {
     const price = +value.selectProductVarient.price;
@@ -26,12 +41,22 @@ export default function MyWishlist({ user }: any) {
     );
   }
 
+  const handleDelete = async (id: string) => {
+    try {
+      dispatch(setLoading({ delete: true }));
+      const res = await deleteWishlist(id);
+      setTimeout(async () => {
+        dispatch(setLoading({ delete: false }));
+        dispatch(setAction({}));
+      }, 500);
+    } catch (error: any) {
+      console.log("v", error);
+    }
+  };
+
   return (
     <div className="grid grid-cols-4 gap-4">
       {(user.wishlists || []).map((item: any, idx: any) => {
-        // console.log("🚀 ~ item:", item.product.reviews.length);
-        // need to calculation review
-
         let price = +item.product.productVariants[0]?.price;
         let discount = item.product?.discount;
 
@@ -80,19 +105,26 @@ export default function MyWishlist({ user }: any) {
                 {item.product?.reviews?.length})
               </span>
             </Link>
-            <Button
-              type="primary"
-              size="large"
-              onClick={() =>
-                addToCart({
-                  ...item.product,
-                  selectProductVarient: item.product.productVariants[0],
-                })
-              }
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Add to Cart
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="small"
+                onClick={() =>
+                  addToCart({
+                    ...item.product,
+                    selectProductVarient: item.product.productVariants[0],
+                  })
+                }
+                icon={<FaShoppingCart />}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              />
+              <Button
+                size="small"
+                onClick={() => handleDelete(item.id)}
+                danger
+                loading={global.loading?.delete}
+                icon={<RestOutlined />}
+              />
+            </div>
           </div>
         );
       })}

@@ -48,7 +48,7 @@ export default function MyAccount({ user }: any) {
   const global = useSelector(selectGlobal);
 
   if (user.dob) user.dob = dayjs(user.dob);
-  // form.setFieldsValue(user);
+  form.setFieldsValue(user);
   const handleSubmit = async (values: any) => {
     const session = await getSession();
     console.log("🚀 ~ session:", session?.user.id);

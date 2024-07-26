@@ -23,6 +23,7 @@ export async function getMe() {
     `${process.env.NEXT_SERVER_URL}/api/v1/auth/me`,
     {
       method: "GET",
+      cache: 'no-cache',
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user.accessToken}`,

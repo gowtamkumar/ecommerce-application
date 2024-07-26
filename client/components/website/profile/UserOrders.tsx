@@ -1,15 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import {
-  Input,
-  Space,
-  Table,
-  Button,
-  Tag,
-  Timeline,
-  Divider,
-} from "antd";
+import { Input, Space, Table, Button, Tag, Timeline, Divider } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,8 +14,6 @@ import {
 import Highlighter from "react-highlight-words";
 import { getUserOrders } from "@/lib/apis/orders";
 import dayjs from "dayjs";
-import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
-import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/share/getStatus";
 
 interface DataType {
@@ -34,7 +24,7 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const Orders = () => {
+const UserOrders = () => {
   const [orders, setOrders] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
@@ -285,7 +275,7 @@ const Orders = () => {
       title: "Shipping Address",
       dataIndex: "shippingAddress",
       key: "shippingAddress",
-      render: (value) => <span>{value.address}</span>,
+      render: (value) => <span>{value?.address}</span>,
     },
     // {
     //   title: "Payment Method",
@@ -331,10 +321,8 @@ const Orders = () => {
         bordered
         size="large"
       />
-      {global.action.orderStatusUpdate && <OrderStatusChange />}
-      {global.action.addOrderTracking && <AddOrderTracking />}
     </div>
   );
 };
 
-export default Orders;
+export default UserOrders;

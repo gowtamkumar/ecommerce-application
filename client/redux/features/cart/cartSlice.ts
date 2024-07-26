@@ -23,7 +23,6 @@ export const cartSlice = createSlice({
   reducers: {
     addCart: (state, action: PayloadAction<any>): any => {
       const { id } = action.payload;
-      console.log("🚀 ~ action.payload:", action.payload);
 
       const existingProductIndex = state.carts.findIndex(
         (item: any) => item.id === action.payload.id
@@ -37,8 +36,6 @@ export const cartSlice = createSlice({
           productId: +id,
         });
       }
-      console.log("state.carts", state.carts);
-
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     clearCart: (state): any => {
