@@ -237,6 +237,11 @@ export const getMe = asyncHandler(
       "orders",
       "products",
       "product",
+      "productVariants.price",
+      "discount.discountType",
+      "discount.value",
+      "tax.value",
+      "reviews",
       "shippingAddress",
       "orderDeliveries",
       "wishlists",
@@ -248,7 +253,10 @@ export const getMe = asyncHandler(
     qb.leftJoin("user.orderDeliveries", "orderDeliveries");
     qb.leftJoin("user.wishlists", "wishlists");
     qb.leftJoin("wishlists.product", "product");
-
+    qb.leftJoin("product.productVariants", "productVariants");
+    qb.leftJoin("product.discount", "discount");
+    qb.leftJoin("product.tax", "tax");
+    qb.leftJoin("product.reviews", "reviews");
     qb.where({ id: req.id });
 
     const user = await qb.getOne();
@@ -433,6 +441,8 @@ export const updateUser = asyncHandler(
     const { id } = req.params;
 
     const validation = updateUserValidationSchema.safeParse(req.body);
+
+    console.log("validation", validation.error);
 
     if (!validation.success) {
       return res.status(401).json({

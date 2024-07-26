@@ -29,7 +29,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
     dispatch(
       addCart({
         ...value,
-        discountA: (productDiscountCalculation(value) || 0),
+        discountA: productDiscountCalculation(value) || 0,
         tax: taxAmount,
         price,
       })
@@ -101,10 +101,10 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
           ৳{" "}
           {product.discountId
             ? (
-              +price +
-              +taxAmount -
-              productDiscountCalculation(product)
-            ).toFixed(2)
+                +price +
+                +taxAmount -
+                productDiscountCalculation(product)
+              ).toFixed(2)
             : (+price + +taxAmount || 0).toFixed(2)}
         </span>
         {product?.discountId ? (

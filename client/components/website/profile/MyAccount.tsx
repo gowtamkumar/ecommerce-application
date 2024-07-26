@@ -46,6 +46,8 @@ export default function MyAccount({ user }: any) {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
+
+  if (user.dob) user.dob = dayjs(user.dob);
   // form.setFieldsValue(user);
   const handleSubmit = async (values: any) => {
     const session = await getSession();
@@ -56,7 +58,6 @@ export default function MyAccount({ user }: any) {
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id && (await updateUser(newData));
-      console.log("🚀 ~ result:", result);
 
       if (result.success) {
         dispatch(
@@ -217,8 +218,8 @@ export default function MyAccount({ user }: any) {
               }
               disabled={!edit}
             >
-              <Select.Option value={"Active"}>Active</Select.Option>
-              <Select.Option value={"Inactive"}>Inactive</Select.Option>
+              <Select.Option value="Active">Active</Select.Option>
+              <Select.Option value="Inactive">Inactive</Select.Option>
             </Select>
           </Form.Item>
           <div>

@@ -49,29 +49,6 @@ const ReviewTable = ({ reviews }: any) => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     dispatch(setLoading({ loading: true }));
-  //     const res = await getReviews();
-  //     setReviews(res?.data);
-  //     dispatch(setLoading({ loading: false }));
-  //   })();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [global.action]);
-
-  // const handleDelete = async (id: string) => {
-  //   try {
-  //     dispatch(setLoading({ delete: true }));
-  //     await deleteReview(id);
-  //     setTimeout(async () => {
-  //       dispatch(setLoading({ delete: false }));
-  //       toast.success("Review deleted successfully");
-  //       dispatch(setAction({}));
-  //     }, 500);
-  //   } catch (error: any) {
-  //     toast.error(error);
-  //   }
-  // };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -296,13 +273,14 @@ const ReviewTable = ({ reviews }: any) => {
   return (
     <Table
       scroll={{ x: "auto" }}
-    
+
       // loading={global.loading.loading}
       columns={columns}
       dataSource={reviews}
       pagination={{ pageSize: 5 }}
       // bordered
       rowHoverable={false}
+      // tableLayout="auto"
       size="small"
     />
   );

@@ -42,7 +42,7 @@ export default function CheckoutPage() {
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
   // const router = useRouter();
-  // console.log("🚀 ~ currentUrl:", currentUrl)
+  console.log("🚀 ~  cart.carts:",  cart.carts)
 
   useEffect(() => {
     async function fetchData() {
@@ -464,7 +464,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-gray-600 mt-2">
                   <span>Shipping</span>
-                  <span> ৳ {(150 || 0).toFixed(2)}.</span>
+                  <span> ৳ {(150).toFixed(2)}.</span>
                 </div>
                 <div className="flex justify-between font-semibold mt-2">
                   <span>Total</span>

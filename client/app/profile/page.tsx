@@ -4,7 +4,7 @@ import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
 import Orders from "@/components/website/profile/Orders";
 import MyAccount from "@/components/website/profile/MyAccount";
 import { getMe } from "@/lib/apis/user";
-import MyWishlist from "@/components/website/profile/MyWishlist";
+import MyWishlist from "@/components/website/profile/wishlist/MyWishlist";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
@@ -42,12 +42,6 @@ export default async function Profile() {
           {
             label: `Rating and Review`,
             children: `My Rating and Review`,
-            icon: <AndroidOutlined />,
-          },
-
-          {
-            label: `Passwrod`,
-            children: `update password`,
             icon: <AndroidOutlined />,
           },
         ].map((item: any, i) => {
