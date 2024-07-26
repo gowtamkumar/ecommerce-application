@@ -5,8 +5,10 @@ import {
   setAction,
   setFormValues,
   setLoading,
+  setResponse,
 } from "@/redux/features/global/globalSlice";
 import {
+  Alert,
   Button,
   DatePicker,
   Divider,
@@ -25,6 +27,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import ChangePassword from "./PasswordChange";
+import { getSession } from "next-auth/react";
 
 interface User {
   name: string;
@@ -45,35 +48,55 @@ export default function MyAccount({ user }: any) {
   const global = useSelector(selectGlobal);
   // form.setFieldsValue(user);
   const handleSubmit = async (values: any) => {
+    const session = await getSession();
+    console.log("🚀 ~ session:", session?.user.id);
     try {
-      let newData = { ...values };
+      let newData = { ...values, id: session?.user.id };
+
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id && (await updateUser(newData));
       console.log("🚀 ~ result:", result);
 
+      if (result.success) {
+        dispatch(
+          setResponse({
+            type: "success",
+            message: "Profile update successfully",
+          })
+        );
+        dispatch(setLoading({ saveProfile: false }));
+      } else {
+        dispatch(setResponse({ type: "error", message: result.message }));
+        dispatch(setLoading({ saveProfile: false }));
+        dispatch(setLoading({ save: false }));
+      }
+      console.log("🚀 ~ result:", result);
+
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
+        dispatch(setResponse({}));
       }, 100);
     } catch (err: any) {
       console.log(err);
     }
   };
 
-  const handleClose = () => {
-    dispatch(setAction({}));
-    dispatch(setLoading({}));
-  };
+  // const handleClose = () => {
+  //   dispatch(setAction({}));
+  //   dispatch(setLoading({}));
+  // };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
-  };
+  // const setFormData = (v: any) => {
+  //   const newData = { ...v };
+  //   form.setFieldsValue(newData);
+  //   dispatch(setFormValues(form.getFieldsValue()));
+  // };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
+    dispatch(setLoading({ save: false }));
+    dispatch(setResponse({}));
     setEdit(false);
     if (newData.dob) newData.dob = dayjs(newData.dob);
     if (newData?.id) {
@@ -110,6 +133,13 @@ export default function MyAccount({ user }: any) {
           </Button>
         </div>
       </div>
+      {global.response.type && (
+        <Alert
+          className="p-0 m-0"
+          message={`${global.response.message}`}
+          type={global.response.type}
+        />
+      )}
       <div>
         <Form
           {...layout}

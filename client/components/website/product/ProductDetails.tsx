@@ -58,13 +58,13 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
         productId: productId,
       });
 
-      if (res.status === 500) {
-        dispatch(setResponse({ type: "error", message: res.message }));
-      } else {
-        dispatch(
-          setResponse({ type: "success", message: "successfully Added" })
-        );
-      }
+      // if (res.status === 500) {
+      //   dispatch(setResponse({ type: "error", message: res.message }));
+      // } else {
+      //   dispatch(
+      //     setResponse({ type: "success", message: "successfully Added" })
+      //   );
+      // }
       setTimeout(() => {
         dispatch(setResponse({}));
       }, 2000);

@@ -1,14 +1,15 @@
-import { Button, Divider, Form, Input } from "antd";
+import { Alert, Button, Divider, Form, Input } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
-  setAction,
   setLoading,
+  setResponse,
 } from "@/redux/features/global/globalSlice";
-import { getSession } from "next-auth/react";
+
+import { updatePassword } from "@/lib/apis/user";
 
 export default function ChangePassword() {
   const [changePassword, setChangePassword] = useState(false);
@@ -28,18 +29,28 @@ export default function ChangePassword() {
   // }, []);
 
   const handleSubmit = async (values: any) => {
-    const session = await getSession();
     try {
-      let newData = { ...values, id: session?.user.id };
+      let newData = { ...values };
 
-      return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      // const result = newData.id && (await updateUser(newData));
+      // return console.log("newData:", newData);
+      dispatch(setLoading({ savePassword: true }));
+      const res = await updatePassword(newData);
+      if (res.success) {
+        dispatch(
+          setResponse({
+            type: "success",
+            message: "Password update successfully",
+          })
+        );
+        dispatch(setLoading({ savePassword: false }));
+      } else {
+        dispatch(setResponse({ type: "error", message: res.message }));
+        dispatch(setLoading({ savePassword: false }));
+      }
 
       setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-      }, 100);
+        dispatch(setResponse({}));
+      }, 5000);
     } catch (err: any) {
       console.log(err);
     }
@@ -71,6 +82,13 @@ export default function ChangePassword() {
           <div>
             <h3>Change Password</h3>{" "}
           </div>
+          {global.response.type && (
+            <Alert
+              className="p-0 m-0"
+              message={`${global.response.message}`}
+              type={global.response.type}
+            />
+          )}
         </Divider>
 
         <div hidden={changePassword}>
@@ -87,9 +105,9 @@ export default function ChangePassword() {
         autoComplete="off"
         scrollToFirstError={true}
       >
-        <Form.Item name="id" hidden className="m-2">
+        {/* <Form.Item name="id" hidden className="m-2">
           <Input />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           name="currentPassword"
@@ -160,7 +178,7 @@ export default function ChangePassword() {
             size="small"
             type="primary"
             htmlType="submit"
-            loading={global.loading.save}
+            loading={global.loading.savePassword}
           >
             Update Password
           </Button>

@@ -39,7 +39,7 @@ export class UserEntity {
   @Column({ unique: true, nullable: true })
   phone?: string;
 
-  @Column({ nullable: true })
+  @Column({nullable: true })
   dob?: string;
 
   @Column({ type: "enum", enum: GenderEnum, nullable: true })

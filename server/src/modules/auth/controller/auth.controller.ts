@@ -14,7 +14,10 @@ import { sendEmail } from "../../../middlewares/sendMail.middleware";
 import { UserEntity } from "../model/user.entity";
 import { getDBConnection } from "../../../config/db";
 import { UpdateUserDto } from "../model/dtos";
-import { userValidationSchema } from "../../../validation";
+import {
+  updateUserValidationSchema,
+  userValidationSchema,
+} from "../../../validation";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -385,6 +388,14 @@ export const updatePassword = asyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
     const { newPassword, currentPassword } = req.body;
 
+    // const validation = userValidationSchema.safeParse(req.body);
+
+    // if (!validation.success) {
+    //   return res.status(401).json({
+    //     message: validation.error.formErrors,
+    //   });
+    // }
+
     const connection = await getDBConnection();
     const userRepository = connection.getRepository(UserEntity);
 
@@ -409,7 +420,6 @@ export const updatePassword = asyncHandler(
     return res.status(200).json({
       success: true,
       msg: "Update password",
-      data: updateData,
     });
   }
 );
@@ -421,6 +431,14 @@ export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const connection = await getDBConnection();
     const { id } = req.params;
+
+    const validation = updateUserValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
 
     const userRepository = await connection.getRepository(UserEntity);
 

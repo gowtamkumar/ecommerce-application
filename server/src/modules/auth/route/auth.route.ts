@@ -19,7 +19,7 @@ const router: Router = express.Router();
 router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/me").get(AuthGuard, getMe);
-router.route("/update-password").put(AuthGuard, updatePassword);
+router.route("/update-password").patch(AuthGuard, updatePassword);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password/:token").post(resetPassword);
 router.route("/users").get(getUsers);
