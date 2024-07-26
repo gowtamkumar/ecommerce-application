@@ -20,7 +20,10 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import { deleteShippingAddress, getShippingAddress } from "@/lib/apis/shipping-address";
+import {
+  deleteShippingAddress,
+  getShippingAddress,
+} from "@/lib/apis/shipping-address";
 
 interface DataType {
   key: string;

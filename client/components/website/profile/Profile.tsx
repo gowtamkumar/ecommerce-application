@@ -8,6 +8,7 @@ import { getMe } from "@/lib/apis/user";
 import MyWishlist from "@/components/website/profile/MyWishlist";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import ShippingAddressList from "@/components/dashboard/shipping-address/ShippingAddresslist";
 
 export default function Profile() {
   const [user, setUser] = useState({});
@@ -46,6 +47,19 @@ export default function Profile() {
             children: <MyWishlist user={user} />,
             icon: <AndroidOutlined />,
           },
+
+          // {
+          //   label: `Shipping Address`,
+          //   children: <ShippingAddressList />,
+          //   icon: <AndroidOutlined />,
+          // },
+
+          {
+            label: `My Returns & Cancellations`,
+            children: `My Returns & Cancellations`,
+            icon: <AndroidOutlined />,
+          },
+
           {
             label: `My Point`,
             children: `My Point`,

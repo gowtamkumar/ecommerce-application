@@ -16,10 +16,7 @@ export default function CategoryHeader() {
         <div className="flex items-center space-x-2 mb-4 md:mb-0">
           <div className="text-sm text-gray-600">
             14,304 items found for
-            <span className="text-orange-500 font-semibold">
-              {" "}
-              Blouses & Shirts
-            </span>
+            <p className="text-orange-500 font-semibold"> Blouses & Shirts</p>
           </div>
           <button className="ml-2 py-1 px-4 bg-orange-100 text-orange-600 rounded-full text-sm hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500">
             Show 7.7 products only
