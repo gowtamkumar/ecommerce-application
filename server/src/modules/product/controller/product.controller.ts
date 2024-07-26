@@ -10,10 +10,7 @@ import { Brackets } from "typeorm";
 // @desc Get all Products
 // @route GET /api/v1/products
 // @access Public
-export const getProducts = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getProducts = async (req: Request, res: Response) => {
   try {
     const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
     const productRepository = connection.getRepository(ProductEntity);
@@ -21,11 +18,11 @@ export const getProducts = async (
       search,
       lowPrice,
       highPrice,
-      maxPrice,
-      minPrice,
       brandId,
       status,
       categoryId,
+      minPrice,
+      maxPrice,
     } = req.query;
 
     const qb = productRepository.createQueryBuilder("product");
@@ -61,6 +58,19 @@ export const getProducts = async (
     qb.leftJoin("productVariants.size", "size");
     qb.orderBy("productVariants.id", "DESC");
 
+    if (brandId) qb.andWhere({ brandId });
+    if (status) qb.andWhere({ status });
+
+    if (categoryId)
+      qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
+        categoryIds: categoryId.toString().split(","),
+      });
+    if (minPrice && maxPrice)
+      qb.andWhere(`productVariants.price BETWEEN ${minPrice} AND ${maxPrice}`);
+
+    if (lowPrice) qb.orderBy("productVariants.price", "ASC");
+    if (highPrice) qb.orderBy("productVariants.price", "DESC");
+
     if (search) {
       qb.andWhere(
         new Brackets((db) => {
@@ -80,22 +90,15 @@ export const getProducts = async (
       );
     }
 
-    if (brandId) qb.andWhere({ brandId });
-    if (status) qb.andWhere({ status });
-    // if (minPrice && maxPrice) qb.andWhere(`product.price BETWEEN ${minPrice} AND ${maxPrice}`)
-    // if (minPrice && maxPrice) qb.andWhere(`product.price BETWEEN ${minPrice} AND ${maxPrice}`)
-    // if (lowPrice) qb.orderBy('productVariants.price', "ASC")
-    // if (highPrice) qb.orderBy('productVariants.price', "DESC")
-
     const results = await qb.getMany();
 
     res.status(200).json({
       success: true,
       message: "Fetched all products successfully",
+      totalItem: results.length,
       data: results,
     });
   } catch (error: any) {
-    console.error("Error fetching products:", error);
     res.status(500).json({
       success: false,
       message: "An error occurred while fetching the products.",
