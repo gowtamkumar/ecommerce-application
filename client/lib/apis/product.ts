@@ -17,14 +17,14 @@ export async function saveProduct(data: any) {
   return res.json();
 }
 
-interface GetParams {
-  brandId: any;
-  maxPrice: string;
-  minPrice: string;
-  search: string;
-  lowPrice: string;
-  highPrice: string;
-  status: boolean;
+interface getParams {
+  brandId?: string;
+  maxPrice?: string;
+  minPrice?: string;
+  search?: string;
+  lowPrice?: string;
+  highPrice?: string;
+  status?: boolean;
 }
 
 export async function getProducts() {
@@ -47,13 +47,20 @@ export async function getProducts() {
   }
 }
 
-export async function getPublicProducts(params: GetParams) {
+export async function getPublicProducts(params?: any) {
   // const session = await getServerSession(authOptions);
-  const { brandId, maxPrice, minPrice, search, lowPrice, highPrice, status } =
-    params;
+  const {
+    brandId,
+    maxPrice,
+    minPrice,
+    search,
+    lowPrice,
+    highPrice,
+    status,
+  } = params;
   let queryString = "";
 
-  if (brandId?.length > 0) {
+  if (brandId) {
     queryString += `brandId=${brandId.join(",")}${brandId && "&"}`;
   }
 

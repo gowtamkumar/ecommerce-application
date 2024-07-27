@@ -9,7 +9,6 @@ import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";
 import { GiDeliveryDrone } from "react-icons/gi";
 import ProductCard from "@/components/website/product/productcard/ProductCard";
-// import 'antd/dist/antd.css'
 
 export default function Home() {
   
