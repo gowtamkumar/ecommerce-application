@@ -8,7 +8,7 @@ import { FaAmazonPay } from "react-icons/fa";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { TbTruckReturn } from "react-icons/tb";
 import { GiDeliveryDrone } from "react-icons/gi";
-import ProductCard from "@/components/website/product/productcard/ProductCard";
+import ProductCard from "@/components/website/product/ProductCard";
 
 export default function Home() {
   

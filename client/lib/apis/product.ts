@@ -18,7 +18,8 @@ export async function saveProduct(data: any) {
 }
 
 interface getParams {
-  brandId?: string;
+  brandId?: any;
+  categoryId?: any;
   maxPrice?: string;
   minPrice?: string;
   search?: string;
@@ -47,7 +48,7 @@ export async function getProducts() {
   }
 }
 
-export async function getPublicProducts(params?: any) {
+export async function getPublicProducts(params: getParams) {
   // const session = await getServerSession(authOptions);
   const {
     brandId,
@@ -56,12 +57,20 @@ export async function getPublicProducts(params?: any) {
     search,
     lowPrice,
     highPrice,
-    status,
-  } = params;
-  let queryString = "";
+    categoryId,
+  }: getParams = params;
+  let queryString = "status=Active&";
 
   if (brandId) {
-    queryString += `brandId=${brandId.join(",")}${brandId && "&"}`;
+    queryString += `brandId=${brandId}&`;
+  }
+
+  // if (categoryId.length > 0) {
+  //   queryString += `categoryId=${categoryId.join(",")}${categoryId && "&"}`;
+  // }
+
+  if (categoryId) {
+    queryString += `categoryId=${categoryId}&`;
   }
 
   if (maxPrice) {
@@ -84,6 +93,8 @@ export async function getPublicProducts(params?: any) {
     queryString += `search=${search}&`;
   }
 
+  console.log("🚀 ~ queryString:", queryString);
+
   try {
     const res = await fetch(
       `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`
@@ -97,6 +108,19 @@ export async function getPublicProducts(params?: any) {
     console.log("Failed to fetch data");
   }
 }
+
+// export async function getPublicProducts() {
+//   try {
+//     const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`);
+//     if (!res.ok) {
+//       console.log("Failed to fetch data");
+//     }
+//     const result = await res.json();
+//     return result;
+//   } catch (error) {
+//     console.log("Failed to fetch data");
+//   }
+// }
 
 export async function getProduct(id: string) {
   const session = await getServerSession(authOptions);

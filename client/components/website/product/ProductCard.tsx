@@ -1,20 +1,43 @@
 "use client";
+import { getPublicProducts } from "@/lib/apis/product";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-const ProductCardDetails = ({ products }: any) => {
+const ProductCard = () => {
+  const [products, setProducts] = useState([]);
+  const { category } = useParams();
+  const searchQuery = useSearchParams();
+  const search = searchQuery.get("search");
+  const brandId = searchQuery.get("brandId");
+  console.log("🚀 ~ searchQuery:", searchQuery.get("search"));
+  console.log("🚀 ~ brandId:", searchQuery.get("brandId"));
+
+  useEffect(() => {
+    (async () => {
+      const products = await getPublicProducts({
+        categoryId: category,
+        brandId,
+        search,
+      } as any);
+      setProducts(products.data);
+    })();
+  }, [category, search]);
+
+  // hook
+
   const global = useSelector(selectGlobal);
 
   return (
     <div
-      className={`grid ${
-        global.productView ? "grid-cols-2" : "grid-cols-5"
-      } gap-4`}
+      className={`grid ${global.productView ? "grid-cols-2" : "grid-cols-5"
+        } gap-4`}
     >
-      {(products.data || []).map((item: any, idx: any) => {
+      {(products || []).map((item: any, idx: any) => {
         let price = +item.productVariants[0]?.price;
         let discount = item.discount;
 
@@ -70,4 +93,4 @@ const ProductCardDetails = ({ products }: any) => {
   );
 };
 
-export default ProductCardDetails;
+export default ProductCard;

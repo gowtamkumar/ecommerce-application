@@ -25,6 +25,8 @@ export const getProducts = async (req: Request, res: Response) => {
       maxPrice,
     } = req.query;
 
+    console.log("🚀 ~ status:", status);
+
     const qb = productRepository.createQueryBuilder("product");
     qb.select([
       "product",
@@ -58,13 +60,19 @@ export const getProducts = async (req: Request, res: Response) => {
     qb.leftJoin("productVariants.size", "size");
     qb.orderBy("productVariants.id", "DESC");
 
-    if (brandId) qb.andWhere({ brandId });
+    // if (brandId) qb.andWhere({ brandId });
     if (status) qb.andWhere({ status });
 
     if (categoryId)
       qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
         categoryIds: categoryId.toString().split(","),
       });
+
+    if (brandId)
+      qb.andWhere("product.brandId IN (:...brandIds)", {
+        brandIds: brandId.toString().split(","),
+      });
+
     if (minPrice && maxPrice)
       qb.andWhere(`productVariants.price BETWEEN ${minPrice} AND ${maxPrice}`);
 
