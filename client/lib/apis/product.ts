@@ -61,7 +61,7 @@ export async function getPublicProducts(params: getParams) {
 
   let queryString = "status=Active&";
 
-  if (brandId.length > 0) {
+  if (brandId?.length > 0) {
     queryString += `brandId=${brandId}&`;
   }
 
@@ -69,7 +69,7 @@ export async function getPublicProducts(params: getParams) {
   //   queryString += `categoryId=${categoryId.join(",")}${categoryId && "&"}`;
   // }
 
-  if (categoryId.length > 0) {
+  if (categoryId?.length > 0) {
     queryString += `categoryId=${categoryId}&`;
   }
 

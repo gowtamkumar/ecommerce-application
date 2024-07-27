@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ProductCard = () => {
   const { category } = useParams();
+  console.log("🚀 ~ category:", category);
   const searchQuery = useSearchParams();
   const search = searchQuery.get("search");
   const brandId = searchQuery.get("brandId");
@@ -27,18 +28,18 @@ const ProductCard = () => {
   //   global.productFilter?.categoryId?.toString()
   // );
 
-  const categoryId = global.productFilter?.categoryId?.toString()
+  const categoryId = global.productFilter?.categoryId?.toString() + "," + category && category;
+  console.log("🚀 ~ categoryId:", categoryId)
 
   useEffect(() => {
     (async () => {
       const products = await getPublicProducts({
-        categoryId: category,
+        categoryId,
         brandId,
         search,
-        ...global.productFilter
+        // ...global.productFilter
         // lowPrice: global.productFilter.lowPrice,
         // highPrice: global.productFilter.highPrice,
-        // categoryId: ...
       } as any);
 
       dispatch(setProducts(products.data));
