@@ -19,6 +19,7 @@ export async function saveProduct(data: any) {
 interface getParams {
   brandId?: any;
   categoryId?: any;
+  colorId?: any;
   maxPrice?: string;
   minPrice?: string;
   search?: string;
@@ -51,6 +52,7 @@ export async function getPublicProducts(params: getParams) {
   // const session = await getServerSession(authOptions);
   const {
     brandId,
+    colorId,
     maxPrice,
     minPrice,
     search,
@@ -71,6 +73,10 @@ export async function getPublicProducts(params: getParams) {
 
   if (categoryId?.length > 0) {
     queryString += `categoryId=${categoryId}&`;
+  }
+
+  if (colorId?.length > 0) {
+    queryString += `colorId=${colorId}&`;
   }
 
   if (maxPrice) {

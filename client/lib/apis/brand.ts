@@ -10,7 +10,7 @@ export async function saveBrand(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      'Authorization': `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -21,10 +21,10 @@ export async function getBrands() {
   const session = await getServerSession(authOptions);
 
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/brands`, {
-    cache: "no-cache",
-    headers: {
-      'Authorization': `Bearer ${session?.user.accessToken}`,
-    },
+    // cache: "no-cache",
+    // headers: {
+    //   'Authorization': `Bearer ${session?.user.accessToken}`,
+    // },
   });
   return res.json();
 }
@@ -38,7 +38,7 @@ export async function updateBrand(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -55,7 +55,7 @@ export async function deleteBrand(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     }
   );

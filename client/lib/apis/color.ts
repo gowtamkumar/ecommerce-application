@@ -18,12 +18,15 @@ export async function saveColor(data: any) {
 
 export async function getColors() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/colors`, {
-    cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/colors`
+    //    {
+    //   cache: "no-cache",
+    //   headers: {
+    //     Authorization: `Bearer ${session?.user.accessToken}`,
+    //   },
+    // }
+  );
   return res.json();
 }
 

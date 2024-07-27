@@ -169,8 +169,8 @@ export default function FilterSidebarDetails({
         <Divider orientation="left" className="font-semibold">
           <p className="font-semibold">Rating </p>
         </Divider>
-        {[1, 2, 3, 4, 5].map((item, index) => (
-          <li key={index}>
+        {/* {[1, 2, 3, 4, 5].map((item, index) => ( */}
+          <li>
             <label className="flex items-center">
               <Rate
                 value={global.productFilter.rating}
@@ -178,7 +178,7 @@ export default function FilterSidebarDetails({
               />
             </label>
           </li>
-        ))}
+        {/* ))} */}
       </ul>
     </aside>
   );

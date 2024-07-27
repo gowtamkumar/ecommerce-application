@@ -35,7 +35,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/settings", settingRoute);
   app.use("/api/v1/product-variants", AuthGuard, productVariantRoute);
   app.use("/api/v1/categories", categoriesRoute);
-  app.use("/api/v1/brands", AuthGuard, brandRoutes);
+  app.use("/api/v1/brands", brandRoutes);
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
   app.use("/api/v1/discounts", AuthGuard, discountRoutes);
   app.use("/api/v1/orders", AuthGuard, orderRoutes);
@@ -46,7 +46,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/taxs", AuthGuard, taxRoute);
   app.use("/api/v1/sizes", AuthGuard, sizeRoute);
   app.use("/api/v1/units", AuthGuard, unitRoute);
-  app.use("/api/v1/colors", AuthGuard, colorRoute);
+  app.use("/api/v1/colors", colorRoute);
   app.use("/api/v1/status", AuthGuard, statusRoute);
   app.use("/api/v1/divisions", divisionRoute);
   app.use("/api/v1/districts", districtRoute);

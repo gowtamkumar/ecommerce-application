@@ -14,37 +14,58 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ProductCard = () => {
   const { category } = useParams();
-  console.log("🚀 ~ category:", category);
   const searchQuery = useSearchParams();
   const search = searchQuery.get("search");
-  const brandId = searchQuery.get("brandId");
+  // const brandId = searchQuery.get("brandId");
 
   // hook
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch();
-  // console.log(
-  // typeof
-  //   global.productFilter?.categoryId?.toString()
-  // );
 
-  const categoryId = global.productFilter?.categoryId?.toString() + "," + category && category;
-  console.log("🚀 ~ categoryId:", categoryId)
+  const categoryIds = global.productFilter?.categoryId?.toString();
+  const lowPrice = global.productFilter.lowPrice;
+  const highPrice = global.productFilter.highPrice;
+  const brandId = global.productFilter.brandId;
+  const colorId = global.productFilter.colorId;
+  const rating = global.productFilter.rating;
+
+  let customQuery = "";
+
+  if (category) {
+    customQuery += `${category}`;
+  }
+
+  if (categoryIds) {
+    customQuery += category ? `,${categoryIds}` : categoryIds;
+  }
+
+  // console.log("🚀 ~ customQuery:", global.productFilter);
 
   useEffect(() => {
     (async () => {
       const products = await getPublicProducts({
-        categoryId,
+        categoryId: customQuery,
         brandId,
         search,
-        // ...global.productFilter
-        // lowPrice: global.productFilter.lowPrice,
-        // highPrice: global.productFilter.highPrice,
+        lowPrice,
+        highPrice,
+        colorId,
+        rating,
       } as any);
-
       dispatch(setProducts(products.data));
+      return {};
     })();
-  }, [brandId, category, categoryId, dispatch, global.productFilter, search]);
+  }, [
+    brandId,
+    colorId,
+    customQuery,
+    dispatch,
+    highPrice,
+    lowPrice,
+    rating,
+    search,
+  ]);
 
   return (
     <div

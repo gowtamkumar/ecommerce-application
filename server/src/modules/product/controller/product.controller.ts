@@ -23,9 +23,11 @@ export const getProducts = async (req: Request, res: Response) => {
       categoryId,
       minPrice,
       maxPrice,
+      colorId,
     } = req.query;
 
-    // console.log("🚀 ~ status:", status);
+    console.log("🚀 ~ categoryId:", categoryId);
+    console.log("🚀 ~ brandId:", brandId);
 
     const qb = productRepository.createQueryBuilder("product");
     qb.select([
