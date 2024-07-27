@@ -25,7 +25,7 @@ export const getProducts = async (req: Request, res: Response) => {
       maxPrice,
     } = req.query;
 
-    console.log("🚀 ~ status:", status);
+    // console.log("🚀 ~ status:", status);
 
     const qb = productRepository.createQueryBuilder("product");
     qb.select([

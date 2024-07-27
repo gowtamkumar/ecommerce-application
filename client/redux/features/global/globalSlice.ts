@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
 export interface globalState {
-  [x: string]: any;
   response: any;
   loading: any;
   action: any;
@@ -12,6 +11,7 @@ export interface globalState {
   formValues: any;
   productView: boolean;
   productRating: any;
+  productFilter: any;
 }
 
 // Define the initial state using that type
@@ -24,6 +24,7 @@ const initialState: globalState = {
   formValues: {},
   productView: false,
   productRating: {},
+  productFilter: {},
 };
 
 export const globalSlice = createSlice({
@@ -57,6 +58,10 @@ export const globalSlice = createSlice({
     setProductRating: (state, action: PayloadAction<any>): any => {
       state.productRating = action.payload;
     },
+
+    setProductFilter: (state, action: PayloadAction<any>): any => {
+      state.productFilter = action.payload;
+    },
   },
 });
 
@@ -69,6 +74,7 @@ export const {
   setFormValues,
   setProductRating,
   setProductView,
+  setProductFilter,
 } = globalSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
 export const selectGlobal = (state: RootState) => state.global;

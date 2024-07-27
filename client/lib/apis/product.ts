@@ -1,5 +1,4 @@
 "use server";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 
@@ -59,9 +58,10 @@ export async function getPublicProducts(params: getParams) {
     highPrice,
     categoryId,
   }: getParams = params;
+
   let queryString = "status=Active&";
 
-  if (brandId) {
+  if (brandId.length > 0) {
     queryString += `brandId=${brandId}&`;
   }
 
@@ -69,7 +69,7 @@ export async function getPublicProducts(params: getParams) {
   //   queryString += `categoryId=${categoryId.join(",")}${categoryId && "&"}`;
   // }
 
-  if (categoryId) {
+  if (categoryId.length > 0) {
     queryString += `categoryId=${categoryId}&`;
   }
 
@@ -93,7 +93,7 @@ export async function getPublicProducts(params: getParams) {
     queryString += `search=${search}&`;
   }
 
-  console.log("🚀 ~ queryString:", queryString);
+  console.log("🚀 ~ lowPrice:", queryString);
 
   try {
     const res = await fetch(

@@ -1,26 +1,21 @@
-import CategoryHeader from "@/components/website/category/CategoryHeader";
-import CategorySidebar from "@/components/website/category/CategorySidebar";
-import WebFooter from "@/components/website/Footer";
-import Header from "@/components/website/header/Header";
-import ProductCard from "@/components/website/product/ProductCard";
-import { getProducts } from "@/lib/apis/product";
-import { Divider } from "antd";
-import { useParams } from "next/navigation";
 import React from "react";
+import Header from "@/components/website/header/Header";
+import FilterSidebar from "@/components/website/product-filter/FilterSidebar";
+import CategoryHeader from "@/components/website/product-filter/FilterHeader";
+import { Divider } from "antd";
+import ProductCard from "@/components/website/product/ProductCard";
+import WebFooter from "@/components/website/Footer";
 
 export default function SingleCategory() {
-  // const params = useParams();
-  // console.log("🚀 ~ params:", params)
-
   return (
     <>
       <Header />
       <section className="lg:w-8/12 mx-auto">
         <div className="grid grid-cols-12">
-          <div className="col-span-3">
-            <CategorySidebar />
+          <div className="col-span-2">
+            <FilterSidebar />
           </div>
-          <div className="col-span-9">
+          <div className="col-span-10 p-3">
             <CategoryHeader />
             <Divider />
             <ProductCard />

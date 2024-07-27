@@ -1,13 +1,37 @@
 "use client";
 import {
   selectGlobal,
+  setProductFilter,
   setProductView,
 } from "@/redux/features/global/globalSlice";
+import { selectProduct } from "@/redux/features/products/productSlice";
 import { Button, Select } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-export default function CategoryHeader() {
+export default function FilterHeader() {
+  const global = useSelector(selectGlobal);
+  const { products } = useSelector(selectProduct);
   const dispatch = useDispatch();
+
+  const handleSort = (value: any) => {
+    if (value === "lowPrice") {
+      dispatch(
+        setProductFilter({
+          ...global.productFilter,
+          lowPrice: true,
+          highPrice: false,
+        })
+      );
+    } else {
+      dispatch(
+        setProductFilter({
+          ...global.productFilter,
+          lowPrice: false,
+          highPrice: true,
+        })
+      );
+    }
+  };
 
   return (
     <div className="py-2">
@@ -15,30 +39,24 @@ export default function CategoryHeader() {
         {/* Item Count and Filter */}
         <div className="flex items-center space-x-2 mb-4 md:mb-0">
           <div className="text-sm text-gray-600">
-            14,304 items found for
-            <p className="text-orange-500 font-semibold"> Blouses & Shirts</p>
+            {products?.length || 0} items found for
+            <span className="text-orange-500 font-semibold">
+              Need to show filter category
+            </span>
           </div>
-          <button className="ml-2 py-1 px-4 bg-orange-100 text-orange-600 rounded-full text-sm hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500">
-            Show 7.7 products only
-          </button>
         </div>
 
         {/* Sorting and View Options */}
         <div className="flex items-center space-x-4">
           <div className="flex items-center">
             <span className="text-sm text-gray-600">Sort By:</span>
-            <Select defaultValue={"Select One"} style={{ width: 150 }}>
-              {[
-                "Best Match",
-                "Top Seles",
-                "Newest Arrivals",
-                "Price Low to High",
-                "Price Hight to Low",
-              ].map((item, idx) => (
-                <Select.Option key={idx} value={item}>
-                  {item}
-                </Select.Option>
-              ))}
+            <Select
+              defaultValue={"Select One"}
+              style={{ width: 150 }}
+              onChange={(value) => handleSort(value)}
+            >
+              <Select.Option value="lowPrice">Price Low to High</Select.Option>
+              <Select.Option value="highPrice">Price High to Low</Select.Option>
             </Select>
           </div>
           <div className="flex items-center">
