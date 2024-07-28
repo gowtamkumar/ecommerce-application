@@ -41,7 +41,7 @@ export default function FilterSidebarDetails({
   brands: [Brands];
   colors: [Colors];
 }) {
-  const [price, setPrice] = useState({});
+  const [price, setPrice] = useState({} as any);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -51,6 +51,7 @@ export default function FilterSidebarDetails({
 
   const filterClear = () => {
     dispatch(setProductFilter({}));
+    setPrice({});
   };
 
   interface Option {
@@ -73,25 +74,29 @@ export default function FilterSidebarDetails({
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Price </p>
       </Divider>
-      <div>
-        <Space.Compact>
-          <InputNumber
-            placeholder="Min"
-            onChange={(value) => setPrice({ ...price, minPrice: value })}
-          />
-          <InputNumber
-            placeholder="Max"
-            onChange={(value) => setPrice({ ...price, maxPrice: value })}
-          />
-        </Space.Compact>
-        <Button
-          onClick={() => {
-            dispatch(setProductFilter({ ...global.productFilter, ...price }));
-          }}
-        >
-          Apply
-        </Button>
+      <div className="flex">
+        {/* <Space.Compact> */}
+        <InputNumber
+          placeholder="Min"
+          value={price.minPrice}
+          onChange={(value) => setPrice({ ...price, minPrice: value })}
+        />
+        <InputNumber
+          placeholder="Max"
+          value={price.maxPrice}
+          onChange={(value) => setPrice({ ...price, maxPrice: value })}
+        />
+        {/* </Space.Compact> */}
       </div>
+      <Button
+        onClick={() => {
+          dispatch(setProductFilter({ ...global.productFilter, ...price }));
+        }}
+        type="default"
+        // style={{ width: '100%' }}
+      >
+        Apply
+      </Button>
 
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Discount </p>
@@ -110,7 +115,11 @@ export default function FilterSidebarDetails({
           <label className="flex items-center">
             <Checkbox.Group
               name="categoryId"
-              value={global.productFilter.categoryId}
+              value={
+                global.productFilter?.categoryId?.length
+                  ? global.productFilter?.categoryId
+                  : global.productFilter?.categoryId?.toString()
+              }
               options={(categories || []).map(
                 (item): Option => ({
                   label: item.name,
@@ -165,21 +174,19 @@ export default function FilterSidebarDetails({
         </li>
       </ul>
 
-      <ul className="space-y-2 pb-3">
+      {/* <ul className="space-y-2 pb-3">
         <Divider orientation="left" className="font-semibold">
           <p className="font-semibold">Rating </p>
         </Divider>
-        {/* {[1, 2, 3, 4, 5].map((item, index) => ( */}
-          <li>
-            <label className="flex items-center">
-              <Rate
-                value={global.productFilter.rating}
-                onChange={(value) => handleFilter(value, "rating")}
-              />
-            </label>
-          </li>
-        {/* ))} */}
-      </ul>
+        <li>
+          <label className="flex items-center">
+            <Rate
+              value={global.productFilter.rating}
+              onChange={(value) => handleFilter(value, "rating")}
+            />
+          </label>
+        </li>
+      </ul> */}
     </aside>
   );
 }

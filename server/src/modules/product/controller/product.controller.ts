@@ -24,10 +24,9 @@ export const getProducts = async (req: Request, res: Response) => {
       minPrice,
       maxPrice,
       colorId,
+      discount,
     } = req.query;
-
-    console.log("🚀 ~ categoryId:", categoryId);
-    console.log("🚀 ~ brandId:", brandId);
+    console.log("🚀 ~ discount:", discount);
 
     const qb = productRepository.createQueryBuilder("product");
     qb.select([
@@ -78,8 +77,17 @@ export const getProducts = async (req: Request, res: Response) => {
     if (minPrice && maxPrice)
       qb.andWhere(`productVariants.price BETWEEN ${minPrice} AND ${maxPrice}`);
 
+    if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
+
+    // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
+
     if (lowPrice) qb.orderBy("productVariants.price", "ASC");
     if (highPrice) qb.orderBy("productVariants.price", "DESC");
+
+    if (colorId)
+      qb.andWhere("productVariants.colorId IN (:...colorIds)", {
+        colorIds: colorId.toString().split(","),
+      });
 
     if (search) {
       qb.andWhere(

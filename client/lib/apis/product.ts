@@ -21,10 +21,12 @@ interface getParams {
   categoryId?: any;
   colorId?: any;
   maxPrice?: string;
+  rating?: string;
   minPrice?: string;
   search?: string;
   lowPrice?: string;
   highPrice?: string;
+  discount?: number;
   status?: boolean;
 }
 
@@ -59,6 +61,8 @@ export async function getPublicProducts(params: getParams) {
     lowPrice,
     highPrice,
     categoryId,
+    rating,
+    discount,
   }: getParams = params;
 
   let queryString = "status=Active&";
@@ -93,6 +97,14 @@ export async function getPublicProducts(params: getParams) {
 
   if (highPrice) {
     queryString += `highPrice=${highPrice}&`;
+  }
+
+  if (discount) {
+    queryString += `discount=${discount}&`;
+  }
+
+  if (rating) {
+    queryString += `rating=${rating}&`;
   }
 
   if (search) {

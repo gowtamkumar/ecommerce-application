@@ -9,14 +9,14 @@ import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const ProductCard = () => {
   const { category } = useParams();
   const searchQuery = useSearchParams();
-  const search = searchQuery.get("search");
-  // const brandId = searchQuery.get("brandId");
+  const searchParams = searchQuery.get("search");
+  const categoryIdParams = searchQuery.get("categoryId");
 
   // hook
   const global = useSelector(selectGlobal);
@@ -29,6 +29,10 @@ const ProductCard = () => {
   const brandId = global.productFilter.brandId;
   const colorId = global.productFilter.colorId;
   const rating = global.productFilter.rating;
+  const minPrice = global.productFilter.minPrice;
+  const maxPrice = global.productFilter.maxPrice;
+  const discount = global.productFilter.discount;
+  const newSearchs = global.productFilter.search;
 
   let customQuery = "";
 
@@ -36,41 +40,55 @@ const ProductCard = () => {
     customQuery += `${category}`;
   }
 
-  if (categoryIds) {
-    customQuery += category ? `,${categoryIds}` : categoryIds;
+  if (categoryIdParams) {
+    customQuery += `${categoryIdParams}`;
   }
 
-  // console.log("🚀 ~ customQuery:", global.productFilter);
+  if (categoryIds) {
+    customQuery +=
+      category || categoryIdParams ? `,${categoryIds}` : categoryIds;
+  }
+
+  let newSearch = "";
+
+  if (searchParams) {
+    newSearch += `${searchParams}`;
+  }
+
+  if (newSearchs) {
+    newSearch += newSearchs;
+  }
 
   useEffect(() => {
-    (async () => {
-      const products = await getPublicProducts({
-        categoryId: customQuery,
-        brandId,
-        search,
-        lowPrice,
-        highPrice,
-        colorId,
-        rating,
-      } as any);
-      dispatch(setProducts(products.data));
-      return {};
-    })();
-  }, [
-    brandId,
-    colorId,
-    customQuery,
-    dispatch,
-    highPrice,
-    lowPrice,
-    rating,
-    search,
-  ]);
+    const fetchProducts = async () => {
+      try {
+        const products = await getPublicProducts({
+          categoryId: customQuery,
+          brandId,
+          search: newSearch,
+          lowPrice,
+          highPrice,
+          colorId,
+          rating,
+          maxPrice,
+          minPrice,
+          discount,
+        });
+        dispatch(setProducts(products?.data));
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    fetchProducts();
+    console.log("Fetching products with new filter...");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [global.productFilter]);
 
   return (
     <div
       className={`grid ${
-        global.productView ? "grid-cols-2" : "grid-cols-5"
+        global.productView ? "grid-cols-2" : "md:grid-cols-5"
       } gap-4`}
     >
       {(products || []).map((item: any, idx: any) => {

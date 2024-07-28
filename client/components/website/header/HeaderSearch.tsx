@@ -1,17 +1,56 @@
 "use client";
+import { useEffect, useState } from "react";
+import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { Input, Select } from "antd";
+import { useDispatch } from "react-redux";
+import { usePathname, useRouter } from "next/navigation";
+
 export default function HeaderSearch({ categories = [] }: any) {
+  const [serach, setSearch] = useState({} as any);
+  // hook
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
 
-
-  const { Option } = Select;
   const { Search } = Input;
 
+  useEffect(() => {
+    const ValidPath = ["products", "category"].includes(pathname.split("/")[1]);
+    if (!ValidPath) {
+      localStorage.removeItem("searchData");
+    }
+    dispatch(setProductFilter({}));
+  }, [pathname, dispatch]);
+
+  const getData =
+    typeof localStorage !== "undefined"
+      ? JSON.parse(localStorage?.getItem("searchData") || "{}")
+      : {};
+
   const selectBefore = (
-    <Select defaultValue="Select Category">
+    <Select
+      defaultValue="Select Category"
+      value={getData.categoryId}
+      onChange={(value) => {
+        if (getData) {
+          localStorage.setItem(
+            "searchData",
+            JSON.stringify({ ...getData, categoryId: value })
+          );
+        } else {
+          localStorage.setItem(
+            "searchData",
+            JSON.stringify({ categoryId: value })
+          );
+        }
+        setSearch({ ...serach, categoryId: value });
+      }}
+      allowClear
+    >
       {(categories?.data || []).map((categoroy: any) => (
-        <Option key={categoroy.id} value={categoroy.id}>
+        <Select.Option key={categoroy.id} value={categoroy.id}>
           {categoroy.name}
-        </Option>
+        </Select.Option>
       ))}
     </Select>
   );
@@ -20,8 +59,23 @@ export default function HeaderSearch({ categories = [] }: any) {
       <Search
         addonBefore={selectBefore}
         width={100}
-        size="large"
-      // defaultValue="mysite"
+        value={getData.search}
+        size="middle"
+        onSearch={() => {
+          router.push(
+            `/products?categoryId=${getData.categoryId}&search=${getData.search}`
+          );
+        }}
+        onChange={({ target }) => {
+          const getData = JSON.parse(
+            localStorage.getItem("searchData") || "{}"
+          );
+          localStorage.setItem(
+            "searchData",
+            JSON.stringify({ ...getData, search: target.value })
+          );
+          setSearch({ ...serach, search: target.value });
+        }}
       />
     </div>
   );
