@@ -8,11 +8,13 @@ import { backupDB } from "./lib/apis/backupDB";
 
 const handleBackup = async () => {
   const date = new Date();
-  const currentDate = `${date.getFullYear()}.${date.getMonth() + 1
-    }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
+  const currentDate = `${date.getFullYear()}.${
+    date.getMonth() + 1
+  }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
 
   try {
     const response = await backupDB();
+    console.log("🚀 ~ response:", response);
     // const response = await fetch(
     //   `http://localhost:3900/api/v1/settings/db-backup`,
     //   {

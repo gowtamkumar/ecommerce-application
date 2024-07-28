@@ -50,7 +50,6 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 
 export const getUserOrders = asyncHandler(async (req: any, res: Response) => {
   const userId = req.id;
-  console.log("🚀 ~ userId:", userId);
   const connection = await getDBConnection();
   const orderRepository = connection.getRepository(OrderEntity);
 
@@ -75,7 +74,6 @@ export const getUserOrders = asyncHandler(async (req: any, res: Response) => {
   qb.leftJoin("order.shippingAddress", "shippingAddress");
   if (userId) qb.where({ userId });
   const results = await qb.getMany();
-  console.log("🚀 ~ results:", results);
 
   return res.status(200).json({
     success: true,

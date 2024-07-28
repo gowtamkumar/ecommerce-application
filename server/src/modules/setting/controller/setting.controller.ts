@@ -15,11 +15,12 @@ export const dbBackup = asyncHandler(async (req: Request, res: Response) => {
   const backupFile = `database-backup-${currentDate}.sql`;
 
   const backupCommand = `PGPASSWORD="${process.env.DB_PASSWORD}" pg_dump -U ${process.env.DB_USERNAME} -p ${process.env.DB_PORT} -h ${process.env.DB_HOST} ${process.env.DB_DATABASE} > ${backupFile}`;
+  console.log("checking backup database");
 
   exec(backupCommand, (error, stdout, stderr) => {
     if (error) {
       console.error(`Backup process failed: ${error.message}`);
-      return res.status(500).json({ error: "Backup failed" });
+      return res.status(500).json({ error: "Backup failed server" });
     }
 
     if (fs.existsSync(backupFile)) {
