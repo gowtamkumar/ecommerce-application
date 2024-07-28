@@ -3,33 +3,54 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
-import RelatedProducts from "./RelatedProducts";
 import { Breadcrumb, Spin } from "antd";
 import RatingProduct from "./RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
 import { getProduct } from "@/lib/apis/product";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setLoading,
+  setProductFilter,
+} from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReviewTable from "./review-rating/ReviewTable";
+import ProductCard from "./ProductCard";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
+
   const { id } = useParams();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
   useEffect(() => {
-    dispatch(setLoading({ loading: true }));
-    (async () => {
-      const newProduct = await getProduct(id.toString());
-      setProduct({
-        ...newProduct?.data,
-        qty: 1,
-        selectProductVarient: newProduct?.data?.productVariants[0],
-      });
-      dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action, id]);
+    const fetchProductData = async () => {
+      dispatch(setLoading({ loading: true }));
+
+      try {
+        const newProduct = await getProduct(id.toString());
+        if (newProduct?.data) {
+          setProduct({
+            ...newProduct.data,
+            qty: 1,
+            selectProductVarient: newProduct.data.productVariants[0],
+          });
+
+          const categoryIds = newProduct.data.productCategories
+            .map((item: { categoryId: number }) => item.categoryId)
+            .join(",");
+
+          dispatch(setProductFilter({ categoryId: categoryIds }));
+        }
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+      } finally {
+        dispatch(setLoading({ loading: false }));
+      }
+    };
+
+    fetchProductData();
+  }, [dispatch, id]);
 
   const productRating = product?.reviews?.reduce(
     (
@@ -62,26 +83,26 @@ export default function SingleProduct() {
     }
   );
 
-  const products = {
-    name: "New LED Watch",
-    description: "A stylish watch available in multiple colors.",
-    price: 199,
-    originalPrice: 580,
-    discount: 66,
-    colors: ["Black", "Red", "Blue", "Orange"],
-    images: ["/images/watch1.jpg", "/images/watch2.jpg"],
-    ratings: 37,
-    seller: {
-      name: "AltasawuQ",
-      rating: 68,
-      onTime: 86,
-      response: 46,
-    },
-    delivery: {
-      price: 120,
-      estimatedDate: "6 Jul - 10 Jul",
-    },
-  };
+  // const products = {
+  //   name: "New LED Watch",
+  //   description: "A stylish watch available in multiple colors.",
+  //   price: 199,
+  //   originalPrice: 580,
+  //   discount: 66,
+  //   colors: ["Black", "Red", "Blue", "Orange"],
+  //   images: ["/images/watch1.jpg", "/images/watch2.jpg"],
+  //   ratings: 37,
+  //   seller: {
+  //     name: "AltasawuQ",
+  //     rating: 68,
+  //     onTime: 86,
+  //     response: 46,
+  //   },
+  //   delivery: {
+  //     price: 120,
+  //     estimatedDate: "6 Jul - 10 Jul",
+  //   },
+  // };
 
   if (global.loading.loading) {
     return (
@@ -116,7 +137,9 @@ export default function SingleProduct() {
       </div>
       <div className=" bg-white  grid grid-cols-1 md:grid-cols-4">
         <div className="col-span-1">
-          <ProductImageGallery images={products.images} />
+          <ProductImageGallery
+            images={["/images/watch1.jpg", "/images/watch2.jpg"]}
+          />
         </div>
         <div className="col-span-2">
           <ProductDetails
@@ -136,7 +159,8 @@ export default function SingleProduct() {
       <ReviewTable reviews={product.reviews} />
       <DescriptionProduct product={product} />
       <section className="py-5">
-        <RelatedProducts products={[products]} />
+        <ProductCard />
+        {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
       </section>
     </div>
   );

@@ -64,6 +64,7 @@ export async function getPublicProducts(params: getParams) {
     rating,
     discount,
   }: getParams = params;
+    console.log("🚀 ~ categoryId:", categoryId)
 
   let queryString = "status=Active&";
 

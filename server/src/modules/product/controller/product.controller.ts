@@ -26,8 +26,6 @@ export const getProducts = async (req: Request, res: Response) => {
       colorId,
       discount,
     } = req.query;
-    console.log("🚀 ~ discount:", discount);
-
     const qb = productRepository.createQueryBuilder("product");
     qb.select([
       "product",
@@ -156,6 +154,7 @@ export const getProduct = asyncHandler(
         "discount.discountType",
         "discount.value",
         "discount.type",
+        "productCategories",
       ]);
       qb.leftJoin("product.user", "user");
       qb.leftJoin("product.brand", "brand");

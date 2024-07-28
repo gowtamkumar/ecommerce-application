@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { setProductFilter } from "@/redux/features/global/globalSlice";
+import {
+  setProductFilter,
+  setProductView,
+} from "@/redux/features/global/globalSlice";
 import { Input, Select } from "antd";
 import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,6 +23,7 @@ export default function HeaderSearch({ categories = [] }: any) {
       localStorage.removeItem("searchData");
     }
     dispatch(setProductFilter({}));
+    dispatch(setProductView(false)); // this state use for product grid
   }, [pathname, dispatch]);
 
   const getData =
