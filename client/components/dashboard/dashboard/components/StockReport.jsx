@@ -4,18 +4,22 @@ import { Card, Statistic, Tabs, Tag } from "antd";
 import StockDataTable from "../tables/StockDataTable";
 
 const StockReport = ({ stockRecords }) => {
-  const [tabKey, setTabKey] = useState("Sale");
+  const [tabKey, setTabKey] = useState("Order");
 
   return (
     <div className="grid grid-cols-6 gap-2">
       <div className="col-span-2 p-0 bg-white mb-3 ">
-        <Card title="Recent Stock History" size="small">
+        <Card title="Recent History" size="small">
           <div className="alert alert-success">
-            Total Sales Items
+            Total Order Items
             <Statistic value={stockRecords?.totalSaleItems || "0"} />
           </div>
           <div className="alert alert-warning">
-            Total Sales Returns Items
+            Total Sales Items
+            <Statistic value={stockRecords?.totalSaleReturnItems || "0"} />
+          </div>
+          <div className="alert alert-warning">
+            active user
             <Statistic value={stockRecords?.totalSaleReturnItems || "0"} />
           </div>
         </Card>
@@ -27,15 +31,15 @@ const StockReport = ({ stockRecords }) => {
           onChange={(key) => setTabKey(key)}
           items={[
             {
-              label: "Order",
+              label: "Recent Order",
               key: "Order",
               children: (
                 <StockDataTable type={tabKey} orderData={stockRecords?.sales} />
               ),
             },
             {
-              label: "Order Return",
-              key: "Order_Return",
+              label: "Sale",
+              key: "Sale",
               children: (
                 <StockDataTable
                   type={tabKey}

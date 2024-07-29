@@ -1,8 +1,12 @@
 "use client";
 import React, { useEffect } from "react";
-import { Button, Form, Input } from "antd";
+import { Alert, Button, Form, Input } from "antd";
 import { useRouter } from "next/navigation";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setLoading,
+  setResponse,
+} from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getSession, signIn } from "next-auth/react";
 
@@ -26,15 +30,16 @@ const Login = () => {
     dispatch(setLoading({ save: true }));
     try {
       let newData = { ...values };
-
       // return console.log("newData:", newData);
-      const result = await signIn("credentials", {
+      const result: any = await signIn("credentials", {
         ...newData,
         redirect: false,
       });
       const getSesson: any = await getSession();
-      console.log("🚀 ~ result:", result);
 
+      if (result.status === 401) {
+        dispatch(setResponse({ type: "error", message: result.error }));
+      }
       if (getSesson?.user?.role === "Admin" && result?.status === 200) {
         router.push("/dashboard");
         return;
@@ -46,13 +51,8 @@ const Login = () => {
       }
 
       setTimeout(async () => {
-        console.log("🚀 ~ result:", result);
-        console.log("🚀 ~ result:", result);
         dispatch(setLoading({ save: false }));
-        // toast.success(
-        //   `Address ${newData?.id ? "Updated" : "Created"} Successfully`
-        // );
-      }, 100);
+      }, 1000);
     } catch (err: any) {
       console.log(err);
     }
@@ -83,7 +83,10 @@ const Login = () => {
                 },
               ]}
             >
-              <Input placeholder="Enter " />
+              <Input
+                placeholder="Enter "
+                onInput={() => dispatch(setResponse({}))}
+              />
             </Form.Item>
             <Form.Item
               name="password"
@@ -95,8 +98,20 @@ const Login = () => {
                 },
               ]}
             >
-              <Input.Password placeholder="Enter " />
+              <Input.Password
+                placeholder="Enter "
+                onInput={() => dispatch(setResponse({}))}
+              />
             </Form.Item>
+            {global.response.type && (
+              <div className="pb-3">
+                <Alert
+                  className="m-0"
+                  message={`${global.response.message}`}
+                  type={global.response.type}
+                />
+              </div>
+            )}
             <Button
               // size="small"
               className="w-full"

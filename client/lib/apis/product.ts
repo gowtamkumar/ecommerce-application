@@ -35,7 +35,6 @@ export async function getProducts() {
 
   try {
     const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
-      cache: "no-cache",
       headers: {
         Authorization: `Bearer ${session?.user.accessToken}`,
       },
@@ -64,7 +63,6 @@ export async function getPublicProducts(params: getParams) {
     rating,
     discount,
   }: getParams = params;
-    console.log("🚀 ~ categoryId:", categoryId)
 
   let queryString = "status=Active&";
 
@@ -112,11 +110,10 @@ export async function getPublicProducts(params: getParams) {
     queryString += `search=${search}&`;
   }
 
-  console.log("🚀 ~ lowPrice:", queryString);
-
   try {
     const res = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`
+      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`,
+      { cache: "force-cache" }
     );
     if (!res.ok) {
       console.log("Failed to fetch data");

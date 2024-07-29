@@ -21,6 +21,7 @@ import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { deleteProduct, getProducts } from "@/lib/apis/product";
+import { useRouter } from "next/navigation";
 
 interface DataType {
   key: string;
@@ -45,6 +46,7 @@ const ProductList: React.FC = () => {
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const route = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -297,10 +299,10 @@ const ProductList: React.FC = () => {
                   stockQty,
                 })
               );
-
+              route.push(`/dashboard/products/${value.id}`);
               dispatch(
                 setAction({
-                  type: ActionType.UPDATE,
+                  // type: ActionType.UPDATE,
                   payload: { ...value, productCategories, productVariants },
                 })
               );

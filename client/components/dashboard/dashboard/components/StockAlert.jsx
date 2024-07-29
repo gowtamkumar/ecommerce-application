@@ -73,7 +73,7 @@ const StockAlert = ({ stockReports }) => {
 
   return (
     <Card
-      title="Stock Alert"
+      title="Top Selling product"
       size="small"
       extra={
         <Button

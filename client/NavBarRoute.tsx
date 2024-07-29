@@ -51,6 +51,20 @@ const navbarRoute = [
     label: <Link href="/dashboard">Dashboard</Link>,
     route: "true",
   },
+
+  {
+    key: "product",
+    label: "Product",
+    disabled: "true",
+    route: "true",
+  },
+
+  {
+    key: "New Product",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/products/new">New Product</Link>,
+    route: "true",
+  },
   {
     key: "Product",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
@@ -120,9 +134,15 @@ const navbarRoute = [
   },
 
   {
-    key: "report",
+    key: "report_section",
     label: "Report",
     disabled: "true",
+    route: "true",
+  },
+  {
+    key: "report",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/report">Report</Link>,
     route: "true",
   },
   {
@@ -151,7 +171,26 @@ const navbarRoute = [
       },
     ],
   },
-
+  {
+    key: "setting",
+    label: "Setting",
+    disabled: "true",
+    route: "true",
+  },
+  {
+    key: "location",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: "Manage location ",
+    route: "true",
+    children: [
+      {
+        key: "country",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/country">Country</Link>,
+        route: "true",
+      },
+    ],
+  },
   {
     key: "user",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,

@@ -83,6 +83,15 @@ const Dashboard = () => {
       </div>
       <div className="grid grid-cols-4 gap-2">
         <WidgetStats
+          title="TOTAL SALE"
+          value={summary?.Purchase.totalAmount || "0.00"}
+          percentage={-2.65}
+          subtitle="since last week"
+          icon={<ShoppingOutlined />}
+          color="primary"
+        />
+
+        <WidgetStats
           title="TOTAL ORDER"
           value={summary?.Sale.totalAmount || "0.00"}
           percentage={3.65}
@@ -90,14 +99,6 @@ const Dashboard = () => {
           icon={<LineChartOutlined />}
           color="primary"
         />
-        {/* <WidgetStats
-          title="TOTAL PURCHASE"
-          value={summary?.Purchase.totalAmount || "0.00"}
-          percentage={-2.65}
-          subtitle="since last week"
-          icon={<ShoppingOutlined />}
-          color="primary"
-        /> */}
 
         <WidgetStats
           title="ORDER RETURN"
@@ -108,26 +109,8 @@ const Dashboard = () => {
           color="primary"
         />
 
-        {/* <WidgetStats
-          title="PURCHASE RETURN"
-          value={summary?.PurchaseReturn.totalAmount || "0.00"}
-          percentage={-2.65}
-          subtitle="since last week"
-          icon={<RetweetOutlined />}
-          color="primary"
-        /> */}
-
         <WidgetStats
-          title="TOTAL PAYMENT RECEIVED"
-          value={summary?.PaymentIn.totalAmount || "0.00"}
-          percentage={-2.65}
-          subtitle="since last week"
-          icon={<DollarOutlined />}
-          color="primary"
-        />
-
-        <WidgetStats
-          title="TOTAL PAYMENT SENT"
+          title="TOTAL VISITOR"
           value={summary?.PaymentOut.totalAmount || "0.00"}
           percentage={-2.65}
           subtitle="since last week"
@@ -142,9 +125,16 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-4 mb-3">
+          Ernings
+          <h1>1. Revenue </h1>
+          <h2>2. Profit</h2>
+      
+          {/* <TopCustomer topCustomers={topCustomers} /> */}
+        </div>
+        <div className="col-span-4 mb-3">
           <TopCustomer topCustomers={topCustomers} />
         </div>
-        <div className="col-span-8 mb-3">
+        <div className="col-span-4 mb-3">
           <StockAlert stockReports={stockReports} />
         </div>
       </div>

@@ -82,8 +82,19 @@ const ProductCard = () => {
 
     fetchProducts();
     console.log("Fetching products with new filter...");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [global.productFilter]);
+  }, [
+    brandId,
+    colorId,
+    customQuery,
+    discount,
+    dispatch,
+    highPrice,
+    lowPrice,
+    maxPrice,
+    minPrice,
+    newSearch,
+    rating,
+  ]);
 
   return (
     <div

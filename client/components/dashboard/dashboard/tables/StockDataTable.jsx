@@ -17,7 +17,7 @@ const StockDataTable = ({ type, orderData }) => {
     switch (type) {
       case "Order":
         return "Customer";
-      case "Order_Return":
+      case "Sale":
         return "Customer";
       default:
         break;

@@ -7,10 +7,12 @@ import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 import ProductList from "@/components/dashboard/product/ProductList";
 import AddProduct from "@/components/dashboard/product/AddProduct";
+import { useParams, useRouter } from "next/navigation";
 
 export default function Product() {
   const [tabKey, setTabKey] = useState("product_list");
   const dispatch = useDispatch();
+  const params = useRouter();
 
   return (
     <div className="container-fluid bg-white p-3  ">
@@ -28,19 +30,20 @@ export default function Product() {
           <Button
             size="small"
             className="capitalize"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                })
-              )
+            onClick={
+              () => params.push("/dashboard/products/new")
+              // dispatch(
+              //   setAction({
+              //     type: ActionType.CREATE,
+              //   })
+              // )
             }
           >
             <PlusOutlined className="mx-1" /> New Product
           </Button>
         }
       />
-      <AddProduct />
+      {/* <AddProduct /> */}
     </div>
   );
 }

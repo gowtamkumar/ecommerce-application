@@ -33,7 +33,7 @@ export default function HeaderSearch({ categories = [] }: any) {
 
   const selectBefore = (
     <Select
-      defaultValue="Select Category"
+      // defaultValue="Select Category"
       value={getData.categoryId}
       onChange={(value) => {
         if (getData) {
@@ -66,9 +66,22 @@ export default function HeaderSearch({ categories = [] }: any) {
         value={getData.search}
         size="middle"
         onSearch={() => {
-          router.push(
-            `/products?categoryId=${getData.categoryId}&search=${getData.search}`
-          );
+          let queryRouter = "";
+          if (getData.categoryId) {
+            queryRouter += `categoryId=${getData.categoryId}&`;
+          }
+          if (getData.search) {
+            queryRouter += `search=${getData.search}&`;
+          }
+          router.push(`/products?${queryRouter}`);
+
+          // dispatch(
+          //   setProductFilter({
+          //     ...global.productFilter,
+          //     categoryId: getData.categoryId,
+          //     search: getData.search,
+          //   })
+          // );
         }}
         onChange={({ target }) => {
           const getData = JSON.parse(
