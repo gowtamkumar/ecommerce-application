@@ -19,10 +19,30 @@ export async function saveShippingCharge(data: any) {
   return res.json();
 }
 
-export async function getShippingCharges() {
+export async function getShippingCharges(params?: any) {
+
+  let queryData = "";
+  if (params?.divisionId) {
+    queryData += `divisionId=${params?.divisionId}`;
+  }
+
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges?${queryData}`,
+    {
+      cache: "no-cache",
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
+  return res.json();
+}
+
+export async function getShippingCharge({ data }: any) {
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/${data.id}`,
     {
       cache: "no-cache",
       headers: {
@@ -37,40 +57,6 @@ export async function updateShippingCharge(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
-  return res.json();
-}
-
-export async function ShippingChargeLike(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/like/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
-  return res.json();
-}
-
-export async function ShippingChargeDisLike(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/dislike/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",

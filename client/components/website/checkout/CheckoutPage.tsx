@@ -33,10 +33,13 @@ import { useEffect, useState } from "react";
 import { getMe } from "@/lib/apis/user";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
+import { getShippingCharges } from "@/lib/apis/shipping-charge";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
   const [shippingAddress, setShippingAddress] = useState([] as any);
+  const [shippingCharge, setShippingCharge] = useState({} as any);
+
   const dispatch = useDispatch();
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
@@ -49,6 +52,13 @@ export default function CheckoutPage() {
       const activeShippingAddress = user.data?.shippingAddress?.find(
         (item: { status: boolean }) => item.status
       );
+      if (activeShippingAddress.divisionId) {
+        const getShippingCharge = await getShippingCharges({
+          divisionId: activeShippingAddress.divisionId,
+        });
+        setShippingCharge(getShippingCharge.data[0]);
+      }
+
       setShippingAddress(user.data?.shippingAddress);
       setCheckoutFormData({
         paymentMethod: "Cash",
@@ -95,7 +105,7 @@ export default function CheckoutPage() {
         netAmount,
         orderTax: taxAmount,
         orderTotalAmount,
-        shippingAmount: 150,
+        shippingAmount: +shippingCharge.shippingAmount || 0,
         discountAmount,
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
@@ -126,6 +136,7 @@ export default function CheckoutPage() {
         dispatch(clearCart());
         setCheckoutFormData({});
         setShippingAddress([]);
+        setShippingCharge({});
       }, 2000);
     } catch (err: any) {
       console.log("🚀 ~ err:", err);
@@ -362,7 +373,11 @@ export default function CheckoutPage() {
                 loading={global.loading.save}
                 disabled={global.loading.save}
               >
-                Confirm Order {(orderTotalAmount + 150 || 0).toFixed(2)} TK.
+                Confirm Order
+                {(
+                  +orderTotalAmount + +shippingCharge.shippingAmount || 0
+                ).toFixed(2)}
+                TK.
               </Button>
             </div>
           </div>
@@ -375,11 +390,21 @@ export default function CheckoutPage() {
               <div className="p-2">
                 <Radio.Group
                   name="shippingAddressId"
-                  onChange={({ target }) => {
+                  onChange={async ({ target }) => {
                     setCheckoutFormData({
                       ...checkoutFormData,
                       shippingAddressId: target.value,
                     });
+
+                    const activeShippingAddress = shippingAddress?.find(
+                      (item: { id: number }) => item.id === target.value
+                    );
+                    if (activeShippingAddress.divisionId) {
+                      const getShippingCharge = await getShippingCharges({
+                        divisionId: activeShippingAddress.divisionId,
+                      });
+                      setShippingCharge(getShippingCharge.data[0]);
+                    }
                   }}
                   value={checkoutFormData?.shippingAddressId}
                 >
@@ -463,15 +488,27 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-gray-600 mt-2">
                   <span>Shipping</span>
-                  <span> ৳ {(150).toFixed(2)}.</span>
+                  <span> ৳ {(+shippingCharge.shippingAmount).toFixed(2)}.</span>
                 </div>
                 <div className="flex justify-between font-semibold mt-2">
                   <span>Total</span>
-                  <span>৳ {(orderTotalAmount + 150 || 0).toFixed(2)}.</span>
+                  <span>
+                    ৳{" "}
+                    {(
+                      orderTotalAmount + +shippingCharge.shippingAmount || 0
+                    ).toFixed(2)}
+                    .
+                  </span>
                 </div>
                 <div className="flex justify-between font-semibold mt-2">
                   <span>Payable Total</span>
-                  <span>৳ {(orderTotalAmount + 150 || 0).toFixed(2)}.</span>
+                  <span>
+                    ৳{" "}
+                    {(
+                      orderTotalAmount + +shippingCharge.shippingAmount || 0
+                    ).toFixed(2)}
+                    .
+                  </span>
                 </div>
               </div>
             </div>
