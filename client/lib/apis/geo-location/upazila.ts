@@ -16,13 +16,22 @@ export async function saveUpazila(data: any) {
   return res.json();
 }
 
-export async function getUpazilas() {
+export async function getUpazilas(params: any) {
+  const { districtId } = params;
+
+  let queryData = "";
+  if (districtId) {
+    queryData += `districtId=${districtId}`;
+  }
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/upazilas`, {
-    headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/upazilas?${queryData}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
   return res.json();
 }
 

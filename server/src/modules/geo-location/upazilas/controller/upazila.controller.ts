@@ -11,7 +11,17 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(UpazilaEntity);
 
-  const result = await repository.find();
+  const { districtId } = req.query;
+
+  let customQuery = {} as any;
+
+  if (districtId) {
+    customQuery.districtId = districtId;
+  }
+
+  const result = await repository.find({
+    where: { districtId: customQuery.districtId },
+  });
 
   return res.status(200).json({
     success: true,
@@ -19,7 +29,6 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 
 // @desc Get a single Upazila
 // @route GET /api/v1/Upazila/:id

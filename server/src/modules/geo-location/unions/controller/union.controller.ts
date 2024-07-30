@@ -11,7 +11,16 @@ export const getUnions = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(UnionEntity);
 
-  const result = await repository.find();
+  const { upazilaId } = req.query;
+
+  let customQuery = {} as any;
+
+  if (upazilaId) {
+    customQuery.upazilaId = upazilaId;
+  }
+  const result = await repository.find({
+    where: { upazilaId: customQuery.upazilaId },
+  });
 
   return res.status(200).json({
     success: true,

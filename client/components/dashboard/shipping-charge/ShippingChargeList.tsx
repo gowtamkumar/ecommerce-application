@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -21,28 +20,23 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import {
-  deleteShippingAddress,
-  getShippingAddress,
-} from "@/lib/apis/shipping-address";
+  deleteShippingCharge,
+  getShippingCharges,
+} from "@/lib/apis/shipping-charge";
 
 interface DataType {
+  divsionId: any;
   key: string;
-  type: string;
-  name: string;
-  phoneNo: string;
-  email: string;
-  country: string;
-  city: string;
-  thana: string;
-  union: string;
-  zipCode: string;
-  address: string;
+  divsion: any;
+  shippingAmount: number;
+  note: string;
+  status: boolean;
 }
 
 type DataIndex = keyof DataType;
 
-const ShippingAddressList: React.FC = () => {
-  const [address, setAddress] = useState([]);
+const ShippingChargeList: React.FC = () => {
+  const [shippingCharges, setShippingCharge] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -50,19 +44,20 @@ const ShippingAddressList: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getShippingAddress();
-      setAddress(res?.data);
+      const res = await getShippingCharges();
+      setShippingCharge(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [global.action]);
 
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteShippingAddress(id);
+      await deleteShippingCharge(id);
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
-        toast.success("Address deleted successfully");
+        toast.success("ShippingCharge deleted successfully");
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
@@ -178,84 +173,34 @@ const ShippingAddressList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      // width: "15%",
-      // responsive: ['sm'],
-      sorter: (a, b) => a.type.length - b.type.length,
-      ...getColumnSearchProps("type"),
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name"),
+      title: "Division",
+      dataIndex: "division",
+      key: "division",
+      render: (value) => <span>{value?.name}</span>,
     },
 
     {
-      title: "Phone No",
-      dataIndex: "phoneNo",
-      key: "phoneNo",
-      sorter: (a, b) => a.phoneNo.length - b.phoneNo.length,
-      ...getColumnSearchProps("phoneNo"),
-    },
-
-    {
-      title: "E-mail",
-      dataIndex: "email",
-      key: "email",
-      // width: "15%",
-      // responsive: ['md'],
-      sorter: (a, b) => a.email.length - b.email.length,
-      ...getColumnSearchProps("email"),
-    },
-
-    {
-      title: "Country",
-      dataIndex: "country",
-      key: "country",
-      sorter: (a, b) => a.country.length - b.country.length,
-      ...getColumnSearchProps("country"),
-    },
-
-    {
-      ...getColumnSearchProps("city"),
-      title: "City",
-      dataIndex: "city",
-      key: "city",
-      sorter: (a, b) => a.city.length - b.city.length,
+      title: "Shipping Amount",
+      dataIndex: "shippingAmount",
+      key: "shippingAmount",
+      sorter: (a, b) => a.shippingAmount - b.shippingAmount,
+      ...getColumnSearchProps("shippingAmount"),
     },
     {
-      ...getColumnSearchProps("thana"),
-      title: "Thana",
-      dataIndex: "thana",
-      key: "thana",
-      sorter: (a, b) => a.thana.length - b.thana.length,
+      title: "Note",
+      dataIndex: "note",
+      key: "note",
     },
     {
-      ...getColumnSearchProps("union"),
-      title: "Union",
-      dataIndex: "union",
-      key: "union",
-      sorter: (a, b) => a.union.length - b.union.length,
-    },
-
-    {
-      ...getColumnSearchProps("zipCode"),
-      title: "Zip Code",
-      dataIndex: "zipCode",
-      key: "zipCode",
-      sorter: (a, b) => a.zipCode.length - b.zipCode.length,
-    },
-
-    {
-      ...getColumnSearchProps("address"),
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      sorter: (a, b) => a.address.length - b.address.length,
+      title: "Status",
+      key: "status",
+      ...getColumnSearchProps("status"),
+      sortDirections: ["descend", "ascend"],
+      render: (value) => (
+        <Tag color={value.status ? "green" : "red"}>
+          {value.status ? "Active" : "Inactive"}
+        </Tag>
+      ),
     },
 
     {
@@ -263,7 +208,7 @@ const ShippingAddressList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "12%",
+      width: "10%",
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -284,7 +229,7 @@ const ShippingAddressList: React.FC = () => {
             title={
               <span>
                 Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Address?
+                this Shipping Charge?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -311,7 +256,7 @@ const ShippingAddressList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={address}
+      dataSource={shippingCharges}
       pagination={{ pageSize: 10 }}
       bordered
       size="small"
@@ -319,4 +264,4 @@ const ShippingAddressList: React.FC = () => {
   );
 };
 
-export default ShippingAddressList;
+export default ShippingChargeList;

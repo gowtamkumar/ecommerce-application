@@ -46,6 +46,14 @@ zip_code,
 address,
 status,
 
+## shipping_charge
+
+id,
+division_id,
+shipping_amount,
+note,
+status,
+
 ## products :(done)
 
 id,

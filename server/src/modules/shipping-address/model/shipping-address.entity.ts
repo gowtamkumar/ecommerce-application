@@ -1,8 +1,19 @@
 import "reflect-metadata";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { AddressType } from "../enums/address-type.enum";
 import { UserEntity } from "../../auth/model/user.entity";
 import { OrderEntity } from "../../order/model/order.entity";
+import { DivisionEntity } from "../../geo-location/divisions/model/division.entity";
+import { DistrictEntity } from "../../geo-location/districts/model/district.entity";
+import { UpazilaEntity } from "../../geo-location/upazilas/model/upazila.entity";
+import { UnionEntity } from "../../geo-location/unions/model/union.entity";
 
 @Entity("shipping_addresses")
 export class ShippingAddressEntity {
@@ -17,7 +28,7 @@ export class ShippingAddressEntity {
 
   @Column({ name: "phone_no" })
   phoneNo!: string;
-  
+
   @Column({ nullable: true })
   email?: string;
 
@@ -27,17 +38,37 @@ export class ShippingAddressEntity {
   @Column({ name: "country" })
   country!: string;
 
-  @Column()
-  city!: string;
+  @Column({ name: "division_id", nullable: true })
+  divisionId!: number;
+  @ManyToOne((_type) => DivisionEntity, (division) => division.shippingAddress, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "division_id" })
+  division!: DivisionEntity;
 
-  @Column()
-  thana!: string;
+  @Column({ name: "district_id", nullable: true })
+  districtId!: number;
+  @ManyToOne((_type) => DistrictEntity, (district) => district.shippingAddress, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "district_id" })
+  district!: DistrictEntity;
 
-  @Column()
-  union!: string;
+  @Column({ name: "upazila_id", nullable: true })
+  upazilaId!: number;
+  @ManyToOne((_type) => UpazilaEntity, (upazila) => upazila.shippingAddress, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "upazila_id" })
+  upazila!: UpazilaEntity;
 
-  @Column({ name: "zip_code", nullable: true })
-  zipCode?: string;
+  @Column({ name: "union_id", nullable: true })
+  unionId!: number;
+  @ManyToOne((_type) => UnionEntity, (union) => union.shippingAddress, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "union_id" })
+  union!: UnionEntity;
 
   @Column()
   address!: string;
@@ -58,7 +89,6 @@ export class ShippingAddressEntity {
 
   // @UpdateDateColumn({ name: "updated_at",type: "timestamp" })
   // updatedAt?: string;
-
 
   @OneToMany((_type) => OrderEntity, (order) => order.shippingAddress)
   orders!: OrderEntity[];

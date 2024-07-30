@@ -95,12 +95,7 @@ const navbarRoute = [
     label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
     route: "true",
   },
-  {
-    key: "shipping_address",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/shipping-address">Shipping Address</Link>,
-    route: "true",
-  },
+
   {
     key: "category",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
@@ -130,6 +125,27 @@ const navbarRoute = [
     key: "status",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/status">Status</Link>,
+    route: "true",
+  },
+
+  {
+    key: "Shipping_managment",
+    label: "Shipping",
+    disabled: "true",
+    route: "true",
+  },
+
+  {
+    key: "shipping_address",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/shipping-address">Shipping Address</Link>,
+    route: "true",
+  },
+
+  {
+    key: "shipping_charge",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/shipping-charges">Shipping Charge</Link>,
     route: "true",
   },
 

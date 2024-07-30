@@ -1,20 +1,18 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Tabs } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
-import { setAction } from "@/redux/features/global/globalSlice";
 import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
-import ShippingAddressList from "@/components/dashboard/shipping-address/ShippingAddresslist";
-
-export default function ShippingAddress() {
+import ShippingAddressList from "@/components/dashboard/shipping-address/ShippingAddressList";
+import { ActionType } from "@/constants/constants";
+import { setAction } from "@/redux/features/global/globalSlice";
+import { Button, Tabs } from "antd";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { PlusOutlined } from "@ant-design/icons";
+export default function Page() {
   const [tabKey, setTabKey] = useState("shipping_address_list");
   const dispatch = useDispatch();
 
-
   return (
-    <div className="container-fluid bg-white p-3  ">
+    <div className="container bg-white p-3">
       <Tabs
         activeKey={tabKey}
         onChange={(key) => setTabKey(key)}

@@ -12,7 +12,9 @@ export const getShippingAddresses = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(ShippingAddressEntity);
 
-    const result = await repository.find();
+    const result = await repository.find({
+      relations: ["division", "district", "upazila", "union", "user"],
+    });
 
     return res.status(200).json({
       success: true,

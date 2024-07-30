@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { DistrictEntity } from "../../districts/model/district.entity";
 import { UnionEntity } from "../../unions/model/union.entity";
+import { ShippingAddressEntity } from "../../../shipping-address/model/shipping-address.entity";
 
 @Entity("upazilas")
 export class UpazilaEntity {
@@ -32,4 +33,7 @@ export class UpazilaEntity {
 
   @OneToMany((_type) => UnionEntity, (union) => union.upazilla)
   unions!: UnionEntity[];
+
+  @OneToMany((_type) => ShippingAddressEntity, (shippingAddress) => shippingAddress.upazila)
+  shippingAddress!: ShippingAddressEntity[];
 }

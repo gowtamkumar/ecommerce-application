@@ -1,8 +1,8 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
@@ -10,7 +10,10 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveShippingAddress, updateShippingAddress } from "@/lib/apis/shipping-address";
+import {
+  saveShippingAddress,
+  updateShippingAddress,
+} from "@/lib/apis/shipping-address";
 import { getDivisions } from "@/lib/apis/geo-location/division";
 import { getDistricts } from "@/lib/apis/geo-location/district";
 import { getUpazilas } from "@/lib/apis/geo-location/upazila";
@@ -25,7 +28,6 @@ const AddShippingAddress = () => {
   const { payload } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,13 +35,7 @@ const AddShippingAddress = () => {
       const newData = { ...payload };
       setFormData(newData);
       const disvision = await getDivisions();
-      // const district = await getDistricts();
-      // const upazila = await getUpazilas();
-      // const union = await getUnions();
-      // setDivision(disvision.data);
-      // setDistricts(district.data);
-      // setUpazilas(upazila.data);
-      // setUnions(union.data);
+      setDivision(disvision.data);
     })();
     return () => {
       dispatch(setFormValues({}));
@@ -51,17 +47,13 @@ const AddShippingAddress = () => {
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
-      return console.log("newData:", newData);
+      // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updateShippingAddress(newData)
         : await saveShippingAddress(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-
-        toast.success(
-          `Address ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
@@ -206,55 +198,111 @@ const AddShippingAddress = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item
-              name="city"
-              label="City"
-              rules={[
-                {
-                  required: true,
-                  message: "city is required",
-                },
-              ]}
-            >
-              <Input placeholder="Enter " />
+            <Form.Item name="divisionId" label="Division" className="mb-1">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select "
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={async (value) => {
+                  if (value) {
+                    const districts = await getDistricts({ divisionId: value });
+                    setDistricts(districts.data);
+                  }
+                }}
+              >
+                {divisions.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </div>
 
           <div className="col-span-1">
-            <Form.Item
-              name="thana"
-              label="Thana"
-              rules={[
-                {
-                  required: true,
-                  message: "thana is required",
-                },
-              ]}
-            >
-              <Input placeholder="Enter " />
+            <Form.Item name="districtId" label="District" className="mb-1">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select "
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={async (value) => {
+                  if (value) {
+                    const upazila = await getUpazilas({ districtId: value });
+                    setUpazilas(upazila.data);
+                  }
+                }}
+              >
+                {districts.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </div>
 
           <div className="col-span-1">
-            <Form.Item
-              name="union"
-              label="Union"
-              rules={[
-                {
-                  required: true,
-                  message: "union is required",
-                },
-              ]}
-            >
-              <Input placeholder="Enter " />
+            <Form.Item name="upazilaId" label="Upazila" className="mb-1">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select "
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={async (value) => {
+                  if (value) {
+                    const union = await getUnions({ upazilaId: value });
+                    setUnions(union.data);
+                  }
+                }}
+              >
+                {upazilas.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="zipCode" label="Zip Code">
-              <Input placeholder="Enter " />
+            <Form.Item name="unionId" label="Union" className="mb-1">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select "
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {unions.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </div>
+
           <div className="col-span-1">
             <Form.Item
               name="address"
@@ -266,7 +314,7 @@ const AddShippingAddress = () => {
                 },
               ]}
             >
-              <Input placeholder="Enter " />
+              <Input.TextArea placeholder="Enter " />
             </Form.Item>
           </div>
         </div>

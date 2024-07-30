@@ -16,13 +16,23 @@ export async function saveDistrict(data: any) {
   return res.json();
 }
 
-export async function getDistricts() {
+export async function getDistricts(params: any) {
+  const { divisionId } = params;
+
+  let queryData = "";
+  if (divisionId) {
+    queryData += `divisionId=${divisionId}`;
+  }
+
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/districts`, {
-    headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/districts?${queryData}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
   return res.json();
 }
 

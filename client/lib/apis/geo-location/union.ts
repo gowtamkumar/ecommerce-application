@@ -16,7 +16,13 @@ export async function saveUnion(data: any) {
   return res.json();
 }
 
-export async function getUnions() {
+export async function getUnions(params: {upazilaId:string}) {
+  const { upazilaId } = params;
+
+  let queryData = "";
+  if (upazilaId) {
+    queryData += `upazilaId=${upazilaId}`;
+  }
   const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/unions`, {
     headers: {

@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import AddSize from "@/components/dashboard/size/AddSize";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import SizeList from "@/components/dashboard/size/SizeList";
+import AddShippingCharge from "@/components/dashboard/shipping-charge/AddShippingCharge";
+import ShippingChargeList from "@/components/dashboard/shipping-charge/ShippingChargeList";
 
-export default function Size() {
-  const [tabKey, setTabKey] = useState("size_list");
+export default function ShippingCharge() {
+  const [tabKey, setTabKey] = useState("shipping_charge_list");
   const dispatch = useDispatch();
 
 
@@ -20,9 +20,9 @@ export default function Size() {
         onChange={(key) => setTabKey(key)}
         items={[
           {
-            label: "Sizes",
-            key: "size_list",
-            children: <SizeList />,
+            label: "Shipping Charge List",
+            key: "shipping_charge_list",
+            children: <ShippingChargeList />,
           },
         ]}
         tabBarExtraContent={
@@ -37,11 +37,11 @@ export default function Size() {
               )
             }
           >
-            <PlusOutlined className="mx-1" /> New size
+            <PlusOutlined className="mx-1" /> New charge
           </Button>
         }
       />
-      <AddSize />
+      <AddShippingCharge />
     </div>
   );
 }

@@ -1,6 +1,14 @@
 import "reflect-metadata";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { UpazilaEntity } from "../../upazilas/model/upazila.entity";
+import { ShippingAddressEntity } from "../../../shipping-address/model/shipping-address.entity";
 
 @Entity("unions")
 export class UnionEntity {
@@ -21,5 +29,10 @@ export class UnionEntity {
 
   @Column({ nullable: true })
   url!: string;
- 
+
+  @OneToMany(
+    (_type) => ShippingAddressEntity,
+    (shippingAddress) => shippingAddress.union
+  )
+  shippingAddress!: ShippingAddressEntity[];
 }

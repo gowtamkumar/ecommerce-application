@@ -6,6 +6,7 @@ import orderRoutes from "../modules/order/route/order.route";
 import orderTrackingRoutes from "../modules/order-tracking/route/order-tracking.route";
 import discountRoutes from "../modules/discount/route/discount.route";
 import shippingAddressRoutes from "../modules/shipping-address/route/shipping-address.route";
+import shippingChargeRoutes from "../modules/shipping-charge/route/shipping-charge.route";
 import brandRoutes from "../modules/brand/route/brand.route";
 import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
@@ -37,6 +38,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/categories", categoriesRoute);
   app.use("/api/v1/brands", brandRoutes);
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
+  app.use("/api/v1/shipping-charges", AuthGuard, shippingChargeRoutes);
   app.use("/api/v1/discounts", AuthGuard, discountRoutes);
   app.use("/api/v1/orders", AuthGuard, orderRoutes);
   app.use("/api/v1/order-trackings", AuthGuard, orderTrackingRoutes);

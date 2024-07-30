@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { DivisionEntity } from "../../divisions/model/division.entity";
 import { UpazilaEntity } from "../../upazilas/model/upazila.entity";
+import { ShippingAddressEntity } from "../../../shipping-address/model/shipping-address.entity";
 
 @Entity("districts")
 export class DistrictEntity {
@@ -31,6 +32,9 @@ export class DistrictEntity {
 
   @OneToMany((_type) => UpazilaEntity, (upazila) => upazila.district)
   upazilas!: UpazilaEntity[];
+
+  @OneToMany((_type) => ShippingAddressEntity, (shippingAddress) => shippingAddress.district)
+  shippingAddress!: ShippingAddressEntity[];
 
 
 }

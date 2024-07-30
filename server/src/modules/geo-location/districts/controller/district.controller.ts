@@ -12,7 +12,16 @@ export const getDistricts = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(DistrictEntity);
 
-    const result = await repository.find();
+    const { divisionId } = req.query;
+
+    let customQuery = {} as any;
+
+    if (divisionId) {
+       customQuery.divisionId = divisionId;
+    }
+    const result = await repository.find({
+      where: { divisionId: customQuery.divisionId },
+    });
 
     return res.status(200).json({
       success: true,
