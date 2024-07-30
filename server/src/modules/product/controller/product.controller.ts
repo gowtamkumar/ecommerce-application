@@ -277,6 +277,9 @@ export const updateProduct = asyncHandler(
       const { id } = req.params;
       const { productVariants, productCategories, ...restData } = req.body;
 
+      // console.log("productVariants", productVariants);
+      
+
       // Get DB connection
       const connection = await getDBConnection();
       const repository = connection.getRepository(ProductEntity);
@@ -305,6 +308,7 @@ export const updateProduct = asyncHandler(
             ...item,
             productId: id,
           }));
+          console.log("🚀 ~ newProductVariantItems:", newProductVariantItems)
 
           await repoProductVariant.save(newProductVariantItems);
         })();

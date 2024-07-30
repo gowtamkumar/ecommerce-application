@@ -286,7 +286,7 @@ const ProductList: React.FC = () => {
                   salePrice,
                   productId,
                   sizeId,
-                  color,
+                  colorId,
                   weight,
                   stockQty,
                 }: any) => ({
@@ -294,7 +294,7 @@ const ProductList: React.FC = () => {
                   salePrice,
                   productId,
                   sizeId,
-                  color,
+                  colorId,
                   weight,
                   stockQty,
                 })
