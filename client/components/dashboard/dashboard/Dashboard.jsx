@@ -128,7 +128,6 @@ const Dashboard = () => {
           Ernings
           <h1>1. Revenue </h1>
           <h2>2. Profit</h2>
-      
           {/* <TopCustomer topCustomers={topCustomers} /> */}
         </div>
         <div className="col-span-4 mb-3">
