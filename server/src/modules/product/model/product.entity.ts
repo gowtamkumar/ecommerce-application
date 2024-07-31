@@ -33,12 +33,6 @@ export class ProductEntity {
   @Column({ type: "enum", enum: ProductType })
   type!: ProductType;
 
-  // @Column({ type: "numeric", precision: 15, scale: 2 })
-  // price!: number;
-
-  // @Column({ name: "shipping_cost", type: "numeric", precision: 15, scale: 2 })
-  // shippingCost!: number;
-
   @Column({ name: "tax_id" })
   taxId?: number;
   @ManyToOne((_type) => TaxEntity, (tax) => tax.products)

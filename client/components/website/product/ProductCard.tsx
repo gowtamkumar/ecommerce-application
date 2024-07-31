@@ -126,19 +126,23 @@ const ProductCard = () => {
               <h3 className="text-sm font-semibold mb-2">
                 {item.name.slice(0, 70)}
               </h3>
-              <p className="text-gray-500 mb-2">
-                ৳
-                {item?.discountId
-                  ? (price + taxAmount - disAmount).toFixed(2)
-                  : (price + taxAmount).toFixed(2)}
-              </p>
+
+              <div className="flex justify-between items-center">
+                <p className="text-gray-500 mb-2">
+                  ৳{" "}
+                  {item?.discountId
+                    ? (price + taxAmount - disAmount).toFixed(2)
+                    : (price + taxAmount).toFixed(2)}
+                </p>
+                <div className="text-green-500">In Stock</div>
+              </div>
 
               {item?.discountId ? (
                 <>
                   <span className="line-through text-gray-500">
                     ৳ {(+price + +taxAmount || 0).toFixed(2)}
                   </span>
-                  <span className="text-green-600 ml-2">
+                  <span className="text-red-600 ml-2">
                     -{item?.discount?.value}
                     {item?.discount?.discountType === "Percentage"
                       ? "%"
@@ -146,6 +150,7 @@ const ProductCard = () => {
                   </span>
                 </>
               ) : null}
+
               <span className="flex gap-1 items-center">
                 <Rate allowHalf disabled defaultValue={2.5} />(
                 {item.reviews.length})

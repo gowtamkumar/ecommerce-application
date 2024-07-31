@@ -63,11 +63,11 @@ const Product = ({
       }
       setFormData(newData);
 
-      // return () => {
-      //   dispatch(setFormValues({}));
-      //   form.resetFields();
-      //   setTags([]);
-      // };
+      return () => {
+        dispatch(setFormValues({}));
+        form.resetFields();
+        setTags([]);
+      };
     } catch (err) {
       console.log(err);
     }
@@ -112,14 +112,13 @@ const Product = ({
     }
   };
 
-  const handleClose = () => {
-    dispatch(setAction({}));
-    dispatch(setLoading({}));
-  };
+  // const handleClose = () => {
+  //   dispatch(setAction({}));
+  //   dispatch(setLoading({}));
+  // };
 
   const setFormData = (v: any) => {
     const newData = { ...v };
-    console.log("🚀 ~ newData:", newData);
     form.setFieldsValue(newData);
     dispatch(setFormValues(form.getFieldsValue()));
   };
@@ -137,10 +136,11 @@ const Product = ({
   };
 
   return (
-    <Form
+   <div>
+    <Divider orientation="left">Create New Product</Divider>
+     <Form
       layout="vertical"
       form={form}
-      // onFinish={handleSubmit}
       onValuesChange={(_v, values) => dispatch(setFormValues(values))}
       autoComplete="off"
       scrollToFirstError={true}
@@ -479,6 +479,7 @@ const Product = ({
                   <thead className="mb-1 text-start">
                     <tr className="text-start">
                       <th>Sale Price</th>
+                      <th>Purchase Price</th>
                       <th>Size</th>
                       <th>Color</th>
                       <th>Weight</th>
@@ -498,6 +499,18 @@ const Product = ({
                             ]}
                           >
                             <InputNumber placeholder="Regular Price" min={1} />
+                          </Form.Item>
+                        </td>
+
+                        <td>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "purchasePrice"]}
+                            rules={[
+                              { required: true, message: "Purchase Price" },
+                            ]}
+                          >
+                            <InputNumber placeholder="Purchase Price" min={1} />
                           </Form.Item>
                         </td>
                         <td>
@@ -583,7 +596,6 @@ const Product = ({
           size="small"
           color="blue"
           onClick={handleSubmit}
-          // htmlType="submit"
           className="capitalize"
           loading={global.loading.save}
         >
@@ -591,6 +603,7 @@ const Product = ({
         </Button>
       </div>
     </Form>
+   </div>
   );
 };
 

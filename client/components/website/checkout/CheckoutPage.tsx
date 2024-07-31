@@ -203,7 +203,9 @@ export default function CheckoutPage() {
                     />
                     <div className="ml-4 flex-grow">
                       <h3 className="text-base font-semibold">{item?.name}</h3>
-                      <span>Size: {item.selectProductVarient?.size?.name}</span>
+                      <span className="mx-2">
+                        Size: {item.selectProductVarient?.size?.name}
+                      </span>
                       <span>
                         Color: {item.selectProductVarient?.color?.name}
                       </span>
@@ -227,7 +229,7 @@ export default function CheckoutPage() {
                           +
                         </Button>
 
-                        <div className="ml-4 text-base font-semibold text-green-600">
+                        <div className="mx-2 text-base font-semibold text-green-600">
                           ৳{" "}
                           {item.discountId
                             ? (

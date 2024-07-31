@@ -39,7 +39,7 @@ export const productValidationSchema = z.object({
     .array(
       z.object({
         price: z.number({ required_error: "Regular Price is required" }),
-        // salePrice: z.number({ required_error: "Sale Price is required" }),
+        purchasePrice: z.number({ required_error: "Purchase Price is required" }),
         sizeId: z.number().optional(),
         images: z.array(z.string()).optional(),
         colorId: z.number().optional(),

@@ -73,6 +73,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
     }
   }
 
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-2">{product?.name}</h1>
@@ -96,7 +97,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
       </h2>
       <p className="text-gray-700 mb-4">{product?.shortDescription}</p>
 
-      <div className="flex items-center mb-4">
+      <div className="flex items-center mb-4 jus">
         <span className="text-2xl font-semibold text-blue-600 mr-4">
           ৳{" "}
           {product.discountId
@@ -107,19 +108,22 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
               ).toFixed(2)
             : (+price + +taxAmount || 0).toFixed(2)}
         </span>
+
         {product?.discountId ? (
           <>
             <span className="line-through text-gray-500">
               ৳ {(+price + +taxAmount || 0).toFixed(2)}
             </span>
-            <span className="text-green-600 ml-2">
+            <span className="text-red-600 ml-2">
               - {product?.discount?.value}
               {product?.discount?.discountType === "Percentage" ? "%" : "BDT"}
             </span>
           </>
         ) : null}
+        <div className="text-green-500 mx-3">In Stock</div>
       </div>
       <Divider />
+
       {product?.productVariants?.length && (
         <div className="mb-4">
           <span className="text-gray-600">Color Family: </span>
@@ -180,6 +184,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
         <Button
           onClick={() => incrementToCart(product)}
           className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300 focus:outline-none"
+          disabled={product.limitPurchaseQty === product.qty}
         >
           +
         </Button>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Divider, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,8 +31,8 @@ interface DataType {
   singleImage: string;
   shippingCost: number;
   limitPurchaseQty: number;
+  discount: any;
   tags: any;
-
   description: string;
   shortDescription: string;
   enableReview: boolean;
@@ -52,7 +52,11 @@ const ProductList: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getProducts();
-      setProducts(res?.data);
+      const newProducts = res.data.map((items: any, idx: number) => ({
+        ...items,
+        key: idx.toString(),
+      }));
+      setProducts(newProducts);
       dispatch(setLoading({ loading: false }));
     })();
   }, [dispatch, global.action]);
@@ -179,6 +183,14 @@ const ProductList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
+      ...getColumnSearchProps("urlSlug"),
+      title: "Slug",
+      dataIndex: "urlSlug",
+      key: "urlSlug",
+      sorter: (a, b) => a.urlSlug.length - b.urlSlug.length,
+    },
+
+    {
       ...getColumnSearchProps("name"),
       title: "Name",
       dataIndex: "name",
@@ -195,26 +207,23 @@ const ProductList: React.FC = () => {
     },
 
     {
-      ...getColumnSearchProps("urlSlug"),
-      title: "Url Slug",
-      dataIndex: "urlSlug",
-      key: "urlSlug",
-      sorter: (a, b) => a.urlSlug.length - b.urlSlug.length,
-    },
-
-    {
-      ...getColumnSearchProps("singleImage"),
       title: "Single Image",
       dataIndex: "singleImage",
       key: "singleImage",
     },
 
     {
-      ...getColumnSearchProps("shippingCost"),
-      title: "Shipping Cost",
-      dataIndex: "shippingCost",
-      key: "shippingCost",
-      sorter: (a, b) => a.shippingCost - b.shippingCost,
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
+      render: (value) => (
+        <span>
+          {value?.value &&
+            `${value?.value}${
+              value?.discountType === "Percentage" ? "%" : "BDT"
+            }`}
+        </span>
+      ),
     },
     {
       ...getColumnSearchProps("limitPurchaseQty"),
@@ -228,16 +237,16 @@ const ProductList: React.FC = () => {
       dataIndex: "tags",
       key: "tags",
     },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "Short Description",
-      dataIndex: "shortDescription",
-      key: "shortDescription",
-    },
+    // {
+    //   title: "Description",
+    //   dataIndex: "description",
+    //   key: "description",
+    // },
+    // {
+    //   title: "Short Description",
+    //   dataIndex: "shortDescription",
+    //   key: "shortDescription",
+    // },
 
     {
       title: "Enable Review",
@@ -334,12 +343,81 @@ const ProductList: React.FC = () => {
     },
   ];
 
+  const expandedRowRender = (value: any) => {
+    const childColumns: any = [
+      {
+        title: "Purchse Price",
+        dataIndex: "purchasePrice",
+        key: "purchasePrice",
+      },
+      { title: "Sale Price", dataIndex: "price", key: "price" },
+
+      {
+        title: "Size",
+        key: "size",
+        dataIndex: "size",
+        render: (v: any) => <span>{v.name}</span>,
+      },
+
+      {
+        title: "color",
+        key: "Color",
+        dataIndex: "color",
+        render: (v: any) => <span>{v.name}</span>,
+      },
+
+      {
+        title: "Weight",
+        key: "weight",
+        dataIndex: "weight",
+      },
+      { title: "Qty", dataIndex: "stockQty", key: "stockQty" },
+    ];
+
+    return (
+      <>
+        <div className="p-4">
+          <h1 className="font-bold">Product Details: </h1>
+          <h2>Type: {value.type}</h2>
+          <h2>Product Name: {value.name}</h2>
+          <h2>Url slug: {value.urlSlug}</h2>
+          <h2>
+            Discount:
+            {value?.discount &&
+              `${value?.discount.value}${
+                value?.discount.discountType === "Percentage" ? "%" : "BDT"
+              }`}
+          </h2>
+          <h2>Limit Purchase Qty: {value.limitPurchaseQty}</h2>
+          <h2>Enable Review: {value.enableReview ? "Yes" : "No"}</h2>
+          <h2>Tags: {value.tags}</h2>
+          <h2>Short Description: {value.shortDescription}</h2>
+          <h2>Description: {value.description}</h2>
+          <h2>Status: {value.status}</h2>
+        </div>
+
+        <div className="p-4 bg-white">
+          <h1 className="font-semibold">Product Varitents</h1>
+          <Table
+            columns={childColumns}
+            size="small"
+            scroll={{ x: "auto" }}
+            dataSource={value.productVariants}
+            pagination={false}
+            bordered
+          />
+        </div>
+      </>
+    );
+  };
+
   return (
     <Table
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
-      columns={columns}
       dataSource={products}
+      columns={columns}
+      expandable={{ expandedRowRender }}
       pagination={{ pageSize: 10 }}
       bordered
       size="small"

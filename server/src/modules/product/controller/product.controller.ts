@@ -44,6 +44,7 @@ export const getProducts = async (req: Request, res: Response) => {
       "category.name",
       "size.id",
       "size.name",
+      "color.name",
       "discount.discountType",
       "discount.value",
       "discount.type",
@@ -57,6 +58,7 @@ export const getProducts = async (req: Request, res: Response) => {
     qb.leftJoin("product.productCategories", "productCategories");
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
+    qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
 
     // if (brandId) qb.andWhere({ brandId });

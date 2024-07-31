@@ -52,6 +52,7 @@ const RatingProduct = ({ product, productRating }: any) => {
           <Button
             type="primary"
             size="small"
+            disabled={!product.enableReview}
             onClick={() =>
               dispatch(
                 setProductRating({
