@@ -25,6 +25,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
 
   async function addToCart(value: any) {
     const price = +value.selectProductVarient.price;
+    const purchasePrice = +value.selectProductVarient.purchasePrice;
     let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
     dispatch(
       addCart({
@@ -32,6 +33,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
         discountA: productDiscountCalculation(value) || 0,
         tax: taxAmount,
         price,
+        purchasePrice,
       })
     );
   }
@@ -72,7 +74,6 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
       console.log("error", error);
     }
   }
-
 
   return (
     <div className="p-4">
@@ -199,6 +200,8 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
             if (session.status === "unauthenticated") {
               setUnAuthorize(true);
             } else {
+              console.log("product", product);
+
               addToCart(product);
             }
           }}

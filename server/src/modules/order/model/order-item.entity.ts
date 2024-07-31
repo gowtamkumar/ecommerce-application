@@ -25,13 +25,28 @@ export class OrderItemEntity {
   @Column({ type: "numeric", precision: 10, scale: 2 })
   price!: number;
 
+  @Column({
+    name: "purchase_price",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  purchasePrice!: number;
+
   @Column()
   qty!: number;
 
   @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
   tax!: number;
 
-  @Column({ name: 'discout_amount', type: "numeric", precision: 10, scale: 2, nullable: true })
+  @Column({
+    name: "discout_amount",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   discountA!: number;
 
   @Column({ name: "product_id" })

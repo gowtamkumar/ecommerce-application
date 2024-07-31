@@ -66,6 +66,9 @@ export default function CheckoutPage() {
       });
     }
     fetchData();
+    return()=>{
+      dispatch(setLoading({ save: false }));
+    }
   }, [global.action, dispatch]);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
@@ -120,6 +123,12 @@ export default function CheckoutPage() {
 
       // return console.log("newData:", validatedFields);
       const res = await saveOrder(validatedFields.data);
+
+      if (res.message?.formErrors) {
+        console.log("🚀 ~ res:", res.message.formErrors);
+        dispatch(setLoading({ save: false }));
+        return;
+      }
 
       if (res.status === 500) {
         dispatch(setResponse({ type: "error", message: res.message }));

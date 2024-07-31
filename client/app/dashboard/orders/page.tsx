@@ -201,6 +201,11 @@ const Page: React.FC = () => {
         key: "product",
         render: (v: { name: string }) => <span>{v.name}</span>,
       },
+      {
+        title: "Purchase Price",
+        dataIndex: "purchasePrice",
+        key: "purchasePrice",
+      },
       { title: "Price", dataIndex: "price", key: "price" },
 
       { title: "Discount", dataIndex: "discountA", key: "discountA" },
@@ -209,6 +214,7 @@ const Page: React.FC = () => {
         key: "tax",
         dataIndex: "tax",
       },
+
       {
         title: "Sale Price",
         render: (v: { price: number; tax: number; discountA: number }) => (
