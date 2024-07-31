@@ -3,17 +3,18 @@ import { Avatar, Table, Tag } from "antd";
 import dayjs from "dayjs";
 import React from "react";
 
-const StockDataTable = ({ type, orderData }) => {
+const StockDataTable = ({ type, orderData }: any) => {
+  console.log("🚀 ~ orderData:", orderData);
   // Query
-  const productQuery = [];
+  const productQuery = [] as any;
 
-  const getProduct = (value) => {
+  const getProduct = (value: any) => {
     const product =
-      (productQuery.data || []).find((item) => item.id === value) || {};
+      (productQuery.data || []).find((item: any) => item.id === value) || {};
     return product;
   };
 
-  const getParties = (type) => {
+  const getParties = (type: any) => {
     switch (type) {
       case "Order":
         return "Customer";
@@ -26,21 +27,23 @@ const StockDataTable = ({ type, orderData }) => {
 
   const columns = [
     {
-      title: "Invoice No",
-      dataIndex: "code",
-      key: "code",
+      title: "tracking No",
+      dataIndex: "trackingNo",
+      key: "trackingNo",
     },
     {
       title: "Date",
       dataIndex: "orderDate",
       key: "orderDate",
-      render: (item) => <div>{dayjs(item).format("DD-MM-YYYY h:mm A")}</div>,
+      render: (item: string) => (
+        <div>{dayjs(item).format("DD-MM-YYYY h:mm A")}</div>
+      ),
     },
     {
       title: `${getParties(type)}`,
-      dataIndex: `${getParties(type).toLowerCase()}`,
-      key: `${getParties(type).toLowerCase()}`,
-      render: (item) => (
+      dataIndex: `${getParties(type)}`,
+      key: `${getParties(type)}`,
+      render: (item: any) => (
         <span>
           <Avatar src="user.png" />
           <span className="mx-2">{item?.name}</span>
@@ -51,7 +54,7 @@ const StockDataTable = ({ type, orderData }) => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (item) => (
+      render: (item: string) => (
         <Tag
           color={
             item === "Received"
@@ -75,11 +78,12 @@ const StockDataTable = ({ type, orderData }) => {
       dataIndex: "totalAmount",
       key: "totalAmount",
     },
+    
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
-      render: (item) => (
+      render: (item: string) => (
         <Tag
           color={
             item === "Paid" ? "green" : item === "Unpaid" ? "red" : "yellow"
@@ -96,37 +100,37 @@ const StockDataTable = ({ type, orderData }) => {
       title: "Name",
       dataIndex: "productId",
       key: "productId",
-      render: (item) => (
+      render: (item: string) => (
         <span>
-          <Avatar
+          {/* <Avatar
             shape="square"
             src={`${config.apiBaseUrl}/uploads/${
               getProduct(item)?.photo || "no-image.png"
             } `}
-          />
+          /> */}
           <span className="ms-2">{getProduct(item)?.name}</span>
         </span>
       ),
     },
-    { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+    { title: "Quantity", dataIndex: "qty", key: "qty" },
     { title: "Unit Price", dataIndex: "price", key: "price" },
     { title: "Sub Total", dataIndex: "subTotal", key: "subTotal" },
   ];
 
-  const data = [];
-  const newData = (orderData || []).map((item) =>
+  const data = [] as any;
+  const newData = (orderData || []).map((item: any) =>
     data.push({
       key: item.id,
       id: item.id,
-      code: item.code,
-      orderDate: item.orderDate,
-      supplier: item.supplier,
-      supplierId: item.supplierId,
-      customer: item.customer,
-      customerId: item.customerId,
-      totalPaid: item.state.totalPaid,
-      totalAmount: item.state.totalAmount,
-      paymentStatus: item.state.paymentStatus,
+      trackingNo: item.tracking_no,
+      orderDate: item.created_at,
+      // supplier: item.supplier,
+      // supplierId: item.supplierId,
+      // customer: item.customer,
+      paymentMethod: item.payment_method,
+      totalPaid: 500,
+      totalAmount: item.net_amount,
+      paymentStatus: item.payment_status,
       status: item.status,
       orderItems: item.orderItems,
       responsive: ["sm", "md"],

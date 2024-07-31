@@ -2,17 +2,17 @@
 import React, { useState } from "react";
 import { Avatar, Button, Card, Table } from "antd";
 
-const StockAlert = ({ stockReports }) => {
+const StockAlert = ({ stockReports }: any) => {
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 5,
   });
   // query
-  const productQuery = [];
+  const productQuery = [] as any;
 
-  const getProduct = (value) => {
+  const getProduct = (value: any) => {
     const product =
-      (productQuery.data || []).find((item) => item.id === value) || {};
+      (productQuery.data || []).find((item: any) => item.id === value) || {};
     return product;
   };
 
@@ -21,7 +21,7 @@ const StockAlert = ({ stockReports }) => {
       title: "Product",
       dataIndex: "productId",
       key: "productId",
-      render: (item) => (
+      render: (item: any) => (
         <span>
           <Avatar
             shape="square"
@@ -38,7 +38,7 @@ const StockAlert = ({ stockReports }) => {
       title: "Total Sale",
       dataIndex: "total_sale",
       key: "total_sale",
-      render: (text) => <>{text}</>,
+      render: (text: string) => <span>{text}</span>,
     },
     {
       title: "Current Stock",
@@ -52,11 +52,11 @@ const StockAlert = ({ stockReports }) => {
     },
   ];
 
-  const data = [];
+  const data = [] as any;
   // (item) => item.qtyAlert && productsInStock[item.id] < item.qtyAlert,
   const newData = (stockReports || [])
-    .filter((item) => item.qty_alert && item.stock_qty < item.qty_alert)
-    .map((item) =>
+    .filter((item: any) => item.qty_alert && item.stock_qty < item.qty_alert)
+    .map((item: any) =>
       data.push({
         key: item.product_id,
         product: item.product_id,
@@ -67,7 +67,7 @@ const StockAlert = ({ stockReports }) => {
       })
     );
 
-  const onChange = (pageNumber) => {
+  const onChange = (pageNumber: any) => {
     setTableParams({ ...tableParams, current: pageNumber });
   };
 

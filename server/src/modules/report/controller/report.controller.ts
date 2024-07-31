@@ -29,9 +29,9 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_count,
           SUM(CASE WHEN status = 'On Shipping' THEN 1 ELSE 0 END) AS total_on_shipping_count,
           SUM(CASE WHEN status = 'Approved' THEN 1 ELSE 0 END) AS total_approved_count,
-          SUM(CASE WHEN status = 'Returned' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_return,
-          SUM(CASE WHEN status = 'Pending' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order,
-          SUM(CASE WHEN status = 'Completed' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale
+          SUM(CASE WHEN status = 'Returned' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_return_amount,
+          SUM(CASE WHEN status = 'Pending' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_amount,
+          SUM(CASE WHEN status = 'Completed' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_amount
       FROM orders
      
   `);
@@ -40,7 +40,7 @@ export const getDashboardReport = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all product",
+      msg: "Get Dashboard Report",
       data: { ...results[0], sales, orders, sales_return: saleReturn },
     });
   }

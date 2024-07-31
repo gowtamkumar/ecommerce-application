@@ -2,7 +2,7 @@
 import React from "react";
 import { Avatar, Card, Table } from "antd";
 
-const TopCustomer = ({ topCustomers }) => {
+const TopCustomer = ({ topCustomers }:any) => {
   const theme = "light-bg";
   const text = "text-dark";
 
@@ -11,9 +11,9 @@ const TopCustomer = ({ topCustomers }) => {
       title: "Customer",
       dataIndex: "customer",
       key: "customer",
-      render: (item) => (
+      render: (item: any) => (
         <div className="flex items-center">
-          <Avatar width={30} prefix={item.name} src="user.png" />
+          <Avatar />
           <div>
             <div className="mx-2">{item.name}</div>
             <small className="mx-2">{item.phone}</small>
@@ -25,7 +25,7 @@ const TopCustomer = ({ topCustomers }) => {
       title: "Total Paid Amount",
       dataIndex: "total_amount",
       key: "total_amount",
-      render: (item) => (
+      render: (item: any) => (
         <>
           <div>৳ {item.amount}</div>
           {/* <span>Total Sales : {item.sale}</span> */}
@@ -34,7 +34,7 @@ const TopCustomer = ({ topCustomers }) => {
     },
   ];
 
-  const data = (topCustomers || []).map((item) => ({
+  const data = (topCustomers || []).map((item: any) => ({
     key: item.id,
     customer: {
       name: item.name,

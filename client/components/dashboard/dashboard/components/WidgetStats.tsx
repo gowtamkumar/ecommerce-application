@@ -2,8 +2,16 @@
 import React from "react";
 import { Card, Statistic } from "antd";
 import CountUp from "react-countup";
-const WidgetStats = ({ title, value, icon, color }) => {
-  const formatter = (value) => <CountUp end={value} separator="," />;
+
+interface WidgetStatsProps {
+  title: string;
+  value: number;
+  icon?: React.ReactNode;
+  color?: string;
+}
+
+const WidgetStats: React.FC<WidgetStatsProps> = ({ title, value, icon, color }: any) => {
+  const formatter = (value: number) => <CountUp end={value} separator="," />;
   return (
     <Card className="rounded-t-md relative overflow-hidden border-0">
       <div className="flex text-red-800 justify-between items-center">
@@ -13,7 +21,7 @@ const WidgetStats = ({ title, value, icon, color }) => {
             value={value}
             prefix="৳"
             precision={2}
-            formatter={formatter}
+            // formatter={formatter}
           />
         </div>
         {icon && (

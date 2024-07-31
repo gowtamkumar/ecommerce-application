@@ -1,10 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DatePicker } from "antd";
-import WidgetStats from "./components/WidgetStats";
-import StockReport from "./components/StockReport";
-import TopCustomer from "./components/TopCustomer";
-import StockAlert from "./components/StockAlert";
+import { DatePicker, Statistic } from "antd";
 import {
   SendOutlined,
   DollarOutlined,
@@ -18,13 +14,31 @@ import {
 // import { reportsApi } from 'src/store/features/reports/reportsApi'
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
+import { getDashboardReports } from "@/lib/apis/reports";
+import WidgetStats from "./components/WidgetStats";
+import StockReport from "./components/StockReport";
+import TopCustomer from "./components/TopCustomer";
+import StockAlert from "./components/StockAlert";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
+  console.log("🚀 ~ dashboardReports:", dashboardReports);
 
   const dispatch = useDispatch();
-  const { summary, stockRecords, topCustomers, stockReports } =
-    dashboardReports || {};
+  const {
+    summary,
+    stockRecords,
+    topCustomers,
+    stockReports,
+    total_approved_count,
+    total_on_shipping_count,
+    total_order_amount,
+    total_processing_count,
+    total_sale_amount,
+    total_order_return_amount,
+    total_shipped_count,
+    orders,
+  }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
   const firstDateOfMonth = dayjs().date(1);
@@ -33,17 +47,10 @@ const Dashboard = () => {
   useEffect(() => {
     (async () => {
       try {
-        // const results = await Promise.resolve(
-        //   dispatch(
-        //     reportsApi.endpoints.getDashboard.initiate({
-        //       startDate: firstDateOfMonth.toISOString(),
-        //       endDate: lastDateOfMonth.toISOString(),
-        //     }),
-        //   ),
-        // )
-        setDashboardReports([]);
+        const results = await getDashboardReports();
+        setDashboardReports(results.data);
       } catch (err) {
-        if (err.data) {
+        if (err) {
           console.log(err);
         }
       }
@@ -59,7 +66,7 @@ const Dashboard = () => {
             style={{ background: "#fff" }}
             defaultValue={[firstDateOfMonth, lastDateOfMonth]}
             onChange={async (value) => {
-              const newDate = {};
+              const newDate = {} as any;
 
               if (value) newDate.startDate = dayjs(value[0]).toISOString();
 
@@ -68,13 +75,7 @@ const Dashboard = () => {
               if (!value) newDate.startDate = firstDateOfMonth.toISOString();
               if (!value) newDate.endDate = lastDateOfMonth.toISOString();
 
-              const results = await Promise.resolve(
-                dispatch(
-                  reportsApi.endpoints.getDashboard.initiate(newDate, {
-                    forceRefetch: true,
-                  })
-                )
-              );
+              const results = await getDashboardReports();
               setDashboardReports(results.data);
             }}
             className="mx-2 w-100"
@@ -84,27 +85,27 @@ const Dashboard = () => {
       <div className="grid grid-cols-4 gap-2">
         <WidgetStats
           title="TOTAL SALE"
-          value={summary?.Purchase.totalAmount || "0.00"}
-          percentage={-2.65}
-          subtitle="since last week"
+          value={total_sale_amount || "0.00"}
+          // percentage={-2.65}
+          // subtitle="since last week"
           icon={<ShoppingOutlined />}
           color="primary"
         />
 
         <WidgetStats
           title="TOTAL ORDER"
-          value={summary?.Sale.totalAmount || "0.00"}
-          percentage={3.65}
-          subtitle="since last week"
+          value={total_order_amount || "0.00"}
+          // percentage={3.65}
+          // title="since last week"
           icon={<LineChartOutlined />}
           color="primary"
         />
 
         <WidgetStats
           title="ORDER RETURN"
-          value={summary?.SaleReturn.totalAmount || "0.00"}
-          percentage={-2.65}
-          subtitle="since last week"
+          value={total_order_return_amount || "0.00"}
+          // percentage={-2.65}
+          // subtitle="since last week"
           icon={<RollbackOutlined />}
           color="primary"
         />
@@ -112,15 +113,15 @@ const Dashboard = () => {
         <WidgetStats
           title="TOTAL VISITOR"
           value={summary?.PaymentOut.totalAmount || "0.00"}
-          percentage={-2.65}
-          subtitle="since last week"
+          // percentage={-2.65}
+          // subtitle="since last week"
           icon={<SendOutlined />}
           color="primary"
         />
       </div>
 
       <div className="py-4">
-        <StockReport stockRecords={stockRecords} />
+        <StockReport recentHistory={dashboardReports} />
       </div>
 
       <div className="grid grid-cols-12 gap-2">
@@ -128,7 +129,10 @@ const Dashboard = () => {
           Ernings
           <h1>1. Revenue </h1>
           <h2>2. Profit</h2>
-          {/* <TopCustomer topCustomers={topCustomers} /> */}
+          <div className="mt-6">
+            Total Active user
+            <Statistic value={+10000 || "0"} />
+          </div>
         </div>
         <div className="col-span-4 mb-3">
           <TopCustomer topCustomers={topCustomers} />
