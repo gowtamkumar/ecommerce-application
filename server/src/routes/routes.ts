@@ -23,7 +23,7 @@ import divisionRoute from "../modules/geo-location/divisions/route/division.rout
 import districtRoute from "../modules/geo-location/districts/route/district.route";
 import upazilaRoute from "../modules/geo-location/upazilas/route/upazila.route";
 import unionsRoute from "../modules/geo-location/unions/route/union.route";
-import reportRoute from "../modules/report/route/report.route";
+import reportRoute from "../modules/reports/route/report.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 
 // Define the type for the Express application

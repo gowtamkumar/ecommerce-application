@@ -22,21 +22,21 @@ export const getDashboardReport = asyncHandler(
       "orderItems",
       "product",
       "payments",
-      "orderTrackings",
-      "deliveryMan.name",
       "user.name",
-      "shippingAddress",
+      // "orderTrackings",
+      // "deliveryMan.name",
+      // "shippingAddress",
     ]);
 
     qb.leftJoin("order.orderItems", "orderItems");
     qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("order.orderTrackings", "orderTrackings");
-    qb.leftJoin("order.deliveryMan", "deliveryMan");
     qb.leftJoin("order.user", "user");
     qb.leftJoin("order.payments", "payments");
-    qb.leftJoin("order.shippingAddress", "shippingAddress");
+    // qb.leftJoin("order.orderTrackings", "orderTrackings");
+    // qb.leftJoin("order.deliveryMan", "deliveryMan");
+    // qb.leftJoin("order.shippingAddress", "shippingAddress");
 
-    if (status) qb.where({ status });
+    if (status) qb.where({ status }); //here need to multiple status agree
     if (fromDate && toDate)
       qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
     const orders = await qb.getMany();

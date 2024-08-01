@@ -216,9 +216,11 @@ order_id,
 
 product_id,
 price,
-tax,
-discountA,
+purchase_price,
+product_variant_id,
 qty,
+tax,
+discount_amount,
 
 ## order_status (optional)
 
