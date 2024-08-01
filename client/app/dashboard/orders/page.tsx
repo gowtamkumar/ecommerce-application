@@ -202,6 +202,14 @@ const Page: React.FC = () => {
         render: (v: { name: string }) => <span>{v.name}</span>,
       },
       {
+        title: "Color",
+        render: (v: any) => <span>{v.productVariant?.color?.name}</span>,
+      },
+      {
+        title: "Size",
+        render: (v: any) => <span>{v.productVariant?.size?.name}</span>,
+      },
+      {
         title: "Purchase Price",
         dataIndex: "purchasePrice",
         key: "purchasePrice",
@@ -328,9 +336,7 @@ const Page: React.FC = () => {
       key: "trackingNo",
       render: (value) => <span className="bg-green-200">{value}</span>,
     },
-
     { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
-
     {
       title: "Customer",
       dataIndex: "user",
@@ -447,6 +453,8 @@ const Page: React.FC = () => {
       ),
     },
   ];
+
+  console.log("orders", orders);
 
   return (
     <div className="p-3">

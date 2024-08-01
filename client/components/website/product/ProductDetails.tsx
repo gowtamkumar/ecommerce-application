@@ -19,13 +19,14 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
   const dispatch = useDispatch();
   const session = useSession();
 
-  const price = product.selectProductVarient?.price;
+  const price = product.selectProductVariant?.price;
 
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
   async function addToCart(value: any) {
-    const price = +value.selectProductVarient.price;
-    const purchasePrice = +value.selectProductVarient.purchasePrice;
+    const price = +value.selectProductVariant.price;
+    const productVariantId = +value.selectProductVariant.id;
+    const purchasePrice = +value.selectProductVariant.purchasePrice;
     let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
     dispatch(
       addCart({
@@ -34,6 +35,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
         tax: taxAmount,
         price,
         purchasePrice,
+        productVariantId,
       })
     );
   }
@@ -134,7 +136,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
               onClick={() =>
                 setProduct({
                   ...product,
-                  selectProductVarient: item,
+                  selectProductVariant: item,
                 })
               }
               style={{ backgroundColor: `${item.color?.color}` }}
@@ -155,7 +157,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
               onClick={() =>
                 setProduct({
                   ...product,
-                  selectProductVarient: item,
+                  selectProductVariant: item,
                 })
               }
               className="mr-2 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none"

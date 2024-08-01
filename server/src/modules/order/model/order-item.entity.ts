@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { OrderEntity } from "./order.entity";
 import { ProductEntity } from "../../product/model/product.entity";
+import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 
 @Entity("order_items")
 export class OrderItemEntity {
@@ -56,4 +58,12 @@ export class OrderItemEntity {
   })
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
+
+  @Column({ name: "product_variant_id", nullable: true }) // leter need to remove nullable ture
+  productVariantId!: number;
+  @OneToOne((_type) => ProductVariantEntity, (product) => product.orderItem, {
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "product_variant_id" })
+  productVariant!: ProductVariantEntity;
 }

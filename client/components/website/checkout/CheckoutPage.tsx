@@ -34,6 +34,7 @@ import { getMe } from "@/lib/apis/user";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
+import dayjs from "dayjs";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
@@ -66,9 +67,9 @@ export default function CheckoutPage() {
       });
     }
     fetchData();
-    return()=>{
+    return () => {
       dispatch(setLoading({ save: false }));
-    }
+    };
   }, [global.action, dispatch]);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
@@ -103,7 +104,7 @@ export default function CheckoutPage() {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
         orderItems: cart.carts,
-        orderDate: "2024-02",
+        orderDate: dayjs().toISOString(),
         paymentStatus: "Paid",
         netAmount,
         orderTax: taxAmount,
@@ -213,10 +214,10 @@ export default function CheckoutPage() {
                     <div className="ml-4 flex-grow">
                       <h3 className="text-base font-semibold">{item?.name}</h3>
                       <span className="mx-2">
-                        Size: {item.selectProductVarient?.size?.name}
+                        Size: {item.selectProductVariant?.size?.name}
                       </span>
                       <span>
-                        Color: {item.selectProductVarient?.color?.name}
+                        Color: {item.selectProductVariant?.color?.name}
                       </span>
                       <div className="mt-2 flex items-center">
                         <Button

@@ -3,14 +3,27 @@
 import { authOptions } from "../authOption";
 import { getServerSession } from "next-auth";
 
-export async function getDashboardReports() {
+export async function getDashboardReports(params: any) {
+  const { status, startDate, endDate } = params;
   const session = await getServerSession(authOptions);
+  let dashboardQuery = "";
+  
+  if (status) {
+    dashboardQuery += `status=${status}`;
+  }
 
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/reports/dashboard`, {
-    cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-  });
+  if (startDate && endDate) {
+    dashboardQuery += `&startDate=${startDate}&endDate=${endDate}`;
+  }
+
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/reports/dashboard?${dashboardQuery}`,
+    {
+      cache: "no-cache",
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
   return res.json();
 }

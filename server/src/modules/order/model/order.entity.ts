@@ -25,7 +25,7 @@ export class OrderEntity {
   @Column({ name: "tracking_no" })
   trackingNo!: string;
 
-  @Column({ name: "order_date" })
+  @Column({ name: "order_date", type: "timestamp with time zone" })
   orderDate!: string;
 
   // @Column({ name: "is_paid", type: "boolean" })
@@ -126,10 +126,10 @@ export class OrderEntity {
   @JoinColumn({ name: "delivery_id" })
   deliveryMan!: UserEntity;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp with time zone" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp with time zone" })
   updatedAt?: string;
 
   // relations

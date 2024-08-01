@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
 import { SizeEntity } from "../../size/model/size.entity";
 import { ColorEntity } from "../../color/model/color.entity";
+import { OrderItemEntity } from "../../order/model/order-item.entity";
 
 @Entity("product_variants")
 export class ProductVariantEntity {
@@ -23,7 +25,13 @@ export class ProductVariantEntity {
   })
   price!: number;
 
-  @Column({ name: "purchase_price", type: "numeric", precision: 15, scale: 2, nullable: true })
+  @Column({
+    name: "purchase_price",
+    type: "numeric",
+    precision: 15,
+    scale: 2,
+    nullable: true,
+  })
   purchasePrice!: number;
 
   @Column({ name: "product_id" })
@@ -58,4 +66,7 @@ export class ProductVariantEntity {
 
   @Column({ name: "stock_qty", nullable: true })
   stockQty?: number;
+
+  @OneToOne((_type) => OrderItemEntity, (items) => items.productVariant)
+  orderItem!: OrderItemEntity[];
 }

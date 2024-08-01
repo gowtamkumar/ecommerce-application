@@ -33,7 +33,7 @@ export default function SingleProduct() {
           setProduct({
             ...newProduct.data,
             qty: 1,
-            selectProductVarient: newProduct.data.productVariants[0],
+            selectProductVariant: newProduct.data.productVariants[0],
           });
 
           const categoryIds = newProduct.data.productCategories

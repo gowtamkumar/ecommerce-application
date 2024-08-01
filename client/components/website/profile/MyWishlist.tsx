@@ -28,7 +28,7 @@ export default function MyWishlist({ user }: any) {
   const global = useSelector(selectGlobal);
 
   async function addToCart(value: any) {
-    const price = +value.selectProductVarient.price;
+    const price = +value.selectProductVariant.price;
     let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
     dispatch(
       addCart({
@@ -111,7 +111,7 @@ export default function MyWishlist({ user }: any) {
                 onClick={() =>
                   addToCart({
                     ...item.product,
-                    selectProductVarient: item.product.productVariants[0],
+                    selectProductVariant: item.product.productVariants[0],
                   })
                 }
                 icon={<FaShoppingCart />}

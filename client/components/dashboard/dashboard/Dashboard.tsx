@@ -1,19 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DatePicker, Statistic } from "antd";
+import { Card, DatePicker, Statistic } from "antd";
 import {
   SendOutlined,
-  DollarOutlined,
-  RetweetOutlined,
-  BarChartOutlined,
   ShoppingOutlined,
   RollbackOutlined,
   LineChartOutlined,
-  DownSquareOutlined,
 } from "@ant-design/icons";
-// import { reportsApi } from 'src/store/features/reports/reportsApi'
 import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
 import { getDashboardReports } from "@/lib/apis/reports";
 import WidgetStats from "./components/WidgetStats";
 import StockReport from "./components/StockReport";
@@ -22,9 +16,7 @@ import StockAlert from "./components/StockAlert";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
-  console.log("🚀 ~ dashboardReports:", dashboardReports);
-
-  const dispatch = useDispatch();
+  const [datePic, setDatePic] = useState({});
   const {
     summary,
     stockRecords,
@@ -38,21 +30,28 @@ const Dashboard = () => {
     total_order_return_amount,
     total_shipped_count,
     orders,
+    total_active_user,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
-  const firstDateOfMonth = dayjs().date(1);
+  const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 
   useEffect(() => {
     (async () => {
       try {
-        const results = await getDashboardReports();
+        const results = await getDashboardReports({
+          status: "Pending",
+          startDate: firstDateOfMonth.toISOString(),
+          endDate: lastDateOfMonth.toISOString(),
+        });
+        setDatePic({
+          startDate: firstDateOfMonth.toISOString(),
+          endDate: lastDateOfMonth.toISOString(),
+        });
         setDashboardReports(results.data);
       } catch (err) {
-        if (err) {
-          console.log(err);
-        }
+        console.log(err);
       }
     })();
   }, []);
@@ -62,20 +61,17 @@ const Dashboard = () => {
       <div className="grid pb-3">
         <div className="col-span-4">
           <RangePicker
-            format="DD/MM/YYYY"
             style={{ background: "#fff" }}
             defaultValue={[firstDateOfMonth, lastDateOfMonth]}
             onChange={async (value) => {
-              const newDate = {} as any;
-
+              const newDate = { status: "Pending" } as any;
               if (value) newDate.startDate = dayjs(value[0]).toISOString();
-
               if (value) newDate.endDate = dayjs(value[1]).toISOString();
 
-              if (!value) newDate.startDate = firstDateOfMonth.toISOString();
-              if (!value) newDate.endDate = lastDateOfMonth.toISOString();
-
-              const results = await getDashboardReports();
+              if (newDate.startDate && newDate.endDate) {
+                setDatePic(newDate);
+              }
+              const results = await getDashboardReports(newDate);
               setDashboardReports(results.data);
             }}
             className="mx-2 w-100"
@@ -121,17 +117,29 @@ const Dashboard = () => {
       </div>
 
       <div className="py-4">
-        <StockReport recentHistory={dashboardReports} />
+        <StockReport
+          recentHistory={dashboardReports}
+          setDashboardReports={setDashboardReports}
+          datePic={datePic}
+        />
       </div>
 
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-4 mb-3">
-          Ernings
-          <h1>1. Revenue </h1>
-          <h2>2. Profit</h2>
+          <Card title="Ernings" size="small">
+            <div>
+              1. Revenue
+              <Statistic value={+6000 || "0"} />
+            </div>
+            <div>
+              2. Profit
+              <Statistic value={+8000 || "0"} />
+            </div>
+          </Card>
+
           <div className="mt-6">
             Total Active user
-            <Statistic value={+10000 || "0"} />
+            <Statistic value={total_active_user || "0"} />
           </div>
         </div>
         <div className="col-span-4 mb-3">
