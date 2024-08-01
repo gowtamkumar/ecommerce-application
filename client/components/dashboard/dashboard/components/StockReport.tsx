@@ -2,22 +2,21 @@
 import React, { useEffect, useState } from "react";
 import { Card, Statistic, Tabs } from "antd";
 import StockDataTable from "../tables/DataTable";
-import { getDashboardReports } from "@/lib/apis/reports";
 
-const StockReport = ({ recentHistory, setDashboardReports, datePic }: any) => {
+const StockReport = ({ recentHistory }: any) => {
   const [tabKey, setTabKey] = useState("Pending");
   const { orders = [], total_order_count, total_sale_count } = recentHistory;
 
-  useEffect(() => {
-    (async () => {
-      const orders = await getDashboardReports({
-        status: tabKey,
-        startDate: datePic.startDate,
-        endDate: datePic.endDate,
-      });
-      setDashboardReports(orders.data);
-    })();
-  }, [tabKey]);
+  // useEffect(() => {
+  //   (async () => {
+  //     const orders = await getDashboardReports({
+  //       status: tabKey,
+  //       startDate: datePic.startDate,
+  //       endDate: datePic.endDate,
+  //     });
+  //     setDashboardReports(orders.data);
+  //   })();
+  // }, [tabKey]);
 
   return (
     <div className="grid grid-cols-6 gap-2">
@@ -46,12 +45,26 @@ const StockReport = ({ recentHistory, setDashboardReports, datePic }: any) => {
             {
               label: "Recent Order",
               key: "Pending",
-              children: <StockDataTable type={tabKey} orderData={orders} />,
+              children: (
+                <StockDataTable
+                  type={tabKey}
+                  orderData={orders.filter(
+                    (item: any) => item.status === tabKey
+                  )}
+                />
+              ),
             },
             {
               label: "Sale",
               key: "Completed",
-              children: <StockDataTable type={tabKey} orderData={orders} />,
+              children: (
+                <StockDataTable
+                  type={tabKey}
+                  orderData={orders.filter(
+                    (item: any) => item.status === tabKey
+                  )}
+                />
+              ),
             },
           ]}
         />

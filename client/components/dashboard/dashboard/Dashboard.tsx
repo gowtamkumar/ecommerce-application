@@ -32,6 +32,7 @@ const Dashboard = () => {
     orders,
     total_active_user,
   }: any = dashboardReports || {};
+  console.log("🚀 ~ dashboardReports:", dashboardReports);
   const { RangePicker } = DatePicker;
 
   const firstDateOfMonth = dayjs().startOf("month");
@@ -117,11 +118,7 @@ const Dashboard = () => {
       </div>
 
       <div className="py-4">
-        <StockReport
-          recentHistory={dashboardReports}
-          setDashboardReports={setDashboardReports}
-          datePic={datePic}
-        />
+        <StockReport recentHistory={dashboardReports} />
       </div>
 
       <div className="grid grid-cols-12 gap-2">
