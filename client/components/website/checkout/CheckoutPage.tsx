@@ -385,9 +385,9 @@ export default function CheckoutPage() {
                 loading={global.loading.save}
                 disabled={global.loading.save}
               >
-                Confirm Order
+                <span className="mx-2">Confirm Order</span>
                 {(
-                  +orderTotalAmount + +shippingCharge.shippingAmount || 0
+                  +orderTotalAmount + (+shippingCharge.shippingAmount || 0)
                 ).toFixed(2)}
                 TK.
               </Button>
@@ -500,14 +500,17 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-gray-600 mt-2">
                   <span>Shipping</span>
-                  <span> ৳ {(+shippingCharge.shippingAmount).toFixed(2)}.</span>
+                  <span>
+                    {" "}
+                    ৳ {(+shippingCharge.shippingAmount || 0).toFixed(2)}.
+                  </span>
                 </div>
                 <div className="flex justify-between font-semibold mt-2">
                   <span>Total</span>
                   <span>
                     ৳{" "}
                     {(
-                      orderTotalAmount + +shippingCharge.shippingAmount || 0
+                      orderTotalAmount + (+shippingCharge.shippingAmount || 0)
                     ).toFixed(2)}
                     .
                   </span>
@@ -517,7 +520,7 @@ export default function CheckoutPage() {
                   <span>
                     ৳{" "}
                     {(
-                      orderTotalAmount + +shippingCharge.shippingAmount || 0
+                      orderTotalAmount + (+shippingCharge.shippingAmount || 0)
                     ).toFixed(2)}
                     .
                   </span>

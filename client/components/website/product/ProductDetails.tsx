@@ -20,20 +20,19 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
   const session = useSession();
 
   const price = product.selectProductVariant?.price;
-
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
   async function addToCart(value: any) {
-    const price = +value.selectProductVariant.price;
+    const cartPrice = +value.selectProductVariant.price;
     const productVariantId = +value.selectProductVariant.id;
     const purchasePrice = +value.selectProductVariant.purchasePrice;
-    let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
+    let taxAmount = (+cartPrice * (value?.tax?.value || 0)) / 100;
     dispatch(
       addCart({
         ...value,
         discountA: productDiscountCalculation(value) || 0,
         tax: taxAmount,
-        price,
+        price: cartPrice,
         purchasePrice,
         productVariantId,
       })
@@ -123,7 +122,11 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
             </span>
           </>
         ) : null}
-        <div className="text-green-500 mx-3">In Stock</div>
+        {product?.selectProductVariant?.stockQty > 0 ? (
+          <div className="text-green-500 mx-3">In Stock</div>
+        ) : (
+          <div className="text-red-500 mx-3">OUt of Stock</div>
+        )}
       </div>
       <Divider />
 
@@ -202,8 +205,6 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
             if (session.status === "unauthenticated") {
               setUnAuthorize(true);
             } else {
-              console.log("product", product);
-
               addToCart(product);
             }
           }}

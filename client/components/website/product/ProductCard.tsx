@@ -9,55 +9,43 @@ import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+// import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
-const ProductCard = () => {
-  const { category } = useParams();
+const ProductCard: React.FC = () => {
+  const { category } = useParams<{ category: string }>();
   const searchQuery = useSearchParams();
   const searchParams = searchQuery.get("search");
   const categoryIdParams = searchQuery.get("categoryId");
 
-  // hook
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const categoryIds = global.productFilter?.categoryId?.toString();
-  const lowPrice = global.productFilter.lowPrice;
-  const highPrice = global.productFilter.highPrice;
-  const brandId = global.productFilter.brandId;
-  const colorId = global.productFilter.colorId;
-  const rating = global.productFilter.rating;
-  const minPrice = global.productFilter.minPrice;
-  const maxPrice = global.productFilter.maxPrice;
-  const discount = global.productFilter.discount;
-  const newSearchs = global.productFilter.search;
+  const {
+    categoryId: categoryIds,
+    lowPrice,
+    highPrice,
+    brandId,
+    colorId,
+    rating,
+    minPrice,
+    maxPrice,
+    discount,
+    search: newSearchs,
+  } = global.productFilter;
 
-  let customQuery = "";
-
-  if (category) {
-    customQuery += `${category}`;
-  }
-
-  if (categoryIdParams) {
-    customQuery += `${categoryIdParams}`;
-  }
-
-  if (categoryIds) {
+  let customQuery = category || "";
+  if (categoryIdParams) customQuery += categoryIdParams;
+  if (categoryIds)
     customQuery +=
       category || categoryIdParams ? `,${categoryIds}` : categoryIds;
-  }
 
   let newSearch = "";
-
-  if (searchParams) {
-    newSearch += `${searchParams}`;
-  }
-
-  if (newSearchs) {
-    newSearch += newSearchs;
-  }
+  if (searchParams) newSearch += searchParams;
+  if (newSearchs) newSearch += newSearchs;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -81,19 +69,18 @@ const ProductCard = () => {
     };
 
     fetchProducts();
-    console.log("Fetching products with new filter...");
   }, [
-    brandId,
-    colorId,
     customQuery,
-    discount,
-    dispatch,
-    highPrice,
+    brandId,
+    newSearch,
     lowPrice,
+    highPrice,
+    colorId,
+    rating,
     maxPrice,
     minPrice,
-    newSearch,
-    rating,
+    discount,
+    dispatch,
   ]);
 
   return (
@@ -102,63 +89,73 @@ const ProductCard = () => {
         global.productView ? "grid-cols-2" : "md:grid-cols-5"
       } gap-4`}
     >
-      {(products || []).map((item: any, idx: any) => {
-        let price = +item.productVariants[0].price;
-        let discount = item.discount;
+      {products?.map((item: any) => (
+        <ProductItem key={item.id} item={item} />
+      ))}
+    </div>
+  );
+};
 
-        let taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
+interface ProductItemProps {
+  item: any;
+}
 
-        let disAmount =
-          discount?.discountType === "Percentage"
-            ? ((price + taxAmount) * (discount.value || 0)) / 100
-            : +discount?.value;
+const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
+  const price = +item.productVariants[0]?.price || 0;
+  const reviewsCount = +item.reviews.length || 0;
+  const discount = item.discount;
+  const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
 
-        return (
-          <div className="bg-white rounded-lg shadow-md p-4" key={item.id}>
-            <Link href={`/products/${item.id}`}>
-              <Image
-                width={150}
-                height={150}
-                src="/product-01.jpg"
-                alt="Category Image"
-                className="w-full h-40 object-cover mb-4"
-              />
-              <h3 className="text-sm font-semibold mb-2">
-                {item.name.slice(0, 70)}
-              </h3>
+  const disAmount =
+    discount?.discountType === "Percentage"
+      ? ((price + taxAmount) * (discount.value || 0)) / 100
+      : +discount?.value || 0;
 
-              <div className="flex justify-between items-center">
-                <p className="text-gray-500 mb-2">
-                  ৳{" "}
-                  {item?.discountId
-                    ? (price + taxAmount - disAmount).toFixed(2)
-                    : (price + taxAmount).toFixed(2)}
-                </p>
-                <div className="text-green-500">In Stock</div>
-              </div>
+  const productRating =
+    item.reviews.reduce((acc: number, review: any) => acc + +review.rating, 0) /
+    reviewsCount;
+  const stockQty = item.productVariants.reduce(
+    (acc: number, variant: any) => acc + +variant.stockQty,
+    0
+  );
 
-              {item?.discountId ? (
-                <>
-                  <span className="line-through text-gray-500">
-                    ৳ {(+price + +taxAmount || 0).toFixed(2)}
-                  </span>
-                  <span className="text-red-600 ml-2">
-                    -{item?.discount?.value}
-                    {item?.discount?.discountType === "Percentage"
-                      ? "%"
-                      : "BDT"}
-                  </span>
-                </>
-              ) : null}
-
-              <span className="flex gap-1 items-center">
-                <Rate allowHalf disabled defaultValue={2.5} />(
-                {item.reviews.length})
-              </span>
-            </Link>
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <Link href={`/products/${item.id}`}>
+        <Image
+          width={150}
+          height={150}
+          src="/product-01.jpg"
+          alt="Category Image"
+          className="w-full h-40 object-cover mb-4"
+        />
+        <h3 className="text-sm font-semibold mb-2">{item.name.slice(0, 70)}</h3>
+        <div className="flex justify-between items-center">
+          <p className="text-gray-500 mb-2">
+            ৳{" "}
+            {item?.discountId
+              ? (price + taxAmount - disAmount).toFixed(2)
+              : (price + taxAmount).toFixed(2)}
+          </p>
+          <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
+            {stockQty > 0 ? "In Stock" : "Out of Stock"}
           </div>
-        );
-      })}
+        </div>
+        {item?.discountId && (
+          <>
+            <span className="line-through text-gray-500">
+              ৳ {(price + taxAmount).toFixed(2)}
+            </span>
+            <span className="text-red-600 ml-2">
+              -{discount?.value}
+              {discount?.discountType === "Percentage" ? "%" : "BDT"}
+            </span>
+          </>
+        )}
+        <span className="flex gap-1 items-center">
+          <Rate disabled value={productRating || 0} />({reviewsCount})
+        </span>
+      </Link>
     </div>
   );
 };
