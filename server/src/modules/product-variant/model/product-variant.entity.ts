@@ -21,7 +21,6 @@ export class ProductVariantEntity {
     type: "numeric",
     precision: 15,
     scale: 2,
-    nullable: true,
   })
   price!: number;
 
@@ -30,7 +29,6 @@ export class ProductVariantEntity {
     type: "numeric",
     precision: 15,
     scale: 2,
-    nullable: true,
   })
   purchasePrice!: number;
 

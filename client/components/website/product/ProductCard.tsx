@@ -103,7 +103,7 @@ const ProductCard = () => {
       } gap-4`}
     >
       {(products || []).map((item: any, idx: any) => {
-        let price = +item.productVariants[0]?.price;
+        let price = +item.productVariants[0].price;
         let discount = item.discount;
 
         let taxAmount = (+price * (+item?.tax?.value || 0)) / 100;

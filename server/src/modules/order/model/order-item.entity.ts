@@ -59,7 +59,7 @@ export class OrderItemEntity {
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-  @Column({ name: "product_variant_id", nullable: true }) // leter need to remove nullable ture
+  @Column({ name: "product_variant_id" })
   productVariantId!: number;
   @OneToOne((_type) => ProductVariantEntity, (product) => product.orderItem, {
     onDelete: "SET NULL",

@@ -112,8 +112,7 @@ export async function getPublicProducts(params: getParams) {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`,
-      { cache: "force-cache" }
+      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`
     );
     if (!res.ok) {
       console.log("Failed to fetch data");
