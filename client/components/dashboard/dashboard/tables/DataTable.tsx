@@ -11,7 +11,7 @@ const DataTable = ({ orderData }: any) => {
       key: "trackingNo",
     },
     {
-      title: "Date",
+      title: "Order Date",
       dataIndex: "orderDate",
       key: "orderDate",
       render: (item: string) => (
@@ -29,24 +29,7 @@ const DataTable = ({ orderData }: any) => {
         </>
       ),
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (item: string) => (
-        <Tag
-          color={
-            item === "Received"
-              ? "green"
-              : item === "Ordered"
-              ? "blue"
-              : "green"
-          }
-        >
-          {item}
-        </Tag>
-      ),
-    },
+
     {
       title: "Paid Amount",
       dataIndex: "totalPaid",
@@ -60,23 +43,45 @@ const DataTable = ({ orderData }: any) => {
       render: (v: number) => <span>{v.toFixed(2)}</span>,
     },
     {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+    },
+    {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
-      render: (item: string) => (
-        <Tag
-          color={
-            item === "Paid" ? "green" : item === "Unpaid" ? "red" : "yellow"
-          }
-        >
-          {item}
-        </Tag>
-      ),
+      // render: (item: string) => (
+      //   <Tag
+      //     color={
+      //       item === "Paid" ? "green" : item === "Unpaid" ? "red" : "yellow"
+      //     }
+      //   >
+      //     {item}
+      //   </Tag>
+      // ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      // render: (item: string) => (
+      //   <Tag
+      //     color={
+      //       item === "Received"
+      //         ? "green"
+      //         : item === "Ordered"
+      //           ? "blue"
+      //           : "green"
+      //     }
+      //   >
+      //     {item}
+      //   </Tag>
+      // ),
     },
   ];
 
   const expandedRowRender = (value: any) => {
-
     const childColumns: any = [
       {
         title: "Product",
@@ -117,7 +122,7 @@ const DataTable = ({ orderData }: any) => {
     ];
 
     return (
-      <div>
+      <>
         <div className="p-4 bg-white">
           <h1 className="font-semibold">Order Items</h1>
           <Table
@@ -157,7 +162,7 @@ const DataTable = ({ orderData }: any) => {
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   };
 
@@ -185,7 +190,7 @@ const DataTable = ({ orderData }: any) => {
   );
 
   return (
-    <div className="table-responsive w-100">
+    <div className="w-100">
       <Table
         columns={columns}
         expandable={{ expandedRowRender }}

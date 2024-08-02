@@ -7,20 +7,9 @@ const StockReport = ({ recentHistory }: any) => {
   const [tabKey, setTabKey] = useState("Pending");
   const { orders = [], total_order_count, total_sale_count } = recentHistory;
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const orders = await getDashboardReports({
-  //       status: tabKey,
-  //       startDate: datePic.startDate,
-  //       endDate: datePic.endDate,
-  //     });
-  //     setDashboardReports(orders.data);
-  //   })();
-  // }, [tabKey]);
-
   return (
-    <div className="grid grid-cols-6 gap-2">
-      <div className="col-span-2 p-0 bg-white mb-3 ">
+    <div className="grid grid-cols-12 gap-2">
+      <div className="col-span-3 bg-white mb-3 ">
         <Card title="Recent History" size="small">
           <div className="alert alert-success">
             Total Order
@@ -36,7 +25,7 @@ const StockReport = ({ recentHistory }: any) => {
           </div>
         </Card>
       </div>
-      <div className="col-span-4 p-0 bg-white">
+      <div className="col-span-9 bg-white">
         <Tabs
           type="card"
           activeKey={tabKey}

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { OrderEntity } from "../../order/model/order.entity";
+import { OrderPaymentMethod } from "../../order/enums";
 
 @Entity("payments")
 export class PaymentEntity {
@@ -21,11 +22,15 @@ export class PaymentEntity {
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  @Column()
-  date!: string;
+  @Column({ name: "payment_date", type: "timestamp with time zone" })
+  paymentDate!: string;
 
-  @Column({ name: "payment_method" })
-  paymentMethod!: string;
+  @Column({
+    name: "payment_method",
+    type: "enum",
+    enum: OrderPaymentMethod,
+  })
+  paymentMethod!: OrderPaymentMethod;
 
   @Column({ type: "numeric", precision: 15, scale: 2 })
   amount!: number;
@@ -39,9 +44,9 @@ export class PaymentEntity {
   @Column({ name: "transaction_id", nullable: true })
   transactionId!: string;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp with time zone" })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp with time zone" })
   updatedAt?: string;
 }

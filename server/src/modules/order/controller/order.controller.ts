@@ -10,6 +10,10 @@ import {
 import { OrderItemEntity } from "../model/order-item.entity";
 import axios from "axios";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
+import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
+import { PaymentEntity } from "../../payment/model/payment.entity";
+import dayjs from "dayjs";
+import { OrderPaymentMethod, PaymentStatus } from "../enums";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -122,109 +126,112 @@ export const getOrder = asyncHandler(
 // @access Public
 export const createOrder = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  const validation = orderValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+  const queryRunner = connection.createQueryRunner();
 
-  // SSLCommerzPayment
-  const store_id = process.env.STORE_ID;
-  const store_passwd = process.env.STORE_PASSWD;
-  const is_live = process.env.IS_LIVE; //true for live, false for sandbox
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
 
-  if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+  try {
+    const validation = orderValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
     });
-  }
 
-  const { orderItems, ...orderData } = validation.data;
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
 
-  const repository = connection.getRepository(OrderEntity);
-  // Generate URL slug
-  const count = (await repository.count()) + 1;
+    const {
+      shippingAmount,
+      orderTotalAmount,
+      orderDate,
+      paymentMethod,
+      orderItems,
+      ...orderData
+    }: any = validation.data;
 
-  const trackingNo = `#N${count.toString().padStart(10, "0")}`;
-  const newOrder = repository.create(orderData);
-  const savedOrder = await repository.save({ ...newOrder, trackingNo });
+    const repository = queryRunner.manager.getRepository(OrderEntity);
+    const count = (await repository.count()) + 1;
 
-  // insert order items data
-  if (orderItems && savedOrder.id) {
-    const repoOrderitems = connection.getRepository(OrderItemEntity);
-    const newOrderItems = await repoOrderitems.create(
-      orderItems.map((item) => ({
-        ...item,
+    const trackingNo = `#N${count.toString().padStart(10, "0")}`;
+
+    const newOrder = repository.create({
+      shippingAmount,
+      orderTotalAmount,
+      orderDate,
+      paymentMethod,
+      paymentStatus:
+        paymentMethod === OrderPaymentMethod.Cash
+          ? PaymentStatus.NotPaid
+          : PaymentStatus.Paid,
+      ...orderData,
+    });
+    const savedOrder = await repository.save({ ...newOrder, trackingNo });
+
+    if (orderItems && savedOrder.id) {
+      const repoOrderItems = queryRunner.manager.getRepository(OrderItemEntity);
+      const newOrderItems = repoOrderItems.create(
+        orderItems.map((item: any) => ({
+          ...item,
+          orderId: savedOrder.id,
+        }))
+      );
+      const orderItemsReturn = await repoOrderItems.save(newOrderItems);
+
+      const productVariantRepo =
+        queryRunner.manager.getRepository(ProductVariantEntity);
+      for (const item of orderItemsReturn) {
+        const findProductVariant = await productVariantRepo.findOne({
+          where: { id: item.productVariantId },
+        });
+
+        if (findProductVariant && item.qty <= findProductVariant.stockQty) {
+          await productVariantRepo.save({
+            id: findProductVariant.id,
+            stockQty: findProductVariant.stockQty - item.qty,
+          });
+        }
+      }
+
+      const repositoryOrderTracking =
+        queryRunner.manager.getRepository(OrderTrackingEntity);
+      const newOrderTracking = repositoryOrderTracking.create({
         orderId: savedOrder.id,
-      }))
-    );
+        userId: req.id,
+        location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+      });
+      await repositoryOrderTracking.save(newOrderTracking);
+    }
 
-    // #Todo
-    // Here need to condition code for stock increage and decreage from product variant table
-    
-
-    await repoOrderitems.save(newOrderItems);
-    // Order Tracking Insert
-    const repositoryOrderTracking =
-      connection.getRepository(OrderTrackingEntity);
-    const newOrderTracking = repositoryOrderTracking.create({
+    const repositoryPayment = queryRunner.manager.getRepository(PaymentEntity);
+    const newPayment = repositoryPayment.create({
       orderId: savedOrder.id,
       userId: req.id,
-      location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+      paymentDate: dayjs(),
+      paymentMethod,
+      amount: +(+shippingAmount + +orderTotalAmount),
     });
-    await repositoryOrderTracking.save(newOrderTracking);
+    await repositoryPayment.save(newPayment);
+
+    await queryRunner.commitTransaction();
+
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new Order",
+      data: savedOrder,
+    });
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    console.error("Transaction failed:", error);
+    return res.status(500).json({
+      success: false,
+      msg: "Failed to create Order",
+    });
+  } finally {
+    await queryRunner.release();
   }
-
-  // if (savedOrder) {
-  //   const data = {
-  //     total_amount: 100,
-  //     currency: "BDT",
-  //     tran_id: "REF123", // use unique tran_id for each api call
-  //     success_url: "http://localhost:3030/success",
-  //     fail_url: "http://localhost:3030/fail",
-  //     cancel_url: "http://localhost:3030/cancel",
-  //     ipn_url: "http://localhost:3030/ipn",
-  //     shipping_method: "Courier",
-  //     product_name: "Computer.",
-  //     product_category: "Electronic",
-  //     product_profile: "general",
-  //     cus_name: "Customer Name",
-  //     cus_email: "customer@example.com",
-  //     cus_add1: "Dhaka",
-  //     cus_add2: "Dhaka",
-  //     cus_city: "Dhaka",
-  //     cus_state: "Dhaka",
-  //     cus_postcode: "1000",
-  //     cus_country: "Bangladesh",
-  //     cus_phone: "01711111111",
-  //     cus_fax: "01711111111",
-  //     ship_name: "Customer Name",
-  //     ship_add1: "Dhaka",
-  //     ship_add2: "Dhaka",
-  //     ship_city: "Dhaka",
-  //     ship_state: "Dhaka",
-  //     ship_postcode: 1000,
-  //     ship_country: "Bangladesh",
-  //   };
-
-  //   try {
-  //     const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-  //     sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
-  //       // Redirect the user to payment gateway
-  //       let GatewayPageURL = apiResponse.GatewayPageURL;
-  //       res.redirect(GatewayPageURL);
-  //       console.log("Redirecting to: ", GatewayPageURL);
-  //     });
-  //   } catch (error) {
-  //     console.error("Payment initiation error:", error);
-  //     throw error;
-  //   }
-  // }
-
-  return res.status(200).json({
-    success: true,
-    msg: "Create a new Order",
-    data: savedOrder,
-  });
 });
 
 // @desc Update a single Order

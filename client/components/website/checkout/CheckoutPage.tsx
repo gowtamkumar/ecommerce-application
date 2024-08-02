@@ -105,7 +105,7 @@ export default function CheckoutPage() {
       const validatedFields = orderValidationSchema.safeParse({
         orderItems: cart.carts,
         orderDate: dayjs().toISOString(),
-        paymentStatus: "Paid",
+        // paymentStatus: checkoutFormData.paymentMethod ? "Paid",
         netAmount,
         orderTax: taxAmount,
         orderTotalAmount,

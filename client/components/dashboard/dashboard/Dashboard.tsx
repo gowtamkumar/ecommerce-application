@@ -122,7 +122,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-12 gap-2">
-        <div className="col-span-4 mb-3">
+        <div className="col-span-3 mb-3">
           <Card title="Ernings" size="small">
             <div>
               1. Revenue
@@ -142,7 +142,7 @@ const Dashboard = () => {
         <div className="col-span-4 mb-3">
           <TopCustomer topCustomers={topCustomers} />
         </div>
-        <div className="col-span-4 mb-3">
+        <div className="col-span-5 mb-3">
           <StockAlert stockReports={stockReports} />
         </div>
       </div>

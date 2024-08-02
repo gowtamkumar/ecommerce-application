@@ -88,7 +88,6 @@ export class OrderEntity {
     name: "payment_status",
     type: "enum",
     enum: PaymentStatus,
-    default: PaymentStatus.Paid,
   })
   paymentStatus!: PaymentStatus;
 

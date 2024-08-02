@@ -69,6 +69,7 @@ unit_id,
 limit_purchase_qty:number,
 tax_id: number,
 discount_id:number
+alert_qty
 tags: ['ddd','aa']
 user_id,
 description,
