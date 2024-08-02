@@ -32,7 +32,9 @@ export const productValidationSchema = z.object({
   type: z.enum(["SimpleProduct", "VarientProduct"], {
     required_error: "Product type is required",
   }),
-
+  alertQty: z.number({
+    required_error: "Alert Qty no is Required",
+  }),
   status: z.enum(["Active", "Inactive"]).optional(),
 
   productVariants: z

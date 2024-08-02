@@ -5,10 +5,6 @@ export const productValidationSchema = z.object({
     required_error: "name is required",
   }),
 
-  // shippingCost: z.number({
-  //   required_error: "Shipping Cost is required",
-  // }),
-
   taxId: z.number({
     required_error: "Tax is required",
   }),
@@ -20,6 +16,10 @@ export const productValidationSchema = z.object({
     required_error: "Discount is required",
   }),
 
+  // shippingCost: z.number({
+  //   required_error: "Shipping Cost is required",
+  // }),
+
   limitPurchaseQty: z.number().optional(),
   tags: z.array(z.string()).optional(),
 
@@ -30,6 +30,9 @@ export const productValidationSchema = z.object({
     required_error: "Product type is required",
   }),
 
+  alertQty: z.number({
+    required_error: "Alert Qty no is Required",
+  }),
   status: z.enum(["Active", "Inactive"]).optional(),
 
   productVariants: z
