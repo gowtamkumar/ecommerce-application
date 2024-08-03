@@ -95,6 +95,7 @@ const Product = ({
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
+        form.resetFields();
         route.push(`/dashboard/products/new`);
       }, 100);
     } catch (err: any) {
@@ -128,9 +129,11 @@ const Product = ({
     if (newData?.id) {
       form.setFieldsValue(newData);
       dispatch(setFormValues(newData));
+      setTags(newData.tags);
     } else {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
+      setTags([]);
     }
     dispatch(setLoading({ save: false }));
   };
@@ -354,7 +357,7 @@ const Product = ({
             </div>
           </div>
 
-          <div className="col-span-1">
+          <div className="col-span-1 mt-4">
             <Form.Item name="enableReview" valuePropName="checked">
               <Checkbox>Enable Review</Checkbox>
             </Form.Item>

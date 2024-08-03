@@ -17,9 +17,7 @@ import {
   RestOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import dayjs from "dayjs";
 import { deleteProduct, getProducts } from "@/lib/apis/product";
 import { useRouter } from "next/navigation";
 
@@ -29,13 +27,11 @@ interface DataType {
   type: string;
   urlSlug: string;
   singleImage: string;
-  shippingCost: number;
   limitPurchaseQty: number;
+  alertQty: number;
   discount: any;
-  tags: any;
   description: string;
   shortDescription: string;
-  enableReview: boolean;
   status: string;
 }
 
@@ -232,33 +228,6 @@ const ProductList: React.FC = () => {
       key: "limitPurchaseQty",
       sorter: (a, b) => a.limitPurchaseQty - b.limitPurchaseQty,
     },
-    {
-      title: "Tags",
-      dataIndex: "tags",
-      key: "tags",
-    },
-    // {
-    //   title: "Description",
-    //   dataIndex: "description",
-    //   key: "description",
-    // },
-    // {
-    //   title: "Short Description",
-    //   dataIndex: "shortDescription",
-    //   key: "shortDescription",
-    // },
-
-    {
-      title: "Enable Review",
-      key: "enableReview",
-      ...getColumnSearchProps("enableReview"),
-      sortDirections: ["descend", "ascend"],
-      render: (value) => (
-        <Tag color={value.enableReview ? "green" : "red"}>
-          {value.enableReview ? "Yes" : "No"}
-        </Tag>
-      ),
-    },
 
     {
       title: "Status",
@@ -277,7 +246,7 @@ const ProductList: React.FC = () => {
       title: "Action",
       key: "action",
       sortDirections: ["descend", "ascend"],
-      className: "text-end",
+      className: "text-end w-20",
       render: (value) => (
         <div className="gap-2">
           <Button
@@ -389,11 +358,24 @@ const ProductList: React.FC = () => {
               }`}
           </h2>
           <h2>Limit Purchase Qty: {value.limitPurchaseQty}</h2>
+          <h2>Alert Qty: {value.alertQty}</h2>
           <h2>Enable Review: {value.enableReview ? "Yes" : "No"}</h2>
           <h2>Tags: {value.tags}</h2>
           <h2>Short Description: {value.shortDescription}</h2>
           <h2>Description: {value.description}</h2>
-          <h2>Status: {value.status}</h2>
+          <h2>
+            Enable Review:{" "}
+            <Tag color={value.enableReview ? "green" : "red"}>
+              {value.enableReview ? "Yes" : "No"}
+            </Tag>
+          </h2>
+
+          <h2>
+            Status:{" "}
+            <Tag color={value.status === "Active" ? "green" : "red"}>
+              {value.status}
+            </Tag>
+          </h2>
         </div>
 
         <div className="p-4 bg-white">
