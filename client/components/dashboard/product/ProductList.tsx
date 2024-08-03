@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Divider, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -260,16 +260,20 @@ const ProductList: React.FC = () => {
               );
               const productVariants = value?.productVariants?.map(
                 ({
+                  id,
                   price,
                   salePrice,
+                  purchasePrice,
                   productId,
                   sizeId,
                   colorId,
                   weight,
                   stockQty,
                 }: any) => ({
+                  id,
                   price,
                   salePrice,
+                  purchasePrice,
                   productId,
                   sizeId,
                   colorId,
@@ -280,7 +284,6 @@ const ProductList: React.FC = () => {
               route.push(`/dashboard/products/${value.id}`);
               dispatch(
                 setAction({
-                  // type: ActionType.UPDATE,
                   payload: { ...value, productCategories, productVariants },
                 })
               );

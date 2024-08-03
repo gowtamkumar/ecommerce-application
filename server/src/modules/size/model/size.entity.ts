@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
+import { OrderItemEntity } from "../../order/model/order-item.entity";
 
 @Entity("sizes")
 export class SizeEntity {
@@ -21,4 +22,7 @@ export class SizeEntity {
     (productVarients) => productVarients.size
   )
   productVariants!: ProductVariantEntity[];
+
+  @OneToMany((_type) => OrderItemEntity, (orderItem) => orderItem.size)
+  orderItems!: OrderItemEntity[];
 }

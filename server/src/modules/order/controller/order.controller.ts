@@ -27,7 +27,6 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   qb.select([
     "order",
     "orderItems",
-    "productVariant.id",
     "size.name",
     "color.name",
     "product",
@@ -40,9 +39,8 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 
   qb.leftJoin("order.orderItems", "orderItems");
   qb.leftJoin("orderItems.product", "product");
-  qb.leftJoin("orderItems.productVariant", "productVariant");
-  qb.leftJoin("productVariant.size", "size");
-  qb.leftJoin("productVariant.color", "color");
+  qb.leftJoin("orderItems.size", "size");
+  qb.leftJoin("orderItems.color", "color");
   qb.leftJoin("order.orderTrackings", "orderTrackings");
   qb.leftJoin("order.deliveryMan", "deliveryMan");
   qb.leftJoin("order.user", "user");
@@ -187,10 +185,15 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
           where: { id: item.productVariantId },
         });
 
-        if (findProductVariant && item.qty <= findProductVariant.stockQty) {
+        if (findProductVariant) {
+          let currentStock =
+            (+findProductVariant.stockQty || 0) - (+item.qty || 0);
+
           await productVariantRepo.save({
             id: findProductVariant.id,
-            stockQty: findProductVariant.stockQty - item.qty,
+            stockQty: currentStock,
+            // stockQty:
+            // findProductVariant.stockQty <= item.qty ? currentStock : null,
           });
         }
       }

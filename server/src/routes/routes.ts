@@ -35,7 +35,7 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/products", productRoutes);
   app.use("/api/v1/files", fileRoute);
   app.use("/api/v1/settings", settingRoute);
-  app.use("/api/v1/product-variants", AuthGuard, productVariantRoute);
+  app.use("/api/v1/product-variants", productVariantRoute);
   app.use("/api/v1/categories", categoriesRoute);
   app.use("/api/v1/brands", brandRoutes);
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);

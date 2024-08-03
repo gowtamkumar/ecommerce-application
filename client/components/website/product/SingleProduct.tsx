@@ -15,10 +15,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import ReviewTable from "./review-rating/ReviewTable";
 import ProductCard from "./ProductCard";
+import { getProductVariant } from "@/lib/apis/product-variant";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
-
+  const [checkStock, setCheckStock] = useState(0)
   const { id } = useParams();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
@@ -36,11 +37,17 @@ export default function SingleProduct() {
             selectProductVariant: newProduct.data.productVariants[0],
           });
 
+          if (newProduct.data.productVariants[0].id) {
+            const productVariant = await getProductVariant({ id: newProduct.data.productVariants[0].id })
+            setCheckStock(productVariant.data.stockQty)
+          }
+
           const categoryIds = newProduct.data.productCategories
             .map((item: { categoryId: number }) => item.categoryId)
             .join(",");
 
           dispatch(setProductFilter({ categoryId: categoryIds }));
+
         }
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -146,6 +153,8 @@ export default function SingleProduct() {
             product={product}
             setProduct={setProduct}
             productRating={productRating}
+            checkStock={checkStock}
+            setCheckStock={setCheckStock}
           />
         </div>
         <div className="bg-slate-400">

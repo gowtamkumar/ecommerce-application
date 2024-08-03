@@ -69,7 +69,7 @@ export default function CheckoutPage() {
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
-      setShippingCharge({})
+      setShippingCharge({});
     };
   }, [dispatch, global.action]);
 
@@ -116,6 +116,8 @@ export default function CheckoutPage() {
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
 
+      // return console.log("newData:", validatedFields);
+
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
         return {
@@ -123,7 +125,6 @@ export default function CheckoutPage() {
         };
       }
 
-      // return console.log("newData:", validatedFields);
       const res = await saveOrder(validatedFields.data);
 
       if (res.message?.formErrors) {

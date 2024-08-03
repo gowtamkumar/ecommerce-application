@@ -96,7 +96,7 @@ const Product = ({
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
         form.resetFields();
-        route.push(`/dashboard/products/new`);
+        route.push(`/dashboard/products`);
       }, 100);
     } catch (err: any) {
       console.log(err);
@@ -112,11 +112,6 @@ const Product = ({
       }
     }
   };
-
-  // const handleClose = () => {
-  //   dispatch(setAction({}));
-  //   dispatch(setLoading({}));
-  // };
 
   const setFormData = (v: any) => {
     const newData = { ...v };
@@ -499,6 +494,11 @@ const Product = ({
                     {fields.map(({ key, name, ...restField }) => (
                       <tbody key={key}>
                         <tr>
+                          <td hidden>
+                            <Form.Item {...restField} name={[name, "id"]}>
+                              <Input />
+                            </Form.Item>
+                          </td>
                           <td>
                             <Form.Item
                               {...restField}

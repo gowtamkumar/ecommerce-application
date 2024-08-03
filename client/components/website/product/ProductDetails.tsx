@@ -13,18 +13,28 @@ import { setResponse } from "@/redux/features/global/globalSlice";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
+import { getProductVariant } from "@/lib/apis/product-variant";
 
-const ProductDetails = ({ product, setProduct, productRating }: any) => {
+const ProductDetails = ({
+  product,
+  setProduct,
+  productRating,
+  checkStock,
+  setCheckStock,
+}: any) => {
   const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
   const session = useSession();
 
+  // const stockQty = product.selectProductVariant?.stockQty;
   const price = product.selectProductVariant?.price;
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
   async function addToCart(value: any) {
     const cartPrice = +value.selectProductVariant.price;
-    const productVariantId = +value.selectProductVariant.id;
+    const productVariantId = value.selectProductVariant.id;
+    const colorId = value.selectProductVariant.colorId;
+    const sizeId = value.selectProductVariant.sizeId;
     const purchasePrice = +value.selectProductVariant.purchasePrice;
     let taxAmount = (+cartPrice * (value?.tax?.value || 0)) / 100;
     dispatch(
@@ -35,6 +45,8 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
         price: cartPrice,
         purchasePrice,
         productVariantId,
+        sizeId,
+        colorId,
       })
     );
   }
@@ -74,6 +86,19 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
     } catch (error) {
       console.log("error", error);
     }
+  }
+
+  function stockCheckingAndPurchaseLimit(
+    product: { limitPurchaseQty: number; qty: number },
+    checkStock: number
+  ): boolean {
+    if (product.limitPurchaseQty <= product.qty) {
+      return true;
+    }
+    if (checkStock <= product.qty) {
+      return true;
+    }
+    return false;
   }
 
   return (
@@ -122,10 +147,10 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
             </span>
           </>
         ) : null}
-        {product?.selectProductVariant?.stockQty > 0 ? (
+        {checkStock > 0 ? (
           <div className="text-green-500 mx-3">In Stock</div>
         ) : (
-          <div className="text-red-500 mx-3">OUt of Stock</div>
+          <div className="text-red-500 mx-3">Out of Stock</div>
         )}
       </div>
       <Divider />
@@ -136,12 +161,19 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
           {product?.productVariants?.map((item: any, idx: number) => (
             <Button
               key={idx}
-              onClick={() =>
+              onClick={async () => {
                 setProduct({
                   ...product,
                   selectProductVariant: item,
-                })
-              }
+                });
+
+                if (product.productVariants[0].id) {
+                  const productVariant = await getProductVariant({
+                    id: product.productVariants[0].id,
+                  });
+                  setCheckStock(productVariant.data.stockQty);
+                }
+              }}
               style={{ backgroundColor: `${item.color?.color}` }}
               className="mr-2 px-2 py-1 rounded bg-gray-200 text-white hover:bg-gray-300 focus:outline-none"
             >
@@ -157,12 +189,18 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
           {product?.productVariants?.map((item: any, idx: number) => (
             <Button
               key={idx}
-              onClick={() =>
+              onClick={async () => {
                 setProduct({
                   ...product,
                   selectProductVariant: item,
-                })
-              }
+                });
+                if (product.productVariants[0].id) {
+                  const productVariant = await getProductVariant({
+                    id: product.productVariants[0].id,
+                  });
+                  setCheckStock(productVariant.data.stockQty);
+                }
+              }}
               className="mr-2 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none"
             >
               {item.size?.name}
@@ -190,7 +228,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
         <Button
           onClick={() => incrementToCart(product)}
           className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300 focus:outline-none"
-          disabled={product.limitPurchaseQty === product.qty}
+          disabled={stockCheckingAndPurchaseLimit(product, checkStock)}
         >
           +
         </Button>
@@ -208,6 +246,7 @@ const ProductDetails = ({ product, setProduct, productRating }: any) => {
               addToCart(product);
             }
           }}
+          disabled={product?.selectProductVariant?.stockQty <= 0}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Add to Cart

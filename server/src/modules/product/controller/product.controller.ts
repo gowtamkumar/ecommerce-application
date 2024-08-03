@@ -301,18 +301,33 @@ export const updateProduct = asyncHandler(
           const repoProductVariant =
             connection.getRepository(ProductVariantEntity);
 
-          const existingVariants = await repoProductVariant.find({
-            where: { productId: id },
+          const productVariantItems = productVariants.map(async (item: any) => {
+            if (item.id) {
+              await repoProductVariant.save(item);
+            } else {
+              const productVariantCreate = repoProductVariant.create({
+                ...item,
+                productId: id,
+              });
+              await repoProductVariant.save(productVariantCreate);
+            }
           });
-          await repoProductVariant.remove(existingVariants);
 
-          const newProductVariantItems = productVariants.map((item: any) => ({
-            ...item,
-            productId: id,
-          }));
-          console.log("🚀 ~ newProductVariantItems:", newProductVariantItems);
+          // const existingVariants = await repoProductVariant.find({
+          //   where: { productId: id },
+          // });
+          // await repoProductVariant.remove(existingVariants);
 
-          await repoProductVariant.save(newProductVariantItems);
+          // const newProductVariantItems = productVariants.map((item: any) => ({
+          //   ...item,
+          //   productId: id,
+          // }));
+          // console.log("🚀 ~ newProductVariantItems:", newProductVariantItems)
+          // const productVariantCreate = repoProductVariant.create(
+          //   newProductVariantItems
+          // );
+
+          // await repoProductVariant.save(productVariantCreate);
         })();
       }
 
