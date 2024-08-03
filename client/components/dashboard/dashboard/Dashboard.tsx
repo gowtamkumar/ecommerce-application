@@ -31,7 +31,8 @@ const Dashboard = () => {
     total_shipped_count,
     orders,
     total_active_user,
-    top_selling_product
+    top_selling_product,
+    top_customers
   }: any = dashboardReports || {};
   console.log("🚀 ~ dashboardReports:", dashboardReports);
   const { RangePicker } = DatePicker;
@@ -141,7 +142,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-span-4 mb-3">
-          <TopCustomer topCustomers={topCustomers} />
+          <TopCustomer top_customers={top_customers} />
         </div>
         <div className="col-span-5 mb-3">
           <StockAlert topSellingProduct={top_selling_product} />

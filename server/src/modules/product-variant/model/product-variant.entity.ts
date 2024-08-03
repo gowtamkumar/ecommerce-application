@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -65,6 +66,6 @@ export class ProductVariantEntity {
   @Column({ name: "stock_qty", nullable: true })
   stockQty?: number;
 
-  @ManyToOne((_type) => OrderItemEntity, (items) => items.productVariant)
-  orderItem!: OrderItemEntity[];
+  @OneToMany((_type) => OrderItemEntity, (items) => items.productVariant)
+  orderItems!: OrderItemEntity[];
 }

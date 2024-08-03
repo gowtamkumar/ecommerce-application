@@ -196,7 +196,7 @@ const DataTable = ({ orderData }: any) => {
         expandable={{ expandedRowRender }}
         dataSource={data}
         size="small"
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 4 }}
       />
     </div>
   );

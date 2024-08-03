@@ -17,17 +17,18 @@ const StockAlert = ({ topSellingProduct }: any) => {
       title: "Total Sale",
       dataIndex: "total_amount",
       key: "total_amount",
+      width: 150,
     },
     // {
     //   title: "Current Stock",
     //   key: "current_stock",
     //   dataIndex: "current_stock",
     // },
-    {
-      title: "Quantity Alert",
-      dataIndex: "alert_qty",
-      key: "alert_qty",
-    },
+    // {
+    //   title: "Quantity Alert",
+    //   dataIndex: "alert_qty",
+    //   key: "alert_qty",
+    // },
   ];
 
   const onChange = (pageNumber: any) => {
@@ -41,7 +42,7 @@ const StockAlert = ({ topSellingProduct }: any) => {
       extra={
         <Button
           size="small"
-          // onClick={() => navigate("/stock-report/stock-alert")}
+        // onClick={() => navigate("/stock-report/stock-alert")}
         >
           View All {">>"}
         </Button>
@@ -50,7 +51,7 @@ const StockAlert = ({ topSellingProduct }: any) => {
       <Table
         pagination={{
           current: tableParams.current,
-          pageSize: 6,
+          pageSize: 5,
           onChange,
         }}
         columns={columns}

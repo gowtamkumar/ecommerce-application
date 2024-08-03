@@ -60,6 +60,7 @@ export const getProducts = async (req: Request, res: Response) => {
     qb.leftJoin("productVariants.size", "size");
     qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
+    qb.addOrderBy("product.urlSlug", "ASC");
 
     // if (brandId) qb.andWhere({ brandId });
     if (status) qb.andWhere({ status });
@@ -280,7 +281,6 @@ export const updateProduct = asyncHandler(
       const { productVariants, productCategories, ...restData } = req.body;
 
       // console.log("productVariants", productVariants);
-      
 
       // Get DB connection
       const connection = await getDBConnection();
@@ -310,7 +310,7 @@ export const updateProduct = asyncHandler(
             ...item,
             productId: id,
           }));
-          console.log("🚀 ~ newProductVariantItems:", newProductVariantItems)
+          console.log("🚀 ~ newProductVariantItems:", newProductVariantItems);
 
           await repoProductVariant.save(newProductVariantItems);
         })();

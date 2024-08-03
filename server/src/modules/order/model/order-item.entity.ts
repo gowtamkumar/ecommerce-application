@@ -62,7 +62,7 @@ export class OrderItemEntity {
 
   @Column({ name: "product_variant_id" })
   productVariantId!: number;
-  @OneToMany((_type) => ProductVariantEntity, (product) => product.orderItem, {
+  @ManyToOne((_type) => ProductVariantEntity, (product) => product.orderItems, {
     onDelete: "SET NULL",
   })
   @JoinColumn({ name: "product_variant_id" })

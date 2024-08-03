@@ -80,10 +80,41 @@ export const getDashboardReport = asyncHandler(
     `
     );
 
+    const top_customers = await connection.query(
+      `
+      with customerPayments as (
+        select 
+          user_id,
+          SUM(COALESCE(amount, 0)) AS total_paid_amount
+        from payments group by user_id 
+      )
+      select 
+        users.name,
+        total_paid_amount
+        from customerPayments as cp
+      LEFT JOIN  users ON users.id = cp.user_id
+      order by total_paid_amount DESC
+    `
+    );
+
+
+    // with customerPayments as (
+    //   select 
+    //     user_id,
+    //     SUM(COALESCE(amount, 0)) AS total_paid_amount
+    //   from payments group by user_id 
+    // )
+    // select 
+    //   users.name,
+    //   total_paid_amount
+    //   from customerPayments
+    // LEFT JOIN  users ON users.id = customerPayments.user_id
+    // order by total_paid_amount DESC
+
     return res.status(200).json({
       success: true,
       msg: "Get Dashboard Report",
-      data: { ...user[0], ...results[0], orders, top_selling_product },
+      data: { ...user[0], ...results[0], orders, top_selling_product,top_customers },
     });
   }
 );

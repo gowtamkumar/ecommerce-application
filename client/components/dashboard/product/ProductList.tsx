@@ -332,7 +332,7 @@ const ProductList: React.FC = () => {
         title: "color",
         key: "Color",
         dataIndex: "color",
-        render: (v: any) => <span>{v.name}</span>,
+        render: (v: any) => <span>{v?.name}</span>,
       },
 
       {

@@ -2,47 +2,32 @@
 import React from "react";
 import { Avatar, Card, Table } from "antd";
 
-const TopCustomer = ({ topCustomers }:any) => {
+const TopCustomer = ({ top_customers }: any) => {
+  console.log("🚀 ~ top_customers:", top_customers);
   const theme = "light-bg";
   const text = "text-dark";
 
   const columns = [
     {
       title: "Customer",
-      dataIndex: "customer",
-      key: "customer",
-      render: (item: any) => (
-        <div className="flex items-center">
-          <Avatar />
-          <div>
-            <div className="mx-2">{item.name}</div>
-            <small className="mx-2">{item.phone}</small>
-          </div>
-        </div>
-      ),
+      dataIndex: "name",
+      key: "name",
+      // render: (item: any) => (
+      //   <div className="flex items-center">
+      //     {/* <Avatar /> */}
+      //     <div>
+      //       <div className="mx-2">{item.name}</div>
+      //       <small className="mx-2">{item.phone}</small>
+      //     </div>
+      //   </div>
+      // ),
     },
     {
       title: "Total Paid Amount",
-      dataIndex: "total_amount",
-      key: "total_amount",
-      render: (item: any) => (
-        <>
-          <div>৳ {item.amount}</div>
-          {/* <span>Total Sales : {item.sale}</span> */}
-        </>
-      ),
+      dataIndex: "total_paid_amount",
+      key: "total_paid_amount",
     },
   ];
-
-  const data = (topCustomers || []).map((item: any) => ({
-    key: item.id,
-    customer: {
-      name: item.name,
-      photo: item.photo,
-      phone: item.phone,
-    },
-    total_amount: { amount: item.amount, sale: item.sale_items },
-  }));
 
   return (
     <Card
@@ -51,11 +36,12 @@ const TopCustomer = ({ topCustomers }:any) => {
       size="small"
     >
       <Table
-        className="bg-slate-600"
         size="small"
-        pagination={false}
+        pagination={{
+          pageSize: 5,
+        }}
         columns={columns}
-        dataSource={data}
+        dataSource={top_customers}
       />
     </Card>
   );
