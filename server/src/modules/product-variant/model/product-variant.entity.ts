@@ -65,6 +65,6 @@ export class ProductVariantEntity {
   @Column({ name: "stock_qty", nullable: true })
   stockQty?: number;
 
-  @OneToOne((_type) => OrderItemEntity, (items) => items.productVariant)
+  @ManyToOne((_type) => OrderItemEntity, (items) => items.productVariant)
   orderItem!: OrderItemEntity[];
 }

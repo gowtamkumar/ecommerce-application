@@ -31,6 +31,7 @@ const Dashboard = () => {
     total_shipped_count,
     orders,
     total_active_user,
+    top_selling_product
   }: any = dashboardReports || {};
   console.log("🚀 ~ dashboardReports:", dashboardReports);
   const { RangePicker } = DatePicker;
@@ -42,7 +43,7 @@ const Dashboard = () => {
     (async () => {
       try {
         const results = await getDashboardReports({
-          status: "Pending",
+          // status: "Pending",
           startDate: firstDateOfMonth.toISOString(),
           endDate: lastDateOfMonth.toISOString(),
         });
@@ -143,7 +144,7 @@ const Dashboard = () => {
           <TopCustomer topCustomers={topCustomers} />
         </div>
         <div className="col-span-5 mb-3">
-          <StockAlert stockReports={stockReports} />
+          <StockAlert topSellingProduct={top_selling_product} />
         </div>
       </div>
     </div>

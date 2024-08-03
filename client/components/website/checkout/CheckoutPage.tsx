@@ -53,7 +53,7 @@ export default function CheckoutPage() {
       const activeShippingAddress = user.data?.shippingAddress?.find(
         (item: { status: boolean }) => item.status
       );
-      if (activeShippingAddress.divisionId) {
+      if (activeShippingAddress?.divisionId) {
         const getShippingCharge = await getShippingCharges({
           divisionId: activeShippingAddress.divisionId,
         });
@@ -69,8 +69,9 @@ export default function CheckoutPage() {
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
+      setShippingCharge({})
     };
-  }, [global.action, dispatch]);
+  }, [dispatch, global.action]);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     cart.carts.reduce(
@@ -109,7 +110,7 @@ export default function CheckoutPage() {
         netAmount,
         orderTax: taxAmount,
         orderTotalAmount,
-        shippingAmount: +shippingCharge.shippingAmount || 0,
+        shippingAmount: +shippingCharge?.shippingAmount || 0,
         discountAmount,
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
@@ -147,7 +148,7 @@ export default function CheckoutPage() {
         setCheckoutFormData({});
         setShippingAddress([]);
         setShippingCharge({});
-      }, 2000);
+      }, 1000);
     } catch (err: any) {
       console.log("🚀 ~ err:", err);
     }
@@ -385,9 +386,9 @@ export default function CheckoutPage() {
                 loading={global.loading.save}
                 disabled={global.loading.save}
               >
-                <span className="mx-2">Confirm Order</span>
+                <span>Confirm Order</span>
                 {(
-                  +orderTotalAmount + (+shippingCharge.shippingAmount || 0)
+                  +orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
                 ).toFixed(2)}
                 TK.
               </Button>
@@ -502,7 +503,7 @@ export default function CheckoutPage() {
                   <span>Shipping</span>
                   <span>
                     {" "}
-                    ৳ {(+shippingCharge.shippingAmount || 0).toFixed(2)}.
+                    ৳ {(+shippingCharge?.shippingAmount || 0).toFixed(2)}.
                   </span>
                 </div>
                 <div className="flex justify-between font-semibold mt-2">
@@ -510,7 +511,7 @@ export default function CheckoutPage() {
                   <span>
                     ৳{" "}
                     {(
-                      orderTotalAmount + (+shippingCharge.shippingAmount || 0)
+                      orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
                     ).toFixed(2)}
                     .
                   </span>
@@ -520,7 +521,7 @@ export default function CheckoutPage() {
                   <span>
                     ৳{" "}
                     {(
-                      orderTotalAmount + (+shippingCharge.shippingAmount || 0)
+                      orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
                     ).toFixed(2)}
                     .
                   </span>

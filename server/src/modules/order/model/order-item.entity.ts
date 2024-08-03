@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -43,7 +44,7 @@ export class OrderItemEntity {
   tax!: number;
 
   @Column({
-    name: "discout_amount",
+    name: "discount_amount",
     type: "numeric",
     precision: 10,
     scale: 2,
@@ -61,7 +62,7 @@ export class OrderItemEntity {
 
   @Column({ name: "product_variant_id" })
   productVariantId!: number;
-  @OneToOne((_type) => ProductVariantEntity, (product) => product.orderItem, {
+  @OneToMany((_type) => ProductVariantEntity, (product) => product.orderItem, {
     onDelete: "SET NULL",
   })
   @JoinColumn({ name: "product_variant_id" })

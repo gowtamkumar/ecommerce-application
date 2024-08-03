@@ -15,32 +15,23 @@ export const getDashboardReport = asyncHandler(
     const fromDate = dayjs(startDate).toISOString();
     const toDate = dayjs(endDate).toISOString();
 
+    // orders data
+
     const orderRepository = connection.getRepository(OrderEntity);
     const qb = orderRepository.createQueryBuilder("order");
-    qb.select([
-      "order",
-      "orderItems",
-      "product",
-      "payments",
-      "user.name",
-      // "orderTrackings",
-      // "deliveryMan.name",
-      // "shippingAddress",
-    ]);
-
+    qb.select(["order", "orderItems", "product", "payments", "user.name"]);
     qb.leftJoin("order.orderItems", "orderItems");
     qb.leftJoin("orderItems.product", "product");
     qb.leftJoin("order.user", "user");
     qb.leftJoin("order.payments", "payments");
-    // qb.leftJoin("order.orderTrackings", "orderTrackings");
-    // qb.leftJoin("order.deliveryMan", "deliveryMan");
-    // qb.leftJoin("order.shippingAddress", "shippingAddress");
 
     if (status) qb.where({ status }); //here need to multiple status agree
     if (fromDate && toDate)
       qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
+    qb.orderBy("order.trackingNo", "DESC");
     const orders = await qb.getMany();
-
+    // orders data end
+    // user info
     const user = await connection.query(
       `SELECT
           SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS total_active_user,
@@ -48,7 +39,7 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
       FROM users`
     );
-
+    // order sale, count etc,
     const results = await connection.query(`
       SELECT
           SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_count,
@@ -62,13 +53,37 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Pending' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_amount,
           SUM(CASE WHEN status = 'Completed' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_amount
       FROM orders
-     
   `);
+
+    const top_selling_product = await connection.query(
+      `with orderItems as (
+          SELECT 
+            oi.product_id AS product_id,
+            SUM(((COALESCE(oi.price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+          FROM 
+            order_items oi
+          LEFT JOIN 
+            orders ON orders.id = oi.order_id
+          WHERE 
+            orders.status = 'Completed'
+          GROUP BY 
+            oi.product_id
+            order by total_amount DESC
+          )
+      select
+        oI.product_id,
+        oI.total_amount,
+        products.name,
+        products.alert_qty
+      from orderItems oI
+      LEFT JOIN products ON products.id = oI.product_id
+    `
+    );
 
     return res.status(200).json({
       success: true,
       msg: "Get Dashboard Report",
-      data: { ...user[0], ...results[0], orders },
+      data: { ...user[0], ...results[0], orders, top_selling_product },
     });
   }
 );

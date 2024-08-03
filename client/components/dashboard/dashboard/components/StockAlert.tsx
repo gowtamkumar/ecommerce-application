@@ -2,70 +2,33 @@
 import React, { useState } from "react";
 import { Avatar, Button, Card, Table } from "antd";
 
-const StockAlert = ({ stockReports }: any) => {
+const StockAlert = ({ topSellingProduct }: any) => {
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 5,
   });
-  // query
-  const productQuery = [] as any;
-
-  const getProduct = (value: any) => {
-    const product =
-      (productQuery.data || []).find((item: any) => item.id === value) || {};
-    return product;
-  };
 
   const columns = [
     {
       title: "Product",
-      dataIndex: "productId",
-      key: "productId",
-      render: (item: any) => (
-        <span>
-          <Avatar
-            shape="square"
-            // src={`${config.apiBaseUrl}/uploads/${
-            //   getProduct(item)?.photo || "no-image.png"
-            // } `}
-            src="user.png"
-          />
-          <span className="ms-2">{getProduct(item)?.name}</span>
-        </span>
-      ),
+      render: (item: any) => <span className="ms-2">{item?.name}</span>,
     },
     {
       title: "Total Sale",
-      dataIndex: "total_sale",
-      key: "total_sale",
-      render: (text: string) => <span>{text}</span>,
+      dataIndex: "total_amount",
+      key: "total_amount",
     },
-    {
-      title: "Current Stock",
-      key: "current_stock",
-      dataIndex: "current_stock",
-    },
+    // {
+    //   title: "Current Stock",
+    //   key: "current_stock",
+    //   dataIndex: "current_stock",
+    // },
     {
       title: "Quantity Alert",
-      dataIndex: "quantity_alert",
-      key: "quantity_alert",
+      dataIndex: "alert_qty",
+      key: "alert_qty",
     },
   ];
-
-  const data = [] as any;
-  // (item) => item.qtyAlert && productsInStock[item.id] < item.qtyAlert,
-  const newData = (stockReports || [])
-    .filter((item: any) => item.qty_alert && item.stock_qty < item.qty_alert)
-    .map((item: any) =>
-      data.push({
-        key: item.product_id,
-        product: item.product_id,
-        productId: item.product_id,
-        total_sale: item.total_sale || "0",
-        quantity_alert: item.qty_alert || "0",
-        current_stock: item.stock_qty || "0",
-      })
-    );
 
   const onChange = (pageNumber: any) => {
     setTableParams({ ...tableParams, current: pageNumber });
@@ -93,7 +56,7 @@ const StockAlert = ({ stockReports }: any) => {
         columns={columns}
         size="small"
         scroll={{ x: true }}
-        dataSource={data}
+        dataSource={topSellingProduct}
       />
     </Card>
   );
