@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Avatar, Button, Card, Table } from "antd";
 
-const StockAlert = ({ productAlertStockReport }: any) => {
+const TopSellingProduct = ({ topSellingProduct }: any) => {
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 5,
@@ -14,15 +14,21 @@ const StockAlert = ({ productAlertStockReport }: any) => {
       render: (item: any) => <span className="ms-2">{item?.name}</span>,
     },
     {
-      title: "Current Stock",
-      key: "stock_qty",
-      dataIndex: "stock_qty",
+      title: "Total Sale",
+      dataIndex: "total_amount",
+      key: "total_amount",
+      width: 150,
     },
-    {
-      title: "Alert Qty",
-      dataIndex: "alert_qty",
-      key: "alert_qty",
-    },
+    // {
+    //   title: "Current Stock",
+    //   key: "current_stock",
+    //   dataIndex: "current_stock",
+    // },
+    // {
+    //   title: "Quantity Alert",
+    //   dataIndex: "alert_qty",
+    //   key: "alert_qty",
+    // },
   ];
 
   const onChange = (pageNumber: any) => {
@@ -31,12 +37,12 @@ const StockAlert = ({ productAlertStockReport }: any) => {
 
   return (
     <Card
-      title="Product Alert & Stock Report"
+      title="Top Selling Product"
       size="small"
       extra={
         <Button
           size="small"
-        // onClick={() => navigate("/stock-report/stock-alert")}
+          // onClick={() => navigate("/stock-report/stock-alert")}
         >
           View All {">>"}
         </Button>
@@ -51,10 +57,10 @@ const StockAlert = ({ productAlertStockReport }: any) => {
         columns={columns}
         size="small"
         scroll={{ x: true }}
-        dataSource={productAlertStockReport}
+        dataSource={topSellingProduct}
       />
     </Card>
   );
 };
 
-export default StockAlert;
+export default TopSellingProduct;

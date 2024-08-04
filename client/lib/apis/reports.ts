@@ -4,16 +4,16 @@ import { authOptions } from "../authOption";
 import { getServerSession } from "next-auth";
 
 export async function getDashboardReports(params: any) {
-  const { status, startDate, endDate } = params;
+  const { startDate, endDate } = params;
   const session = await getServerSession(authOptions);
   let dashboardQuery = "";
-  
-  if (status) {
-    dashboardQuery += `status=${status}`;
-  }
+
+  // if (status) {
+  //   dashboardQuery += `status=${status}`;
+  // }
 
   if (startDate && endDate) {
-    dashboardQuery += `&startDate=${startDate}&endDate=${endDate}`;
+    dashboardQuery += `startDate=${startDate}&endDate=${endDate}`;
   }
 
   const res = await fetch(

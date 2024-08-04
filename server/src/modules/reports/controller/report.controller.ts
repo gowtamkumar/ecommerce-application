@@ -99,19 +99,26 @@ export const getDashboardReport = asyncHandler(
 
     const product_alert_stock_report = await connection.query(
       `
-       with productVariants as (
-        select 
-          product_id,
-          SUM(COALESCE(stock_qty, 0)) AS stock_qty
-        from product_variants group by product_id
+     WITH productVariants AS (
+        SELECT 
+            product_id,
+            SUM(COALESCE(stock_qty, 0)) AS stock_qty
+        FROM 
+            product_variants 
+        GROUP BY 
+            product_id
       )
-      select 
-        products.name,
-        products.alert_qty,
-        stock_qty
-        from productVariants
-      LEFT JOIN products ON products.id = productVariants.product_id
-      order by stock_qty ASC
+      SELECT 
+          products.name AS name,
+          products.alert_qty AS alert_qty,
+          productVariants.stock_qty AS stock_qty
+      FROM 
+          productVariants
+      LEFT JOIN 
+          products ON products.id = productVariants.product_id
+      WHERE products.alert_qty > productVariants.stock_qty
+      ORDER BY 
+          productVariants.stock_qty ASC
     `
     );
 

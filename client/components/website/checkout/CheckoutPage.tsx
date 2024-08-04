@@ -116,7 +116,9 @@ export default function CheckoutPage() {
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
 
-      // return console.log("newData:", validatedFields);
+      // console.log("cart.carts", cart.carts);
+
+      // return console.log("newData:", validatedFields.error);
 
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
@@ -172,6 +174,19 @@ export default function CheckoutPage() {
     }
   }
 
+  function stockCheckingAndPurchaseLimit(
+    product: { limitPurchaseQty: number; qty: number },
+    checkStock: number
+  ): boolean {
+    if (product.limitPurchaseQty <= product.qty) {
+      return true;
+    }
+    if (checkStock <= product.qty) {
+      return true;
+    }
+    return false;
+  }
+
   return (
     <>
       <div className="min-h-screen bg-gray-100 lg:w-8/12 mx-auto items-center">
@@ -204,6 +219,9 @@ export default function CheckoutPage() {
             </div>
             <div>
               {cart.carts.map((item: any, idx: number) => {
+                const stockQty = item.selectProductVariant.stockQty;
+                console.log("🚀 ~ stockQty:", stockQty);
+
                 return (
                   <div key={idx} className="p-3 flex border-b">
                     <Image
@@ -237,6 +255,7 @@ export default function CheckoutPage() {
                         <Button
                           className="px-2 py-1 bg-gray-200"
                           onClick={() => dispatch(addCart(item))}
+                          disabled={stockQty <= item?.qty}
                         >
                           +
                         </Button>

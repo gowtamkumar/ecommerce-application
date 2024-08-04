@@ -13,6 +13,7 @@ import WidgetStats from "./components/WidgetStats";
 import StockReport from "./components/StockReport";
 import TopCustomer from "./components/TopCustomer";
 import StockAlert from "./components/StockAlert";
+import TopSellingProduct from "./components/TopSallingProduct";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
@@ -32,11 +33,12 @@ const Dashboard = () => {
     orders,
     total_active_user,
     top_selling_product,
-    top_customers
+    top_customers,
+    product_alert_stock_report
   }: any = dashboardReports || {};
   console.log("🚀 ~ dashboardReports:", dashboardReports);
   const { RangePicker } = DatePicker;
-
+  // 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 
@@ -135,17 +137,26 @@ const Dashboard = () => {
               <Statistic value={+8000 || "0"} />
             </div>
           </Card>
-
-          <div className="mt-6">
-            Total Active user
-            <Statistic value={total_active_user || "0"} />
-          </div>
         </div>
         <div className="col-span-4 mb-3">
           <TopCustomer top_customers={top_customers} />
         </div>
         <div className="col-span-5 mb-3">
-          <StockAlert topSellingProduct={top_selling_product} />
+          <TopSellingProduct topSellingProduct={top_selling_product} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-6 mb-3">
+          <Card title="Other" size="small">
+            <div>
+              Total Active user
+              <Statistic value={total_active_user || "0"} />
+            </div>
+          </Card>
+        </div>
+        <div className="col-span-6 mb-3">
+          <StockAlert productAlertStockReport={product_alert_stock_report} />
         </div>
       </div>
     </div>

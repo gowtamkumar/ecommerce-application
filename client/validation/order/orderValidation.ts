@@ -50,8 +50,8 @@ export const orderValidationSchema = z.object({
         productVariantId: z.number({
           required_error: "Product Variant is required",
         }),
-        colorId: z.number().optional(),
-        sizeId: z.number().optional(),
+        colorId: z.number().optional().nullable(),
+        sizeId: z.number().optional().nullable(),
         qty: z.number({ required_error: "qty is required" }),
       })
     )

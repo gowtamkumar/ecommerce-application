@@ -19,7 +19,7 @@ import { getProductVariant } from "@/lib/apis/product-variant";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
-  const [checkStock, setCheckStock] = useState(0)
+  const [checkStock, setCheckStock] = useState(0);
   const { id } = useParams();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
@@ -38,8 +38,10 @@ export default function SingleProduct() {
           });
 
           if (newProduct.data.productVariants[0].id) {
-            const productVariant = await getProductVariant({ id: newProduct.data.productVariants[0].id })
-            setCheckStock(productVariant.data.stockQty)
+            const productVariant = await getProductVariant({
+              id: newProduct.data.productVariants[0].id,
+            });
+            setCheckStock(productVariant.data.stockQty);
           }
 
           const categoryIds = newProduct.data.productCategories
@@ -47,7 +49,6 @@ export default function SingleProduct() {
             .join(",");
 
           dispatch(setProductFilter({ categoryId: categoryIds }));
-
         }
       } catch (error) {
         console.error("Error fetching product data:", error);
