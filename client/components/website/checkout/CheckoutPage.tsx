@@ -17,6 +17,7 @@ import {
   Breadcrumb,
   Button,
   Checkbox,
+  Input,
   Popconfirm,
   Radio,
   Space,
@@ -174,11 +175,21 @@ export default function CheckoutPage() {
     }
   }
 
-  function stockCheckingAndPurchaseLimit(
-    product: { limitPurchaseQty: number; qty: number },
-    checkStock: number
-  ): boolean {
-    if (product.limitPurchaseQty <= product.qty) {
+  function stockCheckingAndPurchaseLimit(product: {
+    limitPurchaseQty: number;
+    qty: number;
+    selectProductVariant: { stockQty: number };
+  }) {
+    let checkStock = product.selectProductVariant.stockQty;
+
+    // if (newProduct.data.productVariants[0].id) {
+    //   const productVariant = await getProductVariant({
+    //     id: newProduct.data.productVariants[0].id,
+    //   });
+    //   setCheckStock(productVariant.data.stockQty);
+    // }
+
+    if (product.limitPurchaseQty && product.limitPurchaseQty <= product.qty) {
       return true;
     }
     if (checkStock <= product.qty) {
@@ -219,9 +230,6 @@ export default function CheckoutPage() {
             </div>
             <div>
               {cart.carts.map((item: any, idx: number) => {
-                const stockQty = item.selectProductVariant.stockQty;
-                console.log("🚀 ~ stockQty:", stockQty);
-
                 return (
                   <div key={idx} className="p-3 flex border-b">
                     <Image
@@ -233,16 +241,23 @@ export default function CheckoutPage() {
                     />
                     <div className="ml-4 flex-grow">
                       <h3 className="text-base font-semibold">{item?.name}</h3>
-                      <span className="mx-2">
-                        Size: {item.selectProductVariant?.size?.name}
-                      </span>
-                      <span>
-                        Color: {item.selectProductVariant?.color?.name}
-                      </span>
+                      {item.selectProductVariant?.size?.name && (
+                        <span className="mx-2">
+                          Size: {item.selectProductVariant?.size?.name}
+                        </span>
+                      )}
+
+                      {item.selectProductVariant?.color?.name && (
+                        <span>
+                          Color: {item.selectProductVariant?.color?.name}
+                        </span>
+                      )}
+
                       <div className="mt-2 flex items-center">
                         <Button
                           className="px-2 py-1 bg-gray-200"
                           onClick={() => dispatch(decrementCart(item))}
+                          disabled={item?.qty <= 1}
                         >
                           -
                         </Button>
@@ -255,7 +270,8 @@ export default function CheckoutPage() {
                         <Button
                           className="px-2 py-1 bg-gray-200"
                           onClick={() => dispatch(addCart(item))}
-                          disabled={stockQty <= item?.qty}
+                          // disabled={stockQty <= item?.qty}
+                          disabled={stockCheckingAndPurchaseLimit(item)}
                         >
                           +
                         </Button>

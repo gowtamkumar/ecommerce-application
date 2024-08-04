@@ -92,7 +92,7 @@ const ProductDetails = ({
     product: { limitPurchaseQty: number; qty: number },
     checkStock: number
   ): boolean {
-    if (product.limitPurchaseQty <= product.qty) {
+    if (product.limitPurchaseQty && product.limitPurchaseQty <= product.qty) {
       return true;
     }
     if (checkStock <= product.qty) {
@@ -158,54 +158,58 @@ const ProductDetails = ({
       {product?.productVariants?.length && (
         <div className="mb-4">
           <span className="text-gray-600">Color Family: </span>
-          {product?.productVariants?.map((item: any, idx: number) => (
-            <Button
-              key={idx}
-              onClick={async () => {
-                setProduct({
-                  ...product,
-                  selectProductVariant: item,
-                });
-
-                if (product.productVariants[0].id) {
-                  const productVariant = await getProductVariant({
-                    id: product.productVariants[0].id,
+          {product?.productVariants
+            .filter((item: { id: number }) => item.id)
+            ?.map((item: any, idx: number) => (
+              <Button
+                key={idx}
+                onClick={async () => {
+                  setProduct({
+                    ...product,
+                    selectProductVariant: item,
                   });
-                  setCheckStock(productVariant.data.stockQty);
-                }
-              }}
-              style={{ backgroundColor: `${item.color?.color}` }}
-              className="mr-2 px-2 py-1 rounded bg-gray-200 text-white hover:bg-gray-300 focus:outline-none"
-            >
-              {item.color?.name}
-            </Button>
-          ))}
+
+                  if (product.productVariants[0].id) {
+                    const productVariant = await getProductVariant({
+                      id: product.productVariants[0].id,
+                    });
+                    setCheckStock(productVariant.data.stockQty);
+                  }
+                }}
+                style={{ backgroundColor: `${item.color?.color}` }}
+                className="mr-2 px-2 py-1 rounded bg-gray-200 text-white hover:bg-gray-300 focus:outline-none"
+              >
+                {item?.color?.name}
+              </Button>
+            ))}
         </div>
       )}
 
       {product?.productVariants?.length && (
         <div className="mb-4">
           <span className="text-gray-600">Size </span>
-          {product?.productVariants?.map((item: any, idx: number) => (
-            <Button
-              key={idx}
-              onClick={async () => {
-                setProduct({
-                  ...product,
-                  selectProductVariant: item,
-                });
-                if (product.productVariants[0].id) {
-                  const productVariant = await getProductVariant({
-                    id: product.productVariants[0].id,
+          {product?.productVariants
+            .filter((item: { id: number }) => item.id)
+            ?.map((item: any, idx: number) => (
+              <Button
+                key={idx}
+                onClick={async () => {
+                  setProduct({
+                    ...product,
+                    selectProductVariant: item,
                   });
-                  setCheckStock(productVariant.data.stockQty);
-                }
-              }}
-              className="mr-2 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none"
-            >
-              {item.size?.name}
-            </Button>
-          ))}
+                  if (product.productVariants[0].id) {
+                    const productVariant = await getProductVariant({
+                      id: product.productVariants[0].id,
+                    });
+                    setCheckStock(productVariant.data.stockQty);
+                  }
+                }}
+                className="mr-2 px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              >
+                {item?.size?.name}
+              </Button>
+            ))}
         </div>
       )}
 
@@ -215,6 +219,7 @@ const ProductDetails = ({
         <span className="text-gray-600">Quantity: </span>
         <Button
           onClick={() => decrementToCart(product)}
+          disabled={product.qty <= 1}
           className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300 focus:outline-none"
         >
           -
@@ -222,6 +227,7 @@ const ProductDetails = ({
         <Input
           type="number"
           value={product.qty}
+          min={1}
           readOnly
           className="w-12 text-center border-t border-b border-gray-300"
         />
