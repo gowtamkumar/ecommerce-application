@@ -97,24 +97,35 @@ export const getDashboardReport = asyncHandler(
     `
     );
 
-
-    // with customerPayments as (
-    //   select 
-    //     user_id,
-    //     SUM(COALESCE(amount, 0)) AS total_paid_amount
-    //   from payments group by user_id 
-    // )
-    // select 
-    //   users.name,
-    //   total_paid_amount
-    //   from customerPayments
-    // LEFT JOIN  users ON users.id = customerPayments.user_id
-    // order by total_paid_amount DESC
+    const product_alert_stock_report = await connection.query(
+      `
+       with productVariants as (
+        select 
+          product_id,
+          SUM(COALESCE(stock_qty, 0)) AS stock_qty
+        from product_variants group by product_id
+      )
+      select 
+        products.name,
+        products.alert_qty,
+        stock_qty
+        from productVariants
+      LEFT JOIN products ON products.id = productVariants.product_id
+      order by stock_qty ASC
+    `
+    );
 
     return res.status(200).json({
       success: true,
       msg: "Get Dashboard Report",
-      data: { ...user[0], ...results[0], orders, top_selling_product,top_customers },
+      data: {
+        ...user[0],
+        ...results[0],
+        orders,
+        top_selling_product,
+        top_customers,
+        product_alert_stock_report,
+      },
     });
   }
 );
