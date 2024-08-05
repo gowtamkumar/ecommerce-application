@@ -14,6 +14,12 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
   const result = await repository.find({
     relations: {
       order: true,
+      user: true,
+    },
+    select: {
+      user: {
+        name: true,
+      },
     },
   });
 

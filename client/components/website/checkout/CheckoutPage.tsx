@@ -107,7 +107,6 @@ export default function CheckoutPage() {
       const validatedFields = orderValidationSchema.safeParse({
         orderItems: cart.carts,
         orderDate: dayjs().toISOString(),
-        // paymentStatus: checkoutFormData.paymentMethod ? "Paid",
         netAmount,
         orderTax: taxAmount,
         orderTotalAmount,
@@ -116,8 +115,6 @@ export default function CheckoutPage() {
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-
-      // console.log("cart.carts", cart.carts);
 
       // return console.log("newData:", validatedFields.error);
 
@@ -270,7 +267,6 @@ export default function CheckoutPage() {
                         <Button
                           className="px-2 py-1 bg-gray-200"
                           onClick={() => dispatch(addCart(item))}
-                          // disabled={stockQty <= item?.qty}
                           disabled={stockCheckingAndPurchaseLimit(item)}
                         >
                           +
@@ -280,10 +276,10 @@ export default function CheckoutPage() {
                           ৳{" "}
                           {item.discountId
                             ? (
-                                +item.price +
-                                +item.tax -
-                                item?.discountA
-                              ).toFixed(2)
+                              +item.price +
+                              +item.tax -
+                              item?.discountA
+                            ).toFixed(2)
                             : (+item.price + item.tax || 0).toFixed(2)}
                         </div>
                         {item?.discountId ? (

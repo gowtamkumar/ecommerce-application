@@ -1,13 +1,11 @@
 "use server";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 
-export async function saveSize(data: any) {
+export async function savePayment(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes`, {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/payments`, {
     method: "POST",
-    cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.user.accessToken}`,
@@ -17,10 +15,9 @@ export async function saveSize(data: any) {
   return res.json();
 }
 
-export async function getSizes() {
+export async function getPayments() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes`, {
-    cache: "no-cache",
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/payments`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session?.user.accessToken}`,
@@ -29,10 +26,10 @@ export async function getSizes() {
   return res.json();
 }
 
-export async function getSize(data: any) {
+export async function getPayment(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/sizes/${data.id}`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/payments/${data.id}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -44,10 +41,10 @@ export async function getSize(data: any) {
   return res.json();
 }
 
-export async function updateSize(data: any) {
+export async function updatePayment(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/sizes/${data.id}`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/payments/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -61,15 +58,18 @@ export async function updateSize(data: any) {
   return res.json();
 }
 
-export async function deleteSize(id: string) {
+export async function deletePayment(id: string) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes/${id}`, {
-    method: "DELETE",
-    cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/payments/${id}`,
+    {
+      method: "DELETE",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
   return res.json();
 }

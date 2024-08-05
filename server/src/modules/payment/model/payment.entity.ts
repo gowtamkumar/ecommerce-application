@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { OrderEntity } from "../../order/model/order.entity";
 import { OrderPaymentMethod } from "../../order/enums";
+import { UserEntity } from "../../auth/model/user.entity";
 
 @Entity("payments")
 export class PaymentEntity {
@@ -18,7 +19,9 @@ export class PaymentEntity {
 
   @Column({ name: "order_id" })
   orderId!: number;
-  @ManyToOne((_type) => OrderEntity, (order) => order.payments)
+  @ManyToOne((_type) => OrderEntity, (order) => order.payments, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
@@ -37,9 +40,14 @@ export class PaymentEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
+  @ManyToOne((_type) => UserEntity, (user) => user.payments, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
 
-  @Column({ type: "boolean", default: true })
-  is_successfull!: boolean;
+  @Column({name: 'is_successfull', type: "boolean", default: true })
+  isSuccessfull!: boolean;
 
   @Column({ name: "transaction_id", nullable: true })
   transactionId!: string;

@@ -15,6 +15,7 @@ import { OrderEntity } from "../../order/model/order.entity";
 import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
 import { ReviewEntity } from "../../review/model/review.entity";
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
+import { PaymentEntity } from "../../payment/model/payment.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -39,7 +40,7 @@ export class UserEntity {
   @Column({ unique: true, nullable: true })
   phone?: string;
 
-  @Column({nullable: true })
+  @Column({ nullable: true })
   dob?: string;
 
   @Column({ type: "enum", enum: GenderEnum, nullable: true })
@@ -105,4 +106,7 @@ export class UserEntity {
 
   @OneToMany((_type) => WishListEntity, (wishlist) => wishlist.user)
   wishlists!: WishListEntity[];
+
+  @OneToMany((_type) => PaymentEntity, (payment) => payment.user)
+  payments!: PaymentEntity[];
 }

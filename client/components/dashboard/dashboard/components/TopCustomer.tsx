@@ -1,22 +1,34 @@
 "use client";
 import React from "react";
-import { Avatar, Card, Table } from "antd";
+import { Card, Table } from "antd";
+import { ColumnsType } from "antd/es/table";
 
-const TopCustomer = ({ top_customers }: any) => {
-  console.log("🚀 ~ top_customers:", top_customers);
+// Define the interface for the customer data
+interface Customer {
+  name: string;
+  total_paid_amount: string;
+}
+// Define the interface for the component props
+interface TopCustomerProps {
+  topCustomers: Customer[];
+}
+
+const TopCustomer: React.FC<TopCustomerProps> = ({ topCustomers }) => {
   const theme = "light-bg";
   const text = "text-dark";
 
-  const columns = [
+  // Define columns with proper typing
+  const columns: ColumnsType<Customer> = [
     {
       title: "Customer",
       dataIndex: "name",
       key: "name",
-      // render: (item: any) => (
+      // Uncomment and type the render function if needed
+      // render: (text: string) => (
       //   <div className="flex items-center">
       //     {/* <Avatar /> */}
       //     <div>
-      //       <div className="mx-2">{item.name}</div>
+      //       <div className="mx-2">{text}</div>
       //       <small className="mx-2">{item.phone}</small>
       //     </div>
       //   </div>
@@ -41,7 +53,8 @@ const TopCustomer = ({ top_customers }: any) => {
           pageSize: 5,
         }}
         columns={columns}
-        dataSource={top_customers}
+        dataSource={topCustomers}
+        rowKey="name" // Ensure to provide a unique row key
       />
     </Card>
   );

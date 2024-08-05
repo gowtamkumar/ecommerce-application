@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, DatePicker, Statistic } from "antd";
+import { Card, DatePicker, Spin, Statistic } from "antd";
 import {
   SendOutlined,
   ShoppingOutlined,
@@ -17,7 +17,7 @@ import TopSellingProduct from "./components/TopSallingProduct";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
-  const [datePic, setDatePic] = useState({});
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     summary,
     stockRecords,
@@ -30,36 +30,37 @@ const Dashboard = () => {
     total_sale_amount,
     total_order_return_amount,
     total_shipped_count,
-    orders,
     total_active_user,
     top_selling_product,
     top_customers,
-    product_alert_stock_report
+    product_alert_stock_report,
   }: any = dashboardReports || {};
-  console.log("🚀 ~ dashboardReports:", dashboardReports);
   const { RangePicker } = DatePicker;
-  // 
+  //
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
         const results = await getDashboardReports({
-          // status: "Pending",
-          startDate: firstDateOfMonth.toISOString(),
-          endDate: lastDateOfMonth.toISOString(),
-        });
-        setDatePic({
           startDate: firstDateOfMonth.toISOString(),
           endDate: lastDateOfMonth.toISOString(),
         });
         setDashboardReports(results.data);
       } catch (err) {
+        setLoading(false);
         console.log(err);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
+
+  if (loading) {
+    return <Spin />;
+  }
 
   return (
     <div className="container">
@@ -69,13 +70,9 @@ const Dashboard = () => {
             style={{ background: "#fff" }}
             defaultValue={[firstDateOfMonth, lastDateOfMonth]}
             onChange={async (value) => {
-              const newDate = { status: "Pending" } as any;
+              const newDate = {} as { startDate: string; endDate: string };
               if (value) newDate.startDate = dayjs(value[0]).toISOString();
               if (value) newDate.endDate = dayjs(value[1]).toISOString();
-
-              if (newDate.startDate && newDate.endDate) {
-                setDatePic(newDate);
-              }
               const results = await getDashboardReports(newDate);
               setDashboardReports(results.data);
             }}
@@ -87,8 +84,6 @@ const Dashboard = () => {
         <WidgetStats
           title="TOTAL SALE"
           value={total_sale_amount || "0.00"}
-          // percentage={-2.65}
-          // subtitle="since last week"
           icon={<ShoppingOutlined />}
           color="primary"
         />
@@ -96,8 +91,6 @@ const Dashboard = () => {
         <WidgetStats
           title="TOTAL ORDER"
           value={total_order_amount || "0.00"}
-          // percentage={3.65}
-          // title="since last week"
           icon={<LineChartOutlined />}
           color="primary"
         />
@@ -105,17 +98,13 @@ const Dashboard = () => {
         <WidgetStats
           title="ORDER RETURN"
           value={total_order_return_amount || "0.00"}
-          // percentage={-2.65}
-          // subtitle="since last week"
           icon={<RollbackOutlined />}
           color="primary"
         />
 
         <WidgetStats
           title="TOTAL VISITOR"
-          value={summary?.PaymentOut.totalAmount || "0.00"}
-          // percentage={-2.65}
-          // subtitle="since last week"
+          value={+1 || "0.00"}
           icon={<SendOutlined />}
           color="primary"
         />
@@ -139,7 +128,7 @@ const Dashboard = () => {
           </Card>
         </div>
         <div className="col-span-4 mb-3">
-          <TopCustomer top_customers={top_customers} />
+          <TopCustomer topCustomers={top_customers} />
         </div>
         <div className="col-span-5 mb-3">
           <TopSellingProduct topSellingProduct={top_selling_product} />
@@ -147,7 +136,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-12 gap-2">
-        <div className="col-span-6 mb-3">
+        <div className="col-span-3 mb-3">
           <Card title="Other" size="small">
             <div>
               Total Active user
@@ -155,7 +144,7 @@ const Dashboard = () => {
             </div>
           </Card>
         </div>
-        <div className="col-span-6 mb-3">
+        <div className="col-span-9 mb-3">
           <StockAlert productAlertStockReport={product_alert_stock_report} />
         </div>
       </div>

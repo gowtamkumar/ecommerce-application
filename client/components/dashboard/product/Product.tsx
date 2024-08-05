@@ -526,11 +526,11 @@ const Product = ({
                           block
                           icon={<PlusOutlined />}
                           disabled={
-                            global.formValues.type === "SimpleProduct" &&
-                            global.formValues.productVariants?.length === 1
+                            form.getFieldValue("type") === "SimpleProduct" &&
+                            form.getFieldValue("productVariants")?.length === 1
                           }
                         >
-                          Add field
+                          Add
                         </Button>
                       </Form.Item>
                     </div>

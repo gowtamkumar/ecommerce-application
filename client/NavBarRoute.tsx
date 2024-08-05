@@ -8,13 +8,11 @@ import { backupDB } from "./lib/apis/backupDB";
 
 const handleBackup = async () => {
   const date = new Date();
-  const currentDate = `${date.getFullYear()}.${
-    date.getMonth() + 1
-  }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
+  const currentDate = `${date.getFullYear()}.${date.getMonth() + 1
+    }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
 
   try {
     const response = await backupDB();
-    console.log("🚀 ~ response:", response);
     // const response = await fetch(
     //   `http://localhost:3900/api/v1/settings/db-backup`,
     //   {
@@ -125,6 +123,13 @@ const navbarRoute = [
     key: "status",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/status">Status</Link>,
+    route: "true",
+  },
+
+  {
+    key: "Payment",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/payments">Payments</Link>,
     route: "true",
   },
 
