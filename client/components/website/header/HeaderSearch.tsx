@@ -8,7 +8,7 @@ import { Input, Select } from "antd";
 import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function HeaderSearch({ categories = [] }: any) {
+export default function HeaderSearch() {
   const [serach, setSearch] = useState({} as any);
   // hook
   const dispatch = useDispatch();
@@ -31,45 +31,44 @@ export default function HeaderSearch({ categories = [] }: any) {
       ? JSON.parse(localStorage?.getItem("searchData") || "{}")
       : {};
 
-  const selectBefore = (
-    <Select
-      // defaultValue="Select Category"
-      value={getData.categoryId}
-      onChange={(value) => {
-        if (getData) {
-          localStorage.setItem(
-            "searchData",
-            JSON.stringify({ ...getData, categoryId: value })
-          );
-        } else {
-          localStorage.setItem(
-            "searchData",
-            JSON.stringify({ categoryId: value })
-          );
-        }
-        setSearch({ ...serach, categoryId: value });
-      }}
-      allowClear
-    >
-      {(categories?.data || []).map((categoroy: any) => (
-        <Select.Option key={categoroy.id} value={categoroy.id}>
-          {categoroy.name}
-        </Select.Option>
-      ))}
-    </Select>
-  );
+  // const selectBefore = (
+  //   <Select
+  //     value={getData.categoryId}
+  //     onChange={(value) => {
+  //       if (getData) {
+  //         localStorage.setItem(
+  //           "searchData",
+  //           JSON.stringify({ ...getData, categoryId: value })
+  //         );
+  //       } else {
+  //         localStorage.setItem(
+  //           "searchData",
+  //           JSON.stringify({ categoryId: value })
+  //         );
+  //       }
+  //       setSearch({ ...serach, categoryId: value });
+  //     }}
+  //     allowClear
+  //   >
+  //     {(categories?.data || []).map((categoroy: any) => (
+  //       <Select.Option key={categoroy.id} value={categoroy.id}>
+  //         {categoroy.name}
+  //       </Select.Option>
+  //     ))}
+  //   </Select>
+  // );
   return (
     <div className="w-8/12">
       <Search
-        addonBefore={selectBefore}
+        // addonBefore={selectBefore}
         width={100}
         value={getData.search}
         size="middle"
         onSearch={() => {
           let queryRouter = "";
-          if (getData.categoryId) {
-            queryRouter += `categoryId=${getData.categoryId}&`;
-          }
+          // if (getData.categoryId) {
+          //   queryRouter += `categoryId=${getData.categoryId}&`;
+          // }
           if (getData.search) {
             queryRouter += `search=${getData.search}&`;
           }

@@ -18,7 +18,7 @@ const ProductCard: React.FC = () => {
   const { category } = useParams<{ category: string }>();
   const searchQuery = useSearchParams();
   const searchParams = searchQuery.get("search");
-  const categoryIdParams = searchQuery.get("categoryId");
+  // const categoryIdParams = searchQuery.get("categoryId");
 
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
@@ -38,10 +38,8 @@ const ProductCard: React.FC = () => {
   } = global.productFilter;
 
   let customQuery = category || "";
-  if (categoryIdParams) customQuery += categoryIdParams;
-  if (categoryIds)
-    customQuery +=
-      category || categoryIdParams ? `,${categoryIds}` : categoryIds;
+  // if (categoryIdParams) customQuery += categoryIdParams;
+  if (categoryIds) customQuery += category ? `,${categoryIds}` : categoryIds;
 
   let newSearch = "";
   if (searchParams) newSearch += searchParams;

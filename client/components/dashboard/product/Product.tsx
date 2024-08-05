@@ -10,6 +10,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Spin,
   Tag,
   Upload,
 } from "antd";
@@ -25,8 +26,45 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { saveProduct, updateProduct } from "@/lib/apis/product";
+import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
 import { toast } from "react-toastify";
+
+// Define the shape of product data
+interface ProductCategory {
+  categoryId: number;
+}
+
+interface ProductVariant {
+  id: number;
+  price: number;
+  purchasePrice: number;
+  productId: number;
+  sizeId: number;
+  colorId: number;
+  weight: string;
+  stockQty: number;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  type: string;
+  taxId: number;
+  unitId: number;
+  images: string[]; // Assuming this is an array of image URLs
+  singleImage: string;
+  brandId: number;
+  discountId: number;
+  alertQty: number;
+  limitPurchaseQty: number;
+  tags: string[];
+  description: string;
+  shortDescription: string;
+  enableReview: boolean;
+  status: string;
+  productVariants: ProductVariant[];
+  productCategories: ProductCategory[];
+}
 
 const Product = ({
   sizes,
@@ -39,49 +77,64 @@ const Product = ({
 }: any) => {
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
-
+  const [product, setProduct] = useState<Product | null>(null);
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
   const params = useParams();
   const route = useRouter();
 
-  // need to optimize this component
-
   useEffect(() => {
-    try {
-      const newData = { ...payload };
-      if (newData.id) {
-        setTags(newData.tags);
+    // Define the asynchronous function
+    const fetchProductData = async () => {
+      dispatch(setLoading({ loading: true }));
+      try {
+        if (params.new !== "new") {
+          const id = params.new.toString(); // Convert to string if necessary
+          // Fetch product data
+          const product = await getProduct(id);
+          const productCategories = product.data?.productCategories?.map(
+            ({ categoryId }: { categoryId: number }) => categoryId
+          );
+
+          form.setFieldsValue({ ...product.data, productCategories });
+          setProduct({ ...product.data, productCategories });
+          setTags(product.data?.tags || []); // Use product.data?.tags or default to empty array
+        } else {
+          // Reset form and tags if new product
+          form.resetFields();
+          setTags([]);
+        }
+      } catch (err) {
+        console.error("Error fetching product data:", err);
+      } finally {
+        dispatch(setLoading({ loading: false }));
       }
+    };
+
+    // Call the async function
+    fetchProductData();
+
+    // Cleanup function
+    return () => {
+      // Only reset the form and tags if it's necessary
       if (params.new === "new") {
         form.resetFields();
         setTags([]);
-        return;
       }
-      setFormData(newData);
+    };
 
-      return () => {
-        dispatch(setFormValues({}));
-        form.resetFields();
-        setTags([]);
-      };
-    } catch (err) {
-      console.log(err);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, form, params.new, payload]);
+    // Dependencies array
+  }, [dispatch, form, params]);
 
   const handleSubmit = async () => {
-    const values = await form.validateFields();
     try {
-      let newData = { ...values, tags };
-
-      // return console.log("newData:", newData);
+      const values = await form.validateFields();
+      const newData = { ...values, tags };
 
       dispatch(setLoading({ save: true }));
+
       const result = newData.id
         ? await updateProduct(newData)
         : await saveProduct(newData);
@@ -92,7 +145,7 @@ const Product = ({
         return;
       }
 
-      setTimeout(async () => {
+      setTimeout(() => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
         form.resetFields();
@@ -113,11 +166,11 @@ const Product = ({
     }
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
-  };
+  // const setFormData = (v: any) => {
+  //   const newData = { ...v };
+  //   form.setFieldsValue(newData);
+  //   dispatch(setFormValues(form.getFieldsValue()));
+  // };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
@@ -133,13 +186,17 @@ const Product = ({
     dispatch(setLoading({ save: false }));
   };
 
+  if (global?.loading?.loading) {
+    return <Spin />;
+  }
+
   return (
     <div>
       <Divider orientation="left">Create New Product</Divider>
       <Form
         layout="vertical"
         form={form}
-        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
+        // onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
         initialValues={{ productVariants: [{}] }}
@@ -396,7 +453,7 @@ const Product = ({
           </div>
 
           <div className={`col-span-1 `}>
-            <Form.Item hidden={!payload?.id} name="status" label="Status">
+            <Form.Item hidden={!product?.id} name="status" label="Status">
               <Select
                 showSearch
                 allowClear
@@ -607,7 +664,7 @@ const Product = ({
           <Button
             className="mx-2 capitalize"
             size="small"
-            onClick={() => resetFormData(global.action?.payload)}
+            onClick={() => resetFormData(product)}
           >
             Reset
           </Button>
@@ -618,7 +675,7 @@ const Product = ({
             className="capitalize"
             loading={global.loading.save}
           >
-            {payload?.id ? "Update" : "Save"}
+            {product?.id ? "Update" : "Save"}
           </Button>
         </div>
       </Form>

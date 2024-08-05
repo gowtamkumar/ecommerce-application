@@ -255,38 +255,38 @@ const ProductList: React.FC = () => {
             title="Edit"
             className="me-1"
             onClick={() => {
-              const productCategories = value?.productCategories?.map(
-                ({ categoryId }: any) => categoryId
-              );
-              const productVariants = value?.productVariants?.map(
-                ({
-                  id,
-                  price,
-                  salePrice,
-                  purchasePrice,
-                  productId,
-                  sizeId,
-                  colorId,
-                  weight,
-                  stockQty,
-                }: any) => ({
-                  id,
-                  price,
-                  salePrice,
-                  purchasePrice,
-                  productId,
-                  sizeId,
-                  colorId,
-                  weight,
-                  stockQty,
-                })
-              );
+              // const productCategories = value?.productCategories?.map(
+              //   ({ categoryId }: any) => categoryId
+              // );
+              // const productVariants = value?.productVariants?.map(
+              //   ({
+              //     id,
+              //     price,
+              //     salePrice,
+              //     purchasePrice,
+              //     productId,
+              //     sizeId,
+              //     colorId,
+              //     weight,
+              //     stockQty,
+              //   }: any) => ({
+              //     id,
+              //     price,
+              //     salePrice,
+              //     purchasePrice,
+              //     productId,
+              //     sizeId,
+              //     colorId,
+              //     weight,
+              //     stockQty,
+              //   })
+              // );
               route.push(`/dashboard/products/${value.id}`);
-              dispatch(
-                setAction({
-                  payload: { ...value, productCategories, productVariants },
-                })
-              );
+              // dispatch(
+              //   setAction({
+              //     payload: { ...value, productCategories, productVariants },
+              //   })
+              // );
             }}
           />
           <Popconfirm
