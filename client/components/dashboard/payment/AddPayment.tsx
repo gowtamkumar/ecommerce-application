@@ -1,5 +1,13 @@
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+} from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -11,27 +19,39 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { savePayment, updatePayment } from "@/lib/apis/payment";
+import { getUsers } from "@/lib/apis/user";
 
 const AddPayment = () => {
+  const [users, setUsers] = useState([]);
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...global.action.payload };
-    form.setFieldsValue(newData);
+    const fetchData = async () => {
+      try {
+        const newData = { ...global.action.payload };
+        form.setFieldsValue(newData);
+        
+        const response = await getUsers();
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchData();
     return () => {
       form.resetFields();
     };
-  }, [dispatch, form, global.action]);
+  }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
-      return console.log("newData:", newData);
+      // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updatePayment(newData)
@@ -89,9 +109,40 @@ const AddPayment = () => {
           <div className="grid flex-grow grid-cols-1 gap-5">
             <div className="col-span-1">
               <Form.Item
-                name="name"
+                name="userId"
+                label="Customer"
                 className="mb-1"
-                label="Payment Name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Customer is required",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Select"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children as any)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {users.map((item: { name: string; id: number }) => (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item
+                name="amount"
+                label="Amount"
                 rules={[
                   {
                     required: true,
@@ -99,7 +150,36 @@ const AddPayment = () => {
                   },
                 ]}
               >
-                <Input placeholder="Enter Payment Name" />
+                <InputNumber placeholder="Enter Amount" />
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item
+                name="paymentMethod"
+                label="Payment Method"
+                className="mb-1"
+              >
+                <Select placeholder="Select">
+                  <Select.Option value="Cash"> Cash </Select.Option>
+                  <Select.Option value="SSLCOMMERZ"> SSLCOMMERZ </Select.Option>
+                  <Select.Option value="Stripe"> Stripe </Select.Option>
+                </Select>
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item
+                name="paymentDate"
+                label="Payment Date"
+                rules={[
+                  {
+                    required: true,
+                    message: "Date is required",
+                  },
+                ]}
+              >
+                <DatePicker />
               </Form.Item>
             </div>
 
