@@ -6,6 +6,8 @@ import {
   ShoppingOutlined,
   RollbackOutlined,
   LineChartOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
@@ -19,23 +21,32 @@ const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
   const {
-    summary,
-    stockRecords,
-    topCustomers,
-    stockReports,
-    total_approved_count,
-    total_on_shipping_count,
     total_order_amount,
-    total_processing_count,
     total_sale_amount,
     total_order_return_amount,
-    total_shipped_count,
     total_active_user,
     top_selling_product,
     top_customers,
     product_alert_stock_report,
+    loss_profit,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
+
+  const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
+    (
+      pre: { saleAmount: number; purchaseAmount: number },
+      curr: { total_sale_amount: number; total_purchase_amount: number }
+    ) => {
+      return {
+        saleAmount: +pre.saleAmount + +curr.total_sale_amount,
+        purchaseAmount: +pre.purchaseAmount + +curr.total_purchase_amount,
+      };
+    },
+    {
+      saleAmount: 0,
+      purchaseAmount: 0,
+    }
+  );
   //
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
@@ -118,12 +129,20 @@ const Dashboard = () => {
         <div className="col-span-3 mb-3">
           <Card title="Ernings" size="small">
             <div>
-              1. Revenue
-              <Statistic value={+6000 || "0"} />
-            </div>
-            <div>
-              2. Profit
-              <Statistic value={+8000 || "0"} />
+              <h4> Profit & Loss ৳</h4>
+              <Statistic
+                value={(+saleAmount - +purchaseAmount).toFixed(2)}
+                prefix={
+                  saleAmount > purchaseAmount ? (
+                    <ArrowUpOutlined />
+                  ) : (
+                    <ArrowUpOutlined />
+                  )
+                }
+                valueStyle={{
+                  color: saleAmount > purchaseAmount ? "green" : "red",
+                }}
+              />
             </div>
           </Card>
         </div>

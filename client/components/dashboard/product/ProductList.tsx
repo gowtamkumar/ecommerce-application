@@ -49,8 +49,6 @@ const ProductList: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getProducts();
-      console.log("🚀 ~ res:", res.data);
-
       const newProducts = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),

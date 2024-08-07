@@ -26,7 +26,7 @@ export const getDashboardReport = asyncHandler(
     qb.leftJoin("order.payments", "payments");
 
     if (status) qb.where({ status });
-      qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
+    qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
     qb.orderBy("order.trackingNo", "DESC");
     const orders = await qb.getMany();
     // orders data end
@@ -121,6 +121,30 @@ export const getDashboardReport = asyncHandler(
     `
     );
 
+    const loss_profit = await connection.query(
+      `
+      with orderItems as (
+      SELECT 
+            oi.product_id AS product_id,
+            SUM(((COALESCE(oi.price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
+            SUM(COALESCE(oi.purchase_price, 0) * COALESCE(oi.qty, 0)) AS total_purchase_amount
+        FROM 
+            order_items oi
+        LEFT JOIN 
+            orders ON orders.id = oi.order_id
+        GROUP BY 
+            oi.product_id
+      )
+      select
+        oI.product_id,
+        oI.total_sale_amount,
+        oI.total_purchase_amount,
+        products.name
+      from orderItems oI
+      LEFT JOIN products ON products.id = oI.product_id
+    `
+    );
+
     return res.status(200).json({
       success: true,
       msg: "Get Dashboard Report",
@@ -131,6 +155,7 @@ export const getDashboardReport = asyncHandler(
         top_selling_product,
         top_customers,
         product_alert_stock_report,
+        loss_profit,
       },
     });
   }
