@@ -9,7 +9,7 @@ export async function backupDB() {
     {
       method: "POST",
       headers: {
-        // "Content-Type": "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user.accessToken}`,
       },
       body: JSON.stringify({ a: 1, b: "Textual content" }),
@@ -18,3 +18,12 @@ export async function backupDB() {
 
   return res;
 }
+
+
+// const response = await fetch(`${config.apiBaseUrl + '/api/v1/files/db-backup'}`, {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   body: JSON.stringify({ a: 1, b: 'Textual content' }),
+// })

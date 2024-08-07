@@ -6,36 +6,41 @@ import { backupDB } from "./lib/apis/backupDB";
 
 // key as like features
 
-const handleBackup = async () => {
+const handleBackup = async (): Promise<void> => {
   const date = new Date();
-  const currentDate = `${date.getFullYear()}.${date.getMonth() + 1
-    }.${date.getDate()}.${date.getHours()}.${date.getMinutes()}`;
+  const pad = (num: number): string => num.toString().padStart(2, "0");
+  const currentDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}-${pad(date.getHours())}-${pad(date.getMinutes())}`;
 
   try {
-    const response = await backupDB();
-    // const response = await fetch(
-    //   `http://localhost:3900/api/v1/settings/db-backup`,
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ a: 1, b: "Textual content" }),
-    //   }
-    // );
+    // const response = await backupDB();
 
+    const response = await fetch(
+      `${process.env.NEXT_SERVER_URL}/api/v1/settings/db-backup`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ a: 1, b: "Textual content" }),
+      }
+    );
+
+    console.log("🚀 ~ response:", response);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const blob = await response.blob();
-    const url = URL.createObjectURL(new Blob([blob]));
+    const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `backup-${currentDate}.sql`);
+    link.setAttribute("download", `backup-${currentDate}.sql.zip`);
     document.body.appendChild(link);
     link.click();
-    link.parentNode?.removeChild(link);
+    link.parentNode?.removeChild(link); // Use optional chaining for safety
+    window.URL.revokeObjectURL(url); // Clean up the URL object
   } catch (error) {
     console.error("Backup failed:", error);
     alert("Backup failed");
