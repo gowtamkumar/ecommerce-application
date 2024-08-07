@@ -18,6 +18,7 @@ import {
   updateUserValidationSchema,
   userValidationSchema,
 } from "../../../validation";
+import { UserActivityEntity } from "../model/user-activity.entity";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -111,6 +112,7 @@ export const getUsers = asyncHandler(
   }
 );
 
+
 // // @desc Get a single user
 // // @route GET /api/v1/auth/users/:id
 // // @access Private
@@ -139,51 +141,66 @@ export const getUser = asyncHandler(
 // // @access Public
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const connection = await getDBConnection();
-    const { username, password } = req.body;
+    try {
+      const connection = await getDBConnection();
+      const { username, password } = req.body;
 
-    const ip =
-      req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
-    // console.log("🚀 ~ ip:", ip);
+      const ip =
+        (req.headers["x-forwarded-for"] as string) ||
+        req.socket.remoteAddress ||
+        null;
 
-    const userRepository = connection.getRepository(UserEntity);
+      const userRepository = connection.getRepository(UserEntity);
+      const userActivityRepository =
+        connection.getRepository(UserActivityEntity);
 
-    const oldUser = await userRepository.findOne({ where: { username } });
+      const oldUser = await userRepository.findOne({ where: { username } });
 
-    if (!oldUser) {
-      throw new Error(`Username ${username} not found`);
+      if (!oldUser) {
+        res.status(404);
+        throw new Error(`Username ${username} not found`);
+      }
+
+      const isMatch = await matchPassword(password, oldUser);
+
+      if (!isMatch) {
+        res.status(401);
+        throw new Error("Authorization is not valid!");
+      }
+
+      const token = getSignJwtToken(oldUser);
+      const cookies = sendCookiesResponse(token, res);
+
+      if (!cookies) {
+        res.status(500);
+        throw new Error("Token not set in cookies");
+      }
+
+      oldUser.lastLogin = new Date();
+      oldUser.ipAddress = ip;
+
+      await userRepository.save(oldUser);
+
+      const userActivity = userActivityRepository.create({
+        timestamp: new Date(),
+        userId: oldUser.id,
+      });
+
+      await userActivityRepository.save(userActivity);
+
+      delete oldUser.password;
+
+      return res.status(200).json({
+        success: true,
+        msg: "Login Successful",
+        data: oldUser,
+        accessToken: token,
+      });
+    } catch (err) {
+      next(err);
     }
-
-    const isMatch = await matchPassword(password, oldUser);
-
-    if (!isMatch) {
-      throw new Error("Authorization is not Valid!");
-    }
-    const token = getSignJwtToken(oldUser);
-    const cookies = sendCookiesResponse(token, res);
-
-    if (!cookies) {
-      throw new Error("Token not set in cookies");
-    }
-
-    const updateData = await userRepository.merge(oldUser, {
-      lastLogin: new Date(),
-      ipAddress: ip,
-    });
-
-    await userRepository.save(updateData);
-
-    delete oldUser.password;
-
-    return res.status(200).json({
-      success: true,
-      msg: "Login Successful",
-      data: oldUser,
-      accessToken: token,
-    });
   }
 );
-
 // // @desc Logout User
 // // @route GET /api/v1/auth/logout
 // // @access Private
@@ -260,35 +277,6 @@ export const getMe = asyncHandler(
     qb.where({ id: req.id });
 
     const user = await qb.getOne();
-
-    // const user = await userRepository.findOne({
-    //   where: { id: req.id },
-    //   relations: {
-    //     products: true,
-    //     shippingAddress: true,
-    //     orderDeliveries: true,
-    //     wishlists: {},
-    //     orders: true,
-    //   },
-    //   select: {
-    //     id: true,
-    //     name: true,
-    //     username: true,
-    //     email: true,
-    //     phone: true,
-    //     type: true,
-    //     point: true,
-    //     imgUrl: true,
-    //     role: true,
-    //     status: true,
-    //     lastLogin: true,
-    //     lastLogout: true,
-    //     ipAddress: true,
-    //     diviceId: true,
-    //     dob: true,
-    //     gender: true,
-    //   },
-    // });
 
     if (!user) {
       throw new Error("Authorization is not Valid!");

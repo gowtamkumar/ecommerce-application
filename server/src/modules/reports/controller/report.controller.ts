@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { OrderEntity } from "../../order/model/order.entity";
 import dayjs from "dayjs";
+import { UserActivityEntity } from "../../auth/model/user-activity.entity";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
@@ -14,8 +15,6 @@ export const getDashboardReport = asyncHandler(
 
     const fromDate = dayjs(startDate).toISOString();
     const toDate = dayjs(endDate).toISOString();
-
-    // orders data
 
     const orderRepository = connection.getRepository(OrderEntity);
     const qb = orderRepository.createQueryBuilder("order");
@@ -29,7 +28,6 @@ export const getDashboardReport = asyncHandler(
     qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
     qb.orderBy("order.trackingNo", "DESC");
     const orders = await qb.getMany();
-    // orders data end
     // user info
     const user = await connection.query(
       `SELECT
@@ -51,7 +49,7 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Returned' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_return_amount,
           SUM(CASE WHEN status = 'Pending' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_amount,
           SUM(CASE WHEN status = 'Completed' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_amount
-      FROM orders
+      FROM orders where order_date BETWEEN '${fromDate}' AND '${toDate}'
   `);
 
     const top_selling_product = await connection.query(
@@ -132,6 +130,7 @@ export const getDashboardReport = asyncHandler(
             order_items oi
         LEFT JOIN 
             orders ON orders.id = oi.order_id
+        WHERE order_date BETWEEN '${fromDate}' AND '${toDate}'
         GROUP BY 
             oi.product_id
       )
@@ -141,9 +140,19 @@ export const getDashboardReport = asyncHandler(
         oI.total_purchase_amount,
         products.name
       from orderItems oI
-      LEFT JOIN products ON products.id = oI.product_id
+      LEFT JOIN products ON products.id = oI.product_id 
     `
     );
+
+    const visitors = await connection.query(`select * from visitors`);
+
+    // const userActivityRepository = connection.getRepository(UserActivityEntity);
+    // const user_activity = await userActivityRepository
+    //   .createQueryBuilder("userAcitvitity")
+    //   .where("userAcitvitity.timestamp >= :timestamp", {
+    //     timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    //   })
+    //   .getMany();
 
     return res.status(200).json({
       success: true,
@@ -156,6 +165,7 @@ export const getDashboardReport = asyncHandler(
         top_customers,
         product_alert_stock_report,
         loss_profit,
+        visitors,
       },
     });
   }

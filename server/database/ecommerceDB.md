@@ -21,13 +21,11 @@ resetToken
 createdAt
 updatedAt
 
-<!-- ## login_tracking
+## user_activity
 id,
-last_login: date with time zone
-last_logout: date with time zone,
-ip_address(optional),
-divice_id(optional),
- -->
+type,
+timestamp
+
 
 ## shipping_address
 

@@ -24,6 +24,7 @@ import districtRoute from "../modules/geo-location/districts/route/district.rout
 import upazilaRoute from "../modules/geo-location/upazilas/route/upazila.route";
 import unionsRoute from "../modules/geo-location/unions/route/union.route";
 import reportRoute from "../modules/reports/route/report.route";
+import visitorRoute from "../modules/visitor/route/visitor.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 
 // Define the type for the Express application
@@ -56,4 +57,5 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/upazilas", upazilaRoute);
   app.use("/api/v1/unions", unionsRoute);
   app.use("/api/v1/reports", reportRoute);
+  app.use("/api/v1/visitors", visitorRoute);
 };

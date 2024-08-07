@@ -27,6 +27,8 @@ import { DistrictEntity } from "../modules/geo-location/districts/model/district
 import { UpazilaEntity } from "../modules/geo-location/upazilas/model/upazila.entity";
 import { UnionEntity } from "../modules/geo-location/unions/model/union.entity";
 import { ShippingChargeEntity } from "../modules/shipping-charge/model/shipping-charge.entity";
+import { UserActivityEntity } from "../modules/auth/model/user-activity.entity";
+import { VisitorEntity } from "../modules/visitor/model/visitor.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -63,6 +65,7 @@ const dbConnection = new DataSource({
   logging: false,
   entities: [
     UserEntity,
+    UserActivityEntity,
     ProductEntity,
     ShippingAddressEntity,
     ShippingChargeEntity,
@@ -86,7 +89,8 @@ const dbConnection = new DataSource({
     DivisionEntity,
     DistrictEntity,
     UpazilaEntity,
-    UnionEntity
+    UnionEntity,
+    VisitorEntity,
   ],
   subscribers: [],
   migrations: [],
