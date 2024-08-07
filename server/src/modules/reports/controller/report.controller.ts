@@ -25,8 +25,7 @@ export const getDashboardReport = asyncHandler(
     qb.leftJoin("order.user", "user");
     qb.leftJoin("order.payments", "payments");
 
-    if (status) qb.where({ status }); //here need to multiple status agree
-    if (fromDate && toDate)
+    if (status) qb.where({ status });
       qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
     qb.orderBy("order.trackingNo", "DESC");
     const orders = await qb.getMany();

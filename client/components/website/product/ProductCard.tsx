@@ -15,7 +15,8 @@ import { AppDispatch } from "@/redux/store";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const ProductCard: React.FC = () => {
-  const { category } = useParams<{ category: string }>();
+  // const { category } = useParams<{ category: string }>();
+  // console.log("🚀 ~ category:", category)
   const searchQuery = useSearchParams();
   const searchParams = searchQuery.get("search");
   // const categoryIdParams = searchQuery.get("categoryId");
@@ -37,9 +38,10 @@ const ProductCard: React.FC = () => {
     search: newSearchs,
   } = global.productFilter;
 
-  let customQuery = category || "";
+  let customQuery = "";
   // if (categoryIdParams) customQuery += categoryIdParams;
-  if (categoryIds) customQuery += category ? `,${categoryIds}` : categoryIds;
+  // if (categoryIds) customQuery += category ? `,${categoryIds}` : categoryIds;
+  if (categoryIds) customQuery += categoryIds;
 
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
