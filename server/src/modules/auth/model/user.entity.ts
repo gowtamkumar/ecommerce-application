@@ -16,6 +16,7 @@ import { ShippingAddressEntity } from "../../shipping-address/model/shipping-add
 import { ReviewEntity } from "../../review/model/review.entity";
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
+import { UserActivityEntity } from "./user-activity.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -109,4 +110,8 @@ export class UserEntity {
 
   @OneToMany((_type) => PaymentEntity, (payment) => payment.user)
   payments!: PaymentEntity[];
+
+  @OneToMany((_type) => UserActivityEntity, (userActivity) => userActivity.user)
+  userActivities!: UserActivityEntity[];
+
 }

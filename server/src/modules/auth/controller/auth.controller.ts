@@ -112,7 +112,6 @@ export const getUsers = asyncHandler(
   }
 );
 
-
 // // @desc Get a single user
 // // @route GET /api/v1/auth/users/:id
 // // @access Private
@@ -181,12 +180,13 @@ export const login = asyncHandler(
 
       await userRepository.save(oldUser);
 
+      // user activity start
       const userActivity = userActivityRepository.create({
         timestamp: new Date(),
         userId: oldUser.id,
       });
-
       await userActivityRepository.save(userActivity);
+      // user activity end
 
       delete oldUser.password;
 

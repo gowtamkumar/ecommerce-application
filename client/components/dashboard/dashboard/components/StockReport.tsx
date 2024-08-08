@@ -5,7 +5,7 @@ import StockDataTable from "../tables/DataTable";
 
 const StockReport = ({ recentHistory }: any) => {
   const [tabKey, setTabKey] = useState("Pending");
-  const { orders = [], total_order_count, total_sale_count } = recentHistory;
+  const { orders = [], total_order_count, total_sale_count, total_active_user} = recentHistory;
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -21,7 +21,7 @@ const StockReport = ({ recentHistory }: any) => {
           </div>
           <div>
             Active user
-            <Statistic value={+10000 || "0"} />
+            <Statistic value={total_active_user || "0"} />
           </div>
         </Card>
       </div>

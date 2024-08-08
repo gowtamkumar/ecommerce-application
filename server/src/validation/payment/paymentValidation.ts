@@ -1,13 +1,10 @@
 import { z } from "zod";
 
 export const paymentValidationSchema = z.object({
-  date: z.string({
+  paymentDate: z.string({
     required_error: "Date is required",
   }),
-
-  orderId: z.number({
-    required_error: "Order is required",
-  }),
+  orderId: z.number().optional(),
   userId: z.number({
     required_error: "User is required",
   }),

@@ -21,6 +21,7 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
         name: true,
       },
     },
+    order: { id: "DESC" },
   });
 
   return res.status(200).json({
@@ -80,6 +81,33 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
     data: save,
   });
 });
+
+export const createDashboardPayment = asyncHandler(
+  async (req: any, res: Response) => {
+    const connection = await getDBConnection();
+    const validation = paymentValidationSchema.safeParse({
+      ...req.body,
+    });
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
+    const repository = connection.getRepository(PaymentEntity);
+
+    const newPayment = repository.create(validation.data);
+
+    const save = await repository.save(newPayment);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new Payment by dashboard",
+      data: save,
+    });
+  }
+);
 
 // @desc Update a single Payment
 // @route PUT /api/v1/Payment/:id

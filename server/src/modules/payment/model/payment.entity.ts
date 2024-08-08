@@ -17,7 +17,7 @@ export class PaymentEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "order_id" })
+  @Column({ name: "order_id", nullable: true })
   orderId!: number;
   @ManyToOne((_type) => OrderEntity, (order) => order.payments, {
     onDelete: "CASCADE",

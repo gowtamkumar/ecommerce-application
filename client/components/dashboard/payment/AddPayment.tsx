@@ -10,16 +10,19 @@ import {
 } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { savePayment, updatePayment } from "@/lib/apis/payment";
+import {
+  saveDashboardPayment,
+  savePayment,
+  updatePayment,
+} from "@/lib/apis/payment";
 import { getUsers } from "@/lib/apis/user";
+import dayjs from "dayjs";
 
 const AddPayment = () => {
   const [users, setUsers] = useState([]);
@@ -32,13 +35,14 @@ const AddPayment = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const newData = { ...global.action.payload };
+        let newData = { ...global.action.payload };
+        if (newData.paymentDate)
+          newData.paymentDate = dayjs(newData.paymentDate);
         form.setFieldsValue(newData);
-        
         const response = await getUsers();
         setUsers(response.data);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
       }
     };
 
@@ -55,7 +59,7 @@ const AddPayment = () => {
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updatePayment(newData)
-        : await savePayment(newData);
+        : await saveDashboardPayment(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));

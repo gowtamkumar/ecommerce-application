@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { OrderEntity } from "../../order/model/order.entity";
 import dayjs from "dayjs";
 import { UserActivityEntity } from "../../auth/model/user-activity.entity";
+import { UserEntity } from "../../auth/model/user.entity";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
@@ -144,15 +145,14 @@ export const getDashboardReport = asyncHandler(
     `
     );
 
-    const visitors = await connection.query(`select * from visitors`);
-
-    // const userActivityRepository = connection.getRepository(UserActivityEntity);
-    // const user_activity = await userActivityRepository
-    //   .createQueryBuilder("userAcitvitity")
-    //   .where("userAcitvitity.timestamp >= :timestamp", {
-    //     timestamp: new Date(Date.now() - 5 * 60 * 1000),
-    //   })
-    //   .getMany();
+    const userActivityRepository = connection.getRepository(UserEntity);
+    const user_activity = await userActivityRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.userActivities", "userActivities")
+      .where("userActivities.timestamp >= :timestamp", {
+        timestamp: new Date(Date.now() - 5 * 60 * 1000),
+      })
+      .getMany();
 
     return res.status(200).json({
       success: true,
@@ -165,7 +165,7 @@ export const getDashboardReport = asyncHandler(
         top_customers,
         product_alert_stock_report,
         loss_profit,
-        visitors,
+        user_activity,
       },
     });
   }

@@ -54,9 +54,6 @@ export default function DashboardHeader() {
         <Button type="dashed" size="small" className="text-cyan-950">
           <Link href="/dashboard/orders">ORDER LIST</Link>
         </Button>
-        <Button type="dashed" size="small" className="text-cyan-950">
-          POS
-        </Button>
       </div>
 
       {/* this button show only Mobile a  */}

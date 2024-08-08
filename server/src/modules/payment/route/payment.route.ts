@@ -11,6 +11,7 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 const router = express.Router();
 
 router.route("/").get(getPayments).post(createPayment);
+router.route("/dashboard").post(createPayment);
 
 router
   .route("/:id")

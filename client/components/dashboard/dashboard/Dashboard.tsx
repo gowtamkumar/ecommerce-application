@@ -16,6 +16,7 @@ import StockReport from "./components/StockReport";
 import TopCustomer from "./components/TopCustomer";
 import StockAlert from "./components/StockAlert";
 import TopSellingProduct from "./components/TopSallingProduct";
+import CountUp from "react-countup";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
@@ -29,25 +30,10 @@ const Dashboard = () => {
     top_customers,
     product_alert_stock_report,
     loss_profit,
+    user_activity,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
-  const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
-    (
-      pre: { saleAmount: number; purchaseAmount: number },
-      curr: { total_sale_amount: number; total_purchase_amount: number }
-    ) => {
-      return {
-        saleAmount: +pre.saleAmount + +curr.total_sale_amount,
-        purchaseAmount: +pre.purchaseAmount + +curr.total_purchase_amount,
-      };
-    },
-    {
-      saleAmount: 0,
-      purchaseAmount: 0,
-    }
-  );
-  //
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 
@@ -69,10 +55,27 @@ const Dashboard = () => {
     })();
   }, []);
 
+  const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
+    (
+      pre: { saleAmount: number; purchaseAmount: number },
+      curr: { total_sale_amount: number; total_purchase_amount: number }
+    ) => {
+      return {
+        saleAmount: +pre.saleAmount + +curr.total_sale_amount,
+        purchaseAmount: +pre.purchaseAmount + +curr.total_purchase_amount,
+      };
+    },
+    {
+      saleAmount: 0,
+      purchaseAmount: 0,
+    }
+  );
+
   if (loading) {
     return <Spin />;
   }
 
+  const formatter = (value: any) => <CountUp end={value} separator="," />;
   return (
     <div className="container">
       <div className="grid pb-3">
@@ -91,7 +94,7 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         <WidgetStats
           title="TOTAL SALE"
           value={total_sale_amount || "0.00"}
@@ -112,13 +115,13 @@ const Dashboard = () => {
           icon={<RollbackOutlined />}
           color="primary"
         />
-
+{/* 
         <WidgetStats
           title="TOTAL VISITOR"
           value={+1 || "0.00"}
           icon={<SendOutlined />}
           color="primary"
-        />
+        /> */}
       </div>
 
       <div className="py-4">
@@ -132,6 +135,7 @@ const Dashboard = () => {
               <h4> Profit & Loss ৳</h4>
               <Statistic
                 value={(+saleAmount - +purchaseAmount).toFixed(2)}
+                formatter={formatter}
                 prefix={
                   saleAmount > purchaseAmount ? (
                     <ArrowUpOutlined />
@@ -153,20 +157,7 @@ const Dashboard = () => {
           <TopSellingProduct topSellingProduct={top_selling_product} />
         </div>
       </div>
-
-      <div className="grid grid-cols-12 gap-2">
-        <div className="col-span-3 mb-3">
-          <Card title="Other" size="small">
-            <div>
-              Total Active user
-              <Statistic value={total_active_user || "0"} />
-            </div>
-          </Card>
-        </div>
-        <div className="col-span-9 mb-3">
-          <StockAlert productAlertStockReport={product_alert_stock_report} />
-        </div>
-      </div>
+      <StockAlert productAlertStockReport={product_alert_stock_report} />
     </div>
   );
 };

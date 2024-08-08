@@ -7,12 +7,16 @@ import {
   ColorPicker,
   Divider,
   Form,
+  GetProp,
+  Image,
   Input,
   InputNumber,
   Select,
   Spin,
   Tag,
   Upload,
+  UploadFile,
+  UploadProps,
 } from "antd";
 import {
   selectGlobal,
@@ -28,7 +32,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
 import { toast } from "react-toastify";
-
+import ImgCrop from "antd-img-crop";
 // Define the shape of product data
 interface ProductCategory {
   categoryId: number;
@@ -66,6 +70,16 @@ interface Product {
   productCategories: ProductCategory[];
 }
 
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
 const Product = ({
   sizes,
   brands,
@@ -78,6 +92,10 @@ const Product = ({
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [product, setProduct] = useState<Product | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -186,9 +204,63 @@ const Product = ({
     dispatch(setLoading({ save: false }));
   };
 
+  const customUploadRequest = async (options: any) => {
+    const { filename, file, onSuccess, onError } = options;
+    const fmData = new FormData();
+
+    fmData.append(filename, file);
+    try {
+      console.log("🚀 ~ fmData:", fmData);
+      // let res = await createFile(fmData).unwrap();
+
+      // if (res.photo?.length) {
+      //   setFormData({ photo: res?.photo[0]?.filename });
+      // }
+
+      onSuccess("Ok");
+    } catch (err) {
+      const error = new Error("Upload error");
+      onError({ err });
+    }
+  };
+
   if (global?.loading?.loading) {
     return <Spin />;
   }
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
+    setFileList(newFileList);
+
+  const uploadButton = (
+    <button style={{ border: 0, background: "none" }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
+
+  console.log("previewImage", previewImage);
+
+  previewImage && (
+    // eslint-disable-next-line jsx-a11y/alt-text
+    <Image
+      wrapperStyle={{ display: "none" }}
+      preview={{
+        visible: previewOpen,
+        onVisibleChange: (visible) => setPreviewOpen(visible),
+        afterOpenChange: (visible) => !visible && setPreviewImage(""),
+      }}
+      src={previewImage}
+    />
+  );
 
   return (
     <div>
@@ -196,7 +268,7 @@ const Product = ({
       <Form
         layout="vertical"
         form={form}
-        // onValuesChange={(_v, values) => dispatch(setFormValues(values))}
+        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
         initialValues={{ productVariants: [{}] }}
@@ -353,11 +425,36 @@ const Product = ({
           </div> */}
 
           <div className="col-span-1">
-            <Form.Item name="singleImage" label="Single image">
+            {/* <Form.Item name="singleImage" label="Single image">
               <Input placeholder="Enter" className="w-auto" />
-              {/* <Upload>
+              <Upload>
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            </Form.Item> */}
+            <Form.Item name="fileList" label="Photo">
+              <ImgCrop rotationSlider>
+                <Upload
+                  name="photo"
+                  listType="picture-card"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                  customRequest={customUploadRequest}
+                >
+                  {fileList.length >= 8 ? null : uploadButton}
+                </Upload>
+
+                {/* <Upload
+                name="photo"
+                listType="picture-card"
+                fileList={global?.formValues?.fileList || []}
+                className="avatar-uploader"
+                customRequest={customUploadRequest}
+                onRemove={(e) => onRemoveFile(e)}
+              >
+                {global.formValues?.fileList?.length ? null : uploadButton}
               </Upload> */}
+              </ImgCrop>
             </Form.Item>
           </div>
 

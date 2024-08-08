@@ -203,6 +203,7 @@ const navbarRoute = [
     disabled: "true",
     route: "true",
   },
+
   {
     key: "location",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
@@ -221,6 +222,12 @@ const navbarRoute = [
     key: "user",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/user">User</Link>,
+    route: "true",
+  },
+  {
+    key: "setting_manage",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/setting">Setting</Link>,
     route: "true",
   },
 ];
