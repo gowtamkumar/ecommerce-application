@@ -115,7 +115,7 @@ const Dashboard = () => {
           icon={<RollbackOutlined />}
           color="primary"
         />
-{/* 
+        {/* 
         <WidgetStats
           title="TOTAL VISITOR"
           value={+1 || "0.00"}
@@ -137,14 +137,14 @@ const Dashboard = () => {
                 value={(+saleAmount - +purchaseAmount).toFixed(2)}
                 formatter={formatter}
                 prefix={
-                  saleAmount > purchaseAmount ? (
+                  saleAmount >= purchaseAmount ? (
                     <ArrowUpOutlined />
                   ) : (
-                    <ArrowUpOutlined />
+                    <ArrowDownOutlined />
                   )
                 }
                 valueStyle={{
-                  color: saleAmount > purchaseAmount ? "green" : "red",
+                  color: saleAmount >= purchaseAmount ? "green" : "red",
                 }}
               />
             </div>

@@ -11,6 +11,7 @@ import {
   Image,
   Input,
   InputNumber,
+  Modal,
   Select,
   Spin,
   Tag,
@@ -21,7 +22,6 @@ import {
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import {
@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
 import { toast } from "react-toastify";
 import ImgCrop from "antd-img-crop";
+import { fileDeleteWithPhoto, saveFile, uploadFile } from "@/lib/apis/file";
 // Define the shape of product data
 interface ProductCategory {
   categoryId: number;
@@ -70,16 +71,6 @@ interface Product {
   productCategories: ProductCategory[];
 }
 
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
-
-const getBase64 = (file: FileType): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-
 const Product = ({
   sizes,
   brands,
@@ -94,7 +85,12 @@ const Product = ({
   const [product, setProduct] = useState<Product | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [formValues, setFormValues] = useState({
+    fileList: [],
+    photos: [],
+  }) as any;
+  const [backUp, setBackup] = useState({}) as any;
+  const [previewTitle, setPreviewTitle] = useState("");
 
   // hook
   const [form] = Form.useForm();
@@ -104,53 +100,61 @@ const Product = ({
   const route = useRouter();
 
   useEffect(() => {
-    // Define the asynchronous function
-    const fetchProductData = async () => {
-      dispatch(setLoading({ loading: true }));
-      try {
-        if (params.new !== "new") {
-          const id = params.new.toString(); // Convert to string if necessary
-          // Fetch product data
-          const product = await getProduct(id);
-          const productCategories = product.data?.productCategories?.map(
-            ({ categoryId }: { categoryId: number }) => categoryId
-          );
-
-          form.setFieldsValue({ ...product.data, productCategories });
-          setProduct({ ...product.data, productCategories });
-          setTags(product.data?.tags || []); // Use product.data?.tags or default to empty array
-        } else {
-          // Reset form and tags if new product
-          form.resetFields();
-          setTags([]);
-        }
-      } catch (err) {
-        console.error("Error fetching product data:", err);
-      } finally {
-        dispatch(setLoading({ loading: false }));
-      }
-    };
-
     // Call the async function
     fetchProductData();
-
     // Cleanup function
     return () => {
-      // Only reset the form and tags if it's necessary
       if (params.new === "new") {
         form.resetFields();
         setTags([]);
       }
     };
+  }, [params]);
 
-    // Dependencies array
-  }, [dispatch, form, params]);
+  const fetchProductData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
+      if (params.new !== "new") {
+        const id = params.new.toString(); // Convert to string if necessary
+        // Fetch product data
+        const result = await getProduct(id);
+        const newData = { ...result.data };
+        const productCategories = newData?.productCategories?.map(
+          ({ categoryId }: { categoryId: number }) => categoryId
+        );
+        if (newData.images) {
+          const file = (newData.images || []).map(
+            (item: string, idx: number) => ({
+              uid: Math.random() * 1000 + "",
+              name: `photo ${idx}`,
+              status: "done",
+              fileName: item,
+              url: `http://localhost:3900/uploads/${item || "no-data.png"}`,
+            })
+          );
+          newData.fileList = file;
+        }
+        form.setFieldsValue({ ...newData, productCategories });
+        setProduct({ ...newData, productCategories });
+        setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
+      } else {
+        form.resetFields();
+        setTags([]);
+      }
+    } catch (err) {
+      console.error("Error fetching product data:", err);
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const newData = { ...values, tags };
-
+      let newData = { ...values, tags };
+      // console.log("🚀 ~ newData:", newData);
+      // return;
+      delete newData.fileList;
       dispatch(setLoading({ save: true }));
 
       const result = newData.id
@@ -175,6 +179,93 @@ const Product = ({
     }
   };
 
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </div>
+  );
+
+  const setFormData = (value: any) => {
+    const newData = { ...value };
+
+    if (newData.images) {
+      const file = (newData.images || []).map((item: string, idx: number) => ({
+        uid: Math.random() * 1000 + "",
+        name: `photo ${idx}`,
+        status: "done",
+        fileName: item,
+        url: `http://localhost:3900/uploads/${item || "no-data.png"}`,
+      }));
+      newData.fileList = file;
+    }
+
+    setFormValues(form.getFieldsValue());
+    // setBackup(newData);
+  };
+
+  const resetFormData = (value: any) => {
+    const newData = { ...value };
+    if (newData?.id) {
+      setFormData(newData);
+      setTags(newData.tags);
+    } else {
+      form.resetFields();
+      setFormValues(form.getFieldsValue());
+      setTags([]);
+    }
+    dispatch(setLoading({ save: false }));
+  };
+
+  const customUploadRequest = async (options: any) => {
+    const { filename, file, onSuccess, onError } = options;
+    const formData = new FormData();
+    formData.append(filename, file);
+
+    try {
+      const res = await uploadFile(formData);
+
+      if (!res || !res.data) {
+        throw new Error("Invalid response format");
+      }
+
+      const newfile = res.data.map((item: { filename: string }) => ({
+        uid: Math.random() * 1000 + "",
+        name: `photo ${Math.random() * 10000 + ""}`,
+        status: "done",
+        fileName: item.filename,
+        url: `http://localhost:3900/uploads/${item.filename || "no-data.png"}`,
+      }));
+
+      const newFileName = res.data.length ? res.data[0].filename : null;
+      // Assuming you're updating form data here:
+      form.setFieldsValue({
+        fileList: [...form.getFieldsValue().fileList, ...newfile],
+        images: [...form.getFieldsValue().images, newFileName],
+      });
+
+      onSuccess("Ok");
+    } catch (err) {
+      console.error("🚀 ~ Upload error:", err);
+      onError({ err });
+    }
+  };
+
+  const normFile = (e: { fileList: string }) => {
+    console.log("🚀 ~ e:", e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  // this function for tag
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       if (inputValue.trim() !== "") {
@@ -183,84 +274,31 @@ const Product = ({
       }
     }
   };
+  const handleCancel = () => setPreviewOpen(false);
 
-  // const setFormData = (v: any) => {
-  //   const newData = { ...v };
-  //   form.setFieldsValue(newData);
-  //   dispatch(setFormValues(form.getFieldsValue()));
-  // };
-
-  const resetFormData = (value: any) => {
-    const newData = { ...value };
-    if (newData?.id) {
-      form.setFieldsValue(newData);
-      dispatch(setFormValues(newData));
-      setTags(newData.tags);
-    } else {
-      form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
-      setTags([]);
+  // file Preview
+  const handlePreview = async (file: any) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
     }
-    dispatch(setLoading({ save: false }));
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
   };
 
-  const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const fmData = new FormData();
-
-    fmData.append(filename, file);
-    try {
-      console.log("🚀 ~ fmData:", fmData);
-      // let res = await createFile(fmData).unwrap();
-
-      // if (res.photo?.length) {
-      //   setFormData({ photo: res?.photo[0]?.filename });
-      // }
-
-      onSuccess("Ok");
-    } catch (err) {
-      const error = new Error("Upload error");
-      onError({ err });
-    }
-  };
+  const getBase64 = (file: any) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
 
   if (global?.loading?.loading) {
     return <Spin />;
   }
-
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as FileType);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-  };
-
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
-    setFileList(newFileList);
-
-  const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
-
-  console.log("previewImage", previewImage);
-
-  previewImage && (
-    // eslint-disable-next-line jsx-a11y/alt-text
-    <Image
-      wrapperStyle={{ display: "none" }}
-      preview={{
-        visible: previewOpen,
-        onVisibleChange: (visible) => setPreviewOpen(visible),
-        afterOpenChange: (visible) => !visible && setPreviewImage(""),
-      }}
-      src={previewImage}
-    />
-  );
 
   return (
     <div>
@@ -268,14 +306,22 @@ const Product = ({
       <Form
         layout="vertical"
         form={form}
-        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
+        onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
-        initialValues={{ productVariants: [{}] }}
+        initialValues={{
+          productVariants: [{}],
+          images: [],
+          fileList: [],
+        }}
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
+
+        {/* <Form.Item name="fileList" hidden>
+          <Input />
+        </Form.Item> */}
 
         <div className="grid grid-cols-2 gap-2">
           <div className="col-span-1">
@@ -424,38 +470,81 @@ const Product = ({
             </Form.Item>
           </div> */}
 
-          <div className="col-span-1">
-            {/* <Form.Item name="singleImage" label="Single image">
-              <Input placeholder="Enter" className="w-auto" />
-              <Upload>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
-            </Form.Item> */}
-            <Form.Item name="fileList" label="Photo">
-              <ImgCrop rotationSlider>
-                <Upload
-                  name="photo"
-                  listType="picture-card"
-                  fileList={fileList}
-                  onPreview={handlePreview}
-                  onChange={handleChange}
-                  customRequest={customUploadRequest}
-                >
-                  {fileList.length >= 8 ? null : uploadButton}
-                </Upload>
-
-                {/* <Upload
-                name="photo"
+          <div className="grid grid-cols-1 gap-3 px-3">
+            <Form.Item
+              name="fileList"
+              label="images"
+              valuePropName="fileList"
+              rules={[
+                {
+                  required: true,
+                  message: "Photos is required",
+                },
+              ]}
+              getValueFromEvent={normFile}
+            >
+              <Upload
+                name="images"
                 listType="picture-card"
-                fileList={global?.formValues?.fileList || []}
+                fileList={formValues?.fileList || []}
+                onRemove={async (v) => {
+                  console.log("🚀 ~ v:", v);
+
+                  const find = (form.getFieldValue("images") || []).filter(
+                    (item: string) => item !== v.fileName
+                  );
+                  console.log("🚀 ~ find:", find);
+                  const newfind = (form.getFieldValue("fileList") || []).filter(
+                    (item: { fileName: string }) => item.fileName !== v.fileName
+                  );
+                  form.setFieldsValue({ images: find, fileList: newfind });
+
+                  if (v.fileName) {
+                    const params = { filename: v.fileName };
+                    await fileDeleteWithPhoto(params);
+                  }
+                }}
                 className="avatar-uploader"
+                onPreview={handlePreview}
                 customRequest={customUploadRequest}
-                onRemove={(e) => onRemoveFile(e)}
+                maxCount={5}
               >
-                {global.formValues?.fileList?.length ? null : uploadButton}
-              </Upload> */}
-              </ImgCrop>
+                {formValues?.fileList?.length >= 5 ? null : uploadButton}
+              </Upload>
             </Form.Item>
+
+            <Form.Item name="images" hidden>
+              <Input />
+            </Form.Item>
+
+            <Modal
+              open={previewOpen}
+              title={previewTitle}
+              footer={null}
+              onCancel={handleCancel}
+            >
+              <Image
+                alt="example"
+                style={{
+                  width: "100%",
+                }}
+                src={previewImage}
+              />
+            </Modal>
+
+            {/* <div className="flex flex-col items-center lg:items-end">
+              <div className="text-red-500">
+                (<span className="text-xl"> * </span> Required)
+              </div>
+              <div className="my-2">
+                <Button className="mx-2" onClick={resetFormData} color="gray">
+                  Reset
+                </Button>
+                <Button color="blue">
+                  {formValues?.id ? "Update" : "Submit"}
+                </Button>
+              </div>
+            </div> */}
           </div>
 
           <div className="col-span-1">

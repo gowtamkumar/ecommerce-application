@@ -131,7 +131,7 @@ export const getDashboardReport = asyncHandler(
             order_items oi
         LEFT JOIN 
             orders ON orders.id = oi.order_id
-        WHERE order_date BETWEEN '${fromDate}' AND '${toDate}'
+        WHERE order_date BETWEEN '${fromDate}' AND '${toDate}' AND orders.status = 'Completed'
         GROUP BY 
             oi.product_id
       )

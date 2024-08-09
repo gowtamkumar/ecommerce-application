@@ -39,7 +39,6 @@ type DataIndex = keyof DataType;
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState([]);
-  console.log("🚀 ~ products:", products);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -255,40 +254,7 @@ const ProductList: React.FC = () => {
             icon={<FormOutlined />}
             title="Edit"
             className="me-1"
-            onClick={() => {
-              // const productCategories = value?.productCategories?.map(
-              //   ({ categoryId }: any) => categoryId
-              // );
-              // const productVariants = value?.productVariants?.map(
-              //   ({
-              //     id,
-              //     price,
-              //     salePrice,
-              //     purchasePrice,
-              //     productId,
-              //     sizeId,
-              //     colorId,
-              //     weight,
-              //     stockQty,
-              //   }: any) => ({
-              //     id,
-              //     price,
-              //     salePrice,
-              //     purchasePrice,
-              //     productId,
-              //     sizeId,
-              //     colorId,
-              //     weight,
-              //     stockQty,
-              //   })
-              // );
-              route.push(`/dashboard/products/${value.id}`);
-              // dispatch(
-              //   setAction({
-              //     payload: { ...value, productCategories, productVariants },
-              //   })
-              // );
-            }}
+            onClick={() => route.push(`/dashboard/products/${value.id}`)}
           />
           <Popconfirm
             title={
@@ -317,7 +283,6 @@ const ProductList: React.FC = () => {
   ];
 
   const expandedRowRender = (value: any) => {
-
     const childColumns: any = [
       {
         title: "Size",

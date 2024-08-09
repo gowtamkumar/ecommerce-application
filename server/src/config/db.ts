@@ -18,17 +18,17 @@ import { OrderTrackingEntity } from "../modules/order-tracking/model/order-track
 import { TaxEntity } from "../modules/tax/model/tax.entity";
 import { SizeEntity } from "../modules/size/model/size.entity";
 import { ProductCategoryEntity } from "../modules/product-category/model/product-category.entity";
-import { FileEntity } from "../modules/file/model/file.entity";
 import { StatusEntity } from "../modules/status/model/status.entity";
 import { ColorEntity } from "../modules/color/model/color.entity";
 import { UnitEntity } from "../modules/unit/model/unit.entity";
-import { DivisionEntity } from "../modules/geo-location/divisions/model/division.entity";
-import { DistrictEntity } from "../modules/geo-location/districts/model/district.entity";
-import { UpazilaEntity } from "../modules/geo-location/upazilas/model/upazila.entity";
-import { UnionEntity } from "../modules/geo-location/unions/model/union.entity";
 import { ShippingChargeEntity } from "../modules/shipping-charge/model/shipping-charge.entity";
 import { UserActivityEntity } from "../modules/auth/model/user-activity.entity";
 import { VisitorEntity } from "../modules/visitor/model/visitor.entity";
+import { FileEntity } from "../modules/other/file/model/file.entity";
+import { DivisionEntity } from "../modules/other/geo-location/divisions/model/division.entity";
+import { DistrictEntity } from "../modules/other/geo-location/districts/model/district.entity";
+import { UpazilaEntity } from "../modules/other/geo-location/upazilas/model/upazila.entity";
+import { UnionEntity } from "../modules/other/geo-location/unions/model/union.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();

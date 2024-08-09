@@ -51,8 +51,8 @@ export class ProductEntity {
   @Column({ type: "simple-array", nullable: true })
   images!: string[];
 
-  @Column({ name: "single_image", nullable: true })
-  singleImage!: string;
+  // @Column({ name: "single_image", nullable: true })
+  // singleImage!: string;
 
   @Column({ name: "brand_id" })
   brandId?: number;

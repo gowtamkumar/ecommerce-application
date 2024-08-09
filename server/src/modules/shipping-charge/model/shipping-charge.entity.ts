@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { DivisionEntity } from "../../geo-location/divisions/model/division.entity";
+import { DivisionEntity } from "../../other/geo-location/divisions/model/division.entity";
 
 @Entity("shipping_charges")
 export class ShippingChargeEntity {

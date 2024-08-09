@@ -10,10 +10,10 @@ import {
 import { AddressType } from "../enums/address-type.enum";
 import { UserEntity } from "../../auth/model/user.entity";
 import { OrderEntity } from "../../order/model/order.entity";
-import { DivisionEntity } from "../../geo-location/divisions/model/division.entity";
-import { DistrictEntity } from "../../geo-location/districts/model/district.entity";
-import { UpazilaEntity } from "../../geo-location/upazilas/model/upazila.entity";
-import { UnionEntity } from "../../geo-location/unions/model/union.entity";
+import { DivisionEntity } from "../../other/geo-location/divisions/model/division.entity";
+import { DistrictEntity } from "../../other/geo-location/districts/model/district.entity";
+import { UpazilaEntity } from "../../other/geo-location/upazilas/model/upazila.entity";
+import { UnionEntity } from "../../other/geo-location/unions/model/union.entity";
 
 @Entity("shipping_addresses")
 export class ShippingAddressEntity {
