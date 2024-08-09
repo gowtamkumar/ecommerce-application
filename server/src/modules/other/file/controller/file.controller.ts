@@ -149,15 +149,12 @@ export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const deleteFileWithPhoto = asyncHandler(
   async (req: Request, res: Response) => {
-    const { filename } = req.body;
-    console.log("🚀 ~ req.body:", req.body)
-    
+    const { filename } = req.body;    
     const connection = await getDBConnection();
     const repository = connection.getRepository(FileEntity);
     const directory = join(process.cwd(), "/public/uploads");
     const filePath = `${directory}/${filename}`;
 
-    console.log("🚀 ~ filePath:", filePath)
     try {
       // Find the file entity in the database and unlink the file concurrently
       const [deleteFile] = await Promise.all([

@@ -6,6 +6,9 @@ import { productValidationSchema } from "../../../validation";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 import { Brackets } from "typeorm";
+import { join } from "path";
+import { FileEntity } from "../../other/file/model/file.entity";
+import fs from "fs";
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -442,6 +445,19 @@ export const deleteProduct = asyncHandler(
     const result = await productRepository.findOneBy({ id });
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    if (result.images) {
+      const repository = connection.getRepository(FileEntity);
+      const directory = join(process.cwd(), "/public/uploads");
+      result.images?.forEach(async (item: string) => {
+        const filePath = `${directory}/${item}`;
+        const [deleteFile] = await Promise.all([
+          repository.findOne({ where: { filename: item } }),
+          fs.promises.unlink(filePath),
+        ]);
+        await repository.remove(deleteFile);
+      });
     }
 
     await productRepository.delete({ id });

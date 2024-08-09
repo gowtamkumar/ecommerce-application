@@ -7,7 +7,6 @@ import {
   ColorPicker,
   Divider,
   Form,
-  GetProp,
   Image,
   Input,
   InputNumber,
@@ -15,9 +14,7 @@ import {
   Select,
   Spin,
   Tag,
-  Upload,
-  UploadFile,
-  UploadProps,
+  Upload
 } from "antd";
 import {
   selectGlobal,
@@ -26,14 +23,13 @@ import {
 } from "@/redux/features/global/globalSlice";
 import {
   MinusCircleOutlined,
-  PlusOutlined,
-  UploadOutlined,
+  PlusOutlined
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
 import { toast } from "react-toastify";
 import ImgCrop from "antd-img-crop";
-import { fileDeleteWithPhoto, saveFile, uploadFile } from "@/lib/apis/file";
+import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 // Define the shape of product data
 interface ProductCategory {
   categoryId: number;
@@ -87,9 +83,8 @@ const Product = ({
   const [previewImage, setPreviewImage] = useState("");
   const [formValues, setFormValues] = useState({
     fileList: [],
-    photos: [],
+    images: [],
   }) as any;
-  const [backUp, setBackup] = useState({}) as any;
   const [previewTitle, setPreviewTitle] = useState("");
 
   // hook
@@ -122,6 +117,9 @@ const Product = ({
         const productCategories = newData?.productCategories?.map(
           ({ categoryId }: { categoryId: number }) => categoryId
         );
+        if (!newData.images) {
+          newData.images = [];
+        }
         if (newData.images) {
           const file = (newData.images || []).map(
             (item: string, idx: number) => ({
@@ -137,6 +135,8 @@ const Product = ({
         form.setFieldsValue({ ...newData, productCategories });
         setProduct({ ...newData, productCategories });
         setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
+        setFormValues(newData);
+        console.log("ddd");
       } else {
         form.resetFields();
         setTags([]);
@@ -249,6 +249,10 @@ const Product = ({
         fileList: [...form.getFieldsValue().fileList, ...newfile],
         images: [...form.getFieldsValue().images, newFileName],
       });
+      setFormValues({
+        fileList: [...formValues.fileList, ...newfile],
+        images: [...formValues.images, newFileName],
+      });
 
       onSuccess("Ok");
     } catch (err) {
@@ -318,10 +322,6 @@ const Product = ({
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
-
-        {/* <Form.Item name="fileList" hidden>
-          <Input />
-        </Form.Item> */}
 
         <div className="grid grid-cols-2 gap-2">
           <div className="col-span-1">
@@ -464,12 +464,6 @@ const Product = ({
             </Form.Item>
           </div>
 
-          {/* <div className="col-span-1">
-            <Form.Item name="shippingCost" label="Shipping Cost">
-              <InputNumber placeholder="Enter" className="w-auto" />
-            </Form.Item>
-          </div> */}
-
           <div className="grid grid-cols-1 gap-3 px-3">
             <Form.Item
               name="fileList"
@@ -478,39 +472,42 @@ const Product = ({
               rules={[
                 {
                   required: true,
-                  message: "Photos is required",
+                  message: "Images is required",
                 },
               ]}
               getValueFromEvent={normFile}
             >
-              <Upload
-                name="images"
-                listType="picture-card"
-                fileList={formValues?.fileList || []}
-                onRemove={async (v) => {
-                  console.log("🚀 ~ v:", v);
-
-                  const find = (form.getFieldValue("images") || []).filter(
-                    (item: string) => item !== v.fileName
-                  );
-                  console.log("🚀 ~ find:", find);
-                  const newfind = (form.getFieldValue("fileList") || []).filter(
-                    (item: { fileName: string }) => item.fileName !== v.fileName
-                  );
-                  form.setFieldsValue({ images: find, fileList: newfind });
-
-                  if (v.fileName) {
-                    const params = { filename: v.fileName };
-                    await fileDeleteWithPhoto(params);
-                  }
-                }}
-                className="avatar-uploader"
-                onPreview={handlePreview}
-                customRequest={customUploadRequest}
-                maxCount={5}
-              >
-                {formValues?.fileList?.length >= 5 ? null : uploadButton}
-              </Upload>
+              <ImgCrop rotationSlider>
+                <Upload
+                  name="images"
+                  listType="picture-card"
+                  fileList={formValues?.fileList || []}
+                  onRemove={async (v) => {
+                    const find = (form.getFieldValue("images") || []).filter(
+                      (item: string) => item !== v.fileName
+                    );
+                    const newfind = (
+                      form.getFieldValue("fileList") || []
+                    ).filter(
+                      (item: { fileName: string }) =>
+                        item.fileName !== v.fileName
+                    );
+                    form.setFieldsValue({ images: find, fileList: newfind });
+                    setFormValues({ images: find, fileList: newfind });
+                    if (v.fileName) {
+                      const params = { filename: v.fileName };
+                      await fileDeleteWithPhoto(params);
+                    }
+                  }}
+                  className="avatar-uploader"
+                  onPreview={handlePreview}
+                  customRequest={customUploadRequest}
+                  maxCount={5}
+                >
+                  {uploadButton}
+                  {/* {formValues?.fileList?.length >= 5 ? null : uploadButton} */}
+                </Upload>
+              </ImgCrop>
             </Form.Item>
 
             <Form.Item name="images" hidden>
@@ -531,28 +528,6 @@ const Product = ({
                 src={previewImage}
               />
             </Modal>
-
-            {/* <div className="flex flex-col items-center lg:items-end">
-              <div className="text-red-500">
-                (<span className="text-xl"> * </span> Required)
-              </div>
-              <div className="my-2">
-                <Button className="mx-2" onClick={resetFormData} color="gray">
-                  Reset
-                </Button>
-                <Button color="blue">
-                  {formValues?.id ? "Update" : "Submit"}
-                </Button>
-              </div>
-            </div> */}
-          </div>
-
-          <div className="col-span-1">
-            <Form.Item name="images" label="Images">
-              <Upload>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
-            </Form.Item>
           </div>
 
           <div className="col-span-1">
@@ -633,7 +608,16 @@ const Product = ({
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="alertQty" label="Alert Qty">
+            <Form.Item
+              name="alertQty"
+              label="Alert Qty"
+              rules={[
+                {
+                  required: true,
+                  message: "Alert Qty is required",
+                },
+              ]}
+            >
               <InputNumber placeholder="Enter" className="w-auto" />
             </Form.Item>
           </div>

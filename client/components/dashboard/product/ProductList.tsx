@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -203,9 +205,23 @@ const ProductList: React.FC = () => {
     },
 
     {
-      title: "Single Image",
-      dataIndex: "singleImage",
-      key: "singleImage",
+      title: "Images",
+      dataIndex: "images",
+      key: "images",
+      render: (value) => (
+        <div className="grid grid-cols-2 gap-3">
+          {value?.map((item: string) => {
+            return (
+              <div key={item}>
+                <Image
+                  width={60}
+                  src={`http://localhost:3900/uploads/${item || "no-data.png"}`}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ),
     },
 
     {
@@ -378,6 +394,19 @@ const ProductList: React.FC = () => {
               {value.status}
             </Tag>
           </h2>
+
+          <div className="flex gap-2">
+            Images:
+            {value?.images.map((item: string) => {
+              return (
+                <Image
+                  key={item}
+                  width={200}
+                  src={`http://localhost:3900/uploads/${item || "no-data.png"}`}
+                />
+              );
+            })}
+          </div>
         </div>
 
         <div className="p-4 bg-white">
