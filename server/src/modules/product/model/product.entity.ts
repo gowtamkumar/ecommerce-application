@@ -51,9 +51,6 @@ export class ProductEntity {
   @Column({ type: "simple-array", nullable: true })
   images!: string[];
 
-  // @Column({ name: "single_image", nullable: true })
-  // singleImage!: string;
-
   @Column({ name: "brand_id" })
   brandId?: number;
   @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
@@ -66,8 +63,8 @@ export class ProductEntity {
   @JoinColumn({ name: "discount_id" })
   discount?: DiscountEntity;
 
-  @Column({ name: "alert_qty" }) //need to remove nullable ture
-  alertQty?: number;
+  @Column({ name: "alert_qty" })
+  alertQty!: number;
 
   @Column({ name: "limit_purchase_qty", nullable: true })
   limitPurchaseQty?: number;

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +26,7 @@ interface DataType {
   name: string;
   photo: string;
   description: string;
-  status: string
+  status: string;
 }
 
 type DataIndex = keyof DataType;
@@ -175,9 +175,16 @@ const BrandList: React.FC = () => {
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Photo",
-      dataIndex: "photo",
-      key: "photo",
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (value) => (
+        <Image
+          width={60}
+          alt={value}
+          src={`http://localhost:3900/uploads/${value || "no-data.png"}`}
+        />
+      ),
     },
 
     {
@@ -205,14 +212,27 @@ const BrandList: React.FC = () => {
             icon={<FormOutlined />}
             title="Edit"
             className="me-1"
-            onClick={() =>
+            onClick={() => {
+              const newData = { ...value };
+              if (newData.image) {
+                const file = {
+                  uid: Math.random() * 1000 + "",
+                  name: `image`,
+                  status: "done",
+                  fileName: newData.image,
+                  url: `http://localhost:3900/uploads/${
+                    newData.image || "no-data.png"
+                  }`,
+                };
+                newData.fileList = [file];
+              }
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  payload: value,
+                  payload: newData,
                 })
-              )
-            }
+              );
+            }}
           />
           <Popconfirm
             title={
@@ -242,7 +262,7 @@ const BrandList: React.FC = () => {
 
   return (
     <Table
-      scroll={{ x: 'auto' }}
+      scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
       dataSource={brands}

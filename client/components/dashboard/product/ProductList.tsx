@@ -397,11 +397,12 @@ const ProductList: React.FC = () => {
 
           <div className="flex gap-2">
             Images:
-            {value?.images.map((item: string) => {
+            {value.images?.map((item: string) => {
               return (
                 <Image
                   key={item}
                   width={200}
+                  alt={item}
                   src={`http://localhost:3900/uploads/${item || "no-data.png"}`}
                 />
               );

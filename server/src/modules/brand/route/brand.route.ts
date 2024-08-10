@@ -6,15 +6,16 @@ import {
   getBrands,
   updateBrand,
 } from "../controller/brand.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getBrands).post(createBrand);
+router.route("/").get(getBrands).post(AuthGuard, createBrand);
 
 router
   .route("/:id")
   .get(getBrand)
-  .patch(updateBrand)
-  .delete(deleteBrand);
+  .patch(AuthGuard, updateBrand)
+  .delete(AuthGuard, deleteBrand);
 
 export default router;

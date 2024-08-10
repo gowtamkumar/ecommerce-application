@@ -469,12 +469,6 @@ const Product = ({
               name="fileList"
               label="images"
               valuePropName="fileList"
-              rules={[
-                {
-                  required: true,
-                  message: "Images is required",
-                },
-              ]}
               getValueFromEvent={normFile}
             >
               <ImgCrop rotationSlider>
