@@ -2,55 +2,71 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Checkbox,
-  DatePicker,
   Form,
+  Image,
   Input,
-  InputNumber,
   Modal,
   Select,
   TreeSelect,
+  Upload,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAllCategories,
   getCategories,
   saveCategory,
   updateCategory,
 } from "@/lib/apis/categories";
+import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import ImgCrop from "antd-img-crop";
+import { PlusOutlined } from "@ant-design/icons";
+
+const uploadButton = (
+  <div>
+    <PlusOutlined />
+    <div
+      style={{
+        marginTop: 8,
+      }}
+    >
+      Upload
+    </div>
+  </div>
+);
 
 const AddCategory = () => {
   const [categories, setCategories] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [formValues, setFormValues] = useState({
+    fileList: [],
+  }) as any;
+  const [previewTitle, setPreviewTitle] = useState("");
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
       const newData = { ...payload };
       const categories = await getCategories();
-      console.log("🚀 ~ newData:", newData)
       setCategories(categories.data);
       setFormData(newData);
     })();
 
     return () => {
-      dispatch(setFormValues({}));
+      setFormValues({});
       form.resetFields();
     };
-  }, [global.action]);
+  }, [payload]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -62,13 +78,12 @@ const AddCategory = () => {
         : await saveCategory(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        toast.success(
-          `Category ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
         dispatch(setAction({}));
+        setFormValues({});
+        form.resetFields();
       }, 100);
     } catch (err: any) {
-      toast.error(err);
+      console.error(err);
     }
   };
 
@@ -80,20 +95,85 @@ const AddCategory = () => {
   const setFormData = (v: any) => {
     const newData = { ...v };
     form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
+    setFormValues(form.getFieldsValue());
   };
 
-  const resetFormData = () => {
-    if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+  const resetFormData = (value: any) => {
+    if (value?.id) {
+      form.setFieldsValue(value);
+      setFormValues(form.getFieldsValue());
     } else {
       form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
+      setFormValues(form.getFieldsValue());
     }
   };
 
+  const customUploadRequest = async (options: any) => {
+    const { filename, file, onSuccess, onError } = options;
+    const formData = new FormData();
+    formData.append(filename, file);
 
+    try {
+      const res = await uploadFile(formData);
+      if (!res || !res.data) {
+        throw new Error("Invalid response format");
+      }
+      const filename = res.data[0].filename;
+      const newfile = {
+        uid: Math.random() * 1000 + "",
+        name: `photo ${Math.random() * 10000 + ""}`,
+        status: "done",
+        fileName: filename,
+        url: `http://localhost:3900/uploads/${filename || "no-data.png"}`,
+      };
+      const newFileName = res.data.length ? filename : null;
+      // Assuming you're updating form data here:
+      form.setFieldsValue({
+        fileList: [newfile],
+        image: newFileName,
+      });
+      setFormValues({
+        ...formValues,
+        fileList: [newfile],
+        image: newFileName,
+      });
+
+      onSuccess("Ok");
+    } catch (err) {
+      console.error("🚀 ~ Upload error:", err);
+      onError({ err });
+    }
+  };
+
+  const normFile = (e: { fileList: string }) => {
+    console.log("🚀 ~ e:", e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  const handleCancel = () => setPreviewOpen(false);
+
+  // file Preview
+  const handlePreview = async (file: any) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const getBase64 = (file: any) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
 
   return (
     <Modal
@@ -141,21 +221,20 @@ const AddCategory = () => {
 
           <div className="col-span-1">
             <Form.Item name="parentId" label="parent">
-            
-                <TreeSelect
-                  showSearch
-                  style={{ width: "100%" }}
-                  // value={value}
-                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                  placeholder="Please select"
-                  allowClear
-                  treeDefaultExpandAll
-                  // onChange={onChange}
-                  treeData={categories}
-                  // onPopupScroll={onPopupScroll}
-                />
+              <TreeSelect
+                showSearch
+                style={{ width: "100%" }}
+                // value={value}
+                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                placeholder="Please select"
+                allowClear
+                treeDefaultExpandAll
+                // onChange={onChange}
+                treeData={categories}
+                // onPopupScroll={onPopupScroll}
+              />
 
-                {/* <Select.Option value={false}>Inactive</Select.Option> */}
+              {/* <Select.Option value={false}>Inactive</Select.Option> */}
             </Form.Item>
           </div>
 
@@ -165,10 +244,54 @@ const AddCategory = () => {
             </Form.Item>
           </div>
 
-          <div className="col-span-1">
-            <Form.Item name="image" label="Image">
-              <Input placeholder="Enter " />
+          <div>
+            <Form.Item
+              name="fileList"
+              label="Image"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+            >
+              <ImgCrop rotationSlider>
+                <Upload
+                  name="image"
+                  listType="picture-card"
+                  fileList={formValues?.fileList || []}
+                  onRemove={async (v) => {
+                    if (v.fileName) {
+                      form.setFieldsValue({ image: null, fileList: [] });
+                      setFormValues({ image: null, fileList: [] });
+                      const params = { filename: v.fileName };
+                      await fileDeleteWithPhoto(params);
+                    }
+                  }}
+                  className="avatar-uploader"
+                  onPreview={handlePreview}
+                  customRequest={customUploadRequest}
+                  maxCount={1}
+                >
+                  {formValues?.fileList?.length >= 1 ? null : uploadButton}
+                </Upload>
+              </ImgCrop>
             </Form.Item>
+
+            <Form.Item name="image" hidden>
+              <Input />
+            </Form.Item>
+
+            <Modal
+              open={previewOpen}
+              title={previewTitle}
+              footer={null}
+              onCancel={handleCancel}
+            >
+              <Image
+                alt="example"
+                style={{
+                  width: "100%",
+                }}
+                src={previewImage}
+              />
+            </Modal>
           </div>
 
           <div className="col-span-1">
@@ -199,7 +322,7 @@ const AddCategory = () => {
           <Button
             className="mx-2 capitalize"
             size="small"
-            onClick={resetFormData}
+            onClick={() => resetFormData(payload)}
           >
             Reset
           </Button>

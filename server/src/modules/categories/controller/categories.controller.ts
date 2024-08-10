@@ -4,11 +4,13 @@ import { getDBConnection } from "../../../config/db";
 
 import { CategoriesEntity } from "../model/categories.entity";
 import { categoriesValidationSchema } from "../../../validation/categories/categoriesValidation";
+import { FileEntity } from "../../other/file/model/file.entity";
+import { join } from "path";
+import fs from "fs";
 
 // @desc Get all Categorys
 // @route GET /api/v1/categories/all
 // @access Public
-
 export const getAllCategories = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
@@ -103,6 +105,8 @@ export const getCategory = asyncHandler(
 // @access Public
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
+
+  // Validate request body
   const validation = categoriesValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
@@ -114,54 +118,48 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
       message: validation.error.formErrors,
     });
   }
+  const { name, image, userId, parentId } = validation.data;
+  const categoriesRepository = connection.getRepository(CategoriesEntity);
 
-  const categories = await connection.getRepository(CategoriesEntity);
+  let level = 1;
+  let parent = null;
 
-  if (validation.data.parentId) {
-    const maxLevel = 3;
-    const parent = await categories.findOne({
-      where: { id: validation.data.parentId },
-    });
+  // If parentId is provided, fetch parent category
+  if (parentId) {
+    parent = await categoriesRepository.findOne({ where: { id: parentId } });
 
-    if (parent.level >= maxLevel) {
-      return res.status(401).json({
+    if (!parent) {
+      return res.status(400).json({
         status: 400,
-        message: "No new child allowed for this Category",
+        message: "Parent category not found",
       });
     }
 
-    const newCreateCategory = {
-      name: validation.data.name,
-      image: validation.data.image,
-      userId: validation.data.userId,
-      // urlSlug: validation.data.urlSlug,
-      level: parent.level + 1,
-      parent: parent,
-    };
+    if (parent.level >= 3) {
+      return res.status(400).json({
+        status: 400,
+        message: "No new child allowed for this category",
+      });
+    }
 
-    const newCategories = categories.create(newCreateCategory);
-    const save = await categories.save(newCategories);
-
-    return res.status(200).json({
-      message: "Create new categories",
-      data: save,
-    });
+    level = parent.level + 1;
   }
 
-  const newCreateCategory = {
-    name: validation.data.name,
-    image: validation.data.image,
-    userId: validation.data.userId,
-    // urlSlug: validation.data.urlSlug,
-    level: 1,
-    parent: null,
-  };
+  // Create the new category
+  const newCategory = categoriesRepository.create({
+    name,
+    image,
+    userId,
+    level,
+    parent,
+  });
 
-  const newCategories = categories.create(newCreateCategory);
-  const save = await categories.save(newCategories);
+  // Save the category
+  const savedCategory = await categoriesRepository.save(newCategory);
+
   return res.status(200).json({
-    message: "Create new categories",
-    data: save,
+    message: "Category created successfully",
+    data: savedCategory,
   });
 });
 
@@ -172,85 +170,53 @@ export const updateCategory = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
     const { id } = req.params;
+    const { parentId, name, image, urlSlug } = req.body;
 
-    const categories = await connection.getRepository(CategoriesEntity);
+    const categoriesRepository = connection.getRepository(CategoriesEntity);
 
-    const result = await categories.findOneBy({ id });
+    // Fetch the category to be updated
+    const category = await categoriesRepository.findOne({ where: { id } });
 
-    const parent = await categories.findOne({
-      where: { id: req.body.parentId },
-      relations: { children: true },
-    });
-
-    console.log("🚀 ~ parent:", parent);
-
-    if (!result) {
+    if (!category) {
       return res.status(400).json({
         status: 400,
-        message: "categories not found",
+        message: "Category not found",
       });
     }
 
-    const newCreateCategory = {
-      name: req.body.name,
-      image: req.body.image,
-      urlSlug: req.body.urlSlug,
-      level: parent.level,
-      parent: parent,
-    };
+    // If a parentId is provided, fetch the parent category
+    if (parentId) {
+      const parentCategory = await categoriesRepository.findOne({
+        where: { id: parentId },
+        relations: { children: true },
+      });
 
-    const updateData = await categories.merge(result, newCreateCategory);
+      if (!parentCategory) {
+        return res.status(400).json({
+          status: 400,
+          message: "Parent category not found",
+        });
+      }
+      // Merge the new data with the existing category
+      Object.assign(category, {
+        name,
+        image,
+        urlSlug,
+        level: parentCategory.level,
+        parent: parentCategory,
+      });
+    } else {
+      // Merge the new data without changing the parent
+      Object.assign(category, { name, image, urlSlug });
+    }
 
-    await categories.save(updateData);
+    // Save the updated category
+    await categoriesRepository.save(category);
 
     return res.status(200).json({
-      message: "Update a categories Successfull",
-      data: updateData,
+      message: "Category updated successfully",
+      data: category,
     });
-    // }
-
-    //   if (categories.data.parentId) {
-    //     const maxLevel = 3;
-
-    //     console.log("categories.data.parentId", categories.data.parentId);
-
-    //     const parent = await categories.findOne({
-    //       where: { id: req.body.parentId },
-    //       relations: { children: true },
-    //     });
-
-    //     if (parent.level >= maxLevel) {
-    //       return res.status(200).json({
-    //         message: "No new child allowed for this Category",
-    //       });
-    //     }
-
-    //     const newCreateCategory = {
-    //       name: req.body.name,
-    //       image: req.body.image,
-    //       urlSlug: req.body.urlSlug,
-    //       level: parent.level + 1,
-    //       parent: parent,
-    //     };
-
-    //     const updateData = await categories.merge(result, newCreateCategory);
-    //     const save = await categories.save(updateData);
-
-    //     return res.status(200).json({
-    //       message: "update new categories",
-    //       status: 200,
-    //       data: save,
-    //     });
-    //   } else {
-    //     const updateData = await categories.merge(result, req.body);
-
-    //     await categories.save(updateData);
-
-    //     return res.status(200).json({
-    //       message: "Update a categories Successfull",
-    //       data: updateData,
-    //     });
-    //   }
   }
 );
 
@@ -266,6 +232,17 @@ export const deleteCategory = asyncHandler(
     const result = await repository.findOneBy({ id });
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    if (result.image) {
+      const repository = connection.getRepository(FileEntity);
+      const directory = join(process.cwd(), "/public/uploads");
+      const filePath = `${directory}/${result.image}`;
+      const [deleteFile] = await Promise.all([
+        repository.findOne({ where: { filename: result.image } }),
+        fs.promises.unlink(filePath),
+      ]);
+      await repository.remove(deleteFile);
     }
 
     await repository.delete({ id });

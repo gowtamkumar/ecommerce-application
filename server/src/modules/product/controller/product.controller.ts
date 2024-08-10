@@ -214,7 +214,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       ...req.body,
       userId: req.id,
     });
-    console.log("validation", validation.data);
 
     if (!validation.success) {
       return res.status(400).json({ message: validation.error.formErrors });

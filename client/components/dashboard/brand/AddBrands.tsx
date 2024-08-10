@@ -59,6 +59,7 @@ const AddBrand = () => {
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
+        setFormValues({})
       }, 100);
     } catch (err: any) {
       console.log("🚀 ~ err:", err);
@@ -197,7 +198,7 @@ const AddBrand = () => {
               <Input placeholder="Enter " />
             </Form.Item>
           </div>
-          <div className="grid grid-cols-1 gap-3 px-3">
+          <div>
             <Form.Item
               name="fileList"
               label="Image"

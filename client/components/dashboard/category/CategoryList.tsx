@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -188,7 +188,13 @@ const CategoryList: React.FC = () => {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      ...getColumnSearchProps("image"),
+      render: (value) => (
+        <Image
+          width={60}
+          alt={value}
+          src={`http://localhost:3900/uploads/${value || "no-data.png"}`}
+        />
+      ),
     },
 
     {
@@ -224,14 +230,27 @@ const CategoryList: React.FC = () => {
             icon={<FormOutlined />}
             title="Edit"
             className="me-1"
-            onClick={() =>
+            onClick={() => {
+              const newData = { ...value };
+              if (newData.image) {
+                const file = {
+                  uid: Math.random() * 1000 + "",
+                  name: `image`,
+                  status: "done",
+                  fileName: newData.image,
+                  url: `http://localhost:3900/uploads/${
+                    newData.image || "no-data.png"
+                  }`,
+                };
+                newData.fileList = [file];
+              }
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  payload: value,
+                  payload: newData,
                 })
-              )
-            }
+              );
+            }}
           />
           <Popconfirm
             title={
