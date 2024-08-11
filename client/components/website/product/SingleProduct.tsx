@@ -19,6 +19,7 @@ import { getProductVariant } from "@/lib/apis/product-variant";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
+
   const [checkStock, setCheckStock] = useState(0);
   const { id } = useParams();
   const dispatch = useDispatch();

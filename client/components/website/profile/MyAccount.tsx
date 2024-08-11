@@ -33,7 +33,7 @@ interface User {
   dob: string;
   point: string;
   address: string;
-  imgUrl: string;
+  image: string;
 }
 
 export default function MyAccount({ user }: any) {
@@ -218,7 +218,7 @@ export default function MyAccount({ user }: any) {
         </Form.Item>
         <div>
           <Form.Item
-            name="imgUrl"
+            name="image"
             label="Photo"
             tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
           >

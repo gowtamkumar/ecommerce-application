@@ -53,8 +53,8 @@ export class UserEntity {
   @Column({ nullable: true })
   address?: string;
 
-  @Column({ name: "img_url", nullable: true })
-  imgUrl?: string;
+  @Column({ nullable: true })
+  image?: string;
 
   @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
   role!: RoleEnum;

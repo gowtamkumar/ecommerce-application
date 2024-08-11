@@ -11,7 +11,7 @@ dob,
 gender,
 point:number
 status(Active/Inactive/Block)
-img_url,
+image,
 shippingAddresses:[from shipping_address table]
 last_login: date with time zone
 last_logout: date with time zone
@@ -166,7 +166,7 @@ updatedAt
 
 id,
 name,
-photo,
+image,
 description
 status:(Active/Inactive),,
 user_id,

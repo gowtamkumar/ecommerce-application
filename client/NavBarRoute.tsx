@@ -74,30 +74,31 @@ const navbarRoute = [
     label: <Link href="/dashboard/products">Product</Link>,
     route: "true",
   },
-  {
-    key: "size",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/size">Size</Link>,
-    route: "true",
-  },
-  {
-    key: "unit",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/unit">Unit</Link>,
-    route: "true",
-  },
-  {
-    key: "color",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/color">Color</Link>,
-    route: "true",
-  },
-  {
-    key: "discount",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
-    route: "true",
-  },
+
+  // {
+  //   key: "size",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/size">Size</Link>,
+  //   route: "true",
+  // },
+  // {
+  //   key: "unit",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/unit">Unit</Link>,
+  //   route: "true",
+  // },
+  // {
+  //   key: "color",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/color">Color</Link>,
+  //   route: "true",
+  // },
+  // {
+  //   key: "discount",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
+  //   route: "true",
+  // },
 
   {
     key: "category",
@@ -111,12 +112,12 @@ const navbarRoute = [
     label: <Link href="/dashboard/brands">Brands</Link>,
     route: "true",
   },
-  {
-    key: "taxs",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/taxs">Taxs</Link>,
-    route: "true",
-  },
+  // {
+  //   key: "taxs",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/taxs">Taxs</Link>,
+  //   route: "true",
+  // },
 
   {
     key: "wishlists",
@@ -124,18 +125,38 @@ const navbarRoute = [
     label: <Link href="/dashboard/wishlists">Wishlists</Link>,
     route: "true",
   },
-  {
-    key: "status",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/status">Status</Link>,
-    route: "true",
-  },
+  // {
+  //   key: "status",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/status">Status</Link>,
+  //   route: "true",
+  // },
 
   {
     key: "Payment",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/payments">Payments</Link>,
     route: "true",
+  },
+  {
+    key: "order",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: "Order Manage",
+    route: "true",
+    children: [
+      {
+        key: "neworders",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/orders/new">New Order</Link>,
+        route: "true",
+      },
+      {
+        key: "Order",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/orders">Orders</Link>,
+        route: "true",
+      },
+    ],
   },
 
   {
@@ -171,32 +192,13 @@ const navbarRoute = [
     label: <Link href="/dashboard/report">Report</Link>,
     route: "true",
   },
-  {
-    key: "review",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/review">Review</Link>,
-    route: "true",
-  },
-  {
-    key: "order",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: "Order Manage",
-    route: "true",
-    children: [
-      {
-        key: "neworders",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: <Link href="/dashboard/orders/new">New Order</Link>,
-        route: "true",
-      },
-      {
-        key: "Order",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: <Link href="/dashboard/orders">Orders</Link>,
-        route: "true",
-      },
-    ],
-  },
+  // {
+  //   key: "review",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/review">Review</Link>,
+  //   route: "true",
+  // },
+
   {
     key: "setting",
     label: "Setting",

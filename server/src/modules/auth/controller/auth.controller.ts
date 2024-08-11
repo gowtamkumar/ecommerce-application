@@ -19,6 +19,9 @@ import {
   userValidationSchema,
 } from "../../../validation";
 import { UserActivityEntity } from "../model/user-activity.entity";
+import { join } from "path";
+import { FileEntity } from "../../other/file/model/file.entity";
+import fs from "fs";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -92,7 +95,7 @@ export const getUsers = asyncHandler(
         phone: true,
         type: true,
         point: true,
-        imgUrl: true,
+        image: true,
         role: true,
         status: true,
         lastLogin: true,
@@ -430,8 +433,6 @@ export const updateUser = asyncHandler(
 
     const validation = updateUserValidationSchema.safeParse(req.body);
 
-    console.log("validation", validation.error);
-
     if (!validation.success) {
       return res.status(401).json({
         message: validation.error.formErrors,
@@ -445,10 +446,7 @@ export const updateUser = asyncHandler(
     if (!user) {
       throw new Error("User is not found");
     }
-    const updateData = await userRepository.merge(
-      user,
-      req.body as UpdateUserDto
-    );
+    const updateData = await userRepository.merge(user, req.body);
 
     await userRepository.save(updateData);
 
@@ -475,6 +473,18 @@ export const deleteUser = asyncHandler(
     if (!user) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
+
+    if (user.image) {
+      const repository = connection.getRepository(FileEntity);
+      const directory = join(process.cwd(), "/public/uploads");
+      const filePath = `${directory}/${user.image}`;
+      const [deleteFile] = await Promise.all([
+        repository.findOne({ where: { filename: user.image } }),
+        fs.promises.unlink(filePath),
+      ]);
+      await repository.remove(deleteFile);
+    }
+
     await userRepository.delete({ id });
 
     return res.status(200).json({
