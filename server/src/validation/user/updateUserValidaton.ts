@@ -5,6 +5,7 @@ export const updateUserValidationSchema = z.object({
     required_error: "Name is required",
     invalid_type_error: "Name must be a string",
   }),
+  image: z.string({ required_error: "Name is required" }).optional(),
   username: z
     .string({ required_error: "Name is required" })
     .min(5, { message: "Must be 5 or more characters long" }),

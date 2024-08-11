@@ -72,11 +72,10 @@ export default function MyAccount({ user }: any) {
       };
       newData.fileList = [newfile];
     }
-
     if (newData.dob) newData.dob = dayjs(newData.dob);
     form.setFieldsValue(newData);
     setFormValues(newData);
-  }, [user]);
+  }, [form, user]);
 
   // console.log("formValues", formValues);
 
