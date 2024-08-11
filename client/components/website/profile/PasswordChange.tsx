@@ -20,7 +20,6 @@ export default function ChangePassword() {
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
-
       // return console.log("newData:", newData);
       dispatch(setLoading({ savePassword: true }));
       const res = await updatePassword(newData);
@@ -45,10 +44,6 @@ export default function ChangePassword() {
     }
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-  };
 
   const resetFormData = () => {
     form.resetFields();
