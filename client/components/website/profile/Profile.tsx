@@ -11,6 +11,7 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 
 export default function Profile() {
   const [user, setUser] = useState({});
+  const [tabKey, setTabKey] = useState("my_account");
   // hook
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -29,20 +30,25 @@ export default function Profile() {
       <Tabs
         tabPosition="left"
         defaultActiveKey="1"
+        onChange={(key) => setTabKey(key)}
+        type="card"
         items={[
           {
             label: `My Account`,
+            key: "my_account",
             children: <MyAccount user={user} />,
             icon: <AppleOutlined />,
           },
 
           {
             label: `Orders`,
+            key: "Orders",
             children: <UserOrders />,
             icon: <AndroidOutlined />,
           },
           {
             label: `Wishlist`,
+            key: "wishlist",
             children: <MyWishlist user={user} />,
             icon: <AndroidOutlined />,
           },
@@ -55,6 +61,7 @@ export default function Profile() {
 
           {
             label: `My Returns & Cancellations`,
+            key: "my_Returns_cancellations",
             children: `My Returns & Cancellations`,
             icon: <AndroidOutlined />,
           },
@@ -62,17 +69,10 @@ export default function Profile() {
           {
             label: `My Point`,
             children: `My Point`,
+            key: "point",
             icon: <AndroidOutlined />,
           },
-        ].map((item: any, i) => {
-          const id = String(i + 1);
-          return {
-            key: id,
-            label: item.label,
-            children: item.children,
-            icon: item.icon,
-          };
-        })}
+        ]}
       />
     </div>
   );

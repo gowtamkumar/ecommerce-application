@@ -50,7 +50,7 @@ const UserList: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getUsers();
+      const res = await getUsers();      
       setUsers(res?.data);
       dispatch(setLoading({ loading: false }));
     })();

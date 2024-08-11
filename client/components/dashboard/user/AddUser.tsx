@@ -53,6 +53,9 @@ const AddUser = () => {
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
+      if (newData.id) {
+        delete newData.password;
+      }
       // return console.log('newData:', newData)
       dispatch(setLoading({ save: true }));
       const result = newData.id
@@ -213,7 +216,7 @@ const AddUser = () => {
               <Input placeholder="Enter" />
             </Form.Item>
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1" hidden={global.action.payload?.id}>
             <Form.Item
               name="password"
               label="Password"

@@ -12,47 +12,48 @@ export default function Setting() {
   return (
     <Tabs
       tabPosition="left"
-      defaultValue={'company_stting'}
+      defaultValue={"company_stting"}
+      type="card"
       items={[
         {
-          label: "company Setting",
+          label: "Company Setting",
           key: "company_stting",
           children: "company",
         },
         {
           label: "Sizes",
           key: "size",
-          children: <Size/>,
+          children: <Size />,
         },
         {
           label: "Units",
           key: "unit",
-          children: <Unit/>,
+          children: <Unit />,
         },
         {
           label: "Taxs",
           key: "tax",
-          children: <Tax/>,
+          children: <Tax />,
         },
         {
           label: "Discount",
           key: "discount",
-          children: <Discount/>,
+          children: <Discount />,
         },
         {
           label: "Colors",
           key: "color",
-          children: <Color/>,
+          children: <Color />,
         },
         {
           label: "Reviews",
           key: "reviews",
-          children: <Review/>,
+          children: <Review />,
         },
         {
           label: "Status",
           key: "status",
-          children: <Status/>,
+          children: <Status />,
         },
       ]}
     />

@@ -248,6 +248,7 @@ export const getMe = asyncHandler(
       "user.type",
       "user.point",
       "user.role",
+      "user.image",
       "user.dob",
       "user.gender",
       "user.status",
@@ -446,7 +447,7 @@ export const updateUser = asyncHandler(
     if (!user) {
       throw new Error("User is not found");
     }
-    const updateData = await userRepository.merge(user, req.body);
+    const updateData = await userRepository.merge(user, validation.data);
 
     await userRepository.save(updateData);
 

@@ -18,7 +18,7 @@ export const userValidationSchema = z.object({
       required_error: "email is required",
     })
     .email(),
-
+  dob: z.string().optional(),
   resetToken: z.string().optional(),
   // resetTokenExpire: z.number().optional(),
   role: z.enum(["Admin", "User"]).optional(),

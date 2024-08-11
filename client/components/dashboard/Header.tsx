@@ -9,6 +9,7 @@ import {
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
 import { profileRoute } from "@/NavBarRoute";
+import { useSession } from "next-auth/react";
 
 export default function DashboardHeader() {
   const {
@@ -18,6 +19,8 @@ export default function DashboardHeader() {
   // redux hook
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
+  // const session: any = useSession();
+  // console.log("🚀 ~ session:", session)
 
   return (
     <Header
