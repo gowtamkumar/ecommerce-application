@@ -22,10 +22,10 @@ createdAt
 updatedAt
 
 ## user_activity
+
 id,
 type,
 timestamp
-
 
 ## shipping_address
 
@@ -245,7 +245,7 @@ name
 value,
 status:acitve/inactive
 
-## reviews:
+## reviews:(done)
 
 id,
 product_id,
@@ -291,10 +291,28 @@ message/descripiton,
 createdAt
 updatedAt
 
+## currency
+
+id,
+name,
+symble
+
 ## setting
 
 id,
 logo,
 address,
-social_link: array
-email,
+social_link: jsonb
+currencyId,
+email_config:jsonb,
+account:jsonb,
+about_page: jsonb,
+contact_page: jsonb,
+home_page: jsonb,
+
+## banner
+
+name,
+image,
+description,
+status,
