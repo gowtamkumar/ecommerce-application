@@ -31,7 +31,7 @@ import { AuthGuard } from "../middlewares/auth.middleware";
 type ExpressApp = Express;
 
 // Export the routes setup function
-export const setupRoutes = (app: ExpressApp): void => {
+export const setupRoutes = (app: any) => {
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/products", productRoutes);
   app.use("/api/v1/files", fileRoute);
