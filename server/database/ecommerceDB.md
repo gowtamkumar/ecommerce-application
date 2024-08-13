@@ -302,13 +302,16 @@ symble
 id,
 logo,
 address,
-social_link: jsonb
 currencyId,
+social_link: jsonb
 email_config:jsonb,
-account:jsonb,
+payment_account:jsonb,
+home_page: jsonb,
 about_page: jsonb,
 contact_page: jsonb,
-home_page: jsonb,
+term_policy_page: jsonb,
+footer_option: jsonb,
+header_option: jsonb,
 
 ## banner
 
