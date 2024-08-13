@@ -232,6 +232,12 @@ const navbarRoute = [
     label: <Link href="/dashboard/setting">Setting</Link>,
     route: "true",
   },
+  {
+    key: "website_settomg",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/website-setting">Website Setting </Link>,
+    route: "true",
+  },
 ];
 
 const profileRoute: MenuProps["items"] = [

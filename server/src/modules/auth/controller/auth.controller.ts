@@ -241,6 +241,7 @@ export const getMe = asyncHandler(
 
     const qb = userRepository.createQueryBuilder("user");
     qb.select([
+      "user.id",
       "user.name",
       "user.username",
       "user.email",

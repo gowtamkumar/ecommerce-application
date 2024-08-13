@@ -23,19 +23,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
 import ChangePassword from "./PasswordChange";
-import { getSession } from "next-auth/react";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-// interface User {
-//   name: string;
-//   username: string;
-//   email: string;
-//   phone: string;
-//   dob: string;
-//   point: string;
-//   address: string;
-//   image: string;
-// }
 
 const uploadButton = (
   <div>
@@ -75,18 +64,16 @@ export default function MyAccount({ user }: any) {
     if (newData.dob) newData.dob = dayjs(newData.dob);
     form.setFieldsValue(newData);
     setFormValues(newData);
-  }, [form, user]);
+  }, [user]);
 
   // console.log("formValues", formValues);
 
   const handleSubmit = async (values: any) => {
-    const session = await getSession();
     try {
-      let newData = { ...values, id: session?.user.id };
-
+      let newData = { ...values};
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
-      const result = await updateUser(newData)
+      const result = await updateUser(newData);
 
       if (result.success) {
         dispatch(
@@ -105,23 +92,12 @@ export default function MyAccount({ user }: any) {
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setResponse({}));
-        dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
       console.log(err);
     }
   };
 
-  // const handleClose = () => {
-  //   dispatch(setAction({}));
-  //   dispatch(setLoading({}));
-  // };
-
-  // const setFormData = (v: any) => {
-  //   const newData = { ...v };
-  //   form.setFieldsValue(newData);
-  //   setFormValues(form.getFieldsValue());
-  // };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
@@ -131,10 +107,10 @@ export default function MyAccount({ user }: any) {
     if (newData.dob) newData.dob = dayjs(newData.dob);
     if (newData?.id) {
       form.setFieldsValue(newData);
-      dispatch(setFormValues(newData));
+      setFormValues(newData)
     } else {
       form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
+      setFormValues(form.getFieldsValue());
     }
   };
 
@@ -323,7 +299,6 @@ export default function MyAccount({ user }: any) {
             valuePropName="fileList"
             getValueFromEvent={normFile}
             tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
-
           >
             <ImgCrop rotationSlider>
               <Upload
@@ -352,23 +327,13 @@ export default function MyAccount({ user }: any) {
           <Form.Item name="image" hidden>
             <Input />
           </Form.Item>
-
-          {/* <Form.Item
-            name="image"
-            label="Photo"
-            tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
-          >
-            <Upload>
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-          </Form.Item> */}
         </div>
         <Form.Item {...tailLayout}>
           <Button
             className="mx-2"
             size="small"
             type="default"
-            onClick={() => resetFormData(global.action?.payload)}
+            onClick={() => resetFormData(formValues)}
           >
             Reset
           </Button>
@@ -382,22 +347,6 @@ export default function MyAccount({ user }: any) {
           </Button>
         </Form.Item>
       </Form>
-
-      {/* section password */}
-
-      {/* <div className="flex justify-between items-center gap-2">
-        <Divider orientation="left">
-          <div>
-            <h3>Change Password</h3>{" "}
-          </div>
-        </Divider>
-
-        <div hidden={changePassword}>
-          <Button onClick={() => setChangePassword(true)} size="small">
-            Change Password
-          </Button>
-        </div>
-      </div> */}
 
       <ChangePassword />
     </div>
