@@ -12,7 +12,6 @@ export default function Size() {
   const [tabKey, setTabKey] = useState("size_list");
   const dispatch = useDispatch();
 
-
   return (
     <div className="container bg-white p-3  ">
       <Tabs
@@ -32,7 +31,7 @@ export default function Size() {
             onClick={() =>
               dispatch(
                 setAction({
-                  size:true,
+                  size: true,
                   type: ActionType.CREATE,
                 })
               )

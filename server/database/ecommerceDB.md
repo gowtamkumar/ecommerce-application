@@ -300,6 +300,7 @@ symble
 ## setting
 
 id,
+companyName
 logo,
 address,
 currencyId,
