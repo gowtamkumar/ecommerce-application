@@ -210,6 +210,7 @@ const TaxList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  tax:true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

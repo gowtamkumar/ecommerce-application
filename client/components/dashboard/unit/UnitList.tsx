@@ -191,6 +191,7 @@ const UnitList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  unit:true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

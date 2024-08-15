@@ -31,6 +31,7 @@ export default function Review() {
             onClick={() =>
               dispatch(
                 setAction({
+                  review:true,
                   type: ActionType.CREATE,
                 })
               )

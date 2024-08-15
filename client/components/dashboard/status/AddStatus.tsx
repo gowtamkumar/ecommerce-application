@@ -81,9 +81,9 @@ const AddStatus = () => {
       }
       width={500}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+      open={global.action.status && 
+        (global.action.type === ActionType.CREATE ||
+        global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

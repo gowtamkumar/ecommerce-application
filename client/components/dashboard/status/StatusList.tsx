@@ -191,6 +191,7 @@ const StatusList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  status: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

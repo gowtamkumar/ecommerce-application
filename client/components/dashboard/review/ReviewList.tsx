@@ -231,6 +231,7 @@ const ReviewList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  review:true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

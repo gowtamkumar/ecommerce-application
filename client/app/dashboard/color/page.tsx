@@ -32,6 +32,7 @@ export default function Color() {
             onClick={() =>
               dispatch(
                 setAction({
+                  color:true,
                   type: ActionType.CREATE,
                 })
               )

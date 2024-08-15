@@ -95,9 +95,9 @@ const AddTax = () => {
       }
       width={750}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+      open={global.action.tax && 
+        (global.action.type === ActionType.CREATE ||
+        global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

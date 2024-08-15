@@ -31,6 +31,7 @@ export default function Unit() {
             onClick={() =>
               dispatch(
                 setAction({
+                  unit:true,
                   type: ActionType.CREATE,
                 })
               )

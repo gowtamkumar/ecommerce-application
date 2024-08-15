@@ -40,7 +40,7 @@ const AddUnit = () => {
         : await saveUnit(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `Unit ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -79,9 +79,9 @@ const AddUnit = () => {
       }
       width={500}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+      open={global.action.unit &&
+        (global.action.type === ActionType.CREATE ||
+          global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

@@ -31,6 +31,7 @@ export default function Status() {
             onClick={() =>
               dispatch(
                 setAction({
+                  status:true,
                   type: ActionType.CREATE,
                 })
               )

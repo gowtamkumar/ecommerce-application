@@ -29,6 +29,8 @@ import { DivisionEntity } from "../modules/other/geo-location/divisions/model/di
 import { DistrictEntity } from "../modules/other/geo-location/districts/model/district.entity";
 import { UpazilaEntity } from "../modules/other/geo-location/upazilas/model/upazila.entity";
 import { UnionEntity } from "../modules/other/geo-location/unions/model/union.entity";
+import { CurrencyEntity } from "../modules/currency/model/currency.entity";
+import { BannerEntity } from "../modules/banner/model/banner.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -91,6 +93,8 @@ const dbConnection = new DataSource({
     UpazilaEntity,
     UnionEntity,
     VisitorEntity,
+    CurrencyEntity,
+    BannerEntity,
   ],
   subscribers: [],
   migrations: [],

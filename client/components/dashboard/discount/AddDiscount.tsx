@@ -97,9 +97,9 @@ const AddDiscount = () => {
       }
       width={850}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+      open={global.action.discount &&
+       ( global.action.type === ActionType.CREATE ||
+        global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

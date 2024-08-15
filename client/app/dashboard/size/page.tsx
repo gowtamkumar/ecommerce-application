@@ -32,6 +32,7 @@ export default function Size() {
             onClick={() =>
               dispatch(
                 setAction({
+                  size:true,
                   type: ActionType.CREATE,
                 })
               )
