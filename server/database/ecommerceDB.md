@@ -317,6 +317,7 @@ header_option: jsonb,
 ## banner
 
 name,
+type:["Slider", ""],
 image,
 description,
 status,

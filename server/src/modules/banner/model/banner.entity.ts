@@ -10,6 +10,9 @@ export class BannerEntity {
   name!: string;
 
   @Column()
+  type!: string;
+
+  @Column()
   image!: string;
 
   @Column({ nullable: true })

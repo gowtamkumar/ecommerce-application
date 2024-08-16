@@ -1,3 +1,4 @@
+import Banner from "@/app/dashboard/banner/page";
 import Color from "@/app/dashboard/color/page";
 import Discount from "@/app/dashboard/discounts/page";
 import Review from "@/app/dashboard/review/page";
@@ -44,6 +45,11 @@ export default function Setting() {
           label: "Colors",
           key: "color",
           children: <Color />,
+        },
+        {
+          label: "Banner",
+          key: "banner",
+          children: <Banner />,
         },
         {
           label: "Reviews",

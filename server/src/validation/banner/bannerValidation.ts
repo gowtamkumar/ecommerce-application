@@ -1,7 +1,12 @@
 import { z } from "zod";
 
 export const bannerValidationSchema = z.object({
-  name: z.string().optional(),
+  type: z.enum(["Slider"], {
+    required_error: "type is required",
+  }),
+  name: z.string({
+    required_error: "name is required",
+  }),
   url: z.string().optional(),
   image: z.string({
     required_error: "User is required",
