@@ -46,7 +46,7 @@ const AddBanner = () => {
       setFormValues({});
       form.resetFields();
     };
-  }, [payload]);
+  }, [form, payload]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -60,6 +60,7 @@ const AddBanner = () => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
         setFormValues({});
+        form.resetFields();
       }, 100);
     } catch (err: any) {
       console.log("🚀 ~ err:", err);

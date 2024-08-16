@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 
 export async function saveBanner(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/Banners`, {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/banners`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -17,22 +17,29 @@ export async function saveBanner(data: any) {
   return res.json();
 }
 
-export async function getBanners() {
+export async function getBanners(params?: any) {
+  let searchQuery = "";
+  if (params?.type) {
+    searchQuery += `type=${params.type}`;
+  }
   const session = await getServerSession(authOptions);
 
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/Banners`, {
-    // cache: "no-cache",
-    // headers: {
-    //   'Authorization': `Bearer ${session?.user.accessToken}`,
-    // },
-  });
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/banners?${searchQuery}`,
+    {
+      // cache: "no-cache",
+      // headers: {
+      //   'Authorization': `Bearer ${session?.user.accessToken}`,
+      // },
+    }
+  );
   return res.json();
 }
 
 export async function updateBanner(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/Banners/${data.id}`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/banners/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -49,7 +56,7 @@ export async function updateBanner(data: any) {
 export async function deleteBanner(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/Banners/${id}`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/banners/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

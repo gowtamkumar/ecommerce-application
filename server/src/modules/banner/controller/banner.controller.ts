@@ -8,10 +8,17 @@ import { bannerValidationSchema } from "../../../validation";
 // @route GET /api/v1/Banner
 // @access Public
 export const getBanners = asyncHandler(async (req: Request, res: Response) => {
+  const { type } = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(BannerEntity);
 
-  const result = await repository.find();
+  let customQuery = {} as any;
+  if (type) {
+    customQuery.type = type;
+  }
+  console.log("customQuery", customQuery);
+
+  const result = await repository.find({ where: customQuery });
 
   return res.status(200).json({
     success: true,

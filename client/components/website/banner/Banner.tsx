@@ -2,53 +2,48 @@
 import React from "react";
 import Sidebar from "./Sidebar";
 import { Carousel } from "antd";
+import { getBanners } from "@/lib/apis/banner";
 import Image from "next/image";
 
-export default function Banner() {
+export default async function Banner() {
   const contentStyle: React.CSSProperties = {
-    height: "400px",
-    color: "#fff",
-    lineHeight: "400px",
+    margin: 0,
+    height: "350px",
+    color: "black",
+    lineHeight: "350px",
     textAlign: "center",
-    background: "#364d79",
+    background: "black",
   };
+  const banners = await getBanners({ type: "Slider" });
   return (
     <>
       <div className="flex gap-2 items-stretch">
-        <div className="w-1/6 self-auto">
+        <div className="w-1/6">
           <Sidebar />
         </div>
-        <div className="w-5/6 self-auto justify-center items-center border">
-          <Carousel arrows autoplay draggable centerMode>
-            <div>
-              <Image
-                width={300}
-                height={500}
-                className="mx-auto h-full w-auto"
-                src="/banner.webp"
-                alt="Logo"
-              />
-            </div>
-
-            <div>
-              <Image
-                width={600}
-                height={500}
-                className="mx-auto h-full w-auto"
-                src="/banner.webp"
-                alt="Logo"
-              />
-            </div>
-
-            {/* <div>
-              <h3 style={contentStyle}>2</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>3</h3>
-            </div>
-            <div>
-              <h3 style={contentStyle}>4</h3>
-            </div> */}
+        <div className="w-5/6 justify-center items-center border">
+          <Carousel arrows autoplay pauseOnDotsHover centerMode adaptiveHeight>
+            {banners.data?.map(({ image }: { image: string }) => (
+              <div className="clear-both" key={image}>
+                <Image
+                  style={contentStyle}
+                  src={
+                    image
+                      ? `http://localhost:3900/uploads/${image}`
+                      : "/pos_software.png"
+                  }
+                  alt={image}
+                  loading="lazy"
+                  width="0"
+                  height="0"
+                  sizes="100vw"
+                  className="w-full h-auto"
+                  // placeholder="blur"
+                  // blurDataURL={image}
+                  // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
+            ))}
           </Carousel>
         </div>
       </div>

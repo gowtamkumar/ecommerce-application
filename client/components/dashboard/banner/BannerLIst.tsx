@@ -43,10 +43,11 @@ const BannerList: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getBanners();
+      console.log("🚀 ~ res:", res);
       setBanners(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
-  }, [dispatch, global.action]);
+  }, [dispatch]);
 
   const handleDelete = async (id: string) => {
     try {
