@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // reactStrictMode: true,
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'http://localhost:3000/**',
-        port: '',
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },

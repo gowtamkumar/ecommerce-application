@@ -147,7 +147,7 @@ export default function SingleProduct() {
       <div className=" bg-white  grid grid-cols-1 md:grid-cols-4">
         <div className="col-span-1">
           <ProductImageGallery
-            images={["/images/watch1.jpg", "/images/watch2.jpg"]}
+            images={product.images}
           />
         </div>
         <div className="col-span-2">
