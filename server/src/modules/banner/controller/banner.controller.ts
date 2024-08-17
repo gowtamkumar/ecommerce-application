@@ -12,7 +12,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(BannerEntity);
 
-  let customQuery = {} as any;
+  let customQuery = { status: true} as any;
   if (type) {
     customQuery.type = type;
   }

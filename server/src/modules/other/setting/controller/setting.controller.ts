@@ -2,6 +2,146 @@ import { Request, Response, NextFunction } from "express";
 import { exec } from "child_process";
 import fs from "fs";
 import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
+import { settingValidationSchema } from "../../../../validation";
+import { SettingEntity } from "../model/setting.entity";
+
+// @desc Get all Setting
+// @route GET /api/v1/Setting
+// @access Public
+export const getSettings = asyncHandler(async (req: Request, res: Response) => {
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(SettingEntity);
+
+  const result = await repository.find();
+
+  return res.status(200).json({
+    success: true,
+    msg: "Get all Setting",
+    data: result,
+  });
+});
+
+// @desc Get a single Setting
+// @route GET /api/v1/Setting/:id
+// @access Public
+export const getSetting = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(SettingEntity);
+    const result = await repository.findOneBy({ id });
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    return res.status(200).json({
+      success: true,
+      msg: `Get a single Setting of id ${req.params.id}`,
+      data: result,
+    });
+  }
+);
+
+// @desc Create a single Setting
+// @route POST /api/v1/Setting
+// @access Public
+export const createSetting = asyncHandler(async (req: any, res: Response) => {
+  const connection = await getDBConnection();
+  const validation = settingValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
+
+  if (!validation.success) {
+    return res.status(401).json({
+      message: validation.error.formErrors,
+    });
+  }
+
+  const repository = connection.getRepository(SettingEntity);
+
+  const newSetting = repository.create(validation.data);
+
+  const save = await repository.save(newSetting);
+
+  return res.status(200).json({
+    success: true,
+    msg: "Create a new Setting",
+    data: save,
+  });
+});
+
+export const createDashboardSetting = asyncHandler(
+  async (req: any, res: Response) => {
+    const connection = await getDBConnection();
+    const validation = settingValidationSchema.safeParse({
+      ...req.body,
+    });
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+
+    const repository = connection.getRepository(SettingEntity);
+
+    const newSetting = repository.create(validation.data);
+
+    const save = await repository.save(newSetting);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new Setting by dashboard",
+      data: save,
+    });
+  }
+);
+
+// @desc Update a single Setting
+// @route PUT /api/v1/Setting/:id
+// @access Public
+export const updateSetting = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(SettingEntity);
+    const result = await repository.findOneBy({ id });
+    const updateData = await repository.merge(result, req.body);
+    await repository.save(updateData);
+    return res.status(200).json({
+      success: true,
+      msg: `Update a single Setting of id ${req.params.id}`,
+      data: updateData,
+    });
+  }
+);
+
+// @desc Delete a single Setting
+// @route DELETE /api/v1/Setting/:id
+// @access Public
+export const deleteSetting = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(SettingEntity);
+
+    const result = await repository.findOneBy({ id });
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    await repository.delete({ id });
+
+    return res.status(200).json({
+      success: true,
+      msg: `Delete a single Setting of id ${req.params.id}`,
+      data: result,
+    });
+  }
+);
 
 // @desc Get all Address
 // @route GET /api/v1/Address

@@ -15,7 +15,7 @@ export class SettingEntity {
   companyName!: string;
 
   @Column({ nullable: true })
-  logo!: string;
+  image!: string;
 
   @Column({ nullable: true })
   address!: string;

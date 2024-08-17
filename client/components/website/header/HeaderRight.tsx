@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 export default function HeaderRight() {
   const cart = useSelector(selectCart);
   const session = useSession();
+  const profileImage = session.data?.user.image;
   return (
     <div className="w-2/12 flex justify-between items-center">
       <div className="ml-3 flex ">
@@ -29,7 +30,11 @@ export default function HeaderRight() {
           <Avatar
             className="cursor-pointer h-10 w-10 rounded-full bg-slate-500"
             size={35}
-            src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
+            src={
+              profileImage
+                ? `http://localhost:3900/uploads/${profileImage}`
+                : "/pos_software.png"
+            }
           />
         </Dropdown>
       ) : (

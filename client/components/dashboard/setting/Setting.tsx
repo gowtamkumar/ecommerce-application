@@ -8,6 +8,7 @@ import Tax from "@/app/dashboard/taxs/page";
 import Unit from "@/app/dashboard/unit/page";
 import { Tabs } from "antd";
 import React from "react";
+import CompanySetting from "./company-setting/CompanySetting";
 
 export default function Setting() {
   return (
@@ -19,7 +20,7 @@ export default function Setting() {
         {
           label: "Company Setting",
           key: "company_stting",
-          children: "company",
+          children: <CompanySetting/>,
         },
         {
           label: "Sizes",

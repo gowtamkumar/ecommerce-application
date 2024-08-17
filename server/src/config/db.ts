@@ -31,6 +31,7 @@ import { UpazilaEntity } from "../modules/other/geo-location/upazilas/model/upaz
 import { UnionEntity } from "../modules/other/geo-location/unions/model/union.entity";
 import { CurrencyEntity } from "../modules/currency/model/currency.entity";
 import { BannerEntity } from "../modules/banner/model/banner.entity";
+import { SettingEntity } from "../modules/other/setting/model/setting.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -95,6 +96,7 @@ const dbConnection = new DataSource({
     VisitorEntity,
     CurrencyEntity,
     BannerEntity,
+    SettingEntity
   ],
   subscribers: [],
   migrations: [],

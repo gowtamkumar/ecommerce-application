@@ -24,7 +24,7 @@ export default async function Banner() {
         <div className="w-5/6 justify-center items-center border">
           <Carousel arrows autoplay pauseOnDotsHover centerMode adaptiveHeight>
             {banners.data?.map(({ image }: { image: string }) => (
-              <div className="clear-both" key={image}>
+              <div className="clear-both " key={image}>
                 <Image
                   style={contentStyle}
                   src={

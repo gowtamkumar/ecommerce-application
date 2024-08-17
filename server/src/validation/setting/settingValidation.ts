@@ -4,7 +4,7 @@ export const settingValidationSchema = z.object({
   companyName: z.string({
     required_error: "Company Name is required",
   }),
-  logo: z.string().optional(),
+  image: z.string().optional(),
   url: z.string().optional(),
   address: z.string().optional(),
   currencyId: z.number({

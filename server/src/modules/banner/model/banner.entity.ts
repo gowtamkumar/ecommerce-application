@@ -9,7 +9,7 @@ export class BannerEntity {
   @Column()
   name!: string;
 
-  @Column()
+  @Column({nullable: true})
   type!: string;
 
   @Column()
