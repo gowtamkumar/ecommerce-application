@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 export default function HeaderRight() {
   const cart = useSelector(selectCart);
-  const session = useSession();
+  const session = useSession();  
   const profileImage = session.data?.user.image;
   return (
     <div className="w-2/12 flex justify-between items-center">

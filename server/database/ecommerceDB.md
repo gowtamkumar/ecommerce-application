@@ -313,6 +313,7 @@ contact_page: jsonb,
 term_policy_page: jsonb,
 footer_option: jsonb,
 header_option: jsonb,
+help_Support: jsonb
 
 ## banner
 

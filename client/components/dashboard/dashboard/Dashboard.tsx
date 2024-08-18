@@ -34,6 +34,9 @@ const Dashboard = () => {
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
+  console.log("total_order_amount", total_order_amount);
+  
+
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 
@@ -135,7 +138,7 @@ const Dashboard = () => {
               <h4> Profit & Loss ৳</h4>
               <Statistic
                 value={(+saleAmount - +purchaseAmount).toFixed(2)}
-                formatter={formatter}
+                // formatter={formatter}
                 prefix={
                   saleAmount >= purchaseAmount ? (
                     <ArrowUpOutlined />

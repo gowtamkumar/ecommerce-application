@@ -243,7 +243,7 @@ const navbarRoute = [
 const profileRoute: MenuProps["items"] = [
   {
     key: "1",
-    label: <Link href="/dashboard/profile">Profile</Link>,
+    label: <Link href="/profile">Profile</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {

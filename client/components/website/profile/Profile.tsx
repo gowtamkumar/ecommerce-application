@@ -53,11 +53,12 @@ export default function Profile() {
             icon: <AndroidOutlined />,
           },
 
-          // {
-          //   label: `Shipping Address`,
-          //   children: <ShippingAddressList />,
-          //   icon: <AndroidOutlined />,
-          // },
+          {
+            label: `Shipping Address`,
+            key: "shipping_address",
+            children: "shipping address",
+            icon: <AndroidOutlined />,
+          },
 
           {
             label: `My Returns & Cancellations`,

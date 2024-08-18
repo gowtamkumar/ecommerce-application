@@ -1,7 +1,7 @@
 "use client";
-import { Avatar, Drawer, Layout, Menu, Button } from "antd";
+import { Avatar, Drawer, Layout, Menu, Button, Image } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   selectLayout,
   setCollapsed,
@@ -9,10 +9,12 @@ import {
   setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
 import { navbarRoute } from "@/NavBarRoute";
+import { getSettings } from "@/lib/apis/setting";
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
+  const [setting, setSetting] = useState<{ logo: string }>({ logo: "" });
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
 
@@ -31,6 +33,14 @@ const Sidebar = () => {
       window.removeEventListener("resize", updateScreenWidth);
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    (async () => {
+      const logo = await getSettings();
+      const singleLogo = logo.data ? logo.data[0]?.image : null;
+      setSetting({ logo: singleLogo });
+    })();
+  }, []);
 
   const onClose = () => {
     dispatch(setOpen(false));
@@ -82,8 +92,25 @@ const Sidebar = () => {
         onCollapse={(value) => dispatch(setCollapsed(value))}
         hidden={layout.screenWidth <= 820}
       >
-        <div className="bg-slate-300 flex justify-center items-center">
-          <Avatar alt="logo" size={50} src="/pos_software.png" />
+        <div className="bg-slate-300 flex justify-center items-center p-1">
+          {/* <Avatar alt="logo" size={40} src={
+              setting?.logo
+                ? `http://localhost:3900/uploads/${setting.logo}`
+                : "/pos_software.png"
+            } /> */}
+          <Image
+            src={
+              setting?.logo
+                ? `http://localhost:3900/uploads/${setting.logo}`
+                : "/pos_software.png"
+            }
+            alt={setting?.logo}
+            loading="lazy"
+            width={50}
+            height={50}
+            // className="mx-auto h-5 w-auto"
+            // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         </div>
         <Menu theme="dark" mode="inline" items={filteredChildren} />
       </Sider>

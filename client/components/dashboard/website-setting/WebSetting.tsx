@@ -1,16 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
+import React, { useState } from "react";
+import { Button, Form, Image, Input, Modal, Upload } from "antd";
 import {
   selectGlobal,
   setAction,
+  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import { getSettings, saveSetting, updateSetting } from "@/lib/apis/setting";
+import { saveSetting, updateSetting } from "@/lib/apis/setting";
 
 const uploadButton = (
   <div>
@@ -25,48 +26,16 @@ const uploadButton = (
   </div>
 );
 
-const CompanySetting = () => {
+const WebSetting = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [formValues, setFormValues] = useState({
-    fileList: [],
-  }) as any;
   const [previewTitle, setPreviewTitle] = useState("");
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchSettings = async () => {
-      try {
-        const setting = await getSettings();
-        if (isMounted) {
-          const data = setting.data[0] || {};
-
-          const newfile = {
-            uid: Math.random() * 1000 + "",
-            name: `logo ${Math.random() * 10000 + ""}`,
-            status: "done",
-            fileName: data.image,
-            url: `http://localhost:3900/uploads/${data.image || "no-data.png"}`,
-          };
-          setFormData({ ...data, fileList: [newfile] });
-          // setFormValues({ ...data, fileList: [newfile] });
-        }
-      } catch (error) {
-        console.error("Failed to fetch settings:", error);
-      }
-    };
-
-    fetchSettings();
-    return () => {
-      isMounted = false;
-      setFormValues({});
-      form.resetFields();
-    };
-  }, [form, global.action]);
+  form.setFieldsValue(global.formValues);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -78,12 +47,11 @@ const CompanySetting = () => {
         : await saveSetting(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        setFormValues({});
+        dispatch(setFormValues({}));
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
       console.log("🚀 ~ err:", err);
-      console.error(err);
     }
   };
 
@@ -111,12 +79,13 @@ const CompanySetting = () => {
         fileList: [newfile],
         image: newFileName,
       });
-      setFormValues({
-        ...formValues,
-        fileList: [newfile],
-        image: newFileName,
-      });
-
+      dispatch(
+        setFormValues({
+          ...global.formValues,
+          fileList: [newfile],
+          image: newFileName,
+        })
+      );
       onSuccess("Ok");
     } catch (err) {
       console.error("🚀 ~ Upload error:", err);
@@ -154,30 +123,21 @@ const CompanySetting = () => {
       reader.onerror = (error) => reject(error);
     });
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    setFormValues(form.getFieldsValue());
-  };
-
   const resetFormData = (value: any) => {
     if (value?.id) {
       form.setFieldsValue(value);
-      setFormValues(form.getFieldsValue());
+      dispatch(setFormValues(form.getFieldsValue()));
     } else {
       form.resetFields();
-      setFormValues(form.getFieldsValue());
+      dispatch(setFormValues(form.getFieldsValue()));
     }
   };
 
   // id,
+  // id,
   // companyName
   // logo,
   // address,
-  // currencyId,
-  // social_link: jsonb
-  // email_config:jsonb,
-  // payment_account:jsonb,
   // home_page: jsonb,
   // about_page: jsonb,
   // contact_page: jsonb,
@@ -186,12 +146,12 @@ const CompanySetting = () => {
   // header_option: jsonb,
 
   const layout = {
-    labelCol: { span: 2 },
+    labelCol: { span: 3 },
     wrapperCol: { span: 12 },
   };
 
   const tailLayout = {
-    wrapperCol: { offset: 2, span: 12 },
+    wrapperCol: { offset: 3, span: 12 },
   };
 
   return (
@@ -200,7 +160,6 @@ const CompanySetting = () => {
         {...layout}
         form={form}
         onFinish={handleSubmit}
-        // onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -235,7 +194,7 @@ const CompanySetting = () => {
             <Upload
               name="image"
               listType="picture-card"
-              fileList={formValues?.fileList || []}
+              fileList={global.formValues?.fileList || []}
               onRemove={async (v) => {
                 if (v.fileName) {
                   form.setFieldsValue({ image: null, fileList: [] });
@@ -249,7 +208,7 @@ const CompanySetting = () => {
               customRequest={customUploadRequest}
               maxCount={1}
             >
-              {formValues?.fileList?.length >= 1 ? null : uploadButton}
+              {global.formValues?.fileList?.length >= 1 ? null : uploadButton}
             </Upload>
           </ImgCrop>
         </Form.Item>
@@ -299,7 +258,7 @@ const CompanySetting = () => {
           <Button
             className="mx-2 capitalize"
             size="small"
-            onClick={() => resetFormData(formValues)}
+            onClick={() => resetFormData(global.formValues)}
           >
             Reset
           </Button>
@@ -318,4 +277,4 @@ const CompanySetting = () => {
   );
 };
 
-export default CompanySetting;
+export default WebSetting;
