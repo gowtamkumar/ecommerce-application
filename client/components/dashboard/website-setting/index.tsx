@@ -39,16 +39,22 @@ export default function Index() {
       try {
         const setting = await getSettings();
         if (isMounted) {
-          const data = setting.data[0] || {};
+          const newData = { ...setting.data[0] };
 
-          const newfile = {
-            uid: Math.random() * 1000 + "",
-            name: `logo ${Math.random() * 10000 + ""}`,
-            status: "done",
-            fileName: data.image,
-            url: `http://localhost:3900/uploads/${data.image || "no-data.png"}`,
-          };
-          dispatch(setFormValues({ ...data, fileList: [newfile] }));
+          if (newData.image) {
+            const newfile = {
+              uid: Math.random() * 1000 + "",
+              name: `logo ${Math.random() * 10000 + ""}`,
+              status: "done",
+              fileName: newData.image,
+              url: `http://localhost:3900/uploads/${
+                newData.image || "no-data.png"
+              }`,
+            };
+            newData.fileList = [newfile];
+          }
+
+          dispatch(setFormValues(newData));
         }
       } catch (error) {
         console.error("Failed to fetch settings:", error);

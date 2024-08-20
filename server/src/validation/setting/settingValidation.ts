@@ -7,13 +7,10 @@ export const settingValidationSchema = z.object({
   image: z.string().optional(),
   url: z.string().optional(),
   address: z.string().optional(),
-  currencyId: z.number({
-    required_error: "currency is required",
-  }),
+  currencyId: z.number().optional(),
   userId: z.number({
     required_error: "User is required",
   }),
-
   socialLink: z.any().optional(),
   emailConfig: z.any().optional(),
   payment_account: z.any().optional(),

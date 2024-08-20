@@ -33,7 +33,7 @@ const WebSetting = () => {
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch();  
 
   form.setFieldsValue(global.formValues);
 
@@ -43,8 +43,10 @@ const WebSetting = () => {
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
+      
         ? await updateSetting(newData)
         : await saveSetting(newData);
+        console.log("🚀 ~ result:", result)
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setFormValues({}));
@@ -71,7 +73,7 @@ const WebSetting = () => {
         name: `logo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: filename,
-        url: `http://localhost:3900/uploads/${filename || "no-data.png"}`,
+        url:  `http://localhost:3900/uploads/${filename || "no-data.png"}`,
       };
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:
@@ -198,7 +200,7 @@ const WebSetting = () => {
               onRemove={async (v) => {
                 if (v.fileName) {
                   form.setFieldsValue({ image: null, fileList: [] });
-                  setFormValues({ image: null, fileList: [] });
+                  dispatch(setFormValues({ image: null, fileList: [] }));
                   const params = { filename: v.fileName };
                   await fileDeleteWithPhoto(params);
                 }
