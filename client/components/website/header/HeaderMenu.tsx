@@ -4,7 +4,7 @@ import { Menu, MenuProps, Spin } from "antd";
 import { webSiteNavbarItems } from "@/NavBarRoute";
 import Link from "next/link";
 
-export default function SidebarMenu({ categories }: any) {
+export default function HeaderMenu({ categories }: any) {
   const [current, setCurrent] = useState("mail");
   const onClick: MenuProps["onClick"] = (e) => {
     setCurrent(e.key);
@@ -19,8 +19,10 @@ export default function SidebarMenu({ categories }: any) {
       <Menu
         onClick={onClick}
         selectedKeys={[current]}
-        mode="vertical"
-        items={categories.data?.map((item: any, idx: number) => ({
+        mode="horizontal"
+        // color='black'
+        theme="light"
+        items={categories?.data?.map((item: any, idx: number) => ({
           key: idx,
           label: (
             <Link

@@ -4,6 +4,7 @@ import HeaderLogo from "./HeaderLogo";
 import HeaderRight from "./HeaderRight";
 import HeaderSearch from "./HeaderSearch";
 import { getSettings } from "@/lib/apis/setting";
+import MainMenu from "./Menu";
 
 export default async function Header() {
   //  const res = await saveVisitor({})
@@ -20,6 +21,7 @@ export default async function Header() {
           <HeaderSearch />
           <HeaderRight />
         </div>
+        <MainMenu />
       </div>
     </div>
   );
