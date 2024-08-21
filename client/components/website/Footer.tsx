@@ -6,6 +6,7 @@ import {
   FaInstagram,
   FaLinkedin,
   FaLinkedinIn,
+  FaTwitter,
 } from "react-icons/fa";
 
 async function WebFooter() {
@@ -124,26 +125,41 @@ async function WebFooter() {
             Reserved.
           </span>
           <div className="flex mt-4 sm:justify-center md:mt-0 space-x-5 rtl:space-x-reverse">
-            <Link
-              href={socialLink?.facebookUrl}
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            >
-              <FaFacebookF />
-            </Link>
+            {socialLink?.linkedinUrl && (
+              <Link
+                href={socialLink?.facebookUrl}
+                className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              >
+                <FaFacebookF />
+              </Link>
+            )}
 
-            <Link
-              href={socialLink?.linkedinUrl}
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            >
-              <FaLinkedinIn />
-            </Link>
+            {socialLink?.linkedinUrl && (
+              <Link
+                href={socialLink?.linkedinUrl}
+                className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              >
+                <FaLinkedinIn />
+              </Link>
+            )}
 
-            <Link
-              href={socialLink?.instagramUrl}
-              className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            >
-              <FaInstagram />
-            </Link>
+            {socialLink?.twitterUrl && (
+              <Link
+                href={socialLink?.instagramUrl}
+                className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              >
+                <FaInstagram />
+              </Link>
+            )}
+
+            {socialLink?.twitterUrl && (
+              <Link
+                href={socialLink?.twitterUrl}
+                className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              >
+                <FaTwitter />
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -22,10 +22,13 @@ const SocialLink = () => {
     const facebookUrl = values.facebookUrl;
     const instagramUrl = values.instagramUrl;
     const linkedinUrl = values.linkedinUrl;
+    const twitterUrl = values.twitterUrl;
+
+    
     try {
       let newData = {
         id: values.id,
-        socialLink: { facebookUrl, instagramUrl, linkedinUrl },
+        socialLink: { facebookUrl, instagramUrl, linkedinUrl,twitterUrl },
       };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
