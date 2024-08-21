@@ -6,6 +6,7 @@ import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
   setFormValues,
+  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import SocialLink from "./SocialLink";
@@ -36,7 +37,9 @@ export default function Index() {
   useEffect(() => {
     let isMounted = true;
     const fetchSettings = async () => {
+
       try {
+        dispatch(setLoading({ save: true }));
         const setting = await getSettings();
         if (isMounted) {
           const newData = { ...setting.data[0] };
@@ -47,16 +50,17 @@ export default function Index() {
               name: `logo ${Math.random() * 10000 + ""}`,
               status: "done",
               fileName: newData.image,
-              url: `http://localhost:3900/uploads/${
-                newData.image || "no-data.png"
-              }`,
+              url: `http://localhost:3900/uploads/${newData.image || "no-data.png"
+                }`,
             };
             newData.fileList = [newfile];
           }
 
           dispatch(setFormValues(newData));
         }
+        dispatch(setLoading({ save: false }));
       } catch (error) {
+        dispatch(setLoading({ save: false }));
         console.error("Failed to fetch settings:", error);
       }
     };

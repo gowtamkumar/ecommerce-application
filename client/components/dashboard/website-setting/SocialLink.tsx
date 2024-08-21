@@ -19,8 +19,14 @@ const SocialLink = () => {
   form.setFieldsValue(global.formValues);
 
   const handleSubmit = async (values: any) => {
+    const facebookUrl = values.facebookUrl;
+    const instagramUrl = values.instagramUrl;
+    const linkedinUrl = values.linkedinUrl;
     try {
-      let newData = { ...values };
+      let newData = {
+        id: values.id,
+        socialLink: { facebookUrl, instagramUrl, linkedinUrl },
+      };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = newData.id
@@ -68,20 +74,18 @@ const SocialLink = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="companyName"
-          label="Company Name"
-          rules={[
-            {
-              required: true,
-              message: "Company Name is required",
-            },
-          ]}
-        >
+        <Form.Item name="facebookUrl" label="Facebook Url">
+          <Input placeholder="Enter " />
+        </Form.Item>
+        <Form.Item name="instagramUrl" label="Instagram Url">
           <Input placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item name="address" label="Address">
+        <Form.Item name="linkedinUrl" label="Linkedin Url">
+          <Input placeholder="Enter " />
+        </Form.Item>
+
+        <Form.Item name="twitterUrl" label="Twitter Url">
           <Input placeholder="Enter " />
         </Form.Item>
 
