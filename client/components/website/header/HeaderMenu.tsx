@@ -3,13 +3,14 @@ import React, { Suspense, useState } from "react";
 import { Menu, MenuProps, Spin } from "antd";
 import { webSiteNavbarItems } from "@/NavBarRoute";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function HeaderMenu({ categories }: any) {
   const [current, setCurrent] = useState("mail");
   const onClick: MenuProps["onClick"] = (e) => {
     setCurrent(e.key);
   };
-
+  const router = useRouter();
   // if (!categories.data?.length) {
   //   return <Spin />
   // }
@@ -25,13 +26,16 @@ export default function HeaderMenu({ categories }: any) {
         items={categories?.data?.map((item: any, idx: number) => ({
           key: idx,
           label: (
-            <Link
+            <div
               key={idx}
-              href={`/category/${item.id}`}
-              rel="noopener noreferrer"
+              // href={`/category/${item.id}`}
+              // rel="noopener noreferrer"
+              onClick={() => {
+                router.push(`/products?categoryId=${item.id}&`);
+              }}
             >
               {item.name}
-            </Link>
+            </div>
           ),
           children:
             item.children.length &&

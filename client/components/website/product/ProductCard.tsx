@@ -87,7 +87,7 @@ const ProductCard: React.FC = () => {
   return (
     <div
       className={`grid ${
-        global.productView ? "grid-cols-2" : "md:grid-cols-5"
+        global.productView ? "grid-cols-1" : "md:grid-cols-4"
       } gap-4`}
     >
       {products?.map((item: any) => (
