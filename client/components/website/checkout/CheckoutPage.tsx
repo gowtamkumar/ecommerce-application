@@ -201,7 +201,7 @@ export default function CheckoutPage() {
   return (
     <>
       <div className="min-h-screen bg-gray-100 lg:w-8/12 mx-auto items-center">
-        <div className="pt-2">
+        {/* <div className="pt-2">
           <Breadcrumb
             separator=">"
             items={[
@@ -221,7 +221,7 @@ export default function CheckoutPage() {
               },
             ]}
           />
-        </div>
+        </div> */}
 
         <div className="py-4 md:py-3 grid grid-cols-3 gap-4 ">
           <div className="col-span-2 bg-white  rounded-md overflow-hidden content-between">

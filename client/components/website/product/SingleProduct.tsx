@@ -123,7 +123,7 @@ export default function SingleProduct() {
 
   return (
     <div className="lg:w-8/12 mx-auto">
-      <div className="py-2">
+      {/* <div className="py-2">
         <Breadcrumb
           separator=">"
           items={[
@@ -143,8 +143,8 @@ export default function SingleProduct() {
             },
           ]}
         />
-      </div>
-      <div className=" bg-white  grid grid-cols-1 md:grid-cols-4">
+      </div> */}
+      <div className=" bg-white  grid grid-cols-1 md:grid-cols-4 pt-4">
         <div className="col-span-1">
           <ProductImageGallery
             images={product.images}
