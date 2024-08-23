@@ -8,9 +8,10 @@ import Image from "next/image";
 export default async function Banner() {
   const contentStyle: React.CSSProperties = {
     margin: 0,
-    height: "350px",
+    height: "400px",
     color: "black",
-    lineHeight: "350px",
+    backgroundColor: 'red',
+    lineHeight: "400px",
     textAlign: "center",
     background: "black",
   };

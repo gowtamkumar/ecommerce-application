@@ -50,6 +50,9 @@ export class SettingEntity {
   @Column({ name: "header_option", type: "simple-json", nullable: true })
   headerOption!: string;
 
+  @Column({ name: "help_support", type: "simple-json", nullable: true })
+  helpSupport!: string;
+
   // @CreateDateColumn({ name: "created_at",type: "timestamp" })
   // createdAt?: string;
 

@@ -19,7 +19,7 @@ const ProductCard: React.FC = () => {
   // console.log("🚀 ~ category:", category)
   const searchQuery = useSearchParams();
   const searchParams = searchQuery.get("search");
-  // const categoryIdParams = searchQuery.get("categoryId");
+  const categoryIdParams = searchQuery.get("categoryId");
 
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
@@ -39,9 +39,10 @@ const ProductCard: React.FC = () => {
   } = global.productFilter;
 
   let customQuery = "";
-  // if (categoryIdParams) customQuery += categoryIdParams;
-  // if (categoryIds) customQuery += category ? `,${categoryIds}` : categoryIds;
-  if (categoryIds) customQuery += categoryIds;
+  if (categoryIdParams) customQuery += categoryIdParams;
+  if (categoryIds)
+    customQuery += categoryIdParams ? `,${categoryIds}` : categoryIds;
+  // if (categoryIds) customQuery += categoryIds;
 
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
@@ -85,8 +86,9 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid ${global.productView ? "grid-cols-2" : "md:grid-cols-5"
-        } gap-4`}
+      className={`grid ${
+        global.productView ? "grid-cols-2" : "md:grid-cols-5"
+      } gap-4`}
     >
       {products?.map((item: any) => (
         <ProductItem key={item.id} item={item} />
@@ -117,13 +119,17 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     (acc: number, variant: any) => acc + +variant.stockQty,
     0
   );
-  const image = item.images ? item.images[0] : '/pos_software.png'
+  const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
       <Link href={`/products/${item.id}`}>
         <Image
-          src={item.images ? `http://localhost:3900/uploads/${item.images[0]}` : '/pos_software.png'}
+          src={
+            item.images
+              ? `http://localhost:3900/uploads/${item.images[0]}`
+              : "/pos_software.png"
+          }
           alt={image}
           loading="lazy"
           // fill
@@ -132,7 +138,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           // placeholder="blur"
           // blurDataURL={image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        // className="w-full h-40 object-cover mb-4"
+          // className="w-full h-40 object-cover mb-4"
         />
         <h3 className="text-sm font-semibold mb-2">{item.name.slice(0, 70)}</h3>
         <div className="flex justify-between items-center">

@@ -15,8 +15,11 @@ const SocialLink = () => {
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-
-  form.setFieldsValue(global.formValues);
+  const socialLink = {
+    id: global.formValues.id,
+    ...global.formValues.socialLink,
+  };
+  form.setFieldsValue(socialLink);
 
   const handleSubmit = async (values: any) => {
     const facebookUrl = values.facebookUrl;
@@ -24,11 +27,10 @@ const SocialLink = () => {
     const linkedinUrl = values.linkedinUrl;
     const twitterUrl = values.twitterUrl;
 
-    
     try {
       let newData = {
         id: values.id,
-        socialLink: { facebookUrl, instagramUrl, linkedinUrl,twitterUrl },
+        socialLink: { facebookUrl, instagramUrl, linkedinUrl, twitterUrl },
       };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));

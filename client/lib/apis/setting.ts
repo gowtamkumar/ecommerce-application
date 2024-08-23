@@ -18,7 +18,6 @@ export async function saveSetting(data: any) {
 }
 
 export async function getSettings() {
-  const session = await getServerSession(authOptions);
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/settings`);
   return res.json();
 }

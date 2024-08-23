@@ -16,6 +16,7 @@ import HomePage from "./HomePage";
 import AboutPage from "./AboutPage";
 import TermPolicyPage from "./TermPolicyPage";
 import ContactPage from "./ContactPage";
+import HelpSupport from "./HelpSupport";
 
 export default function Index() {
   const global = useSelector(selectGlobal);
@@ -83,11 +84,7 @@ export default function Index() {
           key: "web_site_stting",
           children: <WebSetting />,
         },
-        {
-          label: "Social Links",
-          key: "social_links",
-          children: <SocialLink />,
-        },
+
 
         {
           label: "Home Page",
@@ -112,13 +109,18 @@ export default function Index() {
         {
           label: "Help Support",
           key: "help_Support",
-          children: "Help Support",
+          children: <HelpSupport />
         },
 
         {
           label: "Header Option",
           key: "header_option",
           children: <HeaderOption />,
+        },
+        {
+          label: "Social Links",
+          key: "social_links",
+          children: <SocialLink />,
         },
         {
           label: "Footer Option",

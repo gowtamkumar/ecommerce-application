@@ -9,10 +9,9 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 
-async function WebFooter() {
+export default async function WebFooter() {
   const setting = await getSettings();
-  const socialLink = setting.data ? setting.data[0]?.socialLink : {};
-  console.log("🚀 ~ socialLink:", socialLink);
+  const settingData = setting.data ? setting.data[0] : {};
 
   return (
     <footer className="bg-slate-500">
@@ -121,40 +120,40 @@ async function WebFooter() {
 
         <div className="px-4 text-center py-6 md:flex md:items-center md:justify-between">
           <span className="text-sm text-gray-700  sm:text-center">
-            © {new Date().getFullYear()} <a href="/">Web site</a>. All Rights
-            Reserved.
+            © {new Date().getFullYear()}
+            {settingData.footerOption.copyRight}
           </span>
           <div className="flex mt-4 sm:justify-center md:mt-0 space-x-5 rtl:space-x-reverse">
-            {socialLink?.linkedinUrl && (
+            {settingData.socialLink?.linkedinUrl && (
               <Link
-                href={socialLink?.facebookUrl}
+                href={settingData.socialLink?.facebookUrl}
                 className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
               >
                 <FaFacebookF />
               </Link>
             )}
 
-            {socialLink?.linkedinUrl && (
+            {settingData.socialLink?.linkedinUrl && (
               <Link
-                href={socialLink?.linkedinUrl}
+                href={settingData.socialLink?.linkedinUrl}
                 className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
               >
                 <FaLinkedinIn />
               </Link>
             )}
 
-            {socialLink?.twitterUrl && (
+            {settingData.socialLink?.twitterUrl && (
               <Link
-                href={socialLink?.instagramUrl}
+                href={settingData.socialLink?.instagramUrl}
                 className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
               >
                 <FaInstagram />
               </Link>
             )}
 
-            {socialLink?.twitterUrl && (
+            {settingData.socialLink?.twitterUrl && (
               <Link
-                href={socialLink?.twitterUrl}
+                href={settingData.socialLink?.twitterUrl}
                 className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
               >
                 <FaTwitter />
@@ -167,4 +166,3 @@ async function WebFooter() {
   );
 }
 
-export default WebFooter;

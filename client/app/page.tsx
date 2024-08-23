@@ -11,39 +11,17 @@ import { GiDeliveryDrone } from "react-icons/gi";
 import ProductCard from "@/components/website/product/ProductCard";
 
 export default function Home() {
-  
   return (
     <>
       <Header />
+      <Banner />
       <div className="lg:w-8/12  mx-auto ">
-        <Banner />
-        <section className="mx-auto py-4">
-          <div className="flex justify-center p-3 gap-2">
-            <div className="border p-2 text-end">
-              <FaAmazonPay size={40} color="red" />
-              <p>Safe Payment </p>
-            </div>
-            <div className="border p-2 ">
-              <CiDeliveryTruck size={40} color="red" />
-              <p>Nationwide Delivery</p>
-            </div>
-            <div className="border p-2 text-center">
-              <TbTruckReturn size={40} color="red" />
-              <p>Free & Easy Return</p>
-            </div>
-            <div className="border p-2 text-center">
-              <TbTruckReturn size={40} color="red" />
-              <p> 100% Authentic Product</p>
-            </div>
-            <div className="border p-2 text-center">
-              <GiDeliveryDrone size={40} color="red" />
-              <p>Fast Delivery</p>
-            </div>
-          </div>
-        </section>
-
         {/* all category show */}
-        <Category />
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Shop by Category</h2>
+          <Category />
+        </section>
 
         {/* Popular products */}
         <section className="mb-8">

@@ -10,25 +10,32 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 
-const FooterOption = () => {
+const HelpSupport = () => {
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const footerOption = {
+  const helpSupport = {
     id: global.formValues.id,
-    ...global.formValues.footerOption,
+    ...global.formValues.helpSupport,
   };
-
-  form.setFieldsValue(footerOption);
+  form.setFieldsValue(helpSupport);
 
   const handleSubmit = async (values: any) => {
-    const copyRight = values.copyRight;
+    const cashDelivery = values.cashDelivery;
+    const returnSupport = values.returnSupport;
+    const guarantee = values.guarantee;
+    const originalProduct = values.originalProduct;
+
     try {
-      // let newData = { ...values };
       let newData = {
         id: values.id,
-        footerOption: { copyRight },
+        helpSupport: {
+          returnSupport,
+          originalProduct,
+          guarantee,
+          cashDelivery,
+        },
       };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
@@ -77,16 +84,18 @@ const FooterOption = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="copyRight"
-          label="Copy Right"
-          rules={[
-            {
-              required: true,
-              message: "Copy Right is required",
-            },
-          ]}
-        >
+        <Form.Item name="cashDelivery" label="Cash Delivery">
+          <Input placeholder="Enter " />
+        </Form.Item>
+
+        <Form.Item name="returnSupport" label="Return Support">
+          <Input placeholder="Enter " />
+        </Form.Item>
+        <Form.Item name="originalProduct" label="Original Product">
+          <Input placeholder="Enter " />
+        </Form.Item>
+
+        <Form.Item name="guarantee" label="Guarantee">
           <Input placeholder="Enter " />
         </Form.Item>
 
@@ -113,4 +122,4 @@ const FooterOption = () => {
   );
 };
 
-export default FooterOption;
+export default HelpSupport;

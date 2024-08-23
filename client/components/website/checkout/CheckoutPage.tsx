@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import WebFooter from "../Footer";
 import {
   selectCart,
   addCart,
@@ -36,11 +35,13 @@ import Image from "next/image";
 import { MdDelete } from "react-icons/md";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dayjs from "dayjs";
+import { getSettings } from "@/lib/apis/setting";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
   const [shippingAddress, setShippingAddress] = useState([] as any);
   const [shippingCharge, setShippingCharge] = useState({} as any);
+  const [setting, setSetting] = useState({} as any);
 
   const dispatch = useDispatch();
   const cart = useSelector(selectCart);
@@ -50,6 +51,8 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     async function fetchData() {
+      const settingResult = await getSettings();
+      setSetting(settingResult.data[0] || {});
       const user = await getMe();
       const activeShippingAddress = user.data?.shippingAddress?.find(
         (item: { status: boolean }) => item.status
@@ -115,8 +118,6 @@ export default function CheckoutPage() {
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-
-      // return console.log("newData:", validatedFields.error);
 
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
@@ -194,6 +195,8 @@ export default function CheckoutPage() {
     }
     return false;
   }
+
+  console.log("setting", setting);
 
   return (
     <>
@@ -276,10 +279,10 @@ export default function CheckoutPage() {
                           ৳{" "}
                           {item.discountId
                             ? (
-                              +item.price +
-                              +item.tax -
-                              item?.discountA
-                            ).toFixed(2)
+                                +item.price +
+                                +item.tax -
+                                item?.discountA
+                              ).toFixed(2)
                             : (+item.price + item.tax || 0).toFixed(2)}
                         </div>
                         {item?.discountId ? (
@@ -565,25 +568,25 @@ export default function CheckoutPage() {
               <div className="p-4">
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>ক্যাশ অন ডেলিভারি</span>
+                  <span>{setting?.helpSupport?.cashDelivery}</span>
                 </div>
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>৭ দিনের মধ্যে পণ্য ফেরত সুবিধা</span>
+                  <span>{setting?.helpSupport?.returnSupport}</span>
                 </div>
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>১০০% টাকা ফেরত গ্যারান্টি</span>
+                  <span>{setting?.helpSupport?.guarantee}</span>
                 </div>
+
+                {/* <div className="flex gap-3 font-semibold text-gray-600">
+                  <span>Icon</span>
+                  <span>অর্ডার করে পয়েন্টস জিতুন </span>
+                </div> */}
 
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>অর্ডার করে পয়েন্টস জিতুন</span>
-                </div>
-
-                <div className="flex gap-3 font-semibold text-gray-600">
-                  <span>Icon</span>
-                  <span>১০০% অরিজিনাল প্রোডাক্ট</span>
+                  <span> {setting?.helpSupport?.originalProduct}</span>
                 </div>
               </div>
             </div>
@@ -596,7 +599,6 @@ export default function CheckoutPage() {
           </Link>
         </div>
       </div>
-      <WebFooter />
     </>
   );
 }

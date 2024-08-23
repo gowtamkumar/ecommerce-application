@@ -11,6 +11,7 @@ export const settingValidationSchema = z.object({
   userId: z.number({
     required_error: "User is required",
   }),
+  helpSupport: z.any().optional(),
   socialLink: z.any().optional(),
   emailConfig: z.any().optional(),
   payment_account: z.any().optional(),
