@@ -63,7 +63,7 @@ export default function HeaderSearch() {
         // addonBefore={selectBefore}
         width={100}
         value={getData.search}
-        size="middle"
+        size="large"
         onSearch={() => {
           let queryRouter = "";
           // if (getData.categoryId) {

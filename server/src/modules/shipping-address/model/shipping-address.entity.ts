@@ -40,17 +40,25 @@ export class ShippingAddressEntity {
 
   @Column({ name: "division_id", nullable: true })
   divisionId!: number;
-  @ManyToOne((_type) => DivisionEntity, (division) => division.shippingAddress, {
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(
+    (_type) => DivisionEntity,
+    (division) => division.shippingAddress,
+    {
+      onDelete: "CASCADE",
+    }
+  )
   @JoinColumn({ name: "division_id" })
   division!: DivisionEntity;
 
   @Column({ name: "district_id", nullable: true })
   districtId!: number;
-  @ManyToOne((_type) => DistrictEntity, (district) => district.shippingAddress, {
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(
+    (_type) => DistrictEntity,
+    (district) => district.shippingAddress,
+    {
+      onDelete: "CASCADE",
+    }
+  )
   @JoinColumn({ name: "district_id" })
   district!: DistrictEntity;
 

@@ -1,7 +1,6 @@
 "use client";
-import React, { Suspense, useState } from "react";
-import { Menu, MenuProps, Spin } from "antd";
-import { webSiteNavbarItems } from "@/NavBarRoute";
+import React, { useState } from "react";
+import { Menu, MenuProps } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -20,9 +19,11 @@ export default function HeaderMenu({ categories }: any) {
       <Menu
         onClick={onClick}
         selectedKeys={[current]}
+        className="text-center bg-fuchsia-500"
         mode="horizontal"
         // color='black'
-        theme="light"
+        // theme="dark"
+      
         items={categories?.data?.map((item: any, idx: number) => ({
           key: idx,
           label: (

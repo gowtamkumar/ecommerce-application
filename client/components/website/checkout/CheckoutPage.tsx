@@ -328,8 +328,8 @@ export default function CheckoutPage() {
 
             <div className="mx-auto bg-white overflow-hidden">
               <div className="p-4 border-b">
-                <h2 className="text-lg font-semibold">
-                  Payment Method(Please select a payment method)
+                <h2 className="text-sm font-semibold">
+                  Payment Method (Please select a payment method)
                 </h2>
               </div>
               <div className=" mx-auto bg-white p-6 rounded-lg ">
@@ -352,7 +352,7 @@ export default function CheckoutPage() {
                     <Radio value="SSLCOMMERZ">SSLCOMMERZ</Radio>
                   </div>
 
-                  <div className="mb-4 font-semibold border p-5">
+                  {/* <div className="mb-4 font-semibold border p-5">
                     <Radio value="Stripe">
                       ডেবিট / ক্রেডিট কার্ড
                       <div className="flex gap-2 items-center">
@@ -386,7 +386,7 @@ export default function CheckoutPage() {
                         />
                       </div>
                     </Radio>
-                  </div>
+                  </div> */}
                 </Radio.Group>
 
                 {/* <!-- Terms and Conditions --> */}
