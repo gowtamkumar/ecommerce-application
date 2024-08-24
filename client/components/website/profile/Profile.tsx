@@ -59,6 +59,12 @@ export default function Profile() {
             children: "shipping address",
             icon: <AndroidOutlined />,
           },
+          {
+            label: `Track your Order`,
+            key: "track_your_order",
+            children: `Track your order`,
+            icon: <AndroidOutlined />,
+          },
 
           {
             label: `My Returns & Cancellations`,
