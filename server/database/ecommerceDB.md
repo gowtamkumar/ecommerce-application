@@ -98,6 +98,15 @@ id,
 category_id,
 product_id
 
+
+## purchase
+
+id,
+product_id:numeric,
+variant_id:numeric,
+price:numeric,(optional)
+qty:number,
+
 ## size (done)
 
 id,
