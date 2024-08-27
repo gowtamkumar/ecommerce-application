@@ -121,7 +121,7 @@ export default async function WebFooter() {
         <div className="px-4 text-center py-6 md:flex md:items-center md:justify-between">
           <span className="text-sm text-gray-700  sm:text-center">
             © {new Date().getFullYear()}
-            {settingData.footerOption.copyRight}
+            {settingData.footerOption?.copyRight}
           </span>
           <div className="flex mt-4 sm:justify-center md:mt-0 space-x-5 rtl:space-x-reverse">
             {settingData.socialLink?.linkedinUrl && (
