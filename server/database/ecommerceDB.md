@@ -27,7 +27,7 @@ id,
 type,
 timestamp
 
-## shipping_address
+## shipping_address :(done)
 
 id,
 type:[Home/Office]
@@ -44,7 +44,7 @@ zip_code,
 address,
 status,
 
-## shipping_charge
+## shipping_charge :(done)
 
 id,
 division_id,
@@ -97,7 +97,6 @@ stock_qty:number,
 id,
 category_id,
 product_id
-
 
 ## purchase
 
@@ -335,7 +334,27 @@ status,
 ## blog
 
 title,
+user_id,
 image,
-tags,
-description,
-status,
+tags:[]
+slug(UNIQUE),
+content,
+status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+createdAt
+updatedAt
+
+## blog_category
+
+id
+post_id,
+category_id,
+
+## Comments
+
+id,
+post_id,
+user_id,
+content TEXT NOT NULL,
+status ENUM('approved', 'pending', 'spam') DEFAULT 'pending',
+created_at,
+updated_at,
