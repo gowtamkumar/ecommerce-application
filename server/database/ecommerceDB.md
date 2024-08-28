@@ -331,3 +331,11 @@ type:["Slider", ""],
 image,
 description,
 status,
+
+## blog
+
+title,
+image,
+tags,
+description,
+status,
