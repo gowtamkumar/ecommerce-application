@@ -4,20 +4,18 @@ import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/header/Header";
 import React from "react";
 import Category from "@/components/website/home/Category";
-import { FaAmazonPay } from "react-icons/fa";
-import { CiDeliveryTruck } from "react-icons/ci";
-import { TbTruckReturn } from "react-icons/tb";
-import { GiDeliveryDrone } from "react-icons/gi";
 import ProductCard from "@/components/website/product/ProductCard";
 
 export default function Home() {
   return (
     <>
-      <Header />
-      <Banner />
-      <div className="lg:w-8/12  mx-auto ">
-        {/* all category show */}
+      <header>
+        <Header />
+        <Banner />
+      </header>
 
+      <main className="lg:w-8/12  mx-auto ">
+        {/* all category show */}
         <section>
           <h2 className="text-2xl font-semibold mb-4">Shop by Category</h2>
           <Category />
@@ -60,7 +58,8 @@ export default function Home() {
           style={{ width: "100%", height: "auto" }}
         />
       </section> */}
-      </div>
+      </main>
+
       <WebFooter />
     </>
   );
