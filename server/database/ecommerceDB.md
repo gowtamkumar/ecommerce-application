@@ -323,13 +323,14 @@ footer_option: jsonb,
 header_option: jsonb,
 help_Support: jsonb
 
-## banner
+## banner: ToDo
 
-name,
+title,
 type:["Slider", ""],
 image,
 description,
-status,
+url,
+status: boolean,
 
 ## blog
 

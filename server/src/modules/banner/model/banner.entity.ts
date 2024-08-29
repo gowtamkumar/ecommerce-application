@@ -7,7 +7,7 @@ export class BannerEntity {
   id!: number;
 
   @Column()
-  name!: string;
+  title!: string;
 
   @Column({nullable: true})
   type!: string;
@@ -27,3 +27,4 @@ export class BannerEntity {
   @Column({ name: "user_id" })
   userId!: number;
 }
+
