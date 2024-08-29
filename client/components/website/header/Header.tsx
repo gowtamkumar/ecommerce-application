@@ -14,8 +14,8 @@ export default async function Header() {
   return (
     <div>
       <TopBar />
-      <div className="lg:w-8/12 mx-auto">
-        <div className="flex justify-between items-center py-4">
+      <div className="lg:w-8/12 mx-auto items-center py-4 ">
+        <div className="flex justify-between items-center ">
           <Logo settingData={setting} />
           <MainMenu />
           <HeaderRight />

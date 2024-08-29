@@ -211,12 +211,12 @@ const AddBanner = () => {
         </Form.Item>
 
         <Form.Item
-          name="name"
-          label="Name"
+          name="title"
+          label="Title"
           rules={[
             {
               required: true,
-              message: "name is required",
+              message: "title is required",
             },
           ]}
         >
@@ -243,7 +243,19 @@ const AddBanner = () => {
             },
           ]}
         >
-          <ImgCrop rotationSlider>
+          <ImgCrop
+            quality={1}
+            fillColor="white"
+            zoomSlider
+            rotationSlider
+            aspectSlider
+            showReset
+            modalWidth={1000}
+            aspect={18 / 6}
+            minZoom={1}
+            maxZoom={3}
+            // cropShape='rect'
+          >
             <Upload
               name="image"
               listType="picture-card"

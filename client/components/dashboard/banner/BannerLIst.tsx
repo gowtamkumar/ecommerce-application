@@ -23,7 +23,7 @@ import { deleteBanner, getBanners } from "@/lib/apis/banner";
 
 interface DataType {
   key: string;
-  name: string;
+  title: string;
   image: string;
   url: string;
   type: string;
@@ -174,15 +174,15 @@ const BannerList: React.FC = () => {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name"),
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      sorter: (a, b) => a.title.length - b.title.length,
+      ...getColumnSearchProps("title"),
     },
     {
       title: "URL",
