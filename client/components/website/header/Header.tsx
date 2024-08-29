@@ -1,6 +1,6 @@
 import React from "react";
 import TopBar from "./TopBar";
-import HeaderLogo from "./HeaderLogo";
+import Logo from "./Logo";
 import HeaderRight from "./HeaderRight";
 import HeaderSearch from "./HeaderSearch";
 import { getSettings } from "@/lib/apis/setting";
@@ -12,15 +12,14 @@ export default async function Header() {
   const setting = await getSettings();
   // const singleLogo = logo.data ? logo.data[0]?.image : null;
   return (
-    <div className="bg-rose-400">
+    <div>
+      <TopBar />
       <div className="lg:w-8/12 mx-auto">
-        <TopBar />
-        <div className="flex items-center py-4 sticky">
-          <HeaderLogo settingData={setting} />
-          <HeaderSearch />
+        <div className="flex justify-between items-center py-4">
+          <Logo settingData={setting} />
+          <MainMenu />
           <HeaderRight />
         </div>
-        <MainMenu />
       </div>
     </div>
   );

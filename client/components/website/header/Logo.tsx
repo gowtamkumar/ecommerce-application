@@ -25,7 +25,7 @@ export default function HeaderLogo({ settingData }: any) {
   //   localStorage.setItem("setting", JSON.stringify(setting.data));
 
   return (
-    <div className="w-2/12 text-center">
+    <div className="w-2/12 ">
       <Link href="/">
         <Image
           src={

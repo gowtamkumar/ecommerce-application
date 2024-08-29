@@ -5,22 +5,22 @@ import { Avatar, Badge, Dropdown } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
-import { FaRegUser, FaShoppingCart } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { CiSearch, CiUser, CiHeart } from "react-icons/ci";
+import { IoBagOutline } from "react-icons/io5";
 
 export default function HeaderRight() {
   const cart = useSelector(selectCart);
-  const session = useSession();  
+  const session = useSession();
   const profileImage = session.data?.user.image;
   return (
-    <div className="w-2/12 flex justify-between items-center">
-      <div className="ml-3 flex ">
-        <Link href="/checkout" className="mx-2">
-          <Badge size="default" count={cart.carts.length}>
-            <FaShoppingCart size={25} title="dd" />
-          </Badge>
-        </Link>
-      </div>
+    <div className="flex gap-4 justify-between items-center">
+      <CiSearch size={22} className="font-medium" />
+      {/* <CiUser size={22} className="font-medium" /> */}
+      <CiHeart size={22} className="font-medium" />
+      <Badge size="default" count={cart.carts.length}>
+        <IoBagOutline size={22} className="font-medium" />
+      </Badge>
       {session.status === "authenticated" ? (
         <Dropdown
           menu={{ items: userProfileRoute as any }}
@@ -29,7 +29,7 @@ export default function HeaderRight() {
         >
           <Avatar
             className="cursor-pointer h-10 w-10 rounded-full bg-slate-500"
-            size={35}
+            size={25}
             src={
               profileImage
                 ? `http://localhost:3900/uploads/${profileImage}`
@@ -40,7 +40,6 @@ export default function HeaderRight() {
       ) : (
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center justify-between">
-            <FaRegUser />{" "}
             <Link className="mx-2" href="/login">
               <span className="text-sm">Login</span>
             </Link>{" "}
