@@ -1,4 +1,5 @@
 import { getSettings } from "@/lib/apis/setting";
+import Image from "next/image";
 import Link from "next/link";
 import {
   FaFacebook,
@@ -14,34 +15,19 @@ export default async function WebFooter() {
   const settingData = setting.data ? setting.data[0] : {};
 
   return (
-    <footer className="bg-slate-500">
+    <footer className="bg-slate-500 font-mono">
       <div className="md:w-8/12 mx-auto w-full">
         <div className="grid grid-cols-2 gap-8 px-4 py-6 lg:py-8 md:grid-cols-4 ">
           <div>
-            <h2 className="mb-6 text-sm font-semibold uppercase">Company</h2>
-            <ul className="font-medium">
-              <li className="mb-4">
-                <a href="#" className=" hover:underline">
-                  About
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Careers
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Brand Center
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Blog
-                </a>
-              </li>
-            </ul>
+            <Image src="/pos_software.png" width={50} height={50} alt="logo" />
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. amet
+              consectetur adipisicing elit.{" "}
+            </p>
+            <p>Mobile: 0170000000</p>
+            <p>E-mail:demo@gmail.com</p>
           </div>
+
           <div>
             <h2 className="mb-6 text-sm font-semibold uppercase">
               Help center
@@ -49,28 +35,55 @@ export default async function WebFooter() {
             <ul className=" dark:text-gray-400 font-medium">
               <li className="mb-4">
                 <a href="#" className="hover:underline">
-                  Discord Server
+                  About Us
                 </a>
               </li>
               <li className="mb-4">
                 <a href="#" className="hover:underline">
-                  Twitter
+                  Term of SErvice
                 </a>
               </li>
               <li className="mb-4">
                 <a href="#" className="hover:underline">
-                  Facebook
+                  Privacy Policy
                 </a>
               </li>
               <li className="mb-4">
                 <a href="#" className="hover:underline">
-                  Contact Us
+                  Return
                 </a>
               </li>
             </ul>
           </div>
+
           <div>
-            <h2 className="mb-6 text-sm font-semibold uppercase">Legal</h2>
+            <h2 className="mb-6 text-sm font-semibold uppercase">Shop</h2>
+            <ul className="font-medium">
+              <li className="mb-4">
+                <a href="#" className=" hover:underline">
+                  Mens Shpping
+                </a>
+              </li>
+              <li className="mb-4">
+                <a href="#" className="hover:underline">
+                  Womens Shopping
+                </a>
+              </li>
+              <li className="mb-4">
+                <a href="#" className="hover:underline">
+                  Kids Shopping
+                </a>
+              </li>
+              <li className="mb-4">
+                <a href="#" className="hover:underline">
+                  t-shart Shopping
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="mb-6 text-sm font-semibold uppercase">Compnay</h2>
             <ul className="font-medium">
               <li className="mb-4">
                 <a href="#" className="hover:underline">
@@ -85,31 +98,6 @@ export default async function WebFooter() {
               <li className="mb-4">
                 <a href="#" className="hover:underline">
                   Terms &amp; Conditions
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="mb-6 text-sm font-semibold uppercas">Download</h2>
-            <ul className=" font-medium">
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  iOS
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Android
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Windows
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  MacOS
                 </a>
               </li>
             </ul>
@@ -165,4 +153,3 @@ export default async function WebFooter() {
     </footer>
   );
 }
-
