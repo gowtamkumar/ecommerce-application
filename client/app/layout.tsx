@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-
+import 'react-multi-carousel/lib/styles.css';
 // import 'antd/dist/antd.css'
 const inter = Inter({ subsets: ["latin"] });
 

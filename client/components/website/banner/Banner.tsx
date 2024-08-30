@@ -25,6 +25,33 @@ export default async function Banner() {
         autoplay
         effect="fade"
         easing="linear"
+        // nextArrow={({ handleNext }) => {
+        //   return (
+        //     <div
+        //       variant="text"
+        //       color="white"
+        //       size="lg"
+        //       onClick={handleNext}
+        //       className="!absolute !right-4 top-2/4 -translate-y-2/4"
+        //     >
+        //       <svg
+        //         xmlns="http://www.w3.org/2000/svg"
+        //         fill="none"
+        //         viewBox="0 0 24 24"
+        //         strokeWidth={2}
+        //         stroke="currentColor"
+        //         className="h-6 w-6"
+        //       >
+        //         <path
+        //           strokeLinecap="round"
+        //           strokeLinejoin="round"
+        //           d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+        //         />
+        //       </svg>
+        //     </div>
+        //   )
+        // }}
+
       >
         {banners.data?.map(
           ({

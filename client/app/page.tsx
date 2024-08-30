@@ -5,7 +5,6 @@ import Header from "@/components/website/header/Header";
 import React from "react";
 import Category from "@/components/website/home/Category";
 import ProductCard from "@/components/website/product/ProductCard";
-
 export default function Home() {
   return (
     <>
