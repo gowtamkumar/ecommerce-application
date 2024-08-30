@@ -10,15 +10,15 @@ export default function SmallCard({ categories }: any) {
 
   return (
     <Swiper
-      spaceBetween={50}
-      slidesPerView={4}
+      spaceBetween={5}
+      slidesPerView={6}
       onSlideChange={() => console.log("slide change")}
       onSwiper={(swiper) => console.log(swiper)}
     >
       {(categories?.data || []).map((item: any, idx: number) => {
         return (
           <SwiperSlide key={idx}>
-            <div className="mx-auto text-center hover:shadow-xl cursor-pointer p-3">
+            <div className="mx-auto p-2 flex text-center items-center justify-center border cursor-pointer">
               <div
                 onClick={() => {
                   router.push(`/products?categoryId=${item.id}&`);
@@ -33,11 +33,10 @@ export default function SmallCard({ categories }: any) {
                   alt={item.image}
                   loading="lazy"
                   // fill
-                  width={100}
-                  height={100}
+                  width={60}
+                  height={60}
                 // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-
                 <p>{item.name}</p>
               </div>
             </div>

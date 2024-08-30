@@ -33,7 +33,7 @@ export default function Home() {
         </section>
 
         {/* Categories */}
-        <CategoryCard />
+        {/* <CategoryCard /> */}
         {/* Banners */}
         {/* <section className="mb-8">
         <Image
