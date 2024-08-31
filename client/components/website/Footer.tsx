@@ -16,8 +16,8 @@ export default async function WebFooter() {
 
   return (
     <footer className="bg-slate-500 font-mono">
-      <div className="md:w-8/12 mx-auto w-full">
-        <div className="grid grid-cols-2 gap-8 px-4 py-6 lg:py-8 md:grid-cols-4 ">
+      <div className="container mx-auto w-full">
+        <div className="grid grid-cols-2 gap-2 py-6 lg:py-8 md:grid-cols-5 ">
           <div>
             <Image src="/pos_software.png" width={50} height={50} alt="logo" />
             <p>
@@ -102,10 +102,27 @@ export default async function WebFooter() {
               </li>
             </ul>
           </div>
+
+          <div>
+            <h2 className="mb-6 text-sm font-semibold uppercase">
+              Newsletter Signup{" "}
+            </h2>
+            <p>
+              Subscribe to our newsletter and get 10% off your first purchase
+            </p>
+            <div className="flex py-6">
+              <input
+                type="email"
+                placeholder="E-mail address"
+                className="rounded-l-full border border-black px-2 py-2 focus:outline-none self-center w-2/3"
+              />
+              <button className="bg-blue-600 text-white rounded-r-full px-4 py-2 font-semibold hover:bg-gray-800 focus:outline-none">
+                Subscribe
+              </button>
+            </div>
+          </div>
         </div>
-
-        <hr className=" border-gray-700 sm:mx-auto dark:border-gray-700 lg:my-4" />
-
+        <hr className="border-gray-700 sm:mx-auto dark:border-gray-700 lg:my-4" />
         <div className="px-4 text-center py-6 md:flex md:items-center md:justify-between">
           <span className="text-sm text-gray-700  sm:text-center">
             © {new Date().getFullYear()}

@@ -10,7 +10,7 @@ export default function SingleCategory() {
   return (
     <>
       <Header />
-      <section className="lg:w-8/12 mx-auto">
+      <section className="container mx-auto">
         <div className="grid grid-cols-12">
           <div className="col-span-2">
             <FilterSidebar />

@@ -86,9 +86,9 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid ${
-        global.productView ? "grid-cols-1" : "md:grid-cols-4"
-      } gap-4`}
+      className={`grid justify-between ${
+        global.productView ? "grid-cols-1" : "md:grid-cols-5"
+      } gap-5`}
     >
       {products?.map((item: any) => (
         <ProductItem key={item.id} item={item} />
@@ -122,25 +122,25 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <Link href={`/products/${item.id}`}>
+    <div className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center">
+      <Link href={`/products/${item.id}`} title={item.name}>
         <Image
           src={
             item.images
               ? `http://localhost:3900/uploads/${item.images[0]}`
               : "/pos_software.png"
           }
-          alt={image}
+          alt={item.name}
           loading="lazy"
           // fill
-          width={150}
-          height={150}
+          width={300}
+          height={500}
           // placeholder="blur"
           // blurDataURL={image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           // className="w-full h-40 object-cover mb-4"
         />
-        <h3 className="text-sm font-semibold mb-2">{item.name.slice(0, 70)}</h3>
+        <h3 className="text-sm font-semibold mb-2">{item.name.slice(0, 50)}</h3>
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-2">
             ৳{" "}

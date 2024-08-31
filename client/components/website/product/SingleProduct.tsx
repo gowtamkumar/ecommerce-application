@@ -122,7 +122,7 @@ export default function SingleProduct() {
   }
 
   return (
-    <div className="lg:w-8/12 mx-auto">
+    <div className="container mx-auto">
       {/* <div className="py-2">
         <Breadcrumb
           separator=">"

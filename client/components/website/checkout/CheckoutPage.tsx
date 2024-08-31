@@ -200,7 +200,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100 lg:w-8/12 mx-auto items-center">
+      <div className="min-h-screen bg-gray-100 container mx-auto items-center">
         {/* <div className="pt-2">
           <Breadcrumb
             separator=">"

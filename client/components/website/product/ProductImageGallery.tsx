@@ -9,7 +9,7 @@ const ProductImageGallery = ({ images }: any) => {
   return (
     <div>
       <img
-        className="w-full h-64 object-cover rounded-lg mb-4"
+        className="w-full h-64 object-cover rounded-lg mb-4 hover:object-contain"
         src={`http://localhost:3900/uploads/${selectedImage}`}
         alt="Selected"
       />

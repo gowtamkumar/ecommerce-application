@@ -4,7 +4,7 @@ import {
   setProductFilter,
   setProductView,
 } from "@/redux/features/global/globalSlice";
-import { Input, Select } from "antd";
+import { Input } from "antd";
 import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 
