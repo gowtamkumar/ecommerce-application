@@ -18,16 +18,21 @@ export default function Home() {
 
       <main>
         {/* all category show */}
-        <section className="py-16 container mx-auto ">
-          <h2 className="text-4xl font-semibold mb-4">Shop by Category</h2>
+        <section className="py-20 w- mx-auto">
+          <h2 className="text-3xl text-center font-semibold pb-8">
+            Shop by Category
+          </h2>
           <Category />
         </section>
-        <SellerAds />
+
+        <section className="py-20  bg-[#F6F6F6]">
+          <SellerAds />
+        </section>
         {/* Popular products */}
-        <section className="py-16 container mx-auto">
+        <section className="py-20 w- mx-auto">
           <div className="flex justify-between">
-            <h2 className="text-4xl font-semibold mb-4">BEST SELLER</h2>
-            <Link href={"/products"} className="hover:underline">
+            <h2 className="text-3xl font-semibold pb-8">BEST SELLER</h2>
+            <Link href={"/products"} className="hover:underline text-2xl">
               View all
             </Link>
           </div>
@@ -35,13 +40,13 @@ export default function Home() {
         </section>
 
         {/* product banner */}
-        <section className="py-16 bg-orange-300">
+        <section className="py-20 bg-[#F6F6F6]">
           <SellerAds />
         </section>
         {/* Featured Products */}
-        <section className="container mx-auto py-16">
+        <section className="w- mx-auto py-20">
           <div className="flex justify-between">
-            <h2 className="text-4xl font-semibold mb-4">Featured Products</h2>
+            <h2 className="text-3xl font-semibold pb-8">Featured Products</h2>
             <Link href={"/products"} className="hover:underline">
               View all
             </Link>
@@ -50,13 +55,13 @@ export default function Home() {
         </section>
 
         {/* More Discover */}
-        <section className="container mx-auto py-16 text-center">
+        <section className="w- mx-auto py-20 text-center">
           <Offer />
         </section>
         {/* More Discover */}
-        <section className="container mx-auto py-16 text-center">
+        <section className="w- mx-auto py-20  text-center">
           <div className="py-10">
-            <h2 className="text-4xl font-semibold mb-4">More to Discover</h2>
+            <h2 className="text-3xl font-semibold pb-4">More to Discover</h2>
             <p>
               Our bundles were designed to conveniently package your tanning
               essentials while saving you money.

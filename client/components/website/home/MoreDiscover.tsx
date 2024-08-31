@@ -11,7 +11,7 @@ export default function MoreDiscover() {
         <div className="underline text-center ">
           <Link href="/">
             <div className="flex justify-center items-center">
-              <span className="px-2">Shop Now</span>
+              <span className="px-2">Discover Now</span>
             </div>
           </Link>
         </div>
@@ -22,7 +22,7 @@ export default function MoreDiscover() {
         <div className="underline text-center">
           <Link href="/">
             <div className="flex justify-center items-center">
-              <span className="px-2">Shop Now</span>
+              <span className="px-2">Discover Now</span>
             </div>
           </Link>
         </div>
@@ -33,7 +33,7 @@ export default function MoreDiscover() {
         <div className="underline text-center">
           <Link href="/">
             <div className="flex justify-center items-center">
-              <span className="px-2">Shop Now</span>
+              <span className="px-2">Discover Now</span>
             </div>
           </Link>
         </div>

@@ -122,8 +122,12 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center">
-      <Link href={`/products/${item.id}`} title={item.name}>
+    <div className="bg-white border flex items-center justify-center">
+      <Link
+        href={`/products/${item.id}`}
+        title={item.name}
+        className="text-center"
+      >
         <Image
           src={
             item.images
@@ -133,39 +137,43 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           alt={item.name}
           loading="lazy"
           // fill
-          width={300}
-          height={500}
+          width={200}
+          height={400}
           // placeholder="blur"
           // blurDataURL={image}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           // className="w-full h-40 object-cover mb-4"
         />
-        <h3 className="text-sm font-semibold mb-2">{item.name.slice(0, 50)}</h3>
-        <div className="flex justify-between items-center">
-          <p className="text-gray-500 mb-2">
-            ৳{" "}
-            {item?.discountId
-              ? (price + taxAmount - disAmount).toFixed(2)
-              : (price + taxAmount).toFixed(2)}
-          </p>
-          <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
-            {stockQty > 0 ? "In Stock" : "Out of Stock"}
+        <div className="p-2">
+          <h3 className="text-sm font-semibold mb-2">
+            {item.name.slice(0, 50)}
+          </h3>
+          <div className="flex justify-between items-center">
+            <p className="text-gray-500 mb-2">
+              ৳{" "}
+              {item?.discountId
+                ? (price + taxAmount - disAmount).toFixed(2)
+                : (price + taxAmount).toFixed(2)}
+            </p>
+            <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
+              {stockQty > 0 ? "In Stock" : "Out of Stock"}
+            </div>
           </div>
+          {item?.discountId && (
+            <>
+              <span className="line-through text-gray-500">
+                ৳ {(price + taxAmount).toFixed(2)}
+              </span>
+              <span className="text-red-600 ml-2">
+                -{discount?.value}
+                {discount?.discountType === "Percentage" ? "%" : "BDT"}
+              </span>
+            </>
+          )}
+          <span className="flex gap-1 items-center">
+            <Rate disabled value={productRating || 0} />({reviewsCount})
+          </span>
         </div>
-        {item?.discountId && (
-          <>
-            <span className="line-through text-gray-500">
-              ৳ {(price + taxAmount).toFixed(2)}
-            </span>
-            <span className="text-red-600 ml-2">
-              -{discount?.value}
-              {discount?.discountType === "Percentage" ? "%" : "BDT"}
-            </span>
-          </>
-        )}
-        <span className="flex gap-1 items-center">
-          <Rate disabled value={productRating || 0} />({reviewsCount})
-        </span>
       </Link>
     </div>
   );

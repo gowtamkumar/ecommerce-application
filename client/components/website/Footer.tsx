@@ -15,7 +15,7 @@ export default async function WebFooter() {
   const settingData = setting.data ? setting.data[0] : {};
 
   return (
-    <footer className="bg-slate-500 font-mono">
+    <footer className="bg-[#F6F6F6] font-mono py-10">
       <div className="container mx-auto w-full">
         <div className="grid grid-cols-2 gap-2 py-6 lg:py-8 md:grid-cols-5 ">
           <div>
