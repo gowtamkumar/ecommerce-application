@@ -10,7 +10,7 @@ export default function Products() {
   return (
     <>
       <Header />
-      <section className="container mx-auto">
+      <section className="w-8/12 mx-auto">
         <div className="grid grid-cols-6">
           <div className="col-span-1">
             <FilterSidebar />

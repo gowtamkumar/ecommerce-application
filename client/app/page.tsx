@@ -18,21 +18,24 @@ export default function Home() {
 
       <main>
         {/* all category show */}
-        <section className="py-20 w- mx-auto">
-          <h2 className="text-3xl text-center font-semibold pb-8">
-            Shop by Category
-          </h2>
-          <Category />
+        <section className="py-10  bg-[#F6F6F6]">
+          <div className="w-8/12 mx-auto">
+            <h2 className="text-xl pb-8 text-center font-semibold ">
+              Shop by Category
+            </h2>
+            I
+            <Category />
+          </div>
         </section>
 
-        <section className="py-20  bg-[#F6F6F6]">
+        {/* <section className="py-5 bg-[#F6F6F6]">
           <SellerAds />
-        </section>
+        </section> */}
         {/* Popular products */}
-        <section className="py-20 w- mx-auto">
+        <section className="py-5 w-8/12 mx-auto">
           <div className="flex justify-between">
-            <h2 className="text-3xl font-semibold pb-8">BEST SELLER</h2>
-            <Link href={"/products"} className="hover:underline text-2xl">
+            <h2 className="text-xl font-semibold pb-8">Best Seller</h2>
+            <Link href={"/products"} className="hover:underline text-xl">
               View all
             </Link>
           </div>
@@ -40,13 +43,13 @@ export default function Home() {
         </section>
 
         {/* product banner */}
-        <section className="py-20 bg-[#F6F6F6]">
+        <section className="py-12 bg-[#F6F6F6]">
           <SellerAds />
         </section>
         {/* Featured Products */}
-        <section className="w- mx-auto py-20">
+        <section className="w-8/12 mx-auto py-5">
           <div className="flex justify-between">
-            <h2 className="text-3xl font-semibold pb-8">Featured Products</h2>
+            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
             <Link href={"/products"} className="hover:underline">
               View all
             </Link>
@@ -55,13 +58,13 @@ export default function Home() {
         </section>
 
         {/* More Discover */}
-        <section className="w- mx-auto py-20 text-center">
+        <section className=" mx-auto py-5 text-center bg-[#F6F6F6]">
           <Offer />
         </section>
         {/* More Discover */}
-        <section className="w- mx-auto py-20  text-center">
-          <div className="py-10">
-            <h2 className="text-3xl font-semibold pb-4">More to Discover</h2>
+        <section className="w-8/12 mx-auto py-5 text-center">
+          <div className="py-5">
+            <h2 className="text-xl font-semibold pb-4">More to Discover</h2>
             <p>
               Our bundles were designed to conveniently package your tanning
               essentials while saving you money.

@@ -1,47 +1,47 @@
-// "use client";
-import React from "react";
-import Sidebar from "../header/Menu";
-import { Button, Carousel } from "antd";
-import { getBanners } from "@/lib/apis/banner";
+"use client";
 import Image from "next/image";
+import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Button } from "antd";
+import { Navigation } from "swiper/modules";
 import Link from "next/link";
-import Slider from "./Slider";
 
-export default async function Banner() {
+export default function Slider({ banners }: any) {
   const contentStyle: React.CSSProperties = {
     margin: 0,
-    height: "600px",
+    height: "500px",
     color: "black",
     backgroundColor: "red",
     lineHeight: "400px",
     textAlign: "center",
     background: "black",
   };
-  const banners = await getBanners({ type: "Slider" });
   return (
-    <div className="mx-auto">
-      <Slider banners={banners} />
-      {/* <Carousel
-        arrows
-        dotPosition="bottom"
-        autoplay
-        effect="fade"
-        easing="linear"
-        
-      >
-        {banners.data?.map(
-          ({
-            image,
-            title,
-            description,
-            url,
-          }: {
-            image: string;
-            title: string;
-            description: string;
-            url: string;
-          }) => (
-            <div className="clear-both " key={image}>
+    <Swiper
+      modules={[Navigation]}
+      spaceBetween={5}
+      slidesPerView={1}
+      navigation
+
+    // pagination={{ clickable: true }}
+    // scrollbar={{ draggable: true }}
+    // onSwiper={(swiper) => console.log(swiper)}
+    // onSlideChange={() => console.log("slide change")}
+    >
+      {banners.data?.map(
+        ({
+          image,
+          title,
+          description,
+          url,
+        }: {
+          image: string;
+          title: string;
+          description: string;
+          url: string;
+        }) => (
+          <SwiperSlide key={image}>
+            <div className="clear-both ">
               <div className="relative  font-mono">
                 <Image
                   style={contentStyle}
@@ -67,12 +67,10 @@ export default async function Banner() {
                   </div>
                 </div>
               </div>
-
-             
             </div>
-          )
-        )}
-      </Carousel> */}
-    </div>
+          </SwiperSlide>
+        )
+      )}
+    </Swiper>
   );
 }

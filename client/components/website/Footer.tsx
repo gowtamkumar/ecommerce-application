@@ -16,8 +16,8 @@ export default async function WebFooter() {
 
   return (
     <footer className="bg-[#F6F6F6] font-mono py-10">
-      <div className="container mx-auto w-full">
-        <div className="grid grid-cols-2 gap-2 py-6 lg:py-8 md:grid-cols-5 ">
+      <div className="w-8/12 mx-auto">
+        <div className="grid grid-cols-2 gap-2 py-6 lg:py-8 md:grid-cols-4 ">
           <div>
             <Image src="/pos_software.png" width={50} height={50} alt="logo" />
             <p>
@@ -55,8 +55,7 @@ export default async function WebFooter() {
               </li>
             </ul>
           </div>
-
-          <div>
+          {/* <div>
             <h2 className="mb-6 text-sm font-semibold uppercase">Shop</h2>
             <ul className="font-medium">
               <li className="mb-4">
@@ -80,7 +79,7 @@ export default async function WebFooter() {
                 </a>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           <div>
             <h2 className="mb-6 text-sm font-semibold uppercase">Compnay</h2>

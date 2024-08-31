@@ -65,7 +65,7 @@ export default function FilterSidebarDetails({
   };
 
   return (
-    <aside className="shadow-sm p-3">
+    <aside className="shadow-sm">
       <div className="flex justify-between">
         <h2 className="text-lg font-bold mb-2">Filters</h2>
         <Button onClick={filterClear}>Clear</Button>
@@ -75,28 +75,29 @@ export default function FilterSidebarDetails({
         <p className="font-semibold">Price </p>
       </Divider>
       <div className="flex">
-        <Space.Compact>
-          <InputNumber
-            placeholder="Min"
-            value={price.minPrice}
-            onChange={(value) => setPrice({ ...price, minPrice: value })}
-          />
-          <InputNumber
-            placeholder="Max"
-            value={price.maxPrice}
-            onChange={(value) => setPrice({ ...price, maxPrice: value })}
-          />
-          <Button
-            onClick={() => {
-              dispatch(setProductFilter({ ...global.productFilter, ...price }));
-            }}
-            type="default"
-            // style={{ width: '100%' }}
-          >
-            Apply
-          </Button>
-        </Space.Compact>
+        {/* <Space.Compact> */}
+        <InputNumber
+          placeholder="Min"
+          value={price.minPrice}
+          onChange={(value) => setPrice({ ...price, minPrice: value })}
+        />
+        <InputNumber
+          placeholder="Max"
+          value={price.maxPrice}
+          onChange={(value) => setPrice({ ...price, maxPrice: value })}
+        />
+
+        {/* </Space.Compact> */}
       </div>
+      <Button
+        onClick={() => {
+          dispatch(setProductFilter({ ...global.productFilter, ...price }));
+        }}
+        type="default"
+      // style={{ width: '100%' }}
+      >
+        Apply
+      </Button>
 
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Discount </p>

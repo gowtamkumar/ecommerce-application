@@ -12,7 +12,7 @@ export default function SmallCard({ categories }: any) {
     <Swiper
       modules={[Navigation, Scrollbar]}
       spaceBetween={5}
-      slidesPerView={6}
+      slidesPerView={5}
       navigation
 
       // pagination={{ clickable: true }}

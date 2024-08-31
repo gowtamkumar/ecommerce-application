@@ -86,8 +86,8 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid justify-between ${
-        global.productView ? "grid-cols-1" : "md:grid-cols-5"
+      className={`grid justify-items-center ${
+        global.productView ? "grid-cols-1" : "md:grid-cols-4"
       } gap-5`}
     >
       {products?.map((item: any) => (
@@ -141,7 +141,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           height={400}
           // placeholder="blur"
           // blurDataURL={image}
-          // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           // className="w-full h-40 object-cover mb-4"
         />
         <div className="p-2">

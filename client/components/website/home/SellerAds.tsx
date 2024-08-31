@@ -7,7 +7,7 @@ const SellerAds = () => {
   return (
     <div className="w-8/12 mx-auto grid min-h-[40vh] grid-cols-12 items-center gap-5">
       <div className="col-span-12 lg:col-span-6 lg:text-start text-center">
-        <h1 className="text-4xl font-bold">Sell your Proudct</h1>
+        <h1 className="text-xl font-bold">Sell your Proudct</h1>
         <p className="my-3 text-xl font-medium">
           Easily create an advert for your Proudct and reach millions of
           potential buyers per month
