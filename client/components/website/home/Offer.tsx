@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import Image from "next/image";
 
 export default function Offer() {
   return (
@@ -20,15 +21,29 @@ export default function Offer() {
         {[{}, {}, {}].map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
-              <div className="relative gap-2">
-                <img src="/image-box-12.jpg" className="h-auto w-full" alt="" />
-                <div className="absolute p-10 flex items-center bottom-0 left-0 top-0 bg-local w-full backdrop-blur-sm bg-white/5">
-                  <div className="w-full text-white">
-                    <h2>30% Off</h2>
+              <div className="relative gap-3">
+                <Image
+                  // src="/image-box-12.jpg"
+                  src={
+                    item.image
+                      ? `http://localhost:3900/uploads/${item.image}`
+                      : "/image-box-12.jpg"
+                  }
+                  alt={item.image}
+                  loading="lazy"
+                  // fill
+                  width={0}
+                  height={0}
+                  className="h-[500px] w-full"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                <div className="absolute p-10 flex items-center bottom-0 left-0 top-0 w-full text-white">
+                  <div className="w-full">
+                    <h2 className="font-bold text-2xl">30% Off</h2>
                     <div className=" text-center">
                       <Link href="/">
                         <div className="flex justify-center items-center">
-                          <span className="px-2 text-6xl font-bold">
+                          <span className="px-2 text-5xl font-bold">
                             Shop Now
                           </span>
                         </div>

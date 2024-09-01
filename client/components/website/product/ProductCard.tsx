@@ -86,9 +86,8 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid justify-between ${
-        global.productView ? "grid-cols-1" : "md:grid-cols-4"
-      } gap-5`}
+      className={`grid gap-2 ${global.productView ? "grid-cols-1" : "md:grid-cols-5"
+        }`}
     >
       {products?.map((item: any) => (
         <ProductItem key={item.id} item={item} />
@@ -122,11 +121,10 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
-    <div className="bg-white border flex items-center justify-center">
+    <div className="bg-white border ">
       <Link
         href={`/products/${item.id}`}
         title={item.name}
-        className="text-center"
       >
         <Image
           src={
@@ -137,15 +135,15 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           alt={item.name}
           loading="lazy"
           // fill
-          width={200}
-          height={400}
+          width={0}
+          height={0}
           // placeholder="blur"
           // blurDataURL={image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          // className="w-full h-40 object-cover mb-4"
+          className="w-full h-50 mb-2"
         />
-        <div className="p-2">
-          <h3 className="text-sm font-semibold mb-2">
+        <div className="p-2 text-sm">
+          <h3 className="font-semibold mb-2">
             {item.name.slice(0, 50)}
           </h3>
           <div className="flex justify-between items-center">

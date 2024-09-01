@@ -24,14 +24,12 @@ export default async function Home() {
 
       <main>
         {/* all category show */}
-        <section className="py-10  bg-[#F6F6F6]">
-          <div className="w-8/12 mx-auto">
-            <h2 className="text-xl pb-8 text-center font-semibold ">
-              Shop by Category
-            </h2>
-            I
-            <Category />
-          </div>
+        <section className="py-10 bg-[#F6F6F6]">
+          <h2 className="text-xl pb-8 text-center font-semibold ">
+            Shop by Category
+          </h2>
+          I
+          <Category />
         </section>
 
         {/* <section className="py-5 bg-[#F6F6F6]">
@@ -50,9 +48,11 @@ export default async function Home() {
 
         {/* product banner */}
         <section className="py-12 bg-[#F6F6F6]">
-          <SellerAds banners={(banners.data || []).filter(
-            (item: { type: string }) => item.type === "Middle"
-          )}  />
+          <SellerAds
+            banners={(banners.data || []).filter(
+              (item: { type: string }) => item.type === "Middle"
+            )}
+          />
         </section>
         {/* Featured Products */}
         <section className="w-8/12 mx-auto py-5">
