@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { CiSearch, CiUser, CiHeart } from "react-icons/ci";
+import { CiSearch, CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
 
@@ -23,10 +23,16 @@ export default function HeaderRight() {
         onClick={() => setOpen(true)}
       />
 
-      <CiHeart size={22} className="font-medium" />
-      <Badge size="default" count={cart.carts.length}>
-        <IoBagOutline size={22} className="font-medium" />
-      </Badge>
+      <Link href={"/profile"} className="cursor-pointer">
+        <CiHeart size={22} className="font-medium" />
+      </Link>
+
+      <Link href={"/checkout"} className="cursor-pointer mt-1">
+        <Badge size="default" count={cart.carts.length}>
+          <IoBagOutline size={22} className="font-medium" />
+        </Badge>
+      </Link>
+
       {session.status === "authenticated" ? (
         <Dropdown
           menu={{ items: userProfileRoute as any }}
@@ -65,7 +71,7 @@ export default function HeaderRight() {
         width={1000}
         footer={null}
       >
-        <HeaderSearch setOpen={setOpen}/>
+        <HeaderSearch setOpen={setOpen} />
       </Modal>
     </div>
   );

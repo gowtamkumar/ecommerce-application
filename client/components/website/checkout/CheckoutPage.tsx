@@ -196,11 +196,9 @@ export default function CheckoutPage() {
     return false;
   }
 
-  console.log("setting", setting);
-
   return (
     <>
-      <div className="min-h-screen bg-gray-100 container mx-auto items-center">
+      <div className="w-8/12 mx-auto min-h-screen items-center bg-gray-100">
         {/* <div className="pt-2">
           <Breadcrumb
             separator=">"
