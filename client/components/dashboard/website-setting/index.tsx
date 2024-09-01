@@ -1,12 +1,11 @@
 "use client";
 import { Tabs } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import WebSetting from "./WebSetting";
 import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
   setFormValues,
-  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import SocialLink from "./SocialLink";
@@ -19,6 +18,7 @@ import ContactPage from "./ContactPage";
 import HelpSupport from "./HelpSupport";
 
 export default function Index() {
+  const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -40,7 +40,7 @@ export default function Index() {
     const fetchSettings = async () => {
 
       try {
-        dispatch(setLoading({ save: true }));
+        setLoading(true)
         const setting = await getSettings();
         if (isMounted) {
           const newData = { ...setting.data[0] };
@@ -59,9 +59,9 @@ export default function Index() {
 
           dispatch(setFormValues(newData));
         }
-        dispatch(setLoading({ save: false }));
+        setLoading(false)
       } catch (error) {
-        dispatch(setLoading({ save: false }));
+        setLoading(false)
         console.error("Failed to fetch settings:", error);
       }
     };

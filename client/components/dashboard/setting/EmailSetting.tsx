@@ -1,16 +1,16 @@
 "use client";
-import React from "react";
-import { Button, Form, Input} from "antd";
+import React, { useState } from "react";
+import { Button, Form, Input } from "antd";
 import {
   selectGlobal,
   setAction,
   setFormValues,
-  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 
 const EmailSetting = () => {
+  const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
@@ -20,12 +20,12 @@ const EmailSetting = () => {
     try {
       let newData = { ...values };
       // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
+      setLoading(true);
       const result = newData.id
         ? await updateSetting(newData)
         : await saveSetting(newData);
       setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
+        setLoading(false);
         dispatch(setFormValues({}));
         dispatch(setAction({}));
       }, 100);
@@ -43,6 +43,7 @@ const EmailSetting = () => {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
+    setLoading(false);
   };
 
   const layout = {
@@ -97,7 +98,7 @@ const EmailSetting = () => {
             color="blue"
             htmlType="submit"
             className="capitalize"
-            loading={global.loading.save}
+            loading={loading}
           >
             Save
           </Button>

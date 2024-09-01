@@ -5,7 +5,6 @@ import {
   selectGlobal,
   setAction,
   setFormValues,
-  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
@@ -27,13 +26,14 @@ const uploadButton = (
 );
 
 const WebSetting = () => {
+  const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
-  const dispatch = useDispatch();  
+  const dispatch = useDispatch();
 
   form.setFieldsValue(global.formValues);
 
@@ -41,14 +41,13 @@ const WebSetting = () => {
     try {
       let newData = { ...values };
       // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
+      setLoading(true);
       const result = newData.id
-      
         ? await updateSetting(newData)
         : await saveSetting(newData);
-        console.log("🚀 ~ result:", result)
+      console.log("🚀 ~ result:", result);
       setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
+        setLoading(false);
         dispatch(setFormValues({}));
         dispatch(setAction({}));
       }, 100);
@@ -73,7 +72,7 @@ const WebSetting = () => {
         name: `logo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: filename,
-        url:  `http://localhost:3900/uploads/${filename || "no-data.png"}`,
+        url: `http://localhost:3900/uploads/${filename || "no-data.png"}`,
       };
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:
@@ -133,19 +132,8 @@ const WebSetting = () => {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
+    setLoading(false);
   };
-
-  // id,
-  // id,
-  // companyName
-  // logo,
-  // address,
-  // home_page: jsonb,
-  // about_page: jsonb,
-  // contact_page: jsonb,
-  // term_policy_page: jsonb,
-  // footer_option: jsonb,
-  // header_option: jsonb,
 
   const layout = {
     labelCol: { span: 3 },
@@ -269,7 +257,7 @@ const WebSetting = () => {
             color="blue"
             htmlType="submit"
             className="capitalize"
-            loading={global.loading.save}
+            loading={loading}
           >
             Save
           </Button>

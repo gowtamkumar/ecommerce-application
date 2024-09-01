@@ -8,7 +8,7 @@ import Status from "@/app/dashboard/status/page";
 import Tax from "@/app/dashboard/taxs/page";
 import Unit from "@/app/dashboard/unit/page";
 import { Tabs } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
@@ -19,6 +19,7 @@ import CurrencySetting from "./CurrencySetting";
 import EmailSetting from "./EmailSetting";
 
 export default function Index() {
+  const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -31,6 +32,7 @@ export default function Index() {
     let isMounted = true;
     const fetchSettings = async () => {
       try {
+        setLoading(true);
         const setting = await getSettings();
         if (isMounted) {
           const data = setting.data[0] || {};
@@ -43,8 +45,10 @@ export default function Index() {
             url: `http://localhost:3900/uploads/${data.image || "no-data.png"}`,
           };
           dispatch(setFormValues({ ...data, fileList: [newfile] }));
+          setLoading(false);
         }
       } catch (error) {
+        setLoading(false);
         console.error("Failed to fetch settings:", error);
       }
     };

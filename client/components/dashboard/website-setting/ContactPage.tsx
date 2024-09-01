@@ -1,16 +1,16 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 import {
   selectGlobal,
   setAction,
   setFormValues,
-  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 
 const ContactPage = () => {
+  const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
@@ -22,12 +22,12 @@ const ContactPage = () => {
     try {
       let newData = { ...values };
       // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
+      setLoading(true);
       const result = newData.id
         ? await updateSetting(newData)
         : await saveSetting(newData);
       setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
+        setLoading(false);
         dispatch(setFormValues({}));
         dispatch(setAction({}));
       }, 100);
@@ -44,6 +44,7 @@ const ContactPage = () => {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
+    setLoading(false);
   };
 
   const layout = {
@@ -98,7 +99,7 @@ const ContactPage = () => {
             color="blue"
             htmlType="submit"
             className="capitalize"
-            loading={global.loading.save}
+            loading={loading}
           >
             Save
           </Button>
