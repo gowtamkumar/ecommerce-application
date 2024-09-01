@@ -6,7 +6,7 @@ import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 
 export default function Offer() {
   return (
-    <div className="mx-auto flex ">
+    <div className="container mx-auto">
       <Swiper
         modules={[Navigation, Scrollbar]}
         spaceBetween={5}

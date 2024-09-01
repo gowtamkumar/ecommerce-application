@@ -15,7 +15,11 @@ export default async function Home() {
     <>
       <header>
         <Header />
-        <Slider banners={(banners.data || []).filter((item: { type: string }) => item.type === "Slider")} />
+        <Slider
+          banners={(banners.data || []).filter(
+            (item: { type: string }) => item.type === "Slider"
+          )}
+        />
       </header>
 
       <main>
@@ -46,7 +50,9 @@ export default async function Home() {
 
         {/* product banner */}
         <section className="py-12 bg-[#F6F6F6]">
-          <SellerAds  />
+          <SellerAds banners={(banners.data || []).filter(
+            (item: { type: string }) => item.type === "Middle"
+          )}  />
         </section>
         {/* Featured Products */}
         <section className="w-8/12 mx-auto py-5">
@@ -60,7 +66,7 @@ export default async function Home() {
         </section>
 
         {/* More Discover */}
-        <section className=" mx-auto py-5 text-center bg-[#F6F6F6]">
+        <section className="py-5 text-center bg-[#F6F6F6]">
           <Offer />
         </section>
         {/* More Discover */}

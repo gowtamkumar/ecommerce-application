@@ -1,22 +1,28 @@
 "use client";
 import { userProfileRoute } from "@/NavBarRoute";
 import { selectCart } from "@/redux/features/cart/cartSlice";
-import { Avatar, Badge, Dropdown } from "antd";
+import { Avatar, Badge, Dropdown, Modal } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { CiSearch, CiUser, CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
+import HeaderSearch from "./HeaderSearch";
 
 export default function HeaderRight() {
+  const [open, setOpen] = useState(false);
   const cart = useSelector(selectCart);
   const session = useSession();
   const profileImage = session.data?.user.image;
   return (
     <div className="flex gap-4 justify-between items-center">
-      <CiSearch size={22} className="font-medium" />
-      {/* <CiUser size={22} className="font-medium" /> */}
+      <CiSearch
+        size={22}
+        className="font-medium cursor-pointer"
+        onClick={() => setOpen(true)}
+      />
+
       <CiHeart size={22} className="font-medium" />
       <Badge size="default" count={cart.carts.length}>
         <IoBagOutline size={22} className="font-medium" />
@@ -50,6 +56,17 @@ export default function HeaderRight() {
           </div>
         </div>
       )}
+      <Modal
+        // title="Search Something"
+        centered
+        open={open}
+        onOk={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+        width={1000}
+        footer={null}
+      >
+        <HeaderSearch setOpen={setOpen}/>
+      </Modal>
     </div>
   );
 }

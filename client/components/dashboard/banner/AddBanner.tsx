@@ -252,14 +252,14 @@ const AddBanner = () => {
           <ImgCrop
             // quality={1}
             // fillColor="white"
-            zoomSlider
+            // zoomSlider
             rotationSlider
             aspectSlider
             showReset
-            modalWidth={1000}
-            aspect={18 / 6}
-            minZoom={1}
-            maxZoom={3}
+            // modalWidth={1000}
+            // aspect={18 / 6}
+            // minZoom={1}
+            // maxZoom={3}
             // cropShape='rect'
           >
             <Upload
