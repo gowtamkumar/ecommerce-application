@@ -1,4 +1,3 @@
-import Banner from "@/components/website/banner/Banner";
 import WebFooter from "@/components/website/Footer";
 import Header from "@/components/website/header/Header";
 import React from "react";
@@ -8,12 +7,15 @@ import SellerAds from "@/components/website/home/SellerAds";
 import MoreDiscover from "@/components/website/home/MoreDiscover";
 import Offer from "@/components/website/home/Offer";
 import Link from "next/link";
-export default function Home() {
+import { getBanners } from "@/lib/apis/banner";
+import Slider from "@/components/website/banner/Slider";
+export default async function Home() {
+  const banners = await getBanners();
   return (
     <>
       <header>
         <Header />
-        <Banner />
+        <Slider banners={(banners.data || []).filter((item: { type: string }) => item.type === "Slider")} />
       </header>
 
       <main>
@@ -44,7 +46,7 @@ export default function Home() {
 
         {/* product banner */}
         <section className="py-12 bg-[#F6F6F6]">
-          <SellerAds />
+          <SellerAds  />
         </section>
         {/* Featured Products */}
         <section className="w-8/12 mx-auto py-5">

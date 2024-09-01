@@ -28,7 +28,7 @@ export default function Slider({ banners }: any) {
     // onSwiper={(swiper) => console.log(swiper)}
     // onSlideChange={() => console.log("slide change")}
     >
-      {banners.data?.map(
+      {banners?.map(
         ({
           image,
           title,

@@ -86,7 +86,7 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid justify-items-center ${
+      className={`grid justify-between ${
         global.productView ? "grid-cols-1" : "md:grid-cols-4"
       } gap-5`}
     >

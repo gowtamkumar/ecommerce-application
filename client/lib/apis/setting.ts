@@ -18,7 +18,7 @@ export async function saveSetting(data: any) {
 }
 
 export async function getSettings() {
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/settings`);
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/settings`, { next: {revalidate: 5}});
   return res.json();
 }
 

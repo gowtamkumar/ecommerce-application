@@ -206,7 +206,13 @@ const AddBanner = () => {
                 .indexOf(input.toLowerCase()) >= 0
             }
           >
-            <Select.Option value="Slider">Slider</Select.Option>
+            {["Slider", "Middle", "Left", "Right", "Footer"].map(
+              (item: string) => (
+                <Select.Option key={item} value={item}>
+                  {item}
+                </Select.Option>
+              )
+            )}
           </Select>
         </Form.Item>
 
@@ -244,8 +250,8 @@ const AddBanner = () => {
           ]}
         >
           <ImgCrop
-            quality={1}
-            fillColor="white"
+            // quality={1}
+            // fillColor="white"
             zoomSlider
             rotationSlider
             aspectSlider

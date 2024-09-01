@@ -326,7 +326,7 @@ help_Support: jsonb
 ## banner: ToDo
 
 title,
-type:["Slider", ""],
+type:["Slider", "Middle", 'Left', 'Right', 'Footer'],
 image,
 description,
 url,

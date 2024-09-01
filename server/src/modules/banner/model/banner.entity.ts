@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BannerType } from "../enums/banner-type.enum";
 
 @Entity("banners")
 export class BannerEntity {
@@ -9,8 +10,8 @@ export class BannerEntity {
   @Column()
   title!: string;
 
-  @Column({nullable: true})
-  type!: string;
+  @Column({ type: "enum", enum: BannerType, default: BannerType.Slider })
+  type!: BannerType;
 
   @Column()
   image!: string;
@@ -27,4 +28,3 @@ export class BannerEntity {
   @Column({ name: "user_id" })
   userId!: number;
 }
-

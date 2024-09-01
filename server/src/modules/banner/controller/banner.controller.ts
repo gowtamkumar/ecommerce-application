@@ -58,7 +58,6 @@ export const createBanner = asyncHandler(async (req: any, res: Response) => {
     ...req.body,
     userId: req.id,
   });
-
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
