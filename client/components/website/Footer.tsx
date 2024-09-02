@@ -10,111 +10,25 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 import Subscribe from "./footer/Subscribe";
+import FourWeight from "./weight/FourWeight";
+import ThirdWeight from "./weight/ThirdWeight";
+import SecondWeight from "./weight/SecondWeight";
+import FirstWeight from "./weight/FirstWeight";
 
 export default async function WebFooter() {
   const setting = await getSettings();
   const settingData = setting.data ? setting.data[0] : {};
 
   return (
-    <footer className="bg-[#F6F6F6] font-mono py-10">
+    <footer className="bg-[#F6F6F6] border-t-2 py-10">
       <div className="w-8/12 mx-auto">
         <div className="grid grid-cols-2 gap-2 py-6 lg:py-8 md:grid-cols-4 ">
-          <div>
-            <Image src="/pos_software.png" width={50} height={50} alt="logo" />
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. amet
-              consectetur adipisicing elit.{" "}
-            </p>
-            <p>Mobile: 0170000000</p>
-            <p>E-mail:demo@gmail.com</p>
-          </div>
-
-          <div>
-            <h2 className="mb-6 text-sm font-semibold uppercase">
-              Help center
-            </h2>
-            <ul className=" dark:text-gray-400 font-medium">
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  About Us
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Term of SErvice
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Privacy Policy
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Return
-                </a>
-              </li>
-            </ul>
-          </div>
-          {/* <div>
-            <h2 className="mb-6 text-sm font-semibold uppercase">Shop</h2>
-            <ul className="font-medium">
-              <li className="mb-4">
-                <a href="#" className=" hover:underline">
-                  Mens Shpping
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Womens Shopping
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Kids Shopping
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  t-shart Shopping
-                </a>
-              </li>
-            </ul>
-          </div> */}
-
-          <div>
-            <h2 className="mb-6 text-sm font-semibold uppercase">Compnay</h2>
-            <ul className="font-medium">
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Privacy Policy
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Licensing
-                </a>
-              </li>
-              <li className="mb-4">
-                <a href="#" className="hover:underline">
-                  Terms &amp; Conditions
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="mb-6 text-sm font-semibold uppercase">
-              Newsletter Signup{" "}
-            </h2>
-            <p>
-              Subscribe to our newsletter and get 10% off your first purchase
-            </p>
-            <Subscribe />
-          </div>
+          <FirstWeight />
+          <SecondWeight />
+          <ThirdWeight />
+          <FourWeight />
         </div>
-        <hr className="border-gray-700 sm:mx-auto dark:border-gray-700 lg:my-4" />
-        <div className="px-4 text-center py-6 md:flex md:items-center md:justify-between">
+        <div className="border-t-2 px-4 text-center py-6 md:flex md:items-center md:justify-between">
           <span className="text-sm text-gray-700  sm:text-center">
             © {new Date().getFullYear()}
             {settingData.footerOption?.copyRight}

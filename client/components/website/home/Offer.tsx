@@ -39,7 +39,7 @@ export default function Offer() {
                 />
                 <div className="absolute p-10 flex items-center bottom-0 left-0 top-0 w-full text-white">
                   <div className="w-full">
-                    <h4 className="text-6xl"> Discount</h4>
+                    <h4 className="text-6xl font-bold"> Discount</h4>
                     <h2 className="font-bold text-2xl">30% Off</h2>
                     <div className="text-center">
                       <div className="flex justify-center items-center">

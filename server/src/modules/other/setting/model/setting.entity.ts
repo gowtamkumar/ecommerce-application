@@ -21,6 +21,12 @@ export class SettingEntity {
   address!: string;
 
   @Column({ nullable: true })
+  phone!: string;
+
+  @Column({ nullable: true })
+  email!: string;
+
+  @Column({ nullable: true })
   currencyId!: number;
 
   @Column({ name: "social_link", type: "simple-json", nullable: true })

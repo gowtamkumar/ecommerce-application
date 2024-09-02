@@ -70,7 +70,7 @@ export default async function Home() {
           <Offer />
         </section>
         {/* More Discover */}
-        <section className="w-8/12 mx-auto py-5 text-center">
+        {/* <section className="w-8/12 mx-auto py-5 text-center">
           <div className="py-5">
             <h2 className="text-xl font-semibold pb-4">More to Discover</h2>
             <p>
@@ -79,7 +79,7 @@ export default async function Home() {
             </p>
           </div>
           <MoreDiscover />
-        </section>
+        </section> */}
       </main>
 
       <WebFooter />

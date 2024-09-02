@@ -22,19 +22,6 @@ export default function Index() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  // id,
-  // id,
-  // companyName
-  // logo,
-  // address,
-  // social_link: jsonb
-  // home_page: jsonb,
-  // about_page: jsonb,
-  // contact_page: jsonb,
-  // term_policy_page: jsonb,
-  // footer_option: jsonb,
-  // header_option: jsonb,
-
   useEffect(() => {
     let isMounted = true;
     const fetchSettings = async () => {

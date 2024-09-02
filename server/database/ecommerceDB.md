@@ -311,6 +311,8 @@ id,
 companyName
 logo,
 address,
+phone,
+email
 currencyId,
 social_link: jsonb
 email_config:jsonb,

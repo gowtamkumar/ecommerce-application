@@ -170,6 +170,15 @@ const WebSetting = () => {
           <Input placeholder="Enter " />
         </Form.Item>
 
+        <Form.Item name="email" label="E-mail">
+          <Input placeholder="Enter " />
+        </Form.Item>
+
+        <Form.Item name="phone" label="Phone No">
+          <Input placeholder="Enter " />
+        </Form.Item>
+
+
         <Form.Item name="address" label="Address">
           <Input placeholder="Enter " />
         </Form.Item>
