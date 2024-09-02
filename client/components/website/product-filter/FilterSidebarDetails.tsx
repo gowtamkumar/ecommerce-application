@@ -65,7 +65,7 @@ export default function FilterSidebarDetails({
   };
 
   return (
-    <aside className="shadow-sm">
+    <aside className="shadow-sm px-1 text-center">
       <div className="flex justify-between">
         <h2 className="text-lg font-bold mb-2">Filters</h2>
         <Button onClick={filterClear}>Clear</Button>
@@ -80,11 +80,13 @@ export default function FilterSidebarDetails({
           placeholder="Min"
           value={price.minPrice}
           onChange={(value) => setPrice({ ...price, minPrice: value })}
+          size="small"
         />
         <InputNumber
           placeholder="Max"
           value={price.maxPrice}
           onChange={(value) => setPrice({ ...price, maxPrice: value })}
+          size="small"
         />
 
         {/* </Space.Compact> */}
@@ -94,7 +96,9 @@ export default function FilterSidebarDetails({
           dispatch(setProductFilter({ ...global.productFilter, ...price }));
         }}
         type="default"
-      // style={{ width: '100%' }}
+        size="small"
+        className="mt-1"
+        // style={{ width: '100%' }}
       >
         Apply
       </Button>

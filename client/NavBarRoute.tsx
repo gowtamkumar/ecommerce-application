@@ -307,7 +307,7 @@ const userProfileRoute: MenuProps["items"] = [
     onClick: () => {
       signOut();
     },
-  }
+  },
 ];
 
 const webSiteNavbarItems: MenuProps["items"] = [

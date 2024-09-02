@@ -25,6 +25,8 @@ export default function Profile() {
     })();
   }, [dispatch, global.action]);
 
+  
+
   return (
     <div>
       <Tabs

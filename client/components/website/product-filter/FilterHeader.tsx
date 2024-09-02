@@ -34,7 +34,7 @@ export default function FilterHeader() {
   };
 
   return (
-    <div className="py-2">
+    <div>
       <div className="flex flex-col md:flex-row justify-between items-center p-4 bg-white  rounded-md">
         {/* Item Count and Filter */}
         <div className="flex items-center space-x-2 mb-4 md:mb-0">

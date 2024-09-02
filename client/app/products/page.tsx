@@ -11,11 +11,11 @@ export default function Products() {
     <>
       <Header />
       <section className="w-8/12 mx-auto">
-        <div className="grid grid-cols-6">
-          <div className="col-span-1">
+        <div className="grid grid-cols-12">
+          <div className="col-span-2 p-3">
             <FilterSidebar />
           </div>
-          <div className="col-span-5">
+          <div className="col-span-10">
             <CategoryHeader />
             <Divider />
             <ProductCard />

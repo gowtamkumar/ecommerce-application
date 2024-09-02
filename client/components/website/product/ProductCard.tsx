@@ -86,8 +86,9 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid gap-2 ${global.productView ? "grid-cols-1" : "md:grid-cols-5"
-        }`}
+      className={`grid gap-2 ${
+        global.productView ? "grid-cols-1" : "md:grid-cols-5"
+      }`}
     >
       {products?.map((item: any) => (
         <ProductItem key={item.id} item={item} />
@@ -122,10 +123,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
 
   return (
     <div className="bg-white border ">
-      <Link
-        href={`/products/${item.id}`}
-        title={item.name}
-      >
+      <Link href={`/products/${item.id}`} title={item.name}>
         <Image
           src={
             item.images
@@ -143,9 +141,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           className="w-full h-50 mb-2"
         />
         <div className="p-2 text-sm">
-          <h3 className="font-semibold mb-2">
-            {item.name.slice(0, 50)}
-          </h3>
+          <h3 className="font-semibold mb-2">{item.name.slice(0, 50)}</h3>
           <div className="flex justify-between items-center">
             <p className="text-gray-500 mb-2">
               ৳{" "}

@@ -9,6 +9,7 @@ import {
   FaLinkedinIn,
   FaTwitter,
 } from "react-icons/fa";
+import Subscribe from "./footer/Subscribe";
 
 export default async function WebFooter() {
   const setting = await getSettings();
@@ -109,16 +110,7 @@ export default async function WebFooter() {
             <p>
               Subscribe to our newsletter and get 10% off your first purchase
             </p>
-            <div className="flex py-6">
-              <input
-                type="email"
-                placeholder="E-mail address"
-                className="rounded-l-full border border-black px-2 py-2 focus:outline-none self-center w-2/3"
-              />
-              <button className="bg-blue-600 text-white rounded-r-full px-4 py-2 font-semibold hover:bg-gray-800 focus:outline-none">
-                Subscribe
-              </button>
-            </div>
+            <Subscribe />
           </div>
         </div>
         <hr className="border-gray-700 sm:mx-auto dark:border-gray-700 lg:my-4" />

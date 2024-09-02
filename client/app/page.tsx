@@ -28,7 +28,7 @@ export default async function Home() {
           <h2 className="text-xl pb-8 text-center font-semibold ">
             Shop by Category
           </h2>
-          I
+          
           <Category />
         </section>
 
