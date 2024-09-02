@@ -12,15 +12,17 @@ export default async function Header() {
   const setting = await getSettings();
   // const singleLogo = logo.data ? logo.data[0]?.image : null;
   return (
-    <div>
+    <>
       <TopBar />
-      <div className="container mx-auto items-center py-4 ">
-        <div className="flex justify-between items-center ">
-          <Logo settingData={setting} />
-          <MainMenu />
-          <HeaderRight />
+      <div className="border-b-2">
+        <div className="container mx-auto items-center py-4">
+          <div className="flex justify-between items-center ">
+            <Logo settingData={setting} />
+            <MainMenu />
+            <HeaderRight />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

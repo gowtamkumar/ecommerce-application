@@ -242,12 +242,27 @@ const navbarRoute = [
 
 const profileRoute: MenuProps["items"] = [
   {
-    key: "1",
-    label: <Link href="/profile">Profile</Link>,
+    key: "my_account",
+    label: <Link href="/profile">My Account</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
-    key: "2",
+    key: "orders",
+    label: <Link href="/profile">Orders</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "wishlist",
+    label: <Link href="/profile">Wishlist</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "order_track",
+    label: <Link href="/profile">Order Track</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "logout",
     label: <Link href="/">Logout</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     onClick: () => {
@@ -266,19 +281,33 @@ const profileRoute: MenuProps["items"] = [
 
 const userProfileRoute: MenuProps["items"] = [
   {
-    key: "1",
-    label: <Link href="/profile">Profile</Link>,
+    key: "my_account",
+    label: <Link href="/profile">My Account</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
-    key: "2",
+    key: "orders",
+    label: <Link href="/profile">Orders</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "wishlist",
+    label: <Link href="/profile">Wishlist</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "order_track",
+    label: <Link href="/profile">Order Track</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "logout",
     label: <Link href="/">Logout</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     onClick: () => {
-      // "use server";
       signOut();
     },
-  },
+  }
 ];
 
 const webSiteNavbarItems: MenuProps["items"] = [

@@ -15,6 +15,7 @@ export default function HeaderRight() {
   const cart = useSelector(selectCart);
   const session = useSession();
   const profileImage = session.data?.user.image;
+  
   return (
     <div className="flex gap-4 justify-between items-center">
       <CiSearch

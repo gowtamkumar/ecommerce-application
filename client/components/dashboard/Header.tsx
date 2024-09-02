@@ -8,7 +8,7 @@ import {
   setCollapsed,
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
-import { profileRoute } from "@/NavBarRoute";
+import { userProfileRoute } from "@/NavBarRoute";
 import { useSession } from "next-auth/react";
 
 export default function DashboardHeader() {
@@ -80,11 +80,10 @@ export default function DashboardHeader() {
       </div>
 
       <Dropdown
-        menu={{ items: profileRoute as any }}
+        menu={{ items: userProfileRoute as any }}
         placement="bottomLeft"
         trigger={["click"]}
       >
-
         <Avatar
           className="cursor-pointer h-10 w-10 rounded-full bg-slate-500"
           size={35}

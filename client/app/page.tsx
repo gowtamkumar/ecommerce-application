@@ -24,7 +24,7 @@ export default async function Home() {
 
       <main>
         {/* all category show */}
-        <section className="py-10 bg-[#F6F6F6]">
+        <section className="py-10 bg-[#F6F6F6] border-t-2">
           <h2 className="text-xl pb-8 text-center font-semibold ">
             Shop by Category
           </h2>
