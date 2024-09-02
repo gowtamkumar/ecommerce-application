@@ -47,7 +47,7 @@ export default async function Home() {
         </section>
 
         {/* product banner */}
-        <section className="py-12 bg-[#F6F6F6]">
+        <section className="py-10 bg-[#F6F6F6]">
           <SellerAds
             banners={(banners.data || []).filter(
               (item: { type: string }) => item.type === "Middle"

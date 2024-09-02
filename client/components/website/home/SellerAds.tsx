@@ -8,23 +8,23 @@ import Image from "next/image";
 
 const SellerAds = ({ banners }: any) => {
   return (
-    <div className="w-7/12 mx-auto">
+    <div>
       <Swiper
         modules={[Navigation, Scrollbar]}
         // spaceBetween={5}
         slidesPerView={1}
-      // navigation
-      // pagination={{ clickable: true }}
-      // scrollbar={{ draggable: true }}
-      // onSwiper={(swiper) => console.log(swiper)}
-      // onSlideChange={() => console.log("slide change")}
+        // navigation
+        // pagination={{ clickable: true }}
+        // scrollbar={{ draggable: true }}
+        // onSwiper={(swiper) => console.log(swiper)}
+        // onSlideChange={() => console.log("slide change")}
       >
         {(banners || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
               <div className="w-8/12 mx-auto grid min-h-[40vh] grid-cols-12 items-center gap-5">
                 <div className="col-span-12 lg:col-span-6 lg:text-start text-center">
-                  <h1 className="text-xl font-bold">{item.title}</h1>
+                  <h1 className="text-4xl font-bold">{item.title}</h1>
                   <p className="my-3 font-medium">{item.description}</p>
                   <Button size="large" type="primary">
                     <Link href="/products"> Shop Now</Link>
