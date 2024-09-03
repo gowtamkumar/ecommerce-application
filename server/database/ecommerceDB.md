@@ -334,19 +334,19 @@ description,
 url,
 status: boolean,
 
-## blog
+## blog(done back end)
 
 title,
 user_id,
 image,
 tags:[]
-slug(UNIQUE),
+<!-- slug(UNIQUE), -->
 content,
 status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
 createdAt
 updatedAt
 
-## blog_category
+## blog_category(done back end)
 
 id
 post_id,

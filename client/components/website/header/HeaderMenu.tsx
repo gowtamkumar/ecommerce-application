@@ -3,25 +3,19 @@ import React, { useState } from "react";
 import { Menu, MenuProps } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-
 export default function HeaderMenu() {
-  const [current, setCurrent] = useState("mail");
+  // const [current, setCurrent] = useState("mail");
 
-  const onClick: MenuProps["onClick"] = (e) => {
-    setCurrent(e.key);
-  };
-  const router = useRouter();
+  // const onClick: MenuProps["onClick"] = (e) => {
+  //   setCurrent(e.key);
+  // };
+  // const router = useRouter();
   // if (!categories.data?.length) {
   //   return <Spin />
   // }
   const menu = [
     { key: "home", label: "Home", url: "/" },
-    { key: "shop", label: "Shop", url: "/shop" },
+    { key: "shop", label: "Shop", url: "/products" },
     { key: "product", label: "Product", url: "/products" },
     { key: "about", label: "About", url: "/about" },
     { key: "contact", label: "Contact", url: "/contact" },

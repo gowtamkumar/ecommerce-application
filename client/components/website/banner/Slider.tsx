@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Button } from "antd";
 import { Navigation } from "swiper/modules";
 import Link from "next/link";
+import "swiper/css/navigation";
 
 export default function Slider({ banners }: any) {
   // const contentStyle: React.CSSProperties = {
@@ -26,14 +27,15 @@ export default function Slider({ banners }: any) {
             slidesPerView={1}
             navigation
             autoplay
-          // navigation={{
-          //   prevEl: '.prev',
-          //   nextEl: '.next',
-          // }}
-          // wrapperTag="ul"
-          // scrollbar={{ draggable: true }}
-          // onSwiper={(swiper) => console.log(swiper)}
-          // onSlideChange={() => console.log("slide change")}
+
+            // navigation={{
+            //   prevEl: '.prev',
+            //   nextEl: '.next',
+            // }}
+            // wrapperTag="ul"
+            // scrollbar={{ draggable: true }}
+            // onSwiper={(swiper) => console.log(swiper)}
+            // onSlideChange={() => console.log("slide change")}
           >
             {banners?.map(
               ({
@@ -51,7 +53,7 @@ export default function Slider({ banners }: any) {
                   <div className="w-10/12 mx-auto h-[50vh]">
                     <div className="grid grid-cols-2 items-center">
                       <div className="">
-                        <h1 className="text-4xl">{title}</h1>
+                        <h1 className="text-4xl font-bold">{title}</h1>
                         <p className="my-4">{description}</p>
                         <Button size="large" type="primary">
                           <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>

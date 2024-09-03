@@ -86,7 +86,7 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid gap-2 ${
+      className={`grid gap-5 ${
         global.productView ? "grid-cols-1" : "md:grid-cols-5"
       }`}
     >
@@ -122,7 +122,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
-    <div className="bg-white border ">
+    <div className="bg-white border">
       <Link href={`/products/${item.id}`} title={item.name}>
         <Image
           src={

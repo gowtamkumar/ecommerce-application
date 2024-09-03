@@ -24,6 +24,7 @@ export * from "./unit/unitValidation";
 export * from "./setting/settingValidation";
 export * from "./banner/bannerValidation";
 export * from "./currency/currencyValidation";
+export * from "./post/postValidation";
 
 
 

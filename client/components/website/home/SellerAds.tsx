@@ -6,13 +6,15 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import Image from "next/image";
 
+
 const SellerAds = ({ banners }: any) => {
   return (
     <div>
       <Swiper
-        modules={[Navigation, Scrollbar]}
+        modules={[Navigation]}
         // spaceBetween={5}
         slidesPerView={1}
+        autoplay
         // navigation
         // pagination={{ clickable: true }}
         // scrollbar={{ draggable: true }}
