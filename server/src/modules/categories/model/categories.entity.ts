@@ -12,6 +12,7 @@ import {
 } from "typeorm";
 import { CategoryStatus } from "../enums/category-status.enum";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
+import { PostCategoryEntity } from "../../post/model/post-category.entity";
 
 @Entity("categories")
 @Tree("materialized-path")
@@ -64,4 +65,10 @@ export class CategoriesEntity {
     (productCategory) => productCategory.category
   )
   productCategories!: ProductCategoryEntity[];
+
+  @OneToMany(
+    (_type) => PostCategoryEntity,
+    (productCategory) => productCategory.category
+  )
+  postCategories!: PostCategoryEntity[];
 }

@@ -114,6 +114,7 @@ export default function Index() {
           key: "footer_option",
           children: <FooterOption />,
         },
+       
       ]}
     />
   );

@@ -3,9 +3,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 
-export async function saveSize(data: any) {
+export async function savePost(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes`, {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/posts`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -17,37 +17,31 @@ export async function saveSize(data: any) {
   return res.json();
 }
 
-export async function getSizes() {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes`, {
+export async function getPosts() {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/posts`, {
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
   });
   return res.json();
 }
 
-export async function getSize(data: any) {
-  const session = await getServerSession(authOptions);
+export async function getPost(data: any) {
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/sizes/${data.id}`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/posts/${data.id}`,
     {
       method: "GET",
+      cache: 'no-cache',
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     }
   );
   return res.json();
 }
 
-export async function updateSize(data: any) {
+export async function updatePost(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/sizes/${data.id}`,
+    `${process.env.NEXT_SERVER_URL}/api/v1/posts/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -61,9 +55,9 @@ export async function updateSize(data: any) {
   return res.json();
 }
 
-export async function deleteSize(id: string) {
+export async function deletePost(id: string) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/sizes/${id}`, {
+  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/posts/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers: {

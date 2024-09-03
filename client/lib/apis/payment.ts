@@ -17,14 +17,17 @@ export async function savePayment(data: any) {
 
 export async function saveDashboardPayment(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/payments/dashboard`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
-    },
-    body: JSON.stringify(data),
-  });
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/payments/dashboard`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
   return res.json();
 }
 
@@ -42,14 +45,7 @@ export async function getPayments() {
 export async function getPayment(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/payments/${data.id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
+    `${process.env.NEXT_SERVER_URL}/api/v1/payments/${data.id}`
   );
   return res.json();
 }

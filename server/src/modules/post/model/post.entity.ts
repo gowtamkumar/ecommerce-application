@@ -3,10 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { PostStatus } from "../enums";
+import { UserEntity } from "../../auth/model/user.entity";
+import { PostCategoryEntity } from "./post-category.entity";
 
 @Entity("posts")
 export class PostEntity {
@@ -20,7 +25,7 @@ export class PostEntity {
   title!: string;
 
   @Column()
-  image!: number;
+  image!: string;
 
   @Column({ type: "simple-array", nullable: true })
   tags!: string[];
@@ -30,11 +35,11 @@ export class PostEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
-  // @ManyToOne((_type) => UserEntity, (user) => user.orders, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "user_id" })
-  // user!: UserEntity;
+  @ManyToOne((_type) => UserEntity, (user) => user.posts, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
 
   @Column({
     type: "enum",
@@ -48,6 +53,6 @@ export class PostEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp with time zone" })
   updatedAt?: string;
 
-  // @OneToMany((_type) => OrderItemEntity, (product) => product.order)
-  // orderItems!: OrderItemEntity[];
+  @OneToMany((_type) => PostCategoryEntity, (postCategory) => postCategory.post)
+  postCategories!: PostCategoryEntity[];
 }

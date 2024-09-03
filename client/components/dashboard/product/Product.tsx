@@ -275,6 +275,7 @@ const Product = ({
       }
     }
   };
+  
   const handleCancel = () => setPreviewOpen(false);
 
   // file Preview

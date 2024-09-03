@@ -259,19 +259,6 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
-
-  // const reqBodyData = {
-  //   // orderDate: validation.data.orderDate,
-  //   isPaid: validation.data.isPaid,
-  //   isShipped: validation.data.isShipped,
-  //   orderTotalAmount: validation.data.orderTotalAmount,
-  //   netAmount: validation.data.netAmount,
-  //   phoneNo: validation.data.phoneNo,
-  //   paymentStatus: validation.data.paymentStatus,
-  //   paymentMothod: validation.data.paymentMothod,
-  //   note: validation.data.note,
-  // };
-
   const updateData = await repository.merge(result, orderData);
 
   const save = await repository.save(updateData);
