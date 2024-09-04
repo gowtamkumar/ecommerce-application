@@ -15,6 +15,7 @@ export default async function Home() {
     <>
       <header>
         <Header />
+
         <Slider
           banners={(banners.data || []).filter(
             (item: { type: string }) => item.type === "Slider"
@@ -24,7 +25,7 @@ export default async function Home() {
 
       <main>
         {/* all category show */}
-        <section className="md:py-10 p-5 bg-[#F6F6F6] border-t-2">
+        <section className="md:py-7 p-5 bg-[#F6F6F6] border-t-2">
           <h2 className="text-xl pb-8 text-center font-semibold ">
             Shop by Category
           </h2>

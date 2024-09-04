@@ -8,9 +8,8 @@ import Link from "next/link";
 import "swiper/css/navigation";
 
 export default function Slider({ banners }: any) {
-
   return (
-    <div className="container mx-auto bg-[#F6F6F6]">
+    <div className="container mx-auto ">
       <div className="grid md:grid-cols-12 grid-cols-1">
         <div className="md:col-span-9">
           <Swiper
@@ -45,9 +44,11 @@ export default function Slider({ banners }: any) {
                     <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
                       <div className="md:order-1 order-2 text-center md:text-start">
                         <h1 className="md:text-4xl text-2xl font-bold">
-                          {title}
+                          {title.slice(0, 50)}
                         </h1>
-                        <p className="my-4">{description}</p>
+                        <p className="my-3 font-medium">
+                          {description.slice(0, 100)}
+                        </p>
                         <Button size="large" type="primary">
                           <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>
                         </Button>
