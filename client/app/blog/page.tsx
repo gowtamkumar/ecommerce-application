@@ -4,7 +4,5 @@ import React from "react";
 
 export default async function page() {
   const posts = await getPosts();
-
-  // return <Index posts={posts} />;
-  return <div>akjaskdf</div>;
+  return <Index posts={posts} />;
 }

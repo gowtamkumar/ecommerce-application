@@ -1,6 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
 import React from "react";
-import Header from "../header/Header";
 import WebFooter from "../Footer";
 import dayjs from "dayjs";
 import Link from "next/link";
@@ -8,28 +6,13 @@ import PostCategory from "./PostCategorySection";
 import PostSearchSection from "./PostSearchSection";
 import RecentPostSection from "./RecentPostSection";
 import PostTagSection from "./PostTagSection";
+import Pagination from "./Pagination";
+import PostHeader from "./PostHeader";
 
 export default function Index({ posts }: any) {
   return (
     <>
-      <header
-        className="bg-cover bg-center h-64"
-        style={{
-          backgroundImage: `url('https://via.placeholder.com/1920x400')`,
-        }}
-      >
-        <div className="flex items-center justify-center h-full bg-gray-900 bg-opacity-50">
-          <div className="text-center">
-            <h1 className="text-white text-4xl font-bold uppercase">
-              Our Blog
-            </h1>
-            <p className="text-gray-300 mt-2">
-              Latest news, updates, and stories
-            </p>
-          </div>
-        </div>
-      </header>
-
+      <PostHeader />
       {/* <!-- Main Content --> */}
       <main className="container mx-auto px-6 py-16 flex flex-col lg:flex-row gap-12">
         {/* <!-- Posts Section --> */}
@@ -85,58 +68,21 @@ export default function Index({ posts }: any) {
           {/* <!-- Add more post articles as needed --> */}
 
           {/* <!-- Pagination --> */}
-          <div className="flex justify-center mt-8">
-            <nav className="flex space-x-2">
-              <a
-                href="#"
-                className="px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
-              >
-                Previous
-              </a>
-              <a
-                href="#"
-                className="px-3 py-2 bg-blue-600 text-white rounded-md"
-              >
-                1
-              </a>
-              <a
-                href="#"
-                className="px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
-              >
-                2
-              </a>
-              <a
-                href="#"
-                className="px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
-              >
-                3
-              </a>
-              <a
-                href="#"
-                className="px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
-              >
-                Next
-              </a>
-            </nav>
-          </div>
+          <Pagination />
         </section>
-
-        {/* <!-- Sidebar Section --> */}
+        {/* <!-- Sidebar Section --> */}wq
         <aside className="w-full lg:w-1/3">
           {/* <!-- Search --> */}
           <PostSearchSection />
-
           {/* <!-- Categories --> */}
           <PostCategory />
-
           {/* <!-- Recent Posts --> */}
           <RecentPostSection />
-
           {/* <!-- Tags --> */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          {/* <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Tags</h3>
             <PostTagSection />
-          </div>
+          </div> */}
         </aside>
       </main>
 

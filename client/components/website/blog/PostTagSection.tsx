@@ -1,6 +1,8 @@
 import React from "react";
 
-export default function PostTagSection() {
+export default function PostTagSection({ tags }: { tags: string[] }) {
+  console.log("tag", tags);
+
   return (
     <div className="flex flex-wrap gap-2">
       <a
