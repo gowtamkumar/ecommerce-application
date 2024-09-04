@@ -21,13 +21,13 @@ export default function HeaderRight() {
     <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">
       <CiSearch
         size={22}
-        className="font-medium cursor-pointer"
+        className="font-medium cursor-pointer "
         onClick={() => setOpen(true)}
       />
-      <Link href="/profile" className="cursor-pointer">
+      <Link href="/profile" className="cursor-pointer md:inline hidden">
         <CiHeart size={22} className="font-medium" />
       </Link>
-      <Link href="/checkout" className="cursor-pointer mt-1">
+      <Link href="/checkout" className="cursor-pointer mt-1 md:inline hidden">
         <Badge size="default" count={cart.carts.length}>
           <IoBagOutline size={22} className="font-medium" />
         </Badge>
@@ -63,7 +63,7 @@ export default function HeaderRight() {
       )}
       <Modal
         // title="Search Something"
-        centered
+        // centered
         open={open}
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}

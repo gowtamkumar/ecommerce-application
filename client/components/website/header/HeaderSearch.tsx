@@ -58,7 +58,7 @@ export default function HeaderSearch({ setOpen }: any) {
   //   </Select>
   // );
   return (
-    <div className="container mx-auto p-10">
+    <div className="container mx-auto md:p-10 py-6">
       <Search
         // addonBefore={selectBefore}
         width={100}

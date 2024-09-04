@@ -1,9 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { Menu, MenuProps } from "antd";
+import { Badge, Menu, MenuProps } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CiHeart, CiSearch } from "react-icons/ci";
+import { IoBagOutline } from "react-icons/io5";
+import { selectCart } from "@/redux/features/cart/cartSlice";
+import { useSelector } from "react-redux";
 export default function HeaderMenu() {
+  const cart = useSelector(selectCart);
   // const [current, setCurrent] = useState("mail");
 
   // const onClick: MenuProps["onClick"] = (e) => {
@@ -30,6 +35,15 @@ export default function HeaderMenu() {
           <Link href={item.url}>{item.label}</Link>
         </div>
       ))}
+
+      <Link href="/profile" className="cursor-pointer md:hidden inline">
+        <CiHeart size={22} className="font-medium" />
+      </Link>
+      <Link href="/checkout" className="cursor-pointer mt-1 md:hidden inline">
+        <Badge size="default" count={cart.carts.length}>
+          <IoBagOutline size={22} className="font-medium" />
+        </Badge>
+      </Link>
     </div>
   );
 }
