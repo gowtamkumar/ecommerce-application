@@ -4,6 +4,6 @@ export default function MainMenu() {
   return (
     <div className="text-center">
       <HeaderMenu />
-    </div>
+   </div>
   );
 }

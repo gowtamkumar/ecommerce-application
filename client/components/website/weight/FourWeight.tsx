@@ -4,7 +4,7 @@ import Subscribe from "../footer/Subscribe";
 export default function FourWeight() {
   return (
     <div>
-      <h2 className="mb-6 text-sm font-semibold uppercase">
+      <h2 className="mb-6 text-lg font-semibold uppercase">
         Newsletter Signup{" "}
       </h2>
       <p className="pb-4">

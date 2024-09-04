@@ -15,7 +15,7 @@ export default function FirstWeight({ data }: any) {
         width="0"
         height="0"
         sizes="100vw"
-        className="w-[10vh] h-[10vh]"
+        className="md:w-[10vh] md:h-[10vh] w-[20vh] h-[20vh]"
       />
       <p>{data.address}</p>
       <p>Mobile: {data.phone}</p>

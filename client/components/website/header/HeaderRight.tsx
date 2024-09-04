@@ -7,6 +7,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { CiSearch, CiHeart } from "react-icons/ci";
+
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
 
@@ -15,25 +16,22 @@ export default function HeaderRight() {
   const cart = useSelector(selectCart);
   const session = useSession();
   const profileImage = session.data?.user.image;
-  
+
   return (
-    <div className="flex gap-4 justify-between items-center">
+    <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">
       <CiSearch
         size={22}
         className="font-medium cursor-pointer"
         onClick={() => setOpen(true)}
       />
-
-      <Link href={"/profile"} className="cursor-pointer">
+      <Link href="/profile" className="cursor-pointer">
         <CiHeart size={22} className="font-medium" />
       </Link>
-
-      <Link href={"/checkout"} className="cursor-pointer mt-1">
+      <Link href="/checkout" className="cursor-pointer mt-1">
         <Badge size="default" count={cart.carts.length}>
           <IoBagOutline size={22} className="font-medium" />
         </Badge>
       </Link>
-
       {session.status === "authenticated" ? (
         <Dropdown
           menu={{ items: userProfileRoute as any }}

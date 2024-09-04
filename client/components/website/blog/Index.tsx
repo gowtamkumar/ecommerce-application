@@ -1,11 +1,10 @@
 import React from "react";
-import WebFooter from "../Footer";
+import WebFooter from "../footer/Footer";
 import dayjs from "dayjs";
 import Link from "next/link";
 import PostCategory from "./PostCategorySection";
 import PostSearchSection from "./PostSearchSection";
 import RecentPostSection from "./RecentPostSection";
-import PostTagSection from "./PostTagSection";
 import Pagination from "./Pagination";
 import PostHeader from "./PostHeader";
 
@@ -85,9 +84,6 @@ export default function Index({ posts }: any) {
           </div> */}
         </aside>
       </main>
-
-      {/* <!-- Footer --> */}
-      <WebFooter />
     </>
   );
 }

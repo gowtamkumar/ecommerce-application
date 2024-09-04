@@ -4,7 +4,7 @@ import FilterSidebar from "@/components/website/product-filter/FilterSidebar";
 import CategoryHeader from "@/components/website/product-filter/FilterHeader";
 import { Divider } from "antd";
 import ProductCard from "@/components/website/product/ProductCard";
-import WebFooter from "@/components/website/Footer";
+import WebFooter from "@/components/website/footer/Footer";
 
 export default function SingleCategory() {
   return (

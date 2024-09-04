@@ -4,7 +4,7 @@ import React from "react";
 export default function ThirdWeight() {
   return (
     <div>
-      <h2 className="mb-6 text-sm font-semibold uppercase">Compnay</h2>
+      <h2 className="mb-6 text-lg font-semibold uppercase">Compnay</h2>
       <ul className="font-medium">
         <li className="mb-4">
           <Link href="#" className="hover:underline">

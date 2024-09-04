@@ -5,6 +5,7 @@ import HeaderRight from "./HeaderRight";
 import HeaderSearch from "./HeaderSearch";
 import { getSettings } from "@/lib/apis/setting";
 import MainMenu from "./Menu";
+import MobileMenu from "./MobileMenu";
 
 export default async function Header() {
   //  const res = await saveVisitor({})
@@ -16,9 +17,27 @@ export default async function Header() {
       <TopBar />
       <div className="border-b-2">
         <div className="container mx-auto items-center py-4">
-          <div className="flex justify-between items-center ">
+          {/* <div className="flex md:justify-between items-center">
             <Logo settingData={setting} />
-            <MainMenu />
+            <div className="md:invisible visible">
+              icon
+            </div>
+
+              <MainMenu />
+            <div className="md:visible invisible">
+            </div>
+
+            <HeaderRight />
+          </div> */}
+
+          <div className="flex justify-between items-center">
+            <Logo settingData={setting} />
+            <div className="md:hidden">
+              <MobileMenu />
+            </div>
+            <div className="hidden md:inline md:order-2">
+              <MainMenu />
+            </div>
             <HeaderRight />
           </div>
         </div>

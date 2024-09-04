@@ -8,26 +8,17 @@ import Link from "next/link";
 import "swiper/css/navigation";
 
 export default function Slider({ banners }: any) {
-  // const contentStyle: React.CSSProperties = {
-  //   margin: 0,
-  //   height: "400px",
-  //   color: "black",
-  //   backgroundColor: "red",
-  //   lineHeight: "400px",
-  //   textAlign: "center",
-  //   background: "black",
-  // };
+
   return (
     <div className="container mx-auto bg-[#F6F6F6]">
-      <div className="grid grid-cols-12">
-        <div className="col-span-9">
+      <div className="grid md:grid-cols-12 grid-cols-1">
+        <div className="md:col-span-9">
           <Swiper
             modules={[Navigation]}
             spaceBetween={5}
             slidesPerView={1}
             navigation
             autoplay
-
             // navigation={{
             //   prevEl: '.prev',
             //   nextEl: '.next',
@@ -50,29 +41,32 @@ export default function Slider({ banners }: any) {
                 url: string;
               }) => (
                 <SwiperSlide key={image}>
-                  <div className="w-10/12 mx-auto h-[50vh]">
-                    <div className="grid grid-cols-2 items-center">
-                      <div className="">
-                        <h1 className="text-4xl font-bold">{title}</h1>
+                  <div className="md:w-10/12 mx-auto md:h-[50vh] md:p-0 p-5">
+                    <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
+                      <div className="md:order-1 order-2 text-center md:text-start">
+                        <h1 className="md:text-4xl text-2xl font-bold">
+                          {title}
+                        </h1>
                         <p className="my-4">{description}</p>
                         <Button size="large" type="primary">
                           <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>
                         </Button>
                       </div>
-
-                      <Image
-                        src={
-                          image
-                            ? `http://localhost:3900/uploads/${image}`
-                            : "/pos_software.png"
-                        }
-                        alt={image}
-                        loading="lazy"
-                        width="0"
-                        height="0"
-                        sizes="100vw"
-                        className="w-full h-[50vh]"
-                      />
+                      <div className="bg-slate-600 md:order-2 order-1">
+                        <Image
+                          src={
+                            image
+                              ? `http://localhost:3900/uploads/${image}`
+                              : "/pos_software.png"
+                          }
+                          alt={image}
+                          loading="lazy"
+                          width="0"
+                          height="0"
+                          sizes="100vw"
+                          className="w-full md:h-[50vh] h-[30vh] "
+                        />
+                      </div>
                     </div>
                   </div>
                 </SwiperSlide>
@@ -80,7 +74,7 @@ export default function Slider({ banners }: any) {
             )}
           </Swiper>
         </div>
-        <div className="col-span-3 bg-black">right</div>
+        <div className="md:col-span-3 bg-black">right</div>
       </div>
     </div>
   );

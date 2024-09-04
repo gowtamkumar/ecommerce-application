@@ -86,9 +86,8 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid gap-5 ${
-        global.productView ? "grid-cols-1" : "md:grid-cols-5"
-      }`}
+      className={`grid gap-5 ${global.productView ? "grid-cols-1" : "md:grid-cols-5"
+        }`}
     >
       {products?.map((item: any) => (
         <ProductItem key={item.id} item={item} />
@@ -141,28 +140,28 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           className="w-full h-50 mb-2"
         />
         <div className="p-2 text-sm">
-          <h3 className="font-semibold mb-2">{item.name.slice(0, 50)}</h3>
+          <h3 className="font-semibold text-sm mb-2">{item.name.slice(0, 50)}</h3>
           <div className="flex justify-between items-center">
-            <p className="text-gray-500 mb-2">
+            <p className="text-gray-500 mb-2 text-xs">
               ৳{" "}
               {item?.discountId
                 ? (price + taxAmount - disAmount).toFixed(2)
                 : (price + taxAmount).toFixed(2)}
             </p>
             <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
-              {stockQty > 0 ? "In Stock" : "Out of Stock"}
+              <p className="text-xs"> {stockQty > 0 ? "In Stock" : "Out of Stock"}</p>
             </div>
           </div>
           {item?.discountId && (
-            <>
-              <span className="line-through text-gray-500">
+            <div className="text-xs">
+              <span className="line-through text-gray-500 ">
                 ৳ {(price + taxAmount).toFixed(2)}
               </span>
               <span className="text-red-600 ml-2">
                 -{discount?.value}
                 {discount?.discountType === "Percentage" ? "%" : "BDT"}
               </span>
-            </>
+            </div>
           )}
           <span className="flex gap-1 items-center">
             <Rate disabled value={productRating || 0} />({reviewsCount})

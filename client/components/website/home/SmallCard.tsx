@@ -9,17 +9,28 @@ export default function SmallCard({ categories }: any) {
   const router = useRouter();
 
   return (
-    <div className="w-8/12 mx-auto flex p-3 items-center justify-center bg-white ">
+    <div className="md:w-8/12 mx-auto flex p-3 items-center justify-center bg-white ">
       <Swiper
         modules={[Navigation, Scrollbar]}
         spaceBetween={5}
-        slidesPerView={5}
         navigation
+        breakpoints={{
+          // when window width is >= 640px
+          640: {
+            width: 640,
+            slidesPerView: 2,
+          },
+          // when window width is >= 768px
+          768: {
+            width: 768,
+            slidesPerView: 5,
+          },
+        }}
 
-      // pagination={{ clickable: true }}
-      // scrollbar={{ draggable: true }}
-      // onSwiper={(swiper) => console.log(swiper)}
-      // onSlideChange={() => console.log("slide change")}
+        // pagination={{ clickable: true }}
+        // scrollbar={{ draggable: true }}
+        // onSwiper={(swiper) => console.log(swiper)}
+        // onSlideChange={() => console.log("slide change")}
       >
         {(categories?.data || []).map((item: any, idx: number) => {
           return (
@@ -43,7 +54,7 @@ export default function SmallCard({ categories }: any) {
                       width={70}
                       height={70}
 
-                    // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   </div>
                   <p className="hover:underline">{item.name}</p>

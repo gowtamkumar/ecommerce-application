@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import WebFooter from "@/components/website/Footer";
+import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import Link from "next/link";
 

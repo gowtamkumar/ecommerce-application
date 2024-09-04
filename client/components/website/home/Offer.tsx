@@ -12,8 +12,20 @@ export default function Offer() {
       <Swiper
         modules={[Navigation, Scrollbar]}
         spaceBetween={5}
-        slidesPerView={3}
+        // slidesPerView={3}
         navigation
+        breakpoints={{
+          // when window width is >= 640px
+          640: {
+            width: 640,
+            slidesPerView: 1,
+          },
+          // when window width is >= 768px
+          768: {
+            width: 768,
+            slidesPerView: 2,
+          },
+        }}
         // pagination={{ clickable: true }}
         // scrollbar={{ draggable: true }}
         // onSwiper={(swiper) => console.log(swiper)}

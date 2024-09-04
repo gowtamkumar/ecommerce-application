@@ -6,10 +6,10 @@ import {
   FaLinkedinIn,
   FaTwitter,
 } from "react-icons/fa";
-import FourWeight from "./weight/FourWeight";
-import ThirdWeight from "./weight/ThirdWeight";
-import SecondWeight from "./weight/SecondWeight";
-import FirstWeight from "./weight/FirstWeight";
+import FourWeight from "../weight/FourWeight";
+import ThirdWeight from "../weight/ThirdWeight";
+import SecondWeight from "../weight/SecondWeight";
+import FirstWeight from "../weight/FirstWeight";
 
 export default async function WebFooter() {
   const setting = await getSettings();
@@ -18,17 +18,17 @@ export default async function WebFooter() {
   return (
     <footer className="bg-gray-800 border-t-2 py-10 text-white">
       <div className="w-8/12 mx-auto">
-        <div className="grid grid-cols-2 gap-2 py-6 lg:py-8 md:grid-cols-4 ">
+        <div className="grid grid-cols-1 text-center md:text-start gap-2 py-6 lg:py-8 md:grid-cols-4 ">
           <FirstWeight data={settingData} />
           <SecondWeight />
           <ThirdWeight />
           <FourWeight />
         </div>
-        <div className="border-t-2 px-4 text-center py-6 md:flex md:items-center md:justify-between ">
+        <div className="flex-row border-t-2 px-4 text-center py-6 md:flex md:items-center md:justify-between ">
           <span className="text-sm  sm:text-center">
             © {new Date().getFullYear()} {settingData.footerOption?.copyRight}
           </span>
-          <div className="flex mt-4 sm:justify-center md:mt-0 space-x-5 rtl:space-x-reverse">
+          <div className="flex justify-center mt-4 md:justify-center md:mt-0 space-x-5 rtl:space-x-reverse text-center">
             {settingData.socialLink?.linkedinUrl && (
               <Link
                 href={settingData.socialLink?.facebookUrl}

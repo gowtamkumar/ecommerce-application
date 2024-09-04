@@ -1,4 +1,4 @@
-import WebFooter from "@/components/website/Footer";
+import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import { authOptions } from "@/lib/authOption";
 import { getServerSession } from "next-auth";

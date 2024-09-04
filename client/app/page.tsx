@@ -1,4 +1,4 @@
-import WebFooter from "@/components/website/Footer";
+import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import React from "react";
 import Category from "@/components/website/home/Category";
@@ -24,11 +24,10 @@ export default async function Home() {
 
       <main>
         {/* all category show */}
-        <section className="py-10 bg-[#F6F6F6] border-t-2">
+        <section className="md:py-10 p-5 bg-[#F6F6F6] border-t-2">
           <h2 className="text-xl pb-8 text-center font-semibold ">
             Shop by Category
           </h2>
-          
           <Category />
         </section>
 
@@ -36,7 +35,7 @@ export default async function Home() {
           <SellerAds />
         </section> */}
         {/* Popular products */}
-        <section className="py-5 w-8/12 mx-auto">
+        <section className="md:py-5 p-5 md:w-8/12 mx-auto">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold pb-8">Best Seller</h2>
             <Link href={"/products"} className="hover:underline text-xl">
@@ -55,7 +54,7 @@ export default async function Home() {
           />
         </section>
         {/* Featured Products */}
-        <section className="w-8/12 mx-auto py-5">
+        <section className="md:w-8/12 mx-auto md:py-5 p-5">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
             <Link href={"/products"} className="hover:underline">
@@ -66,7 +65,7 @@ export default async function Home() {
         </section>
 
         {/* More Discover */}
-        <section className="py-5 text-center bg-[#F6F6F6]">
+        <section className="md:py-5 p-5 text-center bg-[#F6F6F6]">
           <Offer />
         </section>
         {/* More Discover */}

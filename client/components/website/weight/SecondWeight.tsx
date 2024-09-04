@@ -4,7 +4,7 @@ import React from "react";
 export default function SecondWeight() {
   return (
     <div>
-      <h2 className="mb-6 text-sm font-semibold uppercase">Help center</h2>
+      <h2 className="mb-6 text-lg font-semibold uppercase">Help center</h2>
       <ul className=" dark:text-gray-400 font-medium">
         <li className="mb-4">
           <Link href="/about" className="hover:underline">

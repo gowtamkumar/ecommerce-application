@@ -6,7 +6,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import Image from "next/image";
 
-
 const SellerAds = ({ banners }: any) => {
   return (
     <div>
@@ -15,7 +14,8 @@ const SellerAds = ({ banners }: any) => {
         // spaceBetween={5}
         slidesPerView={1}
         autoplay
-        // navigation
+
+       // navigation
         // pagination={{ clickable: true }}
         // scrollbar={{ draggable: true }}
         // onSwiper={(swiper) => console.log(swiper)}
@@ -24,17 +24,19 @@ const SellerAds = ({ banners }: any) => {
         {(banners || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
-              <div className="w-8/12 mx-auto grid min-h-[40vh] grid-cols-12 items-center gap-5">
-                <div className="col-span-12 lg:col-span-6 lg:text-start text-center">
-                  <h1 className="text-4xl font-bold">{item.title}</h1>
+              <div className="md:w-8/12 mx-auto grid md:min-h-[40vh] md:grid-cols-12 items-center gap-5">
+                <div className="col-span-12 lg:col-span-6 lg:text-start text-center order-2 md:order-1">
+                  <h1 className="md:text-4xl text-2xl font-bold">
+                    {item.title}
+                  </h1>
                   <p className="my-3 font-medium">{item.description}</p>
                   <Button size="large" type="primary">
                     <Link href="/products"> Shop Now</Link>
                   </Button>
                 </div>
-                <div className="col-span-12 lg:col-span-6">
-                  <div className="relative my-20 w-[25vw] h-[50vh] items-center rounded-xl bg-red-300">
-                    <div className="absolute w-[25vw] h-[50vh] top-[-35] right-[-30] rounded-xl bg-white">
+                <div className="col-span-12 flex justify-center lg:col-span-6 order-1  md:order-1">
+                  <div className="relative md:my-20 my-10 md:w-[25vw] md:h-[50vh] w-[75vw] h-[30vh] items-center rounded-xl bg-red-300">
+                    <div className="absolute md:w-[25vw] md:h-[50vh] w-[75vw] h-[30vh] top-[-35] right-[-30] rounded-xl bg-white">
                       <Image
                         src={
                           item.image

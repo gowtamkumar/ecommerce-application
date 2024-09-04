@@ -23,7 +23,8 @@ export default function HeaderMenu() {
   ];
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="md:flex flex-row items-center gap-4">
+      {/* <Menu mode="horizontal" items={menu} /> */}
       {menu.map((item, idx) => (
         <div key={idx} className="font-mono">
           <Link href={item.url}>{item.label}</Link>
