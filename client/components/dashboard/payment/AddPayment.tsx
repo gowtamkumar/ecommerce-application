@@ -92,8 +92,9 @@ const AddPayment = () => {
       width={500}
       zIndex={1050}
       open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+        global.action.payment &&
+        (global.action.type === ActionType.CREATE ||
+          global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
@@ -104,13 +105,32 @@ const AddPayment = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        initialValues={{ paymentType: "Debit", paymentDate: dayjs() }}
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
+        <Form.Item name="orderId" hidden>
+          <Input />
+        </Form.Item>
+
         <div className="my-5 flex items-start justify-between gap-4">
           <div className="grid flex-grow grid-cols-1 gap-5">
+            <div className="col-span-1">
+              <Form.Item
+                name="paymentDate"
+                label="Payment Date"
+                rules={[
+                  {
+                    required: true,
+                    message: "Date is required",
+                  },
+                ]}
+              >
+                <DatePicker />
+              </Form.Item>
+            </div>
             <div className="col-span-1">
               <Form.Item
                 name="userId"
@@ -134,7 +154,7 @@ const AddPayment = () => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  {users.map((item: { name: string; id: number }) => (
+                  {(users || []).map((item: { name: string; id: number }) => (
                     <Select.Option key={item.id} value={item.id}>
                       {item.name}
                     </Select.Option>
@@ -160,30 +180,40 @@ const AddPayment = () => {
 
             <div className="col-span-1">
               <Form.Item
-                name="paymentMethod"
-                label="Payment Method"
+                name="paymentType"
+                label="Payment Type"
                 className="mb-1"
+                rules={[
+                  {
+                    required: true,
+                    message: "Payment Type is required",
+                  },
+                ]}
               >
                 <Select placeholder="Select">
-                  <Select.Option value="Cash"> Cash </Select.Option>
-                  <Select.Option value="SSLCOMMERZ"> SSLCOMMERZ </Select.Option>
-                  <Select.Option value="Stripe"> Stripe </Select.Option>
+                  <Select.Option value="Debit"> Debit </Select.Option>
+                  <Select.Option value="Credit"> Credit </Select.Option>
                 </Select>
               </Form.Item>
             </div>
 
             <div className="col-span-1">
               <Form.Item
-                name="paymentDate"
-                label="Payment Date"
+                name="paymentMethod"
+                label="Payment Method"
+                className="mb-1"
                 rules={[
                   {
                     required: true,
-                    message: "Date is required",
+                    message: "Payment Method is required",
                   },
                 ]}
               >
-                <DatePicker />
+                <Select placeholder="Select">
+                  <Select.Option value="Cash"> Cash </Select.Option>
+                  <Select.Option value="SSLCOMMERZ"> SSLCOMMERZ </Select.Option>
+                  <Select.Option value="Stripe"> Stripe </Select.Option>
+                </Select>
               </Form.Item>
             </div>
 

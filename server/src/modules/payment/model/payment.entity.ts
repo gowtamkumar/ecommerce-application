@@ -11,6 +11,7 @@ import {
 import { OrderEntity } from "../../order/model/order.entity";
 import { OrderPaymentMethod } from "../../order/enums";
 import { UserEntity } from "../../auth/model/user.entity";
+import { PaymentType } from "../enums/payment-type.enum";
 
 @Entity("payments")
 export class PaymentEntity {
@@ -29,6 +30,13 @@ export class PaymentEntity {
   paymentDate!: string;
 
   @Column({
+    name: "payment_type",
+    type: "enum",
+    enum: PaymentType,
+  })
+  paymentType!: PaymentType;
+
+  @Column({
     name: "payment_method",
     type: "enum",
     enum: OrderPaymentMethod,
@@ -38,7 +46,7 @@ export class PaymentEntity {
   @Column({ type: "numeric", precision: 15, scale: 2 })
   amount!: number;
 
-  @Column({ name: "user_id" })
+  @Column({ name: "user_id", nullable: true })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.payments, {
     onDelete: "CASCADE",
@@ -46,7 +54,7 @@ export class PaymentEntity {
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
 
-  @Column({name: 'is_successfull', type: "boolean", default: true })
+  @Column({ name: "is_successfull", type: "boolean", default: true })
   isSuccessfull!: boolean;
 
   @Column({ name: "transaction_id", nullable: true })

@@ -46,8 +46,9 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Approved' THEN 1 ELSE 0 END) AS total_approved_count,
           SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_sale_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_order_count,
-          SUM(CASE WHEN status = 'Returned' THEN 1 ELSE 0 END) AS total_order_return_count,
-          SUM(CASE WHEN status = 'Returned' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_return_amount,
+          SUM(CASE WHEN status = 'Returned' THEN 1 ELSE 0 END) AS total_sale_return_count,
+          SUM(CASE WHEN status = 'Returned' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_return_amount,
+          SUM(CASE WHEN status = 'Returned' THEN  COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_return_shipping_amount,
           SUM(CASE WHEN status = 'Pending' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_amount,
           SUM(CASE WHEN status = 'Completed' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_amount
       FROM orders where order_date BETWEEN '${fromDate}' AND '${toDate}'

@@ -31,6 +31,7 @@ export default function Payment() {
             onClick={() =>
               dispatch(
                 setAction({
+                  payment:true,
                   type: ActionType.CREATE,
                 })
               )

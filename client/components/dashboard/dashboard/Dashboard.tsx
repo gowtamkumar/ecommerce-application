@@ -24,17 +24,16 @@ const Dashboard = () => {
   const {
     total_order_amount,
     total_sale_amount,
-    total_order_return_amount,
+    total_sale_return_amount,
     total_active_user,
     top_selling_product,
     top_customers,
     product_alert_stock_report,
     loss_profit,
     user_activity,
+    total_sale_return_shipping_amount,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
-
-  console.log("total_order_amount", dashboardReports);
 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
@@ -113,7 +112,7 @@ const Dashboard = () => {
 
         <WidgetStats
           title="ORDER RETURN"
-          value={total_order_return_amount || "0.00"}
+          value={total_sale_return_amount || "0.00"}
           icon={<RollbackOutlined />}
           color="primary"
         />
@@ -136,7 +135,10 @@ const Dashboard = () => {
             <div>
               <h4> Profit & Loss ৳</h4>
               <Statistic
-                value={(+saleAmount - +purchaseAmount).toFixed(2)}
+                value={(
+                  +saleAmount -
+                  (+purchaseAmount + +total_sale_return_shipping_amount)
+                ).toFixed(2)}
                 // formatter={formatter}
                 prefix={
                   saleAmount >= purchaseAmount ? (
@@ -146,7 +148,10 @@ const Dashboard = () => {
                   )
                 }
                 valueStyle={{
-                  color: saleAmount >= purchaseAmount ? "green" : "red",
+                  color:
+                    saleAmount >= purchaseAmount + +total_sale_return_shipping_amount
+                      ? "green"
+                      : "red",
                 }}
               />
             </div>

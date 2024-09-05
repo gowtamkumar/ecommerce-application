@@ -14,6 +14,7 @@ import { ProductVariantEntity } from "../../product-variant/model/product-varian
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import dayjs from "dayjs";
 import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
+import { PaymentType } from "../../payment/enums/payment-type.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -209,11 +210,13 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     }
 
     const repositoryPayment = queryRunner.manager.getRepository(PaymentEntity);
+
     const newPayment = repositoryPayment.create({
       orderId: savedOrder.id,
       userId: req.id,
       paymentDate: dayjs(),
       paymentMethod,
+      paymentType: PaymentType.Debit,
       amount: +(+shippingAmount + +orderTotalAmount),
     });
     await repositoryPayment.save(newPayment);

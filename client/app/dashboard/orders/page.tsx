@@ -37,6 +37,8 @@ import dayjs from "dayjs";
 import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
 import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/share/getStatus";
+import { FaAmazonPay } from "react-icons/fa";
+import AddPayment from "@/components/dashboard/payment/AddPayment";
 interface DataType {
   key: React.Key;
   name: string;
@@ -393,6 +395,30 @@ const Page: React.FC = () => {
         <div className="flex gap-2 justify-end">
           <Button
             size="small"
+            icon={<FaAmazonPay />}
+            title="Payment"
+            className="me-1"
+            onClick={() => {
+              const amount = +value.orderTotalAmount + +value.shippingAmount;
+
+              dispatch(
+                setAction({
+                  payment: true,
+                  type: ActionType.CREATE,
+                  payload: {
+                    orderId: value.id,
+                    amount,
+                    paymentType: "Debit",
+                    paymentMethod: value.paymentMethod,
+                    userId: value.userId,
+                  },
+                })
+              );
+            }}
+          />
+
+          <Button
+            size="small"
             icon={<PlusOutlined />}
             title="Add Order Tracking"
             className="me-1"
@@ -406,6 +432,7 @@ const Page: React.FC = () => {
               )
             }
           />
+
           <Button
             size="small"
             icon={<UserAddOutlined />}
@@ -486,6 +513,7 @@ const Page: React.FC = () => {
       />
       {global.action.orderStatusUpdate && <OrderStatusChange />}
       {global.action.addOrderTracking && <AddOrderTracking />}
+      {global.action.payment && <AddPayment />}
     </div>
   );
 };

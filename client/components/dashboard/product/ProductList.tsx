@@ -30,6 +30,7 @@ interface DataType {
   urlSlug: string;
   singleImage: string;
   limitPurchaseQty: number;
+
   alertQty: number;
   discount: any;
   description: string;
@@ -231,8 +232,7 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${
-              value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -245,6 +245,7 @@ const ProductList: React.FC = () => {
       sorter: (a, b) => a.limitPurchaseQty - b.limitPurchaseQty,
     },
 
+   
     {
       title: "Status",
       key: "status",
@@ -319,7 +320,7 @@ const ProductList: React.FC = () => {
         key: "weight",
         dataIndex: "weight",
       },
-      { title: "Qty", dataIndex: "stockQty", key: "stockQty" },
+      { title: "Stock Qty", dataIndex: "stockQty", key: "stockQty" },
       {
         title: "Purchse Price",
         dataIndex: "purchasePrice",
@@ -370,8 +371,7 @@ const ProductList: React.FC = () => {
           <h2>
             Discount:
             {value?.discount &&
-              `${value?.discount.value}${
-                value?.discount.discountType === "Percentage" ? "%" : "BDT"
+              `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
               }`}
           </h2>
           <h2>Tax: {value.tax.value}%</h2>
