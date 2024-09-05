@@ -122,7 +122,7 @@ export default function SingleProduct() {
   }
 
   return (
-    <div className="w-8/12 mx-auto">
+    <div className="md:py-5 p-2 md:w-8/12 mx-auto">
       {/* <div className="py-2">
         <Breadcrumb
           separator=">"
@@ -144,7 +144,7 @@ export default function SingleProduct() {
           ]}
         />
       </div> */}
-      <div className=" bg-white  grid grid-cols-1 md:grid-cols-4 pt-4">
+      <div className="bg-white grid grid-cols-1 md:grid-cols-4 pt-4">
         <div className="col-span-1">
           <ProductImageGallery images={product.images} />
         </div>
@@ -157,7 +157,7 @@ export default function SingleProduct() {
             setCheckStock={setCheckStock}
           />
         </div>
-        <div className="bg-slate-400">
+        <div className="bg-slate-400 text-center">
           We can show any thing
           {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>

@@ -10,12 +10,12 @@ export default function Products() {
   return (
     <>
       <Header />
-      <section className="w-8/12 mx-auto py-5">
-        <div className="grid grid-cols-12">
-          <div className="col-span-2 p-3">
+      <section className="lg:w-8/12 mx-auto md:py-5 px-3">
+        <div className="grid md:grid-cols-12">
+          <div className="md:col-span-2 py-3">
             <FilterSidebar />
           </div>
-          <div className="col-span-10">
+          <div className="md:col-span-10">
             <CategoryHeader />
             <Divider />
             <ProductCard />

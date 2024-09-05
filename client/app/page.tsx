@@ -15,7 +15,6 @@ export default async function Home() {
     <>
       <header>
         <Header />
-
         <Slider
           banners={(banners.data || []).filter(
             (item: { type: string }) => item.type === "Slider"
@@ -25,7 +24,7 @@ export default async function Home() {
 
       <main>
         {/* all category show */}
-        <section className="md:py-7 p-5 bg-[#F6F6F6] border-t-2">
+        <section className="md:py-7 p-3 bg-[#F6F6F6] border-t-2">
           <h2 className="text-xl pb-8 text-center font-semibold ">
             Shop by Category
           </h2>
@@ -36,7 +35,7 @@ export default async function Home() {
           <SellerAds />
         </section> */}
         {/* Popular products */}
-        <section className="md:py-5 p-5 md:w-8/12 mx-auto">
+        <section className="md:py-5 p-3 md:w-8/12 mx-auto">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold pb-8">Best Seller</h2>
             <Link href={"/products"} className="hover:underline text-xl">
@@ -47,7 +46,7 @@ export default async function Home() {
         </section>
 
         {/* product banner */}
-        <section className="py-10 bg-[#F6F6F6]">
+        <section className="py-10 text-center bg-[#F6F6F6]">
           <SellerAds
             banners={(banners.data || []).filter(
               (item: { type: string }) => item.type === "Middle"
@@ -55,7 +54,7 @@ export default async function Home() {
           />
         </section>
         {/* Featured Products */}
-        <section className="md:w-8/12 mx-auto md:py-5 p-5">
+        <section className="md:w-8/12 mx-auto md:py-5 p-3">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
             <Link href={"/products"} className="hover:underline">
@@ -66,7 +65,7 @@ export default async function Home() {
         </section>
 
         {/* More Discover */}
-        <section className="md:py-5 p-5 text-center bg-[#F6F6F6]">
+        <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
           <Offer />
         </section>
         {/* More Discover */}

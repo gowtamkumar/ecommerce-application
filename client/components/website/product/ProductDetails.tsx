@@ -103,7 +103,9 @@ const ProductDetails = ({
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-2">{product?.name}</h1>
+      <h1 className="md:text-2xl md:font-bold mb-2 font-semibold text-lg">
+        {product?.name}
+      </h1>
       <h2>
         <Rate
           disabled
@@ -124,20 +126,29 @@ const ProductDetails = ({
       </h2>
       <p className="text-gray-700 mb-4">{product?.shortDescription}</p>
 
-      <div className="flex items-center mb-4 jus">
-        <span className="text-2xl font-semibold text-blue-600 mr-4">
-          ৳{" "}
-          {product.discountId
-            ? (
+      <div className="md:flex-row items-center mb-4">
+        <div className="flex justify-around">
+          <span className="text-2xl font-semibold text-blue-600 mr-4">
+            ৳{" "}
+            {product.discountId
+              ? (
                 +price +
                 +taxAmount -
                 productDiscountCalculation(product)
               ).toFixed(2)
-            : (+price + +taxAmount || 0).toFixed(2)}
-        </span>
+              : (+price + +taxAmount || 0).toFixed(2)}
+          </span>
+
+          {checkStock > 0 ? (
+            <div className="text-green-500 mx-3">In Stock</div>
+          ) : (
+            <div className="text-red-500 mx-3">Out of Stock</div>
+          )}
+        </div>
+
 
         {product?.discountId ? (
-          <>
+          <div className="flex justify-around">
             <span className="line-through text-gray-500">
               ৳ {(+price + +taxAmount || 0).toFixed(2)}
             </span>
@@ -145,13 +156,10 @@ const ProductDetails = ({
               - {product?.discount?.value}
               {product?.discount?.discountType === "Percentage" ? "%" : "BDT"}
             </span>
-          </>
+          </div>
         ) : null}
-        {checkStock > 0 ? (
-          <div className="text-green-500 mx-3">In Stock</div>
-        ) : (
-          <div className="text-red-500 mx-3">Out of Stock</div>
-        )}
+
+
       </div>
       <Divider />
 

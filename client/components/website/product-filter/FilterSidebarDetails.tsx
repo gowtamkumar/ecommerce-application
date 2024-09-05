@@ -67,38 +67,36 @@ export default function FilterSidebarDetails({
   return (
     <aside className="shadow-sm px-1 text-center">
       <div className="flex justify-between">
-        <h2 className="text-lg font-bold mb-2">Filters</h2>
-        <Button onClick={filterClear}>Clear</Button>
+        <h2 className="text-lg font-bold md:mb-2">Filters</h2>
+        <Button size="middle" onClick={filterClear}>Clear</Button>
       </div>
 
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Price </p>
       </Divider>
-      <div className="flex">
-        {/* <Space.Compact> */}
+      <div className="md:flex">
         <InputNumber
           placeholder="Min"
           value={price.minPrice}
           onChange={(value) => setPrice({ ...price, minPrice: value })}
-          size="small"
+          size="middle"
+          className="w-full"
         />
         <InputNumber
           placeholder="Max"
           value={price.maxPrice}
           onChange={(value) => setPrice({ ...price, maxPrice: value })}
-          size="small"
+          size="middle"
+          className="w-full"
         />
-
-        {/* </Space.Compact> */}
       </div>
       <Button
         onClick={() => {
           dispatch(setProductFilter({ ...global.productFilter, ...price }));
         }}
         type="default"
-        size="small"
+        size="middle"
         className="mt-1"
-        // style={{ width: '100%' }}
       >
         Apply
       </Button>
@@ -106,11 +104,13 @@ export default function FilterSidebarDetails({
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Discount </p>
       </Divider>
-      <Slider
-        marks={marks}
-        value={global.productFilter.discount}
-        onChange={(value) => handleFilter(value, "discount")}
-      />
+      <div className="px-3">
+        <Slider
+          marks={marks}
+          value={global.productFilter.discount}
+          onChange={(value) => handleFilter(value, "discount")}
+        />
+      </div>
 
       <ul className="space-y-2">
         <Divider orientation="left" className="font-semibold">
