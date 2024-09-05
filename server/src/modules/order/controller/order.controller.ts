@@ -13,7 +13,7 @@ import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.e
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import dayjs from "dayjs";
-import { OrderPaymentMethod, PaymentStatus } from "../enums";
+import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -176,11 +176,11 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
           orderId: savedOrder.id,
         }))
       );
-      const orderItemsReturn = await repoOrderItems.save(newOrderItems);
+      const orderSaleItems = await repoOrderItems.save(newOrderItems);
 
       const productVariantRepo =
         queryRunner.manager.getRepository(ProductVariantEntity);
-      for (const item of orderItemsReturn) {
+      for (const item of orderSaleItems) {
         const findProductVariant = await productVariantRepo.findOne({
           where: { id: item.productVariantId },
         });
@@ -295,6 +295,11 @@ export const orderStatusUpdate = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
+    const queryRunner = connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
 
     console.log("validation.error", validation.error);
@@ -305,25 +310,65 @@ export const orderStatusUpdate = asyncHandler(
       });
     }
 
-    console.log("tesitn.....");
+    const repository = await queryRunner.manager.getRepository(OrderEntity);
 
-    const repository = await connection.getRepository(OrderEntity);
-
-    const result = await repository.findOne({ where: { id } });
+    const result = await repository.findOne({
+      where: { id },
+      relations: ["orderItems"],
+    });
 
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
-    const updateData = await repository.merge(result, validation.data);
+    try {
+      if (validation.data.status === OrderStatus.Returned) {
+        const productVariantRepo =
+          queryRunner.manager.getRepository(ProductVariantEntity);
+        for (const item of result.orderItems) {
+          const findProductVariant = await productVariantRepo.findOne({
+            where: { id: item.productVariantId },
+          });
 
-    const save = await repository.save(updateData);
+          if (findProductVariant) {
+            let currentStock =
+              (+findProductVariant.stockQty || 0) + (+item.qty || 0);
 
-    return res.status(200).json({
-      success: true,
-      msg: `Order Status Update of id ${req.params.id}`,
-      data: save,
-    });
+            await productVariantRepo.save({
+              id: findProductVariant.id,
+              stockQty: currentStock,
+            });
+          }
+        }
+      }
+
+      // const updateData = await repository.merge({
+      //   id: result.id,
+      //   status: validation.data.status,
+      // });
+
+      const save = await repository.save({
+        id: result.id,
+        status: validation.data.status,
+      });
+
+      await queryRunner.commitTransaction();
+
+      return res.status(200).json({
+        success: true,
+        msg: `Order Status Update of id ${req.params.id}`,
+        data: save,
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.error("Transaction failed:", error);
+      return res.status(500).json({
+        success: false,
+        msg: "Failed to create Order",
+      });
+    } finally {
+      await queryRunner.release();
+    }
   }
 );
 

@@ -414,11 +414,19 @@ const Page: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  assign: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })
               )
             }
+          />
+          <Button
+            size="small"
+            icon={<CheckOutlined />}
+            title="Renew Order"
+            className="me-1"
+            disabled={value.status !== "Returned"}
           />
           <Button
             size="small"
@@ -433,6 +441,9 @@ const Page: React.FC = () => {
                   payload: { id: value.id },
                 })
               )
+            }
+            disabled={
+              value.status === "Completed" || value.status === "Returned"
             }
           />
           <Popconfirm

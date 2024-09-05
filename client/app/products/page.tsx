@@ -10,7 +10,7 @@ export default function Products() {
   return (
     <>
       <Header />
-      <section className="lg:w-8/12 mx-auto md:py-5 px-3">
+      <section className="lg:w-8/12 mx-auto lg:py-5 px-3">
         <div className="grid md:grid-cols-12">
           <div className="md:col-span-2 py-3">
             <FilterSidebar />

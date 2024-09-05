@@ -34,8 +34,7 @@ const Dashboard = () => {
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
-  console.log("total_order_amount", total_order_amount);
-  
+  console.log("total_order_amount", dashboardReports);
 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
