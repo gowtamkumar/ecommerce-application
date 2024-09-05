@@ -421,13 +421,13 @@ const Page: React.FC = () => {
               )
             }
           />
-          <Button
+          {/* <Button
             size="small"
             icon={<CheckOutlined />}
             title="Renew Order"
             className="me-1"
             disabled={value.status !== "Returned"}
-          />
+          /> */}
           <Button
             size="small"
             icon={<CheckOutlined />}
