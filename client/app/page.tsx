@@ -4,13 +4,14 @@ import React from "react";
 import Category from "@/components/website/home/Category";
 import ProductCard from "@/components/website/product/ProductCard";
 import SellerAds from "@/components/website/home/SellerAds";
-import MoreDiscover from "@/components/website/home/MoreDiscover";
-import Offer from "@/components/website/home/Offer";
+import Discount from "@/components/website/home/Discount";
 import Link from "next/link";
 import { getBanners } from "@/lib/apis/banner";
 import Slider from "@/components/website/banner/Slider";
+import {getFilterDiscounts } from "@/lib/apis/discount";
 export default async function Home() {
   const banners = await getBanners();
+  const discounts = await getFilterDiscounts({ type: "Discount" });
   return (
     <>
       <header>
@@ -66,7 +67,7 @@ export default async function Home() {
 
         {/* More Discover */}
         <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
-          <Offer />
+          <Discount discounts={discounts} />
         </section>
         {/* More Discover */}
         {/* <section className="w-8/12 mx-auto py-5 text-center">

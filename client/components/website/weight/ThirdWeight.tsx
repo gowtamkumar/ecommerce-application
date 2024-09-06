@@ -7,7 +7,7 @@ export default function ThirdWeight() {
       <h2 className="mb-6 text-lg font-semibold uppercase">Compnay</h2>
       <ul className="font-medium">
         <li className="mb-4">
-          <Link href="#" className="hover:underline">
+        <Link href="/privacy-policy" className="hover:underline">
             Privacy Policy
           </Link>
         </li>
@@ -17,7 +17,7 @@ export default function ThirdWeight() {
           </Link>
         </li>
         <li className="mb-4">
-          <Link href="#" className="hover:underline">
+          <Link href="/terms-conditions" className="hover:underline">
             Terms &amp; Conditions
           </Link>
         </li>

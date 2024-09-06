@@ -17,7 +17,7 @@ export default function SecondWeight() {
           </Link>
         </li>
         <li className="mb-4">
-          <Link href="#" className="hover:underline">
+          <Link href="/privacy-policy" className="hover:underline">
             Privacy Policy
           </Link>
         </li>
