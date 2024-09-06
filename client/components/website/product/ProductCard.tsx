@@ -37,8 +37,7 @@ const ProductCard: React.FC = () => {
     discount,
     search: newSearchs,
   } = global.productFilter;
-  
-    console.log("🚀 ~ discount:", discount)
+
 
   let customQuery = "";
   if (categoryIdParams) customQuery += categoryIdParams;

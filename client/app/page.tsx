@@ -8,7 +8,7 @@ import Discount from "@/components/website/home/Discount";
 import Link from "next/link";
 import { getBanners } from "@/lib/apis/banner";
 import Slider from "@/components/website/banner/Slider";
-import {getFilterDiscounts } from "@/lib/apis/discount";
+import { getFilterDiscounts } from "@/lib/apis/discount";
 export default async function Home() {
   const banners = await getBanners();
   const discounts = await getFilterDiscounts({ type: "Discount" });

@@ -35,7 +35,7 @@ export default function HeaderLogo({ settingData }: any) {
           loading="lazy"
           width={50}
           height={50}
-          className="mx-auto h-10 w-auto"
+          // className="mx-auto h-10 w-auto"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </Link>
