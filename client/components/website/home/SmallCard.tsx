@@ -24,12 +24,12 @@ export default function SmallCard({ categories }: any) {
         breakpoints={{
           // when window width is >= 640px
           640: {
-            width: 640,
+            // width: 640,
             slidesPerView: 2,
           },
           // when window width is >= 768px
           768: {
-            width: 768,
+            // width: 768,
             slidesPerView: 5,
           },
         }}

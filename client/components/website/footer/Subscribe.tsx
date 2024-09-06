@@ -17,35 +17,31 @@ export default function Subscribe() {
   }
 
   return (
-    <>
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError={true}
-      >
-        {success}
-        <div className="flex">
-          <Space.Compact>
-            <Form.Item
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input E-mail",
-                },
-              ]}
-            >
-              <Input placeholder="Enter your email" size="large" />
-            </Form.Item>
+    <Form
+      layout="vertical"
+      form={form}
+      onFinish={handleSubmit}
+      autoComplete="off"
+      scrollToFirstError={true}
+    >
+      {success}
+      <Space.Compact>
+        <Form.Item
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input E-mail",
+            },
+          ]}
+        >
+          <Input placeholder="Enter your email" size="large" />
+        </Form.Item>
 
-            <Button type="primary" size="large" htmlType="submit">
-              Subscribe
-            </Button>
-          </Space.Compact>
-        </div>
-      </Form>
-    </>
+        <Button type="primary" size="large" htmlType="submit">
+          Subscribe
+        </Button>
+      </Space.Compact>
+    </Form>
   );
 }

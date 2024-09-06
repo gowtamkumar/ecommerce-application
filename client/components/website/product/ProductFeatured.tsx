@@ -9,91 +9,65 @@ import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  A11y,
+  EffectFade,
+  Navigation,
+  Pagination,
+  Scrollbar,
+} from "swiper/modules";
+import { SwiperNavButtons } from "../banner/SwiperNavButtons";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
-const ProductCard: React.FC = () => {
-  // const { category } = useParams<{ category: string }>();
-  // console.log("🚀 ~ category:", category)
-  const searchQuery = useSearchParams();
-  const searchParams = searchQuery.get("search");
-  const categoryIdParams = searchQuery.get("categoryId");
-
+const ProductFeatured = () => {
+  const [products, setProducts] = useState([]);
+  console.log("🚀 ~ products:", products);
   const global = useSelector(selectGlobal);
-  const { products } = useSelector(selectProduct);
+  // const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
-
-  const {
-    categoryId: categoryIds,
-    lowPrice,
-    highPrice,
-    brandId,
-    colorId,
-    rating,
-    minPrice,
-    maxPrice,
-    discount,
-    search: newSearchs,
-  } = global.productFilter;
-
-
-  let customQuery = "";
-  if (categoryIdParams) customQuery += categoryIdParams;
-  if (categoryIds)
-    customQuery += categoryIdParams ? `,${categoryIds}` : categoryIds;
-  // if (categoryIds) customQuery += categoryIds;
-
-  let newSearch = "";
-  if (searchParams) newSearch += searchParams;
-  if (newSearchs) newSearch += newSearchs;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const products = await getPublicProducts({
-          categoryId: customQuery,
-          brandId,
-          search: newSearch,
-          lowPrice,
-          highPrice,
-          colorId,
-          rating,
-          maxPrice,
-          minPrice,
-          discount,
-        });
-        dispatch(setProducts(products?.data));
+        const products = await getPublicProducts({});
+        setProducts(products?.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
 
     fetchProducts();
-  }, [
-    customQuery,
-    brandId,
-    newSearch,
-    lowPrice,
-    highPrice,
-    colorId,
-    rating,
-    maxPrice,
-    minPrice,
-    discount,
-    dispatch,
-  ]);
+  }, []);
 
   return (
-    <div
-      className={`grid gap-1 ${global.productView ? "grid-cols-1" : "lg:grid-cols-5"
-        }`}
+    <Swiper
+      modules={[Navigation, Pagination, Scrollbar, A11y, EffectFade]}
+      spaceBetween={5}
+      breakpoints={{
+        // when window width is >= 640px
+        640: {
+          // width: 640,
+          slidesPerView: 1,
+        },
+        // when window width is >= 768px
+        768: {
+          // width: 768,
+          slidesPerView: 5,
+        },
+      }}
+      pagination={{ clickable: true, dynamicBullets: true }}
     >
       {products?.map((item: any) => (
-        <ProductItem key={item.id} item={item} />
+        <SwiperSlide key={item.id}>
+          <ProductItem item={item} />
+        </SwiperSlide>
       ))}
-    </div>
+      <SwiperNavButtons />
+    </Swiper>
   );
 };
 
@@ -122,7 +96,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
-    <div className="bg-white border">
+    <div className="bg-white border ">
       <Link href={`/products/${item.id}`} title={item.name}>
         <Image
           src={
@@ -132,16 +106,15 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           }
           alt={item.name}
           loading="lazy"
-          // fill
           width={0}
           height={0}
-          // placeholder="blur"
-          // blurDataURL={image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="w-full h-50 mb-2"
         />
         <div className="p-2 text-sm">
-          <h3 className="font-semibold text-sm mb-2">{item.name.slice(0, 50)}</h3>
+          <h3 className="font-semibold text-sm mb-2">
+            {item.name.slice(0, 50)}
+          </h3>
           <div className="flex justify-between items-center">
             <p className="text-gray-500 mb-2 text-xs">
               ৳{" "}
@@ -150,7 +123,10 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                 : (price + taxAmount).toFixed(2)}
             </p>
             <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
-              <p className="text-xs"> {stockQty > 0 ? "In Stock" : "Out of Stock"}</p>
+              <p className="text-xs">
+                {" "}
+                {stockQty > 0 ? "In Stock" : "Out of Stock"}
+              </p>
             </div>
           </div>
           {item?.discountId && (
@@ -173,4 +149,4 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   );
 };
 
-export default ProductCard;
+export default ProductFeatured;

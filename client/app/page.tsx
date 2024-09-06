@@ -9,6 +9,7 @@ import Link from "next/link";
 import { getBanners } from "@/lib/apis/banner";
 import Slider from "@/components/website/banner/Slider";
 import { getFilterDiscounts } from "@/lib/apis/discount";
+import ProductFeatured from "@/components/website/product/ProductFeatured";
 export default async function Home() {
   const banners = await getBanners();
   const discounts = await getFilterDiscounts({ type: "Discount" });
@@ -62,7 +63,8 @@ export default async function Home() {
               View all
             </Link>
           </div>
-          <ProductCard />
+          <ProductFeatured />
+          {/* <ProductCard /> */}
         </section>
 
         {/* More Discover */}

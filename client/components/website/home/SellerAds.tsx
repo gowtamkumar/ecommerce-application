@@ -9,17 +9,7 @@ import Image from "next/image";
 const SellerAds = ({ banners }: any) => {
   return (
     <div>
-      <Swiper
-        modules={[Navigation]}
-        // spaceBetween={5}
-        slidesPerView={1}
-
-       // navigation
-        // pagination={{ clickable: true }}
-        // scrollbar={{ draggable: true }}
-        // onSwiper={(swiper) => console.log(swiper)}
-        // onSlideChange={() => console.log("slide change")}
-      >
+      <Swiper modules={[Navigation]} slidesPerView={1}>
         {(banners || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>

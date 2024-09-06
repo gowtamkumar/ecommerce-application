@@ -45,7 +45,7 @@ export default function Slider({ banners }: any) {
                 url: string;
               }) => (
                 <SwiperSlide key={image}>
-                  <div className=" mx-auto md:h-[57vh] md:p-0 p-5">
+                  <div className="mx-auto md:h-[57vh] md:p-0 p-5">
                     <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
                       <div className="md:order-1 order-2 text-center md:text-start">
                         <h1 className="md:text-4xl text-2xl font-bold">
