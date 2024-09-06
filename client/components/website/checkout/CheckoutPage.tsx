@@ -198,7 +198,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <div className="w-8/12 mx-auto min-h-screen items-center bg-gray-100">
+      <div className="lg:w-8/12 lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
         {/* <div className="pt-2">
           <Breadcrumb
             separator=">"
@@ -221,8 +221,8 @@ export default function CheckoutPage() {
           />
         </div> */}
 
-        <div className="py-4 md:py-3 grid grid-cols-3 gap-4 ">
-          <div className="col-span-2 bg-white  rounded-md overflow-hidden content-between">
+        <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
+          <div className="col-span-2 bg-white rounded-md overflow-hidden content-between">
             <div className="p-4 border-b">
               <h2 className="text-2xl font-semibold">Order summary</h2>
             </div>
@@ -251,51 +251,55 @@ export default function CheckoutPage() {
                         </span>
                       )}
 
-                      <div className="mt-2 flex items-center">
-                        <Button
-                          className="px-2 py-1 bg-gray-200"
-                          onClick={() => dispatch(decrementCart(item))}
-                          disabled={item?.qty <= 1}
-                        >
-                          -
-                        </Button>
-                        <input
-                          type="text"
-                          className="mx-2 w-10 text-center border"
-                          value={item?.qty}
-                          readOnly
-                        />
-                        <Button
-                          className="px-2 py-1 bg-gray-200"
-                          onClick={() => dispatch(addCart(item))}
-                          disabled={stockCheckingAndPurchaseLimit(item)}
-                        >
-                          +
-                        </Button>
+                      <div className="mt-2 lg:flex items-center">
+                        <div className="flex">
+                          <Button
+                            className="px-2 py-1 bg-gray-200"
+                            onClick={() => dispatch(decrementCart(item))}
+                            disabled={item?.qty <= 1}
+                          >
+                            -
+                          </Button>
+                          <input
+                            type="text"
+                            className="mx-2 w-10 text-center border"
+                            value={item?.qty}
+                            readOnly
+                          />
+                          <Button
+                            className="px-2 py-1 bg-gray-200"
+                            onClick={() => dispatch(addCart(item))}
+                            disabled={stockCheckingAndPurchaseLimit(item)}
+                          >
+                            +
+                          </Button>
+                        </div>
 
                         <div className="mx-2 text-base font-semibold text-green-600">
                           ৳{" "}
                           {item.discountId
                             ? (
-                                +item.price +
-                                +item.tax -
-                                item?.discountA
-                              ).toFixed(2)
+                              +item.price +
+                              +item.tax -
+                              item?.discountA
+                            ).toFixed(2)
                             : (+item.price + item.tax || 0).toFixed(2)}
                         </div>
-                        {item?.discountId ? (
-                          <div className="text-base">
-                            <span className="line-through text-gray-500">
-                              ৳ {(+item.price + +item.tax || 0).toFixed(2)}
-                            </span>
-                            <span className="text-green-600 ml-2">
-                              - {item?.discount?.value}
-                              {item?.discount?.discountType === "Percentage"
-                                ? "%"
-                                : "BDT"}
-                            </span>
-                          </div>
-                        ) : null}
+                        <div>
+                          {item?.discountId ? (
+                            <div className="text-base">
+                              <span className="line-through text-gray-500">
+                                ৳ {(+item.price + +item.tax || 0).toFixed(2)}
+                              </span>
+                              <span className="text-green-600 ml-2">
+                                - {item?.discount?.value}
+                                {item?.discount?.discountType === "Percentage"
+                                  ? "%"
+                                  : "BDT"}
+                              </span>
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
 
@@ -330,7 +334,7 @@ export default function CheckoutPage() {
                   Payment Method (Please select a payment method)
                 </h2>
               </div>
-              <div className=" mx-auto bg-white p-6 rounded-lg ">
+              <div className="mx-auto bg-white lg:p-6 py-2 rounded-lg">
                 <Radio.Group
                   name="paymentMethod"
                   onChange={({ target }) =>
@@ -410,7 +414,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
-            <div className="p-4 border-t text-right">
+            <div className="p-4 border-t text-right lg:inline hidden">
               <Button
                 type="primary"
                 size="large"
@@ -419,7 +423,7 @@ export default function CheckoutPage() {
                 loading={global.loading.save}
                 disabled={global.loading.save}
               >
-                <span>Confirm Order</span>
+                <span className="me-1">Confirm Order</span>
                 {(
                   +orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
                 ).toFixed(2)}
@@ -590,11 +594,26 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <Link href="/products">
-            <div className="text-blue-500 hover:underline">
-              Back to Shopping
-            </div>
-          </Link>
+          <div className="lg:hidden inline">
+            <Button
+              type="primary"
+              size="large"
+              className=" w-full"
+              onClick={() => handleOrder()}
+              loading={global.loading.save}
+              disabled={global.loading.save}
+            >
+              <span className="me-1">Confirm Order</span>
+              {(
+                +orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
+              ).toFixed(2)}
+              TK.
+            </Button>
+          </div>
+
+          <div className="text-blue-500 hover:underline lg:text-start text-center">
+            <Link href="/products">Back to Shopping</Link>
+          </div>
         </div>
       </div>
     </>
