@@ -38,10 +38,6 @@ const OrderStatusUpdate = () => {
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        toast.success(
-          `Order Status Change${newData?.id ? "Updated" : "Created"
-          } Successfully`
-        );
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
@@ -109,6 +105,7 @@ const OrderStatusUpdate = () => {
               "Completed",
               "Pending",
               "Returned",
+              "Canceled",
             ].map((item, idx) => (
               <Select.Option key={idx} value={item}>
                 {item}

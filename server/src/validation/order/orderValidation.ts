@@ -37,6 +37,7 @@ export const orderValidationSchema = z.object({
       "Completed",
       "Pending",
       "Returned",
+      "Canceled",
     ])
     .optional(),
   orderItems: z

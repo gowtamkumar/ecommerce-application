@@ -39,6 +39,7 @@ import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/share/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
 import AddPayment from "@/components/dashboard/payment/AddPayment";
+import AssignDeliveryMan from "@/components/dashboard/order/AssignDeliveryMan";
 interface DataType {
   key: React.Key;
   name: string;
@@ -400,7 +401,6 @@ const Page: React.FC = () => {
             className="me-1"
             onClick={() => {
               const amount = +value.orderTotalAmount + +value.shippingAmount;
-
               dispatch(
                 setAction({
                   payment: true,
@@ -442,8 +442,7 @@ const Page: React.FC = () => {
               dispatch(
                 setAction({
                   assign: true,
-                  type: ActionType.UPDATE,
-                  payload: value,
+                  payload: {id: value.id},
                 })
               )
             }
@@ -514,6 +513,9 @@ const Page: React.FC = () => {
       {global.action.orderStatusUpdate && <OrderStatusChange />}
       {global.action.addOrderTracking && <AddOrderTracking />}
       {global.action.payment && <AddPayment />}
+      {global.action.assign && <AssignDeliveryMan />}
+
+      
     </div>
   );
 };

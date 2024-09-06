@@ -77,6 +77,24 @@ export async function orderStatusUpdate(data: any) {
   return res.json();
 }
 
+export async function assignDeliveryMan(data: any) {
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/orders/assign/${data.id}`,
+    {
+      method: "PATCH",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  return res.json();
+}
+
+
 export async function deleteOrder(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(

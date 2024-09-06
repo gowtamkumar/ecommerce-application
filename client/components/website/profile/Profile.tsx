@@ -8,9 +8,11 @@ import { getMe } from "@/lib/apis/user";
 import MyWishlist from "@/components/website/profile/MyWishlist";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import MyShippingAddress from "./MyShippingAddress";
 
 export default function Profile() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({} as any);
+  console.log("🚀 ~ user:", user);
   const [tabKey, setTabKey] = useState("my_account");
   // hook
   const global = useSelector(selectGlobal);
@@ -24,8 +26,6 @@ export default function Profile() {
       dispatch(setLoading({ loading: false }));
     })();
   }, [dispatch, global.action]);
-
-  
 
   return (
     <div>
@@ -45,20 +45,28 @@ export default function Profile() {
           {
             label: `Orders`,
             key: "Orders",
-            children: <UserOrders />,
+            children: (
+              <UserOrders
+                orders={(user.orders || []).filter(
+                  (item: { status: string }) => item.status !== "Returned"
+                )}
+              />
+            ),
             icon: <AndroidOutlined />,
           },
           {
             label: `Wishlist`,
             key: "wishlist",
-            children: <MyWishlist user={user} />,
+            children: <MyWishlist user={user?.wishlists} />,
             icon: <AndroidOutlined />,
           },
 
           {
             label: `Shipping Address`,
             key: "shipping_address",
-            children: "shipping address",
+            children: (
+              <MyShippingAddress shippingAddress={user?.shippingAddress} />
+            ),
             icon: <AndroidOutlined />,
           },
           {
@@ -71,7 +79,14 @@ export default function Profile() {
           {
             label: `My Returns & Cancellations`,
             key: "my_Returns_cancellations",
-            children: `My Returns & Cancellations`,
+            children: (
+              <UserOrders
+                orders={(user.orders || []).filter(
+                  (item: { status: string }) =>
+                    item.status === "Returned" || "Canceled"
+                )}
+              />
+            ),
             icon: <AndroidOutlined />,
           },
 

@@ -210,7 +210,7 @@ payment_status(Paid/NotPaid/PertialPaid),
 payment_method(cash/ssecommer/strip)
 payment_type(Online/Offline)
 payment_transaction_id,
-status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned"],
+status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned", "Canceled"],
 createdAt
 updatedAt
 

@@ -64,7 +64,7 @@ export default function MyAccount({ user }: any) {
     if (newData.dob) newData.dob = dayjs(newData.dob);
     form.setFieldsValue(newData);
     setFormValues(newData);
-  }, [user]);
+  }, [form, user]);
 
   // console.log("formValues", formValues);
 

@@ -20,6 +20,7 @@ import CountUp from "react-countup";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
+  console.log("🚀 ~ dashboardReports:", dashboardReports);
   const [loading, setLoading] = useState<boolean>(false);
   const {
     total_order_amount,
@@ -32,6 +33,7 @@ const Dashboard = () => {
     loss_profit,
     user_activity,
     total_sale_return_shipping_amount,
+    total_canceled_amount,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
@@ -116,15 +118,14 @@ const Dashboard = () => {
           icon={<RollbackOutlined />}
           color="primary"
         />
-        {/* 
+
         <WidgetStats
-          title="TOTAL VISITOR"
-          value={+1 || "0.00"}
+          title="TOTAL ORDER CANCELED AMOUNT"
+          value={total_canceled_amount || "0.00"}
           icon={<SendOutlined />}
           color="primary"
-        /> */}
+        />
       </div>
-
       <div className="py-4">
         <StockReport recentHistory={dashboardReports} />
       </div>
@@ -149,7 +150,8 @@ const Dashboard = () => {
                 }
                 valueStyle={{
                   color:
-                    saleAmount >= purchaseAmount + +total_sale_return_shipping_amount
+                    saleAmount >=
+                    purchaseAmount + +total_sale_return_shipping_amount
                       ? "green"
                       : "red",
                 }}

@@ -24,24 +24,24 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const UserOrders = () => {
-  const [orders, setOrders] = useState([]);
+const UserOrders = ({ orders }: any) => {
+  // const [orders, setOrders] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getUserOrders();
-      const newOrders = res.data?.map((items: any, idx: number) => ({
-        ...items,
-        key: idx.toString(),
-      }));
-      setOrders(newOrders);
-      dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+  // useEffect(() => {
+  //   (async () => {
+  //     dispatch(setLoading({ loading: true }));
+  //     const res = await getUserOrders();
+  //     const newOrders = res.data?.map((items: any, idx: number) => ({
+  //       ...items,
+  //       key: idx.toString(),
+  //     }));
+  //     setOrders(newOrders);
+  //     dispatch(setLoading({ loading: false }));
+  //   })();
+  // }, [dispatch, global.action]);
 
   const handleSearch = (
     selectedKeys: string[],

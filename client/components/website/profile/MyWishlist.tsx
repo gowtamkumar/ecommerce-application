@@ -23,7 +23,7 @@ import {
 } from "@ant-design/icons";
 import { FaShoppingCart } from "react-icons/fa";
 
-export default function MyWishlist({ user }: any) {
+export default function MyWishlist({ wishlists }: any) {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
@@ -56,7 +56,7 @@ export default function MyWishlist({ user }: any) {
 
   return (
     <div className="grid grid-cols-4 gap-4">
-      {(user.wishlists || []).map((item: any, idx: any) => {
+      {(wishlists || []).map((item: any, idx: any) => {
         let price = +item.product.productVariants[0]?.price;
         let discount = item.product?.discount;
 
@@ -87,7 +87,7 @@ export default function MyWishlist({ user }: any) {
                   : (price + taxAmount).toFixed(2)}
               </p>
 
-              {item?.product.discountId ? (
+              {item?.product?.discountId ? (
                 <>
                   <span className="line-through text-gray-500">
                     ৳ {(+price + +taxAmount || 0).toFixed(2)}

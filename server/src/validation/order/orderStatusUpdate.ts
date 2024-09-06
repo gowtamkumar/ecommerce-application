@@ -10,6 +10,7 @@ export const orderStatusUpdateValidationSchema = z.object({
       "Completed",
       "Pending",
       "Returned",
+      "Canceled"
     ],
     { required_error: "Order Status is Required" }
   ),

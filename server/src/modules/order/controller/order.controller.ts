@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { OrderEntity } from "../model/order.entity";
 import {
+  orderDeliveryManValidationSchema,
   orderStatusUpdateValidationSchema,
   orderUpdateValidationSchema,
   orderValidationSchema,
@@ -293,6 +294,40 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
     data: updateData,
   });
 });
+
+// @desc Update a single Order
+// @route patch /api/v1/order/assign/:id
+// @access Public
+export const assignDeliveryMan = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const validation = orderDeliveryManValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(401).json({
+        message: validation.error.formErrors,
+      });
+    }
+    const repository = await connection.getRepository(OrderEntity);
+
+    const result = await repository.findOne({ where: { id } });
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const save = await repository.save({
+      id: result.id,
+      deliveryId: validation.data.deliveryId,
+    });
+
+    return res.status(200).json({
+      success: true,
+      msg: `Assign Delivery man`,
+      data: save,
+    });
+  }
+);
 
 export const orderStatusUpdate = asyncHandler(
   async (req: Request, res: Response) => {

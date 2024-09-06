@@ -10,6 +10,7 @@ export * from "./wishlist/wishlistValidation";
 export * from "./brand/brandValidation";
 export * from "./order/orderValidation";
 export * from "./order/orderUpdateValidation";
+export * from "./order/orderDeliveryManAsingValidation";
 export * from "./order/orderStatusUpdate";
 export * from "./payment/paymentValidation";
 export * from "./review/reviewValidation";

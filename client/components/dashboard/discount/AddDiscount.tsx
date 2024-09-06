@@ -50,10 +50,7 @@ const AddDiscount = () => {
         : await saveDiscount(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
-        toast.success(
-          `Discount ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
+     
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
