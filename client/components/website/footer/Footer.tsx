@@ -17,7 +17,7 @@ export default async function WebFooter() {
 
   return (
     <footer className="bg-gray-800 border-t-2 py-10 text-white">
-      <div className="w-8/12 mx-auto">
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 text-center md:text-start gap-2 py-6 lg:py-8 md:grid-cols-4 ">
           <FirstWeight data={settingData} />
           <SecondWeight />

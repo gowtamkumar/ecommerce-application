@@ -3,7 +3,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  EffectFade,
+} from "swiper/modules";
+import { SwiperNavButtons } from "../banner/SwiperNavButtons";
 
 export default function SmallCard({ categories }: any) {
   const router = useRouter();
@@ -11,9 +18,9 @@ export default function SmallCard({ categories }: any) {
   return (
     <div className="md:w-8/12 mx-auto flex p-3 items-center justify-center bg-white ">
       <Swiper
-        modules={[Navigation, Scrollbar]}
+        modules={[Navigation, Pagination, Scrollbar, A11y, EffectFade]}
         spaceBetween={5}
-        navigation
+        // navigation
         breakpoints={{
           // when window width is >= 640px
           640: {
@@ -26,6 +33,7 @@ export default function SmallCard({ categories }: any) {
             slidesPerView: 5,
           },
         }}
+        pagination={{ clickable: true, dynamicBullets: true }}
 
         // pagination={{ clickable: true }}
         // scrollbar={{ draggable: true }}
@@ -63,6 +71,7 @@ export default function SmallCard({ categories }: any) {
             </SwiperSlide>
           );
         })}
+        <SwiperNavButtons/>
       </Swiper>
     </div>
   );

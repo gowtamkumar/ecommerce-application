@@ -14,8 +14,6 @@ export default function MobileMenu() {
         onClick={() => setOpen(true)}
       />
 
-      {/* <HeaderMenu /> */}
-
       <Drawer
         title="Menu"
         open={open}

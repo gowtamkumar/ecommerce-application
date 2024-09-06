@@ -17,18 +17,6 @@ export default async function Header() {
       <TopBar />
       <div className="border-b-2">
         <div className="container mx-auto items-center py-4">
-          {/* <div className="flex md:justify-between items-center">
-            <Logo settingData={setting} />
-            <div className="md:invisible visible">
-              icon
-            </div>
-
-              <MainMenu />
-            <div className="md:visible invisible">
-            </div>
-
-            <HeaderRight />
-          </div> */}
 
           <div className="flex justify-between items-center">
             <Logo settingData={setting} />

@@ -13,7 +13,6 @@ const SellerAds = ({ banners }: any) => {
         modules={[Navigation]}
         // spaceBetween={5}
         slidesPerView={1}
-        autoplay
 
        // navigation
         // pagination={{ clickable: true }}

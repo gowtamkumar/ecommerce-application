@@ -28,7 +28,7 @@ export default function HeaderMenu() {
   ];
 
   return (
-    <div className="md:flex flex-row items-center gap-4">
+    <div className="md:flex  text-center items-center gap-4 lg:text-lg text-2xl justify-center">
       {/* <Menu mode="horizontal" items={menu} /> */}
       {menu.map((item, idx) => (
         <div key={idx} className="font-mono">
@@ -36,12 +36,17 @@ export default function HeaderMenu() {
         </div>
       ))}
 
-      <Link href="/profile" className="cursor-pointer md:hidden inline">
-        <CiHeart size={22} className="font-medium" />
-      </Link>
-      <Link href="/checkout" className="cursor-pointer mt-1 md:hidden inline">
+      <div className="font-mono">
+        <Link href="/profile" className="cursor-pointer md:hidden inline ">
+          <Badge size="default">
+            <CiHeart className="font-medium lg:text-lg text-2xl" />
+          </Badge>
+        </Link>
+      </div>
+
+      <Link href="/checkout" className="mt-1 md:hidden inline">
         <Badge size="default" count={cart.carts.length}>
-          <IoBagOutline size={22} className="font-medium" />
+          <IoBagOutline className="font-medium lg:text-lg text-2xl" />
         </Badge>
       </Link>
     </div>

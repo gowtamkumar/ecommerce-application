@@ -7,6 +7,7 @@ import { Button } from "antd";
 import { useDispatch } from "react-redux";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
+import { SwiperNavButtons } from "../banner/SwiperNavButtons";
 
 export default function Discount({ discounts }: any) {
   const dispatch = useDispatch();
@@ -18,7 +19,8 @@ export default function Discount({ discounts }: any) {
         modules={[Navigation, Scrollbar]}
         spaceBetween={5}
         // slidesPerView={3}
-        navigation
+        // navigation
+        pagination={{ clickable: true, dynamicBullets: true }}
         breakpoints={{
           // when window width is >= 640px
           640: {
@@ -79,6 +81,7 @@ export default function Discount({ discounts }: any) {
             </SwiperSlide>
           );
         })}
+        <SwiperNavButtons />
       </Swiper>
     </div>
   );

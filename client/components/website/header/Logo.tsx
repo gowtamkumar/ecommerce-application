@@ -1,9 +1,7 @@
 "use client";
-import { selectGlobal, setSetting } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 export default function HeaderLogo({ settingData }: any) {
   const logo = settingData?.data ? settingData.data[0] : {};
@@ -25,7 +23,7 @@ export default function HeaderLogo({ settingData }: any) {
   //   localStorage.setItem("setting", JSON.stringify(setting.data));
 
   return (
-    <div className="w-2/12 md:order-1 order-2">
+    <div className="md:order-1 order-2">
       <Link href="/">
         <Image
           src={
