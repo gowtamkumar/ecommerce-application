@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button, Popconfirm, Rate } from "antd";
+import { Button, Empty, Popconfirm, Rate } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -24,6 +24,7 @@ import {
 import { FaShoppingCart } from "react-icons/fa";
 
 export default function MyWishlist({ wishlists }: any) {
+  console.log("🚀 ~ wishlists:", wishlists)
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
@@ -53,6 +54,11 @@ export default function MyWishlist({ wishlists }: any) {
       console.log("v", error);
     }
   };
+
+  if (!wishlists?.length) {
+    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+    return
+  }
 
   return (
     <div className="grid grid-cols-4 gap-4">
