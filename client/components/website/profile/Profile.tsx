@@ -45,7 +45,7 @@ export default function Profile() {
           key: "Orders",
           children: (
             <UserOrders
-              orders={(user.orders || []).filter(
+              orders={(user?.orders || []).filter(
                 (item: { status: string }) => item.status !== "Returned"
               )}
             />
@@ -79,9 +79,9 @@ export default function Profile() {
           key: "my_Returns_cancellations",
           children: (
             <UserOrders
-              orders={(user.orders || []).filter(
+              orders={(user?.orders || []).filter(
                 (item: { status: string }) =>
-                  item.status === "Returned" || "Canceled"
+                  item.status === "Returned" || item.status === "Canceled"
               )}
             />
           ),

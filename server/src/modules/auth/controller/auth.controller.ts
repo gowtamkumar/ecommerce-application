@@ -267,9 +267,23 @@ export const getMe = asyncHandler(
       "shippingAddress",
       "orderDeliveries",
       "wishlists",
+      "orderItems",
+      "orderProduct.name",
+      "orderTrackings.location",
+      "orderTrackings.createdAt",
+      "orderTrackings.status",
+      "deliveryMan.name",
+      // "payments",
     ]);
 
     qb.leftJoin("user.orders", "orders");
+
+    qb.leftJoin("orders.orderItems", "orderItems");
+    qb.leftJoin("orderItems.product", "orderProduct");
+    qb.leftJoin("orders.orderTrackings", "orderTrackings");
+    qb.leftJoin("orders.deliveryMan", "deliveryMan");
+    // qb.leftJoin("orders.payments", "payments");
+
     qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");
     qb.leftJoin("user.orderDeliveries", "orderDeliveries");
