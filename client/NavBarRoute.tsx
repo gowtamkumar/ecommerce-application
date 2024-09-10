@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { backupDB } from "./lib/apis/backupDB";
 
+
 // key as like features
 
 const handleBackup = async (): Promise<void> => {
@@ -243,7 +244,7 @@ const navbarRoute = [
 const profileRoute: MenuProps["items"] = [
   {
     key: "my_account",
-    label: <Link href="/profile">My Account</Link>,
+    label: <Link href={"/profile"}>My Account</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
@@ -282,7 +283,16 @@ const profileRoute: MenuProps["items"] = [
 const userProfileRoute: MenuProps["items"] = [
   {
     key: "my_account",
-    label: <Link href="/profile">My Account</Link>,
+    label: (
+      <Link
+        href={{
+          pathname: "/profile",
+          query: { name: "test" },
+        }}
+      >
+        My Account df
+      </Link>
+    ),
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {

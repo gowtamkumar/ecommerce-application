@@ -2,7 +2,17 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button, Card, Divider, Empty, Input, Popconfirm, Rate, Space, Timeline } from "antd";
+import {
+  Button,
+  Card,
+  Divider,
+  Empty,
+  Input,
+  Popconfirm,
+  Rate,
+  Space,
+  Timeline,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -22,19 +32,22 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { FaShoppingCart } from "react-icons/fa";
+import { getOrderTracking } from "@/lib/apis/orders";
 
-export default function OrderTracker() {
-  const [tracker, setTracker] = useState({} as { orderTrackingNo: string });
+export default function OrderTracker({ orders }: any) {
+  const [order, setOrder] = useState({} as any);
+  const [tracker, setTracker] = useState({} as { trackingNo: string });
   const [loading, setLoading] = useState(false);
-  console.log("🚀 ~ tracker:", tracker);
-  const dispatch = useDispatch();
-  const global = useSelector(selectGlobal);
 
   async function handleOrderTracking() {
+    // const result = await getOrderTracking({ trackingNo: tracker.trackingNo });
     setLoading(true);
-    console.log("sdfasdf", tracker);
 
+    const getOrderTracker = (orders || []).find(
+      (item: { trackingNo: string }) => item.trackingNo === tracker.trackingNo
+    );
     setTimeout(() => {
+      setOrder(getOrderTracker || {});
       setLoading(false);
     }, 2000);
   }
@@ -46,19 +59,20 @@ export default function OrderTracker() {
 
   return (
     <div>
-      <label htmlFor="orderTrackingNo">Order Tracking No</label>
+      <label htmlFor="trackingNo">Order Tracking No</label>
       <Space.Compact block size="small">
         <Input
-          id="orderTrackingNo"
+          id="trackingNo"
           size="middle"
           placeholder="Input Your tracking No"
-          onChange={({ target }) =>
-            setTracker({ orderTrackingNo: target.value })
-          }
+          onChange={({ target }) => {
+            setTracker({ trackingNo: target.value });
+            setOrder({});
+          }}
         />
         <Button
           size="middle"
-          disabled={!tracker.orderTrackingNo}
+          disabled={!tracker.trackingNo}
           type="primary"
           loading={loading}
           onClick={handleOrderTracking}
@@ -67,7 +81,12 @@ export default function OrderTracker() {
         </Button>
       </Space.Compact>
 
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      {order.trackingNo ? (
+        <div>Order Tracking No: {order.trackingNo}</div>
+      ) : (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
+
       {/* <div className="grid grid-cols-4 p-2">
         <div className="col-span-1 p-2">
           <h1 className="font-bold">Order No:{value.trackingNo}</h1>

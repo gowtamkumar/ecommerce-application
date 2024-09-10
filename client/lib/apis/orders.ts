@@ -28,6 +28,28 @@ export async function getOrders() {
   return res.json();
 }
 
+export async function getOrderTracking(params: {trackingNo: string}) {
+  // const { trackingNo } = params;
+  console.log("🚀 ~ params:", params)
+  let query = "";
+  if (params.trackingNo) {
+    query += `trackingNo=${params.trackingNo}`;
+  }
+  console.log("query", query);
+
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/orders/tracking?${query}`,
+    {
+      cache: "no-cache",
+      headers: {
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+    }
+  );
+  return res.json();
+}
+
 export async function getUserOrders() {
   const session = await getServerSession(authOptions);
   const res = await fetch(
@@ -93,7 +115,6 @@ export async function assignDeliveryMan(data: any) {
   );
   return res.json();
 }
-
 
 export async function deleteOrder(id: string) {
   const session = await getServerSession(authOptions);

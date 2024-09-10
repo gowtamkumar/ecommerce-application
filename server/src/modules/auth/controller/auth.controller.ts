@@ -256,18 +256,67 @@ export const getMe = asyncHandler(
       "user.lastLogin",
       "user.lastLogout",
       "user.lastLogout",
-      "orders",
-      "products",
+
+      "orders.discountAmount",
+      "orders.netAmount",
+      "orders.note",
+      "orders.orderDate",
+      "orders.orderTax",
+      "orders.orderTotalAmount",
+      "orders.paymentMethod",
+      "orders.paymentStatus",
+      "orders.shippingAmount",
+      "orders.status",
+      "orders.trackingNo",
+
+      "products.name",
+      "products.type",
+      "products.createdAt",
+      "products.description",
+      "products.enableReview",
+      "products.images",
+      "products.limitPurchaseQty",
+      "products.alertQty",
+      "products.shortDescription",
+      "products.status",
+      "products.tags",
+      "products.urlSlug",
+
       "product",
       "productVariants.price",
+
       "discount.discountType",
       "discount.value",
       "tax.value",
       "reviews",
-      "shippingAddress",
+
+      "orderShippingAddress.name",
+      "orderShippingAddress.phoneNo",
+      "orderShippingAddress.email",
+      "orderShippingAddress.country",
+      "orderShippingAddress.alternativePhoneNo",
+      "orderShippingAddress.address",
+      "orderShippingAddress.phoneNo",
+
+      "shippingAddress.name",
+      "shippingAddress.phoneNo",
+      "shippingAddress.email",
+      "shippingAddress.country",
+      "shippingAddress.alternativePhoneNo",
+      "shippingAddress.address",
+      "shippingAddress.phoneNo",
+      "shippingAddress.type",
+      "shippingAddress.status",
+
       "orderDeliveries",
       "wishlists",
-      "orderItems",
+
+      "orderItems.purchasePrice",
+      "orderItems.discountA",
+      "orderItems.price",
+      "orderItems.qty",
+      "orderItems.tax",
+
       "orderProduct.name",
       "orderTrackings.location",
       "orderTrackings.createdAt",
@@ -282,7 +331,7 @@ export const getMe = asyncHandler(
     qb.leftJoin("orderItems.product", "orderProduct");
     qb.leftJoin("orders.orderTrackings", "orderTrackings");
     qb.leftJoin("orders.deliveryMan", "deliveryMan");
-    // qb.leftJoin("orders.payments", "payments");
+    qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
 
     qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");

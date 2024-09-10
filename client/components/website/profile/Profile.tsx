@@ -42,7 +42,7 @@ export default function Profile() {
 
         {
           label: `Orders`,
-          key: "Orders",
+          key: "orders",
           children: (
             <UserOrders
               orders={(user?.orders || []).filter(
@@ -70,7 +70,7 @@ export default function Profile() {
         {
           label: `Track your Order`,
           key: "track_your_order",
-          children: <OrderTracker />,
+          children: <OrderTracker  orders={user?.orders} />,
           icon: <AndroidOutlined />,
         },
 
