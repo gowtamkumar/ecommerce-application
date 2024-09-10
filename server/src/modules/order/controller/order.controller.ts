@@ -244,45 +244,45 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 // @desc Get a single Order
 // @route GET /api/v1/Order/:id
 // @access Public
-export const orderTracking = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
-    const { trackingNo } = req.query;
-    const userId = req.id;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(OrderEntity);
-    const qb = repository.createQueryBuilder("order");
-    qb.select([
-      "order",
-      "orderItems",
-      "product",
-      "payments",
-      "orderTrackings",
-      "deliveryMan.name",
-      "shippingAddress",
-    ]);
+// export const orderTracking = asyncHandler(
+//   async (req: any, res: Response, next: NextFunction) => {
+//     const { trackingNo } = req.query;
+//     const userId = req.id;
+//     const connection = await getDBConnection();
+//     const repository = await connection.getRepository(OrderEntity);
+//     const qb = repository.createQueryBuilder("order");
+//     qb.select([
+//       "order",
+//       "orderItems",
+//       "product",
+//       "payments",
+//       "orderTrackings",
+//       "deliveryMan.name",
+//       "shippingAddress",
+//     ]);
 
-    qb.leftJoin("order.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("order.orderTrackings", "orderTrackings");
-    qb.leftJoin("order.deliveryMan", "deliveryMan");
-    qb.leftJoin("order.user", "user");
-    qb.leftJoin("order.payments", "payments");
-    qb.leftJoin("order.shippingAddress", "shippingAddress");
-    if (userId) qb.where({ userId });
-    if (trackingNo) qb.andWhere({ trackingNo });
-    const result = await qb.getOne();
+//     qb.leftJoin("order.orderItems", "orderItems");
+//     qb.leftJoin("orderItems.product", "product");
+//     qb.leftJoin("order.orderTrackings", "orderTrackings");
+//     qb.leftJoin("order.deliveryMan", "deliveryMan");
+//     qb.leftJoin("order.user", "user");
+//     qb.leftJoin("order.payments", "payments");
+//     qb.leftJoin("order.shippingAddress", "shippingAddress");
+//     if (userId) qb.where({ userId });
+//     if (trackingNo) qb.andWhere({ trackingNo });
+//     const result = await qb.getOne();
 
-    if (!result) {
-      throw new Error(`Resource not found of #${trackingNo}`);
-    }
+//     if (!result) {
+//       throw new Error(`Resource not found of #${trackingNo}`);
+//     }
 
-    return res.status(200).json({
-      success: true,
-      msg: `Get a single Tracking No of ${trackingNo}`,
-      data: result,
-    });
-  }
-);
+//     return res.status(200).json({
+//       success: true,
+//       msg: `Get a single Tracking No of ${trackingNo}`,
+//       data: result,
+//     });
+//   }
+// );
 
 // @desc Update a single Order
 // @route PUT /api/v1/Order/:id
