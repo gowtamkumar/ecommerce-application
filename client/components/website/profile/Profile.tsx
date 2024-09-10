@@ -70,10 +70,9 @@ export default function Profile() {
         {
           label: `Track your Order`,
           key: "track_your_order",
-          children: <OrderTracker  orders={user?.orders} />,
+          children: <OrderTracker orders={user?.orders} />,
           icon: <AndroidOutlined />,
         },
-
         {
           label: `My Returns & Cancellations`,
           key: "my_Returns_cancellations",

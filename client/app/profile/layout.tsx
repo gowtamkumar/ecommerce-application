@@ -19,7 +19,7 @@ export default async function ProfileLayout({
     <main>
       <Header />
       <div className="w-8/12 mx-auto">{children}</div>
-      {/* <WebFooter /> */}
+      <WebFooter />
     </main>
   );
 }

@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CurrencySetting from "./CurrencySetting";
 import EmailSetting from "./EmailSetting";
 import Post from "./blog/Post";
+import Lead from "./lead/Lead";
 
 export default function Index() {
   const [loading, setLoading] = useState(false);
@@ -120,6 +121,11 @@ export default function Index() {
           label: "Post",
           key: "post",
           children: <Post />,
+        },
+        {
+          label: "Leads",
+          key: "lead",
+          children: <Lead />,
         },
       ]}
     />

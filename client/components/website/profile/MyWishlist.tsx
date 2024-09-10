@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button, Empty, Popconfirm, Rate } from "antd";
+import { Button, Empty, Rate } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -12,19 +12,10 @@ import {
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { productDiscountCalculation } from "@/lib/share";
 import { deleteWishlist } from "@/lib/apis/wishlist";
-import {
-  FormOutlined,
-  PlusOutlined,
-  UserAddOutlined,
-  RestOutlined,
-  CheckOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { RestOutlined } from "@ant-design/icons";
 import { FaShoppingCart } from "react-icons/fa";
 
 export default function MyWishlist({ wishlists }: any) {
-  console.log("🚀 ~ wishlists:", wishlists)
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
@@ -56,8 +47,8 @@ export default function MyWishlist({ wishlists }: any) {
   };
 
   if (!wishlists?.length) {
-    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-    return
+    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+    return;
   }
 
   return (

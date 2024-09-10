@@ -155,7 +155,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     const repository = queryRunner.manager.getRepository(OrderEntity);
     const count = (await repository.count()) + 1;
 
-    const trackingNo = `#N${count.toString().padStart(10, "0")}`;
+    const trackingNo = `N${count.toString().padStart(10, "0")}`;
 
     const newOrder = repository.create({
       shippingAmount,

@@ -291,6 +291,7 @@ export const getMe = asyncHandler(
       "reviews",
 
       "orderShippingAddress.name",
+      "orderShippingAddress.type",
       "orderShippingAddress.phoneNo",
       "orderShippingAddress.email",
       "orderShippingAddress.country",
@@ -323,6 +324,8 @@ export const getMe = asyncHandler(
       "orderTrackings.status",
       "deliveryMan.name",
       // "payments",
+      "size.name",
+      "color.name",
     ]);
 
     qb.leftJoin("user.orders", "orders");
@@ -332,6 +335,9 @@ export const getMe = asyncHandler(
     qb.leftJoin("orders.orderTrackings", "orderTrackings");
     qb.leftJoin("orders.deliveryMan", "deliveryMan");
     qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
+
+    qb.leftJoin("orderItems.size", "size");
+    qb.leftJoin("orderItems.color", "color");
 
     qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");

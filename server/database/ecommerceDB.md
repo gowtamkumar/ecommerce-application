@@ -364,7 +364,7 @@ status ENUM('approved', 'pending', 'spam') DEFAULT 'pending',
 created_at,
 updated_at,
 
-## leads
+## leads(done)
 
 id,
 email,
