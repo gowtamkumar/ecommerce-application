@@ -6,7 +6,7 @@ export class CurrencyEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ nullable: true })
+  @Column()
   name!: string;
 
   @Column()

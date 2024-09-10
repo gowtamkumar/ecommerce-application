@@ -334,6 +334,14 @@ description,
 url,
 status: boolean,
 
+## leads(done)
+
+id,
+email,
+created_at,
+updated_at,
+
+
 ## post
 
 title,
@@ -364,9 +372,3 @@ status ENUM('approved', 'pending', 'spam') DEFAULT 'pending',
 created_at,
 updated_at,
 
-## leads(done)
-
-id,
-email,
-created_at,
-updated_at,

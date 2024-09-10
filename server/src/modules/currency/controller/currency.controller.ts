@@ -78,8 +78,10 @@ export const createCurrency = asyncHandler(async (req: any, res: Response) => {
 export const updateCurrency = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const connection = await getDBConnection();
+    
+    console.log("🚀 ~ req.body:", req.body)
 
+    const connection = await getDBConnection();
     const repository = await connection.getRepository(CurrencyEntity);
 
     const result = await repository.findOneBy({ id });
@@ -94,6 +96,7 @@ export const updateCurrency = asyncHandler(
       data: updateData,
     });
   }
+    
 );
 
 // @desc Delete a single Currency

@@ -15,10 +15,10 @@ import {
   setFormValues,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import CurrencySetting from "./CurrencySetting";
 import EmailSetting from "./EmailSetting";
 import Post from "./blog/Post";
 import Lead from "./lead/Lead";
+import Currency from "./currency/Currency";
 
 export default function Index() {
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,6 @@ export default function Index() {
         const setting = await getSettings();
         if (isMounted) {
           const data = setting.data[0] || {};
-
           const newfile = {
             uid: Math.random() * 1000 + "",
             name: `logo ${Math.random() * 10000 + ""}`,
@@ -75,7 +74,7 @@ export default function Index() {
         {
           label: "Currency Setting",
           key: "currency_stting",
-          children: <CurrencySetting />,
+          children: <Currency />,
         },
         {
           label: "Sizes",

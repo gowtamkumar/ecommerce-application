@@ -6,11 +6,16 @@ import {
   getCurrencies,
   updateCurrency,
 } from "../controller/currency.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getCurrencies).post(createCurrency);
+router.route("/").get(AuthGuard, getCurrencies).post(AuthGuard, createCurrency);
 
-router.route("/:id").get(getCurrency).patch(updateCurrency).delete(deleteCurrency);
+router
+  .route("/:id")
+  .get(AuthGuard, getCurrency)
+  .patch(AuthGuard, updateCurrency)
+  .delete(AuthGuard, deleteCurrency);
 
 export default router;
