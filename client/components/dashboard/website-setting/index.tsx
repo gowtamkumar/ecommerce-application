@@ -16,8 +16,10 @@ import AboutPage from "./AboutPage";
 import TermPolicyPage from "./TermPolicyPage";
 import ContactPage from "./ContactPage";
 import HelpSupport from "./HelpSupport";
+import { getCurrencies } from "@/lib/apis/currency";
 
 export default function Index() {
+  const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -29,9 +31,9 @@ export default function Index() {
       try {
         setLoading(true)
         const setting = await getSettings();
+        const currency = await getCurrencies();
         if (isMounted) {
           const newData = { ...setting.data[0] };
-
           if (newData.image) {
             const newfile = {
               uid: Math.random() * 1000 + "",
@@ -46,6 +48,9 @@ export default function Index() {
 
           dispatch(setFormValues(newData));
         }
+
+        setCurrencies(currency.data)
+
         setLoading(false)
       } catch (error) {
         setLoading(false)
@@ -69,10 +74,8 @@ export default function Index() {
         {
           label: "Company Setting",
           key: "web_site_stting",
-          children: <WebSetting />,
+          children: <WebSetting  currencies={currencies}  />,
         },
-
-
         {
           label: "Home Page",
           key: "home_page",

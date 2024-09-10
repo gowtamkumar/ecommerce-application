@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Form, Image, Input, Modal, Upload } from "antd";
+import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import {
   selectGlobal,
   setAction,
@@ -25,7 +25,7 @@ const uploadButton = (
   </div>
 );
 
-const WebSetting = () => {
+const WebSetting = ({ currencies }: any) => {
   const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -178,9 +178,30 @@ const WebSetting = () => {
           <Input placeholder="Enter " />
         </Form.Item>
 
-
         <Form.Item name="address" label="Address">
           <Input placeholder="Enter " />
+        </Form.Item>
+
+        <Form.Item name="currencyId" label="Currency" className="mb-1">
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select "
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.children as any)
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            {(currencies || []).map(
+              (item: { name: string; id: number; symbol: string }) => (
+                <Select.Option key={item.id} value={item.id}>
+                  {`${item.name} - ${item.symbol}`}
+                </Select.Option>
+              )
+            )}
+          </Select>
         </Form.Item>
 
         <Form.Item

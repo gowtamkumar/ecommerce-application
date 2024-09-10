@@ -106,8 +106,6 @@ export const createDashboardSetting = asyncHandler(
 export const updateSetting = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    console.log(req.body);
-    
     const connection = await getDBConnection();
     const repository = await connection.getRepository(SettingEntity);
     const result = await repository.findOneBy({ id });

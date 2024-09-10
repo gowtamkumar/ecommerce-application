@@ -13,7 +13,6 @@ import OrderTracker from "./OrderTracker";
 
 export default function Profile() {
   const [user, setUser] = useState({} as any);
-  console.log("🚀 ~ user:", user);
   const [tabKey, setTabKey] = useState("my_account");
   // hook
   const global = useSelector(selectGlobal);

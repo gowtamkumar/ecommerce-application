@@ -134,7 +134,7 @@ export default function SingleProduct() {
               title: "Application Center",
               href: "",
             },
-            {
+            {Rate this product
               title: "Application List",
               href: "",
             },
