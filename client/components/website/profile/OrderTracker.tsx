@@ -175,6 +175,7 @@ export default function OrderTracker({ orders }: any) {
             size="small"
             // disabled={!product.enableReview}
             onClick={() =>
+              
               dispatch(
                 setProductRating({
                   type: ActionType.CREATE,

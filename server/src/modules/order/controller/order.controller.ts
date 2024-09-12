@@ -8,7 +8,6 @@ import {
   orderUpdateValidationSchema,
   orderValidationSchema,
 } from "../../../validation";
-import { OrderItemEntity } from "../model/order-item.entity";
 import axios from "axios";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
@@ -16,6 +15,7 @@ import { PaymentEntity } from "../../payment/model/payment.entity";
 import dayjs from "dayjs";
 import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
 import { PaymentType } from "../../payment/enums/payment-type.enum";
+import { OrderItemEntity } from "../model/order-item.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -338,6 +338,51 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// @desc Update a single Order
+// @route PUT /api/v1/Order/:id
+// @access Public
+export const orderReview = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+
+  const repository = await connection.getRepository(OrderItemEntity);
+
+  const result = await repository.find({ where: { orderId: id } });
+  console.log("🚀 ~ result:", result)
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  // const save = await repository.save(updateData);
+
+  // if (orderItems && save.id) {
+  //   const repoOrderitems = connection.getRepository(OrderItemEntity);
+
+  //   // remove order items
+  //   const existingVariants = await repoOrderitems.find({
+  //     where: { orderId: id },
+  //   });
+
+  //   await repoOrderitems.remove(existingVariants);
+  //   // new order items data
+  //   const newOrderItems = await repoOrderitems.create(
+  //     orderItems.map((item) => ({
+  //       productId: item.productId,
+  //       qty: item.qty,
+  //       price: item.price,
+  //       orderId: save.id,
+  //     }))
+  //   );
+  //   await repoOrderitems.save(newOrderItems);
+  // }
+
+  return res.status(200).json({
+    success: true,
+    msg: `Update a single Order of id ${req.params.id}`,
+    data: {},
+  });
+});
 // @desc Update a single Order
 // @route patch /api/v1/order/assign/:id
 // @access Public

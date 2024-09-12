@@ -6,6 +6,7 @@ import {
   getOrder,
   getOrders,
   getUserOrders,
+  orderReview,
   orderStatusUpdate,
   // orderTracking,
   updateOrder,
@@ -20,5 +21,6 @@ router.route("/user-orders").get(getUserOrders);
 router.route("/:id").get(getOrder).patch(updateOrder).delete(deleteOrder);
 router.route("/order-status-update/:id").patch(orderStatusUpdate);
 router.route("/assign/:id").patch(assignDeliveryMan);
+router.route("/review/:id").patch(orderReview);
 
 export default router;

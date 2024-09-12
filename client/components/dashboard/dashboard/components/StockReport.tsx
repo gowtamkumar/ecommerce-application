@@ -13,7 +13,6 @@ const StockReport = ({ recentHistory }: any) => {
     total_sale_return_count,
     total_canceled_count,
   } = recentHistory;
-  console.log("🚀 ~ orders:", orders);
 
   return (
     <div className="grid grid-cols-12 gap-2">

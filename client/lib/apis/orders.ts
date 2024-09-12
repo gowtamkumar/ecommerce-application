@@ -82,6 +82,24 @@ export async function updateOrder(data: any) {
   return res.json();
 }
 
+export async function orderReview(data: any) {
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/orders/review/${data.id}`,
+    {
+      method: "PATCH",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user.accessToken}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  return res.json();
+}
+
+
 export async function orderStatusUpdate(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(

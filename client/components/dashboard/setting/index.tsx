@@ -25,11 +25,6 @@ export default function Index() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  // id,
-  // currencyId,
-  // email_config:jsonb,
-  // payment_account:jsonb,
-
   useEffect(() => {
     let isMounted = true;
     const fetchSettings = async () => {

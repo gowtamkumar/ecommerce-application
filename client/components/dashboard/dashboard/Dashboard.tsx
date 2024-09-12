@@ -20,7 +20,6 @@ import CountUp from "react-countup";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
-  console.log("🚀 ~ dashboardReports:", dashboardReports);
   const [loading, setLoading] = useState<boolean>(false);
   const {
     total_order_amount,
@@ -39,6 +38,8 @@ const Dashboard = () => {
 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
+
+  console.log("🚀 ~ dashboardReports:", dashboardReports);
 
   useEffect(() => {
     (async () => {

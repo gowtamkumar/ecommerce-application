@@ -42,10 +42,6 @@ const NewReview = () => {
         : await saveReview(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        //
-        toast.success(
-          `Review ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
         dispatch(setProductRating({}));
       }, 100);
     } catch (err: any) {
