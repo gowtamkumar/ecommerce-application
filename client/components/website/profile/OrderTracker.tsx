@@ -166,29 +166,29 @@ export default function OrderTracker({ orders }: any) {
               </div>
             </div>
             <div className="col-span-1 p-2 flex gap-2">
-            <div className="basis-1/3">
-          <p>Rate this product</p>
-          <Rate defaultValue={2.5} disabled />
-          <br />
-          <Button
-            type="primary"
-            size="small"
-            // disabled={!product.enableReview}
-            onClick={() =>
-              
-              dispatch(
-                setProductRating({
-                  type: ActionType.CREATE,
-                  productRating: true,
-                  payload: { productId: order.id },
-                })
-              )
-            }
-          >
-            Write a Review
-          </Button>
-          <NewReview />
-        </div>
+              <div className="basis-1/3">
+                <p>Rate this product</p>
+                <Rate defaultValue={2.5} disabled />
+                <br />
+                <Button
+                  type="primary"
+                  size="small"
+                  // disabled={!product.enableReview}
+                  onClick={() =>
+
+                    dispatch(
+                      setProductRating({
+                        type: ActionType.CREATE,
+                        productRating: true,
+                        payload: { orderItems: order.orderItems },
+                      })
+                    )
+                  }
+                >
+                  Write a Review
+                </Button>
+                <NewReview />
+              </div>
             </div>
           </div>
 

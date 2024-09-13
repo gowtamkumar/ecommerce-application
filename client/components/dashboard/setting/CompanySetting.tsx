@@ -25,7 +25,7 @@ const uploadButton = (
   </div>
 );
 
-const WebSetting = ({ currencies }: any) => {
+const CompanySetting = ({ currencies }: any) => {
   const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -297,4 +297,4 @@ const WebSetting = ({ currencies }: any) => {
   );
 };
 
-export default WebSetting;
+export default CompanySetting;

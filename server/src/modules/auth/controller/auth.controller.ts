@@ -299,6 +299,7 @@ export const getMe = asyncHandler(
       "orderShippingAddress.address",
       "orderShippingAddress.phoneNo",
 
+      "shippingAddress.id",
       "shippingAddress.name",
       "shippingAddress.phoneNo",
       "shippingAddress.email",
@@ -308,6 +309,7 @@ export const getMe = asyncHandler(
       "shippingAddress.phoneNo",
       "shippingAddress.type",
       "shippingAddress.status",
+      "shippingAddress.divisionId",
 
       "orderDeliveries",
       "wishlists",
@@ -317,6 +319,7 @@ export const getMe = asyncHandler(
       "orderItems.price",
       "orderItems.qty",
       "orderItems.tax",
+      "orderItems.productId",
 
       "orderProduct.name",
       "orderTrackings.location",

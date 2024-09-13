@@ -234,9 +234,9 @@ const navbarRoute = [
     route: "true",
   },
   {
-    key: "website_settomg",
+    key: "web_setting",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/website-setting">Website Setting </Link>,
+    label: <Link href="/dashboard/website-setting">Web Setting </Link>,
     route: "true",
   },
 ];
@@ -290,7 +290,7 @@ const userProfileRoute: MenuProps["items"] = [
           query: { name: "test" },
         }}
       >
-        My Account df
+        My Account
       </Link>
     ),
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,

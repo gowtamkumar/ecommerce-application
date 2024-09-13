@@ -223,6 +223,7 @@ export default function MyAccount({ user }: any) {
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
+        
         <Form.Item
           name="name"
           label="Name"
@@ -235,9 +236,11 @@ export default function MyAccount({ user }: any) {
         >
           <Input placeholder="Enter name" disabled={!edit} />
         </Form.Item>
+
         <Form.Item name="username" label="Username">
           <Input placeholder="Enter" disabled />
         </Form.Item>
+
         <Form.Item
           name="email"
           label="E-mail"
@@ -250,12 +253,14 @@ export default function MyAccount({ user }: any) {
         >
           <Input placeholder="Enter " disabled={!edit} />
         </Form.Item>
+
         <Form.Item name="gender" label="Gender">
           <Radio.Group disabled={!edit}>
             <Radio value="Male">Male</Radio>
             <Radio value="Female">Female</Radio>
           </Radio.Group>
         </Form.Item>
+
         <Form.Item
           name="phone"
           label="Phone No"
@@ -268,9 +273,11 @@ export default function MyAccount({ user }: any) {
         >
           <Input placeholder="Enter phone" disabled={!edit} />
         </Form.Item>
+
         <Form.Item name="dob" label="Date of Brith">
           <DatePicker placeholder="Enter Birth day" disabled={!edit} />
         </Form.Item>
+
         <Form.Item
           hidden={!global.action.payload?.id}
           name="status"

@@ -39,9 +39,12 @@ import { getSettings } from "@/lib/apis/setting";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
+
   const [shippingAddress, setShippingAddress] = useState([] as any);
   const [shippingCharge, setShippingCharge] = useState({} as any);
   const [setting, setSetting] = useState({} as any);
+
+  console.log("🚀 ~ checkoutFormData:", checkoutFormData)
 
   const dispatch = useDispatch();
   const cart = useSelector(selectCart);
@@ -54,6 +57,7 @@ export default function CheckoutPage() {
       const settingResult = await getSettings();
       setSetting(settingResult.data[0] || {});
       const user = await getMe();
+      console.log("🚀 ~ user:", user.data)
       const activeShippingAddress = user.data?.shippingAddress?.find(
         (item: { status: boolean }) => item.status
       );

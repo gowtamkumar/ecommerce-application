@@ -1,7 +1,6 @@
 "use client";
 import { Tabs } from "antd";
 import React, { useEffect, useState } from "react";
-import WebSetting from "./WebSetting";
 import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
@@ -19,7 +18,7 @@ import HelpSupport from "./HelpSupport";
 import { getCurrencies } from "@/lib/apis/currency";
 
 export default function Index() {
-  const [currencies, setCurrencies] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -31,7 +30,7 @@ export default function Index() {
       try {
         setLoading(true)
         const setting = await getSettings();
-        const currency = await getCurrencies();
+     
         if (isMounted) {
           const newData = { ...setting.data[0] };
           if (newData.image) {
@@ -49,7 +48,7 @@ export default function Index() {
           dispatch(setFormValues(newData));
         }
 
-        setCurrencies(currency.data)
+
 
         setLoading(false)
       } catch (error) {
@@ -71,11 +70,7 @@ export default function Index() {
       defaultValue={"web_site_stting"}
       type="card"
       items={[
-        {
-          label: "Company Setting",
-          key: "web_site_stting",
-          children: <WebSetting  currencies={currencies}  />,
-        },
+        
         {
           label: "Home Page",
           key: "home_page",

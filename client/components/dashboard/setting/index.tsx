@@ -19,8 +19,11 @@ import EmailSetting from "./EmailSetting";
 import Post from "./blog/Post";
 import Lead from "./lead/Lead";
 import Currency from "./currency/Currency";
+import CompanySetting from "./CompanySetting";
+import { getCurrencies } from "@/lib/apis/currency";
 
 export default function Index() {
+  const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -31,6 +34,7 @@ export default function Index() {
       try {
         setLoading(true);
         const setting = await getSettings();
+        const currency = await getCurrencies();
         if (isMounted) {
           const data = setting.data[0] || {};
           const newfile = {
@@ -41,6 +45,7 @@ export default function Index() {
             url: `http://localhost:3900/uploads/${data.image || "no-data.png"}`,
           };
           dispatch(setFormValues({ ...data, fileList: [newfile] }));
+          setCurrencies(currency.data);
           setLoading(false);
         }
       } catch (error) {
@@ -55,12 +60,18 @@ export default function Index() {
       dispatch(setFormValues({}));
     };
   }, [dispatch, global.action]);
+  
   return (
     <Tabs
       tabPosition="left"
       defaultValue={"company_stting"}
       type="card"
       items={[
+        {
+          label: "Company Setting",
+          key: "web_site_stting",
+          children: <CompanySetting currencies={currencies} />,
+        },
         {
           label: "Email Config",
           key: "email_config",
