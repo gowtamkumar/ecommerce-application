@@ -14,6 +14,7 @@ import { saveWishlist } from "@/lib/apis/wishlist";
 import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
 import { getProductVariant } from "@/lib/apis/product-variant";
+import { saveCart } from "@/lib/apis/cart";
 
 const ProductDetails = ({
   product,
@@ -31,25 +32,35 @@ const ProductDetails = ({
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
   async function addToCart(value: any) {
-    const cartPrice = +value.selectProductVariant.price;
-    const productVariantId = value.selectProductVariant.id;
-    const colorId = value.selectProductVariant.colorId;
-    const sizeId = value.selectProductVariant.sizeId;
-    const purchasePrice = +value.selectProductVariant.purchasePrice;
-    let taxAmount = (+cartPrice * (value?.tax?.value || 0)) / 100;
-    
-    dispatch(
-      addCart({
-        ...value,
-        discountA: productDiscountCalculation(value) || 0,
-        tax: taxAmount,
-        price: cartPrice,
-        purchasePrice,
-        productVariantId,
-        sizeId,
-        colorId,
-      })
-    );
+    const newData = {
+      productId: value.id,
+      productVariantId: value.selectProductVariant.id,
+      qty: product.qty,
+    };
+    console.log("🚀 ~ value:", value);
+
+    const result = await saveCart(newData);
+    console.log("🚀 ~ result:", result)
+
+    // const cartPrice = +value.selectProductVariant.price;
+    // const productVariantId = value.selectProductVariant.id;
+    // const colorId = value.selectProductVariant.colorId;
+    // const sizeId = value.selectProductVariant.sizeId;
+    // const purchasePrice = +value.selectProductVariant.purchasePrice;
+    // let taxAmount = (+cartPrice * (value?.tax?.value || 0)) / 100;
+
+    // dispatch(
+    //   addCart({
+    //     ...value,
+    //     discountA: productDiscountCalculation(value) || 0,
+    //     tax: taxAmount,
+    //     price: cartPrice,
+    //     purchasePrice,
+    //     productVariantId,
+    //     sizeId,
+    //     colorId,
+    //   })
+    // );
   }
 
   async function incrementToCart(product: any) {
@@ -133,10 +144,10 @@ const ProductDetails = ({
             ৳{" "}
             {product.discountId
               ? (
-                +price +
-                +taxAmount -
-                productDiscountCalculation(product)
-              ).toFixed(2)
+                  +price +
+                  +taxAmount -
+                  productDiscountCalculation(product)
+                ).toFixed(2)
               : (+price + +taxAmount || 0).toFixed(2)}
           </span>
 
@@ -146,7 +157,6 @@ const ProductDetails = ({
             <div className="text-red-500 mx-3">Out of Stock</div>
           )}
         </div>
-
 
         {product?.discountId ? (
           <div className="flex justify-around">
@@ -159,8 +169,6 @@ const ProductDetails = ({
             </span>
           </div>
         ) : null}
-
-
       </div>
       <Divider />
 

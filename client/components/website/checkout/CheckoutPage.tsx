@@ -36,18 +36,21 @@ import { MdDelete } from "react-icons/md";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dayjs from "dayjs";
 import { getSettings } from "@/lib/apis/setting";
+import { deleteCart, getCartByUser } from "@/lib/apis/cart";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
 
   const [shippingAddress, setShippingAddress] = useState([] as any);
+  const [carts, setCarts] = useState([] as any);
+  // console.log("🚀 ~ carts:", carts);
   const [shippingCharge, setShippingCharge] = useState({} as any);
   const [setting, setSetting] = useState({} as any);
 
-  console.log("🚀 ~ checkoutFormData:", checkoutFormData)
+  console.log("🚀 ~ checkoutFormData:", checkoutFormData);
 
   const dispatch = useDispatch();
-  const cart = useSelector(selectCart);
+  // const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
   // const router = useRouter();
@@ -55,9 +58,11 @@ export default function CheckoutPage() {
   useEffect(() => {
     async function fetchData() {
       const settingResult = await getSettings();
+      const res = await getCartByUser();
       setSetting(settingResult.data[0] || {});
+      setCarts(res.data);
       const user = await getMe();
-      console.log("🚀 ~ user:", user.data)
+      // console.log("🚀 ~ user:", user.data);
       const activeShippingAddress = user.data?.shippingAddress?.find(
         (item: { status: boolean }) => item.status
       );
@@ -82,21 +87,25 @@ export default function CheckoutPage() {
   }, [dispatch, global.action]);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
-    cart.carts.reduce(
+    carts.reduce(
       (pre: any, curr: any) => {
-        let sutotal = (+curr.price + curr?.tax) * +curr.qty;
+        const tax = +curr?.product?.tax?.value;
+        const price = +curr?.productVariant?.price;
+        const discount = curr.product?.discount;
+        let taxAmount = (+price * (curr?.product?.tax?.value || 0)) / 100;
+        let disAmount =
+          discount?.discountType === "Percentage"
+            ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
+            : +discount?.value;
+        let sutotal = (+price + taxAmount) * +curr.qty;
         return {
-          taxAmount: (+pre.taxAmount + curr?.tax) * +curr.qty,
+          taxAmount: (+pre.taxAmount + taxAmount) * +curr.qty,
           netAmount:
-            +pre.netAmount +
-            sutotal -
-            (+curr.discountA || 0) * (+curr.qty || 0),
+            +pre.netAmount + sutotal - (+disAmount || 0) * (+curr.qty || 0),
           discountAmount:
-            +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
+            +pre.discountAmount + (+disAmount || 0) * (+curr.qty || 0),
           orderTotalAmount:
-            +pre.orderTotalAmount +
-            +sutotal -
-            (+curr.discountA * +curr.qty || 0),
+            +pre.orderTotalAmount + +sutotal - (+disAmount * +curr.qty || 0),
         };
       },
       {
@@ -112,7 +121,7 @@ export default function CheckoutPage() {
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
-        orderItems: cart.carts,
+        orderItems: carts,
         orderDate: dayjs().toISOString(),
         netAmount,
         orderTax: taxAmount,
@@ -164,11 +173,10 @@ export default function CheckoutPage() {
     (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
   );
 
-  function removeFromCart(value: { id: number }) {
+  async function removeFromCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
-      dispatch(removeCart(value));
-
+      const res = await deleteCart(id)
       setTimeout(async () => {
         dispatch(setLoading({ remove: false }));
       }, 1000);
@@ -177,24 +185,34 @@ export default function CheckoutPage() {
     }
   }
 
-  function stockCheckingAndPurchaseLimit(product: {
-    limitPurchaseQty: number;
-    qty: number;
-    selectProductVariant: { stockQty: number };
-  }) {
-    let checkStock = product.selectProductVariant.stockQty;
+  function incrementCart(value: { id: number }) {
+    console.log("🚀 ~ value:", value)
 
-    // if (newProduct.data.productVariants[0].id) {
-    //   const productVariant = await getProductVariant({
-    //     id: newProduct.data.productVariants[0].id,
-    //   });
-    //   setCheckStock(productVariant.data.stockQty);
+    // try {
+    //   dispatch(setLoading({ remove: true }));
+    //   dispatch(removeCart(value));
+
+    //   setTimeout(async () => {
+    //     dispatch(setLoading({ remove: false }));
+    //   }, 1000);
+    // } catch (err) {
+    //   console.log("err");
     // }
 
-    if (product.limitPurchaseQty && product.limitPurchaseQty <= product.qty) {
+  }
+
+
+  function stockCheckingAndPurchaseLimit(value: {
+    limitPurchaseQty: number;
+    qty: number;
+    productVariant: { stockQty: number };
+  }) {
+    let checkStock = value?.productVariant?.stockQty;
+
+    if (value.limitPurchaseQty && value.limitPurchaseQty <= value.qty) {
       return true;
     }
-    if (checkStock <= product.qty) {
+    if (checkStock <= value.qty) {
       return true;
     }
     return false;
@@ -231,7 +249,18 @@ export default function CheckoutPage() {
               <h2 className="text-2xl font-semibold">Order summary</h2>
             </div>
             <div>
-              {cart.carts.map((item: any, idx: number) => {
+              {carts.map((item: any, idx: number) => {
+                const product = item.product;
+                const productVariant = item.productVariant;
+                let taxAmount =
+                  (+productVariant.price * (product?.tax?.value || 0)) / 100;
+                let disAmount =
+                  product?.discount.discountType === "Percentage"
+                    ? ((+productVariant.price + +taxAmount) *
+                      (+product.discount.value || 0)) /
+                    100
+                    : +product.discount?.value;
+
                 return (
                   <div key={idx} className="p-3 flex border-b">
                     <Image
@@ -242,17 +271,17 @@ export default function CheckoutPage() {
                       className="w-24 h-24 object-cover"
                     />
                     <div className="ml-4 flex-grow">
-                      <h3 className="text-base font-semibold">{item?.name}</h3>
-                      {item.selectProductVariant?.size?.name && (
+                      <h3 className="text-base font-semibold">
+                        {product?.name}
+                      </h3>
+                      {productVariant.size?.name && (
                         <span className="mx-2">
-                          Size: {item.selectProductVariant?.size?.name}
+                          Size: {productVariant.size?.name}
                         </span>
                       )}
 
-                      {item.selectProductVariant?.color?.name && (
-                        <span>
-                          Color: {item.selectProductVariant?.color?.name}
-                        </span>
+                      {productVariant.color?.name && (
+                        <span>Color: {productVariant.color?.name}</span>
                       )}
 
                       <div className="mt-2 lg:flex items-center">
@@ -272,7 +301,7 @@ export default function CheckoutPage() {
                           />
                           <Button
                             className="px-2 py-1 bg-gray-200"
-                            onClick={() => dispatch(addCart(item))}
+                            onClick={() => incrementCart(item)}
                             disabled={stockCheckingAndPurchaseLimit(item)}
                           >
                             +
@@ -280,24 +309,30 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="mx-2 text-base font-semibold text-green-600">
-                          ৳{" "}
-                          {item.discountId
+                          ৳
+                          {product.discountId
                             ? (
-                              +item.price +
-                              +item.tax -
-                              item?.discountA
+                              +productVariant.price +
+                              +taxAmount -
+                              +disAmount
                             ).toFixed(2)
-                            : (+item.price + item.tax || 0).toFixed(2)}
+                            : (+productVariant.price + +taxAmount || 0).toFixed(
+                              2
+                            )}
                         </div>
                         <div>
-                          {item?.discountId ? (
+                          {product?.discountId ? (
                             <div className="text-base">
                               <span className="line-through text-gray-500">
-                                ৳ {(+item.price + +item.tax || 0).toFixed(2)}
+                                ৳{" "}
+                                {(
+                                  +productVariant.price + +taxAmount || 0
+                                ).toFixed(2)}
                               </span>
                               <span className="text-green-600 ml-2">
-                                - {item?.discount?.value}
-                                {item?.discount?.discountType === "Percentage"
+                                - {product?.discount?.value}
+                                {product?.discount?.discountType ===
+                                  "Percentage"
                                   ? "%"
                                   : "BDT"}
                               </span>
@@ -311,7 +346,7 @@ export default function CheckoutPage() {
                       <Popconfirm
                         title="Delete Order item"
                         description="Are you sure to delete this Order item?"
-                        onConfirm={() => removeFromCart(item)}
+                        onConfirm={() => removeFromCart(item.id)}
                         okText="Yes"
                         cancelText="No"
                         okButtonProps={{ loading: global.loading.remove }}
