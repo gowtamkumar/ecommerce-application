@@ -165,6 +165,7 @@ updatedAt
 
 id,
 product_id,
+productVariantId,
 user_id,
 qty,
 createdAt,

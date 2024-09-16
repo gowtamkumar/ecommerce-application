@@ -37,6 +37,7 @@ const ProductDetails = ({
     const sizeId = value.selectProductVariant.sizeId;
     const purchasePrice = +value.selectProductVariant.purchasePrice;
     let taxAmount = (+cartPrice * (value?.tax?.value || 0)) / 100;
+    
     dispatch(
       addCart({
         ...value,
