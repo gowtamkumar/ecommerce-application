@@ -6,11 +6,13 @@ import HeaderSearch from "./HeaderSearch";
 import { getSettings } from "@/lib/apis/setting";
 import MainMenu from "./Menu";
 import MobileMenu from "./MobileMenu";
+import { getCartByUser } from "@/lib/apis/cart";
 
 export default async function Header() {
   //  const res = await saveVisitor({})
   //  console.log("🚀 ~ res:", res)
   const setting = await getSettings();
+  const res = await getCartByUser();
   // const singleLogo = logo.data ? logo.data[0]?.image : null;
   return (
     <>
@@ -21,12 +23,12 @@ export default async function Header() {
           <div className="flex justify-between items-center">
             <Logo settingData={setting} />
             <div className="md:hidden">
-              <MobileMenu />
+              <MobileMenu/>
             </div>
             <div className="hidden md:inline md:order-2">
-              <MainMenu />
+              <MainMenu  />
             </div>
-            <HeaderRight />
+            <HeaderRight  res={res} />
           </div>
         </div>
       </div>

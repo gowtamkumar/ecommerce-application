@@ -11,13 +11,13 @@ import { CiSearch, CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
 
-export default function HeaderRight() {
+export default function HeaderRight({res}: any) {
   const [open, setOpen] = useState(false);
   const cart = useSelector(selectCart);
   const session = useSession();
   const profileImage = session.data?.user.image;
 
-  console.log("cart.carts", cart.carts);
+  // console.log("cart.carts", cart.carts);
   
 
   return (
@@ -31,7 +31,7 @@ export default function HeaderRight() {
         <CiHeart size={22} className="font-medium" />
       </Link>
       <Link href="/checkout" className="cursor-pointer mt-1 md:inline hidden">
-        <Badge size="default" count={cart.carts.length}>
+        <Badge size="default" count={res.data?.length}>
           <IoBagOutline size={22} className="font-medium" />
         </Badge>
       </Link>

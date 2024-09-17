@@ -43,11 +43,8 @@ export default function CheckoutPage() {
 
   const [shippingAddress, setShippingAddress] = useState([] as any);
   const [carts, setCarts] = useState([] as any);
-  // console.log("🚀 ~ carts:", carts);
   const [shippingCharge, setShippingCharge] = useState({} as any);
   const [setting, setSetting] = useState({} as any);
-
-  console.log("🚀 ~ checkoutFormData:", checkoutFormData);
 
   const dispatch = useDispatch();
   // const cart = useSelector(selectCart);
@@ -84,11 +81,13 @@ export default function CheckoutPage() {
       dispatch(setLoading({ save: false }));
       setShippingCharge({});
     };
-  }, [dispatch, global.action]);
+  }, []);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     carts.reduce(
       (pre: any, curr: any) => {
+        console.log("dfdasf test", curr.qty);
+
         const tax = +curr?.product?.tax?.value;
         const price = +curr?.productVariant?.price;
         const discount = curr.product?.discount;
@@ -118,6 +117,8 @@ export default function CheckoutPage() {
 
   // State for form inputs
   const handleOrder = async () => {
+    console.log("carts", carts);
+    
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
@@ -138,6 +139,10 @@ export default function CheckoutPage() {
           errors: validatedFields.error.formErrors,
         };
       }
+
+      console.log("eee", validatedFields.data);
+
+      return
 
       const res = await saveOrder(validatedFields.data);
 
@@ -173,10 +178,10 @@ export default function CheckoutPage() {
     (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
   );
 
-  async function removeFromCart(id: string) {
+  async function removeItemCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
-      const res = await deleteCart(id)
+      const res = await deleteCart(id);
       setTimeout(async () => {
         dispatch(setLoading({ remove: false }));
       }, 1000);
@@ -186,7 +191,21 @@ export default function CheckoutPage() {
   }
 
   function incrementCart(value: { id: number }) {
-    console.log("🚀 ~ value:", value)
+    const data = carts.map((item: any) => {
+      if (item.id === value.id) {
+        item.qty++;
+      }
+      return item;
+    });
+    setCarts(data);
+
+    // const existingProductIndex = carts.findIndex(
+    //   (item: any) => item.id === value.id
+    // );
+
+    // if (existingProductIndex !== -1) {
+    //   carts[existingProductIndex].qty++;
+    // }
 
     // try {
     //   dispatch(setLoading({ remove: true }));
@@ -198,9 +217,18 @@ export default function CheckoutPage() {
     // } catch (err) {
     //   console.log("err");
     // }
-
   }
 
+  function decrementCart(value: { id: number }) {
+    const data = carts.map((item: any) => {
+      if (item.id === value.id) {
+        item.qty--;
+      }
+      return item;
+    });
+
+    setCarts(data);
+  }
 
   function stockCheckingAndPurchaseLimit(value: {
     limitPurchaseQty: number;
@@ -221,28 +249,6 @@ export default function CheckoutPage() {
   return (
     <>
       <div className="lg:w-8/12 lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
-        {/* <div className="pt-2">
-          <Breadcrumb
-            separator=">"
-            items={[
-              {
-                title: "Home",
-              },
-              {
-                title: "Application Center",
-                href: "",
-              },
-              {
-                title: "Application List",
-                href: "",
-              },
-              {
-                title: "An Application",
-              },
-            ]}
-          />
-        </div> */}
-
         <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
           <div className="col-span-2 bg-white rounded-md overflow-hidden content-between">
             <div className="p-4 border-b">
@@ -288,7 +294,7 @@ export default function CheckoutPage() {
                         <div className="flex">
                           <Button
                             className="px-2 py-1 bg-gray-200"
-                            onClick={() => dispatch(decrementCart(item))}
+                            onClick={() => decrementCart(item)}
                             disabled={item?.qty <= 1}
                           >
                             -
@@ -296,7 +302,7 @@ export default function CheckoutPage() {
                           <input
                             type="text"
                             className="mx-2 w-10 text-center border"
-                            value={item?.qty}
+                            value={item.qty}
                             readOnly
                           />
                           <Button
@@ -346,7 +352,7 @@ export default function CheckoutPage() {
                       <Popconfirm
                         title="Delete Order item"
                         description="Are you sure to delete this Order item?"
-                        onConfirm={() => removeFromCart(item.id)}
+                        onConfirm={() => removeItemCart(item.id)}
                         okText="Yes"
                         cancelText="No"
                         okButtonProps={{ loading: global.loading.remove }}

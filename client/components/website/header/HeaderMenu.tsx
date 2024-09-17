@@ -45,7 +45,7 @@ export default function HeaderMenu() {
       </div>
 
       <Link href="/checkout" className="mt-1 md:hidden inline">
-        <Badge size="default" count={cart.carts.length}>
+        <Badge size="default" count={cart.carts?.length}>
           <IoBagOutline className="font-medium lg:text-lg text-2xl" />
         </Badge>
       </Link>
