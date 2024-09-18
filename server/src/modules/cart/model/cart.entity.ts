@@ -23,10 +23,10 @@ export class CartEntity {
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-  @Column({ name: "product_variant_Id" })
+  @Column({ name: "product_variant_id" })
   productVariantId!: number;
   @ManyToOne((_type) => ProductVariantEntity, (productv) => productv.carts)
-  @JoinColumn({ name: "product_variant_Id" })
+  @JoinColumn({ name: "product_variant_id" })
   productVariant!: ProductVariantEntity;
 
   @Column()
@@ -44,3 +44,12 @@ export class CartEntity {
   // @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   // updatedAt?: string;
 }
+
+
+// select 
+// * 
+// from carts 
+// LEFT JOIN products ON products.id = carts.product_id
+// LEFT JOIN product_variants ON product_variants.id = carts.product_variant_id
+// LEFT JOIN sizes ON sizes.id = product_variants.size_id
+// LEFT JOIN colors ON colors.id = product_variants.color_id
