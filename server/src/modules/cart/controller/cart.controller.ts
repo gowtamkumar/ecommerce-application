@@ -29,11 +29,14 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
     "discount.type",
     "discount.value",
     "brand.name",
+    "productVariant.id",
     "productVariant.price",
     "productVariant.purchasePrice",
     "productVariant.stockQty",
     "productVariant.weight",
     "color.name",
+    "color.id",
+    "size.id",
     "size.name",
   ]);
 

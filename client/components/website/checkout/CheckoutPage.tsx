@@ -53,29 +53,6 @@ export default function CheckoutPage() {
   // const router = useRouter();
 
   useEffect(() => {
-    async function fetchData() {
-      const settingResult = await getSettings();
-      const res = await getCartByUser();
-      setSetting(settingResult.data[0] || {});
-      setCarts(res.data);
-      const user = await getMe();
-      // console.log("🚀 ~ user:", user.data);
-      const activeShippingAddress = user.data?.shippingAddress?.find(
-        (item: { status: boolean }) => item.status
-      );
-      if (activeShippingAddress?.divisionId) {
-        const getShippingCharge = await getShippingCharges({
-          divisionId: activeShippingAddress.divisionId,
-        });
-        setShippingCharge(getShippingCharge.data[0]);
-      }
-
-      setShippingAddress(user.data?.shippingAddress);
-      setCheckoutFormData({
-        paymentMethod: "Cash",
-        shippingAddressId: activeShippingAddress?.id, //need to logic implements
-      });
-    }
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
@@ -83,12 +60,35 @@ export default function CheckoutPage() {
     };
   }, []);
 
+  
+
+  async function fetchData() {
+    const settingResult = await getSettings();
+    const res = await getCartByUser();
+    setSetting(settingResult.data[0] || {});
+    setCarts(res.data);
+    const user = await getMe();
+    // console.log("🚀 ~ user:", user.data);
+    const activeShippingAddress = user.data?.shippingAddress?.find(
+      (item: { status: boolean }) => item.status
+    );
+    if (activeShippingAddress?.divisionId) {
+      const getShippingCharge = await getShippingCharges({
+        divisionId: activeShippingAddress.divisionId,
+      });
+      setShippingCharge(getShippingCharge.data[0]);
+    }
+
+    setShippingAddress(user.data?.shippingAddress);
+    setCheckoutFormData({
+      paymentMethod: "Cash",
+      shippingAddressId: activeShippingAddress?.id, //need to logic implements
+    });
+  }
+
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     carts.reduce(
       (pre: any, curr: any) => {
-        console.log("dfdasf test", curr.qty);
-
-        const tax = +curr?.product?.tax?.value;
         const price = +curr?.productVariant?.price;
         const discount = curr.product?.discount;
         let taxAmount = (+price * (curr?.product?.tax?.value || 0)) / 100;
@@ -97,6 +97,7 @@ export default function CheckoutPage() {
             ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
             : +discount?.value;
         let sutotal = (+price + taxAmount) * +curr.qty;
+
         return {
           taxAmount: (+pre.taxAmount + taxAmount) * +curr.qty,
           netAmount:
@@ -118,7 +119,7 @@ export default function CheckoutPage() {
   // State for form inputs
   const handleOrder = async () => {
     console.log("carts", carts);
-    
+
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
@@ -142,7 +143,7 @@ export default function CheckoutPage() {
 
       console.log("eee", validatedFields.data);
 
-      return
+      return;
 
       const res = await saveOrder(validatedFields.data);
 
@@ -263,8 +264,8 @@ export default function CheckoutPage() {
                 let disAmount =
                   product?.discount.discountType === "Percentage"
                     ? ((+productVariant.price + +taxAmount) *
-                      (+product.discount.value || 0)) /
-                    100
+                        (+product.discount.value || 0)) /
+                      100
                     : +product.discount?.value;
 
                 return (
@@ -318,13 +319,13 @@ export default function CheckoutPage() {
                           ৳
                           {product.discountId
                             ? (
-                              +productVariant.price +
-                              +taxAmount -
-                              +disAmount
-                            ).toFixed(2)
+                                +productVariant.price +
+                                +taxAmount -
+                                +disAmount
+                              ).toFixed(2)
                             : (+productVariant.price + +taxAmount || 0).toFixed(
-                              2
-                            )}
+                                2
+                              )}
                         </div>
                         <div>
                           {product?.discountId ? (
@@ -338,7 +339,7 @@ export default function CheckoutPage() {
                               <span className="text-green-600 ml-2">
                                 - {product?.discount?.value}
                                 {product?.discount?.discountType ===
-                                  "Percentage"
+                                "Percentage"
                                   ? "%"
                                   : "BDT"}
                               </span>
