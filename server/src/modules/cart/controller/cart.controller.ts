@@ -12,47 +12,95 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(CartEntity);
 
-  const qb = repository.createQueryBuilder("cart");
-  qb.select([
-    "cart.id",
-    "cart.qty",
-    "product.name",
-    "product.urlSlug",
-    "product.images",
-    "product.limitPurchaseQty",
-    "product.limitPurchaseQty",
-    "product.discountId",
-    "user.name",
-    "tax.name",
-    "tax.value",
-    "discount.discountType",
-    "discount.type",
-    "discount.value",
-    "brand.name",
-    "productVariant.id",
-    "productVariant.price",
-    "productVariant.purchasePrice",
-    "productVariant.stockQty",
-    "productVariant.weight",
-    "color.name",
-    "color.id",
-    "size.id",
-    "size.name",
-  ]);
+  const results = await connection.query(
+    `select 
+carts.id,
+carts.qty,
+p.name,
+p.url_slug as "urlSlug",
+p.images,
+p.limit_purchase_qty as "limitPurchaseQty",
+p.discount_id as "discountId",
+t.name as "taxName",
+t.value as "taxValue",
+d.discount_type as "discountType",
+d.type,
+d.value as "discountValue",
+brands.name as "brandName",
+pv.id as "productVariantId",
+pv.price,
+pv.purchase_price as "purchasePrice",
+pv.stock_qty as "stockQty",
+pv.weight,
+c.name as "colorName",
+c.id as "colorId",
+s.id as "sizeId",
+s.name as "sizeName",
+(COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100 AS "taxAmount",
+(COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100, 0)) * COALESCE(carts.qty, 0) AS sutotal,
+	CASE 
+		WHEN 
+			d.discount_type = 'Percentage'
+		THEN 
+			 ((COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
+		ELSE
+			COALESCE(d.value, 0)
+	END
+ AS "disAmount"
 
-  qb.leftJoin("cart.user", "user");
-  qb.leftJoin("cart.product", "product");
-  qb.leftJoin("product.tax", "tax");
-  qb.leftJoin("product.discount", "discount");
-  qb.leftJoin("product.brand", "brand");
-  qb.leftJoin("cart.productVariant", "productVariant");
-  qb.leftJoin("productVariant.color", "color");
-  qb.leftJoin("productVariant.size", "size");
+from carts 
+LEFT JOIN products as p ON p.id = carts.product_id
+LEFT JOIN brands ON brands.id = p.brand_id
+LEFT JOIN taxs as t ON t.id = p.tax_id
+LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
+LEFT JOIN discounts as d ON d.id = p.discount_id
+LEFT JOIN sizes as s ON s.id = pv.size_id
+LEFT JOIN colors as c ON c.id = pv.color_id`
+  );
 
-  if (userId) qb.where({ userId });
-  const results = await qb.getMany();
+  // const qb = repository.createQueryBuilder("cart");
+  // qb.select([
+  //   "cart.id",
+  //   "cart.qty",
+  //   "product.name",
+  //   "product.urlSlug",
+  //   "product.images",
+  //   "product.limitPurchaseQty",
+  //   "product.discountId",
+  //   "user.name",
+  //   "tax.name",
+  //   "tax.value",
+  //   "discount.discountType",
+  //   "discount.type",
+  //   "discount.value",
+  //   "brand.name",
+  //   "productVariant.id",
+  //   "productVariant.price",
+  //   "productVariant.purchasePrice",
+  //   "productVariant.stockQty",
+  //   "productVariant.weight",
+  //   "color.name",
+  //   "color.id",
+  //   "size.id",
+  //   "size.name",
+  // ]);
+
+  // qb.leftJoin("cart.user", "user");
+  // qb.leftJoin("cart.product", "product");
+  // qb.leftJoin("product.tax", "tax");
+  // qb.leftJoin("product.discount", "discount");
+  // qb.leftJoin("product.brand", "brand");
+  // qb.leftJoin("cart.productVariant", "productVariant");
+  // qb.leftJoin("productVariant.color", "color");
+  // qb.leftJoin("productVariant.size", "size");
+
+  // if (userId) qb.where({ userId });
+  // const results = await qb.getMany();
 
   // const result = await repository.find();
+
+  console.log("results dd", results);
+  
 
   return res.status(200).json({
     success: true,

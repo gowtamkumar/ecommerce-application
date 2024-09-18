@@ -43,6 +43,7 @@ export default function CheckoutPage() {
 
   const [shippingAddress, setShippingAddress] = useState([] as any);
   const [carts, setCarts] = useState([] as any);
+
   const [shippingCharge, setShippingCharge] = useState({} as any);
   const [setting, setSetting] = useState({} as any);
 
@@ -52,6 +53,8 @@ export default function CheckoutPage() {
   // const currentUrl = window.location.pathname
   // const router = useRouter();
 
+  console.log("🚀 ~ carts:", carts);
+
   useEffect(() => {
     fetchData();
     return () => {
@@ -59,8 +62,6 @@ export default function CheckoutPage() {
       setShippingCharge({});
     };
   }, []);
-
-  
 
   async function fetchData() {
     const settingResult = await getSettings();
@@ -89,23 +90,27 @@ export default function CheckoutPage() {
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     carts.reduce(
       (pre: any, curr: any) => {
-        const price = +curr?.productVariant?.price;
-        const discount = curr.product?.discount;
-        let taxAmount = (+price * (curr?.product?.tax?.value || 0)) / 100;
-        let disAmount =
-          discount?.discountType === "Percentage"
-            ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
-            : +discount?.value;
-        let sutotal = (+price + taxAmount) * +curr.qty;
+        console.log("🚀 ~ curr:", curr);
+        // const price = +curr?.productVariant?.price;
+        // const discount = curr.product?.discount;
+        // let taxAmount = (+price * (curr?.product?.tax?.value || 0)) / 100;
+        // let disAmount =
+        //   discount?.discountType === "Percentage"
+        //     ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
+        //     : +discount?.value;
+        // let sutotal = (+price + taxAmount) * +curr.qty;
+        // console.log("🚀 ~ sutotal:", sutotal)
 
         return {
-          taxAmount: (+pre.taxAmount + taxAmount) * +curr.qty,
+          taxAmount: (+pre.taxAmount + curr.taxAmount) * +curr.qty,
           netAmount:
-            +pre.netAmount + sutotal - (+disAmount || 0) * (+curr.qty || 0),
+           ( +pre.netAmount + +curr.sutotal) - (+curr.disAmount * +curr.qty || 0),
           discountAmount:
-            +pre.discountAmount + (+disAmount || 0) * (+curr.qty || 0),
+            +pre.discountAmount + (+curr.disAmount || 0) * (+curr.qty || 0),
           orderTotalAmount:
-            +pre.orderTotalAmount + +sutotal - (+disAmount * +curr.qty || 0),
+            +pre.orderTotalAmount +
+            +curr.sutotal -
+            (+curr.disAmount * +curr.qty || 0),
         };
       },
       {
@@ -231,12 +236,8 @@ export default function CheckoutPage() {
     setCarts(data);
   }
 
-  function stockCheckingAndPurchaseLimit(value: {
-    limitPurchaseQty: number;
-    qty: number;
-    productVariant: { stockQty: number };
-  }) {
-    let checkStock = value?.productVariant?.stockQty;
+  function stockCheckingAndPurchaseLimit(value: any) {
+    let checkStock = value?.stockQty;
 
     if (value.limitPurchaseQty && value.limitPurchaseQty <= value.qty) {
       return true;
@@ -257,16 +258,21 @@ export default function CheckoutPage() {
             </div>
             <div>
               {carts.map((item: any, idx: number) => {
-                const product = item.product;
-                const productVariant = item.productVariant;
-                let taxAmount =
-                  (+productVariant.price * (product?.tax?.value || 0)) / 100;
-                let disAmount =
-                  product?.discount.discountType === "Percentage"
-                    ? ((+productVariant.price + +taxAmount) *
-                        (+product.discount.value || 0)) /
-                      100
-                    : +product.discount?.value;
+                // const product = item.product;
+                // const productVariant = item.productVariant;
+                // let taxAmount =
+
+                //   (+item.price * (product?.tax?.value || 0)) / 100;
+
+                // let disAmount =
+                //   item.type === "Percentage"
+                //     ? ((+item.price + +item.taxAmount) *
+                //         (+product.discount.value || 0)) /
+                //       100
+                //     : +product.discount?.value;
+
+                //     console.log("disAmount", disAmount);
+                //     console.log("🚀 ~ taxAmount:", taxAmount)
 
                 return (
                   <div key={idx} className="p-3 flex border-b">
@@ -278,18 +284,12 @@ export default function CheckoutPage() {
                       className="w-24 h-24 object-cover"
                     />
                     <div className="ml-4 flex-grow">
-                      <h3 className="text-base font-semibold">
-                        {product?.name}
-                      </h3>
-                      {productVariant.size?.name && (
-                        <span className="mx-2">
-                          Size: {productVariant.size?.name}
-                        </span>
+                      <h3 className="text-base font-semibold">{item?.name}</h3>
+                      {item.sizeName && (
+                        <span className="mx-2">Size: {item.sizeName}</span>
                       )}
 
-                      {productVariant.color?.name && (
-                        <span>Color: {productVariant.color?.name}</span>
-                      )}
+                      {item.colorName && <span>Color: {item.colorName}</span>}
 
                       <div className="mt-2 lg:flex items-center">
                         <div className="flex">
@@ -317,31 +317,26 @@ export default function CheckoutPage() {
 
                         <div className="mx-2 text-base font-semibold text-green-600">
                           ৳
-                          {product.discountId
+                          {item.discountId
                             ? (
-                                +productVariant.price +
-                                +taxAmount -
-                                +disAmount
+                                +item.price +
+                                +item.taxAmount -
+                                +item.disAmount
                               ).toFixed(2)
-                            : (+productVariant.price + +taxAmount || 0).toFixed(
-                                2
-                              )}
+                            : (+item.price + +item.taxAmount || 0).toFixed(2)}
                         </div>
                         <div>
-                          {product?.discountId ? (
+                          {item?.discountId ? (
                             <div className="text-base">
                               <span className="line-through text-gray-500">
                                 ৳{" "}
-                                {(
-                                  +productVariant.price + +taxAmount || 0
-                                ).toFixed(2)}
+                                {(+item.price + +item.taxAmount || 0).toFixed(
+                                  2
+                                )}
                               </span>
                               <span className="text-green-600 ml-2">
-                                - {product?.discount?.value}
-                                {product?.discount?.discountType ===
-                                "Percentage"
-                                  ? "%"
-                                  : "BDT"}
+                                - {item.discountValue}
+                                {item.discountType === "Percentage" ? "%" : "BDT"}
                               </span>
                             </div>
                           ) : null}
