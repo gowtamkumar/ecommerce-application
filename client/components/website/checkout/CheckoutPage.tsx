@@ -53,8 +53,6 @@ export default function CheckoutPage() {
   // const currentUrl = window.location.pathname
   // const router = useRouter();
 
-  console.log("🚀 ~ carts:", carts);
-
   useEffect(() => {
     fetchData();
     return () => {
@@ -90,7 +88,6 @@ export default function CheckoutPage() {
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     carts.reduce(
       (pre: any, curr: any) => {
-        console.log("🚀 ~ curr:", curr);
         // const price = +curr?.productVariant?.price;
         // const discount = curr.product?.discount;
         // let taxAmount = (+price * (curr?.product?.tax?.value || 0)) / 100;
@@ -98,19 +95,20 @@ export default function CheckoutPage() {
         //   discount?.discountType === "Percentage"
         //     ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
         //     : +discount?.value;
+        let sutotal = curr.sutotal * +curr.qty;
         // let sutotal = (+price + taxAmount) * +curr.qty;
         // console.log("🚀 ~ sutotal:", sutotal)
 
         return {
-          taxAmount: (+pre.taxAmount + curr.taxAmount) * +curr.qty,
+          taxAmount: (+pre.taxAmount + curr.tax) * +curr.qty,
           netAmount:
-           ( +pre.netAmount + +curr.sutotal) - (+curr.disAmount * +curr.qty || 0),
+           ( +pre.netAmount + +sutotal) - (+curr.discountA * +curr.qty || 0),
           discountAmount:
-            +pre.discountAmount + (+curr.disAmount || 0) * (+curr.qty || 0),
+            +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
           orderTotalAmount:
             +pre.orderTotalAmount +
-            +curr.sutotal -
-            (+curr.disAmount * +curr.qty || 0),
+            +sutotal -
+            (+curr.discountA * +curr.qty || 0),
         };
       },
       {
@@ -138,7 +136,7 @@ export default function CheckoutPage() {
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-
+      console.log("error", validatedFields.error);
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
         return {
@@ -146,9 +144,10 @@ export default function CheckoutPage() {
         };
       }
 
-      console.log("eee", validatedFields.data);
+   
+      console.log("data", validatedFields.data);
 
-      return;
+      // return;
 
       const res = await saveOrder(validatedFields.data);
 
@@ -320,10 +319,10 @@ export default function CheckoutPage() {
                           {item.discountId
                             ? (
                                 +item.price +
-                                +item.taxAmount -
-                                +item.disAmount
+                                +item.tax -
+                                +item.discountA
                               ).toFixed(2)
-                            : (+item.price + +item.taxAmount || 0).toFixed(2)}
+                            : (+item.price + +item.tax || 0).toFixed(2)}
                         </div>
                         <div>
                           {item?.discountId ? (

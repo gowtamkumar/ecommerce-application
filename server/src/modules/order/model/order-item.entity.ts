@@ -28,7 +28,7 @@ export class OrderItemEntity {
   order!: OrderEntity;
 
   @Column({ type: "numeric", precision: 10, scale: 2 })
-  price!: number;
+  price!: string;
 
   @Column({
     name: "purchase_price",
@@ -37,13 +37,13 @@ export class OrderItemEntity {
     scale: 2,
     nullable: true,
   })
-  purchasePrice!: number;
+  purchasePrice!: string;
 
   @Column()
   qty!: number;
 
   @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
-  tax!: number;
+  tax!: string;
 
   @Column({
     name: "discount_amount",
@@ -52,7 +52,7 @@ export class OrderItemEntity {
     scale: 2,
     nullable: true,
   })
-  discountA!: number;
+  discountA!: string;
 
   @Column({ name: "product_id" })
   productId!: number;

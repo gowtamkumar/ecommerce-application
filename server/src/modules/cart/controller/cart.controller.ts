@@ -14,48 +14,50 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
 
   const results = await connection.query(
     `select 
-carts.id,
-carts.qty,
-p.name,
-p.url_slug as "urlSlug",
-p.images,
-p.limit_purchase_qty as "limitPurchaseQty",
-p.discount_id as "discountId",
-t.name as "taxName",
-t.value as "taxValue",
-d.discount_type as "discountType",
-d.type,
-d.value as "discountValue",
-brands.name as "brandName",
-pv.id as "productVariantId",
-pv.price,
-pv.purchase_price as "purchasePrice",
-pv.stock_qty as "stockQty",
-pv.weight,
-c.name as "colorName",
-c.id as "colorId",
-s.id as "sizeId",
-s.name as "sizeName",
-(COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100 AS "taxAmount",
-(COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100, 0)) * COALESCE(carts.qty, 0) AS sutotal,
-	CASE 
-		WHEN 
-			d.discount_type = 'Percentage'
-		THEN 
-			 ((COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
-		ELSE
-			COALESCE(d.value, 0)
-	END
- AS "disAmount"
+      carts.id,
+      carts.qty,
+      p.id as "productId",
+      p.name,
+      p.url_slug as "urlSlug",
+      p.images,
+      p.limit_purchase_qty as "limitPurchaseQty",
+      p.discount_id as "discountId",
+      t.name as "taxName",
+      t.value as "taxValue",
+      d.discount_type as "discountType",
+      d.type,
+      d.value as "discountValue",
+      brands.name as "brandName",
+      pv.id as "productVariantId",
+      pv.price,
+      pv.purchase_price as "purchasePrice",
+      pv.stock_qty as "stockQty",
+      pv.weight,
+      c.name as "colorName",
+      c.id as "colorId",
+      s.id as "sizeId",
+      s.name as "sizeName",
+      (COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
+      (COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
+        CASE 
+          WHEN 
+            d.discount_type = 'Percentage'
+          THEN 
+            ((COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
+          ELSE
+            COALESCE(d.value, 0)
+        END
+      AS "discountA"
 
-from carts 
-LEFT JOIN products as p ON p.id = carts.product_id
-LEFT JOIN brands ON brands.id = p.brand_id
-LEFT JOIN taxs as t ON t.id = p.tax_id
-LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
-LEFT JOIN discounts as d ON d.id = p.discount_id
-LEFT JOIN sizes as s ON s.id = pv.size_id
-LEFT JOIN colors as c ON c.id = pv.color_id`
+      from carts 
+      LEFT JOIN products as p ON p.id = carts.product_id
+      LEFT JOIN brands ON brands.id = p.brand_id
+      LEFT JOIN taxs as t ON t.id = p.tax_id
+      LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
+      LEFT JOIN discounts as d ON d.id = p.discount_id
+      LEFT JOIN sizes as s ON s.id = pv.size_id
+      LEFT JOIN colors as c ON c.id = pv.color_id
+`
   );
 
   // const qb = repository.createQueryBuilder("cart");
