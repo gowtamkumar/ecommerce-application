@@ -101,12 +101,9 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
 
   // const result = await repository.find();
 
-  console.log("results dd", results);
-  
-
   return res.status(200).json({
     success: true,
-    msg: "Get cart by users",
+    msg: "Get cart by user",
     data: results,
   });
 });
@@ -169,15 +166,31 @@ export const createCart = asyncHandler(async (req: any, res: Response) => {
 
   const repository = connection.getRepository(CartEntity);
 
-  const newCart = repository.create(validation.data);
-
-  const save = await repository.save(newCart);
-
-  return res.status(200).json({
-    success: true,
-    msg: "Create a new Cart",
-    data: save,
+  const findCart = await repository.findOneBy({
+    productId: validation.data.productId,
   });
+
+  if (findCart) {
+    const updateData = await repository.merge(findCart, {
+      qty: findCart.qty + 1,
+    });
+
+    await repository.save(updateData);
+
+    console.log("updateData", updateData);
+
+    // await repository.save({ id: findCart.id, qty: findCart.qty++ });
+  } else {
+    const newCart = repository.create(validation.data);
+
+    const save = await repository.save(newCart);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Create a new Cart",
+      data: save,
+    });
+  }
 });
 
 // @desc Update a single Cart

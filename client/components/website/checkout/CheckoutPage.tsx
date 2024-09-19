@@ -1,12 +1,6 @@
 "use client";
 import Link from "next/link";
-import {
-  selectCart,
-  addCart,
-  decrementCart,
-  removeCart,
-  clearCart,
-} from "@/redux/features/cart/cartSlice";
+import { clearCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { CiEdit, CiSquareRemove } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
@@ -54,6 +48,28 @@ export default function CheckoutPage() {
   // const router = useRouter();
 
   useEffect(() => {
+    async function fetchData() {
+      const settingResult = await getSettings();
+      const res = await getCartByUser();
+      setSetting(settingResult.data[0] || {});
+      setCarts(res.data);
+      const user = await getMe();
+      const activeShippingAddress = user.data?.shippingAddress?.find(
+        (item: { status: boolean }) => item.status
+      );
+      if (activeShippingAddress?.divisionId) {
+        const getShippingCharge = await getShippingCharges({
+          divisionId: activeShippingAddress.divisionId,
+        });
+        setShippingCharge(getShippingCharge.data[0]);
+      }
+
+      setShippingAddress(user.data?.shippingAddress);
+      setCheckoutFormData({
+        paymentMethod: "Cash",
+        shippingAddressId: activeShippingAddress?.id, //need to logic implements
+      });
+    }
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
@@ -61,32 +77,8 @@ export default function CheckoutPage() {
     };
   }, []);
 
-  async function fetchData() {
-    const settingResult = await getSettings();
-    const res = await getCartByUser();
-    setSetting(settingResult.data[0] || {});
-    setCarts(res.data);
-    const user = await getMe();
-    // console.log("🚀 ~ user:", user.data);
-    const activeShippingAddress = user.data?.shippingAddress?.find(
-      (item: { status: boolean }) => item.status
-    );
-    if (activeShippingAddress?.divisionId) {
-      const getShippingCharge = await getShippingCharges({
-        divisionId: activeShippingAddress.divisionId,
-      });
-      setShippingCharge(getShippingCharge.data[0]);
-    }
-
-    setShippingAddress(user.data?.shippingAddress);
-    setCheckoutFormData({
-      paymentMethod: "Cash",
-      shippingAddressId: activeShippingAddress?.id, //need to logic implements
-    });
-  }
-
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
-    carts.reduce(
+    carts?.reduce(
       (pre: any, curr: any) => {
         // const price = +curr?.productVariant?.price;
         // const discount = curr.product?.discount;
@@ -102,7 +94,7 @@ export default function CheckoutPage() {
         return {
           taxAmount: (+pre.taxAmount + curr.tax) * +curr.qty,
           netAmount:
-           ( +pre.netAmount + +sutotal) - (+curr.discountA * +curr.qty || 0),
+            +pre.netAmount + +sutotal - (+curr.discountA * +curr.qty || 0),
           discountAmount:
             +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
           orderTotalAmount:
@@ -121,8 +113,6 @@ export default function CheckoutPage() {
 
   // State for form inputs
   const handleOrder = async () => {
-    console.log("carts", carts);
-
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
@@ -136,18 +126,13 @@ export default function CheckoutPage() {
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-      console.log("error", validatedFields.error);
+
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
         return {
           errors: validatedFields.error.formErrors,
         };
       }
-
-   
-      console.log("data", validatedFields.data);
-
-      // return;
 
       const res = await saveOrder(validatedFields.data);
 
@@ -166,6 +151,7 @@ export default function CheckoutPage() {
       }
 
       setTimeout(async () => {
+        setCarts([]);
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
         dispatch(setResponse({}));
@@ -187,6 +173,8 @@ export default function CheckoutPage() {
     try {
       dispatch(setLoading({ remove: true }));
       const res = await deleteCart(id);
+      const newCarts = carts.filter((item: any) => item.id !== id);
+      setCarts(newCarts);
       setTimeout(async () => {
         dispatch(setLoading({ remove: false }));
       }, 1000);
@@ -276,9 +264,14 @@ export default function CheckoutPage() {
                 return (
                   <div key={idx} className="p-3 flex border-b">
                     <Image
+                      src={
+                        item.images
+                          ? `http://localhost:3900/uploads/${item.images}`
+                          : "/pos_software.png"
+                      }
                       width={100}
                       height={100}
-                      src="/pos_software.png"
+                      // src="/pos_software.png"
                       alt="Product"
                       className="w-24 h-24 object-cover"
                     />
@@ -328,14 +321,13 @@ export default function CheckoutPage() {
                           {item?.discountId ? (
                             <div className="text-base">
                               <span className="line-through text-gray-500">
-                                ৳{" "}
-                                {(+item.price + +item.taxAmount || 0).toFixed(
-                                  2
-                                )}
+                                ৳ {(+item.price + +item.tax || 0).toFixed(2)}
                               </span>
                               <span className="text-green-600 ml-2">
                                 - {item.discountValue}
-                                {item.discountType === "Percentage" ? "%" : "BDT"}
+                                {item.discountType === "Percentage"
+                                  ? "%"
+                                  : "BDT"}
                               </span>
                             </div>
                           ) : null}

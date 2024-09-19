@@ -2,11 +2,6 @@
 import { Button, Divider, Input, Rate } from "antd";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  addCart,
-  decrementCart,
-  incrementCart,
-} from "@/redux/features/cart/cartSlice";
 import Link from "next/link";
 import { productDiscountCalculation } from "@/lib/share";
 import { setResponse } from "@/redux/features/global/globalSlice";
@@ -37,10 +32,10 @@ const ProductDetails = ({
       productVariantId: value.selectProductVariant.id,
       qty: product.qty,
     };
-    console.log("🚀 ~ value:", value);
+
+    
 
     const result = await saveCart(newData);
-    console.log("🚀 ~ result:", result)
 
     // const cartPrice = +value.selectProductVariant.price;
     // const productVariantId = value.selectProductVariant.id;
@@ -64,7 +59,7 @@ const ProductDetails = ({
   }
 
   async function incrementToCart(product: any) {
-    dispatch(incrementCart(product));
+    // dispatch(incrementCart(product));
     setProduct({
       ...product,
       qty: product.qty + 1,
@@ -72,7 +67,7 @@ const ProductDetails = ({
   }
 
   async function decrementToCart(product: any) {
-    dispatch(decrementCart(product));
+    // dispatch(decrementCart(product));
     setProduct({
       ...product,
       qty: product.qty - 1,

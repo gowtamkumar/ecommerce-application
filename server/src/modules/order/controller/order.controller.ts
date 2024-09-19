@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
 import { PaymentType } from "../../payment/enums/payment-type.enum";
 import { OrderItemEntity } from "../model/order-item.entity";
+import { CartEntity } from "../../cart/model/cart.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
@@ -130,6 +131,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 
   await queryRunner.connect();
   await queryRunner.startTransaction();
+  
 
   try {
     const validation = orderValidationSchema.safeParse({
@@ -171,6 +173,8 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     const savedOrder = await repository.save({ ...newOrder, trackingNo });
 
     if (orderItems && savedOrder.id) {
+      const repositoryCarts =
+      queryRunner.manager.getRepository(CartEntity);
       const repoOrderItems = queryRunner.manager.getRepository(OrderItemEntity);
       const newOrderItems = repoOrderItems.create(
         orderItems.map((item: any) => ({
@@ -207,7 +211,10 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
         userId: req.id,
         location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
       });
-      await repositoryOrderTracking.save(newOrderTracking);
+      await repositoryOrderTracking.save(newOrderTracking);    
+
+      await repositoryCarts.remove(orderItems)
+
     }
 
     const repositoryPayment = queryRunner.manager.getRepository(PaymentEntity);
