@@ -25,10 +25,9 @@ import { SwiperNavButtons } from "../banner/SwiperNavButtons";
 
 const ProductFeatured = () => {
   const [products, setProducts] = useState([]);
-  console.log("🚀 ~ products:", products);
   const global = useSelector(selectGlobal);
   // const { products } = useSelector(selectProduct);
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const fetchProducts = async () => {

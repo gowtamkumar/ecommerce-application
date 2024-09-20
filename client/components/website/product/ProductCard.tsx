@@ -5,7 +5,7 @@ import {
   selectProduct,
   setProducts,
 } from "@/redux/features/products/productSlice";
-import { Rate } from "antd";
+import { Button, Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";

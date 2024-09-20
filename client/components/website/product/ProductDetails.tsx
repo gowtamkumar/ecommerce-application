@@ -26,40 +26,16 @@ const ProductDetails = ({
   const price = product.selectProductVariant?.price;
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
-  async function addToCart(value: any) {
+  const addToCart = async (value: any) => {
     const newData = {
       productId: value.id,
       productVariantId: value.selectProductVariant.id,
       qty: product.qty,
     };
-
-    
-
     const result = await saveCart(newData);
-
-    // const cartPrice = +value.selectProductVariant.price;
-    // const productVariantId = value.selectProductVariant.id;
-    // const colorId = value.selectProductVariant.colorId;
-    // const sizeId = value.selectProductVariant.sizeId;
-    // const purchasePrice = +value.selectProductVariant.purchasePrice;
-    // let taxAmount = (+cartPrice * (value?.tax?.value || 0)) / 100;
-
-    // dispatch(
-    //   addCart({
-    //     ...value,
-    //     discountA: productDiscountCalculation(value) || 0,
-    //     tax: taxAmount,
-    //     price: cartPrice,
-    //     purchasePrice,
-    //     productVariantId,
-    //     sizeId,
-    //     colorId,
-    //   })
-    // );
-  }
+  };
 
   async function incrementToCart(product: any) {
-    // dispatch(incrementCart(product));
     setProduct({
       ...product,
       qty: product.qty + 1,
@@ -67,7 +43,6 @@ const ProductDetails = ({
   }
 
   async function decrementToCart(product: any) {
-    // dispatch(decrementCart(product));
     setProduct({
       ...product,
       qty: product.qty - 1,

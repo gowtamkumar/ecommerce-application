@@ -155,9 +155,6 @@ export const createCart = asyncHandler(async (req: any, res: Response) => {
     ...req.body,
     userId: req.id,
   });
-
-  console.log("validation", validation.error);
-
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
@@ -168,17 +165,20 @@ export const createCart = asyncHandler(async (req: any, res: Response) => {
 
   const findCart = await repository.findOneBy({
     productId: validation.data.productId,
+    userId: req.id,
   });
+  console.log("🚀 ~ findCart:", findCart);
 
   if (findCart) {
     const updateData = await repository.merge(findCart, {
-      qty: findCart.qty + 1,
+      qty: findCart.qty + validation.data.qty,
     });
-
-    await repository.save(updateData);
-
-    console.log("updateData", updateData);
-
+    const save = await repository.save(updateData);
+    return res.status(200).json({
+      success: true,
+      msg: "Cart increment",
+      data: save,
+    });
     // await repository.save({ id: findCart.id, qty: findCart.qty++ });
   } else {
     const newCart = repository.create(validation.data);
