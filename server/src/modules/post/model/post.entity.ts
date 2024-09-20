@@ -12,6 +12,7 @@ import {
 import { PostStatus } from "../enums";
 import { UserEntity } from "../../auth/model/user.entity";
 import { PostCategoryEntity } from "./post-category.entity";
+import { CommentEntity } from "../../comment/model/comment.entity";
 
 @Entity("posts")
 export class PostEntity {
@@ -55,4 +56,7 @@ export class PostEntity {
 
   @OneToMany((_type) => PostCategoryEntity, (postCategory) => postCategory.post)
   postCategories!: PostCategoryEntity[];
+
+  @OneToMany((_type) => CommentEntity, (comment) => comment.post)
+  comments!: CommentEntity[];
 }

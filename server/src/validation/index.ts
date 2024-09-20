@@ -28,6 +28,6 @@ export * from "./setting/updateSettingValidation";
 export * from "./banner/bannerValidation";
 export * from "./currency/currencyValidation";
 export * from "./post/postValidation";
-
+export * from "./comment/commentValidation";
 
 

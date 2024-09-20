@@ -119,7 +119,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     (acc: number, variant: any) => acc + +variant.stockQty,
     0
   );
-  const image = item.images ? item.images[0] : "/pos_software.png";
+  // const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
     <div className="bg-white border">

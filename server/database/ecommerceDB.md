@@ -343,7 +343,7 @@ created_at,
 updated_at,
 
 
-## post
+## post(back end done)
 
 title,
 user_id,
@@ -369,7 +369,7 @@ id,
 post_id,
 user_id,
 content TEXT NOT NULL,
-status ENUM('approved', 'pending', 'spam') DEFAULT 'pending',
+status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
 created_at,
 updated_at,
 

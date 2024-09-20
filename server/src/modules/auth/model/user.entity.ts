@@ -18,6 +18,7 @@ import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { UserActivityEntity } from "./user-activity.entity";
 import { PostEntity } from "../../post/model/post.entity";
+import { CommentEntity } from "../../comment/model/comment.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -117,5 +118,10 @@ export class UserEntity {
 
   @OneToMany((_type) => PostEntity, (post) => post.user)
   posts!: PostEntity[];
+
+  @OneToMany((_type) => CommentEntity, (comment) => comment.user)
+  comments!: CommentEntity[];
+
+  
 
 }

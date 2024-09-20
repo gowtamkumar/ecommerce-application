@@ -13,9 +13,16 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
   const repository = connection.getRepository(PostEntity);
 
   const qb = repository.createQueryBuilder("post");
-  qb.select(["post", "postCategories", "user.name", "category.name"]);
+  qb.select([
+    "post",
+    "postCategories",
+    "user.name",
+    "category.name",
+    "comments",
+  ]);
 
   qb.leftJoin("post.postCategories", "postCategories");
+  qb.leftJoin("post.comments", "comments");
   qb.leftJoin("postCategories.category", "category");
   qb.leftJoin("post.user", "user");
 
@@ -38,12 +45,18 @@ export const getPost = asyncHandler(
     const repository = await connection.getRepository(PostEntity);
 
     const qb = repository.createQueryBuilder("post");
-    qb.select(["post", "postCategories", "user.name","user.image", "category"]);
+    qb.select([
+      "post",
+      "postCategories",
+      "user.name",
+      "user.image",
+      "category",
+    ]);
 
     qb.leftJoin("post.postCategories", "postCategories");
     qb.leftJoin("postCategories.category", "category");
     qb.leftJoin("post.user", "user");
-    qb.where({id});
+    qb.where({ id });
     const result = await qb.getOne();
 
     if (!result) {

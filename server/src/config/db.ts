@@ -36,6 +36,7 @@ import { LeadEntity } from "../modules/lead/model/lead.entity";
 import { PostEntity } from "../modules/post/model/post.entity";
 import { PostCategoryEntity } from "../modules/post/model/post-category.entity";
 import { CartEntity } from "../modules/cart/model/cart.entity";
+import { CommentEntity } from "../modules/comment/model/comment.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -105,6 +106,7 @@ const dbConnection = new DataSource({
     LeadEntity,
     PostEntity,
     PostCategoryEntity,
+    CommentEntity
   ],
   subscribers: [],
   migrations: [],
