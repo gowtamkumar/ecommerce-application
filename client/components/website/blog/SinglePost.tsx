@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import PostSearchSection from "./PostSearchSection";
 import PostCategorySection from "./PostCategorySection";
@@ -69,7 +70,7 @@ export default function SinglePost() {
             </div>
 
             {/* <!-- Tags --> */}
-            <PostTagSection />
+            {/* <PostTagSection /> */}
           </article>
 
           {/* <!-- Author Section --> */}

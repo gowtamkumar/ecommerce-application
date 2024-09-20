@@ -363,7 +363,7 @@ id
 post_id,
 category_id,
 
-## Comments
+## Comments(back end done)
 
 id,
 post_id,

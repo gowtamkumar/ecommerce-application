@@ -2,15 +2,13 @@
 import Link from "next/link";
 import { clearCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { CiEdit, CiSquareRemove } from "react-icons/ci";
+import { CiEdit } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
 import { saveOrder } from "@/lib/apis/orders";
 import {
   Alert,
-  Breadcrumb,
   Button,
   Checkbox,
-  Input,
   Popconfirm,
   Radio,
   Space,
@@ -75,7 +73,7 @@ export default function CheckoutPage() {
       dispatch(setLoading({ save: false }));
       setShippingCharge({});
     };
-  }, []);
+  }, [dispatch]);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     carts?.reduce(
@@ -263,6 +261,7 @@ export default function CheckoutPage() {
 
                 return (
                   <div key={idx} className="p-3 flex border-b">
+                    {/* <TestImage image={item.images}/> */}
                     <Image
                       src={
                         item.images
@@ -271,7 +270,6 @@ export default function CheckoutPage() {
                       }
                       width={100}
                       height={100}
-                      // src="/pos_software.png"
                       alt="Product"
                       className="w-24 h-24 object-cover"
                     />
@@ -311,10 +309,10 @@ export default function CheckoutPage() {
                           ৳
                           {item.discountId
                             ? (
-                                +item.price +
-                                +item.tax -
-                                +item.discountA
-                              ).toFixed(2)
+                              +item.price +
+                              +item.tax -
+                              +item.discountA
+                            ).toFixed(2)
                             : (+item.price + +item.tax || 0).toFixed(2)}
                         </div>
                         <div>
