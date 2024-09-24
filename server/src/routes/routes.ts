@@ -51,7 +51,7 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/brands", brandRoutes);
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
   app.use("/api/v1/shipping-charges", AuthGuard, shippingChargeRoutes);
-  app.use("/api/v1/discounts", AuthGuard, discountRoutes);
+  app.use("/api/v1/discounts", discountRoutes);
   app.use("/api/v1/orders", AuthGuard, orderRoutes);
   app.use("/api/v1/order-trackings", AuthGuard, orderTrackingRoutes);
   app.use("/api/v1/wishlists", AuthGuard, wishlistRoutes);
