@@ -10,6 +10,7 @@ import { getBanners } from "@/lib/apis/banner";
 import Slider from "@/components/website/banner/Slider";
 import { getFilterDiscounts } from "@/lib/apis/discount";
 import ProductFeatured from "@/components/website/product/ProductFeatured";
+import HeaderDiscount from "@/components/website/banner/HeaderDiscount";
 export default async function Home() {
   const banners = await getBanners();
   const discounts = await getFilterDiscounts({ type: "Discount" });
@@ -17,11 +18,24 @@ export default async function Home() {
     <>
       <header>
         <Header />
-        <Slider
-          banners={(banners.data || []).filter(
-            (item: { type: string }) => item.type === "Slider"
-          )}
-        />
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-12 grid-cols-1">
+            <div className="md:col-span-9">
+              <Slider
+                banners={(banners.data || []).filter(
+                  (item: { type: string }) => item.type === "Slider"
+                )}
+              />
+
+            </div>
+
+            <div className="md:col-span-3 bg-black">
+              <HeaderDiscount discounts={discounts} />
+            </div>
+
+          </div>
+        </div>
+
       </header>
 
       <main>
@@ -67,7 +81,7 @@ export default async function Home() {
           {/* <ProductCard /> */}
         </section>
 
-        {/* More Discover */}
+        {/* More discount */}
         <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
           <Discount discounts={discounts} />
         </section>
