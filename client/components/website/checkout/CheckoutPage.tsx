@@ -90,7 +90,7 @@ export default function CheckoutPage() {
         // console.log("🚀 ~ sutotal:", sutotal)
 
         return {
-          taxAmount: (+pre.taxAmount + curr.tax) * +curr.qty,
+          taxAmount: (+pre.taxAmount + +curr.tax) * +curr.qty,
           netAmount:
             +pre.netAmount + +sutotal - (+curr.discountA * +curr.qty || 0),
           discountAmount:

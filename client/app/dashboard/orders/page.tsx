@@ -43,6 +43,7 @@ import AssignDeliveryMan from "@/components/dashboard/order/AssignDeliveryMan";
 interface DataType {
   key: React.Key;
   name: string;
+  phoneNo: string;
   trackingNo: string;
 }
 
@@ -68,7 +69,7 @@ const Page: React.FC = () => {
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
-      }));
+      }));      
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
@@ -249,7 +250,18 @@ const Page: React.FC = () => {
     return (
       <div className="grid grid-cols-4 p-2">
         <div className="col-span-1 p-2">
-          <h1 className="font-bold">Order No:{value.trackingNo}</h1>
+          <h1>
+            <span className="font-bold">Order No: </span>
+            <code>{value.trackingNo}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Delivery Man: </span>
+            <code>{value?.deliveryMan?.name}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Shipping Address: </span>
+            <code> {value.shippingAddress?.address}</code>
+          </h1>
           <Divider dashed />
           <Timeline
             items={(value?.orderTrackings || []).map(
@@ -282,9 +294,9 @@ const Page: React.FC = () => {
               bordered
             />
           </div>
-          <div className="grid grid-cols-3 mt-5">
-            <div className="col-span-2">dasdf</div>
-            <div className="grid gap-y-3 col-span-1">
+          <div className="grid grid-cols-8 mt-5">
+            <div className="col-span-4">dasdf</div>
+            <div className="grid gap-y-3 col-span-4">
               <div className="flex justify-between">
                 <h1>
                   Net Amount: (+tax {value.orderTax}, - Discount{" "}
@@ -342,9 +354,9 @@ const Page: React.FC = () => {
 
     {
       title: "Phone No",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (value) => <span>{value.phoneNo}</span>,
+      dataIndex: "phoneNo",
+      key: "phoneNo",
+      render: (value) => <span>{value?.phoneNo}</span>,
     },
 
     {
@@ -353,12 +365,12 @@ const Page: React.FC = () => {
       key: "user",
       render: (customer) => <span>{customer?.name}</span>,
     },
-    {
-      title: "Shipping Address",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (value) => <span>{value.address}</span>,
-    },
+    // {
+    //   title: "Shipping Address",
+    //   dataIndex: "shippingAddress",
+    //   key: "shippingAddress",
+    //   render: (value) => <span>{value.address}</span>,
+    // },
     {
       title: "Payment Method",
       dataIndex: "paymentMethod",
@@ -442,7 +454,7 @@ const Page: React.FC = () => {
               dispatch(
                 setAction({
                   assign: true,
-                  payload: {id: value.id},
+                  payload: { id: value.id },
                 })
               )
             }
@@ -514,8 +526,6 @@ const Page: React.FC = () => {
       {global.action.addOrderTracking && <AddOrderTracking />}
       {global.action.payment && <AddPayment />}
       {global.action.assign && <AssignDeliveryMan />}
-
-      
     </div>
   );
 };
