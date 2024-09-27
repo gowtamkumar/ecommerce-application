@@ -11,6 +11,7 @@ import Slider from "@/components/website/banner/Slider";
 import { getFilterDiscounts } from "@/lib/apis/discount";
 import ProductFeatured from "@/components/website/product/ProductFeatured";
 import HeaderDiscount from "@/components/website/banner/HeaderDiscount";
+import MoreDiscover from "@/components/website/home/MoreDiscover";
 export default async function Home() {
   const banners = await getBanners();
   const discounts = await getFilterDiscounts({ type: "Discount" });
@@ -82,11 +83,11 @@ export default async function Home() {
         </section>
 
         {/* More discount */}
-        <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
+        {/* <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
           <Discount discounts={discounts} />
-        </section>
+        </section> */}
         {/* More Discover */}
-        {/* <section className="w-8/12 mx-auto py-5 text-center">
+        <section className="w-8/12 mx-auto py-5 text-center">
           <div className="py-5">
             <h2 className="text-xl font-semibold pb-4">More to Discover</h2>
             <p>
@@ -95,7 +96,7 @@ export default async function Home() {
             </p>
           </div>
           <MoreDiscover />
-        </section> */}
+        </section>
       </main>
 
       <WebFooter />

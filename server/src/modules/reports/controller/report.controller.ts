@@ -5,6 +5,8 @@ import { OrderEntity } from "../../order/model/order.entity";
 import dayjs from "dayjs";
 import { UserActivityEntity } from "../../auth/model/user-activity.entity";
 import { UserEntity } from "../../auth/model/user.entity";
+import { OrderItemEntity } from "../../order/model/order-item.entity";
+import { ProductEntity } from "../../product/model/product.entity";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
@@ -171,6 +173,69 @@ export const getDashboardReport = asyncHandler(
         loss_profit,
         user_activity,
       },
+    });
+  }
+);
+
+export const getTopSellingProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
+
+
+//     const subquery = connection.getRepository(OrderItemEntity)
+//   .createQueryBuilder('oi')
+//   .select('oi.product_id', 'product_id')
+//   .addSelect(
+//     'SUM(((COALESCE(oi.price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - (COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)))',
+//     'total_amount'
+//   )
+//   .leftJoin('oi.order', 'orders')
+//   .where('orders.status = :status', { status: 'Completed' })
+//   .groupBy('oi.product_id')
+//   .orderBy('total_amount', 'DESC');
+
+// const result = await connection.getRepository(ProductEntity)
+//   .createQueryBuilder('products')
+//   .select('oI.product_id', 'productId')
+//   .addSelect('oI.total_amount', 'totalAmount')
+//   .addSelect('products.name', 'name')
+//   .addSelect('products.alert_qty', 'alertQty')
+//   .from(subquery, 'oI')
+//   .leftJoin('products', 'products', 'products.id = oI.product_id')
+//   .getRawMany();
+
+// console.log(result);
+
+
+    const top_selling_product = await connection.query(
+      `with orderItems as (
+          SELECT 
+            oi.product_id AS product_id,
+            SUM(((COALESCE(oi.price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+          FROM 
+            order_items oi
+          LEFT JOIN 
+            orders ON orders.id = oi.order_id
+          WHERE 
+            orders.status = 'Completed'
+          GROUP BY 
+            oi.product_id
+            order by total_amount DESC
+          )
+      select
+        oI.product_id as "productId",
+        oI.total_amount as "totolAmount",
+        products.name,
+        products.alert_qty as "alertQty"
+      from orderItems oI
+      LEFT JOIN products ON products.id = oI.product_id
+    `
+    );
+
+    return res.status(200).json({
+      success: true,
+      msg: "Get Top selling Products",
+      data: top_selling_product,
     });
   }
 );

@@ -3,13 +3,25 @@ import React from "react";
 import { Button } from "antd";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Autoplay,
+} from "swiper/modules";
 import Image from "next/image";
 
 const SellerAds = ({ banners }: any) => {
   return (
     <div>
-      <Swiper modules={[Navigation]} slidesPerView={1}>
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        slidesPerView={1}
+        autoplay={true}
+        speed={500}
+        pagination={{ clickable: true, type: "bullets", dynamicBullets: true }}
+      >
         {(banners || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>

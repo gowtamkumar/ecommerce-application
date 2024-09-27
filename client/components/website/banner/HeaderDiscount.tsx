@@ -56,8 +56,8 @@ export default function HeaderDiscount({ discounts }: any) {
                 />
                 <div className="absolute flex items-center justify-center bottom-0 left-0 top-0 w-full text-white">
                   <div className="flex flex-col items-center justify-center">
-                    <h4 className="text-6xl font-bold"> Discount</h4>
-                    <h2 className="font-bold text-2xl">{item.value}% Off</h2>
+                    <h4 className="text-3xl font-bold"> Discount</h4>
+                    <h2 className="font-bold text-1xl">{item.value}% Off</h2>
                     <div className="text-center">
                       <div className="flex justify-center items-center">
                         <Button
