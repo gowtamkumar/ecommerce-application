@@ -12,6 +12,7 @@ import { getFilterDiscounts } from "@/lib/apis/discount";
 import ProductFeatured from "@/components/website/product/ProductFeatured";
 import HeaderDiscount from "@/components/website/banner/HeaderDiscount";
 import MoreDiscover from "@/components/website/home/MoreDiscover";
+import TopSellingProductCard from "@/components/website/product/TopSellingProductCard";
 export default async function Home() {
   const banners = await getBanners();
   const discounts = await getFilterDiscounts({ type: "Discount" });
@@ -27,16 +28,13 @@ export default async function Home() {
                   (item: { type: string }) => item.type === "Slider"
                 )}
               />
-
             </div>
 
             <div className="md:col-span-3 bg-black">
               <HeaderDiscount discounts={discounts} />
             </div>
-
           </div>
         </div>
-
       </header>
 
       <main>
@@ -59,7 +57,9 @@ export default async function Home() {
               View all
             </Link>
           </div>
-          <ProductCard />
+          <TopSellingProductCard />
+
+          {/* <ProductCard /> */}
         </section>
 
         {/* product banner */}

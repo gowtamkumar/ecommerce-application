@@ -134,11 +134,8 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
           }
           alt={item.name}
           loading="lazy"
-          // fill
           width={0}
           height={0}
-          // placeholder="blur"
-          // blurDataURL={image}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="w-full h-50 mb-2"
         />

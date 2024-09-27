@@ -28,7 +28,7 @@ export default async function Header() {
             <div className="hidden md:inline md:order-2">
               <MainMenu  />
             </div>
-            <HeaderRight  res={res} />
+            <HeaderRight res={res} />
           </div>
         </div>
       </div>

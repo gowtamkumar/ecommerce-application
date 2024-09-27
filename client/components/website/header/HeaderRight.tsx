@@ -13,7 +13,7 @@ import HeaderSearch from "./HeaderSearch";
 
 export default function HeaderRight({res}: any) {
   const [open, setOpen] = useState(false);
-  const cart = useSelector(selectCart);
+  // const cart = useSelector(selectCart);
   const session = useSession();
   const profileImage = session.data?.user.image;
 

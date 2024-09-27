@@ -31,7 +31,7 @@ export default function MoreDiscover() {
         <img src="/image-box-12.jpg" className="h-auto w-full" alt="" />
         <h2>From Our Blog</h2>
         <div className="underline text-center">
-          <Link href="/">
+          <Link href="/blog">
             <div className="flex justify-center items-center">
               <span className="px-2">Discover Now</span>
             </div>

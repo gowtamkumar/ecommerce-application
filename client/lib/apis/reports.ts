@@ -27,3 +27,13 @@ export async function getDashboardReports(params: any) {
   );
   return res.json();
 }
+
+export async function getTopSellingProducts() {
+  const res = await fetch(
+    `${process.env.NEXT_SERVER_URL}/api/v1/reports/top-selling-products`,
+    {
+      cache: "no-cache",
+    }
+  );
+  return res.json();
+}
