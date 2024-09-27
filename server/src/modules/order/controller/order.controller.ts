@@ -475,8 +475,6 @@ export const orderStatusUpdate = asyncHandler(
 
     const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
 
-    console.log("validation.error", validation.error);
-
     if (!validation.success) {
       return res.status(401).json({
         message: validation.error.formErrors,
