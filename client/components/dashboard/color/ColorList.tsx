@@ -201,6 +201,7 @@ const ColorList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  color: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

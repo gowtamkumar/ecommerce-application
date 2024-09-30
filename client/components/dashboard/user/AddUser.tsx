@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, DatePicker, Form, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -13,8 +13,26 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { saveUser, updateUser } from "@/lib/apis/user";
 import dayjs from "dayjs";
+import ImgCrop from "antd-img-crop";
+import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import { PlusOutlined } from "@ant-design/icons";
+const uploadButton = (
+  <div>
+    <PlusOutlined />
+    <div
+      style={{
+        marginTop: 8,
+      }}
+    >
+      Upload
+    </div>
+  </div>
+);
 
 const AddUser = () => {
+  const [formValues, setFormValues] = useState({
+    fileList: [],
+  }) as any;
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -27,7 +45,7 @@ const AddUser = () => {
     if (newData.dob) newData.dob = dayjs(newData.dob);
     setFormData(newData);
     return () => {
-      dispatch(setFormValues({}));
+      setFormValues({});
       form.resetFields();
     };
   }, [global.action]);
@@ -35,6 +53,9 @@ const AddUser = () => {
   const handleSubmit = async (values: any) => {
     try {
       let newData = { ...values };
+      if (newData.id) {
+        delete newData.password;
+      }
       // return console.log('newData:', newData)
       dispatch(setLoading({ save: true }));
       const result = newData.id
@@ -42,10 +63,7 @@ const AddUser = () => {
         : await saveUser(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-
-        toast.success(
-          `User ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
+        setFormValues({});
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
@@ -61,7 +79,7 @@ const AddUser = () => {
   const setFormData = (v: any) => {
     const newData = { ...v };
     form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
+    setFormValues(form.getFieldsValue());
   };
 
   const resetFormData = (value: any) => {
@@ -69,12 +87,79 @@ const AddUser = () => {
     if (newData.dob) newData.dob = dayjs(newData.dob);
     if (newData?.id) {
       form.setFieldsValue(newData);
-      dispatch(setFormValues(newData));
+      setFormValues(newData);
     } else {
       form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
+      setFormValues(form.getFieldsValue());
     }
   };
+
+  const customUploadRequest = async (options: any) => {
+    const { filename, file, onSuccess, onError } = options;
+    const formData = new FormData();
+    formData.append(filename, file);
+
+    try {
+      const res = await uploadFile(formData);
+      if (!res || !res.data) {
+        throw new Error("Invalid response format");
+      }
+      const filename = res.data[0].filename;
+      const newfile = {
+        uid: Math.random() * 1000 + "",
+        name: `photo ${Math.random() * 10000 + ""}`,
+        status: "done",
+        fileName: filename,
+        url: `http://localhost:3900/uploads/${filename || "no-data.png"}`,
+      };
+      const newFileName = res.data.length ? filename : null;
+      // Assuming you're updating form data here:
+      form.setFieldsValue({
+        fileList: [newfile],
+        image: newFileName,
+      });
+      setFormValues({
+        ...formValues,
+        fileList: [newfile],
+        image: newFileName,
+      });
+
+      onSuccess("Ok");
+    } catch (err) {
+      console.error("🚀 ~ Upload error:", err);
+      onError({ err });
+    }
+  };
+
+  const normFile = (e: { fileList: string }) => {
+    console.log("🚀 ~ e:", e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  // const handleCancel = () => setPreviewOpen(false);
+
+  // file Preview
+  // const handlePreview = async (file: any) => {
+  //   if (!file.url && !file.preview) {
+  //     file.preview = await getBase64(file.originFileObj);
+  //   }
+  //   setPreviewImage(file.url || file.preview);
+  //   setPreviewOpen(true);
+  //   setPreviewTitle(
+  //     file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+  //   );
+  // };
+
+  // const getBase64 = (file: any) =>
+  //   new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => resolve(reader.result);
+  //     reader.onerror = (error) => reject(error);
+  //   });
 
   return (
     <Modal
@@ -131,7 +216,7 @@ const AddUser = () => {
               <Input placeholder="Enter" />
             </Form.Item>
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1" hidden={global.action.payload?.id}>
             <Form.Item
               name="password"
               label="Password"
@@ -224,6 +309,40 @@ const AddUser = () => {
                 <Select.Option value={"Active"}>Active</Select.Option>
                 <Select.Option value={"Inactive"}>Inactive</Select.Option>
               </Select>
+            </Form.Item>
+          </div>
+          <div>
+            <Form.Item
+              name="fileList"
+              label="Image"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+            >
+              <ImgCrop rotationSlider>
+                <Upload
+                  name="image"
+                  listType="picture-card"
+                  fileList={formValues?.fileList || []}
+                  onRemove={async (v) => {
+                    if (v.fileName) {
+                      form.setFieldsValue({ image: null, fileList: [] });
+                      setFormValues({ image: null, fileList: [] });
+                      const params = { filename: v.fileName };
+                      await fileDeleteWithPhoto(params);
+                    }
+                  }}
+                  className="avatar-uploader"
+                  // onPreview={handlePreview}
+                  customRequest={customUploadRequest}
+                  maxCount={1}
+                >
+                  {formValues?.fileList?.length >= 1 ? null : uploadButton}
+                </Upload>
+              </ImgCrop>
+            </Form.Item>
+
+            <Form.Item name="image" hidden>
+              <Input />
             </Form.Item>
           </div>
         </div>

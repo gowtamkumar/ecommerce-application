@@ -1,11 +1,23 @@
 import express from "express";
-import { dbBackup } from "../controller/setting.controller";
+import {
+  createSetting,
+  dbBackup,
+  deleteSetting,
+  getSetting,
+  getSettings,
+  updateSetting,
+} from "../controller/setting.controller";
+import { AuthGuard } from "../../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-// router.route("/").get(getAddresses).post(createAddress);
-router.route("/db-backup").post(dbBackup);
+router.route("/").get(getSettings).post(AuthGuard, createSetting);
+router.route("/db-backup").post(AuthGuard, dbBackup);
 
-// router.route("/:id").get(getAddress).put(updateShippingAddress).delete(deleteShippingAddress);
+router
+  .route("/:id")
+  .get(AuthGuard, getSetting)
+  .patch(AuthGuard, updateSetting)
+  .delete(AuthGuard, deleteSetting);
 
 export default router;

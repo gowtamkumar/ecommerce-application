@@ -127,8 +127,9 @@ const AddColor = () => {
       width={500}
       zIndex={1050}
       open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+        global.action.color && 
+       ( global.action.type === ActionType.CREATE ||
+        global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

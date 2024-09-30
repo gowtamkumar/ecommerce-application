@@ -34,7 +34,7 @@ export default function FilterHeader() {
   };
 
   return (
-    <div className="py-2">
+    <div>
       <div className="flex flex-col md:flex-row justify-between items-center p-4 bg-white  rounded-md">
         {/* Item Count and Filter */}
         <div className="flex items-center space-x-2 mb-4 md:mb-0">
@@ -47,8 +47,8 @@ export default function FilterHeader() {
         </div>
 
         {/* Sorting and View Options */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center">
+        <div className="md:flex items-center md:space-x-4">
+          <div className="md:flex items-center md:space-x-4">
             <span className="text-sm text-gray-600">Sort By:</span>
             <Select
               defaultValue={"Select One"}
@@ -59,7 +59,7 @@ export default function FilterHeader() {
               <Select.Option value="highPrice">Price High to Low</Select.Option>
             </Select>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center ">
             <span className="text-sm text-gray-600">View:</span>
             <Button
               onClick={() => dispatch(setProductView(false))}

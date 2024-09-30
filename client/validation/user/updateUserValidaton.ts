@@ -15,5 +15,5 @@ export const updateUserValidationSchema = z.object({
   gender: z.enum(["Male", "Female"]).optional(),
   phone: z.string().optional(),
   dob: z.string().optional(),
-  imgUrl: z.string().optional(),
+  image: z.string().optional(),
 });

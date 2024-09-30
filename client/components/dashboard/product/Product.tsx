@@ -14,17 +14,14 @@ import {
   Select,
   Spin,
   Tag,
-  Upload
+  Upload,
 } from "antd";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import {
-  MinusCircleOutlined,
-  PlusOutlined
-} from "@ant-design/icons";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
 import { toast } from "react-toastify";
@@ -278,6 +275,7 @@ const Product = ({
       }
     }
   };
+  
   const handleCancel = () => setPreviewOpen(false);
 
   // file Preview

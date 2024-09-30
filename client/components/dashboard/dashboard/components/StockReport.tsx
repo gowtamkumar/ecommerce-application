@@ -5,7 +5,14 @@ import StockDataTable from "../tables/DataTable";
 
 const StockReport = ({ recentHistory }: any) => {
   const [tabKey, setTabKey] = useState("Pending");
-  const { orders = [], total_order_count, total_sale_count, total_active_user} = recentHistory;
+  const {
+    orders = [],
+    total_order_count,
+    total_sale_count,
+    total_active_user,
+    total_sale_return_count,
+    total_canceled_count,
+  } = recentHistory;
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -18,6 +25,14 @@ const StockReport = ({ recentHistory }: any) => {
           <div>
             Total Sales Items
             <Statistic value={total_sale_count || "0"} />
+          </div>
+          <div>
+            Total Sales Return Items
+            <Statistic value={total_sale_return_count || "0"} />
+          </div>
+          <div>
+            Total Order Canceled Items
+            <Statistic value={total_canceled_count || "0"} />
           </div>
           <div>
             Active user
@@ -46,6 +61,18 @@ const StockReport = ({ recentHistory }: any) => {
             {
               label: "Sale",
               key: "Completed",
+              children: (
+                <StockDataTable
+                  type={tabKey}
+                  orderData={orders.filter(
+                    (item: any) => item.status === tabKey
+                  )}
+                />
+              ),
+            },
+            {
+              label: "Sale Returned",
+              key: "Returned",
               children: (
                 <StockDataTable
                   type={tabKey}

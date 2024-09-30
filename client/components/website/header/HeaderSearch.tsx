@@ -4,11 +4,11 @@ import {
   setProductFilter,
   setProductView,
 } from "@/redux/features/global/globalSlice";
-import { Input, Select } from "antd";
+import { Input } from "antd";
 import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function HeaderSearch() {
+export default function HeaderSearch({ setOpen }: any) {
   const [serach, setSearch] = useState({} as any);
   // hook
   const dispatch = useDispatch();
@@ -58,12 +58,12 @@ export default function HeaderSearch() {
   //   </Select>
   // );
   return (
-    <div className="w-8/12">
+    <div className="container mx-auto md:p-10 py-6">
       <Search
         // addonBefore={selectBefore}
         width={100}
         value={getData.search}
-        size="middle"
+        size="large"
         onSearch={() => {
           let queryRouter = "";
           // if (getData.categoryId) {
@@ -73,7 +73,7 @@ export default function HeaderSearch() {
             queryRouter += `search=${getData.search}&`;
           }
           router.push(`/products?${queryRouter}`);
-
+          setOpen(false);
           // dispatch(
           //   setProductFilter({
           //     ...global.productFilter,

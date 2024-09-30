@@ -8,9 +8,11 @@ import { WishListEntity } from "../model/wishlist.entity";
 // @route GET /api/v1/Wishlists
 // @access Public
 export const getWishlists = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: any, res: Response) => {
+    const { userId }: any = req.query;
     const connection = await getDBConnection();
     const repository = connection.getRepository(WishListEntity);
+
 
     const result = await repository.find({
       relations: {

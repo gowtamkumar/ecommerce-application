@@ -19,6 +19,7 @@ import { getProductVariant } from "@/lib/apis/product-variant";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
+
   const [checkStock, setCheckStock] = useState(0);
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -121,8 +122,8 @@ export default function SingleProduct() {
   }
 
   return (
-    <div className="lg:w-8/12 mx-auto">
-      <div className="py-2">
+    <div className="md:py-5 p-2 md:w-8/12 mx-auto">
+      {/* <div className="py-2">
         <Breadcrumb
           separator=">"
           items={[
@@ -133,7 +134,7 @@ export default function SingleProduct() {
               title: "Application Center",
               href: "",
             },
-            {
+            {Rate this product
               title: "Application List",
               href: "",
             },
@@ -142,12 +143,10 @@ export default function SingleProduct() {
             },
           ]}
         />
-      </div>
-      <div className=" bg-white  grid grid-cols-1 md:grid-cols-4">
+      </div> */}
+      <div className="bg-white grid grid-cols-1 md:grid-cols-4 pt-4">
         <div className="col-span-1">
-          <ProductImageGallery
-            images={["/images/watch1.jpg", "/images/watch2.jpg"]}
-          />
+          <ProductImageGallery images={product.images} />
         </div>
         <div className="col-span-2">
           <ProductDetails
@@ -158,7 +157,7 @@ export default function SingleProduct() {
             setCheckStock={setCheckStock}
           />
         </div>
-        <div className="bg-slate-400">
+        <div className="bg-slate-400 text-center">
           We can show any thing
           {/* <DeliveryInfo delivery={products.delivery} /> */}
         </div>

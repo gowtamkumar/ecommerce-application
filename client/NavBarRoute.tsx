@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { backupDB } from "./lib/apis/backupDB";
 
+
 // key as like features
 
 const handleBackup = async (): Promise<void> => {
@@ -74,30 +75,31 @@ const navbarRoute = [
     label: <Link href="/dashboard/products">Product</Link>,
     route: "true",
   },
-  {
-    key: "size",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/size">Size</Link>,
-    route: "true",
-  },
-  {
-    key: "unit",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/unit">Unit</Link>,
-    route: "true",
-  },
-  {
-    key: "color",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/color">Color</Link>,
-    route: "true",
-  },
-  {
-    key: "discount",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
-    route: "true",
-  },
+
+  // {
+  //   key: "size",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/size">Size</Link>,
+  //   route: "true",
+  // },
+  // {
+  //   key: "unit",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/unit">Unit</Link>,
+  //   route: "true",
+  // },
+  // {
+  //   key: "color",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/color">Color</Link>,
+  //   route: "true",
+  // },
+  // {
+  //   key: "discount",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
+  //   route: "true",
+  // },
 
   {
     key: "category",
@@ -111,12 +113,12 @@ const navbarRoute = [
     label: <Link href="/dashboard/brands">Brands</Link>,
     route: "true",
   },
-  {
-    key: "taxs",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/taxs">Taxs</Link>,
-    route: "true",
-  },
+  // {
+  //   key: "taxs",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/taxs">Taxs</Link>,
+  //   route: "true",
+  // },
 
   {
     key: "wishlists",
@@ -124,18 +126,38 @@ const navbarRoute = [
     label: <Link href="/dashboard/wishlists">Wishlists</Link>,
     route: "true",
   },
-  {
-    key: "status",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/status">Status</Link>,
-    route: "true",
-  },
+  // {
+  //   key: "status",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/status">Status</Link>,
+  //   route: "true",
+  // },
 
   {
     key: "Payment",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/payments">Payments</Link>,
     route: "true",
+  },
+  {
+    key: "order",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: "Order Manage",
+    route: "true",
+    children: [
+      {
+        key: "neworders",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/orders/new">New Order</Link>,
+        route: "true",
+      },
+      {
+        key: "Order",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/orders">Orders</Link>,
+        route: "true",
+      },
+    ],
   },
 
   {
@@ -171,32 +193,13 @@ const navbarRoute = [
     label: <Link href="/dashboard/report">Report</Link>,
     route: "true",
   },
-  {
-    key: "review",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/review">Review</Link>,
-    route: "true",
-  },
-  {
-    key: "order",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: "Order Manage",
-    route: "true",
-    children: [
-      {
-        key: "neworders",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: <Link href="/dashboard/orders/new">New Order</Link>,
-        route: "true",
-      },
-      {
-        key: "Order",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: <Link href="/dashboard/orders">Orders</Link>,
-        route: "true",
-      },
-    ],
-  },
+  // {
+  //   key: "review",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/review">Review</Link>,
+  //   route: "true",
+  // },
+
   {
     key: "setting",
     label: "Setting",
@@ -230,16 +233,37 @@ const navbarRoute = [
     label: <Link href="/dashboard/setting">Setting</Link>,
     route: "true",
   },
+  {
+    key: "web_setting",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/website-setting">Web Setting </Link>,
+    route: "true",
+  },
 ];
 
 const profileRoute: MenuProps["items"] = [
   {
-    key: "1",
-    label: <Link href="/dashboard/profile">Profile</Link>,
+    key: "my_account",
+    label: <Link href={"/profile"}>My Account</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
-    key: "2",
+    key: "orders",
+    label: <Link href="/profile">Orders</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "wishlist",
+    label: <Link href="/profile">Wishlist</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "order_track",
+    label: <Link href="/profile">Order Track</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "logout",
     label: <Link href="/">Logout</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     onClick: () => {
@@ -258,16 +282,39 @@ const profileRoute: MenuProps["items"] = [
 
 const userProfileRoute: MenuProps["items"] = [
   {
-    key: "1",
-    label: <Link href="/profile">Profile</Link>,
+    key: "my_account",
+    label: (
+      <Link
+        href={{
+          pathname: "/profile",
+          query: { name: "test" },
+        }}
+      >
+        My Account
+      </Link>
+    ),
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
-    key: "2",
+    key: "orders",
+    label: <Link href="/profile">Orders</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "wishlist",
+    label: <Link href="/profile">Wishlist</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "order_track",
+    label: <Link href="/profile">Order Track</Link>,
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  },
+  {
+    key: "logout",
     label: <Link href="/">Logout</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     onClick: () => {
-      // "use server";
       signOut();
     },
   },

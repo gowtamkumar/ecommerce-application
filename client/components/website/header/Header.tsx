@@ -1,24 +1,37 @@
 import React from "react";
 import TopBar from "./TopBar";
-import HeaderLogo from "./HeaderLogo";
+import Logo from "./Logo";
 import HeaderRight from "./HeaderRight";
 import HeaderSearch from "./HeaderSearch";
-import { saveVisitor } from "@/lib/apis/visitor";
+import { getSettings } from "@/lib/apis/setting";
+import MainMenu from "./Menu";
+import MobileMenu from "./MobileMenu";
+import { getCartByUser } from "@/lib/apis/cart";
 
 export default async function Header() {
   //  const res = await saveVisitor({})
   //  console.log("🚀 ~ res:", res)
-
+  const setting = await getSettings();
+  const res = await getCartByUser();
+  // const singleLogo = logo.data ? logo.data[0]?.image : null;
   return (
-    <div className="bg-rose-400">
-      <div className="lg:w-8/12 mx-auto">
-        <TopBar />
-        <div className="flex items-center py-4 sticky">
-          <HeaderLogo />
-          <HeaderSearch />
-          <HeaderRight />
+    <>
+      <TopBar />
+      <div className="border-b-2">
+        <div className="container mx-auto items-center py-4">
+
+          <div className="flex justify-between items-center">
+            <Logo settingData={setting} />
+            <div className="md:hidden">
+              <MobileMenu/>
+            </div>
+            <div className="hidden md:inline md:order-2">
+              <MainMenu  />
+            </div>
+            <HeaderRight res={res} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

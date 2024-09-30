@@ -8,7 +8,7 @@ import { setAction } from "@/redux/features/global/globalSlice";
 import StatusList from "@/components/dashboard/status/StatusList";
 import AddStatus from "@/components/dashboard/status/AddStatus";
 
-export default function Size() {
+export default function Status() {
   const [tabKey, setTabKey] = useState("status_list");
   const dispatch = useDispatch();
 
@@ -31,6 +31,7 @@ export default function Size() {
             onClick={() =>
               dispatch(
                 setAction({
+                  status:true,
                   type: ActionType.CREATE,
                 })
               )

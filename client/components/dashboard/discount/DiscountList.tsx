@@ -275,6 +275,7 @@ const DiscountList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  discount:true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

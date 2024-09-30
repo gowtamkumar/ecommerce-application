@@ -17,6 +17,8 @@ import { ReviewEntity } from "../../review/model/review.entity";
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { UserActivityEntity } from "./user-activity.entity";
+import { PostEntity } from "../../post/model/post.entity";
+import { CommentEntity } from "../../comment/model/comment.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -53,8 +55,8 @@ export class UserEntity {
   @Column({ nullable: true })
   address?: string;
 
-  @Column({ name: "img_url", nullable: true })
-  imgUrl?: string;
+  @Column({ nullable: true })
+  image?: string;
 
   @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
   role!: RoleEnum;
@@ -113,5 +115,13 @@ export class UserEntity {
 
   @OneToMany((_type) => UserActivityEntity, (userActivity) => userActivity.user)
   userActivities!: UserActivityEntity[];
+
+  @OneToMany((_type) => PostEntity, (post) => post.user)
+  posts!: PostEntity[];
+
+  @OneToMany((_type) => CommentEntity, (comment) => comment.user)
+  comments!: CommentEntity[];
+
+  
 
 }

@@ -40,7 +40,7 @@ const AddSize = () => {
         : await saveSize(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `Size ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -79,9 +79,9 @@ const AddSize = () => {
       }
       width={500}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+      open={global.action.size &&
+        (global.action.type === ActionType.CREATE ||
+          global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

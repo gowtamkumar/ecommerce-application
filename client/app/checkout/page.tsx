@@ -1,6 +1,7 @@
 import Header from "@/components/website/header/Header";
 import CheckoutPage from "@/components/website/checkout/CheckoutPage";
 import React from "react";
+import WebFooter from "@/components/website/footer/Footer";
 
 export default function CheckOut() {
   return (
@@ -9,6 +10,7 @@ export default function CheckOut() {
       <div className="bg-gray-100">
         <CheckoutPage />
       </div>
+      <WebFooter/>
     </>
   );
 }

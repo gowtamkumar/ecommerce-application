@@ -8,7 +8,8 @@ import {
   setCollapsed,
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
-import { profileRoute } from "@/NavBarRoute";
+import { userProfileRoute } from "@/NavBarRoute";
+import { useSession } from "next-auth/react";
 
 export default function DashboardHeader() {
   const {
@@ -18,6 +19,8 @@ export default function DashboardHeader() {
   // redux hook
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
+  const session = useSession();
+  const profileImage = session.data?.user.image;
 
   return (
     <Header
@@ -77,14 +80,18 @@ export default function DashboardHeader() {
       </div>
 
       <Dropdown
-        menu={{ items: profileRoute as any }}
+        menu={{ items: userProfileRoute as any }}
         placement="bottomLeft"
         trigger={["click"]}
       >
         <Avatar
           className="cursor-pointer h-10 w-10 rounded-full bg-slate-500"
           size={35}
-          src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
+          src={
+            profileImage
+              ? `http://localhost:3900/uploads/${profileImage}`
+              : "/pos_software.png"
+          }
         />
       </Dropdown>
     </Header>

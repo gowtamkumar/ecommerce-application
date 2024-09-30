@@ -34,11 +34,11 @@ export async function getSize(data: any) {
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/sizes/${data.id}`,
     {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user.accessToken}`,
       },
-      body: JSON.stringify(data),
     }
   );
   return res.json();

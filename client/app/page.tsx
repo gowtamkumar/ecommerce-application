@@ -1,88 +1,104 @@
-import Banner from "@/components/website/banner/Banner";
-import CategoryCard from "@/components/website/home/CategoryCard";
-import WebFooter from "@/components/website/Footer";
+import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import React from "react";
 import Category from "@/components/website/home/Category";
-import { FaAmazonPay } from "react-icons/fa";
-import { CiDeliveryTruck } from "react-icons/ci";
-import { TbTruckReturn } from "react-icons/tb";
-import { GiDeliveryDrone } from "react-icons/gi";
 import ProductCard from "@/components/website/product/ProductCard";
-
-export default function Home() {
-  
+import SellerAds from "@/components/website/home/SellerAds";
+import Discount from "@/components/website/home/Discount";
+import Link from "next/link";
+import { getBanners } from "@/lib/apis/banner";
+import Slider from "@/components/website/banner/Slider";
+import { getFilterDiscounts } from "@/lib/apis/discount";
+import ProductFeatured from "@/components/website/product/ProductFeatured";
+import HeaderDiscount from "@/components/website/banner/HeaderDiscount";
+import MoreDiscover from "@/components/website/home/MoreDiscover";
+import TopSellingProductCard from "@/components/website/product/TopSellingProductCard";
+export default async function Home() {
+  const banners = await getBanners();
+  const discounts = await getFilterDiscounts({ type: "Discount" });
   return (
     <>
-      <Header />
-      <div className="lg:w-8/12  mx-auto ">
-        <Banner />
-        <section className="mx-auto py-4">
-          <div className="flex justify-center p-3 gap-2">
-            <div className="border p-2 text-end">
-              <FaAmazonPay size={40} color="red" />
-              <p>Safe Payment </p>
+      <header>
+        <Header />
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-12 grid-cols-1">
+            <div className="md:col-span-9">
+              <Slider
+                banners={(banners.data || []).filter(
+                  (item: { type: string }) => item.type === "Slider"
+                )}
+              />
             </div>
-            <div className="border p-2 ">
-              <CiDeliveryTruck size={40} color="red" />
-              <p>Nationwide Delivery</p>
-            </div>
-            <div className="border p-2 text-center">
-              <TbTruckReturn size={40} color="red" />
-              <p>Free & Easy Return</p>
-            </div>
-            <div className="border p-2 text-center">
-              <TbTruckReturn size={40} color="red" />
-              <p> 100% Authentic Product</p>
-            </div>
-            <div className="border p-2 text-center">
-              <GiDeliveryDrone size={40} color="red" />
-              <p>Fast Delivery</p>
+
+            <div className="md:col-span-3 bg-black">
+              <HeaderDiscount discounts={discounts} />
             </div>
           </div>
-        </section>
+        </div>
+      </header>
 
+      <main>
         {/* all category show */}
-        <Category />
+        <section className="md:py-7 p-3 bg-[#F6F6F6] border-t-2">
+          <h2 className="text-xl pb-8 text-center font-semibold ">
+            Shop by Category
+          </h2>
+          <Category />
+        </section>
 
+        {/* <section className="py-5 bg-[#F6F6F6]">
+          <SellerAds />
+        </section> */}
         {/* Popular products */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Popular Products</h2>
-          <ProductCard />
+        <section className="md:py-5 p-3 md:w-8/12 mx-auto">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Best Seller</h2>
+            <Link href={"/products"} className="hover:underline text-xl">
+              View all
+            </Link>
+          </div>
+          <TopSellingProductCard />
+
+          {/* <ProductCard /> */}
         </section>
 
+        {/* product banner */}
+        <section className="py-10 text-center bg-[#F6F6F6]">
+          <SellerAds
+            banners={(banners.data || []).filter(
+              (item: { type: string }) => item.type === "Middle"
+            )}
+          />
+        </section>
         {/* Featured Products */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
-          <ProductCard />
+        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <ProductFeatured />
+          {/* <ProductCard /> */}
         </section>
 
-        {/* Categories */}
-        <CategoryCard />
-        {/* Banners */}
-        {/* <section className="mb-8">
-        <Image
-          width={0}
-          height={0}
-          src="/banner-1.jpg"
-          blurDataURL="/banner-1.jpg"
-          placeholder="blur"
-          alt="Banner"
-          sizes="100vw"
-          style={{ width: "100%", height: "auto" }}
-        />
-        <Image
-          width={0}
-          height={0}
-          src="/banner-1.jpg"
-          blurDataURL="/banner-1.jpg"
-          placeholder="blur"
-          alt="Banner"
-          sizes="100vw"
-          style={{ width: "100%", height: "auto" }}
-        />
-      </section> */}
-      </div>
+        {/* More discount */}
+        {/* <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
+          <Discount discounts={discounts} />
+        </section> */}
+        {/* More Discover */}
+        <section className="w-8/12 mx-auto py-5 text-center">
+          <div className="py-5">
+            <h2 className="text-xl font-semibold pb-4">More to Discover</h2>
+            <p>
+              Our bundles were designed to conveniently package your tanning
+              essentials while saving you money.
+            </p>
+          </div>
+          <MoreDiscover />
+        </section>
+      </main>
+
       <WebFooter />
     </>
   );

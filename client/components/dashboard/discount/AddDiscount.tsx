@@ -50,10 +50,7 @@ const AddDiscount = () => {
         : await saveDiscount(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
-        toast.success(
-          `Discount ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
+     
         dispatch(setAction({}));
       }, 100);
     } catch (err: any) {
@@ -97,9 +94,9 @@ const AddDiscount = () => {
       }
       width={850}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
+      open={global.action.discount &&
+       ( global.action.type === ActionType.CREATE ||
+        global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}

@@ -1,23 +1,14 @@
 "use client";
 import Link from "next/link";
-import WebFooter from "../Footer";
-import {
-  selectCart,
-  addCart,
-  decrementCart,
-  removeCart,
-  clearCart,
-} from "@/redux/features/cart/cartSlice";
+import { clearCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { CiEdit, CiSquareRemove } from "react-icons/ci";
+import { CiEdit } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
 import { saveOrder } from "@/lib/apis/orders";
 import {
   Alert,
-  Breadcrumb,
   Button,
   Checkbox,
-  Input,
   Popconfirm,
   Radio,
   Space,
@@ -36,20 +27,30 @@ import Image from "next/image";
 import { MdDelete } from "react-icons/md";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dayjs from "dayjs";
+import { getSettings } from "@/lib/apis/setting";
+import { deleteCart, getCartByUser } from "@/lib/apis/cart";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
+
   const [shippingAddress, setShippingAddress] = useState([] as any);
+  const [carts, setCarts] = useState([] as any);
+
   const [shippingCharge, setShippingCharge] = useState({} as any);
+  const [setting, setSetting] = useState({} as any);
 
   const dispatch = useDispatch();
-  const cart = useSelector(selectCart);
+  // const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
   // const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
+      const settingResult = await getSettings();
+      const res = await getCartByUser();
+      setSetting(settingResult.data[0] || {});
+      setCarts(res.data);
       const user = await getMe();
       const activeShippingAddress = user.data?.shippingAddress?.find(
         (item: { status: boolean }) => item.status
@@ -72,18 +73,26 @@ export default function CheckoutPage() {
       dispatch(setLoading({ save: false }));
       setShippingCharge({});
     };
-  }, [dispatch, global.action]);
+  }, [dispatch]);
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
-    cart.carts.reduce(
+    carts?.reduce(
       (pre: any, curr: any) => {
-        let sutotal = (+curr.price + curr?.tax) * +curr.qty;
+        // const price = +curr?.productVariant?.price;
+        // const discount = curr.product?.discount;
+        // let taxAmount = (+price * (curr?.product?.tax?.value || 0)) / 100;
+        // let disAmount =
+        //   discount?.discountType === "Percentage"
+        //     ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
+        //     : +discount?.value;
+        let sutotal = curr.sutotal * +curr.qty;
+        // let sutotal = (+price + taxAmount) * +curr.qty;
+        // console.log("🚀 ~ sutotal:", sutotal)
+
         return {
-          taxAmount: (+pre.taxAmount + curr?.tax) * +curr.qty,
+          taxAmount: (+pre.taxAmount + +curr.tax) * +curr.qty,
           netAmount:
-            +pre.netAmount +
-            sutotal -
-            (+curr.discountA || 0) * (+curr.qty || 0),
+            +pre.netAmount + +sutotal - (+curr.discountA * +curr.qty || 0),
           discountAmount:
             +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
           orderTotalAmount:
@@ -105,7 +114,7 @@ export default function CheckoutPage() {
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
-        orderItems: cart.carts,
+        orderItems: carts,
         orderDate: dayjs().toISOString(),
         netAmount,
         orderTax: taxAmount,
@@ -115,8 +124,6 @@ export default function CheckoutPage() {
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-
-      // return console.log("newData:", validatedFields.error);
 
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
@@ -142,6 +149,7 @@ export default function CheckoutPage() {
       }
 
       setTimeout(async () => {
+        setCarts([]);
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
         dispatch(setResponse({}));
@@ -159,11 +167,12 @@ export default function CheckoutPage() {
     (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
   );
 
-  function removeFromCart(value: { id: number }) {
+  async function removeItemCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
-      dispatch(removeCart(value));
-
+      const res = await deleteCart(id);
+      const newCarts = carts.filter((item: any) => item.id !== id);
+      setCarts(newCarts);
       setTimeout(async () => {
         dispatch(setLoading({ remove: false }));
       }, 1000);
@@ -172,24 +181,53 @@ export default function CheckoutPage() {
     }
   }
 
-  function stockCheckingAndPurchaseLimit(product: {
-    limitPurchaseQty: number;
-    qty: number;
-    selectProductVariant: { stockQty: number };
-  }) {
-    let checkStock = product.selectProductVariant.stockQty;
+  function incrementCart(value: { id: number }) {
+    const data = carts.map((item: any) => {
+      if (item.id === value.id) {
+        item.qty++;
+      }
+      return item;
+    });
+    setCarts(data);
 
-    // if (newProduct.data.productVariants[0].id) {
-    //   const productVariant = await getProductVariant({
-    //     id: newProduct.data.productVariants[0].id,
-    //   });
-    //   setCheckStock(productVariant.data.stockQty);
+    // const existingProductIndex = carts.findIndex(
+    //   (item: any) => item.id === value.id
+    // );
+
+    // if (existingProductIndex !== -1) {
+    //   carts[existingProductIndex].qty++;
     // }
 
-    if (product.limitPurchaseQty && product.limitPurchaseQty <= product.qty) {
+    // try {
+    //   dispatch(setLoading({ remove: true }));
+    //   dispatch(removeCart(value));
+
+    //   setTimeout(async () => {
+    //     dispatch(setLoading({ remove: false }));
+    //   }, 1000);
+    // } catch (err) {
+    //   console.log("err");
+    // }
+  }
+
+  function decrementCart(value: { id: number }) {
+    const data = carts.map((item: any) => {
+      if (item.id === value.id) {
+        item.qty--;
+      }
+      return item;
+    });
+
+    setCarts(data);
+  }
+
+  function stockCheckingAndPurchaseLimit(value: any) {
+    let checkStock = value?.stockQty;
+
+    if (value.limitPurchaseQty && value.limitPurchaseQty <= value.qty) {
       return true;
     }
-    if (checkStock <= product.qty) {
+    if (checkStock <= value.qty) {
       return true;
     }
     return false;
@@ -197,104 +235,101 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100 lg:w-8/12 mx-auto items-center">
-        <div className="pt-2">
-          <Breadcrumb
-            separator=">"
-            items={[
-              {
-                title: "Home",
-              },
-              {
-                title: "Application Center",
-                href: "",
-              },
-              {
-                title: "Application List",
-                href: "",
-              },
-              {
-                title: "An Application",
-              },
-            ]}
-          />
-        </div>
-
-        <div className="py-4 md:py-3 grid grid-cols-3 gap-4 ">
-          <div className="col-span-2 bg-white  rounded-md overflow-hidden content-between">
+      <div className="lg:w-8/12 lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
+        <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
+          <div className="col-span-2 bg-white rounded-md overflow-hidden content-between">
             <div className="p-4 border-b">
               <h2 className="text-2xl font-semibold">Order summary</h2>
             </div>
             <div>
-              {cart.carts.map((item: any, idx: number) => {
+              {carts.map((item: any, idx: number) => {
+                // const product = item.product;
+                // const productVariant = item.productVariant;
+                // let taxAmount =
+
+                //   (+item.price * (product?.tax?.value || 0)) / 100;
+
+                // let disAmount =
+                //   item.type === "Percentage"
+                //     ? ((+item.price + +item.taxAmount) *
+                //         (+product.discount.value || 0)) /
+                //       100
+                //     : +product.discount?.value;
+
+                //     console.log("disAmount", disAmount);
+                //     console.log("🚀 ~ taxAmount:", taxAmount)
+
                 return (
                   <div key={idx} className="p-3 flex border-b">
+                    {/* <TestImage image={item.images}/> */}
                     <Image
+                      src={
+                        item.images
+                          ? `http://localhost:3900/uploads/${item.images}`
+                          : "/pos_software.png"
+                      }
                       width={100}
                       height={100}
-                      src="/pos_software.png"
                       alt="Product"
                       className="w-24 h-24 object-cover"
                     />
                     <div className="ml-4 flex-grow">
                       <h3 className="text-base font-semibold">{item?.name}</h3>
-                      {item.selectProductVariant?.size?.name && (
-                        <span className="mx-2">
-                          Size: {item.selectProductVariant?.size?.name}
-                        </span>
+                      {item.sizeName && (
+                        <span className="mx-2">Size: {item.sizeName}</span>
                       )}
 
-                      {item.selectProductVariant?.color?.name && (
-                        <span>
-                          Color: {item.selectProductVariant?.color?.name}
-                        </span>
-                      )}
+                      {item.colorName && <span>Color: {item.colorName}</span>}
 
-                      <div className="mt-2 flex items-center">
-                        <Button
-                          className="px-2 py-1 bg-gray-200"
-                          onClick={() => dispatch(decrementCart(item))}
-                          disabled={item?.qty <= 1}
-                        >
-                          -
-                        </Button>
-                        <input
-                          type="text"
-                          className="mx-2 w-10 text-center border"
-                          value={item?.qty}
-                          readOnly
-                        />
-                        <Button
-                          className="px-2 py-1 bg-gray-200"
-                          onClick={() => dispatch(addCart(item))}
-                          disabled={stockCheckingAndPurchaseLimit(item)}
-                        >
-                          +
-                        </Button>
+                      <div className="mt-2 lg:flex items-center">
+                        <div className="flex">
+                          <Button
+                            className="px-2 py-1 bg-gray-200"
+                            onClick={() => decrementCart(item)}
+                            disabled={item?.qty <= 1}
+                          >
+                            -
+                          </Button>
+                          <input
+                            type="text"
+                            className="mx-2 w-10 text-center border"
+                            value={item.qty}
+                            readOnly
+                          />
+                          <Button
+                            className="px-2 py-1 bg-gray-200"
+                            onClick={() => incrementCart(item)}
+                            disabled={stockCheckingAndPurchaseLimit(item)}
+                          >
+                            +
+                          </Button>
+                        </div>
 
                         <div className="mx-2 text-base font-semibold text-green-600">
-                          ৳{" "}
+                          ৳
                           {item.discountId
                             ? (
                               +item.price +
                               +item.tax -
-                              item?.discountA
+                              +item.discountA
                             ).toFixed(2)
-                            : (+item.price + item.tax || 0).toFixed(2)}
+                            : (+item.price + +item.tax || 0).toFixed(2)}
                         </div>
-                        {item?.discountId ? (
-                          <div className="text-base">
-                            <span className="line-through text-gray-500">
-                              ৳ {(+item.price + +item.tax || 0).toFixed(2)}
-                            </span>
-                            <span className="text-green-600 ml-2">
-                              - {item?.discount?.value}
-                              {item?.discount?.discountType === "Percentage"
-                                ? "%"
-                                : "BDT"}
-                            </span>
-                          </div>
-                        ) : null}
+                        <div>
+                          {item?.discountId ? (
+                            <div className="text-base">
+                              <span className="line-through text-gray-500">
+                                ৳ {(+item.price + +item.tax || 0).toFixed(2)}
+                              </span>
+                              <span className="text-green-600 ml-2">
+                                - {item.discountValue}
+                                {item.discountType === "Percentage"
+                                  ? "%"
+                                  : "BDT"}
+                              </span>
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
 
@@ -302,7 +337,7 @@ export default function CheckoutPage() {
                       <Popconfirm
                         title="Delete Order item"
                         description="Are you sure to delete this Order item?"
-                        onConfirm={() => removeFromCart(item)}
+                        onConfirm={() => removeItemCart(item.id)}
                         okText="Yes"
                         cancelText="No"
                         okButtonProps={{ loading: global.loading.remove }}
@@ -325,11 +360,11 @@ export default function CheckoutPage() {
 
             <div className="mx-auto bg-white overflow-hidden">
               <div className="p-4 border-b">
-                <h2 className="text-lg font-semibold">
-                  Payment Method(Please select a payment method)
+                <h2 className="text-sm font-semibold">
+                  Payment Method (Please select a payment method)
                 </h2>
               </div>
-              <div className=" mx-auto bg-white p-6 rounded-lg ">
+              <div className="mx-auto bg-white lg:p-6 py-2 rounded-lg">
                 <Radio.Group
                   name="paymentMethod"
                   onChange={({ target }) =>
@@ -349,7 +384,7 @@ export default function CheckoutPage() {
                     <Radio value="SSLCOMMERZ">SSLCOMMERZ</Radio>
                   </div>
 
-                  <div className="mb-4 font-semibold border p-5">
+                  {/* <div className="mb-4 font-semibold border p-5">
                     <Radio value="Stripe">
                       ডেবিট / ক্রেডিট কার্ড
                       <div className="flex gap-2 items-center">
@@ -383,7 +418,7 @@ export default function CheckoutPage() {
                         />
                       </div>
                     </Radio>
-                  </div>
+                  </div> */}
                 </Radio.Group>
 
                 {/* <!-- Terms and Conditions --> */}
@@ -409,7 +444,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
-            <div className="p-4 border-t text-right">
+            <div className="p-4 border-t text-right lg:inline hidden">
               <Button
                 type="primary"
                 size="large"
@@ -418,7 +453,7 @@ export default function CheckoutPage() {
                 loading={global.loading.save}
                 disabled={global.loading.save}
               >
-                <span>Confirm Order</span>
+                <span className="me-1">Confirm Order</span>
                 {(
                   +orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
                 ).toFixed(2)}
@@ -565,38 +600,52 @@ export default function CheckoutPage() {
               <div className="p-4">
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>ক্যাশ অন ডেলিভারি</span>
+                  <span>{setting?.helpSupport?.cashDelivery}</span>
                 </div>
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>৭ দিনের মধ্যে পণ্য ফেরত সুবিধা</span>
+                  <span>{setting?.helpSupport?.returnSupport}</span>
                 </div>
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>১০০% টাকা ফেরত গ্যারান্টি</span>
+                  <span>{setting?.helpSupport?.guarantee}</span>
                 </div>
+
+                {/* <div className="flex gap-3 font-semibold text-gray-600">
+                  <span>Icon</span>
+                  <span>অর্ডার করে পয়েন্টস জিতুন </span>
+                </div> */}
 
                 <div className="flex gap-3 font-semibold text-gray-600">
                   <span>Icon</span>
-                  <span>অর্ডার করে পয়েন্টস জিতুন</span>
-                </div>
-
-                <div className="flex gap-3 font-semibold text-gray-600">
-                  <span>Icon</span>
-                  <span>১০০% অরিজিনাল প্রোডাক্ট</span>
+                  <span> {setting?.helpSupport?.originalProduct}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <Link href="/products">
-            <div className="text-blue-500 hover:underline">
-              Back to Shopping
-            </div>
-          </Link>
+          <div className="lg:hidden inline">
+            <Button
+              type="primary"
+              size="large"
+              className=" w-full"
+              onClick={() => handleOrder()}
+              loading={global.loading.save}
+              disabled={global.loading.save}
+            >
+              <span className="me-1">Confirm Order</span>
+              {(
+                +orderTotalAmount + (+shippingCharge?.shippingAmount || 0)
+              ).toFixed(2)}
+              TK.
+            </Button>
+          </div>
+
+          <div className="text-blue-500 hover:underline lg:text-start text-center">
+            <Link href="/products">Back to Shopping</Link>
+          </div>
         </div>
       </div>
-      <WebFooter />
     </>
   );
 }

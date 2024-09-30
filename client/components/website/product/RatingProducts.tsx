@@ -45,7 +45,7 @@ const RatingProduct = ({ product, productRating }: any) => {
             <Rate allowHalf defaultValue={5} disabled /> {rating5}
           </div>
         </div>
-        <div className="basis-1/3">
+        {/* <div className="basis-1/3">
           <p>Rate this product</p>
           <Rate defaultValue={2.5} disabled />
           <br />
@@ -66,7 +66,7 @@ const RatingProduct = ({ product, productRating }: any) => {
             Write a Review
           </Button>
           <NewReview />
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -8,9 +8,12 @@ import { getMe } from "@/lib/apis/user";
 import MyWishlist from "@/components/website/profile/MyWishlist";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import MyShippingAddress from "./MyShippingAddress";
+import OrderTracker from "./OrderTracker";
 
 export default function Profile() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({} as any);
+  const [tabKey, setTabKey] = useState("my_account");
   // hook
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -25,55 +28,71 @@ export default function Profile() {
   }, [dispatch, global.action]);
 
   return (
-    <div>
-      <Tabs
-        tabPosition="left"
-        defaultActiveKey="1"
-        items={[
-          {
-            label: `My Account`,
-            children: <MyAccount user={user} />,
-            icon: <AppleOutlined />,
-          },
+    <Tabs
+      onChange={(key) => setTabKey(key)}
+      defaultValue={tabKey}
+      items={[
+        {
+          label: `My Account`,
+          key: "my_account",
+          children: <MyAccount user={user} />,
+          icon: <AppleOutlined />,
+        },
 
-          {
-            label: `Orders`,
-            children: <UserOrders />,
-            icon: <AndroidOutlined />,
-          },
-          {
-            label: `Wishlist`,
-            children: <MyWishlist user={user} />,
-            icon: <AndroidOutlined />,
-          },
+        {
+          label: `Orders`,
+          key: "orders",
+          children: (
+            <UserOrders
+              orders={(user?.orders || []).filter(
+                (item: { status: string }) => item.status !== "Returned"
+              )}
+            />
+          ),
+          icon: <AndroidOutlined />,
+        },
+        {
+          label: `Wishlist`,
+          key: "wishlist",
+          children: <MyWishlist wishlists={user?.wishlists} />,
+          icon: <AndroidOutlined />,
+        },
 
-          // {
-          //   label: `Shipping Address`,
-          //   children: <ShippingAddressList />,
-          //   icon: <AndroidOutlined />,
-          // },
+        {
+          label: `Shipping Address`,
+          key: "shipping_address",
+          children: (
+            <MyShippingAddress shippingAddress={user?.shippingAddress} />
+          ),
+          icon: <AndroidOutlined />,
+        },
+        {
+          label: `Track your Order`,
+          key: "track_your_order",
+          children: <OrderTracker orders={user?.orders} />,
+          icon: <AndroidOutlined />,
+        },
+        {
+          label: `My Returns & Cancellations`,
+          key: "my_Returns_cancellations",
+          children: (
+            <UserOrders
+              orders={(user?.orders || []).filter(
+                (item: { status: string }) =>
+                  item.status === "Returned" || item.status === "Canceled"
+              )}
+            />
+          ),
+          icon: <AndroidOutlined />,
+        },
 
-          {
-            label: `My Returns & Cancellations`,
-            children: `My Returns & Cancellations`,
-            icon: <AndroidOutlined />,
-          },
-
-          {
-            label: `My Point`,
-            children: `My Point`,
-            icon: <AndroidOutlined />,
-          },
-        ].map((item: any, i) => {
-          const id = String(i + 1);
-          return {
-            key: id,
-            label: item.label,
-            children: item.children,
-            icon: item.icon,
-          };
-        })}
-      />
-    </div>
+        {
+          label: `My Point`,
+          children: `My Point`,
+          key: "point",
+          icon: <AndroidOutlined />,
+        },
+      ]}
+    />
   );
 }

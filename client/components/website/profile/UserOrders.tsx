@@ -24,24 +24,24 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const UserOrders = () => {
-  const [orders, setOrders] = useState([]);
+const UserOrders = ({ orders }: any) => {
+  // const [orders, setOrders] = useState([]);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getUserOrders();
-      const newOrders = res.data?.map((items: any, idx: number) => ({
-        ...items,
-        key: idx.toString(),
-      }));
-      setOrders(newOrders);
-      dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+  // useEffect(() => {
+  //   (async () => {
+  //     dispatch(setLoading({ loading: true }));
+  //     const res = await getUserOrders();
+  //     const newOrders = res.data?.map((items: any, idx: number) => ({
+  //       ...items,
+  //       key: idx.toString(),
+  //     }));
+  //     setOrders(newOrders);
+  //     dispatch(setLoading({ loading: false }));
+  //   })();
+  // }, [dispatch, global.action]);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -159,6 +159,7 @@ const UserOrders = () => {
       },
       {
         title: "Price",
+        key: "price",
         render: (v: { price: number; tax: number; discountA: number }) => (
           <span>{(+v.price + +v.tax - +v.discountA).toFixed(2)}</span>
         ),
@@ -167,6 +168,7 @@ const UserOrders = () => {
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
         title: "Total item Amount",
+        key: "total_item_amount",
         render: (v: {
           price: number;
           tax: number;

@@ -37,9 +37,13 @@ import dayjs from "dayjs";
 import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
 import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/share/getStatus";
+import { FaAmazonPay } from "react-icons/fa";
+import AddPayment from "@/components/dashboard/payment/AddPayment";
+import AssignDeliveryMan from "@/components/dashboard/order/AssignDeliveryMan";
 interface DataType {
   key: React.Key;
   name: string;
+  phoneNo: string;
   trackingNo: string;
 }
 
@@ -65,7 +69,7 @@ const Page: React.FC = () => {
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
-      }));
+      }));      
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
@@ -246,7 +250,18 @@ const Page: React.FC = () => {
     return (
       <div className="grid grid-cols-4 p-2">
         <div className="col-span-1 p-2">
-          <h1 className="font-bold">Order No:{value.trackingNo}</h1>
+          <h1>
+            <span className="font-bold">Order No: </span>
+            <code>{value.trackingNo}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Delivery Man: </span>
+            <code>{value?.deliveryMan?.name}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Shipping Address: </span>
+            <code> {value.shippingAddress?.address}</code>
+          </h1>
           <Divider dashed />
           <Timeline
             items={(value?.orderTrackings || []).map(
@@ -279,9 +294,9 @@ const Page: React.FC = () => {
               bordered
             />
           </div>
-          <div className="grid grid-cols-3 mt-5">
-            <div className="col-span-2">dasdf</div>
-            <div className="grid gap-y-3 col-span-1">
+          <div className="grid grid-cols-8 mt-5">
+            <div className="col-span-4">dasdf</div>
+            <div className="grid gap-y-3 col-span-4">
               <div className="flex justify-between">
                 <h1>
                   Net Amount: (+tax {value.orderTax}, - Discount{" "}
@@ -339,9 +354,9 @@ const Page: React.FC = () => {
 
     {
       title: "Phone No",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (value) => <span>{value.phoneNo}</span>,
+      dataIndex: "phoneNo",
+      key: "phoneNo",
+      render: (value) => <span>{value?.phoneNo}</span>,
     },
 
     {
@@ -350,12 +365,12 @@ const Page: React.FC = () => {
       key: "user",
       render: (customer) => <span>{customer?.name}</span>,
     },
-    {
-      title: "Shipping Address",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (value) => <span>{value.address}</span>,
-    },
+    // {
+    //   title: "Shipping Address",
+    //   dataIndex: "shippingAddress",
+    //   key: "shippingAddress",
+    //   render: (value) => <span>{value.address}</span>,
+    // },
     {
       title: "Payment Method",
       dataIndex: "paymentMethod",
@@ -393,6 +408,29 @@ const Page: React.FC = () => {
         <div className="flex gap-2 justify-end">
           <Button
             size="small"
+            icon={<FaAmazonPay />}
+            title="Payment"
+            className="me-1"
+            onClick={() => {
+              const amount = +value.orderTotalAmount + +value.shippingAmount;
+              dispatch(
+                setAction({
+                  payment: true,
+                  type: ActionType.CREATE,
+                  payload: {
+                    orderId: value.id,
+                    amount,
+                    paymentType: "Debit",
+                    paymentMethod: value.paymentMethod,
+                    userId: value.userId,
+                  },
+                })
+              );
+            }}
+          />
+
+          <Button
+            size="small"
             icon={<PlusOutlined />}
             title="Add Order Tracking"
             className="me-1"
@@ -406,6 +444,7 @@ const Page: React.FC = () => {
               )
             }
           />
+
           <Button
             size="small"
             icon={<UserAddOutlined />}
@@ -414,12 +453,19 @@ const Page: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  type: ActionType.UPDATE,
-                  payload: value,
+                  assign: true,
+                  payload: { id: value.id },
                 })
               )
             }
           />
+          {/* <Button
+            size="small"
+            icon={<CheckOutlined />}
+            title="Renew Order"
+            className="me-1"
+            disabled={value.status !== "Returned"}
+          /> */}
           <Button
             size="small"
             icon={<CheckOutlined />}
@@ -433,6 +479,9 @@ const Page: React.FC = () => {
                   payload: { id: value.id },
                 })
               )
+            }
+            disabled={
+              value.status === "Completed" || value.status === "Returned"
             }
           />
           <Popconfirm
@@ -475,6 +524,8 @@ const Page: React.FC = () => {
       />
       {global.action.orderStatusUpdate && <OrderStatusChange />}
       {global.action.addOrderTracking && <AddOrderTracking />}
+      {global.action.payment && <AddPayment />}
+      {global.action.assign && <AssignDeliveryMan />}
     </div>
   );
 };

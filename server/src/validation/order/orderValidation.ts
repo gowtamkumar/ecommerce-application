@@ -37,17 +37,19 @@ export const orderValidationSchema = z.object({
       "Completed",
       "Pending",
       "Returned",
+      "Canceled",
     ])
     .optional(),
   orderItems: z
     .array(
       z.object({
-        price: z.number({ required_error: "Price is required" }),
-        purchasePrice: z.number({
+        price: z.string({ required_error: "Price is required" }),
+        purchasePrice: z.string({
           required_error: "Purchase Price is required",
         }),
-        tax: z.number({ required_error: "Tax is required" }),
-        discountA: z.number().optional(),
+        tax: z.string({ required_error: "Tax is required" }),
+        discountA: z.string().optional(),
+        id: z.number({ required_error: "Cart id is required" }),
         productId: z.number({ required_error: "Product is required" }),
         productVariantId: z.number({
           required_error: "Product Variant is required",

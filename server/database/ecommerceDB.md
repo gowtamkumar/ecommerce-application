@@ -11,7 +11,7 @@ dob,
 gender,
 point:number
 status(Active/Inactive/Block)
-img_url,
+image,
 shippingAddresses:[from shipping_address table]
 last_login: date with time zone
 last_logout: date with time zone
@@ -22,12 +22,12 @@ createdAt
 updatedAt
 
 ## user_activity
+
 id,
 type,
 timestamp
 
-
-## shipping_address
+## shipping_address :(done)
 
 id,
 type:[Home/Office]
@@ -44,7 +44,7 @@ zip_code,
 address,
 status,
 
-## shipping_charge
+## shipping_charge :(done)
 
 id,
 division_id,
@@ -99,6 +99,14 @@ stock_qty:number,
 id,
 category_id,
 product_id
+
+## purchase
+
+id,
+product_id:numeric,
+variant_id:numeric,
+price:numeric,(optional)
+qty:number,
 
 ## size (done)
 
@@ -159,6 +167,7 @@ updatedAt
 
 id,
 product_id,
+productVariantId,
 user_id,
 qty,
 createdAt,
@@ -168,7 +177,7 @@ updatedAt
 
 id,
 name,
-photo,
+image,
 description
 status:(Active/Inactive),,
 user_id,
@@ -204,7 +213,7 @@ payment_status(Paid/NotPaid/PertialPaid),
 payment_method(cash/ssecommer/strip)
 payment_type(Online/Offline)
 payment_transaction_id,
-status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned"],
+status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned", "Canceled"],
 createdAt
 updatedAt
 
@@ -247,7 +256,7 @@ name
 value,
 status:acitve/inactive
 
-## reviews:
+## reviews:(done)
 
 id,
 product_id,
@@ -293,10 +302,76 @@ message/descripiton,
 createdAt
 updatedAt
 
+## currency
+
+id,
+name,
+symble
+
 ## setting
 
 id,
+companyName
 logo,
 address,
-social_link: array
+phone,
+email
+currencyId,
+social_link: jsonb
+email_config:jsonb,
+payment_account:jsonb,
+home_page: jsonb,
+about_page: jsonb,
+contact_page: jsonb,
+term_policy_page: jsonb,
+footer_option: jsonb,
+header_option: jsonb,
+help_Support: jsonb
+
+## banner: ToDo
+
+title,
+type:["Slider", "Middle", 'Left', 'Right', 'Footer'],
+image,
+description,
+url,
+status: boolean,
+
+## leads(done)
+
+id,
 email,
+created_at,
+updated_at,
+
+
+## post(back end done)
+
+title,
+user_id,
+image,
+tags:[]
+
+<!-- slug(UNIQUE), -->
+
+content,
+status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+createdAt
+updatedAt
+
+## blog_category(done back end)
+
+id
+post_id,
+category_id,
+
+## Comments(back end done)
+
+id,
+post_id,
+user_id,
+content TEXT NOT NULL,
+status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
+created_at,
+updated_at,
+

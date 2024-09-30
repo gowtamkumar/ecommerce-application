@@ -31,6 +31,7 @@ export default function Discount() {
             onClick={() =>
               dispatch(
                 setAction({
+                  discount:true,
                   type: ActionType.CREATE,
                 })
               )

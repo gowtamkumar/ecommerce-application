@@ -15,7 +15,7 @@ note: delivery change depend for location
 11. customer relationship managemen
 12. order and delivery managemnet
     1. delivery man assign and add delivery charge
-    2. dashboard total delivery  
+    2. dashboard total delivery
 13. discount and promotion management
 14. multiple mayment option(sslecommerce etc)
 15. Search and Filtering
@@ -31,7 +31,11 @@ note: delivery change depend for location
 
 #Todo 1. error handling, 2. error message show 3. all api a userid input kora
 
+need to work order update and partial return and return product ar je shipping cost seta loss profit add hove kin na?
+# must need to check and testing when every table cascade how many table data delete?
+
 ## product list a published ar radio button rakte hobe
 ## need to add attribute as like wordpress
 ## need to add combopackage for product
 ## need to modify discount role kiser jonno disouct dibo, exam: category, product, total order, for number of items, for shipping, . that mine kivabe all category, ba singe category, single product, all product, qty upor virty kore discount hoy. dicount ar moddha couponcode dite hobe. discount and coupon ar  expiry date thakbe.
+# 

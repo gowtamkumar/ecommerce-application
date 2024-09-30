@@ -203,6 +203,7 @@ const SizeList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  size:true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

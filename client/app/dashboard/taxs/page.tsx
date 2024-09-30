@@ -32,6 +32,7 @@ export default function Tax() {
             onClick={() =>
               dispatch(
                 setAction({
+                  tax:true,
                   type: ActionType.CREATE,
                 })
               )

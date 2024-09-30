@@ -5,7 +5,7 @@ import path, { extname, resolve } from "path";
 const storage = multer.diskStorage({
   destination: (req, file, callback: any) => {
     if (!file) return callback(new Error("Upload file error"), null);
-    return callback(null, "public/uploads");
+    return callback(null, 'public/uploads');
   },
 
   filename: (req: any, file, callback: any) => {

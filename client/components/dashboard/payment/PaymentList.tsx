@@ -210,6 +210,7 @@ const PaymentList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
+                  payment:true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

@@ -10,12 +10,16 @@ import shippingChargeRoutes from "../modules/shipping-charge/route/shipping-char
 import brandRoutes from "../modules/brand/route/brand.route";
 import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
+import commentRoute from "../modules/comment/route/comment.route";
 import taxRoute from "../modules/tax/route/tax.route";
 import sizeRoute from "../modules/size/route/size.route";
 import unitRoute from "../modules/unit/route/unit.route";
 import colorRoute from "../modules/color/route/color.route";
 import statusRoute from "../modules/status/route/status.route";
 import settingRoute from "../modules/other/setting/route/setting.route";
+import currencyRoute from "../modules/currency/route/currency.route";
+import bannerRoute from "../modules/banner/route/banner.route";
+import cartRoute from "../modules/cart/route/cart.route";
 import fileRoute from "../modules/other/file/route/file.route";
 import categoriesRoute from "../modules/categories/route/category.route";
 import productVariantRoute from "../modules/product-variant/route/product-variant.route";
@@ -25,28 +29,35 @@ import upazilaRoute from "../modules/other/geo-location/upazilas/route/upazila.r
 import unionsRoute from "../modules/other/geo-location/unions/route/union.route";
 import reportRoute from "../modules/reports/route/report.route";
 import visitorRoute from "../modules/visitor/route/visitor.route";
+import leadRoute from "../modules/lead/route/lead.route";
+import postRoute from "../modules/post/route/post.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 
 // Define the type for the Express application
 type ExpressApp = Express;
 
 // Export the routes setup function
-export const setupRoutes = (app: ExpressApp): void => {
+export const setupRoutes = (app: any) => {
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/products", productRoutes);
   app.use("/api/v1/files", fileRoute);
   app.use("/api/v1/settings", settingRoute);
+  app.use("/api/v1/currencies", currencyRoute);
+  app.use("/api/v1/banners", bannerRoute);
+  app.use("/api/v1/carts",AuthGuard, cartRoute);
+
   app.use("/api/v1/product-variants", productVariantRoute);
   app.use("/api/v1/categories", categoriesRoute);
   app.use("/api/v1/brands", brandRoutes);
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
   app.use("/api/v1/shipping-charges", AuthGuard, shippingChargeRoutes);
-  app.use("/api/v1/discounts", AuthGuard, discountRoutes);
+  app.use("/api/v1/discounts", discountRoutes);
   app.use("/api/v1/orders", AuthGuard, orderRoutes);
   app.use("/api/v1/order-trackings", AuthGuard, orderTrackingRoutes);
   app.use("/api/v1/wishlists", AuthGuard, wishlistRoutes);
   app.use("/api/v1/payments", AuthGuard, paymentRoute);
   app.use("/api/v1/reviews", AuthGuard, reviewRoute);
+  app.use("/api/v1/comments", AuthGuard, commentRoute);
   app.use("/api/v1/taxs", AuthGuard, taxRoute);
   app.use("/api/v1/sizes", AuthGuard, sizeRoute);
   app.use("/api/v1/units", AuthGuard, unitRoute);
@@ -58,4 +69,6 @@ export const setupRoutes = (app: ExpressApp): void => {
   app.use("/api/v1/unions", unionsRoute);
   app.use("/api/v1/reports", reportRoute);
   app.use("/api/v1/visitors", visitorRoute);
+  app.use("/api/v1/leads", leadRoute);
+  app.use("/api/v1/posts", postRoute);
 };

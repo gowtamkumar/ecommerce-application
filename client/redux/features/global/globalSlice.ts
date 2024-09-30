@@ -12,6 +12,7 @@ export interface globalState {
   productView: boolean;
   productRating: any;
   productFilter: any;
+  setting: any;
 }
 
 // Define the initial state using that type
@@ -25,6 +26,7 @@ const initialState: globalState = {
   productView: false,
   productRating: {},
   productFilter: {},
+  setting: {},
 };
 
 export const globalSlice = createSlice({
@@ -62,6 +64,9 @@ export const globalSlice = createSlice({
     setProductFilter: (state, action: PayloadAction<any>): any => {
       state.productFilter = action.payload;
     },
+    setSetting: (state, action: PayloadAction<any>): any => {
+      state.setting = action.payload;
+    },
   },
 });
 
@@ -75,6 +80,7 @@ export const {
   setProductRating,
   setProductView,
   setProductFilter,
+  setSetting
 } = globalSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
 export const selectGlobal = (state: RootState) => state.global;

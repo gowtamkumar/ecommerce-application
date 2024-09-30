@@ -32,7 +32,6 @@ export async function getFilterDiscounts(params?: { type: string }) {
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/discounts?type=${params?.type}`,
     {
-      cache: "no-cache",
       headers: {
         Authorization: `Bearer ${session?.user.accessToken}`,
       },

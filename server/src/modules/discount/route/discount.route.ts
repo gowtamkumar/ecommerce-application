@@ -10,12 +10,12 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getDiscounts).post(createDiscount);
+router.route("/").get(getDiscounts).post(AuthGuard, createDiscount);
 
 router
   .route("/:id")
-  .get(getDiscount)
-  .patch(updateDiscount)
-  .delete(deleteDiscount);
+  .get(AuthGuard, getDiscount)
+  .patch(AuthGuard, updateDiscount)
+  .delete(AuthGuard, deleteDiscount);
 
 export default router;

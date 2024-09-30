@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { saveReview, updateReview } from "@/lib/apis/review";
 import { ActionType } from "@/constants/constants";
+import { orderReview } from "@/lib/apis/orders";
 
 const NewReview = () => {
   const global = useSelector(selectGlobal);
@@ -24,6 +25,7 @@ const NewReview = () => {
 
   useEffect(() => {
     const newData = { ...payload };
+    console.log("🚀 ~ newData:", newData);
     setFormData(newData);
     return () => {
       dispatch(setFormValues({}));
@@ -37,15 +39,10 @@ const NewReview = () => {
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
 
-      const result = newData.id
-        ? await updateReview(newData)
-        : await saveReview(newData);
+      const result = await saveReview(newData);
+
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        //
-        toast.success(
-          `Review ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
         dispatch(setProductRating({}));
       }, 100);
     } catch (err: any) {
@@ -101,15 +98,44 @@ const NewReview = () => {
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
-        <Form.Item name="productId" hidden>
-          <Input />
-        </Form.Item>
-
+      
         <div className="my-5 flex items-start justify-between gap-4">
           <div className="grid flex-grow grid-cols-1 gap-5">
             <div className="col-span-1">
               <Form.Item name="rating" className="mb-1" label="Rating">
                 <Rate />
+              </Form.Item>
+            </div>
+
+            <div className="col-span-1">
+              <Form.Item
+                name="productId"
+                label="Product"
+                className="mb-1"
+                rules={[
+                  {
+                    required: true,
+                    message: "Product is required",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Select"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children as any)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {(payload?.orderItems || []).map((item: any) => (
+                    <Select.Option key={item.productId} value={item.productId}>
+                      {item.product.name}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </div>
 

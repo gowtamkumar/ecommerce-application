@@ -53,7 +53,6 @@ const ShippingAddressList: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getShippingAddress();
-      console.log("🚀 ~ res:", res);
       setAddress(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -230,7 +229,7 @@ const ShippingAddressList: React.FC = () => {
       dataIndex: "division",
       key: "division",
       sorter: (a, b) => a.division.length - b.division.length,
-      render: (value) => <span>{value.name}</span>,
+      render: (value) => <span>{value?.name}</span>,
     },
     {
       ...getColumnSearchProps("district"),
@@ -238,7 +237,7 @@ const ShippingAddressList: React.FC = () => {
       dataIndex: "district",
       key: "district",
       sorter: (a, b) => a.district.length - b.district.length,
-      render: (value) => <span>{value.name}</span>,
+      render: (value) => <span>{value?.name}</span>,
     },
     {
       ...getColumnSearchProps("upazila"),
@@ -246,7 +245,7 @@ const ShippingAddressList: React.FC = () => {
       dataIndex: "upazila",
       key: "upazila",
       sorter: (a, b) => a.upazila.length - b.upazila.length,
-      render: (value) => <span>{value.name}</span>,
+      render: (value) => <span>{value?.name}</span>,
     },
 
     {

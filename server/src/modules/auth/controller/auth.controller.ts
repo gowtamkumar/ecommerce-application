@@ -19,6 +19,9 @@ import {
   userValidationSchema,
 } from "../../../validation";
 import { UserActivityEntity } from "../model/user-activity.entity";
+import { join } from "path";
+import { FileEntity } from "../../other/file/model/file.entity";
+import fs from "fs";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -92,7 +95,7 @@ export const getUsers = asyncHandler(
         phone: true,
         type: true,
         point: true,
-        imgUrl: true,
+        image: true,
         role: true,
         status: true,
         lastLogin: true,
@@ -238,6 +241,7 @@ export const getMe = asyncHandler(
 
     const qb = userRepository.createQueryBuilder("user");
     qb.select([
+      "user.id",
       "user.name",
       "user.username",
       "user.email",
@@ -245,26 +249,99 @@ export const getMe = asyncHandler(
       "user.type",
       "user.point",
       "user.role",
+      "user.image",
       "user.dob",
       "user.gender",
       "user.status",
       "user.lastLogin",
       "user.lastLogout",
       "user.lastLogout",
-      "orders",
-      "products",
+
+      "orders.discountAmount",
+      "orders.netAmount",
+      "orders.note",
+      "orders.orderDate",
+      "orders.orderTax",
+      "orders.orderTotalAmount",
+      "orders.paymentMethod",
+      "orders.paymentStatus",
+      "orders.shippingAmount",
+      "orders.status",
+      "orders.trackingNo",
+
+      "products.name",
+      "products.type",
+      "products.createdAt",
+      "products.description",
+      "products.enableReview",
+      "products.images",
+      "products.limitPurchaseQty",
+      "products.alertQty",
+      "products.shortDescription",
+      "products.status",
+      "products.tags",
+      "products.urlSlug",
+
       "product",
       "productVariants.price",
+
       "discount.discountType",
       "discount.value",
       "tax.value",
       "reviews",
-      "shippingAddress",
+
+      "orderShippingAddress.name",
+      "orderShippingAddress.type",
+      "orderShippingAddress.phoneNo",
+      "orderShippingAddress.email",
+      "orderShippingAddress.country",
+      "orderShippingAddress.alternativePhoneNo",
+      "orderShippingAddress.address",
+      "orderShippingAddress.phoneNo",
+
+      "shippingAddress.id",
+      "shippingAddress.name",
+      "shippingAddress.phoneNo",
+      "shippingAddress.email",
+      "shippingAddress.country",
+      "shippingAddress.alternativePhoneNo",
+      "shippingAddress.address",
+      "shippingAddress.phoneNo",
+      "shippingAddress.type",
+      "shippingAddress.status",
+      "shippingAddress.divisionId",
+
       "orderDeliveries",
       "wishlists",
+
+      "orderItems.purchasePrice",
+      "orderItems.discountA",
+      "orderItems.price",
+      "orderItems.qty",
+      "orderItems.tax",
+      "orderItems.productId",
+
+      "orderProduct.name",
+      "orderTrackings.location",
+      "orderTrackings.createdAt",
+      "orderTrackings.status",
+      "deliveryMan.name",
+      // "payments",
+      "size.name",
+      "color.name",
     ]);
 
     qb.leftJoin("user.orders", "orders");
+
+    qb.leftJoin("orders.orderItems", "orderItems");
+    qb.leftJoin("orderItems.product", "orderProduct");
+    qb.leftJoin("orders.orderTrackings", "orderTrackings");
+    qb.leftJoin("orders.deliveryMan", "deliveryMan");
+    qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
+
+    qb.leftJoin("orderItems.size", "size");
+    qb.leftJoin("orderItems.color", "color");
+
     qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");
     qb.leftJoin("user.orderDeliveries", "orderDeliveries");
@@ -430,8 +507,6 @@ export const updateUser = asyncHandler(
 
     const validation = updateUserValidationSchema.safeParse(req.body);
 
-    console.log("validation", validation.error);
-
     if (!validation.success) {
       return res.status(401).json({
         message: validation.error.formErrors,
@@ -445,10 +520,7 @@ export const updateUser = asyncHandler(
     if (!user) {
       throw new Error("User is not found");
     }
-    const updateData = await userRepository.merge(
-      user,
-      req.body as UpdateUserDto
-    );
+    const updateData = await userRepository.merge(user, validation.data);
 
     await userRepository.save(updateData);
 
@@ -475,6 +547,18 @@ export const deleteUser = asyncHandler(
     if (!user) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
+
+    if (user.image) {
+      const repository = connection.getRepository(FileEntity);
+      const directory = join(process.cwd(), "/public/uploads");
+      const filePath = `${directory}/${user.image}`;
+      const [deleteFile] = await Promise.all([
+        repository.findOne({ where: { filename: user.image } }),
+        fs.promises.unlink(filePath),
+      ]);
+      await repository.remove(deleteFile);
+    }
+
     await userRepository.delete({ id });
 
     return res.status(200).json({

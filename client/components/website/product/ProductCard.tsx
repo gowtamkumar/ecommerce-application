@@ -5,7 +5,7 @@ import {
   selectProduct,
   setProducts,
 } from "@/redux/features/products/productSlice";
-import { Rate } from "antd";
+import { Button, Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -19,7 +19,7 @@ const ProductCard: React.FC = () => {
   // console.log("🚀 ~ category:", category)
   const searchQuery = useSearchParams();
   const searchParams = searchQuery.get("search");
-  // const categoryIdParams = searchQuery.get("categoryId");
+  const categoryIdParams = searchQuery.get("categoryId");
 
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
@@ -38,10 +38,12 @@ const ProductCard: React.FC = () => {
     search: newSearchs,
   } = global.productFilter;
 
+
   let customQuery = "";
-  // if (categoryIdParams) customQuery += categoryIdParams;
-  // if (categoryIds) customQuery += category ? `,${categoryIds}` : categoryIds;
-  if (categoryIds) customQuery += categoryIds;
+  if (categoryIdParams) customQuery += categoryIdParams;
+  if (categoryIds)
+    customQuery += categoryIdParams ? `,${categoryIds}` : categoryIds;
+  // if (categoryIds) customQuery += categoryIds;
 
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
@@ -62,6 +64,8 @@ const ProductCard: React.FC = () => {
           minPrice,
           discount,
         });
+        console.log("products", products);
+        
         dispatch(setProducts(products?.data));
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -85,9 +89,8 @@ const ProductCard: React.FC = () => {
 
   return (
     <div
-      className={`grid ${
-        global.productView ? "grid-cols-2" : "md:grid-cols-5"
-      } gap-4`}
+      className={`grid gap-1 ${global.productView ? "grid-cols-1" : "lg:grid-cols-5"
+        }`}
     >
       {products?.map((item: any) => (
         <ProductItem key={item.id} item={item} />
@@ -118,43 +121,52 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     (acc: number, variant: any) => acc + +variant.stockQty,
     0
   );
+  // const image = item.images ? item.images[0] : "/pos_software.png";
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <Link href={`/products/${item.id}`}>
+    <div className="bg-white border">
+      <Link href={`/products/${item.id}`} title={item.name}>
         <Image
-          width={150}
-          height={150}
-          src="/product-01.jpg"
-          alt="Category Image"
-          className="w-full h-40 object-cover mb-4"
+          src={
+            item.images
+              ? `http://localhost:3900/uploads/${item.images[0]}`
+              : "/pos_software.png"
+          }
+          alt={item.name}
+          loading="lazy"
+          width={0}
+          height={0}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="w-full h-50 mb-2"
         />
-        <h3 className="text-sm font-semibold mb-2">{item.name.slice(0, 70)}</h3>
-        <div className="flex justify-between items-center">
-          <p className="text-gray-500 mb-2">
-            ৳{" "}
-            {item?.discountId
-              ? (price + taxAmount - disAmount).toFixed(2)
-              : (price + taxAmount).toFixed(2)}
-          </p>
-          <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
-            {stockQty > 0 ? "In Stock" : "Out of Stock"}
+        <div className="p-2 text-sm">
+          <h3 className="font-semibold text-sm mb-2">{item.name.slice(0, 50)}</h3>
+          <div className="flex justify-between items-center">
+            <p className="text-gray-500 mb-2 text-xs">
+              ৳{" "}
+              {item?.discountId
+                ? (price + taxAmount - disAmount).toFixed(2)
+                : (price + taxAmount).toFixed(2)}
+            </p>
+            <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
+              <p className="text-xs"> {stockQty > 0 ? "In Stock" : "Out of Stock"}</p>
+            </div>
           </div>
+          {item?.discountId && (
+            <div className="text-xs">
+              <span className="line-through text-gray-500 ">
+                ৳ {(price + taxAmount).toFixed(2)}
+              </span>
+              <span className="text-red-600 ml-2">
+                -{discount?.value}
+                {discount?.discountType === "Percentage" ? "%" : "BDT"}
+              </span>
+            </div>
+          )}
+          <span className="flex gap-1 items-center">
+            <Rate disabled value={productRating || 0} />({reviewsCount})
+          </span>
         </div>
-        {item?.discountId && (
-          <>
-            <span className="line-through text-gray-500">
-              ৳ {(price + taxAmount).toFixed(2)}
-            </span>
-            <span className="text-red-600 ml-2">
-              -{discount?.value}
-              {discount?.discountType === "Percentage" ? "%" : "BDT"}
-            </span>
-          </>
-        )}
-        <span className="flex gap-1 items-center">
-          <Rate disabled value={productRating || 0} />({reviewsCount})
-        </span>
       </Link>
     </div>
   );

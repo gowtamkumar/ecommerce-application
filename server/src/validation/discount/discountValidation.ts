@@ -16,7 +16,7 @@ const conditionalSchema = z.object({
   expiryDate: z.string().datetime().nullable().optional(),
   minOrderAmount: z.number().nullable().optional(),
   userId: z.number({
-    required_error: "Discount is required",
+    required_error: "user is required",
   }),
   maxUser: z.number().nullable().optional(),
   // usageCount: z.number({
