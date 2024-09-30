@@ -30,3 +30,8 @@ note: delivery change depend for location
     3. notification(optional)
 
 #Todo 1. error handling, 2. error message show 3. all api a userid input kora
+
+## product list a published ar radio button rakte hobe
+## need to add attribute as like wordpress
+## need to add combopackage for product
+## need to modify discount role kiser jonno disouct dibo, exam: category, product, total order, for number of items, for shipping, . that mine kivabe all category, ba singe category, single product, all product, qty upor virty kore discount hoy. dicount ar moddha couponcode dite hobe. discount and coupon ar  expiry date thakbe.

@@ -52,9 +52,11 @@ shipping_amount,
 note,
 status,
 
-## products :(done)
+## products :(done) note: need to change product varitant as like wordpress
+
 
 id,
+featured: boolean, this field for only show home page(need to add)
 name:string,
 url_slug(unique),
 single_image,
