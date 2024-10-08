@@ -87,6 +87,9 @@ export class ProductEntity {
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
 
+  @Column({ type: "boolean", default: false })
+  featured?: boolean;
+
   @Column({ type: "enum", enum: ProductStatus, default: ProductStatus.Active })
   status!: ProductStatus;
 
