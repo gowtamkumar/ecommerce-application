@@ -4,7 +4,7 @@ import Link from "next/link";
 import React from "react";
 
 export default function HeaderLogo({ settingData }: any) {
-  const logo = settingData?.data ? settingData.data[0] : {};
+  const logo = settingData?.data ? settingData?.data[0] : {};
   // console.log("🚀 ~ logo:", logo)
   // const global = useSelector(selectGlobal);
   // const dispatch = useDispatch();
@@ -28,10 +28,10 @@ export default function HeaderLogo({ settingData }: any) {
         <Image
           src={
             logo?.image
-              ? `http://localhost:3900/uploads/${logo.image}`
+              ? `http://localhost:3900/uploads/${logo?.image}`
               : "/pos_software.png"
           }
-          alt={logo.image}
+          alt={logo?.image}
           loading="lazy"
           width={50}
           height={50}
