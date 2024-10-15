@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
-    "start": "next start -p 1999",
+    "start": "next start",
     "lint": "next lint"
   },
-  "proxy": "http://localhost:2999",
+  "proxy": "http://localhost:3900",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gowtamkumar/ecommerce-application.git"
