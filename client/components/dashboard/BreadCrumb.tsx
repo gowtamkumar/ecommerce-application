@@ -7,8 +7,8 @@ export default function BreadCrumb() {
   const pathname = usePathname();
 
   const newResutl = pathname
-    .split("/")
-    .slice(1)
+    ?.split("/")
+    ?.slice(1)
     .map((item) => ({ title: item }));
   return (
     <Breadcrumb

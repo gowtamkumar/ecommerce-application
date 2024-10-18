@@ -15,8 +15,8 @@ dotenv.config();
 const app = express();
 
 // access public folder for image
-app.use(express.static(path.join(__dirname, "public")));
-// app.use(express.static(path.join(__dirname, "..", "public"))); //this for production for get image
+// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "..", "public"))); //this for production for get image
 
 // Connect to database
 if (process.env.NODE_ENV !== "test") {

@@ -20,7 +20,7 @@ export default function DashboardHeader() {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const session = useSession();
-  const profileImage = session.data?.user.image;
+  const profileImage = session.data?.user?.image || {};
 
   return (
     <Header

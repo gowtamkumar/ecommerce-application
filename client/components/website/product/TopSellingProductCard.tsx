@@ -54,7 +54,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     (acc: number, variant: any) => acc + +variant.stockQty,
     0
   );
-  const image = item.images.split(",");
+  const image = item?.images?.split(",") || [];
 
   return (
     <div className="bg-white border">
