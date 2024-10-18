@@ -9,6 +9,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
+import TextEditor from "../ComponentEditor/Editor";
 
 const AboutPage = () => {
   const [loading, setLoading] = useState(false);
@@ -97,7 +98,7 @@ const AboutPage = () => {
           </Button>
           <Button
             size="small"
-            color="blue"
+            color="danger"
             htmlType="submit"
             className="capitalize"
             loading={loading}
@@ -106,6 +107,7 @@ const AboutPage = () => {
           </Button>
         </Form.Item>
       </Form>
+      <TextEditor/>
     </div>
   );
 };
