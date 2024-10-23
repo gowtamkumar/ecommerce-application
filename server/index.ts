@@ -10,6 +10,8 @@ import { errorHandler } from "./src/middlewares/errorHandler";
 import { getDBConnection } from "./src/config/db";
 // all routes
 import { setupRoutes } from "./src/routes/routes";
+import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
 import path from "path";
 dotenv.config();
 const app = express();
@@ -22,12 +24,24 @@ app.use(express.static(path.join(__dirname, "..", "public"))); //this for produc
 if (process.env.NODE_ENV !== "test") {
   getDBConnection();
 }
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Redis, Memcached, etc. See below.
+});
+
+// Apply the rate limiting middleware to all requests.
+app.use(limiter);
+
 // middleware
 app.use(cookieParser()); // cookie parser when we needed the cookies value then we simply get and set
 app.use(express.json()); // you ensure that your express application can handle json data sent in the request body automatically
 app.use(express.urlencoded({ extended: true })); // it parses incoming request with url-encoded payloads and is based on a body parser.
 app.use(cors()); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
-
+app.use(helmet());
 app.use((req, res, next) => {
   console.log(`Static file request: ${req.url}`);
   next();
