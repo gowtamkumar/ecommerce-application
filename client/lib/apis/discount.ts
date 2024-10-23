@@ -13,6 +13,7 @@ export async function saveDiscount(data: any) {
     },
     body: JSON.stringify(data),
   });
+
   return res.json();
 }
 
@@ -28,16 +29,22 @@ export async function getDiscounts() {
 }
 
 export async function getFilterDiscounts(params?: { type: string }) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/discounts?type=${params?.type}`,
-    {
-      headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
-      },
-    }
-  );
-  return res.json();
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(
+      `${process.env.NEXT_SERVER_URL}/api/v1/discounts?type=${params?.type}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.user.accessToken}`,
+        },
+      }
+    );
+
+    return res.json();
+  } catch (error) {
+    console.error("Failed to parse response as JSON:", error);
+    throw new Error("Invalid response from server");
+  }
 }
 
 export async function updateDiscount(data: any) {

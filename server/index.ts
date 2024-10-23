@@ -14,7 +14,6 @@ import winston from "winston";
 // all routes
 import { setupRoutes } from "./src/routes/routes";
 import { rateLimit } from "express-rate-limit";
-import helmet from "helmet";
 import path from "path";
 dotenv.config();
 const app = express();
@@ -46,8 +45,9 @@ app.use(express.json()); // you ensure that your express application can handle 
 app.use(express.urlencoded({ extended: true })); // it parses incoming request with url-encoded payloads and is based on a body parser.
 app.use(cors()); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
 app.use(helmet());
+
 app.use((req, res, next) => {
-  console.log(`Static file request: ${req.url}`);
+  // console.log(`Static file request: ${req.url}`);
   next();
 });
 // Dev logging middleware
@@ -66,6 +66,8 @@ app.use(errorHandler);
 app.get("/", (req, res) => {
   res.send("Welcome to nodejs server!");
 });
+
+
 
 const logger = winston.createLogger({
   level: 'info',

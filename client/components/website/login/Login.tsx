@@ -20,17 +20,18 @@ const Login = () => {
   useEffect(() => {
     (async () => {
       const session: any = await getSession();
+      console.log("🚀 ~ session:", session)
       if (session?.status === "authenticated") {
         router.replace("/");
       }
     })();
   }, [dispatch, router]);
 
+
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));
     try {
       let newData = { ...values };
-      // return console.log("newData:", newData);
       const result: any = await signIn("credentials", {
         ...newData,
         redirect: false,
@@ -53,26 +54,36 @@ const Login = () => {
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
       }, 1000);
+      
     } catch (err: any) {
       console.log(err);
     }
   };
 
-  return (
-    <>
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError={true}
-      >
-        <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Welcome to site! Please login.
-            </h2>
+  const HandleGoolgeLogin = async () => {
 
+    const result = await signIn("google", { redirectTo: '/' });
+    console.log("🚀 ~ result:", result)
+    
+    const getSesson: any = await getSession();
+    console.log("🚀 ~ getSesson:", getSesson)
+
+  }
+
+  return (
+    <div className="text-cetner">
+      <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8 bg-white">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Welcome to site! Please login.
+          </h2>
+          <Form
+            layout="vertical"
+            form={form}
+            onFinish={handleSubmit}
+            autoComplete="off"
+            scrollToFirstError={true}
+          >
             <Form.Item
               name="username"
               label="Username"
@@ -122,10 +133,12 @@ const Login = () => {
             >
               Login
             </Button>
-          </div>
+          </Form>
+          <Button className="w-full my-2" onClick={HandleGoolgeLogin}>Google</Button>
+          <Button className="w-full">Facebook</Button>
         </div>
-      </Form>
-    </>
+      </div>
+    </div>
   );
 };
 

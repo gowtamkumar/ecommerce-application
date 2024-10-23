@@ -19,6 +19,8 @@ export async function saveUser(data: any) {
 
 export async function getMe() {
   const session = await getServerSession(authOptions);
+
+  console.log("🚀 ~ get me session:", session)
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/auth/me`,
     {

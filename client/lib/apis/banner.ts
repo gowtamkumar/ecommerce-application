@@ -14,6 +14,7 @@ export async function saveBanner(data: any) {
     },
     body: JSON.stringify(data),
   });
+  
   return res.json();
 }
 
@@ -22,7 +23,7 @@ export async function getBanners(params?: any) {
   if (params?.type) {
     searchQuery += `type=${params.type}`;
   }
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
 
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/banners?${searchQuery}`,

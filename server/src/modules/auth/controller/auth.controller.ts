@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { Request, Response, NextFunction } from "express";
+import passport from "passport";
 import { v4 as uuidv4 } from "uuid";
 import {
   sendCookiesResponse,
@@ -204,6 +205,27 @@ export const login = asyncHandler(
     }
   }
 );
+
+// // @desc Login by google
+// // @route POST /api/v1/auth/auth/google
+// // @access Public
+export const googleAuth = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    passport.authenticate("google", { scope: ["profile"] });
+  }
+);
+
+
+// // @desc Login by google
+// // @route POST /api/v1/auth/auth/google
+// // @access Public
+export const googleAuthCallBack = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+   // Successful authentication, redirect home.
+   res.redirect('/');
+  }
+);
+
 // // @desc Logout User
 // // @route GET /api/v1/auth/logout
 // // @access Private
