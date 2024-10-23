@@ -5,9 +5,12 @@ import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import colors from "colors";
-import { logger } from "./src/middlewares/logger";
+// import { logger } from "./src/middlewares/logger";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { getDBConnection } from "./src/config/db";
+import helmet from "helmet";
+import winston from "winston";
+
 // all routes
 import { setupRoutes } from "./src/routes/routes";
 import { rateLimit } from "express-rate-limit";
@@ -18,7 +21,8 @@ const app = express();
 
 // access public folder for image
 // app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "..", "public"))); //this for production for get image
+const publicPath = path.join(__dirname, process.env.NODE_ENV === 'production' ? ".." : "", "public");
+app.use(express.static(publicPath));
 
 // Connect to database
 if (process.env.NODE_ENV !== "test") {
@@ -51,7 +55,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 // logger assign
-app.use(logger);
+// app.use(logger);
 
 //main route
 setupRoutes(app);
@@ -62,6 +66,34 @@ app.use(errorHandler);
 app.get("/", (req, res) => {
   res.send("Welcome to nodejs server!");
 });
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    //
+    // - Write all logs with importance level of `error` or higher to `error.log`
+    //   (i.e., error, fatal, but not other levels)
+    //
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    //
+    // - Write all logs with importance level of `info` or higher to `combined.log`
+    //   (i.e., fatal, error, warn, and info, but not trace)
+    //
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
+
+//
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+  }));
+}
 
 // not found route
 // app.get("*", (req, res) => {
