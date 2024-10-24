@@ -85,14 +85,14 @@ export default function CheckoutPage() {
         //   discount?.discountType === "Percentage"
         //     ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
         //     : +discount?.value;
-        let sutotal = curr.sutotal * +curr.qty;
+        let sutotal = (curr.sutotal || 0) * (+curr.qty || 0);
         // let sutotal = (+price + taxAmount) * +curr.qty;
         // console.log("🚀 ~ sutotal:", sutotal)
 
         return {
-          taxAmount: (+pre.taxAmount + +curr.tax) * +curr.qty,
+          taxAmount: (+pre.taxAmount + +curr.tax) * (+curr.qty || 0),
           netAmount:
-            +pre.netAmount + +sutotal - (+curr.discountA * +curr.qty || 0),
+            +pre.netAmount + +sutotal - (+curr.discountA * (+curr.qty || 0)),
           discountAmount:
             +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
           orderTotalAmount:

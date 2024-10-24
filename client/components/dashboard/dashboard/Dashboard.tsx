@@ -16,7 +16,7 @@ import StockReport from "./components/StockReport";
 import TopCustomer from "./components/TopCustomer";
 import StockAlert from "./components/StockAlert";
 import TopSellingProduct from "./components/TopSallingProduct";
-import CountUp from "react-countup";
+// import CountUp from "react-countup";
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
@@ -79,7 +79,7 @@ const Dashboard = () => {
     return <Spin />;
   }
 
-  const formatter = (value: any) => <CountUp end={value} separator="," />;
+  // const formatter = (value: any) => <CountUp end={value} separator="," />;
   return (
     <div className="container">
       <div className="grid pb-3">
@@ -152,7 +152,7 @@ const Dashboard = () => {
                 valueStyle={{
                   color:
                     saleAmount >=
-                    purchaseAmount + +total_sale_return_shipping_amount
+                      purchaseAmount + +total_sale_return_shipping_amount
                       ? "green"
                       : "red",
                 }}

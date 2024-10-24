@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Card, Statistic } from "antd";
-import CountUp from "react-countup";
+// import CountUp from "react-countup";
 
 interface WidgetStatsProps {
   title: string;
