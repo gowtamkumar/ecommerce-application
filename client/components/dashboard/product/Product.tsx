@@ -101,7 +101,8 @@ const Product = ({
         setTags([]);
       }
     };
-  }, [params]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, params]);
 
   const fetchProductData = async () => {
     dispatch(setLoading({ loading: true }));
@@ -275,7 +276,7 @@ const Product = ({
       }
     }
   };
-  
+
   const handleCancel = () => setPreviewOpen(false);
 
   // file Preview
@@ -832,7 +833,7 @@ const Product = ({
           </Button>
           <Button
             size="small"
-            color="blue"
+            color="primary"
             onClick={handleSubmit}
             className="capitalize"
             loading={global.loading.save}

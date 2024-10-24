@@ -46,6 +46,7 @@ const AddBanner = () => {
       setFormValues({});
       form.resetFields();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, payload]);
 
   const handleSubmit = async (values: any) => {
@@ -334,7 +335,7 @@ const AddBanner = () => {
         </Button>
         <Button
           size="small"
-          color="blue"
+          type="primary"
           htmlType="submit"
           className="capitalize"
           loading={global.loading.save}

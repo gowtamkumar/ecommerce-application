@@ -46,7 +46,8 @@ const AddBrand = () => {
       setFormValues({});
       form.resetFields();
     };
-  }, [payload]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, payload]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -282,7 +283,7 @@ const AddBrand = () => {
           </Button>
           <Button
             size="small"
-            color="blue"
+            type="primary"
             htmlType="submit"
             className="capitalize"
             loading={global.loading.save}

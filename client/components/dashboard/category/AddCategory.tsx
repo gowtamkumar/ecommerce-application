@@ -328,7 +328,7 @@ const AddCategory = () => {
           </Button>
           <Button
             size="small"
-            color="blue"
+            type="primary"
             htmlType="submit"
             className="capitalize"
             loading={global.loading.save}

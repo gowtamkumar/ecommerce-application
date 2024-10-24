@@ -92,6 +92,7 @@ export default function DashboardHeader() {
               ? `http://localhost:3900/uploads/${profileImage}`
               : "/pos_software.png"
           }
+          alt="profile image"
         />
       </Dropdown>
     </Header>

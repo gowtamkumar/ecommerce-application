@@ -22,9 +22,7 @@ export default function ForgotPassrod() {
         errors: validatedFields.error.formErrors,
       };
     }
-    const result = await sendForgotPassword(validatedFields.data);
-    console.log("🚀 ~ result forgot:", result)
-    
+    const result = await sendForgotPassword(validatedFields.data);    
     dispatch(setResponse(result));
     setTimeout(() => {
       dispatch(setResponse({}));
@@ -42,7 +40,7 @@ export default function ForgotPassrod() {
             height={300}
             className="mx-auto h-10 w-auto"
             src="/pos_software.png"
-            alt="Your Company"
+            alt="YourCompany"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Change or reset your password?

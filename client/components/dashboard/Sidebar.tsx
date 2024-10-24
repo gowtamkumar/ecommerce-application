@@ -93,11 +93,6 @@ const Sidebar = () => {
         hidden={layout.screenWidth <= 820}
       >
         <div className="bg-slate-300 flex justify-center items-center p-1">
-          {/* <Avatar alt="logo" size={40} src={
-              setting?.logo
-                ? `http://localhost:3900/uploads/${setting.logo}`
-                : "/pos_software.png"
-            } /> */}
           <Image
             src={
               setting?.logo

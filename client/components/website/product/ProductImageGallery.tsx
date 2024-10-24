@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-// src/components/ProductImageGallery.js
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -11,7 +10,7 @@ const ProductImageGallery = ({ images }: any) => {
       <img
         className="w-full h-64 object-cover rounded-lg mb-4 hover:object-contain"
         src={`http://localhost:3900/uploads/${selectedImage}`}
-        alt="Selected"
+        alt="Selected image"
       />
       <div className="flex space-x-2">
         {images?.map((image: any) => (

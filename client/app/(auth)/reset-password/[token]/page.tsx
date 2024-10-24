@@ -29,7 +29,6 @@ export default function ResetPassrod() {
     }
 
     const result = await resetPassword(validatedFields.data, params.token);
-    console.log("🚀 ~ result:", result)
 
     dispatch(setResponse(result));
 
@@ -52,7 +51,7 @@ export default function ResetPassrod() {
             height={300}
             className="mx-auto h-10 w-auto"
             src="/pos_software.png"
-            alt="Your Company"
+            alt="YourCompany"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             reset your password?

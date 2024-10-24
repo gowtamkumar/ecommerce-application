@@ -251,7 +251,7 @@ export default function MyAccount({ user }: any) {
             },
           ]}
         >
-          <Input placeholder="Enter " disabled={!edit} />
+          <Input placeholder="Enter" disabled={!edit} />
         </Form.Item>
 
         <Form.Item name="gender" label="Gender">
@@ -275,7 +275,7 @@ export default function MyAccount({ user }: any) {
         </Form.Item>
 
         <Form.Item name="dob" label="Date of Brith">
-          <DatePicker placeholder="Enter Birth day" disabled={!edit} />
+          <DatePicker placeholder="Enter" disabled={!edit} />
         </Form.Item>
 
         <Form.Item
@@ -348,6 +348,7 @@ export default function MyAccount({ user }: any) {
             size="small"
             type="primary"
             htmlType="submit"
+            
             loading={global.loading.save}
           >
             {global.action.payload?.id ? "Update" : "Save"}
