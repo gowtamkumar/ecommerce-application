@@ -6,12 +6,12 @@ import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
 import AuthProvider from "../lib/SessionProvider";
-// import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import 'swiper/css/autoplay'
+import "swiper/css/autoplay";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,8 +31,8 @@ export default async function RootLayout({
       <body suppressHydrationWarning={true} className={`${inter.className}`}>
         <AuthProvider session={session}>
           <StoreProvider>
-          {children}
-            {/* <AntdRegistry>{children}</AntdRegistry> */}
+            {/* {children} */}
+            <AntdRegistry>{children}</AntdRegistry>
           </StoreProvider>
         </AuthProvider>
       </body>

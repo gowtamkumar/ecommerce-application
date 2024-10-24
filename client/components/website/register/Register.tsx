@@ -18,7 +18,6 @@ const Register = () => {
   useEffect(() => {
     (async () => {
       const session = await getSession();
-      console.log("🚀 ~ session:", session)
       if (session) {
         router.replace("/");
       }
@@ -34,7 +33,6 @@ const Register = () => {
       if (result?.success) {
         router.push("/login");
       }
-
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));

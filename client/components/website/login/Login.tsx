@@ -20,7 +20,7 @@ const Login = () => {
   useEffect(() => {
     (async () => {
       const session: any = await getSession();
-      if (session?.status === "authenticated") {
+      if (session?.token) {
         router.replace("/");
       }
     })();
@@ -53,7 +53,7 @@ const Login = () => {
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
       }, 1000);
-      
+
     } catch (err: any) {
       console.log(err);
     }
@@ -63,7 +63,7 @@ const Login = () => {
 
     const result = await signIn("google", { redirectTo: '/' });
     console.log("🚀 ~ result:", result)
-    
+
     const getSesson: any = await getSession();
     console.log("🚀 ~ getSesson:", getSesson)
 

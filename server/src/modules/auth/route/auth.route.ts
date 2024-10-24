@@ -30,17 +30,17 @@ router.route("/users").get(getUsers);
 router.route("/get-user-by-email").post(getUserByEmail);
 
 // google auth Routes
-router
-  .route("/auth/google")
-  .get(passport.authenticate("google", { scope: ["profile"] }));
-router
-  .route("/auth/google/callback")
-  .get(
-    passport.authenticate("google", {
-      failureRedirect: "http://localhost:3000/login",
-    }),
-    googleAuthCallBack
-  );
+// router
+//   .route("/auth/google")
+//   .get(passport.authenticate("google", { scope: ["profile"] }));
+// router
+//   .route("/auth/google/callback")
+//   .get(
+//     passport.authenticate("google", {
+//       failureRedirect: "http://localhost:3000/login",
+//     }),
+//     googleAuthCallBack
+//   );
 
 router
   .route("/users/:id")

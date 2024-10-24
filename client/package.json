@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.1",
     "@faker-js/faker": "^9.0.3",
     "@reduxjs/toolkit": "^2.3.0",
     "@types/react-highlight-words": "^0.20.0",
