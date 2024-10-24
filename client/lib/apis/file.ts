@@ -9,7 +9,7 @@ export async function saveFile(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -24,7 +24,7 @@ export async function uploadFile(data: any) {
       method: "POST",
       cache: "no-cache",
       headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: data,
     }
@@ -41,7 +41,7 @@ export async function fileDeleteWithPhoto(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -54,7 +54,7 @@ export async function getFiles() {
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/files`, {
     cache: "no-cache",
     headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -69,7 +69,7 @@ export async function updateFile(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -85,7 +85,7 @@ export async function getFile(data: any) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -100,7 +100,7 @@ export async function deleteFile(id: string) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();

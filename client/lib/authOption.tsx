@@ -1,9 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from 'next-auth/providers/google';
-
-// http://localhost:3900/api/v1/auth/login
-// ${process.env.NEXTAUTH_URL}/api/users/login
+import GoogleProvider from "next-auth/providers/google";
+import jwt from "jsonwebtoken";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,7 +9,6 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
 
       async authorize(credentials: any) {
-
         const res = await fetch(
           `${process.env.NEXT_SERVER_URL}/api/v1/auth/login`,
           {
@@ -21,9 +18,9 @@ export const authOptions: NextAuthOptions = {
           }
         );
 
-        const text = await res.text(); // Get response as text
+        const user = await res.json(); // Get response as text
         try {
-          const user = JSON.parse(text); // Attempt to parse as JSON
+          // const user = JSON.parse(text); // Attempt to parse as JSON
           if (res.ok && user.data) {
             const newuser = { ...user.data, accessToken: user.accessToken };
             return newuser;
@@ -59,13 +56,30 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 
       async profile(profile: any) {
-        // console.log("🚀 ~ profile:", profile)
+        // console.log("🚀 ~ profile ge:", profile);
 
-        // Connect to the database
-        // await connectDB();
+        const newUser = {
+          name: profile.name,
+          email: profile.email,
+        };
+
+        const res = await fetch(
+          `${process.env.NEXT_SERVER_URL}/api/v1/auth/get-user-by-email`,
+          {
+            method: "POST",
+            body: JSON.stringify(newUser),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        const user = await res.json(); // Get response as text
+        // console.log("🚀 ~ user sdfasdf:", user)
+
+        // // Connect to the database
+        // // await connectDB();
 
         // // Check if the user already exists
-        // let user = await User.findOne({ googleId: profile.id });
+        // let user = await User.findOne({ email: profile.email });
         // // If not, create a new user
         // if (!user) {
         //   user = await User.create({
@@ -75,9 +89,8 @@ export const authOptions: NextAuthOptions = {
         //     googleId: profile.id,
         //   });
         // }
-        return { ...profile, id: profile.sub }
 
-
+        return user.data;
       },
     } as any),
   ],
@@ -92,8 +105,10 @@ export const authOptions: NextAuthOptions = {
   //   verifyRequest: "/auth/verify-request",
   //   newUser: "/auth/new-user",
   // },
-  secret: process.env.NEXTAUTH_SECRET, // environment variable should be server and client same
+
+  secret: "ecommerce-application", // environment variable should be server and client same
   session: { strategy: "jwt", maxAge: 1 * 24 * 60 * 60 }, // 1 day
+  // debug: true,
   callbacks: {
     async session({ session, token, user }) {
       return {
@@ -104,13 +119,18 @@ export const authOptions: NextAuthOptions = {
       };
     },
     async jwt({ token, user, account, profile }: any) {
-      // console.log("🚀 ~ profile:", profile)
-      // console.log("🚀 ~ token:", token)
-      // console.log("🚀 ~ account:", account)
+      // console.log("🚀 ~ user:", user)
+      // console.log("🚀 ~ account:", account);
+      // console.log("🚀 ~ token:", token);
+      // const tokena = await jwt.sign(
+      //   { id: token.id, name: token.name, username: token.username, role: token.role },
+      //   process.env.NEXTAUTH_SECRET!,
+      //   {
+      //     expiresIn: process.env.JWT_EXPIRES + "h",
+      //   }
+      // );
 
-      if (account) {
-        token.accessToken = account.access_token;  // Store the access token in the JWT
-      }
+      // accessToken: token.user.accessToken 
 
       if (typeof user !== "undefined") {
         return {

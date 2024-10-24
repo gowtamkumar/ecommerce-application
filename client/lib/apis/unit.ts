@@ -10,7 +10,7 @@ export async function saveUnit(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      'Authorization': `Bearer ${session?.user.accessToken}`,
+      'Authorization': `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -22,7 +22,7 @@ export async function getUnits() {
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/units`, {
     cache: "no-cache",
     headers: {
-      'Authorization': `Bearer ${session?.user.accessToken}`,
+      'Authorization': `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -37,7 +37,7 @@ export async function updateUnit(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${session?.user.accessToken}`,
+        'Authorization': `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -52,7 +52,7 @@ export async function deleteUnit(id: string) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      'Authorization': `Bearer ${session?.user.accessToken}`,
+      'Authorization': `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();

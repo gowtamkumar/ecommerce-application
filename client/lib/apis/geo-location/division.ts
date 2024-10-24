@@ -10,7 +10,7 @@ export async function saveDivision(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -23,7 +23,7 @@ export async function getDivisions() {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -37,7 +37,7 @@ export async function getDivision(data: any) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );
@@ -53,7 +53,7 @@ export async function getDivision(data: any) {
 //       cache: "no-cache",
 //       headers: {
 //         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user.accessToken}`,
+//         Authorization: `Bearer ${session?.user?.accessToken}`,
 //       },
 //       body: JSON.stringify(data),
 //     }
@@ -70,7 +70,7 @@ export async function getDivision(data: any) {
 //       cache: "no-cache",
 //       headers: {
 //         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user.accessToken}`,
+//         Authorization: `Bearer ${session?.user?.accessToken}`,
 //       },
 //     }
 //   );

@@ -8,7 +8,7 @@ export async function savePayment(data: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -23,7 +23,7 @@ export async function saveDashboardPayment(data: any) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -36,7 +36,7 @@ export async function getPayments() {
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/payments`, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -59,7 +59,7 @@ export async function updatePayment(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -76,7 +76,7 @@ export async function deletePayment(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

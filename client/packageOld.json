@@ -1,0 +1,66 @@
+{
+  "name": "ecommerce-front-end",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "proxy": "http://localhost:3900",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gowtamkumar/ecommerce-application.git"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.11",
+    "dotenv": "^16.4.5",
+    "next": "^15.0.1",
+    "next-auth": "^3.29.10",
+    "nodemailer": "^6.9.13",
+    "quill": "^2.0.2",
+    "react": "19.0.0-rc-1631855f-20241023",
+    "react-chartjs-2": "^5.2.0",
+    "react-countup": "^6.5.3",
+    "react-dom": "19.0.0-rc-1631855f-20241023",
+    "react-highlight-words": "^0.20.0",
+    "react-icons": "^5.0.1",
+    "react-quill": "^0.0.2",
+    "react-redux": "^9.1.0",
+    "react-toastify": "^10.0.5",
+    "redux-persist": "^6.0.0",
+    "reflect-metadata": "^0.2.1",
+    "sharp": "^0.33.3",
+    "swiper": "^11.1.11",
+    "swiper-react": "^1.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
+    "@types/react-highlight-words": "^0.20.0",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc"
+  },
+  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "bugs": {
+    "url": "https://github.com/gowtamkumar/ecommerce-application/issues"
+  },
+  "homepage": "https://github.com/gowtamkumar/ecommerce-application#readme",
+  "main": "postcss.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "author": "",
+  "license": "ISC"
+}

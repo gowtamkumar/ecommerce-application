@@ -19,8 +19,6 @@ export async function saveUser(data: any) {
 
 export async function getMe() {
   const session = await getServerSession(authOptions);
-
-  console.log("🚀 ~ get me session:", session)
   const res = await fetch(
     `${process.env.NEXT_SERVER_URL}/api/v1/auth/me`,
     {
@@ -28,7 +26,7 @@ export async function getMe() {
       cache: 'no-cache',
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );
@@ -40,7 +38,7 @@ export async function getUsers() {
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/auth/users`, {
     cache: "no-cache",
     headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -55,7 +53,7 @@ export async function updateUser(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -72,7 +70,7 @@ export async function updatePassword(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -89,7 +87,7 @@ export async function deleteUser(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

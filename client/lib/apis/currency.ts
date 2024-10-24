@@ -9,7 +9,7 @@ export async function saveCurrency(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -22,7 +22,7 @@ export async function getCurrencies() {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -37,7 +37,7 @@ export async function updateCurrency(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -54,7 +54,7 @@ export async function deleteCurrency(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

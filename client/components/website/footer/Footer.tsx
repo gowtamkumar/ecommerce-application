@@ -13,7 +13,7 @@ import FirstWeight from "../weight/FirstWeight";
 
 export default async function WebFooter() {
   const setting = await getSettings();
-  const settingData = setting.data ? setting.data[0] : {};
+  const settingData = setting?.data ? setting?.data[0] : {};
 
   return (
     <footer className="bg-gray-800 border-t-2 px-5 text-white">

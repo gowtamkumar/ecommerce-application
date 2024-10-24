@@ -5,7 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import colors from "colors";
-// import { logger } from "./src/middlewares/logger";
+import { logger } from "./src/middlewares/logger";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { getDBConnection } from "./src/config/db";
 import helmet from "helmet";
@@ -28,16 +28,16 @@ if (process.env.NODE_ENV !== "test") {
   getDBConnection();
 }
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-  standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-  // store: ... , // Redis, Memcached, etc. See below.
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+//   standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+//   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+//   // store: ... , // Redis, Memcached, etc. See below.
+// });
 
 // Apply the rate limiting middleware to all requests.
-app.use(limiter);
+// app.use(limiter);
 
 // middleware
 app.use(cookieParser()); // cookie parser when we needed the cookies value then we simply get and set
@@ -55,7 +55,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 // logger assign
-// app.use(logger);
+app.use(logger);
 
 //main route
 setupRoutes(app);
@@ -69,38 +69,38 @@ app.get("/", (req, res) => {
 
 
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  defaultMeta: { service: 'user-service' },
-  transports: [
-    //
-    // - Write all logs with importance level of `error` or higher to `error.log`
-    //   (i.e., error, fatal, but not other levels)
-    //
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    //
-    // - Write all logs with importance level of `info` or higher to `combined.log`
-    //   (i.e., fatal, error, warn, and info, but not trace)
-    //
-    new winston.transports.File({ filename: 'combined.log' }),
-  ],
-});
+// const logger = winston.createLogger({
+//   level: 'info',
+//   format: winston.format.json(),
+//   defaultMeta: { service: 'user-service' },
+//   transports: [
+//     //
+//     // - Write all logs with importance level of `error` or higher to `error.log`
+//     //   (i.e., error, fatal, but not other levels)
+//     //
+//     new winston.transports.File({ filename: 'error.log', level: 'error' }),
+//     //
+//     // - Write all logs with importance level of `info` or higher to `combined.log`
+//     //   (i.e., fatal, error, warn, and info, but not trace)
+//     //
+//     new winston.transports.File({ filename: 'combined.log' }),
+//   ],
+// });
 
 //
 // If we're not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple(),
-  }));
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   logger.add(new winston.transports.Console({
+//     format: winston.format.simple(),
+//   }));
+// }
 
 // not found route
-// app.get("*", (req, res) => {
-//   res.send("Not found route, Please right route hite");
-// });
+app.get("*", (req, res) => {
+  res.send("Not found route, Please right route hite");
+});
 // Port
 const PORT = process.env.PORT || 3900;
 

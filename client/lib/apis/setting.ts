@@ -10,7 +10,7 @@ export async function saveSetting(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -20,6 +20,10 @@ export async function saveSetting(data: any) {
 export async function getSettings() {
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/settings`);
   return res.json();
+
+  // const text = await res.text();
+  // const data = JSON.parse(text);
+  // return data
 }
 
 export async function getSetting(data: any) {
@@ -29,7 +33,7 @@ export async function getSetting(data: any) {
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -46,7 +50,7 @@ export async function updateSetting(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -63,7 +67,7 @@ export async function deleteSetting(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

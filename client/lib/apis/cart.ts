@@ -9,7 +9,7 @@ export async function saveCart(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -23,7 +23,7 @@ export async function getCarts() {
     //    {
     //   cache: "no-cache",
     //   headers: {
-    //     Authorization: `Bearer ${session?.user.accessToken}`,
+    //     Authorization: `Bearer ${session?.user?.accessToken}`,
     //   },
     // }
   );
@@ -36,7 +36,7 @@ export async function getCartByUser() {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
@@ -51,7 +51,7 @@ export async function updateCart(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -66,7 +66,7 @@ export async function deleteCart(id: string) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();

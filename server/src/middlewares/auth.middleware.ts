@@ -21,8 +21,6 @@ interface TokenPayload {
 const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
   const { authorization } = req.headers;
   let token = authorization?.split(" ")[1] || req.cookies.accessToken;
-  // console.log("🚀 ~ token for:", token);
-  // let token = req.cookies.accessToken;
 
   if (!token) {
     return next({ message: "Authentication Failed" });

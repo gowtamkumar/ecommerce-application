@@ -9,7 +9,7 @@ export async function saveDistrict(data: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -29,7 +29,7 @@ export async function getDistricts(params: any) {
     `${process.env.NEXT_SERVER_URL}/api/v1/districts?${queryData}`,
     {
       headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );
@@ -44,7 +44,7 @@ export async function getDistrict(data: any) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -61,7 +61,7 @@ export async function getDistrict(data: any) {
 //       cache: "no-cache",
 //       headers: {
 //         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user.accessToken}`,
+//         Authorization: `Bearer ${session?.user?.accessToken}`,
 //       },
 //       body: JSON.stringify(data),
 //     }
@@ -78,7 +78,7 @@ export async function getDistrict(data: any) {
 //       cache: "no-cache",
 //       headers: {
 //         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user.accessToken}`,
+//         Authorization: `Bearer ${session?.user?.accessToken}`,
 //       },
 //     }
 //   );

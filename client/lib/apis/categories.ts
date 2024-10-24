@@ -12,7 +12,7 @@ export async function getAllCategories() {
       {
         next: { revalidate: 30 },
         headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
       }
     );
@@ -36,7 +36,7 @@ export async function getCategories() {
         // next: { revalidate: 30 },
         cache: "no-cache",
         headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
       }
     );
@@ -59,7 +59,7 @@ export async function saveCategory(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -75,7 +75,7 @@ export async function updateCategory(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -92,7 +92,7 @@ export async function deleteCategory(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

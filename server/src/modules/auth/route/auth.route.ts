@@ -14,6 +14,7 @@ import {
   updatePassword,
   googleAuth,
   googleAuthCallBack,
+  getUserByEmail,
 } from "../controller/auth.controller";
 import { AuthGuard, isAuthorize } from "../../../middlewares/auth.middleware";
 
@@ -26,6 +27,7 @@ router.route("/update-password").patch(AuthGuard, updatePassword);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password/:token").post(resetPassword);
 router.route("/users").get(getUsers);
+router.route("/get-user-by-email").post(getUserByEmail);
 
 // google auth Routes
 router
@@ -34,7 +36,9 @@ router
 router
   .route("/auth/google/callback")
   .get(
-    passport.authenticate("google", { failureRedirect: "http://localhost:3000/login" }),
+    passport.authenticate("google", {
+      failureRedirect: "http://localhost:3000/login",
+    }),
     googleAuthCallBack
   );
 

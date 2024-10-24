@@ -9,7 +9,7 @@ export async function saveDiscount(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -22,28 +22,32 @@ export async function getDiscounts() {
   const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/discounts`, {
     cache: "no-cache",
     headers: {
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
   });
   return res.json();
 }
 
+
 export async function getFilterDiscounts(params?: { type: string }) {
   try {
     const session = await getServerSession(authOptions);
+    console.log("🚀 ~ session:", session)
     const res = await fetch(
       `${process.env.NEXT_SERVER_URL}/api/v1/discounts?type=${params?.type}`,
       {
         headers: {
-          Authorization: `Bearer ${session?.user.accessToken}`,
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         },
       }
     );
 
-    return res.json();
+    const text = await res.text();
+    const data = JSON.parse(text);
+    return data
   } catch (error) {
     console.error("Failed to parse response as JSON:", error);
-    throw new Error("Invalid response from server");
+    // throw new Error("Invalid response from server");
   }
 }
 
@@ -56,7 +60,7 @@ export async function updateDiscount(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -73,7 +77,7 @@ export async function deleteDiscount(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

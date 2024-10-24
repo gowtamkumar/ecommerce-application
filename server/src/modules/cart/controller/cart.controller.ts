@@ -167,7 +167,6 @@ export const createCart = asyncHandler(async (req: any, res: Response) => {
     productId: validation.data.productId,
     userId: req.id,
   });
-  console.log("🚀 ~ findCart:", findCart);
 
   if (findCart) {
     const updateData = await repository.merge(findCart, {

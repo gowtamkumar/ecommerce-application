@@ -10,7 +10,7 @@ export async function backupDB() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify({ a: 1, b: "Textual content" }),
     }

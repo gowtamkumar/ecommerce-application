@@ -4,7 +4,6 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { backupDB } from "./lib/apis/backupDB";
 
-
 // key as like features
 
 const handleBackup = async (): Promise<void> => {
@@ -27,8 +26,6 @@ const handleBackup = async (): Promise<void> => {
         body: JSON.stringify({ a: 1, b: "Textual content" }),
       }
     );
-
-    console.log("🚀 ~ response:", response);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }

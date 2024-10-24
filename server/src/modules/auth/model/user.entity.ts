@@ -28,10 +28,10 @@ export class UserEntity {
   @Column()
   name!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true,nullable: true })
   username!: string;
 
-  @Column()
+  @Column({nullable: true})
   password?: string;
 
   @Column({ unique: true })

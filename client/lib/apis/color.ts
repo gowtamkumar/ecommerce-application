@@ -9,7 +9,7 @@ export async function saveColor(data: any) {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -23,7 +23,7 @@ export async function getColors() {
     //    {
     //   cache: "no-cache",
     //   headers: {
-    //     Authorization: `Bearer ${session?.user.accessToken}`,
+    //     Authorization: `Bearer ${session?.user?.accessToken}`,
     //   },
     // }
   );
@@ -39,7 +39,7 @@ export async function updateColor(data: any) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -56,7 +56,7 @@ export async function deleteColor(id: string) {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

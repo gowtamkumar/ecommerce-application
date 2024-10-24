@@ -38,17 +38,17 @@ export default function Discount({ discounts }: any) {
         // onSwiper={(swiper) => console.log(swiper)}
         // onSlideChange={() => console.log("slide change")}
       >
-        {(discounts.data || []).map((item: any, idx: number) => {
+        {(discounts?.data || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
               <div className="relative gap-3">
                 <Image
                   src={
                     item.image
-                      ? `http://localhost:3900/uploads/${item.image}`
+                      ? `http://localhost:3900/uploads/${item?.image}`
                       : "/image-box-12.jpg"
                   }
-                  alt={item.image}
+                  alt={item?.image}
                   loading="lazy"
                   // fill
                   width={0}

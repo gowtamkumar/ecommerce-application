@@ -21,7 +21,7 @@ export async function getDashboardReports(params: any) {
     {
       cache: "no-cache",
       headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );

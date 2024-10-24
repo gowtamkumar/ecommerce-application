@@ -36,7 +36,7 @@ export default function HeaderDiscount({ discounts }: any) {
         // onSwiper={(swiper) => console.log(swiper)}
         // onSlideChange={() => console.log("slide change")}
       >
-        {(discounts.data || []).map((item: any, idx: number) => {
+        {(discounts?.data || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
               <div className="relative gap-3">

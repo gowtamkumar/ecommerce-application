@@ -139,6 +139,66 @@ export const getUser = asyncHandler(
   }
 );
 
+// // @desc Get a single user
+// // @route GET /api/v1/auth/users/:id
+// // @access Private
+export const getUserByEmail = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    const connection = await getDBConnection();
+
+    const userRepository = connection.getRepository(UserEntity);
+
+    let user = await userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      const createUser = await userRepository.create({
+        ...req.body,
+      });
+
+      user = await userRepository.save(createUser);
+    }
+
+    const token = getSignJwtToken(user);
+    const cookies = await sendCookiesResponse(token, res);
+
+    return res.status(200).json({
+      success: true,
+      msg: "user create by email successfully",
+      data: { ...user, accessToken: token },
+    });
+  }
+);
+
+// // @desc Get a single user
+// // @route GET /api/v1/auth/users/:id
+// // @access Private
+// export const createUserByEmail = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { email } = req.body;
+
+//     console.log("🚀 ~ email:", email)
+
+//     const connection = await getDBConnection();
+
+//     const userRepository = connection.getRepository(UserEntity);
+
+//     const user = await userRepository.findOne({ where: { email } });
+//     console.log("🚀 ~ user:", user)
+
+//     // if (!user) {
+//     //   throw new Error("User is not found");
+//     // }
+
+//     return res.status(200).json({
+//       success: true,
+//       msg: "Get a user",
+//       data: user,
+//     });
+//   }
+// );
+
 // // @desc Login User
 // // @route POST /api/v1/auth/login
 // // @access Public
@@ -215,14 +275,13 @@ export const googleAuth = asyncHandler(
   }
 );
 
-
 // // @desc Login by google
 // // @route POST /api/v1/auth/auth/google
 // // @access Public
 export const googleAuthCallBack = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-   // Successful authentication, redirect home.
-   res.redirect('/');
+    // Successful authentication, redirect home.
+    res.redirect("/");
   }
 );
 

@@ -9,7 +9,7 @@ export async function saveUpazila(data: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user.accessToken}`,
+      Authorization: `Bearer ${session?.user?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -28,7 +28,7 @@ export async function getUpazilas(params: any) {
     `${process.env.NEXT_SERVER_URL}/api/v1/upazilas?${queryData}`,
     {
       headers: {
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
     }
   );
@@ -43,7 +43,7 @@ export async function getUpazila(data: any) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user.accessToken}`,
+        Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
     }
@@ -60,7 +60,7 @@ export async function getUpazila(data: any) {
 //       cache: "no-cache",
 //       headers: {
 //         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user.accessToken}`,
+//         Authorization: `Bearer ${session?.user?.accessToken}`,
 //       },
 //       body: JSON.stringify(data),
 //     }
@@ -77,7 +77,7 @@ export async function getUpazila(data: any) {
 //       cache: "no-cache",
 //       headers: {
 //         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user.accessToken}`,
+//         Authorization: `Bearer ${session?.user?.accessToken}`,
 //       },
 //     }
 //   );

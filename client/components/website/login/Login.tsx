@@ -20,7 +20,6 @@ const Login = () => {
   useEffect(() => {
     (async () => {
       const session: any = await getSession();
-      console.log("🚀 ~ session:", session)
       if (session?.status === "authenticated") {
         router.replace("/");
       }

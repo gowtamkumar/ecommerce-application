@@ -10,15 +10,16 @@ import dayjs from "dayjs";
 import React from "react";
 
 export default async function page({ params }: { params: { id: string } }) {
-  const { data: post } = await getPost(params);
+  const paramsData = await params
+
+  const { data: post } = await getPost(paramsData);
   return (
     <>
       <div
         className="bg-cover bg-center h-64"
         style={{
-          backgroundImage: `url('http://localhost:3900/uploads/${
-            post?.image || "no-data.png"
-          }')`,
+          backgroundImage: `url('http://localhost:3900/uploads/${post?.image || "no-data.png"
+            }')`,
         }}
       >
         <div className="flex items-center justify-center h-full bg-gray-900 bg-opacity-50">
