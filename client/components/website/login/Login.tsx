@@ -59,15 +59,27 @@ const Login = () => {
     }
   };
 
-  const HandleGoolgeLogin = async () => {
+  const handleGoolgeLogin = async () => {
 
-    const result = await signIn("google", { redirectTo: '/' });
-    console.log("🚀 ~ result:", result)
-
-    const getSesson: any = await getSession();
-    console.log("🚀 ~ getSesson:", getSesson)
+    const result = await signIn("google", {
+      callbackUrl: `${window.location.origin}`
+    });
+    // const getSesson: any = await getSession();
+    // console.log("🚀 ~ getSesson:", getSesson)
 
   }
+
+  const handleFacebookLogin = async () => {
+
+    const result = await signIn("facebook");
+
+    console.log("🚀 ~ result:", result)
+    // const getSesson: any = await getSession();
+    // console.log("🚀 ~ getSesson:", getSesson)
+
+  }
+
+
 
   return (
     <div className="text-cetner">
@@ -133,8 +145,8 @@ const Login = () => {
               Login
             </Button>
           </Form>
-          <Button className="w-full my-2" onClick={HandleGoolgeLogin}>Google</Button>
-          <Button className="w-full">Facebook</Button>
+          <Button className="w-full my-2" onClick={handleGoolgeLogin}>Google</Button>
+          <Button className="w-full" onClick={handleFacebookLogin}>Facebook</Button>
         </div>
       </div>
     </div>

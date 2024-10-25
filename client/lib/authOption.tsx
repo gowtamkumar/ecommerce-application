@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -36,6 +37,27 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      
+      async profile(profile: any) {
+        const newUser = {
+          name: profile.name,
+          email: profile.email,
+        };
+        const res = await fetch(
+          `${process.env.NEXT_SERVER_URL}/api/v1/auth/get-user-by-email`,
+          {
+            method: "POST",
+            body: JSON.stringify(newUser),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        const user = await res.json();
+        return user.data;
+      },
+    } as any),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
 
       async profile(profile: any) {
         const newUser = {
@@ -50,11 +72,10 @@ export const authOptions: NextAuthOptions = {
             headers: { "Content-Type": "application/json" },
           }
         );
-
         const user = await res.json();
         return user.data;
       },
-    } as any),
+    } as any)
   ],
   pages: {
     signIn: "/login",
@@ -68,7 +89,7 @@ export const authOptions: NextAuthOptions = {
   //   newUser: "/auth/new-user",
   // },
 
-  secret: "ecommerce-application", // environment variable should be server and client same
+  secret: process.env.NEXTAUTH_SECRET, // environment variable should be server and client same
   session: { strategy: "jwt", maxAge: 1 * 24 * 60 * 60 }, // 1 day
   // debug: true,
   callbacks: {
@@ -76,7 +97,6 @@ export const authOptions: NextAuthOptions = {
       return {
         ...session,
         user: token.user,
-        // token,
         token: { exp: token.exp, iat: token.iat, jti: token.jti },
       };
     },

@@ -33,22 +33,23 @@ export default function Discount({ discounts }: any) {
             slidesPerView: 3,
           },
         }}
-        // pagination={{ clickable: true }}
-        // scrollbar={{ draggable: true }}
-        // onSwiper={(swiper) => console.log(swiper)}
-        // onSlideChange={() => console.log("slide change")}
+      // pagination={{ clickable: true }}
+      // scrollbar={{ draggable: true }}
+      // onSwiper={(swiper) => console.log(swiper)}
+      // onSlideChange={() => console.log("slide change")}
       >
         {(discounts?.data || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
               <div className="relative gap-3">
                 <Image
+                  alt={item?.image}
                   src={
                     item.image
                       ? `http://localhost:3900/uploads/${item?.image}`
                       : "/image-box-12.jpg"
                   }
-                  alt={item?.image}
+
                   loading="lazy"
                   // fill
                   width={0}

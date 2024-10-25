@@ -51,17 +51,17 @@ export default function SmallCard({ categories }: any) {
                 >
                   <div className="rounded-full border flex justify-center p-5 text-center">
                     <Image
+                     alt={item.image}
                       src={
                         item.image
                           ? `http://localhost:3900/uploads/${item.image}`
                           : "/pos_software.png"
                       }
-                      alt={item.image}
+                     
                       loading="lazy"
                       // fill
                       width={70}
                       height={70}
-
                       // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   </div>

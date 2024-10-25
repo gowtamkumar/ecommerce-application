@@ -7,7 +7,7 @@ export default function MoreDiscover() {
   return (
     <div className="grid grid-cols-3 gap-3">
       <div>
-        <img src="/image-box-12.jpg" className="h-auto w-full" alt="" />
+        <img src="/image-box-12.jpg" className="h-auto w-full" alt="image" />
         <h2>From Our Blog</h2>
         <div className="underline text-center ">
           <Link href="/">
@@ -18,7 +18,7 @@ export default function MoreDiscover() {
         </div>
       </div>
       <div>
-        <img src="/image-box-12.jpg" className="h-auto w-full" alt="" />
+        <img src="/image-box-12.jpg" className="h-auto w-full" alt="image" />
         <h2>From Our Blog</h2>
         <div className="underline text-center">
           <Link href="/">
@@ -29,7 +29,7 @@ export default function MoreDiscover() {
         </div>
       </div>
       <div>
-        <img src="/image-box-12.jpg" className="h-auto w-full" alt="" />
+        <img src="/image-box-12.jpg" className="h-auto w-full" alt="image"  />
         <h2>From Our Blog</h2>
         <div className="underline text-center">
           <Link href="/blog">
