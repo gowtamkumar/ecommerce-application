@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
+import appConfig from "@/config";
 import React from "react";
 
 export default function AuthorSection({ author }: any) {
-  console.log("🚀 ~ author:", author);
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-10 flex items-center">
       <img
-        src={`http://localhost:3900/uploads/${author?.image || "no-data.png"}`}
+        src={`${appConfig.apiUrl}/uploads/${author?.image || "no-data.png"}`}
         alt="User Image"
         className="w-12 h-12 rounded-full mr-4"
       />

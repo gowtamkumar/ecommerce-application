@@ -1,10 +1,11 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveProduct(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -34,7 +35,7 @@ export async function getProducts() {
   const session = await getServerSession(authOptions);
 
   try {
-    const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`, {
+    const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
       headers: {
         Authorization: `Bearer ${session?.user?.accessToken}`,
       },
@@ -112,7 +113,7 @@ export async function getPublicProducts(params: getParams) {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/products?${queryString}`
+      `${appConfig.apiUrl}/api/v1/products?${queryString}`
     );
     if (!res.ok) {
       console.log("Failed to fetch data");
@@ -126,7 +127,7 @@ export async function getPublicProducts(params: getParams) {
 
 // export async function getPublicProducts() {
 //   try {
-//     const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/products`);
+//     const res = await fetch(`${appConfig.apiUrl}/api/v1/products`);
 //     if (!res.ok) {
 //       console.log("Failed to fetch data");
 //     }
@@ -140,7 +141,7 @@ export async function getPublicProducts(params: getParams) {
 export async function getProduct(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/products/${id}`,
+    `${appConfig.apiUrl}/api/v1/products/${id}`,
     {
       method: "GET",
       cache: "no-cache",
@@ -156,7 +157,7 @@ export async function getProduct(id: string) {
 export async function updateProduct(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/products/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/products/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -173,7 +174,7 @@ export async function updateProduct(data: any) {
 export async function deleteProduct(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/products/${id}`,
+    `${appConfig.apiUrl}/api/v1/products/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

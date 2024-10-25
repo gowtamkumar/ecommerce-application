@@ -1,3 +1,4 @@
+import appConfig from "@/config";
 import Image from "next/image";
 import React from "react";
 
@@ -8,7 +9,7 @@ export default function FirstWeight({ data }: any) {
         <Image
           src={
             data?.image
-              ? `http://localhost:3900/uploads/${data?.image}`
+              ? `${appConfig.apiUrl}/uploads/${data?.image}`
               : "/pos_software.png"
           }
           alt={data?.image}

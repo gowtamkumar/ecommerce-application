@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use server";
+import appConfig from "@/config";
 import { authOptions } from "../authOption";
 import { getServerSession } from "next-auth";
 
@@ -17,7 +18,7 @@ export async function getDashboardReports(params: any) {
   }
 
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/reports/dashboard?${dashboardQuery}`,
+    `${appConfig.apiUrl}/api/v1/reports/dashboard?${dashboardQuery}`,
     {
       cache: "no-cache",
       headers: {
@@ -30,7 +31,7 @@ export async function getDashboardReports(params: any) {
 
 export async function getTopSellingProducts() {
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/reports/top-selling-products`,
+    `${appConfig.apiUrl}/api/v1/reports/top-selling-products`,
     {
       cache: "no-cache",
     }

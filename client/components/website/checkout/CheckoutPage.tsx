@@ -29,6 +29,7 @@ import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dayjs from "dayjs";
 import { getSettings } from "@/lib/apis/setting";
 import { deleteCart, getCartByUser } from "@/lib/apis/cart";
+import appConfig from "@/config";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
@@ -265,12 +266,12 @@ export default function CheckoutPage() {
                     <Image
                       src={
                         item.images
-                          ? `http://localhost:3900/uploads/${item.images}`
+                          ? `${appConfig.apiUrl}/uploads/${item.images}`
                           : "/pos_software.png"
                       }
                       width={100}
                       height={100}
-                      alt="Product"
+                      alt={item.images}
                       className="w-24 h-24 object-cover"
                     />
                     <div className="ml-4 flex-grow">

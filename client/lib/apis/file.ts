@@ -1,10 +1,11 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveFile(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/files`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/files`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -19,7 +20,7 @@ export async function saveFile(data: any) {
 export async function uploadFile(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/files/uploads`,
+    `${appConfig.apiUrl}/api/v1/files/uploads`,
     {
       method: "POST",
       cache: "no-cache",
@@ -35,7 +36,7 @@ export async function uploadFile(data: any) {
 export async function fileDeleteWithPhoto(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/files/delete-file-with-photo`,
+    `${appConfig.apiUrl}/api/v1/files/delete-file-with-photo`,
     {
       method: "POST",
       cache: "no-cache",
@@ -51,7 +52,7 @@ export async function fileDeleteWithPhoto(data: any) {
 
 export async function getFiles() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/files`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/files`, {
     cache: "no-cache",
     headers: {
       Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -63,7 +64,7 @@ export async function getFiles() {
 export async function updateFile(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/files/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/files/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -80,7 +81,7 @@ export async function updateFile(data: any) {
 export async function getFile(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/files/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/files/${data.id}`,
     {
       method: "GET",
       headers: {
@@ -95,7 +96,7 @@ export async function getFile(data: any) {
 
 export async function deleteFile(id: string) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/files/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/files/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers: {

@@ -2,10 +2,11 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveOrder(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/orders`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/orders`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -19,7 +20,7 @@ export async function saveOrder(data: any) {
 
 export async function getOrders() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/orders`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/orders`, {
     cache: "no-cache",
     headers: {
       Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -39,7 +40,7 @@ export async function getOrderTracking(params: {trackingNo: string}) {
 
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/tracking?${query}`,
+    `${appConfig.apiUrl}/api/v1/orders/tracking?${query}`,
     {
       cache: "no-cache",
       headers: {
@@ -53,7 +54,7 @@ export async function getOrderTracking(params: {trackingNo: string}) {
 export async function getUserOrders() {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/user-orders`,
+    `${appConfig.apiUrl}/api/v1/orders/user-orders`,
     {
       method: "GET",
       cache: "no-cache",
@@ -68,7 +69,7 @@ export async function getUserOrders() {
 export async function updateOrder(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/orders/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -85,7 +86,7 @@ export async function updateOrder(data: any) {
 export async function orderReview(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/review/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/orders/review/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -103,7 +104,7 @@ export async function orderReview(data: any) {
 export async function orderStatusUpdate(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/order-status-update/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/orders/order-status-update/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -120,7 +121,7 @@ export async function orderStatusUpdate(data: any) {
 export async function assignDeliveryMan(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/assign/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/orders/assign/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -137,7 +138,7 @@ export async function assignDeliveryMan(data: any) {
 export async function deleteOrder(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/orders/${id}`,
+    `${appConfig.apiUrl}/api/v1/orders/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

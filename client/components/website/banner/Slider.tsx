@@ -14,6 +14,7 @@ import {
 } from "swiper/modules";
 import Link from "next/link";
 import { SwiperNavButtons } from "./SwiperNavButtons";
+import appConfig from "@/config";
 
 export default function Slider({ banners }: any) {
   return (
@@ -61,7 +62,7 @@ export default function Slider({ banners }: any) {
                   <Image
                     src={
                       image
-                        ? `http://localhost:3900/uploads/${image}`
+                        ? `${appConfig.apiUrl}/uploads/${image}`
                         : "/pos_software.png"
                     }
                     alt={image}

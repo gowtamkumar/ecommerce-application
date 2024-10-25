@@ -21,6 +21,7 @@ import {
   Scrollbar,
 } from "swiper/modules";
 import { SwiperNavButtons } from "../banner/SwiperNavButtons";
+import appConfig from "@/config";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const ProductFeatured = () => {
@@ -99,7 +100,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
         <Image
           src={
             item.images
-              ? `http://localhost:3900/uploads/${item.images[0]}`
+              ? `${appConfig.apiUrl}/uploads/${item.images[0]}`
               : "/pos_software.png"
           }
           alt={item.name}

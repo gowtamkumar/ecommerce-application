@@ -2,10 +2,11 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveStatus(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/status`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/status`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -19,7 +20,7 @@ export async function saveStatus(data: any) {
 
 export async function getStatuss() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/status`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/status`, {
     cache: "no-cache",
     headers: {
       'Authorization': `Bearer ${session?.user?.accessToken}`,
@@ -31,7 +32,7 @@ export async function getStatuss() {
 export async function updateStatus(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/status/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/status/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -48,7 +49,7 @@ export async function updateStatus(data: any) {
 export async function deleteStatus(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/status/${id}`,
+    `${appConfig.apiUrl}/api/v1/status/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

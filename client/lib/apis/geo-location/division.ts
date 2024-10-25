@@ -2,10 +2,11 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../authOption";
+import appConfig from "@/config";
 
 export async function saveDivision(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/divisions`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/divisions`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -19,7 +20,7 @@ export async function saveDivision(data: any) {
 
 export async function getDivisions() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/divisions`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/divisions`, {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +33,7 @@ export async function getDivisions() {
 export async function getDivision(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/divisions/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/divisions/${data.id}`,
     {
       method: "GET",
       headers: {
@@ -47,7 +48,7 @@ export async function getDivision(data: any) {
 // export async function updateDivision(data: any) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${process.env.NEXT_SERVER_URL}/api/v1/divisions/${data.id}`,
+//     `${appConfig.apiUrl}/api/v1/divisions/${data.id}`,
 //     {
 //       method: "PUT",
 //       cache: "no-cache",
@@ -64,7 +65,7 @@ export async function getDivision(data: any) {
 // export async function deleteDivision(id: string) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${process.env.NEXT_SERVER_URL}/api/v1/divisions/${id}`,
+//     `${appConfig.apiUrl}/api/v1/divisions/${id}`,
 //     {
 //       method: "DELETE",
 //       cache: "no-cache",

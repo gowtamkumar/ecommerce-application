@@ -1,13 +1,13 @@
-const url = process.env.NEXT_PUBLIC_APP_URL 
+const url = process.env.NEXTAUTH_URL;
 
-const apiBaseUrl = process.env.NEXT_SERVER_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const appConfig = {
   name: "E-commerce",
   title: "E-commerce",
   description: "",
   url,
-  apiBaseUrl,
+  apiUrl,
   author: {
     name: "E-commerce",
     email: "demo@gmail.com",

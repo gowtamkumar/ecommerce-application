@@ -25,6 +25,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import ChangePassword from "./PasswordChange";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import appConfig from "@/config";
 
 const uploadButton = (
   <div>
@@ -57,7 +58,7 @@ export default function MyAccount({ user }: any) {
         name: `image ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.image,
-        url: `http://localhost:3900/uploads/${newData.image || "no-data.png"}`,
+        url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"}`,
       };
       newData.fileList = [newfile];
     }
@@ -130,7 +131,7 @@ export default function MyAccount({ user }: any) {
         name: `image ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: filename,
-        url: `http://localhost:3900/uploads/${filename || "no-data.png"}`,
+        url: `${appConfig.apiUrl}/uploads/${filename || "no-data.png"}`,
       };
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:

@@ -1,14 +1,12 @@
-// const BASE_URL = process.env.NEXTAUTH_URL + "/api/products";
 "use server";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
-
+import appConfig from "@/config";
 export async function getAllCategories() {
   try {
     const session = await getServerSession(authOptions);
     const res = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/categories/all`,
+      `${appConfig.apiUrl}/api/v1/categories/all`,
       {
         next: { revalidate: 30 },
         headers: {
@@ -31,7 +29,7 @@ export async function getCategories() {
   const session = await getServerSession(authOptions);
   try {
     const res = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/categories`,
+      `${appConfig.apiUrl}/api/v1/categories`,
       {
         // next: { revalidate: 30 },
         cache: "no-cache",
@@ -54,7 +52,7 @@ export async function getCategories() {
 
 export async function saveCategory(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/categories`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -69,7 +67,7 @@ export async function saveCategory(data: any) {
 export async function updateCategory(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/categories/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/categories/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -86,7 +84,7 @@ export async function updateCategory(data: any) {
 export async function deleteCategory(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/categories/${id}`,
+    `${appConfig.apiUrl}/api/v1/categories/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

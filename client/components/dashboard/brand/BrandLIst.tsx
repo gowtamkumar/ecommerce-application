@@ -20,6 +20,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteBrand, getBrands } from "@/lib/apis/brand";
+import appConfig from "@/config";
 
 interface DataType {
   key: string;
@@ -182,7 +183,7 @@ const BrandList: React.FC = () => {
         <Image
           width={60}
           alt={value}
-          src={`http://localhost:3900/uploads/${value || "no-data.png"}`}
+          src={`${appConfig.apiUrl}/uploads/${value || "no-data.png"}`}
         />
       ),
     },
@@ -220,7 +221,7 @@ const BrandList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `http://localhost:3900/uploads/${
+                  url: `${appConfig.apiUrl}/uploads/${
                     newData.image || "no-data.png"
                   }`,
                 };

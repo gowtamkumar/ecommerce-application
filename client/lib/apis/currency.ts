@@ -1,10 +1,11 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveCurrency(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/currencies`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -18,7 +19,7 @@ export async function saveCurrency(data: any) {
 
 export async function getCurrencies() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/currencies`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
@@ -31,7 +32,7 @@ export async function getCurrencies() {
 export async function updateCurrency(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/currencies/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/currencies/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -48,7 +49,7 @@ export async function updateCurrency(data: any) {
 export async function deleteCurrency(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/currencies/${id}`,
+    `${appConfig.apiUrl}/api/v1/currencies/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

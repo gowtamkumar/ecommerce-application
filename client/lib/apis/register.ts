@@ -3,7 +3,7 @@
 //   // const session = await getServerSession(authOptions);
 
 //   const res = await fetch(
-//     `${process.env.NEXT_SERVER_URL}/api/v1/auth/register`,
+//     `${appConfig.apiUrl}/api/v1/auth/register`,
 //     {
 //       method: "POST",
 //       headers: {

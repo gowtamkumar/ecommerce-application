@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import appConfig from "@/config";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -9,7 +10,7 @@ const ProductImageGallery = ({ images }: any) => {
     <div>
       <img
         className="w-full h-64 object-cover rounded-lg mb-4 hover:object-contain"
-        src={`http://localhost:3900/uploads/${selectedImage}`}
+        src={`${appConfig.apiUrl}/uploads/${selectedImage}`}
         alt="Selected image"
       />
       <div className="flex space-x-2">
@@ -17,7 +18,7 @@ const ProductImageGallery = ({ images }: any) => {
           <Image
             src={
               image
-                ? `http://localhost:3900/uploads/${image}`
+                ? `${appConfig.apiUrl}/uploads/${image}`
                 : "/pos_software.png"
             }
             key={image}

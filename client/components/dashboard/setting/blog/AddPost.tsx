@@ -38,6 +38,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { getAllCategories } from "@/lib/apis/categories";
+import appConfig from "@/config";
 
 type Presets = Required<ColorPickerProps>["presets"][number];
 
@@ -156,7 +157,7 @@ const AddPost = () => {
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: filename,
-        url: `http://localhost:3900/uploads/${filename || "no-data.png"}`,
+        url: `${appConfig.apiUrl}/uploads/${filename || "no-data.png"}`,
       };
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:

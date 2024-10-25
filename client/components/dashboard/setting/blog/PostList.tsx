@@ -21,6 +21,7 @@ import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteColor, getColors } from "@/lib/apis/color";
 import { getPosts } from "@/lib/apis/posts";
+import appConfig from "@/config";
 
 interface DataType {
   key: string;
@@ -209,7 +210,7 @@ const PostList: React.FC = () => {
         <Image
           width={60}
           alt={value}
-          src={`http://localhost:3900/uploads/${value || "no-data.png"}`}
+          src={`${appConfig.apiUrl}/uploads/${value || "no-data.png"}`}
         />
       ),
     },
@@ -244,7 +245,7 @@ const PostList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `http://localhost:3900/uploads/${
+                  url: `${appConfig.apiUrl}/uploads/${
                     newData.image || "no-data.png"
                   }`,
                 };

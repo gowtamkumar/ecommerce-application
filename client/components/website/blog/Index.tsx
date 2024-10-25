@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import WebFooter from "../footer/Footer";
 import dayjs from "dayjs";
@@ -7,6 +8,7 @@ import PostSearchSection from "./PostSearchSection";
 import RecentPostSection from "./RecentPostSection";
 import Pagination from "./Pagination";
 import PostHeader from "./PostHeader";
+import appConfig from "@/config";
 
 export default function Index({ posts }: any) {
   return (
@@ -23,7 +25,7 @@ export default function Index({ posts }: any) {
               className="bg-white rounded-lg shadow-md overflow-hidden mb-10"
             >
               <img
-                src={`http://localhost:3900/uploads/${
+                src={`${appConfig.apiUrl}/uploads/${
                   post.image || "no-data.png"
                 }`}
                 alt="Post Image"

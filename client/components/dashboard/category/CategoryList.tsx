@@ -20,6 +20,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteCategory, getCategories } from "@/lib/apis/categories";
+import appConfig from "@/config";
 
 interface DataType {
   key: React.ReactNode;
@@ -192,7 +193,7 @@ const CategoryList: React.FC = () => {
         <Image
           width={60}
           alt={value}
-          src={`http://localhost:3900/uploads/${value || "no-data.png"}`}
+          src={`${appConfig.apiUrl}/uploads/${value || "no-data.png"}`}
         />
       ),
     },
@@ -238,7 +239,7 @@ const CategoryList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `http://localhost:3900/uploads/${
+                  url: `${appConfig.apiUrl}/uploads/${
                     newData.image || "no-data.png"
                   }`,
                 };

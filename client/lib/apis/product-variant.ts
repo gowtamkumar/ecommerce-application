@@ -2,11 +2,12 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveProductVariant(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/product-variants`,
+    `${appConfig.apiUrl}/api/v1/product-variants`,
     {
       method: "POST",
       cache: "no-cache",
@@ -23,7 +24,7 @@ export async function saveProductVariant(data: any) {
 export async function getProductVariants() {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/product-variants`,
+    `${appConfig.apiUrl}/api/v1/product-variants`,
     {
       cache: "no-cache",
       headers: {
@@ -37,7 +38,7 @@ export async function getProductVariants() {
 export async function getProductVariant(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/product-variants/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/product-variants/${data.id}`,
     {
       method: "GET",
       // headers: {
@@ -52,7 +53,7 @@ export async function getProductVariant(data: any) {
 export async function updateProductVariant(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/product-variants/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/product-variants/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -69,7 +70,7 @@ export async function updateProductVariant(data: any) {
 export async function deleteProductVariant(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/product-variants/${id}`,
+    `${appConfig.apiUrl}/api/v1/product-variants/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

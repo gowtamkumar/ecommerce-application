@@ -27,6 +27,7 @@ import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
 import { toast } from "react-toastify";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import appConfig from "@/config";
 // Define the shape of product data
 interface ProductCategory {
   categoryId: number;
@@ -125,7 +126,7 @@ const Product = ({
               name: `photo ${idx}`,
               status: "done",
               fileName: item,
-              url: `http://localhost:3900/uploads/${item || "no-data.png"}`,
+              url: `${appConfig.apiUrl}/uploads/${item || "no-data.png"}`,
             })
           );
           newData.fileList = file;
@@ -199,7 +200,7 @@ const Product = ({
         name: `photo ${idx}`,
         status: "done",
         fileName: item,
-        url: `http://localhost:3900/uploads/${item || "no-data.png"}`,
+        url: `${appConfig.apiUrl}/uploads/${item || "no-data.png"}`,
       }));
       newData.fileList = file;
     }
@@ -238,7 +239,7 @@ const Product = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: item.filename,
-        url: `http://localhost:3900/uploads/${item.filename || "no-data.png"}`,
+        url: `${appConfig.apiUrl}/uploads/${item.filename || "no-data.png"}`,
       }));
 
       const newFileName = res.data.length ? res.data[0].filename : null;

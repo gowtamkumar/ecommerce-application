@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
 import { SwiperNavButtons } from "./SwiperNavButtons";
+import appConfig from "@/config";
 
 export default function HeaderDiscount({ discounts }: any) {
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ export default function HeaderDiscount({ discounts }: any) {
                   alt={item.image}
                   src={
                     item.image
-                      ? `http://localhost:3900/uploads/${item.image}`
+                      ? `${appConfig.apiUrl}/uploads/${item.image}`
                       : "/image-box-12.jpg"
                   }
 

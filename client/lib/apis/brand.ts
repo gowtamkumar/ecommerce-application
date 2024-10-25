@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use server";
+import appConfig from "@/config";
 import { authOptions } from "../authOption";
 import { getServerSession } from "next-auth";
 
 export async function saveBrand(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/brands`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -20,7 +21,7 @@ export async function saveBrand(data: any) {
 export async function getBrands() {
   const session = await getServerSession(authOptions);
 
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/brands`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`, {
     // cache: "no-cache",
     // headers: {
     //   'Authorization': `Bearer ${session?.user?.accessToken}`,
@@ -32,7 +33,7 @@ export async function getBrands() {
 export async function updateBrand(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/brands/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/brands/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -49,7 +50,7 @@ export async function updateBrand(data: any) {
 export async function deleteBrand(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/brands/${id}`,
+    `${appConfig.apiUrl}/api/v1/brands/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

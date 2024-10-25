@@ -10,6 +10,7 @@ import {
 } from "@/redux/features/layout/layoutSlice";
 import { navbarRoute } from "@/NavBarRoute";
 import { getSettings } from "@/lib/apis/setting";
+import appConfig from "@/config";
 
 const { Sider } = Layout;
 
@@ -96,7 +97,7 @@ const Sidebar = () => {
           <Image
             src={
               setting?.logo
-                ? `http://localhost:3900/uploads/${setting.logo}`
+                ? `${appConfig.apiUrl}/uploads/${setting.logo}`
                 : "/pos_software.png"
             }
             alt={setting?.logo}

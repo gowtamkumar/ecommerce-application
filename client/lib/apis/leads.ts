@@ -2,9 +2,10 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveLead(data: any) {
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/leads`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -17,7 +18,7 @@ export async function saveLead(data: any) {
 
 export async function getLeads() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/leads`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
     cache: "no-cache",
     headers: {
       Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -29,7 +30,7 @@ export async function getLeads() {
 export async function updateLead(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/leads/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/leads/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -45,7 +46,7 @@ export async function updateLead(data: any) {
 
 export async function deleteLead(id: string) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/leads/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers: {

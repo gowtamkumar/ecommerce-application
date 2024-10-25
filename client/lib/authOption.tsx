@@ -2,6 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import appConfig from "@/config";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,7 +11,7 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials: any) {
         const res = await fetch(
-          `${process.env.NEXT_SERVER_URL}/api/v1/auth/login`,
+          `${appConfig.apiUrl}/api/v1/auth/login`,
           {
             method: "POST",
             body: JSON.stringify(credentials),
@@ -44,7 +45,7 @@ export const authOptions: NextAuthOptions = {
           email: profile.email,
         };
         const res = await fetch(
-          `${process.env.NEXT_SERVER_URL}/api/v1/auth/get-user-by-email`,
+          `${appConfig.apiUrl}/api/v1/auth/get-user-by-email`,
           {
             method: "POST",
             body: JSON.stringify(newUser),
@@ -65,7 +66,7 @@ export const authOptions: NextAuthOptions = {
           email: profile.email,
         };
         const res = await fetch(
-          `${process.env.NEXT_SERVER_URL}/api/v1/auth/get-user-by-email`,
+          `${appConfig.apiUrl}/api/v1/auth/get-user-by-email`,
           {
             method: "POST",
             body: JSON.stringify(newUser),

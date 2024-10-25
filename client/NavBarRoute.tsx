@@ -3,6 +3,7 @@ import { MenuProps } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { backupDB } from "./lib/apis/backupDB";
+import appConfig from "./config";
 
 // key as like features
 
@@ -17,7 +18,7 @@ const handleBackup = async (): Promise<void> => {
     // const response = await backupDB();
 
     const response = await fetch(
-      `${process.env.NEXT_SERVER_URL}/api/v1/settings/db-backup`,
+      `${appConfig.apiUrl}/api/v1/settings/db-backup`,
       {
         method: "POST",
         headers: {

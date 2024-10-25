@@ -1,4 +1,5 @@
 "use client";
+import appConfig from "@/config";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -21,6 +22,7 @@ export default function HeaderLogo({ settingData }: any) {
   //  const settingData =  JSON.parse(localStorage.getItem("setting") || "")
 
   //   localStorage.setItem("setting", JSON.stringify(setting.data));
+ 
 
   return (
     <div className="md:order-1 order-2">
@@ -28,7 +30,7 @@ export default function HeaderLogo({ settingData }: any) {
         <Image
           src={
             logo?.image
-              ? `http://localhost:3900/uploads/${logo?.image}`
+              ? `${appConfig.apiUrl}/uploads/${logo?.image}`
               : "/pos_software.png"
           }
           alt={logo?.image}

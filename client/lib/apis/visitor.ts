@@ -2,9 +2,10 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveVisitor(data: any) {
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/visitors`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors`, {
     method: "POST",
     cache: 'no-cache',
     headers: {
@@ -17,7 +18,7 @@ export async function saveVisitor(data: any) {
 
 export async function getVisitors() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/visitors`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors`, {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +31,7 @@ export async function getVisitors() {
 export async function getVisitor(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/visitors/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/visitors/${data.id}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +46,7 @@ export async function getVisitor(data: any) {
 export async function updateVisitor(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/visitors/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/visitors/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -62,7 +63,7 @@ export async function updateVisitor(data: any) {
 export async function deleteVisitor(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/visitors/${id}`,
+    `${appConfig.apiUrl}/api/v1/visitors/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

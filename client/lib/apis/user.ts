@@ -1,10 +1,11 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveUser(data: any) {
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/auth/register`,
+    `${appConfig.apiUrl}/api/v1/auth/register`,
     {
       method: "POST",
       cache: "no-cache",
@@ -20,7 +21,7 @@ export async function saveUser(data: any) {
 export async function getMe() {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/auth/me`,
+    `${appConfig.apiUrl}/api/v1/auth/me`,
     {
       method: "GET",
       cache: 'no-cache',
@@ -35,7 +36,7 @@ export async function getMe() {
 
 export async function getUsers() {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/auth/users`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users`, {
     cache: "no-cache",
     headers: {
       Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -47,7 +48,7 @@ export async function getUsers() {
 export async function updateUser(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/auth/users/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/auth/users/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -64,7 +65,7 @@ export async function updateUser(data: any) {
 export async function updatePassword(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/auth/update-password`,
+    `${appConfig.apiUrl}/api/v1/auth/update-password`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -81,7 +82,7 @@ export async function updatePassword(data: any) {
 export async function deleteUser(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/auth/users/${id}`,
+    `${appConfig.apiUrl}/api/v1/auth/users/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

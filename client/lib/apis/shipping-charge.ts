@@ -1,11 +1,12 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveShippingCharge(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges`,
+    `${appConfig.apiUrl}/api/v1/shipping-charges`,
     {
       method: "POST",
       cache: "no-cache",
@@ -28,7 +29,7 @@ export async function getShippingCharges(params?: any) {
 
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges?${queryData}`,
+    `${appConfig.apiUrl}/api/v1/shipping-charges?${queryData}`,
     {
       cache: "no-cache",
       headers: {
@@ -42,7 +43,7 @@ export async function getShippingCharges(params?: any) {
 export async function getShippingCharge({ data }: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/shipping-charges/${data.id}`,
     {
       cache: "no-cache",
       headers: {
@@ -56,7 +57,7 @@ export async function getShippingCharge({ data }: any) {
 export async function updateShippingCharge(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/shipping-charges/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -73,7 +74,7 @@ export async function updateShippingCharge(data: any) {
 export async function deleteShippingCharge(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/shipping-charges/${id}`,
+    `${appConfig.apiUrl}/api/v1/shipping-charges/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

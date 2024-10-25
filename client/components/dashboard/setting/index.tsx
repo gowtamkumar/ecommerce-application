@@ -21,6 +21,7 @@ import Lead from "./lead/Lead";
 import Currency from "./currency/Currency";
 import CompanySetting from "./CompanySetting";
 import { getCurrencies } from "@/lib/apis/currency";
+import appConfig from "@/config";
 
 export default function Index() {
   const [currencies, setCurrencies] = useState([]);
@@ -42,7 +43,7 @@ export default function Index() {
             name: `logo ${Math.random() * 10000 + ""}`,
             status: "done",
             fileName: data.image,
-            url: `http://localhost:3900/uploads/${data.image || "no-data.png"}`,
+            url: `${appConfig.apiUrl}/uploads/${data.image || "no-data.png"}`,
           };
           dispatch(setFormValues({ ...data, fileList: [newfile] }));
           setCurrencies(currency.data);

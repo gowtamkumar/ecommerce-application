@@ -2,10 +2,11 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../authOption";
+import appConfig from "@/config";
 
 export async function saveUnion(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/unions`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -24,7 +25,7 @@ export async function getUnions(params: {upazilaId:string}) {
     queryData += `upazilaId=${upazilaId}`;
   }
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.NEXT_SERVER_URL}/api/v1/unions`, {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions`, {
     headers: {
       Authorization: `Bearer ${session?.user?.accessToken}`,
     },
@@ -35,7 +36,7 @@ export async function getUnions(params: {upazilaId:string}) {
 export async function getUnion(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/unions/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/unions/${data.id}`,
     {
       method: "GET",
       headers: {
@@ -51,7 +52,7 @@ export async function getUnion(data: any) {
 // export async function updateUnion(data: any) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${process.env.NEXT_SERVER_URL}/api/v1/unions/${data.id}`,
+//     `${appConfig.apiUrl}/api/v1/unions/${data.id}`,
 //     {
 //       method: "PUT",
 //       cache: "no-cache",
@@ -68,7 +69,7 @@ export async function getUnion(data: any) {
 // export async function deleteUnion(id: string) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${process.env.NEXT_SERVER_URL}/api/v1/unions/${id}`,
+//     `${appConfig.apiUrl}/api/v1/unions/${id}`,
 //     {
 //       method: "DELETE",
 //       cache: "no-cache",

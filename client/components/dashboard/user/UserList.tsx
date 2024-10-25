@@ -21,6 +21,7 @@ import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteUser, getUsers } from "@/lib/apis/user";
 import dayjs from "dayjs";
+import appConfig from "@/config";
 
 interface DataType {
   key: string;
@@ -240,7 +241,7 @@ const UserList: React.FC = () => {
         <Image
           width={60}
           alt={value}
-          src={`http://localhost:3900/uploads/${value || "no-data.png"}`}
+          src={`${appConfig.apiUrl}/uploads/${value || "no-data.png"}`}
         />
       ),
     },
@@ -312,7 +313,7 @@ const UserList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `http://localhost:3900/uploads/${newData.image || "no-data.png"
+                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
                     }`,
                 };
                 newData.fileList = [file];

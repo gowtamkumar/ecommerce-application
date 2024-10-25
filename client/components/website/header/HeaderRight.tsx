@@ -10,6 +10,7 @@ import { CiSearch, CiHeart } from "react-icons/ci";
 
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
+import appConfig from "@/config";
 
 export default function HeaderRight({res}: any) {
   const [open, setOpen] = useState(false);
@@ -46,7 +47,7 @@ export default function HeaderRight({res}: any) {
             size={25}
             src={
               profileImage
-                ? `http://localhost:3900/uploads/${profileImage}`
+                ? `${appConfig.apiUrl}/uploads/${profileImage}`
                 : "/pos_software.png"
             }
           />

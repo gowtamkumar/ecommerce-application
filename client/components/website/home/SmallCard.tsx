@@ -11,6 +11,7 @@ import {
   EffectFade,
 } from "swiper/modules";
 import { SwiperNavButtons } from "../banner/SwiperNavButtons";
+import appConfig from "@/config";
 
 export default function SmallCard({ categories }: any) {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function SmallCard({ categories }: any) {
                      alt={item.image}
                       src={
                         item.image
-                          ? `http://localhost:3900/uploads/${item.image}`
+                          ? `${appConfig.apiUrl}/uploads/${item.image}`
                           : "/pos_software.png"
                       }
                      

@@ -5,6 +5,7 @@ import PostSearchSection from "@/components/website/blog/PostSearchSection";
 import PostTagSection from "@/components/website/blog/PostTagSection";
 import RecentPostSection from "@/components/website/blog/RecentPostSection";
 import Subscribe from "@/components/website/footer/Subscribe";
+import appConfig from "@/config";
 import { getPost } from "@/lib/apis/posts";
 import dayjs from "dayjs";
 import React from "react";
@@ -18,7 +19,7 @@ export default async function page({ params }: { params: { id: string } }) {
       <div
         className="bg-cover bg-center h-64"
         style={{
-          backgroundImage: `url('http://localhost:3900/uploads/${post?.image || "no-data.png"
+          backgroundImage: `url('${appConfig.apiUrl}/uploads/${post?.image || "no-data.png"
             }')`,
         }}
       >

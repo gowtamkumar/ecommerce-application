@@ -1,7 +1,7 @@
 // // 'use client'
 // import { getSession } from 'next-auth/react'
 
-// const BASE_URL = process.env.NEXT_SERVER_URL + '/api/v1'
+// const BASE_URL = appConfig.apiUrl + '/api/v1'
 
 // async function Gets(params) {
 //   try {

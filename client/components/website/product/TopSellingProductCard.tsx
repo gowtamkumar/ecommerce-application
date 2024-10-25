@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getTopSellingProducts } from "@/lib/apis/reports";
+import appConfig from "@/config";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const TopSellingProductCard: React.FC = () => {
@@ -62,7 +63,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
         <Image
           src={
             image
-              ? `http://localhost:3900/uploads/${image[0]}`
+              ? `${appConfig.apiUrl}/uploads/${image[0]}`
               : "/pos_software.png"
           }
           alt={item.name}

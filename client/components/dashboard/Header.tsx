@@ -10,6 +10,7 @@ import {
 } from "@/redux/features/layout/layoutSlice";
 import { userProfileRoute } from "@/NavBarRoute";
 import { useSession } from "next-auth/react";
+import appConfig from "@/config";
 
 export default function DashboardHeader() {
   const {
@@ -89,7 +90,7 @@ export default function DashboardHeader() {
           size={35}
           src={
             profileImage
-              ? `http://localhost:3900/uploads/${profileImage}`
+              ? `${appConfig.apiUrl}/uploads/${profileImage}`
               : "/pos_software.png"
           }
           alt="profile image"

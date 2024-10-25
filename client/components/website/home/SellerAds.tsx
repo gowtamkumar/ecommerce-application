@@ -11,6 +11,7 @@ import {
   Autoplay,
 } from "swiper/modules";
 import Image from "next/image";
+import appConfig from "@/config";
 
 const SellerAds = ({ banners }: any) => {
   return (
@@ -41,7 +42,7 @@ const SellerAds = ({ banners }: any) => {
                       <Image
                         src={
                           item.image
-                            ? `http://localhost:3900/uploads/${item.image}`
+                            ? `${appConfig.apiUrl}/uploads/${item.image}`
                             : "/pos_software.png"
                         }
                         alt={item.image}

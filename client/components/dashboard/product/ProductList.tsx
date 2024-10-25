@@ -22,6 +22,7 @@ import {
 import { toast } from "react-toastify";
 import { deleteProduct, getProducts } from "@/lib/apis/product";
 import { useRouter } from "next/navigation";
+import appConfig from "@/config";
 
 interface DataType {
   key: string;
@@ -216,7 +217,8 @@ const ProductList: React.FC = () => {
               <div key={item}>
                 <Image
                   width={60}
-                  src={`http://localhost:3900/uploads/${item || "no-data.png"}`}
+                  src={`${appConfig.apiUrl}/uploads/${item || "no-data.png"}`}
+                  alt={item}
                 />
               </div>
             );
@@ -403,7 +405,7 @@ const ProductList: React.FC = () => {
                   key={item}
                   width={200}
                   alt={item}
-                  src={`http://localhost:3900/uploads/${item || "no-data.png"}`}
+                  src={`${appConfig.apiUrl}/uploads/${item || "no-data.png"}`}
                 />
               );
             })}

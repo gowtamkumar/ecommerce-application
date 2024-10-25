@@ -2,11 +2,12 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function saveOrderTracking(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/order-trackings`,
+    `${appConfig.apiUrl}/api/v1/order-trackings`,
     {
       method: "POST",
       cache: "no-cache",
@@ -23,7 +24,7 @@ export async function saveOrderTracking(data: any) {
 export async function getOrderTracking(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/order-trackings/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/order-trackings/${data.id}`,
     {
       cache: "no-cache",
       headers: {
@@ -37,7 +38,7 @@ export async function getOrderTracking(data: any) {
 export async function getOrderTrackings() {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/order-trackings`,
+    `${appConfig.apiUrl}/api/v1/order-trackings`,
     {
       headers: {
         Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -50,7 +51,7 @@ export async function getOrderTrackings() {
 export async function updateOrderTracking(data: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/order-trackings/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/order-trackings/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -67,7 +68,7 @@ export async function updateOrderTracking(data: any) {
 export async function deleteOrderTracking(id: string) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/order-trackings/${id}`,
+    `${appConfig.apiUrl}/api/v1/order-trackings/${id}`,
     {
       method: "DELETE",
       cache: "no-cache",

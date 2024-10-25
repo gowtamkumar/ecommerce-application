@@ -1,10 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function resetPassword(data: any, token: any) {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `http://localhost:3900/api/v1/auth/reset-password/${token}`,
+    `${appConfig.apiUrl}/api/v1/auth/reset-password/${token}`,
     {
       method: "POST",
       headers: {

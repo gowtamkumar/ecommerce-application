@@ -2,13 +2,14 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function sendForgotPassword(data: any) {
   const session = await getServerSession(authOptions);
-  console.log("process.env.NEXT_SERVER_URL", process.env.NEXT_SERVER_URL);
+  console.log("appConfig.apiUrl", appConfig.apiUrl);
   
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/auth/forgot-password`,
+    `${appConfig.apiUrl}/api/v1/auth/forgot-password`,
     {
       method: "POST",
       headers: {

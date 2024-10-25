@@ -1,11 +1,12 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import appConfig from "@/config";
 
 export async function backupDB() {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${process.env.NEXT_SERVER_URL}/api/v1/settings/db-backup`,
+    `${appConfig.apiUrl}/api/v1/settings/db-backup`,
     {
       method: "POST",
       headers: {

@@ -16,6 +16,7 @@ import TermPolicyPage from "./TermPolicyPage";
 import ContactPage from "./ContactPage";
 import HelpSupport from "./HelpSupport";
 import { getCurrencies } from "@/lib/apis/currency";
+import appConfig from "@/config";
 
 export default function Index() {
 
@@ -39,7 +40,7 @@ export default function Index() {
               name: `logo ${Math.random() * 10000 + ""}`,
               status: "done",
               fileName: newData.image,
-              url: `http://localhost:3900/uploads/${newData.image || "no-data.png"
+              url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
                 }`,
             };
             newData.fileList = [newfile];
