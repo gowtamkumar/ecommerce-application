@@ -57,7 +57,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [firstDateOfMonth, lastDateOfMonth]);
 
   const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
     (

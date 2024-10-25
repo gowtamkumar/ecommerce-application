@@ -96,7 +96,7 @@ const ContactPage = () => {
           </Button>
           <Button
             size="small"
-            color="blue"
+            color="primary"
             htmlType="submit"
             className="capitalize"
             loading={loading}

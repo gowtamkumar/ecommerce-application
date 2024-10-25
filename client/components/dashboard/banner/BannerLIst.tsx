@@ -35,7 +35,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const BannerList: React.FC = () => {
-  const [Banners, setBanners] = useState([]);
+  const [Banners, setBanners] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -44,7 +44,6 @@ const BannerList: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getBanners();
-      console.log("🚀 ~ res:", res);
       setBanners(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -241,9 +240,8 @@ const BannerList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${
-                    newData.image || "no-data.png"
-                  }`,
+                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+                    }`,
                 };
                 newData.fileList = [file];
               }

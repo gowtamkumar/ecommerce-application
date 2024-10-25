@@ -4,8 +4,10 @@ import appConfig from "@/config";
 import { authOptions } from "../authOption";
 import { getServerSession } from "next-auth";
 
+
 export async function saveBrand(data: any) {
   const session = await getServerSession(authOptions);
+  
   const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`, {
     method: "POST",
     cache: "no-cache",
@@ -15,23 +17,27 @@ export async function saveBrand(data: any) {
     },
     body: JSON.stringify(data),
   });
+
+  if (!res.ok) {
+    throw new Error(`Error saving brand: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function getBrands() {
-  const session = await getServerSession(authOptions);
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`);
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`, {
-    // cache: "no-cache",
-    // headers: {
-    //   'Authorization': `Bearer ${session?.user?.accessToken}`,
-    // },
-  });
+  if (!res.ok) {
+    throw new Error(`Error fetching brands: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function updateBrand(data: any) {
   const session = await getServerSession(authOptions);
+
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/brands/${data.id}`,
     {
@@ -44,11 +50,17 @@ export async function updateBrand(data: any) {
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error updating brand: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function deleteBrand(id: string) {
   const session = await getServerSession(authOptions);
+
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/brands/${id}`,
     {
@@ -60,5 +72,10 @@ export async function deleteBrand(id: string) {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error deleting brand: ${res.statusText}`);
+  }
+
   return res.json();
 }

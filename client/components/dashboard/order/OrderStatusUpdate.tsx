@@ -124,7 +124,7 @@ const OrderStatusUpdate = () => {
           </Button>
           <Button
             size="small"
-            color="blue"
+            color="primary"
             htmlType="submit"
             className="capitalize"
             loading={global.loading.save}

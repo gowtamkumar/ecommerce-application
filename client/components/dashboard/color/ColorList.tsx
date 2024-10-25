@@ -30,7 +30,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ColorList: React.FC = () => {
-  const [colors, setColors] = useState([]);
+  const [colors, setColors] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

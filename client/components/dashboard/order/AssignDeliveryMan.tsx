@@ -12,7 +12,7 @@ import { getUsers } from "@/lib/apis/user";
 import { assignDeliveryMan } from "@/lib/apis/orders";
 
 const AssignDeliveryMan = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([] as any);
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -25,11 +25,10 @@ const AssignDeliveryMan = () => {
         // let newData = { ...payload };
         form.setFieldsValue(payload);
         const response = await getUsers();
-        setUsers(
-          response.data.filter(
-            (item: { type: string }) => item.type === "Delivery Man"
-          )
+        const newUserDtata = (response?.data || []).filter(
+          (item: any) => item.type === "Delivery Man"
         );
+        setUsers(newUserDtata);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -47,7 +46,7 @@ const AssignDeliveryMan = () => {
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = await assignDeliveryMan(values);
-      console.log("🚀 ~ result:", result)
+      console.log("🚀 ~ result:", result);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
@@ -116,7 +115,7 @@ const AssignDeliveryMan = () => {
 
         <Button
           size="small"
-          color="blue"
+          color="primary"
           htmlType="submit"
           loading={global.loading.save}
         >

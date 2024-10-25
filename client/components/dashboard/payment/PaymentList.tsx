@@ -33,7 +33,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const PaymentList: React.FC = () => {
-  const [Statuss, setStatus] = useState([]);
+  const [Statuss, setStatus] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

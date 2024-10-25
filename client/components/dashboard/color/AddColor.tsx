@@ -7,32 +7,20 @@ import {
   Form,
   Input,
   Modal,
-  Select,
-  theme,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
-  generate,
-  yellow,
   green,
   presetPalettes,
   red,
-  orange,
   gold,
-  gray,
   cyan,
-  blue,
   purple,
-  magenta,
-  lime,
-  geekblue,
-  volcano,
   grey,
 } from "@ant-design/colors";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { saveColor, updateColor } from "@/lib/apis/color";
-
 import {
   selectGlobal,
   setAction,
@@ -70,7 +58,7 @@ const AddColor = () => {
         : await saveColor(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `Color ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -127,9 +115,9 @@ const AddColor = () => {
       width={500}
       zIndex={1050}
       open={
-        global.action.color && 
-       ( global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE)
+        global.action.color &&
+        (global.action.type === ActionType.CREATE ||
+          global.action.type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
@@ -203,7 +191,7 @@ const AddColor = () => {
               </Button>
               <Button
                 size="small"
-                color="blue"
+                color="primary"
                 htmlType="submit"
                 className="capitalize"
                 loading={global.loading.save}

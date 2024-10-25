@@ -1,11 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Select, theme } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { ActionType } from "../../../../constants/constants";
-
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-
 import {
   selectGlobal,
   setAction,

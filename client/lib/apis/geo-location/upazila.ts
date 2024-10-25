@@ -6,49 +6,79 @@ import appConfig from "@/config";
 
 export async function saveUpazila(data: any) {
   const session = await getServerSession(authOptions);
+
+  if (!session?.user?.accessToken) {
+    throw new Error("No access token found");
+  }
+
   const res = await fetch(`${appConfig.apiUrl}/api/v1/upazilas`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
+      Authorization: `Bearer ${session.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
+
+  if (!res.ok) {
+    throw new Error(`Error saving upazila: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function getUpazilas(params: any) {
   const { districtId } = params;
 
-  let queryData = "";
+  const queryParams = new URLSearchParams();
   if (districtId) {
-    queryData += `districtId=${districtId}`;
+    queryParams.append("districtId", districtId);
   }
+
   const session = await getServerSession(authOptions);
+
+  if (!session?.user?.accessToken) {
+    throw new Error("No access token found");
+  }
+
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/upazilas?${queryData}`,
+    `${appConfig.apiUrl}/api/v1/upazilas?${queryParams.toString()}`,
     {
       headers: {
-        Authorization: `Bearer ${session?.user?.accessToken}`,
+        Authorization: `Bearer ${session.user.accessToken}`,
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error fetching upazilas: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function getUpazila(data: any) {
   const session = await getServerSession(authOptions);
+
+  if (!session?.user?.accessToken) {
+    throw new Error("No access token found");
+  }
+
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/upazilas/${data.id}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
+        Authorization: `Bearer ${session.user.accessToken}`,
       },
-      body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error fetching upazila: ${res.statusText}`);
+  }
+
   return res.json();
 }
 

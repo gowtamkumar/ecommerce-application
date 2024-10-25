@@ -24,7 +24,7 @@ import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/config";
 
 export default function Index() {
-  const [currencies, setCurrencies] = useState([]);
+  const [currencies, setCurrencies] = useState([] as any);
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ export default function Index() {
         const setting = await getSettings();
         const currency = await getCurrencies();
         if (isMounted) {
-          const data = setting.data[0] || {};
+          const data = setting?.data?.length ? setting?.data[0] : {};
           const newfile = {
             uid: Math.random() * 1000 + "",
             name: `logo ${Math.random() * 10000 + ""}`,
@@ -61,7 +61,7 @@ export default function Index() {
       dispatch(setFormValues({}));
     };
   }, [dispatch, global.action]);
-  
+
   return (
     <Tabs
       tabPosition="left"

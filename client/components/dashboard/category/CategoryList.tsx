@@ -35,7 +35,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const CategoryList: React.FC = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

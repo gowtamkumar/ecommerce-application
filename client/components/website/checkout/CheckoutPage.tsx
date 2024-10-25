@@ -5,14 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
 import { saveOrder } from "@/lib/apis/orders";
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Popconfirm,
-  Radio,
-  Space,
-} from "antd";
+import { Alert, Button, Checkbox, Popconfirm, Radio, Space } from "antd";
 import {
   selectGlobal,
   setAction,
@@ -50,7 +43,7 @@ export default function CheckoutPage() {
     async function fetchData() {
       const settingResult = await getSettings();
       const res = await getCartByUser();
-      setSetting(settingResult.data[0] || {});
+      setSetting(settingResult.data?.length ? settingResult.data[0] : {});
       setCarts(res.data);
       const user = await getMe();
       const activeShippingAddress = user.data?.shippingAddress?.find(
@@ -60,7 +53,9 @@ export default function CheckoutPage() {
         const getShippingCharge = await getShippingCharges({
           divisionId: activeShippingAddress.divisionId,
         });
-        setShippingCharge(getShippingCharge.data[0]);
+        setShippingCharge(
+          getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
+        );
       }
 
       setShippingAddress(user.data?.shippingAddress);
@@ -93,7 +88,7 @@ export default function CheckoutPage() {
         return {
           taxAmount: (+pre.taxAmount + +curr.tax) * (+curr.qty || 0),
           netAmount:
-            +pre.netAmount + +sutotal - (+curr.discountA * (+curr.qty || 0)),
+            +pre.netAmount + +sutotal - +curr.discountA * (+curr.qty || 0),
           discountAmount:
             +pre.discountAmount + (+curr.discountA || 0) * (+curr.qty || 0),
           orderTotalAmount:
@@ -310,10 +305,10 @@ export default function CheckoutPage() {
                           ৳
                           {item.discountId
                             ? (
-                              +item.price +
-                              +item.tax -
-                              +item.discountA
-                            ).toFixed(2)
+                                +item.price +
+                                +item.tax -
+                                +item.discountA
+                              ).toFixed(2)
                             : (+item.price + +item.tax || 0).toFixed(2)}
                         </div>
                         <div>
@@ -484,7 +479,11 @@ export default function CheckoutPage() {
                       const getShippingCharge = await getShippingCharges({
                         divisionId: activeShippingAddress.divisionId,
                       });
-                      setShippingCharge(getShippingCharge.data[0]);
+                      setShippingCharge(
+                        getShippingCharge.data?.length
+                          ? getShippingCharge.data[0]
+                          : {}
+                      );
                     }
                   }}
                   value={checkoutFormData?.shippingAddressId}

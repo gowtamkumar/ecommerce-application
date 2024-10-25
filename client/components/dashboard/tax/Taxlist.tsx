@@ -31,7 +31,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const TaxList: React.FC = () => {
-  const [taxs, setTaxs] = useState([]);
+  const [taxs, setTaxs] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

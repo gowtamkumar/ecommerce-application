@@ -36,7 +36,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ShippingChargeList: React.FC = () => {
-  const [shippingCharges, setShippingCharge] = useState([]);
+  const [shippingCharges, setShippingCharge] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

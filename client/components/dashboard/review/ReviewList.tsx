@@ -32,7 +32,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ReviewList: React.FC = () => {
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

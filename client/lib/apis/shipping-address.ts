@@ -4,7 +4,26 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
 
-export async function saveShippingAddress(data: any) {
+// Define an interface for the shipping address
+interface ShippingAddress {
+  id?: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  [key: string]: any; // Allow additional properties
+}
+
+// Define the response structure
+interface ApiResponse<T> {
+  data?: T;
+  message?: string;
+  status?: string;
+}
+
+// Function to save a shipping address
+export async function saveShippingAddress(data: ShippingAddress): Promise<ApiResponse<ShippingAddress>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-address`,
@@ -18,10 +37,16 @@ export async function saveShippingAddress(data: any) {
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+  
   return res.json();
 }
 
-export async function getShippingAddress() {
+// Function to get the shipping address
+export async function getShippingAddress(): Promise<ApiResponse<ShippingAddress[]>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-address`,
@@ -32,10 +57,16 @@ export async function getShippingAddress() {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }
 
-export async function updateShippingAddress(data: any) {
+// Function to update a shipping address
+export async function updateShippingAddress(data: ShippingAddress): Promise<ApiResponse<ShippingAddress>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-address/${data.id}`,
@@ -49,10 +80,16 @@ export async function updateShippingAddress(data: any) {
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }
 
-export async function deleteShippingAddress(id: string) {
+// Function to delete a shipping address
+export async function deleteShippingAddress(id: string): Promise<ApiResponse<null>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-address/${id}`,
@@ -65,5 +102,10 @@ export async function deleteShippingAddress(id: string) {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }

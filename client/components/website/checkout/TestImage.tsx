@@ -3,13 +3,12 @@ import Image from 'next/image'
 import React from 'react'
 
 export default function TestImage({ image }: { image: string }) {
-  console.log("appConfig", appConfig);
   
   return (
     <Image
       src={
         image
-          ? `${appConfig.apiBaseUrl}/uploads/${image}`
+          ? `${appConfig.apiUrl}/uploads/${image}`
           : "/pos_software.png"
       }
       width={100}

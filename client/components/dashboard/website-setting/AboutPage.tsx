@@ -98,7 +98,7 @@ const AboutPage = () => {
           </Button>
           <Button
             size="small"
-            color="danger"
+            color="primary"
             htmlType="submit"
             className="capitalize"
             loading={loading}

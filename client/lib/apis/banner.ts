@@ -4,8 +4,10 @@ import appConfig from "@/config";
 import { authOptions } from "../authOption";
 import { getServerSession } from "next-auth";
 
+
 export async function saveBanner(data: any) {
   const session = await getServerSession(authOptions);
+  
   const res = await fetch(`${appConfig.apiUrl}/api/v1/banners`, {
     method: "POST",
     cache: "no-cache",
@@ -15,31 +17,41 @@ export async function saveBanner(data: any) {
     },
     body: JSON.stringify(data),
   });
-  
+
+  if (!res.ok) {
+    throw new Error(`Error saving banner: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function getBanners(params?: any) {
-  let searchQuery = "";
+  const searchParams = new URLSearchParams();
+
   if (params?.type) {
-    searchQuery += `type=${params.type}`;
+    searchParams.append("type", params.type);
   }
-  // const session = await getServerSession(authOptions);
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/banners?${searchQuery}`,
+    `${appConfig.apiUrl}/api/v1/banners?${searchParams.toString()}`,
     {
-      // cache: "no-cache",
+      // Uncomment the headers if authentication is needed
       // headers: {
-      //   'Authorization': `Bearer ${session?.user?.accessToken}`,
+      //   'Authorization': `Bearer ${accessToken}`,
       // },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error fetching banners: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function updateBanner(data: any) {
   const session = await getServerSession(authOptions);
+
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/banners/${data.id}`,
     {
@@ -52,11 +64,17 @@ export async function updateBanner(data: any) {
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error updating banner: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function deleteBanner(id: string) {
   const session = await getServerSession(authOptions);
+
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/banners/${id}`,
     {
@@ -68,5 +86,10 @@ export async function deleteBanner(id: string) {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error deleting banner: ${res.statusText}`);
+  }
+
   return res.json();
 }

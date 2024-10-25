@@ -178,7 +178,6 @@ const CurrencyList: React.FC = () => {
       dataIndex: "symbol",
       key: "symbol",
       width: "30%",
-     
     },
     {
       title: "Action",

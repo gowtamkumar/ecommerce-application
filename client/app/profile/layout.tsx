@@ -11,9 +11,7 @@ export default async function ProfileLayout({
   children: React.ReactNode;
 }>) {
   const session: any = await getServerSession(authOptions);
-  console.log("🚀 ~ session:", session)
-  
-  
+
   if (!session?.token) {
     redirect("/");
   }

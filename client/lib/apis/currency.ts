@@ -4,60 +4,100 @@ import { authOptions } from "../authOption";
 import appConfig from "@/config";
 
 export async function saveCurrency(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
-    method: "POST",
-    cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function getCurrencies() {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
-    cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
-  });
-  return res.json();
-}
-
-export async function updateCurrency(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/currencies/${data.id}`,
-    {
-      method: "PATCH",
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
+      method: "POST",
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to save currency: ${res.statusText}`);
     }
-  );
-  return res.json();
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in saveCurrency:", error);
+    throw error; // Re-throw the error for further handling
+  }
 }
 
-export async function deleteCurrency(id: string) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/currencies/${id}`,
-    {
-      method: "DELETE",
+export async function getCurrencies() {
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user?.accessToken}`,
       },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch currencies: ${res.statusText}`);
     }
-  );
-  return res.json();
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in getCurrencies:", error);
+    throw error; // Re-throw the error for further handling
+  }
+}
+
+export async function updateCurrency(data: any) {
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(
+      `${appConfig.apiUrl}/api/v1/currencies/${data.id}`,
+      {
+        method: "PATCH",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`Failed to update currency: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in updateCurrency:", error);
+    throw error; // Re-throw the error for further handling
+  }
+}
+
+export async function deleteCurrency(id: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(
+      `${appConfig.apiUrl}/api/v1/currencies/${id}`,
+      {
+        method: "DELETE",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`Failed to delete currency: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in deleteCurrency:", error);
+    throw error; // Re-throw the error for further handling
+  }
 }

@@ -6,46 +6,69 @@ import appConfig from "@/config";
 
 export async function saveUnion(data: any) {
   const session = await getServerSession(authOptions);
+
+  if (!session?.user?.accessToken) {
+    throw new Error("No access token found");
+  }
+
   const res = await fetch(`${appConfig.apiUrl}/api/v1/unions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
+      Authorization: `Bearer ${session.user.accessToken}`,
     },
     body: JSON.stringify(data),
   });
+
+  if (!res.ok) {
+    throw new Error(`Error saving union: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
-export async function getUnions(params: {upazilaId:string}) {
+export async function getUnions(params: { upazilaId: string }) {
   const { upazilaId } = params;
 
-  let queryData = "";
-  if (upazilaId) {
-    queryData += `upazilaId=${upazilaId}`;
-  }
+  const queryData = upazilaId ? `?upazilaId=${upazilaId}` : "";
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions`, {
+
+  if (!session?.user?.accessToken) {
+    throw new Error("No access token found");
+  }
+
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions${queryData}`, {
     headers: {
-      Authorization: `Bearer ${session?.user?.accessToken}`,
+      Authorization: `Bearer ${session.user.accessToken}`,
     },
   });
+
+  if (!res.ok) {
+    throw new Error(`Error fetching unions: ${res.statusText}`);
+  }
+
   return res.json();
 }
 
 export async function getUnion(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/unions/${data.id}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
+
+  if (!session?.user?.accessToken) {
+    throw new Error("No access token found");
+  }
+
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions/${data.id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.user.accessToken}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error fetching union: ${res.statusText}`);
+  }
+
   return res.json();
 }
 

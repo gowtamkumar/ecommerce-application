@@ -64,9 +64,7 @@ const ProductCard: React.FC = () => {
           maxPrice,
           minPrice,
           discount,
-        });
-        console.log("products", products);
-        
+        });        
         dispatch(setProducts(products?.data));
       } catch (error) {
         console.error("Failed to fetch products:", error);

@@ -25,7 +25,7 @@ import { getUsers } from "@/lib/apis/user";
 import dayjs from "dayjs";
 
 const AddPayment = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([] as any);
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
@@ -35,22 +35,31 @@ const AddPayment = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let newData = { ...global.action.payload };
-        if (newData.paymentDate)
-          newData.paymentDate = dayjs(newData.paymentDate);
+        const { payload } = global.action; // Destructure to get payload
+        const newData = {
+          ...payload,
+          paymentDate: payload.paymentDate ? dayjs(payload.paymentDate) : undefined, // Optional chaining
+        };
         form.setFieldsValue(newData);
+        
         const response = await getUsers();
-        setUsers(response.data);
+        if (response?.data) {
+          setUsers(response.data);
+        } else {
+          console.warn("No user data found in the response.");
+        }
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-
+  
     fetchData();
+    
     return () => {
       form.resetFields();
     };
   }, [form, global.action]);
+  
 
   const handleSubmit = async (values: any) => {
     try {
@@ -227,7 +236,7 @@ const AddPayment = () => {
               </Button>
               <Button
                 size="small"
-                color="blue"
+                color="primary"
                 htmlType="submit"
                 className="capitalize"
                 loading={global.loading.save}

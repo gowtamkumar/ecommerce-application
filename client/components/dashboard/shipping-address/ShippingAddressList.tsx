@@ -44,7 +44,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ShippingAddressList: React.FC = () => {
-  const [address, setAddress] = useState([]);
+  const [address, setAddress] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

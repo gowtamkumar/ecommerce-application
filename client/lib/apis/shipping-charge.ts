@@ -1,9 +1,27 @@
 "use server";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
 
-export async function saveShippingCharge(data: any) {
+// Define an interface for the shipping charge
+interface ShippingCharge {
+  id?: string; // Optional for new entries
+  divisionId: string;
+  chargeAmount: number;
+  description?: string; // Optional field
+  [key: string]: any; // Allow additional properties
+}
+
+// Define the response structure
+interface ApiResponse<T> {
+  data?: T;
+  message?: string;
+  status?: string;
+}
+
+// Function to save a shipping charge
+export async function saveShippingCharge(data: ShippingCharge): Promise<ApiResponse<ShippingCharge>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-charges`,
@@ -17,14 +35,19 @@ export async function saveShippingCharge(data: any) {
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+  
   return res.json();
 }
 
-export async function getShippingCharges(params?: any) {
-
+// Function to get shipping charges with optional parameters
+export async function getShippingCharges(params?: { divisionId?: string }): Promise<ApiResponse<ShippingCharge[]>> {
   let queryData = "";
   if (params?.divisionId) {
-    queryData += `divisionId=${params?.divisionId}`;
+    queryData += `divisionId=${params.divisionId}`;
   }
 
   const session = await getServerSession(authOptions);
@@ -37,13 +60,19 @@ export async function getShippingCharges(params?: any) {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }
 
-export async function getShippingCharge({ data }: any) {
+// Function to get a specific shipping charge by ID
+export async function getShippingCharge(id: string): Promise<ApiResponse<ShippingCharge>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/shipping-charges/${data.id}`,
+    `${appConfig.apiUrl}/api/v1/shipping-charges/${id}`,
     {
       cache: "no-cache",
       headers: {
@@ -51,10 +80,16 @@ export async function getShippingCharge({ data }: any) {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }
 
-export async function updateShippingCharge(data: any) {
+// Function to update a shipping charge
+export async function updateShippingCharge(data: ShippingCharge): Promise<ApiResponse<ShippingCharge>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-charges/${data.id}`,
@@ -68,10 +103,16 @@ export async function updateShippingCharge(data: any) {
       body: JSON.stringify(data),
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }
 
-export async function deleteShippingCharge(id: string) {
+// Function to delete a shipping charge by ID
+export async function deleteShippingCharge(id: string): Promise<ApiResponse<null>> {
   const session = await getServerSession(authOptions);
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/shipping-charges/${id}`,
@@ -84,5 +125,10 @@ export async function deleteShippingCharge(id: string) {
       },
     }
   );
+
+  if (!res.ok) {
+    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+  }
+
   return res.json();
 }

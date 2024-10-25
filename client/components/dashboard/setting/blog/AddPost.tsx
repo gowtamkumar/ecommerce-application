@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  ColorPicker,
   ColorPickerProps,
   Divider,
   Form,
@@ -11,24 +10,13 @@ import {
   Modal,
   Select,
   Tag,
-  theme,
   Upload,
 } from "antd";
-import {
-  green,
-  presetPalettes,
-  red,
-  gold,
-  cyan,
-  purple,
-  grey,
-} from "@ant-design/colors";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +28,7 @@ import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { getAllCategories } from "@/lib/apis/categories";
 import appConfig from "@/config";
 
-type Presets = Required<ColorPickerProps>["presets"][number];
+// type Presets = Required<ColorPickerProps>["presets"][number];
 
 const uploadButton = (
   <div>

@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
+
 export async function getAllCategories() {
   try {
     const session = await getServerSession(authOptions);
@@ -16,22 +17,22 @@ export async function getAllCategories() {
     );
 
     if (!res.ok) {
-      console.log("Failed to fetch data");
+      throw new Error(`Failed to fetch data: ${res.statusText}`);
     }
-    const result = await res.json();
-    return result;
+
+    return await res.json();
   } catch (error) {
-    console.log("Failed to fetch data");
+    console.error("Error in getAllCategories:", error);
+    throw error; // Re-throw the error for further handling
   }
 }
 
 export async function getCategories() {
-  const session = await getServerSession(authOptions);
   try {
+    const session = await getServerSession(authOptions);
     const res = await fetch(
       `${appConfig.apiUrl}/api/v1/categories`,
       {
-        // next: { revalidate: 30 },
         cache: "no-cache",
         headers: {
           Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -40,59 +41,89 @@ export async function getCategories() {
     );
 
     if (!res.ok) {
-      console.log("Failed to fetch data");
+      throw new Error(`Failed to fetch data: ${res.statusText}`);
     }
-    const result = await res.json();
-    return result;
+
+    return await res.json();
   } catch (error) {
-    // console.log("🚀 ~ error:", error);
-    console.log("Failed to fetch data");
+    console.error("Error in getCategories:", error);
+    throw error; // Re-throw the error for further handling
   }
 }
 
 export async function saveCategory(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories`, {
-    method: "POST",
-    cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
-    body: JSON.stringify(data),
-  });
-  return res.json();
-}
-
-export async function updateCategory(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/categories/${data.id}`,
-    {
-      method: "PUT",
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(`${appConfig.apiUrl}/api/v1/categories`, {
+      method: "POST",
       cache: "no-cache",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to save category: ${res.statusText}`);
     }
-  );
-  return res.json();
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in saveCategory:", error);
+    throw error; // Re-throw the error for further handling
+  }
+}
+
+export async function updateCategory(data: any) {
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(
+      `${appConfig.apiUrl}/api/v1/categories/${data.id}`,
+      {
+        method: "PUT",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`Failed to update category: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in updateCategory:", error);
+    throw error; // Re-throw the error for further handling
+  }
 }
 
 export async function deleteCategory(id: string) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/categories/${id}`,
-    {
-      method: "DELETE",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
+  try {
+    const session = await getServerSession(authOptions);
+    const res = await fetch(
+      `${appConfig.apiUrl}/api/v1/categories/${id}`,
+      {
+        method: "DELETE",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user?.accessToken}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`Failed to delete category: ${res.statusText}`);
     }
-  );
-  return res.json();
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in deleteCategory:", error);
+    throw error; // Re-throw the error for further handling
+  }
 }

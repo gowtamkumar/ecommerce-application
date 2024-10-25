@@ -29,20 +29,17 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import {  getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
-
+import { getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
 import { getTaxs } from "@/lib/apis/tax";
 import { getAllCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
-
 import { getUsers } from "@/lib/apis/user";
 
-
 const AddOrder = () => {
-  const [users, setUsers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [sizes, setSizes] = useState([]);
-  const [taxs, setTaxs] = useState([]);
+  const [users, setUsers] = useState([] as any);
+  const [products, setProducts] = useState([] as any);
+  const [sizes, setSizes] = useState([] as any);
+  const [taxs, setTaxs] = useState([] as any);
   const [categories, setCategories] = useState([]);
   const [array, setArray] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
@@ -65,7 +62,6 @@ const AddOrder = () => {
       setFormData(newData);
 
       const users = await getUsers();
-      setUsers(users.data);
 
       const resSize = await getSizes();
       const resProducts = await getProducts();
@@ -74,9 +70,8 @@ const AddOrder = () => {
       setSizes(resSize.data);
       setProducts(resProducts.data);
       setCategories(resCategory.data);
-
+      setUsers(users.data);
       setTaxs(resTax.data);
-
       if (params.new === "new") {
         form.resetFields();
         setFormValues({});
@@ -100,7 +95,7 @@ const AddOrder = () => {
         : await saveProduct(newData);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        
+
         toast.success(
           `Product ${newData?.id ? "Updated" : "Created"} Successfully`
         );
@@ -145,16 +140,19 @@ const AddOrder = () => {
   };
 
   const handleProductSelect = (value: any) => {
-    if (!value) return
-    const newData = { ...global.formValues, orderItems: [...global.formValues.orderItems] }
+    if (!value) return;
+    const newData = {
+      ...global.formValues,
+      orderItems: [...global.formValues.orderItems],
+    };
 
     const product = (products || []).find(
-      (item: {id: number, price: string,}) => item.id === value
-    )
-    
+      (item: { id: number; price: string }) => item.id === value
+    );
+
     console.log("product", product);
-    
-    if (!product) return
+
+    if (!product) return;
 
     // const itemInCart = (global.formValues.orderItems || []).find((item: any) => item.productId === product.id)
 
@@ -185,7 +183,7 @@ const AddOrder = () => {
     // newData.productId = null
     // newData.itemBarcode = null
     // setFormData(newData)
-  }
+  };
 
   return (
     <div className="container mx-auto p-3">
@@ -220,7 +218,11 @@ const AddOrder = () => {
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="paymentMothod" label="Payment Type" className="p-0">
+            <Form.Item
+              name="paymentMothod"
+              label="Payment Type"
+              className="p-0"
+            >
               <Select allowClear placeholder="Select Type">
                 <Select.Option value="Online">Online</Select.Option>
                 <Select.Option value="Offline">Offline</Select.Option>
@@ -302,7 +304,7 @@ const AddOrder = () => {
                   .indexOf(input.toLowerCase()) >= 0
               }
             >
-              {products.map((item: any, idx) => (
+              {products.map((item: any, idx: number) => (
                 <Select.Option key={idx} value={item.id}>
                   {item.name}
                 </Select.Option>
@@ -358,7 +360,7 @@ const AddOrder = () => {
                             ]}
                           >
                             <Select allowClear showSearch placeholder="Select">
-                              {(sizes || []).map((item: any, index) => (
+                              {(sizes || []).map((item: any, index: number) => (
                                 <Select.Option key={index} value={item.id}>
                                   {`${item.id} ${item.name}`}
                                 </Select.Option>
@@ -437,7 +439,7 @@ const AddOrder = () => {
           </Button>
           <Button
             size="small"
-            color="blue"
+            color="primary"
             onClick={() => handleSubmit(global.formValues)}
             // htmlType="submit"
             className="capitalize"

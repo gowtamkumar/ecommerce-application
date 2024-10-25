@@ -43,7 +43,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const UserList: React.FC = () => {
-  const [user, setUsers] = useState([]);
+  const [user, setUsers] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();

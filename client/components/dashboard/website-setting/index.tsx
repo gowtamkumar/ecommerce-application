@@ -19,7 +19,6 @@ import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/config";
 
 export default function Index() {
-
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -31,9 +30,9 @@ export default function Index() {
       try {
         setLoading(true)
         const setting = await getSettings();
-     
+
         if (isMounted) {
-          const newData = { ...setting.data[0] };
+          const newData = setting.data?.length ? setting.data[0] : {};
           if (newData.image) {
             const newfile = {
               uid: Math.random() * 1000 + "",
@@ -71,7 +70,7 @@ export default function Index() {
       defaultValue={"web_site_stting"}
       type="card"
       items={[
-        
+
         {
           label: "Home Page",
           key: "home_page",
@@ -113,7 +112,7 @@ export default function Index() {
           key: "footer_option",
           children: <FooterOption />,
         },
-       
+
       ]}
     />
   );

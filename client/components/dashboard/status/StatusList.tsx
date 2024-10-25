@@ -4,7 +4,7 @@ import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
-import { deleteStatus, getStatuss } from "@/lib/apis/status";
+import { deleteStatus, getStatuses } from "@/lib/apis/status";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -30,7 +30,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const StatusList: React.FC = () => {
-  const [Statuss, setStatus] = useState([]);
+  const [status, setStatus] = useState([] as any);
   const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const StatusList: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getStatuss();
+      const res = await getStatuses();
       setStatus(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -229,7 +229,7 @@ const StatusList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={Statuss}
+      dataSource={status}
       pagination={{ pageSize: 15 }}
       bordered
       size="small"
