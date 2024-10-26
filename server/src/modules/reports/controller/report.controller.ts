@@ -12,7 +12,11 @@ import { logger } from "../../../middlewares/logger";
 export const getDashboardReport = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: getDashbordReport ${req.method} ${req.url}`);
-    logger.error(`Error: something `); //this is error log
+    // logger.error(`Error: something `); //this is error log
+    // logger.log({
+    //   level: 'info',
+    //   message: 'Hello distributed log files!'
+    // })
 
     const { status, startDate, endDate }: any = req.query;
     const connection = await getDBConnection();
