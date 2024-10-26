@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, DatePicker, Spin, Statistic } from "antd";
@@ -57,7 +58,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     })();
-  }, [firstDateOfMonth, lastDateOfMonth]);
+  }, []);
 
   const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
     (
