@@ -4,27 +4,17 @@ import { authOptions } from "../authOption";
 import appConfig from "@/config";
 
 export async function getAllCategories() {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/categories/all`,
-      {
-        next: { revalidate: 30 },
-        headers: {
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch data: ${res.statusText}`);
+  const session = await getServerSession(authOptions);
+  const res = await fetch(
+    `${appConfig.apiUrl}/api/v1/categories/all`,
+    {
+      next: { revalidate: 30 },
+      headers: {
+        Authorization: `Bearer ${session?.user?.accessToken}`,
+      },
     }
-
-    return await res.json();
-  } catch (error) {
-    console.error("Error in getAllCategories:", error);
-    throw error; // Re-throw the error for further handling
-  }
+  );
+  return  res.json();
 }
 
 export async function getCategories() {

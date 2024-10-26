@@ -4,6 +4,7 @@ import PostSearchSection from "./PostSearchSection";
 import PostCategorySection from "./PostCategorySection";
 import RecentPostSection from "./RecentPostSection";
 import PostTagSection from "./PostTagSection";
+import Image from "next/image";
 
 export default function SinglePost() {
   return (
@@ -75,10 +76,15 @@ export default function SinglePost() {
 
           {/* <!-- Author Section --> */}
           <div className="bg-white rounded-lg shadow-md p-6 mt-10 flex items-center">
-            <img
-              src="https://via.placeholder.com/80x80"
+            <Image
               alt="Author Image"
+              src="https://via.placeholder.com/80x80"
+              loading="lazy"
+              // fill
+              width={0}
+              height={0}
               className="w-20 h-20 rounded-full mr-6"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <div>
               <h3 className="text-xl font-semibold text-gray-800">

@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 import React from "react";
 
 export default function CommentSection() {
@@ -7,10 +8,15 @@ export default function CommentSection() {
       <h3 className="text-2xl font-semibold text-gray-800 mb-6">Comments</h3>
       <div className="space-y-6">
         <div className="flex">
-          <img
-            src="https://via.placeholder.com/50x50"
+          <Image
             alt="User Image"
+            src="https://via.placeholder.com/80x80"
+            loading="lazy"
+            // fill
+            width={0}
+            height={0}
             className="w-12 h-12 rounded-full mr-4"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div>
             <h4 className="font-semibold text-gray-800">User Name</h4>

@@ -11,9 +11,7 @@ import dayjs from "dayjs";
 import React from "react";
 
 export default async function page({ params }: { params: { id: string } }) {
-  const paramsData = await params
-
-  const { data: post } = await getPost(paramsData);
+  const { data: post } = await getPost(params);
   return (
     <>
       <div

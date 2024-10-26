@@ -51,8 +51,7 @@ export async function getDiscounts() {
 }
 
 export async function getFilterDiscounts(params?: { type: string }) {
-  try {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
     const res = await fetch(
       `${appConfig.apiUrl}/api/v1/discounts?type=${params?.type}`,
       {
@@ -62,11 +61,7 @@ export async function getFilterDiscounts(params?: { type: string }) {
       }
     );
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in getFilterDiscounts:", error);
-    throw error; // Re-throw the error for further handling
-  }
+    return res.json()
 }
 
 export async function updateDiscount(data: any) {
