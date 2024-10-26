@@ -36,6 +36,9 @@ const CompanySetting = ({ currencies }: any) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
+  console.log("global.formValues", global.formValues);
+  
+
   form.setFieldsValue(global.formValues);
 
   const handleSubmit = async (values: any) => {

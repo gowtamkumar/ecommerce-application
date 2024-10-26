@@ -4,12 +4,16 @@ import { getDBConnection } from "../../../config/db";
 import { OrderEntity } from "../../order/model/order.entity";
 import dayjs from "dayjs";
 import { UserEntity } from "../../auth/model/user.entity";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
 // @access Public
 export const getDashboardReport = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getDashbordReport ${req.method} ${req.url}`);
+    logger.error(`Error: something `); //this is error log
+
     const { status, startDate, endDate }: any = req.query;
     const connection = await getDBConnection();
 
