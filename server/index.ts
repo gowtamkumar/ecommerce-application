@@ -47,10 +47,10 @@ app.use(express.urlencoded({ extended: true })); // it parses incoming request w
 app.use(cors()); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
 app.use(helmet());
 
-app.use((req, res, next) => {
-  // console.log(`Static file request: ${req.url}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   // console.log(`Static file request: ${req.url}`);
+//   next();
+// });
 // Dev logging middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
