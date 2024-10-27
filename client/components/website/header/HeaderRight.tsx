@@ -1,25 +1,18 @@
 "use client";
 import { userProfileRoute } from "@/NavBarRoute";
-import { selectCart } from "@/redux/features/cart/cartSlice";
 import { Avatar, Badge, Dropdown, Modal } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { CiSearch, CiHeart } from "react-icons/ci";
-
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
 import appConfig from "@/config";
 
-export default function HeaderRight({res}: any) {
+export default function HeaderRight({ res }: any) {
   const [open, setOpen] = useState(false);
-  // const cart = useSelector(selectCart);
   const session = useSession();
   const profileImage = session.data?.user?.image;
-
-  // console.log("cart.carts", cart.carts);
-  
 
   return (
     <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">

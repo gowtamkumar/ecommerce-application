@@ -17,6 +17,7 @@ import ContactPage from "./ContactPage";
 import HelpSupport from "./HelpSupport";
 import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/config";
+import Menu from "./Menu";
 
 export default function Index() {
   const [loading, setLoading] = useState(false);
@@ -48,8 +49,6 @@ export default function Index() {
           dispatch(setFormValues(newData));
         }
 
-
-
         setLoading(false)
       } catch (error) {
         setLoading(false)
@@ -70,6 +69,11 @@ export default function Index() {
       defaultValue={"web_site_stting"}
       type="card"
       items={[
+        {
+          label: "Menu",
+          key: "menu",
+          children: <Menu />,
+        },
 
         {
           label: "Home Page",

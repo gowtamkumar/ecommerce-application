@@ -64,6 +64,7 @@ export async function getFilterDiscounts(params?: { type: string }) {
     return res.json()
 }
 
+
 export async function updateDiscount(data: any) {
   try {
     const session = await getServerSession(authOptions);

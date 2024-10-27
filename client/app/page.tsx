@@ -13,6 +13,7 @@ import ProductFeatured from "@/components/website/product/ProductFeatured";
 import HeaderDiscount from "@/components/website/banner/HeaderDiscount";
 import MoreDiscover from "@/components/website/home/MoreDiscover";
 import TopSellingProductCard from "@/components/website/product/TopSellingProductCard";
+
 export default async function Home() {
   const banners = await getBanners();
   const discounts = await getFilterDiscounts({ type: "Discount" });
@@ -58,7 +59,6 @@ export default async function Home() {
             </Link>
           </div>
           <TopSellingProductCard />
-
           {/* <ProductCard /> */}
         </section>
 
