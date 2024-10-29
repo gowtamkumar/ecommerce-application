@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// import "./style.css";
+import "./style.css";
 import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";

@@ -34,6 +34,9 @@ const config: Config = {
       fontWeight: {
         "weight-100": "100",
       },
+      screens: {
+        'mobile-landscape': '560px'
+      }
 
       // backgroundImage: {
       //   "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

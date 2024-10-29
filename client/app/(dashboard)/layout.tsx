@@ -8,7 +8,7 @@ import DashboardHeader from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Loading from "./loading";
+import Loading from "./dashboard/loading";
 const { Content } = Layout;
 
 export default function DashboardLayout({
