@@ -31,13 +31,11 @@ const config: Config = {
         "font-size-h6": "0.8rem",
         "font-size-p": "0.5rem",
       },
-      fontWeight: {
-        "weight-100": "100",
-      },
       screens: {
-        'mobile-landscape': '560px'
-      }
-
+        'xs': '480px',   // Custom extra small (Mobile portrait)
+        'mobile-landscape': '568px',   // Custom breakpoint for mobile landscape
+        '3xl': '1600px', // Extra large desktop
+      },
       // backgroundImage: {
       //   "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       //   "gradient-conic":
@@ -45,6 +43,8 @@ const config: Config = {
       // },
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwindcss-animate")
+  ],
 };
 export default config;

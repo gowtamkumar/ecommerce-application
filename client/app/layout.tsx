@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import "./style.css";
 import StoreProvider from "@/redux/storeProvider";
@@ -13,7 +13,73 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 
-const inter = Inter({ subsets: ["latin"] });
+// const urbanistFont = localFont({
+//   src: [
+//     // Urbanist Font Variants
+//     {
+//       path: "../fonts/Urbanist/Urbanist-Black.woff2",
+//       weight: "900",
+//       style: "normal",
+//     },
+//     {
+//       path: "../fonts/Urbanist/Urbanist-ExtraBold.woff2",
+//       weight: "800",
+//       style: "normal",
+//     },
+//     {
+//       path: "../fonts/Urbanist/Urbanist-Bold.woff2",
+//       weight: "700",
+//       style: "normal",
+//     },
+//     {
+//       path: "../fonts/Urbanist/Urbanist-SemiBold.woff2",
+//       weight: "600",
+//       style: "normal",
+//     },
+//     {
+//       path: "../fonts/Urbanist/Urbanist-Medium.woff2",
+//       weight: "500",
+//       style: "normal",
+//     },
+//     {
+//       path: "../fonts/Urbanist/Urbanist-Regular.woff2",
+//       weight: "400",
+//       style: "normal",
+//     },
+//   ],
+//   variable: "--font-urbanist",
+// });
+const poppinsFont = localFont({
+  src: [
+    // Poppins Font Variants
+    {
+      path: "../fonts/Poppins/Poppins-Black.woff2",
+      weight: "900",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Poppins/Poppins-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Poppins/Poppins-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Poppins/Poppins-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Poppins/Poppins-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,7 +94,10 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true} className={`${inter.className}`}>
+      <body
+        suppressHydrationWarning={true}
+        className={`${poppinsFont.variable}`}
+      >
         <AuthProvider session={session}>
           <StoreProvider>
             <AntdRegistry>{children}</AntdRegistry>

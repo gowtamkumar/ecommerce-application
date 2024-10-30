@@ -2,51 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global styles */
-.btn-primary-bioxin {
-  @apply bg-[#000000] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#F7AA0E];
+/*global font*/
+body {
+  /* font-family: var(--font-urbanist); */
+  font-family: var(--font-poppins);
 }
 
+.tobar {
+  @apply min-h-[60px] text-bioxin-p;
+}
+
+.menubar {
+  @apply min-h-[80px];
+}
+
+.hero-section {
+  @apply min-h-[vh80];
+}
+
+/* Global section */
 .section-spacing-bioxin {
-  @apply py-20;
+  @apply py-24;
 }
 
-.banner-section-spacing {
-  @apply py-20;
+/* page title */
+.page-title {
+  @apply text-bioxin-h1 p-0 m-0 font-bold leading-[80px];
 }
-
-/* Global responsive container padding */
-.container {
-  @apply p-4; /* Default padding (mobile) */
-  @apply mobile-landscape:p-6; /* Mobile landscape */
-  @apply md:p-8; /* Tablet */
-  @apply lg:p-10; /* Laptop */
-  @apply xl:p-12; /* Desktop */
-}
+/* @apply mobile-landscape:text-3xl; Mobile landscape 
+@apply md:text-4xl;  Tablet 
+@apply lg:text-5xl;  Laptop 
+@apply xl:text-6xl;  Desktop  */
 
 /* Global responsive heading */
-.heading {
-  @apply text-2xl; /* Default heading size (mobile) */
-  @apply mobile-landscape:text-3xl; /* Mobile landscape */
-  @apply md:text-4xl; /* Tablet */
-  @apply lg:text-5xl; /* Laptop */
-  @apply xl:text-6xl; /* Desktop */
+.section-heading {
+  @apply text-bioxin-h3 p-0 m-0 font-semibold leading-[52px];
 }
 
-/* Global responsive paragraph */
-.paragraph {
-  @apply text-base; /* Default font size (mobile) */
-  @apply mobile-landscape:text-lg; /* Mobile landscape */
-  @apply md:text-xl; /* Tablet */
-  @apply lg:text-2xl; /* Laptop */
-  @apply xl:text-3xl; /* Desktop */
+/* Global styles */
+.btn-primary-bioxin {
+  @apply bg-[#000000] text-white text-bioxin-p font-semibold py-3 px-4 rounded hover:bg-[#F7AA0E];
 }
 
-/* Example for visibility on different screen sizes */
-.show-only-mobile {
-  @apply block sm:hidden; /* Visible on mobile, hidden on larger screens */
-}
-
-.show-only-desktop {
-  @apply hidden lg:block; /* Hidden on smaller screens, visible on laptop and up */
+.card-title {
+  @apply text-bioxin-h5 p-0 m-0 font-semibold leading-[38px];
 }
