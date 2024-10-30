@@ -31,7 +31,6 @@ export default async function RootLayout({
       <body suppressHydrationWarning={true} className={`${inter.className}`}>
         <AuthProvider session={session}>
           <StoreProvider>
-            {/* {children} */}
             <AntdRegistry>{children}</AntdRegistry>
           </StoreProvider>
         </AuthProvider>
