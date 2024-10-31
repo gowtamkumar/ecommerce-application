@@ -9,7 +9,7 @@ body {
 }
 
 .tobar {
-  @apply min-h-[60px] text-bioxin-p;
+  @apply min-h-[60px] text-global-size-p;
 }
 
 .menubar {
@@ -21,13 +21,13 @@ body {
 }
 
 /* Global section */
-.section-spacing-bioxin {
+.section-spacing {
   @apply py-24;
 }
 
 /* page title */
 .page-title {
-  @apply text-bioxin-h1 p-0 m-0 font-bold leading-[80px];
+  @apply text-global-size-h1 p-0 m-0 font-bold leading-[80px];
 }
 /* @apply mobile-landscape:text-3xl; Mobile landscape 
 @apply md:text-4xl;  Tablet 
@@ -36,14 +36,14 @@ body {
 
 /* Global responsive heading */
 .section-heading {
-  @apply text-bioxin-h3 p-0 m-0 font-semibold leading-[52px];
+  @apply text-global-size-h3 p-0 m-0 font-semibold leading-[52px];
 }
 
 /* Global styles */
-.btn-primary-bioxin {
-  @apply bg-[#000000] text-white text-bioxin-p font-semibold py-3 px-4 rounded hover:bg-[#F7AA0E];
+.global-btn-primary {
+  @apply bg-[#000000] text-white text-global-size-p font-semibold py-3 px-4 rounded hover:bg-global-primary;
 }
 
 .card-title {
-  @apply text-bioxin-h5 p-0 m-0 font-semibold leading-[38px];
+  @apply text-global-size-h5 p-0 m-0 font-semibold leading-[38px];
 }

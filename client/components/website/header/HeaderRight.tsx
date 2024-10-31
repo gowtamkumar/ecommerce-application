@@ -9,7 +9,7 @@ import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
 import appConfig from "@/config";
 
-export default function HeaderRight({ res }: any) {
+export default function HeaderRight() {
   const [open, setOpen] = useState(false);
   const session = useSession();
   const profileImage = session.data?.user?.image;
@@ -25,7 +25,7 @@ export default function HeaderRight({ res }: any) {
         <CiHeart size={22} className="font-medium" />
       </Link>
       <Link href="/checkout" className="cursor-pointer mt-1 md:inline hidden">
-        <Badge size="default" count={res.data?.length}>
+        <Badge size="default" count={10}>
           <IoBagOutline size={22} className="font-medium" />
         </Badge>
       </Link>

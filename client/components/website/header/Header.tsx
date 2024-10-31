@@ -12,7 +12,7 @@ export default async function Header() {
   //  const res = await saveVisitor({})
   //  console.log("🚀 ~ res:", res)
   const setting = await getSettings();
-  const res = await getCartByUser();
+  // const res = await getCartByUser();
   // const singleLogo = logo.data ? logo.data[0]?.image : null;
   return (
     <>
@@ -28,7 +28,7 @@ export default async function Header() {
             <div className="hidden md:inline md:order-2">
               <MainMenu  />
             </div>
-            <HeaderRight res={res} />
+            <HeaderRight />
           </div>
         </div>
       </div>

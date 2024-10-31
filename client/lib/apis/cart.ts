@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
+import { notFound } from "next/navigation";
 
 export async function saveCart(data: any) {
   const session = await getServerSession(authOptions);
@@ -47,6 +48,8 @@ export async function getCartByUser() {
   });
 
   if (!res.ok) {
+  //  notFound()
+
     console.log(`Error fetching cart by user: ${res.statusText}`);
   }
 

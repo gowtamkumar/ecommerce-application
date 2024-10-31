@@ -9,32 +9,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bioxin: {
+        global: {
           primary: "#F7AA0E",
           secondary: "#000000",
           accent: "#F2F2F2",
         },
       },
       fontFamily: {
-        fontfamily: ["Poppins", "Urbanist"],
-        "primary-fontfamily": "Poppins",
-        "secondary-fontfamily": "Urbanist",
+        "global-fontfamily": ["Poppins", "Urbanist"],
+        "global-primary-fontfamily": "Poppins",
+        "global-secondary-fontfamily": "Urbanist",
         "bangla-primary-fontfamily": "হিন্দ শিলিগুড়ি",
         "bangla-secondary-fontfamily": "আদর নইিরত",
       },
       fontSize: {
-        "font-size-h1": "1rem",
-        "font-size-h2": "0.8rem",
-        "font-size-h3": "0.8rem",
-        "font-size-h4": "0.8rem",
-        "font-size-h5": "0.8rem",
-        "font-size-h6": "0.8rem",
-        "font-size-p": "0.5rem",
+        "global-size-h1": "1rem",
+        "global-size-h2": "0.8rem",
+        "global-size-h3": "0.8rem",
+        "global-size-h4": "0.8rem",
+        "global-size-h5": "0.8rem",
+        "global-size-h6": "0.8rem",
+        "global-size-p": "0.5rem",
       },
       screens: {
-        'xs': '480px',   // Custom extra small (Mobile portrait)
-        'mobile-landscape': '568px',   // Custom breakpoint for mobile landscape
-        '3xl': '1600px', // Extra large desktop
+        xs: "480px", // Custom extra small (Mobile portrait)
+        "mobile-landscape": "568px", // Custom breakpoint for mobile landscape
+        "3xl": "1600px", // Extra large desktop
       },
       // backgroundImage: {
       //   "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -43,8 +43,6 @@ const config: Config = {
       // },
     },
   },
-  plugins: [
-    require("tailwindcss-animate")
-  ],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;
