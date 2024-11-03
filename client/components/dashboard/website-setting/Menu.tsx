@@ -1,9 +1,16 @@
 import React from "react";
 import { Form, Card, Input, Button, Space, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import { saveMenu } from "@/lib/apis/menu";
 
 const DynamicForm = () => {
   const [form] = Form.useForm();
+  const handelMenu=async(value: any)=> {
+  // console.log("🚀 ~ value:", value.items[0])
+  const menu = await saveMenu(value.items[0])
+  console.log("🚀 ~ menu:", menu)
+
+  }
 
   const NestedList = ({ parentField }: any) => (
     <Form.Item label="List">
@@ -63,9 +70,7 @@ const DynamicForm = () => {
       wrapperCol={{ span: 18 }}
       form={form}
       name="dynamic_form_complex"
-      onFinish={(v) => {
-        console.log("asdfasdf", v);
-      }}
+      onFinish={handelMenu}
       // style={{ maxWidth: 900 }}
       autoComplete="off"
       initialValues={{ items: [{}] }}

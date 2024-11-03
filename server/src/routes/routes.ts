@@ -20,6 +20,7 @@ import settingRoute from "../modules/other/setting/route/setting.route";
 import currencyRoute from "../modules/currency/route/currency.route";
 import bannerRoute from "../modules/banner/route/banner.route";
 import cartRoute from "../modules/cart/route/cart.route";
+import menuRoute from "../modules/menu/route/menu.route";
 import fileRoute from "../modules/other/file/route/file.route";
 import categoriesRoute from "../modules/categories/route/category.route";
 import productVariantRoute from "../modules/product-variant/route/product-variant.route";
@@ -45,6 +46,7 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/currencies", currencyRoute);
   app.use("/api/v1/banners", bannerRoute);
   app.use("/api/v1/carts",AuthGuard, cartRoute);
+  app.use("/api/v1/menus",AuthGuard, menuRoute);
 
   app.use("/api/v1/product-variants", productVariantRoute);
   app.use("/api/v1/categories", categoriesRoute);
