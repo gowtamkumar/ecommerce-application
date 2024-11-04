@@ -3,7 +3,7 @@ import { Form, Card, Input, Button, Space, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { saveMenu } from "@/lib/apis/menu";
 
-const DynamicForm = () => {
+const Index = () => {
   const [form] = Form.useForm();
   const handelMenu=async(value: any)=> {
   // console.log("🚀 ~ value:", value.items[0])
@@ -130,4 +130,4 @@ const DynamicForm = () => {
   );
 };
 
-export default DynamicForm;
+export default Index;

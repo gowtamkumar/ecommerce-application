@@ -17,7 +17,7 @@ export class MenuEntity {
   @Column()
   name!: string;
 
-  @Column({ type: "simple-json" })
+  @Column({ type: "simple-json", nullable: true })
   items!: string;
 
   // @Column({ nullable: true })
@@ -26,7 +26,7 @@ export class MenuEntity {
   @Column({
     type: "enum",
     enum: MenuStatus,
-    default: MenuStatus.Active,
+    default: MenuStatus.Inactive,
   })
   status!: MenuStatus;
 

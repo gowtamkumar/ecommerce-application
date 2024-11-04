@@ -36,7 +36,6 @@ const AddColor = () => {
   const { payload } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -56,6 +55,7 @@ const AddColor = () => {
       const result = newData.id
         ? await updateColor(newData)
         : await saveColor(newData);
+      // console.log("🚀 ~ result:", result)
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
 

@@ -51,7 +51,9 @@ export const createColor = asyncHandler(async (req: any, res: Response) => {
     ...req.body,
     userId: req.id,
   });
-
+  console.log("req.body", req.body);
+  
+  console.log("🚀 ~ validation:", validation.error)
   if (!validation.success) {
     return res.status(401).json({
       message: validation.error.formErrors,
@@ -69,6 +71,7 @@ export const createColor = asyncHandler(async (req: any, res: Response) => {
     data: save,
   });
 });
+ 
 
 // @desc Update a single Color
 // @route PUT /api/v1/Color/:id

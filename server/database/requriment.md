@@ -38,4 +38,5 @@ need to work order update and partial return and return product ar je shipping c
 ## need to add attribute as like wordpress
 ## need to add combopackage for product
 ## need to modify discount role kiser jonno disouct dibo, exam: category, product, total order, for number of items, for shipping, . that mine kivabe all category, ba singe category, single product, all product, qty upor virty kore discount hoy. dicount ar moddha couponcode dite hobe. discount and coupon ar  expiry date thakbe.
-# 
+
+# need to dynamic menu

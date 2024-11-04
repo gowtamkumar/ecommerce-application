@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import {
   Input,
@@ -59,7 +59,8 @@ type DataIndex = keyof DataType;
 
 const Page: React.FC = () => {
   const [orders, setOrders] = useState([]);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState(null) as any ;
+  // const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -70,7 +71,7 @@ const Page: React.FC = () => {
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
-      }));      
+      }));
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
@@ -119,11 +120,14 @@ const Page: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
+          // ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={(e) => {
+
             setSelectedKeys(e.target.value ? [e.target.value] : [])
+            setSearchInput(e.target.value)
+          }
           }
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)

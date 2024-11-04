@@ -45,8 +45,8 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/settings", settingRoute);
   app.use("/api/v1/currencies", currencyRoute);
   app.use("/api/v1/banners", bannerRoute);
-  app.use("/api/v1/carts",AuthGuard, cartRoute);
-  app.use("/api/v1/menus",AuthGuard, menuRoute);
+  app.use("/api/v1/carts", AuthGuard, cartRoute);
+  app.use("/api/v1/menus", AuthGuard, menuRoute);
 
   app.use("/api/v1/product-variants", productVariantRoute);
   app.use("/api/v1/categories", categoriesRoute);

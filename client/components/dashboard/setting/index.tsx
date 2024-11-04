@@ -1,12 +1,5 @@
 "use client";
-import Banner from "@/app/dashboard/banner/page";
-import Color from "@/app/dashboard/color/page";
-import Discount from "@/app/dashboard/discounts/page";
-import Review from "@/app/dashboard/review/page";
-import Size from "@/app/dashboard/size/page";
-import Status from "@/app/dashboard/status/page";
-import Tax from "@/app/dashboard/taxs/page";
-import Unit from "@/app/dashboard/unit/page";
+
 import { Tabs } from "antd";
 import React, { useEffect, useState } from "react";
 import { getSettings } from "@/lib/apis/setting";
@@ -22,6 +15,14 @@ import Currency from "./currency/Currency";
 import CompanySetting from "./CompanySetting";
 import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/config";
+import Size from "@/app/(dashboard)/dashboard/size/page";
+import Unit from "@/app/(dashboard)/dashboard/unit/page";
+import Tax from "@/app/(dashboard)/dashboard/taxs/page";
+import Discount from "@/app/(dashboard)/dashboard/discounts/page";
+import Color from "@/app/(dashboard)/dashboard/color/page";
+import Banner from "@/app/(dashboard)/dashboard/banner/page";
+import Review from "@/app/(dashboard)/dashboard/review/page";
+import Status from "@/app/(dashboard)/dashboard/status/page";
 
 export default function Index() {
   const [currencies, setCurrencies] = useState([] as any);

@@ -5,6 +5,7 @@ import appConfig from "@/config";
 
 
 export async function saveColor(data: any) {
+  console.log("🚀 ~ data:", data)
   try {
     const session = await getServerSession(authOptions);
     const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {

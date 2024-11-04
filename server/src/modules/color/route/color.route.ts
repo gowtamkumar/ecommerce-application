@@ -6,11 +6,16 @@ import {
   getColor,
   updateColor,
 } from "../controller/color.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getColors).post(createColor);
+router.route("/").get(getColors).post(AuthGuard, createColor);
 
-router.route("/:id").get(getColor).put(updateColor).delete(deleteColor);
+router
+  .route("/:id")
+  .get(getColor)
+  .put(AuthGuard, updateColor)
+  .delete(AuthGuard, deleteColor);
 
 export default router;
