@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import type {  TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -33,7 +33,7 @@ type DataIndex = keyof DataType;
 
 const ReviewList: React.FC = () => {
   const [reviews, setReviews] = useState([] as any);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -88,12 +88,12 @@ const ReviewList: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -151,7 +151,7 @@ const ReviewList: React.FC = () => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput, 100);
       }
     },
     render: (text) =>
@@ -173,7 +173,7 @@ const ReviewList: React.FC = () => {
       title: "Product",
       dataIndex: "product",
       key: "product",
-      render: (value) => (<div>{value.name}</div>),
+      render: (value) => <div>{value.name}</div>,
 
       // sorter: (a, b) => a.product.length - b.product.length,
     },
@@ -206,8 +206,8 @@ const ReviewList: React.FC = () => {
             value.status === "Approved"
               ? "green"
               : value.status === "Pending"
-                ? "yellow"
-                : "red"
+              ? "yellow"
+              : "red"
           }
         >
           {value.status}
@@ -231,7 +231,7 @@ const ReviewList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  review:true,
+                  review: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

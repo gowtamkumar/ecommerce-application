@@ -1,8 +1,8 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,17 +13,8 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
-import {
-  deleteShippingAddress,
-  getShippingAddress,
-} from "@/lib/apis/shipping-address";
+import { deleteShippingAddress } from "@/lib/apis/shipping-address";
 
 interface DataType {
   key: string;
@@ -44,8 +35,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const MyShippingAddress = ({ shippingAddress }: any) => {
-  // const [address, setAddress] = useState([]);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -99,11 +89,12 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={(e) => {
+            setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           }
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -162,7 +153,7 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput, 100);
       }
     },
     render: (text) =>

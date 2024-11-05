@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { sendForgotPassword } from "@/lib/apis/sendForgotPassword";
 import { useFormState } from "react-dom";
-import Button from "@/components/dashboard/Button";
+import Button from "@/components/share-component/Button";
 import { forgotPasswordValidationSchema } from "@/validation/user/forgotPasswordValidation";
 
 export default function ForgotPassrod() {

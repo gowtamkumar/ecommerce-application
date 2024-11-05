@@ -27,6 +27,7 @@ import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { getAllCategories } from "@/lib/apis/categories";
 import appConfig from "@/config";
+import TextQuillEditor from "@/components/share-component/editor-quill/TextQuillEditor";
 
 // type Presets = Required<ColorPickerProps>["presets"][number];
 
@@ -53,6 +54,7 @@ const AddPost = () => {
     fileList: [],
   }) as any;
   const [previewTitle, setPreviewTitle] = useState("");
+  const [editorContent, setEditorContent] = useState('')
 
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
@@ -69,6 +71,7 @@ const AddPost = () => {
         ({ categoryId }: { categoryId: number }) => categoryId
       );
       setTags(newData?.tags || []);
+      setEditorContent(newData?.content || '');
       setCategories(resCategory.data);
       setFormData({ ...newData, postCategories });
     })();
@@ -81,8 +84,9 @@ const AddPost = () => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      let newData = { ...values, tags };
-      // return console.log("newData:", newData);
+      let newData = { ...values, content: editorContent, tags };
+      // return console.log("newData:", editorContent, newData);
+
       dispatch(setLoading({ save: true }));
       const result = newData.id
         ? await updatePost(newData)
@@ -278,7 +282,6 @@ const AddPost = () => {
 
             <div className={`col-span-1 `}>
               <label htmlFor="tags">Tags</label>
-
               <Input
                 type="text"
                 id="tags"
@@ -357,7 +360,8 @@ const AddPost = () => {
             </div>
 
             <div className="col-span-1">
-              <Form.Item
+              <label htmlFor="content">Content</label>
+              {/* <Form.Item
                 name="content"
                 className="mb-1"
                 label="Content"
@@ -367,9 +371,11 @@ const AddPost = () => {
                     message: "content is required",
                   },
                 ]}
-              >
-                <Input.TextArea placeholder="Enter Title" />
-              </Form.Item>
+              > */}
+
+                <TextQuillEditor editorContent={editorContent} setEditorContent={setEditorContent} />
+                {/* <Input.TextArea placeholder="Enter Title" /> */}
+              {/* </Form.Item> */}
             </div>
 
             <div className={`col-span-1 `}>

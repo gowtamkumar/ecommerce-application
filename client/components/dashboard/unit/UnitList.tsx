@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import type {  TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -31,7 +31,7 @@ type DataIndex = keyof DataType;
 
 const UnitList: React.FC = () => {
   const [units, setUnits] = useState([] as any);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -86,11 +86,12 @@ const UnitList: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={(e) =>{
+            setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           }
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -149,7 +150,7 @@ const UnitList: React.FC = () => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput, 100);
       }
     },
     render: (text) =>

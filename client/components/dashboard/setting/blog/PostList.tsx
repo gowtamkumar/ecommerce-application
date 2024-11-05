@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import type {  TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -36,7 +36,7 @@ type DataIndex = keyof DataType;
 
 const PostList: React.FC = () => {
   const [posts, setPosts] = useState([]);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -44,7 +44,6 @@ const PostList: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getPosts();
-      console.log("🚀 ~ res:", res.data);
       setPosts(res?.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -92,11 +91,12 @@ const PostList: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={(e) => {
             setSelectedKeys(e.target.value ? [e.target.value] : [])
+            setSearchInput(e.target.value)
+          }
           }
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -155,7 +155,7 @@ const PostList: React.FC = () => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput, 100);
       }
     },
     render: (text) =>
@@ -218,6 +218,9 @@ const PostList: React.FC = () => {
       title: "content",
       dataIndex: "content",
       key: "content",
+      render: (value) => {
+        return <div dangerouslySetInnerHTML={{ __html: value }} />
+      }
     },
     {
       title: "Status",
@@ -245,9 +248,8 @@ const PostList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${
-                    newData.image || "no-data.png"
-                  }`,
+                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+                    }`,
                 };
                 newData.fileList = [file];
               }

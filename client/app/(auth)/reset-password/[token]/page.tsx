@@ -8,7 +8,7 @@ import { resetPasswordValidationSchema } from "@/validation/user/resetPasswordVa
 import { resetPassword } from "@/lib/apis/resetPassword";
 import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
-import Button from "@/components/dashboard/Button";
+import Button from "@/components/share-component/Button";
 
 export default function ResetPassrod() {
   const params = useParams();

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Rate, Row, Space, Table, Tag } from "antd";
@@ -14,18 +14,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
-  setAction,
-  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { BiDislike, BiLike } from "react-icons/bi";
 import Image from "next/image";
 import dayjs from "dayjs";
@@ -44,8 +35,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ReviewTable = ({ reviews }: any) => {
-  // const [reviews, setReviews] = useState([]);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -92,11 +82,12 @@ const ReviewTable = ({ reviews }: any) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={(e) => {
+            setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           }
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -155,7 +146,7 @@ const ReviewTable = ({ reviews }: any) => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput, 100);
       }
     },
     render: (text) =>

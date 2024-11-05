@@ -60,7 +60,6 @@ type DataIndex = keyof DataType;
 const Page: React.FC = () => {
   const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState(null) as any ;
-  // const searchInput = useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 

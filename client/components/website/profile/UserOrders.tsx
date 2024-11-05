@@ -1,18 +1,16 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import React, { useState } from "react";
+import type { TableColumnsType, TableColumnType } from "antd";
 import { Input, Space, Table, Button, Tag, Timeline, Divider } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
-  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import Highlighter from "react-highlight-words";
-import { getUserOrders } from "@/lib/apis/orders";
 import dayjs from "dayjs";
 import { getStatus } from "@/lib/share/getStatus";
 
@@ -25,8 +23,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const UserOrders = ({ orders }: any) => {
-  // const [orders, setOrders] = useState([]);
-  const searchInput = useRef<InputRef>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -70,11 +67,12 @@ const UserOrders = ({ orders }: any) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={(e) => {
+            setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           }
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -133,7 +131,7 @@ const UserOrders = ({ orders }: any) => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput, 100);
       }
     },
     render: (text) =>
