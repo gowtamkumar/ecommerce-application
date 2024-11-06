@@ -1,12 +1,14 @@
 "use client";
+import dynamic from 'next/dynamic'
 import React, { useState } from "react";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import LeadList from "./LeadList";
-import AddLead from "./AddLead";
+
+const AddLead = dynamic(()=> import('./AddLead'), {ssr: false})
+const LeadList = dynamic(()=> import('./LeadList'), {ssr: false})
 
 
 export default function Lead() {

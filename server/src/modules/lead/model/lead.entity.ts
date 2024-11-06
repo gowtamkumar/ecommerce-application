@@ -1,12 +1,18 @@
 import "reflect-metadata";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity("leads")
 export class LeadEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ unique: true })
   email!: string;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp with time zone" })
@@ -14,6 +20,4 @@ export class LeadEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp with time zone" })
   updatedAt?: string;
-
-
 }

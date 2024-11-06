@@ -13,42 +13,6 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 
-// const urbanistFont = localFont({
-//   src: [
-//     // Urbanist Font Variants
-//     {
-//       path: "../fonts/Urbanist/Urbanist-Black.woff2",
-//       weight: "900",
-//       style: "normal",
-//     },
-//     {
-//       path: "../fonts/Urbanist/Urbanist-ExtraBold.woff2",
-//       weight: "800",
-//       style: "normal",
-//     },
-//     {
-//       path: "../fonts/Urbanist/Urbanist-Bold.woff2",
-//       weight: "700",
-//       style: "normal",
-//     },
-//     {
-//       path: "../fonts/Urbanist/Urbanist-SemiBold.woff2",
-//       weight: "600",
-//       style: "normal",
-//     },
-//     {
-//       path: "../fonts/Urbanist/Urbanist-Medium.woff2",
-//       weight: "500",
-//       style: "normal",
-//     },
-//     {
-//       path: "../fonts/Urbanist/Urbanist-Regular.woff2",
-//       weight: "400",
-//       style: "normal",
-//     },
-//   ],
-//   variable: "--font-urbanist",
-// });
 const poppinsFont = localFont({
   src: [
     // Poppins Font Variants
@@ -94,10 +58,12 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="en">
+      
       <body
         suppressHydrationWarning={true}
         className={`${poppinsFont.variable}`}
       >
+        
         <AuthProvider session={session}>
           <StoreProvider>
             <AntdRegistry>{children}</AntdRegistry>

@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
   setAction,
-  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
@@ -20,6 +19,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { deleteLead, getLeads } from "@/lib/apis/leads";
 import dayjs from "dayjs";
+import { successNotification } from "@/lib/share/notification";
 
 interface DataType {
   key: string;
@@ -30,26 +30,28 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const LeadList: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>();
   const [leads, setLeads] = useState([]);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      dispatch(setLoading({ loading: true }));
+      setLoading(true);
       const res = await getLeads();
       setLeads(res?.data);
-      dispatch(setLoading({ loading: false }));
+      setLoading(false);
     })();
-  }, [dispatch, global.action]);
+  }, []);
 
   const handleDelete = async (id: string) => {
     try {
-      dispatch(setLoading({ delete: true }));
+      setLoading(true);
       await deleteLead(id);
+      successNotification({ message: "Successfully deleted" });
       setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
+        setLoading(false);
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
@@ -84,16 +86,12 @@ const LeadList: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          // onRateChange={}
-          // ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-            setSearchInput(e.target.value)
-          }
-
-          }
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+            setSearchInput(e.target.value);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -237,7 +235,7 @@ const LeadList: React.FC = () => {
   return (
     <Table
       scroll={{ x: "auto" }}
-      loading={global.loading.loading}
+      loading={loading}
       columns={columns}
       dataSource={leads}
       pagination={{ pageSize: 10 }}

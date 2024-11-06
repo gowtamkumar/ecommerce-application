@@ -9,6 +9,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "@/constants/constants";
 import { saveLead, updateLead } from "@/lib/apis/leads";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/share/notification";
 
 const AddLead = () => {
   const global = useSelector(selectGlobal);
@@ -23,7 +27,7 @@ const AddLead = () => {
     return () => {
       form.resetFields();
     };
-  }, [form, global.action, payload]);
+  }, [payload]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -33,9 +37,22 @@ const AddLead = () => {
       const result = newData.id
         ? await updateLead(newData)
         : await saveLead(newData);
+        console.log("🚀 ~ result:", result)
+
+      // if (!result.status) {
+      //   errorNotification({ message: result.message });
+      //   dispatch(setLoading({ save: false }));
+      //   return;
+      // }
+
+      result.data.id
+        ? successNotification({ message: "Successfully Updated" })
+        : successNotification({ message: "successfully Added" });
+
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
+        form.resetFields();
       }, 100);
     } catch (err: any) {
       console.error(err);
@@ -45,6 +62,7 @@ const AddLead = () => {
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
+    form.resetFields();
   };
 
   const setFormData = (v: any) => {
@@ -57,6 +75,7 @@ const AddLead = () => {
       form.setFieldsValue(global.action?.payload);
     } else {
       form.resetFields();
+      dispatch(setLoading({ loading: false }));
     }
   };
 
@@ -111,6 +130,7 @@ const AddLead = () => {
           htmlType="submit"
           className="capitalize "
           loading={global.loading.save}
+          disabled={global.loading.save}
         >
           {payload?.id ? "Update" : "Save"}
         </Button>
