@@ -52,12 +52,26 @@ export const createLead = asyncHandler(async (req: any, res: Response) => {
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
   const repository = connection.getRepository(LeadEntity);
+
+  const result = await repository.findOne({
+    where: { email: validation.data.email },
+  });
+
+  if (result) {
+    throw new Error(`Email already exists #${validation.data.email}`);
+  }
 
   const newLead = repository.create(validation.data);
   const save = await repository.save(newLead);
@@ -80,6 +94,10 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
 
   const result = await repository.findOneBy({ id });
 
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
   const updateData = await repository.merge(result, req.body);
 
   await repository.save(updateData);
@@ -100,6 +118,7 @@ export const deleteLead = asyncHandler(async (req: Request, res: Response) => {
   const repository = await connection.getRepository(LeadEntity);
 
   const result = await repository.findOneBy({ id });
+
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
