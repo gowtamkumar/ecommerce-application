@@ -26,7 +26,7 @@ export default async function Header() {
               <MobileMenu/>
             </div>
             <div className="hidden md:inline md:order-2">
-              <MainMenu  />
+              <MainMenu responsiveMenu="desktop"  />
             </div>
             <HeaderRight />
           </div>

@@ -3,6 +3,7 @@ import { Drawer, Modal } from "antd";
 import HeaderMenu from "./HeaderMenu";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
+import MainMenu from "./Menu";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -22,7 +23,7 @@ export default function MobileMenu() {
         onClose={() => setOpen(false)}
         footer={null}
       >
-        <HeaderMenu />
+        <MainMenu responsiveMenu="mobile" />
       </Drawer>
     </div>
   );
