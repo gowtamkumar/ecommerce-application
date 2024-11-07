@@ -49,16 +49,22 @@ export const getProductVariant = asyncHandler(
 // @access Public
 export const createProductVariant = asyncHandler(
   async (req: any, res: Response) => {
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(ProductVariantEntity);
-
     const validation = productVariantValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
+
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(ProductVariantEntity);
 
     const result = await repository.create(validation.data);
     await repository.save(result);
@@ -77,13 +83,32 @@ export const createProductVariant = asyncHandler(
 export const updateProductVariant = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
+    const validation = productVariantValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const connection = await getDBConnection();
 
     const repository = await connection.getRepository(ProductVariantEntity);
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body);
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const updateData = await repository.merge(result, validation.data);
 
     await repository.save(updateData);
 

@@ -7,6 +7,7 @@ import { getDBConnection } from "../../../config/db";
 // import fs from "fs";
 import { MenuEntity } from "../model/menu.entity";
 import { menuValidationSchema } from "../../../validation/menu/menuValidation";
+import { updateMenuValidationSchema } from "../../../validation/menu/updateMenuValidation";
 
 // @desc Get all memus
 // @route GET /api/v1/memus
@@ -50,20 +51,25 @@ export const getMemu = asyncHandler(
 // @route POST /api/v1/memus
 // @access Public
 export const createMemu = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
   const validation = menuValidationSchema.safeParse({
     items: req.body.children,
     name: req.body.name,
     userId: req.id,
   });
-  // console.log("🚀 ~ validation:", validation.error);
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
+  const connection = await getDBConnection();
   const repository = connection.getRepository(MenuEntity);
 
   const newMemu = repository.create(validation.data);
@@ -81,6 +87,23 @@ export const createMemu = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  const validation = updateMenuValidationSchema.safeParse({
+    ...req.body,
+  });
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
   const connection = await getDBConnection();
 
   const repository = await connection.getRepository(MenuEntity);

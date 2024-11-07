@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { PostEntity } from "../model/post.entity";
 import { postValidationSchema } from "../../../validation";
 import { PostCategoryEntity } from "../model/post-category.entity";
+import { updatePostValidationSchema } from "../../../validation/post/updatePostValidation";
 
 // @desc Get all Post
 // @route GET /api/v1/Post
@@ -75,6 +76,23 @@ export const getPost = asyncHandler(
 // @route POST /api/v1/Post
 // @access Public
 export const createPost = asyncHandler(async (req: any, res: Response) => {
+  const validation = postValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
   const connection = await getDBConnection();
   const queryRunner = connection.createQueryRunner();
 
@@ -82,16 +100,6 @@ export const createPost = asyncHandler(async (req: any, res: Response) => {
   await queryRunner.startTransaction();
 
   try {
-    const validation = postValidationSchema.safeParse({
-      ...req.body,
-      userId: req.id,
-    });
-
-    if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
-      });
-    }
     const { postCategories, ...resetData } = validation.data;
     const repository = queryRunner.manager.getRepository(PostEntity);
 
@@ -133,12 +141,32 @@ export const createPost = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updatePost = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { postCategories, ...postData } = req.body;
+
+  const validation = updatePostValidationSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
+  const { postCategories, ...postData } = validation.data;
+
   const connection = await getDBConnection();
 
   const repository = await connection.getRepository(PostEntity);
 
   const result = await repository.findOneBy({ id });
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
 
   const updateData = await repository.merge(result, postData);
 

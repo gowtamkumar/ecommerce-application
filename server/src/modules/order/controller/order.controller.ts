@@ -143,8 +143,14 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     });
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
 
@@ -341,8 +347,14 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
   const validation = orderUpdateValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
@@ -436,14 +448,22 @@ export const orderReview = asyncHandler(async (req: Request, res: Response) => {
 export const assignDeliveryMan = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const connection = await getDBConnection();
     const validation = orderDeliveryManValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
+
+    const connection = await getDBConnection();
+
     const repository = await connection.getRepository(OrderEntity);
 
     const result = await repository.findOne({ where: { id } });
@@ -467,19 +487,26 @@ export const assignDeliveryMan = asyncHandler(
 export const orderStatusUpdate = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
+    const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
-    const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
-
-    if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
-      });
-    }
 
     const repository = await queryRunner.manager.getRepository(OrderEntity);
 

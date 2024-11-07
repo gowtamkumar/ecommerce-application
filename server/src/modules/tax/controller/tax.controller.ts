@@ -46,17 +46,23 @@ export const getTax = asyncHandler(
 // @route POST /api/v1/Tax
 // @access Public
 export const createTax = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
   const validation = taxValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
+  const connection = await getDBConnection();
 
   const repository = connection.getRepository(TaxEntity);
 
@@ -75,13 +81,30 @@ export const createTax = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateTax = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  const validation = taxValidationSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
   const connection = await getDBConnection();
 
   const repository = await connection.getRepository(TaxEntity);
 
   const result = await repository.findOneBy({ id });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
 
-  const updateData = await repository.merge(result, req.body);
+  const updateData = await repository.merge(result, validation.data);
 
   await repository.save(updateData);
 

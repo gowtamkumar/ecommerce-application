@@ -23,6 +23,10 @@ import { UserActivityEntity } from "../model/user-activity.entity";
 import { join } from "path";
 import { FileEntity } from "../../other/file/model/file.entity";
 import fs from "fs";
+import { loginValidationSchema } from "../../../validation/user/loginValidation";
+import { forgotPasswordValidationSchema } from "../../../validation/user/forgotPasswordValidation";
+import { resetPasswordValidationSchema } from "../../../validation/user/resetPasswordValidation";
+import { updatePasswordValidationSchema } from "../../../validation/user/updatePasswordValidation";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -31,16 +35,24 @@ export const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const connection = await getDBConnection();
     const { password, username } = req.body;
+
     const validation = userValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
+
     const userRepository = connection.getRepository(UserEntity);
     const findUser = await userRepository.findOne({
-      where: { username },
+      where: { username: validation.data.username },
     });
 
     if (findUser) {
@@ -48,8 +60,8 @@ export const register = asyncHandler(
     }
 
     const createUser = await userRepository.create({
-      ...req.body,
-      password: await hashedPassword(password),
+      ...validation.data,
+      password: await hashedPassword(validation.data.password),
     });
 
     if (!createUser) {
@@ -204,86 +216,97 @@ export const getUserByEmail = asyncHandler(
 // // @access Public
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const connection = await getDBConnection();
-      const { username, password } = req.body;
+    const connection = await getDBConnection();
+    const { username, password } = req.body;
 
-      const ip =
-        (req.headers["x-forwarded-for"] as string) ||
-        req.socket.remoteAddress ||
-        null;
+    const validation = loginValidationSchema.safeParse(req.body);
 
-      const userRepository = connection.getRepository(UserEntity);
-      const userActivityRepository =
-        connection.getRepository(UserActivityEntity);
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-      const oldUser = await userRepository.findOne({ where: { username } });
-
-      if (!oldUser) {
-        res.status(404);
-        throw new Error(`Username ${username} not found`);
-      }
-
-      const isMatch = await matchPassword(password, oldUser);
-
-      if (!isMatch) {
-        res.status(401);
-        throw new Error("Authorization is not valid!");
-      }
-
-      const token = getSignJwtToken(oldUser);
-      const cookies = sendCookiesResponse(token, res);
-
-      if (!cookies) {
-        res.status(500);
-        throw new Error("Token not set in cookies");
-      }
-
-      oldUser.lastLogin = new Date();
-      oldUser.ipAddress = ip;
-
-      await userRepository.save(oldUser);
-
-      // user activity start
-      const userActivity = userActivityRepository.create({
-        timestamp: new Date(),
-        userId: oldUser.id,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
-      await userActivityRepository.save(userActivity);
-      // user activity end
-
-      delete oldUser.password;
-
-      return res.status(200).json({
-        success: true,
-        msg: "Login Successful",
-        data: oldUser,
-        accessToken: token,
-      });
-    } catch (err) {
-      next(err);
     }
+
+    const ip =
+      (req.headers["x-forwarded-for"] as string) ||
+      req.socket.remoteAddress ||
+      null;
+
+    const userRepository = connection.getRepository(UserEntity);
+    const userActivityRepository = connection.getRepository(UserActivityEntity);
+
+    const oldUser = await userRepository.findOne({
+      where: { username: validation.data.username },
+    });
+
+    if (!oldUser) {
+      res.status(404);
+      throw new Error(`Username ${username} not found`);
+    }
+
+    const isMatch = await matchPassword(password, oldUser);
+
+    if (!isMatch) {
+      res.status(401);
+      throw new Error("Authorization is not valid!");
+    }
+
+    const token = getSignJwtToken(oldUser);
+    const cookies = sendCookiesResponse(token, res);
+
+    if (!cookies) {
+      res.status(500);
+      throw new Error("Token not set in cookies");
+    }
+
+    oldUser.lastLogin = new Date();
+    oldUser.ipAddress = ip;
+
+    await userRepository.save(oldUser);
+
+    // user activity start
+    const userActivity = userActivityRepository.create({
+      timestamp: new Date(),
+      userId: oldUser.id,
+    });
+    await userActivityRepository.save(userActivity);
+    // user activity end
+
+    delete oldUser.password;
+
+    return res.status(200).json({
+      success: true,
+      msg: "Login Successful",
+      data: oldUser,
+      accessToken: token,
+    });
   }
 );
 
 // // @desc Login by google
 // // @route POST /api/v1/auth/auth/google
 // // @access Public
-export const googleAuth = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate("google", { scope: ["profile"] });
-  }
-);
+// export const googleAuth = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     passport.authenticate("google", { scope: ["profile"] });
+//   }
+// );
 
 // // @desc Login by google
 // // @route POST /api/v1/auth/auth/google
 // // @access Public
-export const googleAuthCallBack = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Successful authentication, redirect home.
-    res.redirect("/");
-  }
-);
+// export const googleAuthCallBack = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     // Successful authentication, redirect home.
+//     res.redirect("/");
+//   }
+// );
 
 // // @desc Logout User
 // // @route GET /api/v1/auth/logout
@@ -453,11 +476,24 @@ export const getMe = asyncHandler(
 // // @access Private
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { email } = req.body;
+    const validation = forgotPasswordValidationSchema.safeParse(req.body);
 
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
     const connection = await getDBConnection();
     const userRepository = connection.getRepository(UserEntity);
-    const findMail = await userRepository.findOne({ where: { email } });
+    const findMail = await userRepository.findOne({
+      where: { email: validation.data.email },
+    });
 
     if (!findMail) {
       throw new Error("User with this email does not exist");
@@ -470,7 +506,7 @@ export const forgotPassword = asyncHandler(
     }
 
     const updateData = await userRepository.merge(findMail, {
-      ...req.body,
+      ...validation.data,
       resetToken: resetToken,
     });
 
@@ -502,16 +538,30 @@ export const forgotPassword = asyncHandler(
 // // @access Private
 export const resetPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { password } = req.body;
     const { token } = req.params;
     const connection = await getDBConnection();
+
+    const validation = resetPasswordValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const userRepository = connection.getRepository(UserEntity);
 
     if (token) {
       getResetVerifyJwtToken(token, res);
     }
 
-    const newPassword = await hashedPassword(password);
+    const newPassword = await hashedPassword(validation.data.password);
     const user = await userRepository.findOne({
       where: { resetToken: token },
     });
@@ -540,16 +590,19 @@ export const resetPassword = asyncHandler(
 // // @access Private
 export const updatePassword = asyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { newPassword, currentPassword } = req.body;
+    const validation = updatePasswordValidationSchema.safeParse(req.body);
 
-    // const validation = userValidationSchema.safeParse(req.body);
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    // if (!validation.success) {
-    //   return res.status(401).json({
-    //     message: validation.error.formErrors,
-    //   });
-    // }
-
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
     const connection = await getDBConnection();
     const userRepository = connection.getRepository(UserEntity);
 
@@ -559,11 +612,14 @@ export const updatePassword = asyncHandler(
       throw new Error("User not found");
     }
 
-    if (!newPassword || !(await matchPassword(currentPassword, user))) {
+    if (
+      !validation.data.newPassword ||
+      !(await matchPassword(validation.data.currentPassword, user))
+    ) {
       throw new Error("Current password is incorrect");
     }
 
-    const password = await hashedPassword(newPassword);
+    const password = await hashedPassword(validation.data.newPassword);
 
     const updateData = await userRepository.merge(user, {
       password: password,
@@ -583,17 +639,22 @@ export const updatePassword = asyncHandler(
 // // @access Public
 export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const connection = await getDBConnection();
     const { id } = req.params;
 
     const validation = updateUserValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
-
+    const connection = await getDBConnection();
     const userRepository = await connection.getRepository(UserEntity);
 
     const user = await userRepository.findOneBy({ id });

@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { DiscountEntity } from "../model/discount.entity";
 import { discountValidationSchema } from "../../../validation";
+import { updateDiscountValidation } from "../../../validation/discount/updateDiscountValidation";
 
 // @desc Get all Discounts
 // @route GET /api/v1/Discounts
@@ -57,8 +58,14 @@ export const createDiscount = asyncHandler(async (req: any, res: Response) => {
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
@@ -81,6 +88,21 @@ export const createDiscount = asyncHandler(async (req: any, res: Response) => {
 export const updateDiscount = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
+    const validation = updateDiscountValidation.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const connection = await getDBConnection();
 
     const repository = await connection.getRepository(DiscountEntity);

@@ -5,8 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  PrimaryGeneratedColumn
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
 import { UserEntity } from "../../auth/model/user.entity";

@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { OrderTrackingEntity } from "../model/order-tracking.entity";
 import { orderTrackingValidationSchema } from "../../../validation";
+import { updateOrderTrackingValidationSchema } from "../../../validation/order-tracking/updateOrderTrackingValidation";
 
 // @desc Get all OrderTracking
 // @route GET /api/v1/OrderTracking
@@ -49,17 +50,24 @@ export const getOrderTracking = asyncHandler(
 // @access Public
 export const createOrderTracking = asyncHandler(
   async (req: any, res: Response) => {
-    const connection = await getDBConnection();
     const validation = orderTrackingValidationSchema.safeParse({
       ...req.body,
       userId: req.id,
     });
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
+
+    const connection = await getDBConnection();
 
     const repository = connection.getRepository(OrderTrackingEntity);
 
@@ -81,13 +89,31 @@ export const createOrderTracking = asyncHandler(
 export const updateOrderTracking = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const validation = updateOrderTrackingValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const connection = await getDBConnection();
 
     const repository = await connection.getRepository(OrderTrackingEntity);
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body); // orderId update hobe na
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const updateData = await repository.merge(result, validation.data); // orderId update hobe na
 
     await repository.save(updateData);
 

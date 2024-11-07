@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { shippingAddressValidationSchema } from "../../../validation";
 import { ShippingAddressEntity } from "../model/shipping-address.entity";
+import { updateShippingAddressValidationSchema } from "../../../validation/shipping-address/updateShippingAddressValidation";
 
 // @desc Get all ShippingAddress
 // @route GET /api/v1/shipping-address
@@ -51,18 +52,23 @@ export const getShippingAddress = asyncHandler(
 // @access Public
 export const createShippingAddress = asyncHandler(
   async (req: any, res: Response) => {
-    const connection = await getDBConnection();
     const validation = shippingAddressValidationSchema.safeParse({
       ...req.body,
       userId: req.id,
     });
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
-
+    const connection = await getDBConnection();
     const repository = connection.getRepository(ShippingAddressEntity);
     const result = await repository.findOneBy({ userId: req.id, status: true });
 
@@ -91,11 +97,31 @@ export const createShippingAddress = asyncHandler(
 export const updateShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
+    const validation = updateShippingAddressValidationSchema.safeParse(
+      req.body
+    );
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
     const connection = await getDBConnection();
 
     const repository = await connection.getRepository(ShippingAddressEntity);
 
     const result = await repository.findOneBy({ id });
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
 
     const updateData = await repository.merge(result, req.body);
 

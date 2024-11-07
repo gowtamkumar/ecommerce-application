@@ -12,11 +12,9 @@ import {
   forgotPassword,
   resetPassword,
   updatePassword,
-  googleAuth,
-  googleAuthCallBack,
   getUserByEmail,
 } from "../controller/auth.controller";
-import { AuthGuard, isAuthorize } from "../../../middlewares/auth.middleware";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router: Router = express.Router();
 

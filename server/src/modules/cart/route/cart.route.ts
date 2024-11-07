@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 router.route("/").get(getCarts).post(createCart);
-router.route("/user").get(getCartByUser)
+router.route("/user").get(getCartByUser);
 
 router.route("/:id").get(getCart).patch(updateCart).delete(deleteCart);
 

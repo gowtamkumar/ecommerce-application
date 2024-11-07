@@ -6,6 +6,7 @@ import { brandValidationSchema } from "../../../validation";
 import { join } from "path";
 import { FileEntity } from "../../other/file/model/file.entity";
 import fs from "fs";
+import { updateBrandValidationSchema } from "../../../validation/brand/updateBrandValidation";
 
 // @desc Get all Brands
 // @route GET /api/v1/Brands
@@ -50,18 +51,23 @@ export const getBrand = asyncHandler(
 // @access Public
 export const createBrand = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
+
   const validation = brandValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
   });
-  console.log("🚀 ~ validation:", validation.error);
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-
   const repository = connection.getRepository(BrandEntity);
 
   const newBrand = repository.create(validation.data);
@@ -81,6 +87,22 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const connection = await getDBConnection();
 
+  const validation = updateBrandValidationSchema.safeParse({
+    ...req.body,
+  });
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
   const repository = await connection.getRepository(BrandEntity);
 
   const result = await repository.findOneBy({ id });
@@ -89,7 +111,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  const updateData = await repository.merge(result, req.body);
+  const updateData = await repository.merge(result, validation.data);
 
   await repository.save(updateData);
 

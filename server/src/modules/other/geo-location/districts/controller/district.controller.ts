@@ -59,17 +59,7 @@ export const getDistrict = asyncHandler(
 // @access Public
 export const createDistrict = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
-  // const validation = DistrictValidationSchema.safeParse({
-  //   ...req.body,
-  //   userId: req.id,
-  // });
-
-  // if (!validation.success) {
-  //   return res.status(401).json({
-  //     message: validation.error.formErrors,
-  //   });
-  // }
-
+ 
   const file = fs.readFileSync(
     process.cwd() + "/database/fack-data/districts.json",
     "utf8"

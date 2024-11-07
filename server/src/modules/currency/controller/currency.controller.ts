@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { CurrencyEntity } from "../model/currency.entity";
 import { currencyValidationSchema } from "../../../validation";
+import { updateCurrencyValidationSchema } from "../../../validation/currency/updateCurrencyValidation";
 
 // @desc Get all Currency
 // @route GET /api/v1/Currency
@@ -55,8 +56,14 @@ export const createCurrency = asyncHandler(async (req: any, res: Response) => {
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
@@ -78,15 +85,31 @@ export const createCurrency = asyncHandler(async (req: any, res: Response) => {
 export const updateCurrency = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    
-    console.log("🚀 ~ req.body:", req.body)
+
+    const validation = updateCurrencyValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
 
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CurrencyEntity);
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body);
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const updateData = await repository.merge(result, validation.data);
 
     await repository.save(updateData);
 
@@ -96,7 +119,6 @@ export const updateCurrency = asyncHandler(
       data: updateData,
     });
   }
-    
 );
 
 // @desc Delete a single Currency

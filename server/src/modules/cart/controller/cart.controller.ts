@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { CartEntity } from "../model/cart.entity";
 import { cartValidationSchema } from "../../../validation";
+import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -151,16 +152,22 @@ export const getCart = asyncHandler(
 // @access Public
 export const createCart = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
+
   const validation = cartValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
   });
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-
   const repository = connection.getRepository(CartEntity);
 
   const findCart = await repository.findOneBy({
@@ -199,7 +206,20 @@ export const updateCart = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const connection = await getDBConnection();
 
-  console.log("req.body", req.body);
+  const validation = updateCartValidationSchema.safeParse({
+    ...req.body,
+  });
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
 
   const repository = await connection.getRepository(CartEntity);
 
@@ -208,7 +228,7 @@ export const updateCart = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  const updateData = await repository.merge(result, req.body);
+  const updateData = await repository.merge(result, validation.data);
 
   await repository.save(updateData);
 

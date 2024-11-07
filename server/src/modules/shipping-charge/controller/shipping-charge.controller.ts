@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { ShippingChargeEntity } from "../model/shipping-charge.entity";
-import { shippingChargeValidationSchema } from "../../../validation/shipping-charge/shipping-chargeValidation";
+import { shippingChargeValidationSchema } from "../../../validation/shipping-charge/shippingChargeValidation";
+import { updateShippingChargeValidationSchema } from "../../../validation/shipping-charge/updateShippingChargeValidation";
 // import { shippingChargeValidationSchema } from "../../../validation";
 
 // @desc Get all shippingCharge
@@ -61,17 +62,23 @@ export const getShippingCharge = asyncHandler(
 // @access Public
 export const createShippingCharge = asyncHandler(
   async (req: any, res: Response) => {
-    const connection = await getDBConnection();
     const validation = shippingChargeValidationSchema.safeParse({
       ...req.body,
       userId: req.id,
     });
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
+    const connection = await getDBConnection();
 
     const repository = connection.getRepository(ShippingChargeEntity);
 
@@ -92,13 +99,31 @@ export const createShippingCharge = asyncHandler(
 export const updateShippingCharge = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const validation = updateShippingChargeValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const connection = await getDBConnection();
 
     const repository = await connection.getRepository(ShippingChargeEntity);
 
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body);
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const updateData = await repository.merge(result, validation.data);
 
     await repository.save(updateData);
 

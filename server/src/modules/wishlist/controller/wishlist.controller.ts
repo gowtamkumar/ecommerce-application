@@ -7,26 +7,23 @@ import { WishListEntity } from "../model/wishlist.entity";
 // @desc Get all Wishlists
 // @route GET /api/v1/Wishlists
 // @access Public
-export const getWishlists = asyncHandler(
-  async (req: any, res: Response) => {
-    const { userId }: any = req.query;
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(WishListEntity);
+export const getWishlists = asyncHandler(async (req: any, res: Response) => {
+  const { userId }: any = req.query;
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(WishListEntity);
 
+  const result = await repository.find({
+    relations: {
+      product: true,
+    },
+  });
 
-    const result = await repository.find({
-      relations: {
-        product: true,
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      msg: "Get all Wishlists",
-      data: result,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    msg: "Get all Wishlists",
+    data: result,
+  });
+});
 
 // @desc Get a single Wishlist
 // @route GET /api/v1/Wishlists/:id
@@ -54,24 +51,28 @@ export const getWishlist = asyncHandler(
 // @route POST /api/v1/Wishlists
 // @access Public
 export const createWishlist = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
   const validation = wishListhValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-
+  const connection = await getDBConnection();
   const repository = connection.getRepository(WishListEntity);
   const result = await repository.findOneBy({
-    userId: req.id,
-    productId: req.body.productId,
+    userId: validation.data.userId,
+    productId: validation.data.productId,
   });
-  console.log("🚀 ~ result:", result);
 
   if (result) {
     throw new Error(`Product Already in Wishlist`);
@@ -95,14 +96,6 @@ export const updateWishlist = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const validation = await wishListhValidationSchema.safeParse(req.body);
-
-    if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
-      });
-    }
-
     const repository = await connection.getRepository(WishListEntity);
 
     const result = await repository.findOneBy({ id });
@@ -112,11 +105,8 @@ export const updateWishlist = asyncHandler(
     }
 
     const updateData = await repository.merge(result, req.body);
-    console.log("🚀 ~ updateData:", updateData);
 
     const updateWishdata = await repository.save(updateData);
-
-    console.log("updateWishdata", updateWishdata);
 
     return res.status(200).json({
       success: true,

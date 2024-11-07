@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { CommentEntity } from "../model/comment.entity";
-import { commentValidationSchema } from "../../../validation";
+import {commentValidationSchema } from "../../../validation";
+import { updateCommentValidationSchema } from "../../../validation/comment/updateCommentValidation";
 
 // @desc Get all Comment
 // @route GET /api/v1/Comment
@@ -61,11 +62,15 @@ export const createComment = asyncHandler(async (req: any, res: Response) => {
     userId: req.id,
   });
 
-  console.log("validation", validation.error);
-
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
@@ -90,7 +95,19 @@ export const updateComment = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    console.log("req.body", req.body);
+    const validation = updateCommentValidationSchema.safeParse(req.body);
+  
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+  
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
 
     const repository = await connection.getRepository(CommentEntity);
 
@@ -99,7 +116,7 @@ export const updateComment = asyncHandler(
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
-    const updateData = await repository.merge(result, req.body);
+    const updateData = await repository.merge(result, validation.data);
 
     await repository.save(updateData);
 
@@ -114,20 +131,17 @@ export const updateComment = asyncHandler(
 // @desc Update a single Comment
 // @route PUT /api/v1/Comments/increage:id
 // @access Public
-export const CommentLike = asyncHandler(async (req: Request, res: Response) => {
+export const commentLike = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const connection = await getDBConnection();
 
   const repository = await connection.getRepository(CommentEntity);
 
   const result = await repository.findOneBy({ id });
-  console.log("🚀 ~ result:", result);
 
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
-
-  // const updateData = await repository.merge(result, req.body);
 
   await repository.save({ id: result.id, like: result.like + 1 });
 
@@ -138,7 +152,7 @@ export const CommentLike = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export const CommentDisLike = asyncHandler(
+export const commentDisLike = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const connection = await getDBConnection();
@@ -146,13 +160,10 @@ export const CommentDisLike = asyncHandler(
     const repository = await connection.getRepository(CommentEntity);
 
     const result = await repository.findOneBy({ id });
-    console.log("🚀 ~ result:", result);
 
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
-
-    // const updateData = await repository.merge(result, req.body);
 
     await repository.save({ id: result.id, disLike: result.disLike + 1 });
 

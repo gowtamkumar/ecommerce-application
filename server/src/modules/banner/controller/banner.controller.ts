@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { BannerEntity } from "../model/banner.entity";
 import { bannerValidationSchema } from "../../../validation";
+import { updateBannerValidationSchema } from "../../../validation/banner/updateBannerValidation";
 
 // @desc Get all Banner
 // @route GET /api/v1/Banner
@@ -12,7 +13,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(BannerEntity);
 
-  let customQuery = { status: true} as any;
+  let customQuery = { status: true } as any;
   if (type) {
     customQuery.type = type;
   }
@@ -56,9 +57,16 @@ export const createBanner = asyncHandler(async (req: any, res: Response) => {
     ...req.body,
     userId: req.id,
   });
+
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
@@ -82,9 +90,27 @@ export const updateBanner = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
+    const validation = updateBannerValidationSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
     const repository = await connection.getRepository(BannerEntity);
 
     const result = await repository.findOneBy({ id });
+
+    if (!result) {
+      throw new Error(`Banner Not found`);
+    }
 
     const updateData = await repository.merge(result, req.body);
 

@@ -64,11 +64,16 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-
   const repository = connection.getRepository(PaymentEntity);
 
   const newPayment = repository.create(validation.data);
@@ -85,16 +90,19 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
 export const createDashboardPayment = asyncHandler(
   async (req: any, res: Response) => {
     const connection = await getDBConnection();
-    const validation = paymentValidationSchema.safeParse({
-      ...req.body,
-    });
+    const validation = paymentValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(401).json({
-        message: validation.error.formErrors,
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
       });
     }
-
     const repository = connection.getRepository(PaymentEntity);
 
     const newPayment = repository.create(validation.data);
@@ -120,6 +128,9 @@ export const updatePayment = asyncHandler(
     const repository = await connection.getRepository(PaymentEntity);
 
     const result = await repository.findOneBy({ id });
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
 
     const updateData = await repository.merge(result, req.body);
 

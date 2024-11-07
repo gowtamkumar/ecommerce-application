@@ -53,8 +53,14 @@ export const createUnit = asyncHandler(async (req: any, res: Response) => {
   });
 
   if (!validation.success) {
-    return res.status(401).json({
-      message: validation.error.formErrors,
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
 
@@ -80,6 +86,10 @@ export const updateUnit = asyncHandler(async (req: Request, res: Response) => {
   const repository = await connection.getRepository(UnitEntity);
 
   const result = await repository.findOneBy({ id });
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
 
   const updateData = await repository.merge(result, req.body);
 

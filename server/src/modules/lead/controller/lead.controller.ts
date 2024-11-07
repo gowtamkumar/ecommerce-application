@@ -10,7 +10,6 @@ import { leadValidationSchema } from "../../../validation";
 export const getLeads = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(LeadEntity);
-
   const result = await repository.find();
 
   return res.status(200).json({
@@ -46,10 +45,7 @@ export const getLead = asyncHandler(
 // @route POST /api/v1/Lead
 // @access Public
 export const createLead = asyncHandler(async (req: any, res: Response) => {
-  const connection = await getDBConnection();
-  const validation = leadValidationSchema.safeParse({
-    ...req.body,
-  });
+  const validation = leadValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
@@ -62,7 +58,7 @@ export const createLead = asyncHandler(async (req: any, res: Response) => {
       issues: formattedErrors,
     });
   }
-
+  const connection = await getDBConnection();
   const repository = connection.getRepository(LeadEntity);
 
   const result = await repository.findOne({
@@ -90,6 +86,22 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const connection = await getDBConnection();
 
+  const validation = leadValidationSchema.safeParse({
+    ...req.body,
+  });
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
   const repository = await connection.getRepository(LeadEntity);
 
   const result = await repository.findOneBy({ id });
@@ -98,7 +110,7 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  const updateData = await repository.merge(result, req.body);
+  const updateData = await repository.merge(result, validation.data);
 
   await repository.save(updateData);
 
