@@ -1,1 +1,1 @@
-export * from './brand-status.enum'
+export * from './menu-status.enum'
