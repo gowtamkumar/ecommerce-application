@@ -270,6 +270,10 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 export const updateProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log("req.body", req.body);
+
+    
+    
     // Validate request body
     const validation = updateProductValidationSchema.safeParse(req.body);
 

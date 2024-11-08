@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -23,6 +21,10 @@ import { toast } from "react-toastify";
 import { deleteProduct, getProducts } from "@/lib/apis/product";
 import { useRouter } from "next/navigation";
 import appConfig from "@/config";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -31,11 +33,10 @@ interface DataType {
   urlSlug: string;
   singleImage: string;
   limitPurchaseQty: number;
-
   alertQty: number;
   discount: any;
-  description: string;
   shortDescription: string;
+  description: string;
   status: string;
 }
 
@@ -43,13 +44,17 @@ type DataIndex = keyof DataType;
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState([] as any);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
 
   useEffect(() => {
-    (async () => {
+    fetchProductData();
+  }, []);
+
+  const fetchProductData = async () => {
+    try {
       dispatch(setLoading({ loading: true }));
       const res = await getProducts();
       const newProducts = res.data.map((items: any, idx: number) => ({
@@ -58,20 +63,24 @@ const ProductList: React.FC = () => {
       }));
       setProducts(newProducts);
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [global.action]);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
-      dispatch(setLoading({ delete: true }));
-      await deleteProduct(id);
+      dispatch(setLoading({ save: true }));
+      const deleted = await deleteProduct(id);
+      deleted.success &&
+        successNotification({ message: "Successfully deleted" });
       setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Product deleted successfully");
+        dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+      dispatch(setLoading({}));
     }
   };
 
@@ -105,11 +114,10 @@ const ProductList: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
+            setSearchInput(e.target.value);
 
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -236,7 +244,8 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${
+              value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -248,7 +257,6 @@ const ProductList: React.FC = () => {
       key: "limitPurchaseQty",
       sorter: (a, b) => a.limitPurchaseQty - b.limitPurchaseQty,
     },
-
 
     {
       title: "Status",
@@ -375,7 +383,8 @@ const ProductList: React.FC = () => {
           <h2>
             Discount:
             {value?.discount &&
-              `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
+              `${value?.discount.value}${
+                value?.discount.discountType === "Percentage" ? "%" : "BDT"
               }`}
           </h2>
           <h2>Tax: {value.tax.value}%</h2>

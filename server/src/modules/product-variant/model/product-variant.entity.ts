@@ -64,7 +64,7 @@ export class ProductVariantEntity {
   @Column({ nullable: true })
   weight?: string;
 
-  @Column({ name: "stock_qty", nullable: true })
+  @Column({ name: "stock_qty" })
   stockQty?: number;
 
   @OneToMany((_type) => OrderItemEntity, (items) => items.productVariant)

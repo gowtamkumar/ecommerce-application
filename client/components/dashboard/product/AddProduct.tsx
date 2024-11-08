@@ -20,12 +20,11 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
-import { toast } from "react-toastify";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/config";
 import { ProductType } from "@/lib/types/product";
-// Define the shape of product data
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddProduct = ({
   sizes,
@@ -67,7 +66,6 @@ const AddProduct = ({
   }, []);
 
   const fetchProductData = async () => {
-
     try {
       dispatch(setLoading({ loading: true }));
       if (params.new !== "new") {
@@ -97,7 +95,6 @@ const AddProduct = ({
         setProduct({ ...newData, productCategories });
         setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
         setFormValues(newData);
-        
       } else {
         form.resetFields();
         setTags([]);
@@ -110,27 +107,23 @@ const AddProduct = ({
   };
 
   const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      let newData = { ...values, tags };
-      // console.log("🚀 ~ newData:", newData);
-      delete newData.fileList;
-      dispatch(setLoading({ save: true }));
+    const values = await form.validateFields();
+    let newData = { ...values, tags };
+    delete newData.fileList;
 
-      const result = newData.id
-       
-        ? await updateProduct(newData)
-        : await saveProduct(newData);
-        console.log("🚀 ~ result:", result)
-      setTimeout(() => {
-        dispatch(setLoading({ save: false }));
-        form.resetFields();
-        route.push(`/dashboard/product`);
-      }, 100);
-    } catch (err: any) {
-      console.log(err);
-      toast.error(err.message);
-    }
+    const asyncFn = newData.id
+      ? () => updateProduct(newData)
+      : () => saveProduct(newData);
+
+    const successMessage = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(asyncFn, successMessage, dispatch);
+
+    form.resetFields();
+    setTags([]);
+    // route.push(`/dashboard/product`);
   };
 
   const uploadButton = (
@@ -148,7 +141,6 @@ const AddProduct = ({
 
   const setFormData = (value: any) => {
     const newData = { ...value };
-
     if (newData.images) {
       const file = (newData.images || []).map((item: string, idx: number) => ({
         uid: Math.random() * 1000 + "",
@@ -159,9 +151,7 @@ const AddProduct = ({
       }));
       newData.fileList = file;
     }
-
     setFormValues(form.getFieldsValue());
-    // setBackup(newData);
   };
 
   const resetFormData = (value: any) => {
@@ -323,11 +313,29 @@ const AddProduct = ({
               </Select>
             </Form.Item>
 
-            <Form.Item name="shortDescription" label="Short Description">
-              <Input.TextArea placeholder="Enter" rows={5} />
+            <Form.Item
+              name="shortDescription"
+              label="Short Description"
+              rules={[
+                {
+                  required: true,
+                  message: "Short Description is required",
+                },
+              ]}
+            >
+              <Input.TextArea placeholder="Enter" rows={3} />
             </Form.Item>
 
-            <Form.Item name="description" label="Description">
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[
+                {
+                  required: true,
+                  message: "Description is required",
+                },
+              ]}
+            >
               <Input.TextArea placeholder="Enter" rows={8} />
             </Form.Item>
 
@@ -340,7 +348,7 @@ const AddProduct = ({
                   rules={[
                     {
                       required: true,
-                      message: "Brand is required",
+                      message: "Tax is required",
                     },
                   ]}
                 >
@@ -417,34 +425,23 @@ const AddProduct = ({
           </div>
 
           <div className="col-span-1">
-            <Form.Item name="status" label="Status">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Status"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[
+                {
+                  required: true,
+                  message: "Status is required",
+                },
+              ]}
+            >
+              <Select showSearch allowClear placeholder="Select Status">
                 <Select.Option value="Active">Active</Select.Option>
                 <Select.Option value="Inactive">Inactive</Select.Option>
               </Select>
             </Form.Item>
 
-            <Form.Item
-              name="brandId"
-              label="Brand"
-              className="p-0"
-              rules={[
-                {
-                  required: true,
-                  message: "Brand is required",
-                },
-              ]}
-            >
+            <Form.Item name="brandId" label="Brand">
               <Select
                 showSearch
                 allowClear
@@ -555,9 +552,15 @@ const AddProduct = ({
             <div>
               <Form.Item
                 name="fileList"
-                label="images"
+                label="Images"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
+                rules={[
+                  {
+                    required: true,
+                    message: "Images is required",
+                  },
+                ]}
               >
                 <ImgCrop rotationSlider>
                   <Upload
@@ -669,11 +672,9 @@ const AddProduct = ({
                           <Form.Item
                             {...restField}
                             name={[name, "price"]}
-                            rules={[
-                              { required: true, message: "Regular Price" },
-                            ]}
+                            rules={[{ required: true, message: "Sale Price" }]}
                           >
-                            <InputNumber placeholder="Regular Price" min={1} />
+                            <InputNumber placeholder="Sale Price" min={1} />
                           </Form.Item>
                         </td>
 
@@ -771,6 +772,7 @@ const AddProduct = ({
             onClick={handleSubmit}
             className="capitalize"
             loading={global.loading.save}
+            disabled={global.loading.save}
           >
             {product?.id ? "Update" : "Save"}
           </Button>

@@ -83,6 +83,7 @@ export const createProductVariant = asyncHandler(
 export const updateProductVariant = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    
 
     const validation = productVariantValidationSchema.safeParse(req.body);
 

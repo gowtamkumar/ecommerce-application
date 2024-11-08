@@ -140,8 +140,7 @@ export async function updateProduct(data: any) {
   });
   if (!res.ok) {
     const errorData = await res.json();
-    console.log("🚀 ~ errorData:", errorData)
-    throw new Error(errorData || "Failed to update product");
+    throw new Error(errorData.message || "Failed to update product");
   }
   return res.json();
 }

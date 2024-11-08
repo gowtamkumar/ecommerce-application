@@ -30,8 +30,17 @@ export class ProductEntity {
   @Column()
   name!: string;
 
+  @Column({ name: "url_slug", unique: true })
+  urlSlug!: string;
+
   @Column({ type: "enum", enum: ProductType })
   type!: ProductType;
+
+  @Column()
+  description?: string;
+
+  @Column({ name: "short_description" })
+  shortDescription?: string;
 
   @Column({ name: "tax_id" })
   taxId?: number;
@@ -39,59 +48,47 @@ export class ProductEntity {
   @JoinColumn({ name: "tax_id" })
   tax?: TaxEntity;
 
-  @Column({ name: "unit_id" })
-  unitId!: number;
-  @ManyToOne((_type) => UnitEntity, (unit) => unit.products)
-  @JoinColumn({ name: "unit_id" })
-  unit!: UnitEntity;
-
-  @Column({ name: "url_slug", unique: true })
-  urlSlug!: string;
-
-  @Column({ type: "simple-array", nullable: true })
-  images!: string[];
-
-  @Column({ name: "brand_id" })
-  brandId?: number;
-  @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
-  @JoinColumn({ name: "brand_id" })
-  brand?: BrandEntity;
-
   @Column({ name: "discount_id", nullable: true })
   discountId?: number;
   @ManyToOne((_type) => DiscountEntity, (discount) => discount.products)
   @JoinColumn({ name: "discount_id" })
   discount?: DiscountEntity;
 
-  @Column({ name: "alert_qty" })
-  alertQty!: number;
+  @Column({ name: "enable_review", type: "boolean", default: true })
+  enableReview?: boolean;
 
   @Column({ name: "limit_purchase_qty", nullable: true })
   limitPurchaseQty?: number;
 
+  @Column({ name: "alert_qty" })
+  alertQty!: number;
+
+  @Column({ type: "enum", enum: ProductStatus, default: ProductStatus.Active })
+  status!: ProductStatus;
+
+  @Column({ name: "brand_id", nullable: true })
+  brandId?: number;
+  @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
+  @JoinColumn({ name: "brand_id" })
+  brand?: BrandEntity;
+
+  @Column({ name: "unit_id" })
+  unitId!: number;
+  @ManyToOne((_type) => UnitEntity, (unit) => unit.products)
+  @JoinColumn({ name: "unit_id" })
+  unit!: UnitEntity;
+
   @Column({ type: "simple-array", nullable: true })
   tags!: string[];
 
-  @Column({ nullable: true })
-  description?: string;
-
-  @Column({ name: "short_description", nullable: true })
-  shortDescription?: string;
-
-  @Column({ name: "enable_review", type: "boolean", default: true })
-  enableReview?: boolean;
+  @Column({ type: "simple-array" })
+  images!: string[];
 
   @Column({ name: "user_id" })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.products)
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
-
-  @Column({ type: "boolean", default: false })
-  featured?: boolean;
-
-  @Column({ type: "enum", enum: ProductStatus, default: ProductStatus.Active })
-  status!: ProductStatus;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;
