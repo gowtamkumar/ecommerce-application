@@ -9,7 +9,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import EmailSetting from "./EmailSetting";
-import Post from "./blog/Post";
+import Post from "../post/Post";
 import Lead from "./lead/Lead";
 import Currency from "./currency/Currency";
 import CompanySetting from "./CompanySetting";
@@ -124,11 +124,11 @@ export default function Index() {
           key: "status",
           children: <Status />,
         },
-        {
-          label: "Post",
-          key: "post",
-          children: <Post />,
-        },
+        // {
+        //   label: "Post",
+        //   key: "post",
+        //   children: <Post />,
+        // },
         {
           label: "Leads",
           key: "lead",

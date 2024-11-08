@@ -9,10 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "@/constants/constants";
 import { saveLead, updateLead } from "@/lib/apis/leads";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/share/notification";
+import { handleAsyncAction } from "@/lib/share/commonFunctions";
 
 const AddLead = () => {
   const global = useSelector(selectGlobal);
@@ -29,35 +26,22 @@ const AddLead = () => {
     };
   }, [payload]);
 
+
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateLead(newData)
-        : await saveLead(newData);
-        console.log("🚀 ~ result:", result)
+    let newData = { ...values };
 
-      // if (!result.status) {
-      //   errorNotification({ message: result.message });
-      //   dispatch(setLoading({ save: false }));
-      //   return;
-      // }
+    const asyncFn = newData.id
+      ? () => updateLead(newData)
+      : () => saveLead(newData);
 
-      result.data.id
-        ? successNotification({ message: "Successfully Updated" })
-        : successNotification({ message: "successfully Added" });
+    const successMessage = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
 
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-        form.resetFields();
-      }, 100);
-    } catch (err: any) {
-      console.error(err);
-    }
+    await handleAsyncAction(asyncFn, successMessage, dispatch);
+    form.resetFields();
   };
+
 
   const handleClose = () => {
     dispatch(setAction({}));

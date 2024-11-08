@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -8,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
   setAction,
+  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
@@ -19,7 +21,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { deleteLead, getLeads } from "@/lib/apis/leads";
 import dayjs from "dayjs";
-import { successNotification } from "@/lib/share/notification";
+import { errorNotification, successNotification } from "@/lib/share/notification";
 
 interface DataType {
   key: string;
@@ -30,7 +32,6 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const LeadList: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>();
   const [leads, setLeads] = useState([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
@@ -38,24 +39,25 @@ const LeadList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      dispatch(setLoading({ loading: true }));
       const res = await getLeads();
       setLeads(res?.data);
-      setLoading(false);
+      dispatch(setLoading({ loading: false }));
     })();
   }, []);
 
   const handleDelete = async (id: string) => {
     try {
-      setLoading(true);
-      await deleteLead(id);
-      successNotification({ message: "Successfully deleted" });
+      dispatch(setLoading({ save: true }));
+      const deleted = await deleteLead(id);
+      deleted.success && successNotification({ message: "Successfully deleted" });
       setTimeout(async () => {
-        setLoading(false);
+        dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
-      console.error(error);
+      errorNotification({ message: error.message })
+      dispatch(setLoading({ save: false }));
     }
   };
 
@@ -235,7 +237,7 @@ const LeadList: React.FC = () => {
   return (
     <Table
       scroll={{ x: "auto" }}
-      loading={loading}
+      loading={global.loading.loading}
       columns={columns}
       dataSource={leads}
       pagination={{ pageSize: 10 }}

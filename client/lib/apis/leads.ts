@@ -1,89 +1,87 @@
 "use server";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
 
-
-// Function to handle API responses
-async function handleResponse(res: Response) {
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Error: ${res.status} - ${errorText}`);
+// Helper function to get the Authorization header
+async function getAuthHeaders() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.accessToken) {
+    throw new Error("User not authenticated");
   }
-  return res.json();
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${session.user.accessToken}`,
+  };
 }
 
+// Save a new lead
 export async function saveLead(data: any) {
-  try {
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
-      method: "POST",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
+    method: "POST",
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in saveLead:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save lead");
   }
+
+  return await res.json();
 }
 
+// Retrieve all leads
 export async function getLeads() {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
-      cache: "no-cache",
-      headers: {
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-    });
+  const headers = await getAuthHeaders();
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in getLeads:", error);
-    throw error; // Re-throw the error for further handling
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
+    cache: "no-cache",
+    headers,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to fetch leads");
   }
+
+  return await res.json();
 }
 
+// Update an existing lead
 export async function updateLead(data: any) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${data.id}`, {
-      method: "PUT",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    });
+  const headers = await getAuthHeaders();
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in updateLead:", error);
-    throw error; // Re-throw the error for further handling
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${data.id}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to update lead");
   }
+
+  return await res.json();
 }
 
+// Delete a lead
 export async function deleteLead(id: string) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${id}`, {
-      method: "DELETE",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-    });
+  const headers = await getAuthHeaders();
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in deleteLead:", error);
-    throw error; // Re-throw the error for further handling
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${id}`, {
+    method: "DELETE",
+    headers,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to delete lead");
   }
+
+  return await res.json();
 }
