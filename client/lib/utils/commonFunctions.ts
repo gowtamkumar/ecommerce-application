@@ -1,11 +1,12 @@
 import { setAction, setLoading } from "@/redux/features/global/globalSlice";
 import { errorNotification, successNotification } from "./notification";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../authOption";
 
 export const handleAsyncAction = async (
   asyncFn: () => Promise<any>,
   successMessage: string,
   dispatch: any
-  // form?: any
 ) => {
   try {
     dispatch(setLoading({ save: true }));
@@ -15,7 +16,6 @@ export const handleAsyncAction = async (
     setTimeout(() => {
       dispatch(setLoading({ save: false }));
       dispatch(setAction({}));
-      // form?.resetFields();
     }, 100);
   } catch (error: any) {
     errorNotification({ message: error.message });
@@ -23,6 +23,18 @@ export const handleAsyncAction = async (
     dispatch(setAction({}));
   }
 };
+
+
+export async function getAuthHeaders() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.accessToken) {
+    throw new Error("User not authenticated");
+  }
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${session.user.accessToken}`,
+  };
+}
 
   // const handleSubmit = async (values: any) => {
   //   try {

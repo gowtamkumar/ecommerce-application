@@ -2,103 +2,79 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
+import { getAuthHeaders } from "../utils/commonFunctions";
 
+// async function getAuthHeaders() {
+//   const session = await getServerSession(authOptions);
+//   if (!session?.user?.accessToken) {
+//     throw new Error("User not authenticated");
+//   }
+//   return {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${session.user.accessToken}`,
+//   };
+// }
 
 export async function saveColor(data: any) {
-  console.log("🚀 ~ data:", data)
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {
-      method: "POST",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    });
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {
+    method: "POST",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to save color: ${res.statusText}`);
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error("Error in saveColor:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save lead");
   }
+  return await res.json();
 }
 
 export async function getColors() {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {
-      cache: "no-cache",
-      headers: {
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-    });
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {
+    cache: "no-cache",
+    headers,
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch colors: ${res.statusText}`);
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error("Error in getColors:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save lead");
   }
+
+  return await res.json();
 }
 
 export async function updateColor(data: any) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/colors/${data.id}`,
-      {
-        method: "PUT",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors/${data.id}`, {
+    method: "PUT",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to update color: ${res.statusText}`);
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error("Error in updateColor:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save lead");
   }
+
+  return res.json();
 }
 
 export async function deleteColor(id: string) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/colors/${id}`,
-      {
-        method: "DELETE",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-      }
-    );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers,
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to delete color: ${res.statusText}`);
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error("Error in deleteColor:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save lead");
   }
+
+  return res.json();
 }

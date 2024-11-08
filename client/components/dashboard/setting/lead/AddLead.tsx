@@ -9,7 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "@/constants/constants";
 import { saveLead, updateLead } from "@/lib/apis/leads";
-import { handleAsyncAction } from "@/lib/share/commonFunctions";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddLead = () => {
   const global = useSelector(selectGlobal);

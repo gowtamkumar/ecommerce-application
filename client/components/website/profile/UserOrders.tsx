@@ -12,7 +12,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import Highlighter from "react-highlight-words";
 import dayjs from "dayjs";
-import { getStatus } from "@/lib/share/getStatus";
+import { getStatus } from "@/lib/utils/getStatus";
 
 interface DataType {
   key: React.Key;

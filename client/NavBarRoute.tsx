@@ -56,9 +56,23 @@ const navbarRoute = [
 
   {
     key: "product",
-    label: "Product",
-    disabled: "true",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: "Product Manage",
     route: "true",
+    children: [
+      {
+        key: "new_product",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/product/new">New Product</Link>,
+        route: "true",
+      },
+      {
+        key: "products",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/product">Products</Link>,
+        route: "true",
+      },
+    ],
   },
 
   {

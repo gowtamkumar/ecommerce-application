@@ -2,18 +2,19 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
+import { getAuthHeaders } from "../utils/commonFunctions";
 
 // Helper function to get the Authorization header
-async function getAuthHeaders() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.accessToken) {
-    throw new Error("User not authenticated");
-  }
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${session.user.accessToken}`,
-  };
-}
+// async function getAuthHeaders() {
+//   const session = await getServerSession(authOptions);
+//   if (!session?.user?.accessToken) {
+//     throw new Error("User not authenticated");
+//   }
+//   return {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${session.user.accessToken}`,
+//   };
+// }
 
 // Save a new lead
 export async function saveLead(data: any) {

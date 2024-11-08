@@ -2,8 +2,10 @@
 import React, { useState } from "react";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import ProductList from "@/components/dashboard/product/ProductList";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const ProductList = dynamic(() => import('@/components/dashboard/product/ProductList'))
 
 export default function Product() {
   const [tabKey, setTabKey] = useState("product_list");

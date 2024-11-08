@@ -13,7 +13,7 @@ import { upload } from "../../../../enums/fileUpload";
 
 const router = express.Router();
 
-router.route("/").get(getFiles).post(AuthGuard, createFile);
+router.route("/").get(getFiles).post(createFile);
 router.route("/delete-file-with-photo").post(deleteFileWithPhoto);
 router.route("/uploads").post(
   upload.fields([

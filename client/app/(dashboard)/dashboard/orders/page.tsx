@@ -36,7 +36,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
 import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
-import { getStatus } from "@/lib/share/getStatus";
+import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
 import AddPayment from "@/components/dashboard/payment/AddPayment";
 import AssignDeliveryMan from "@/components/dashboard/order/AssignDeliveryMan";

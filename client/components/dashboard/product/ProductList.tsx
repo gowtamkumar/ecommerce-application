@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -59,7 +59,7 @@ const ProductList: React.FC = () => {
       setProducts(newProducts);
       dispatch(setLoading({ loading: false }));
     })();
-  }, [dispatch, global.action]);
+  }, [global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -104,7 +104,7 @@ const ProductList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
+          onChange={(e) => {
             setSearchInput(e.target.value)
 
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -219,7 +219,7 @@ const ProductList: React.FC = () => {
               <div key={item}>
                 <Image
                   width={60}
-                  src={`${appConfig.apiUrl}/uploads/${item || "no-data.png"}`}
+                  src={`${appConfig.apiUrl}/uploads/${item}`}
                   alt={item}
                 />
               </div>
@@ -249,7 +249,7 @@ const ProductList: React.FC = () => {
       sorter: (a, b) => a.limitPurchaseQty - b.limitPurchaseQty,
     },
 
-   
+
     {
       title: "Status",
       key: "status",
@@ -275,7 +275,7 @@ const ProductList: React.FC = () => {
             icon={<FormOutlined />}
             title="Edit"
             className="me-1"
-            onClick={() => route.push(`/dashboard/products/${value.id}`)}
+            onClick={() => route.push(`/dashboard/product/${value.id}`)}
           />
           <Popconfirm
             title={

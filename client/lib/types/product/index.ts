@@ -2,6 +2,7 @@ export interface ProductCategory {
   categoryId: number;
 }
 
+
 export interface ProductVariant {
   id: number;
   price: number;
@@ -13,13 +14,13 @@ export interface ProductVariant {
   stockQty: number;
 }
 
-export interface ProductInterface {
+export interface ProductType {
   id: number;
   name: string;
   type: string;
   taxId: number;
   unitId: number;
-  images: string[];
+  images: string[]; // Assuming this is an array of image URLs
   singleImage: string;
   brandId: number;
   discountId: number;

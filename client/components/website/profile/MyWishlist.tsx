@@ -10,7 +10,7 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { addCart } from "@/redux/features/cart/cartSlice";
-import { productDiscountCalculation } from "@/lib/share";
+import { productDiscountCalculation } from "@/lib/utils";
 import { deleteWishlist } from "@/lib/apis/wishlist";
 import { RestOutlined } from "@ant-design/icons";
 import { FaShoppingCart } from "react-icons/fa";

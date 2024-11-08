@@ -28,7 +28,7 @@ import { getAllCategories } from "@/lib/apis/categories";
 import appConfig from "@/config";
 import TextQuillEditor from "@/components/share-component/editor-quill/TextQuillEditor";
 import { useParams, useRouter } from "next/navigation";
-import { handleAsyncAction } from "@/lib/share/commonFunctions";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 // type Presets = Required<ColorPickerProps>["presets"][number];
 

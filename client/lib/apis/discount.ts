@@ -1,111 +1,81 @@
 "use server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/config";
+import { getAuthHeaders } from "../utils/commonFunctions";
 
+export async function saveDiscount(data: any) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts`, {
+    method: "POST",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-// Function to handle API responses
-async function handleResponse(res: Response) {
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Error: ${res.status} - ${errorText}`);
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save discount");
   }
   return res.json();
 }
 
-export async function saveDiscount(data: any) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts`, {
-      method: "POST",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    });
-
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in saveDiscount:", error);
-    throw error; // Re-throw the error for further handling
-  }
-}
-
 export async function getDiscounts() {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts`, {
-      cache: "no-cache",
-      headers: {
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-    });
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts`, {
+    cache: "no-cache",
+    headers,
+  });
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in getDiscounts:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to get discounts");
   }
+  return res.json();
 }
 
 export async function getFilterDiscounts(params?: { type: string }) {
-  const session = await getServerSession(authOptions);
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/discounts?type=${params?.type}`,
-      {
-        headers: {
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-      }
-    );
+  const headers = await getAuthHeaders();
+  const res = await fetch(
+    `${appConfig.apiUrl}/api/v1/discounts?type=${params?.type}`,
+    {
+      headers,
+    }
+  );
 
-    return res.json()
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to get filter discount");
+  }
+
+  return res.json();
 }
 
-
 export async function updateDiscount(data: any) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/discounts/${data.id}`,
-      {
-        method: "PATCH",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts/${data.id}`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in updateDiscount:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to update discount");
   }
+  return res.json();
 }
 
 export async function deleteDiscount(id: string) {
-  try {
-    const session = await getServerSession(authOptions);
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/discounts/${id}`,
-      {
-        method: "DELETE",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-      }
-    );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers,
+  });
 
-    return await handleResponse(res);
-  } catch (error) {
-    console.error("Error in deleteDiscount:", error);
-    throw error; // Re-throw the error for further handling
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to delete discount");
   }
+  return res.json();
 }

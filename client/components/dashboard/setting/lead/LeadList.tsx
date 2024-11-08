@@ -21,7 +21,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { deleteLead, getLeads } from "@/lib/apis/leads";
 import dayjs from "dayjs";
-import { errorNotification, successNotification } from "@/lib/share/notification";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;

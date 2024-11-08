@@ -1,20 +1,20 @@
-
 "use server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/config";
+import { getAuthHeaders } from "../utils/commonFunctions";
 
 export async function saveProduct(data: any) {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save product");
+  }
   return res.json();
 }
 
@@ -33,26 +33,20 @@ interface getParams {
 }
 
 export async function getProducts() {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
 
-  try {
-    const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
-      headers: {
-        Authorization: `Bearer ${session?.user?.session?.user?.accessToken}`,
-      },
-    });
-    if (!res.ok) {
-      console.log("Failed to fetch data");
-    }
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    console.log("Failed to fetch data");
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
+    method: "GET",
+    headers,
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to get products");
   }
+  return res.json();
 }
 
 export async function getPublicProducts(params: getParams) {
-  // const session = await getServerSession(authOptions);
   const {
     brandId,
     colorId,
@@ -112,78 +106,56 @@ export async function getPublicProducts(params: getParams) {
     queryString += `search=${search}&`;
   }
 
-  try {
-    const res = await fetch(
-      `${appConfig.apiUrl}/api/v1/products?${queryString}`
-    );
-    if (!res.ok) {
-      console.log("Failed to fetch data");
-    }
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    console.log("Failed to fetch data");
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/products?${queryString}`);
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to  product query");
   }
+  const result = await res.json();
+  return result;
 }
 
-// export async function getPublicProducts() {
-//   try {
-//     const res = await fetch(`${appConfig.apiUrl}/api/v1/products`);
-//     if (!res.ok) {
-//       console.log("Failed to fetch data");
-//     }
-//     const result = await res.json();
-//     return result;
-//   } catch (error) {
-//     console.log("Failed to fetch data");
-//   }
-// }
-
 export async function getProduct(id: string) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/products/${id}`,
-    {
-      method: "GET",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.session?.user?.accessToken}`,
-      },
-    }
-  );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${id}`, {
+    method: "GET",
+    cache: "no-cache",
+    headers,
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to get product");
+  }
   return res.json();
 }
 
 export async function updateProduct(data: any) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/products/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${data.id}`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    console.log("🚀 ~ errorData:", errorData)
+    throw new Error(errorData || "Failed to update product");
+  }
   return res.json();
 }
 
 export async function deleteProduct(id: string) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/products/${id}`,
-    {
-      method: "DELETE",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.session?.user?.accessToken}`,
-      },
-    }
-  );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers,
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to delete product");
+  }
   return res.json();
 }

@@ -3,6 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
 import appConfig from "@/config";
+import { getAuthHeaders } from "../utils/commonFunctions";
 
 // Define an interface for the tax
 interface Tax {
@@ -21,61 +22,52 @@ interface ApiResponse<T> {
 }
 
 // Function to save a new tax
-export async function saveTax(data: Tax): Promise<ApiResponse<Tax>> {
-  const session = await getServerSession(authOptions);
+export async function saveTax(data: Tax){
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
 
   if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save Category");
   }
-
   return res.json();
 }
 
 // Function to get all taxes
-export async function getTaxs(): Promise<ApiResponse<Tax[]>> {
-  const session = await getServerSession(authOptions);
+export async function getTaxs(){
+  const headers = await getAuthHeaders();
 
   const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs`, {
     cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
 
   if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save Category");
   }
 
   return res.json();
 }
 
 // Function to update a tax
-export async function updateTax(data: Tax): Promise<ApiResponse<Tax>> {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/taxs/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
+export async function updateTax(data: Tax){
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs/${data.id}`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
   if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save Category");
   }
 
   return res.json();
@@ -83,19 +75,16 @@ export async function updateTax(data: Tax): Promise<ApiResponse<Tax>> {
 
 // Function to delete a tax by ID
 export async function deleteTax(id: string): Promise<ApiResponse<null>> {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs/${id}`, {
     method: "DELETE",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
 
   if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
+    const errorData = await res.json();
+    throw new Error(errorData?.message || "Failed to save Category");
   }
-
   return res.json();
 }
