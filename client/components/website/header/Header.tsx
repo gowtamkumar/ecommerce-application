@@ -4,9 +4,9 @@ import Logo from "./Logo";
 import HeaderRight from "./HeaderRight";
 import HeaderSearch from "./HeaderSearch";
 import { getSettings } from "@/lib/apis/setting";
-import MainMenu from "./Menu";
-import MobileMenu from "./MobileMenu";
 import { getCartByUser } from "@/lib/apis/cart";
+import MobileMenu from "./MobileMenu";
+import MainMenu from "./Menu";
 
 export default async function Header() {
   //  const res = await saveVisitor({})
@@ -23,10 +23,10 @@ export default async function Header() {
           <div className="flex justify-between items-center">
             <Logo settingData={setting} />
             <div className="md:hidden">
-              <MobileMenu/>
+              <MobileMenu />
             </div>
             <div className="hidden md:inline md:order-2">
-              <MainMenu responsiveMenu="desktop"  />
+              <MainMenu />
             </div>
             <HeaderRight />
           </div>
