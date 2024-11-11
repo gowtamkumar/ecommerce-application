@@ -29,12 +29,23 @@ export default async function Product() {
   // const resCategory = await getAllCategories();
   // const resTax = await getTaxs();
 
-
-  const [resBrand, resSize, resUnit, resColor, resDiscount, resCategory, resTax] = await Promise.all([getBrands(),
-  getSizes(), getUnits(), getColors(),
-  getFilterDiscounts({ type: "Discount" }), getAllCategories(),
-  getTaxs()]);
-
+  const [
+    resBrand,
+    resSize,
+    resUnit,
+    resColor,
+    resDiscount,
+    resCategory,
+    resTax,
+  ] = await Promise.all([
+    getBrands(),
+    getSizes(),
+    getUnits(),
+    getColors(),
+    getFilterDiscounts({ type: "Discount" }),
+    getAllCategories(),
+    getTaxs(),
+  ]);
 
   // useEffect(() => {
   //   (async () => {
