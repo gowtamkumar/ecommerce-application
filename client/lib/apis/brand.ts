@@ -1,8 +1,5 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use server";
-import appConfig from "@/config";
-import { authOptions } from "../authOption";
-import { getServerSession } from "next-auth";
+import appConfig from "@/appConfig";
 import { getAuthHeaders } from "../utils/commonFunctions";
 
 // async function getAuthHeaders() {

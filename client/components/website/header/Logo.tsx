@@ -1,5 +1,5 @@
 "use client";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";

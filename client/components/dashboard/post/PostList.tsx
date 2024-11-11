@@ -21,7 +21,7 @@ import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteColor, getColors } from "@/lib/apis/color";
 import { getPosts } from "@/lib/apis/posts";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 interface DataType {
   key: string;

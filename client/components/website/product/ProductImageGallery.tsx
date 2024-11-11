@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import Image from "next/image";
 import React, { useState } from "react";
 

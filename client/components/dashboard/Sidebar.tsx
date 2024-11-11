@@ -10,7 +10,7 @@ import {
 } from "@/redux/features/layout/layoutSlice";
 import { navbarRoute } from "@/NavBarRoute";
 import { getSettings } from "@/lib/apis/setting";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 const { Sider } = Layout;
 

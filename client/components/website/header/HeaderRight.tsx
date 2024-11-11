@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { CiSearch, CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function HeaderRight() {
   const [open, setOpen] = useState(false);

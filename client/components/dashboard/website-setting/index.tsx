@@ -16,7 +16,7 @@ import TermPolicyPage from "./TermPolicyPage";
 import ContactPage from "./ContactPage";
 import HelpSupport from "./HelpSupport";
 import { getCurrencies } from "@/lib/apis/currency";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import Menu from "./Menu";
 
 export default function Index() {

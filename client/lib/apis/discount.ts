@@ -1,5 +1,5 @@
 "use server";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import { getAuthHeaders } from "../utils/commonFunctions";
 
 export async function saveDiscount(data: any) {

@@ -20,7 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { deleteProduct, getProducts } from "@/lib/apis/product";
 import { useRouter } from "next/navigation";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import {
   errorNotification,
   successNotification,

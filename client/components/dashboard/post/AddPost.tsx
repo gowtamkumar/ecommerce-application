@@ -25,7 +25,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { getAllCategories } from "@/lib/apis/categories";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import TextQuillEditor from "@/components/share-component/editor-quill/TextQuillEditor";
 import { useParams, useRouter } from "next/navigation";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";

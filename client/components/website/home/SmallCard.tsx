@@ -11,7 +11,7 @@ import {
   EffectFade,
 } from "swiper/modules";
 import { SwiperNavButtons } from "../banner/SwiperNavButtons";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function SmallCard({ categories }: any) {
   const router = useRouter();

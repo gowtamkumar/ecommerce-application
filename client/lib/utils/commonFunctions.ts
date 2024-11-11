@@ -27,12 +27,12 @@ export const handleAsyncAction = async (
 
 export async function getAuthHeaders() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.accessToken) {
-    throw new Error("User not authenticated");
-  }
+  // if (!session?.user?.accessToken) {
+  //   throw new Error("User not authenticated");
+  // }
   return {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${session.user.accessToken}`,
+    Authorization: `Bearer ${session?.user?.accessToken}`,
   };
 }
 

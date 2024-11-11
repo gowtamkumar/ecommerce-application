@@ -12,7 +12,7 @@ import { saveBrand, updateBrand } from "@/lib/apis/brand";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 const uploadButton = (
   <div>

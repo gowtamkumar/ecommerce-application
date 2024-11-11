@@ -5,7 +5,7 @@ import PostSearchSection from "@/components/website/blog/PostSearchSection";
 import PostTagSection from "@/components/website/blog/PostTagSection";
 import RecentPostSection from "@/components/website/blog/RecentPostSection";
 import Subscribe from "@/components/website/footer/Subscribe";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import { getPost } from "@/lib/apis/posts";
 import dayjs from "dayjs";
 import React from "react";

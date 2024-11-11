@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../authOption";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export async function saveDistrict(data: any) {
   const session = await getServerSession(authOptions);

@@ -1,7 +1,7 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import { getAuthHeaders } from "../utils/commonFunctions";
 
 // async function getAuthHeaders() {

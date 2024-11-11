@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getTopSellingProducts } from "@/lib/apis/reports";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const TopSellingProductCard: React.FC = () => {

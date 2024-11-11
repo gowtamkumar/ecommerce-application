@@ -14,7 +14,7 @@ import {
 } from "swiper/modules";
 import Link from "next/link";
 import { SwiperNavButtons } from "./SwiperNavButtons";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function Slider({ banners }: any) {
   return (

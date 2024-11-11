@@ -26,7 +26,7 @@ import {
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import ImgCrop from "antd-img-crop";
 import { PlusOutlined } from "@ant-design/icons";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 const uploadButton = (
   <div>

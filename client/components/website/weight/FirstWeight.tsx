@@ -1,4 +1,4 @@
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import Image from "next/image";
 import React from "react";
 

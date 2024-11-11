@@ -10,7 +10,7 @@ import {
 } from "@/redux/features/layout/layoutSlice";
 import { userProfileRoute } from "@/NavBarRoute";
 import { useSession } from "next-auth/react";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function DashboardHeader() {
   const {

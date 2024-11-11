@@ -14,7 +14,7 @@ import Lead from "./lead/Lead";
 import Currency from "./currency/Currency";
 import CompanySetting from "./CompanySetting";
 import { getCurrencies } from "@/lib/apis/currency";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 import Size from "@/app/(dashboard)/dashboard/size/page";
 import Unit from "@/app/(dashboard)/dashboard/unit/page";
 import Tax from "@/app/(dashboard)/dashboard/taxs/page";

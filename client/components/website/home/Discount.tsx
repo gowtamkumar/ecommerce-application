@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
 import { SwiperNavButtons } from "../banner/SwiperNavButtons";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function Discount({ discounts }: any) {
   const dispatch = useDispatch();

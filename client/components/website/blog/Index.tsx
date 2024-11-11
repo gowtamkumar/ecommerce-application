@@ -8,7 +8,7 @@ import PostSearchSection from "./PostSearchSection";
 import RecentPostSection from "./RecentPostSection";
 import Pagination from "./Pagination";
 import PostHeader from "./PostHeader";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function Index({ posts }: any) {
   return (

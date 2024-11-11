@@ -22,7 +22,7 @@ import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dayjs from "dayjs";
 import { getSettings } from "@/lib/apis/setting";
 import { deleteCart, getCartByUser } from "@/lib/apis/cart";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);

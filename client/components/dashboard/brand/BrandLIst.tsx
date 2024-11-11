@@ -20,7 +20,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteBrand, getBrands } from "@/lib/apis/brand";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 interface DataType {
   key: string;

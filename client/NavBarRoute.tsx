@@ -3,7 +3,7 @@ import { MenuProps } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { backupDB } from "./lib/apis/backupDB";
-import appConfig from "./config";
+import appConfig from "./appConfig";
 
 // key as like features
 

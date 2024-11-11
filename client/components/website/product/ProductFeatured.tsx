@@ -21,7 +21,7 @@ import {
   Scrollbar,
 } from "swiper/modules";
 import { SwiperNavButtons } from "../banner/SwiperNavButtons";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const ProductFeatured = () => {

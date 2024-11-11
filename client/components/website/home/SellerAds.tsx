@@ -11,7 +11,7 @@ import {
   Autoplay,
 } from "swiper/modules";
 import Image from "next/image";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 const SellerAds = ({ banners }: any) => {
   return (

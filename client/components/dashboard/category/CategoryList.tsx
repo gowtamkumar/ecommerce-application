@@ -20,7 +20,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteCategory, getCategories } from "@/lib/apis/categories";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 interface DataType {
   key: React.ReactNode;

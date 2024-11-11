@@ -25,7 +25,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import ChangePassword from "./PasswordChange";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 const uploadButton = (
   <div>

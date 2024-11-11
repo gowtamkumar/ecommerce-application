@@ -21,7 +21,7 @@ import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteUser, getUsers } from "@/lib/apis/user";
 import dayjs from "dayjs";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 interface DataType {
   key: string;

@@ -1,7 +1,7 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 // Function to handle API responses
 async function handleResponse(res: Response) {

@@ -12,7 +12,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const ProductCard: React.FC = () => {

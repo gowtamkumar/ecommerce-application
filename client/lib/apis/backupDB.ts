@@ -1,7 +1,7 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
-import appConfig from "@/config";
+import appConfig from "@/appConfig";
 
 export async function backupDB() {
   const session = await getServerSession(authOptions);
