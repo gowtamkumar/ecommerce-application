@@ -1,19 +1,6 @@
 "use server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
-
-// async function getAuthHeaders() {
-//   const session = await getServerSession(authOptions);
-//   if (!session?.user?.accessToken) {
-//     throw new Error("User not authenticated");
-//   }
-//   return {
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${session.user.accessToken}`,
-//   };
-// }
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveColor(data: any) {
   const headers = await getAuthHeaders();
@@ -24,11 +11,7 @@ export async function saveColor(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-  return await res.json();
+  return await handleResponse(res);
 }
 
 export async function getColors() {
@@ -38,12 +21,7 @@ export async function getColors() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return await res.json();
+  return await handleResponse(res);
 }
 
 export async function updateColor(data: any) {
@@ -55,12 +33,7 @@ export async function updateColor(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function deleteColor(id: string) {
@@ -71,10 +44,5 @@ export async function deleteColor(id: string) {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }

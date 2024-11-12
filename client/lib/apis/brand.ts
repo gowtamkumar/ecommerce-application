@@ -1,17 +1,6 @@
 "use server";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
-
-// async function getAuthHeaders() {
-//   const session = await getServerSession(authOptions);
-//   if (!session?.user?.accessToken) {
-//     throw new Error("User not authenticated");
-//   }
-//   return {
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${session.user.accessToken}`,
-//   };
-// }
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveBrand(data: any) {
   const headers = await getAuthHeaders();
@@ -22,12 +11,7 @@ export async function saveBrand(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return await res.json();
+  return await handleResponse(res);
 }
 
 export async function getBrands() {
@@ -38,12 +22,7 @@ export async function getBrands() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to fetch leads");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function updateBrand(data: any) {
@@ -56,12 +35,7 @@ export async function updateBrand(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to fetch leads");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function deleteBrand(id: string) {
@@ -73,10 +47,5 @@ export async function deleteBrand(id: string) {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to fetch leads");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }

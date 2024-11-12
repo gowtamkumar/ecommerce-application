@@ -1,88 +1,46 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use server";
 import appConfig from "@/appConfig";
-import { authOptions } from "../authOption";
-import { getServerSession } from "next-auth";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveMenu(data: any) {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
 
   const res = await fetch(`${appConfig.apiUrl}/api/v1/menus`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error(`Error saving Menu: ${res.statusText}`);
-  }
-
-  return res.json();
+  return handleResponse(res);
 }
 
-export async function getMenus(params?: any) {
-  const searchParams = new URLSearchParams();
+export async function getMenus() {
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus`);
 
-  if (params?.type) {
-    searchParams.append("type", params.type);
-  }
-
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/menus?${searchParams.toString()}`,
-    {
-      // Uncomment the headers if authentication is needed
-      // headers: {
-      //   'Authorization': `Bearer ${accessToken}`,
-      // },
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error(`Error fetching Menus: ${res.statusText}`);
-  }
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function updateMenu(data: any) {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
 
   const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    throw new Error(`Error updating Menu: ${res.statusText}`);
-  }
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function deleteMenu(id: string) {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
 
   const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/${id}`, {
     method: "DELETE",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
 
-  if (!res.ok) {
-    throw new Error(`Error deleting Menu: ${res.statusText}`);
-  }
-
-  return res.json();
+  return handleResponse(res);
 }

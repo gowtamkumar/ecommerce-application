@@ -1,22 +1,6 @@
 "use server";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
-
-// Define an interface for the unit
-
-// async function getAuthHeaders() {
-//   const session = await getServerSession(authOptions);
-//   if (!session?.user?.accessToken) {
-//     throw new Error("User not authenticated");
-//   }
-//   return {
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${session.user.accessToken}`,
-//   };
-// }
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Function to save a new unit
 export async function saveUnit(data: any) {
@@ -28,11 +12,7 @@ export async function saveUnit(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-  return res.json();
+  return await handleResponse(res)
 }
 
 // Function to get all units
@@ -43,12 +23,7 @@ export async function getUnits() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return res.json();
+  return await handleResponse(res)
 }
 
 // Function to update a unit
@@ -61,12 +36,7 @@ export async function updateUnit(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return res.json();
+  return await handleResponse(res)
 }
 
 // Function to delete a unit by ID
@@ -78,10 +48,5 @@ export async function deleteUnit(id: string) {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return res.json();
+  return await handleResponse(res)
 }

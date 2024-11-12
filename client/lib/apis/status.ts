@@ -1,8 +1,6 @@
 "use server";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Define an interface for the status
 interface Status {
@@ -21,82 +19,49 @@ interface ApiResponse<T> {
 
 // Function to save a new status
 export async function saveStatus(data: Status): Promise<ApiResponse<Status>> {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/status`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      'Authorization': `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get all statuses
 export async function getStatuses(): Promise<ApiResponse<Status[]>> {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/status`, {
     cache: "no-cache",
-    headers: {
-      'Authorization': `Bearer ${session?.user?.accessToken}`,
-    }
+    headers,
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to update a status
 export async function updateStatus(data: Status): Promise<ApiResponse<Status>> {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/status/${data.id}`,
-    {
-      method: "PUT",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/status/${data.id}`, {
+    method: "PUT",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to delete a status by ID
 export async function deleteStatus(id: string): Promise<ApiResponse<null>> {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/status/${id}`,
-    {
-      method: "DELETE",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${session?.user?.accessToken}`,
-      },
-    }
-  );
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/status/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers,
+  });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }

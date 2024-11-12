@@ -1,6 +1,6 @@
 "use server";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveDiscount(data: any) {
   const headers = await getAuthHeaders();
@@ -11,11 +11,7 @@ export async function saveDiscount(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save discount");
-  }
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function getDiscounts() {
@@ -25,11 +21,7 @@ export async function getDiscounts() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to get discounts");
-  }
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function getFilterDiscounts(params?: { type: string }) {
@@ -41,12 +33,7 @@ export async function getFilterDiscounts(params?: { type: string }) {
     }
   );
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to get filter discount");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function updateDiscount(data: any) {
@@ -58,11 +45,7 @@ export async function updateDiscount(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to update discount");
-  }
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function deleteDiscount(id: string) {
@@ -73,9 +56,5 @@ export async function deleteDiscount(id: string) {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to delete discount");
-  }
-  return res.json();
+  return await handleResponse(res);
 }

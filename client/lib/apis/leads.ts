@@ -1,20 +1,6 @@
 "use server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
-
-// Helper function to get the Authorization header
-// async function getAuthHeaders() {
-//   const session = await getServerSession(authOptions);
-//   if (!session?.user?.accessToken) {
-//     throw new Error("User not authenticated");
-//   }
-//   return {
-//     "Content-Type": "application/json",
-//     Authorization: `Bearer ${session.user.accessToken}`,
-//   };
-// }
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Save a new lead
 export async function saveLead(data: any) {
@@ -27,12 +13,7 @@ export async function saveLead(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save lead");
-  }
-
-  return await res.json();
+  return await handleResponse(res);
 }
 
 // Retrieve all leads
@@ -44,12 +25,7 @@ export async function getLeads() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to fetch leads");
-  }
-
-  return await res.json();
+  return await handleResponse(res);
 }
 
 // Update an existing lead
@@ -62,12 +38,7 @@ export async function updateLead(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to update lead");
-  }
-
-  return await res.json();
+  return await handleResponse(res);
 }
 
 // Delete a lead
@@ -78,11 +49,5 @@ export async function deleteLead(id: string) {
     method: "DELETE",
     headers,
   });
-
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to delete lead");
-  }
-
-  return await res.json();
+  return await handleResponse(res);
 }

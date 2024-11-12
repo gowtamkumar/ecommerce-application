@@ -1,10 +1,7 @@
 "use server";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
-// Define interfaces for visitor and API response
 interface Visitor {
   id?: string; // Optional for new visitors
   name?: string; // Name of the visitor
@@ -19,94 +16,58 @@ interface ApiResponse<T> {
 }
 
 // Function to save a new visitor
-export async function saveVisitor(data: Visitor): Promise<ApiResponse<Visitor>> {
+export async function saveVisitor(
+  data: Visitor
+): Promise<ApiResponse<Visitor>> {
   const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors`, {
     method: "POST",
-    cache: 'no-cache',
-    headers: {
-      "Content-Type": "application/json",
-    },
+    cache: "no-cache",
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get all visitors
 export async function getVisitors(): Promise<ApiResponse<Visitor[]>> {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors`, {
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get a specific visitor by ID
 export async function getVisitor(id: string): Promise<ApiResponse<Visitor>> {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to update a visitor
-export async function updateVisitor(data: Visitor): Promise<ApiResponse<Visitor>> {
-  const session = await getServerSession(authOptions);
+export async function updateVisitor(
+  data: Visitor
+): Promise<ApiResponse<Visitor>> {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to delete a visitor by ID
 export async function deleteVisitor(id: string): Promise<ApiResponse<null>> {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors/${id}`, {
     method: "DELETE",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }

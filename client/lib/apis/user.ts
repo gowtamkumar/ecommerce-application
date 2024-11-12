@@ -1,8 +1,6 @@
 "use server";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Define interfaces for user and API response
 interface User {
@@ -20,117 +18,75 @@ interface ApiResponse<T> {
 }
 
 // Function to save a new user
-export async function saveUser(data: User){
+export async function saveUser(data: User) {
   const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/register`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get the current user's information
 export async function getMe() {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/me`, {
     method: "GET",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get all users
 export async function getUsers() {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users`, {
     cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to update a user
 export async function updateUser(data: User) {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/auth/users/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
-}
-
-// Function to update the user's password
-export async function updatePassword(data: { oldPassword: string; newPassword: string }){
-  const session = await getServerSession(authOptions);
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/update-password`, {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
+  return await handleResponse(res);
+}
 
-  return res.json();
+// Function to update the user's password
+export async function updatePassword(data: {
+  oldPassword: string;
+  newPassword: string;
+}) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/update-password`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  return await handleResponse(res);
 }
 
 // Function to delete a user by ID
 export async function deleteUser(id: string) {
-  const session = await getServerSession(authOptions);
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users/${id}`, {
     method: "DELETE",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }

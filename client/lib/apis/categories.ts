@@ -1,6 +1,6 @@
 "use server";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function getAllCategories() {
   const headers = await getAuthHeaders();
@@ -10,12 +10,7 @@ export async function getAllCategories() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save discount");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function getCategories() {
@@ -25,11 +20,7 @@ export async function getCategories() {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save discount");
-  }
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function saveCategory(data: any) {
@@ -41,12 +32,7 @@ export async function saveCategory(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save discount");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function updateCategory(data: any) {
@@ -57,12 +43,7 @@ export async function updateCategory(data: any) {
     headers,
     body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save discount");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 export async function deleteCategory(id: string) {
@@ -73,10 +54,5 @@ export async function deleteCategory(id: string) {
     headers,
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save discount");
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }

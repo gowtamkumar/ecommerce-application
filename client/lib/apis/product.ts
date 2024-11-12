@@ -1,6 +1,6 @@
 "use server";
 import appConfig from "@/appConfig";
-import { getAuthHeaders } from "../utils/commonFunctions";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveProduct(data: any) {
   const headers = await getAuthHeaders();
@@ -11,11 +11,7 @@ export async function saveProduct(data: any) {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to save product");
-  }
-  return res.json();
+  return await handleResponse(res);
 }
 
 interface getParams {
@@ -108,12 +104,7 @@ export async function getPublicProducts(params: getParams) {
 
   const res = await fetch(`${appConfig.apiUrl}/api/v1/products?${queryString}`);
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to  product query");
-  }
-  const result = await res.json();
-  return result;
+  return await handleResponse(res);
 }
 
 export async function getProduct(id: string) {
@@ -123,11 +114,8 @@ export async function getProduct(id: string) {
     cache: "no-cache",
     headers,
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to get product");
-  }
-  return res.json();
+
+  return await handleResponse(res);
 }
 
 export async function updateProduct(data: any) {
@@ -138,11 +126,8 @@ export async function updateProduct(data: any) {
     headers,
     body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "Failed to update product");
-  }
-  return res.json();
+
+  return await handleResponse(res);
 }
 
 export async function deleteProduct(id: string) {
@@ -152,9 +137,6 @@ export async function deleteProduct(id: string) {
     cache: "no-cache",
     headers,
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to delete product");
-  }
-  return res.json();
+
+  return await handleResponse(res);
 }

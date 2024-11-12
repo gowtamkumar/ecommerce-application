@@ -1,8 +1,7 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
 import appConfig from "@/appConfig";
+import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Define an interface for setting data
 interface Setting {
@@ -18,99 +17,58 @@ interface ApiResponse<T> {
 }
 
 // Function to save a setting
-export async function saveSetting(data: Setting): Promise<ApiResponse<Setting>> {
-  const session = await getServerSession(authOptions);
+export async function saveSetting(data: Setting) {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/settings`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-  
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get all settings
-export async function getSettings(): Promise<ApiResponse<Setting[]>> {
+export async function getSettings() {
   const res = await fetch(`${appConfig.apiUrl}/api/v1/settings`, {
     cache: "no-cache",
   });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to get a specific setting
-export async function getSetting(id: string): Promise<ApiResponse<Setting>> {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/settings/${id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-    }
-  );
+export async function getSetting(id: string) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/${id}`, {
+    headers,
+  });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to update a setting
-export async function updateSetting(data: Setting): Promise<ApiResponse<Setting>> {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/settings/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(data),
-    }
-  );
+export async function updateSetting(data: Setting) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/${data.id}`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
 
 // Function to delete a setting
-export async function deleteSetting(id: string): Promise<ApiResponse<null>> {
-  const session = await getServerSession(authOptions);
-  const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/settings/${id}`,
-    {
-      method: "DELETE",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-    }
-  );
+export async function deleteSetting(id: string){
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers,
+  });
 
-  if (!res.ok) {
-    throw new Error(`Error: ${res.status} - ${await res.text()}`);
-  }
-
-  return res.json();
+  return await handleResponse(res);
 }
