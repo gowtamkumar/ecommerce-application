@@ -16,7 +16,7 @@ export const getProductVariants = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all Product Variants",
+      message: "Get all Product Variants",
       data: result,
     });
   }
@@ -38,7 +38,7 @@ export const getProductVariant = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single ProductVariant of id ${req.params.id}`,
+      message: `Get a single ProductVariant of id ${req.params.id}`,
       data: result,
     });
   }
@@ -71,7 +71,7 @@ export const createProductVariant = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Product Variant",
+      message: "Create a new Product Variant",
       data: result,
     });
   }
@@ -115,7 +115,7 @@ export const updateProductVariant = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single ProductVariant of id ${req.params.id}`,
+      message: `Update a single ProductVariant of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -139,7 +139,7 @@ export const deleteProductVariant = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single ProductVariant of id ${req.params.id}`,
+      message: `Delete a single ProductVariant of id ${req.params.id}`,
       data: result,
     });
   }

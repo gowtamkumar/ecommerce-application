@@ -18,7 +18,7 @@ export const getFiles = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Files",
+    message: "Get all Files",
     data: result,
   });
 });
@@ -39,7 +39,7 @@ export const getFile = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single File of id ${req.params.id}`,
+      message: `Get a single File of id ${req.params.id}`,
       data: result,
     });
   }
@@ -72,7 +72,7 @@ export const createFile = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new File",
+    message: "Create a new File",
     data: save,
   });
 });
@@ -97,7 +97,7 @@ export const fileUpload = asyncHandler(async (req: any, res: Response) => {
   const save = await repository.save(newFile);
   return res.status(200).json({
     success: true,
-    msg: "Create a new File",
+    message: "Create a new File",
     data: save,
   });
 });
@@ -123,7 +123,7 @@ export const updateFile = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single File of id ${req.params.id}`,
+    message: `Update a single File of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -145,7 +145,7 @@ export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single File of id ${req.params.id}`,
+    message: `Delete a single File of id ${req.params.id}`,
     data: result,
   });
 });
@@ -171,7 +171,7 @@ export const deleteFileWithPhoto = asyncHandler(
       if (!deleteFile) {
         return res.status(404).json({
           success: false,
-          msg: "File not found",
+          message: "File not found",
         });
       }
 
@@ -180,13 +180,13 @@ export const deleteFileWithPhoto = asyncHandler(
 
       return res.status(200).json({
         success: true,
-        msg: `Deleted file with filename: ${filename}`,
+        message: `Deleted file with filename: ${filename}`,
         data: deleteFile,
       });
     } catch (error: any) {
       return res.status(500).json({
         success: false,
-        msg: "An error occurred while deleting the file",
+        message: "An error occurred while deleting the file",
         error: error.message,
       });
     }

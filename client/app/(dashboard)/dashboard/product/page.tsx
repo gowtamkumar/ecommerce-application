@@ -27,7 +27,7 @@ export default function Product() {
           <Button
             size="small"
             className="capitalize"
-            onClick={() => params.push("/dashboard/products/new")}
+            onClick={() => params.push("/dashboard/product/new")}
           >
             <PlusOutlined className="mx-1" /> New Product
           </Button>

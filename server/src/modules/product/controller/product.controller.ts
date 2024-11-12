@@ -399,7 +399,7 @@ export const updateProduct = asyncHandler(
 //     }
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Get active products`,
+//       message: `Get active products`,
 //       data: results,
 //     });
 //   }
@@ -416,7 +416,7 @@ export const updateProduct = asyncHandler(
 //   }
 //   return res.status(200).json({
 //     success: true,
-//     msg: `Find products by name`,
+//     message: `Find products by name`,
 //     data: results,
 //   });
 // });
@@ -433,7 +433,7 @@ export const updateProduct = asyncHandler(
 //   }
 //   return res.status(200).json({
 //     success: true,
-//     msg: `Query by product name`,
+//     message: `Query by product name`,
 //     data: results,
 //   });
 // });
@@ -469,7 +469,7 @@ export const deleteProduct = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Product of id ${req.params.id}`,
+      message: `Delete a single Product of id ${req.params.id}`,
       data: result,
     });
   }

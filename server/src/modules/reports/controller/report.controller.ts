@@ -167,7 +167,7 @@ export const getDashboardReport = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get Dashboard Report",
+      message: "Get Dashboard Report",
       data: {
         ...user[0],
         ...results[0],
@@ -271,7 +271,7 @@ export const getTopSellingProduct = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get Top selling Products",
+      message: "Get Top selling Products",
       data: top_selling_product,
     });
   }

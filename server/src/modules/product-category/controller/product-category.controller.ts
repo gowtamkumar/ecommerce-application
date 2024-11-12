@@ -16,7 +16,7 @@ export const getProductCategorys = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all ProductCategory",
+      message: "Get all ProductCategory",
       data: result,
     });
   }
@@ -38,7 +38,7 @@ export const getProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single ProductCategory of id ${req.params.id}`,
+      message: `Get a single ProductCategory of id ${req.params.id}`,
       data: result,
     });
   }
@@ -72,7 +72,7 @@ export const createProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Product Category",
+      message: "Create a new Product Category",
       data: save,
     });
   }
@@ -114,7 +114,7 @@ export const updateProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single ProductCategory of id ${req.params.id}`,
+      message: `Update a single ProductCategory of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -138,7 +138,7 @@ export const deleteProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single ProductCategory of id ${req.params.id}`,
+      message: `Delete a single ProductCategory of id ${req.params.id}`,
       data: result,
     });
   }

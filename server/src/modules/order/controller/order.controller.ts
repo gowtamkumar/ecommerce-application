@@ -54,7 +54,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Order",
+    message: "Get all Order",
     data: results,
   });
 });
@@ -88,7 +88,7 @@ export const getUserOrders = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Order",
+    message: "Get all Order",
     data: results,
   });
 });
@@ -116,7 +116,7 @@ export const getOrder = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Order of id ${req.params.id}`,
+      message: `Get a single Order of id ${req.params.id}`,
       data: result,
     });
   }
@@ -280,7 +280,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Order",
+      message: "Create a new Order",
       data: savedOrder,
     });
   } catch (error) {
@@ -288,7 +288,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
     console.error("Transaction failed:", error);
     return res.status(500).json({
       success: false,
-      msg: "Failed to create Order",
+      message: "Failed to create Order",
     });
   } finally {
     await queryRunner.release();
@@ -332,7 +332,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Get a single Tracking No of ${trackingNo}`,
+//       message: `Get a single Tracking No of ${trackingNo}`,
 //       data: result,
 //     });
 //   }
@@ -393,7 +393,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Order of id ${req.params.id}`,
+    message: `Update a single Order of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -438,7 +438,7 @@ export const orderReview = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Order of id ${req.params.id}`,
+    message: `Update a single Order of id ${req.params.id}`,
     data: {},
   });
 });
@@ -478,7 +478,7 @@ export const assignDeliveryMan = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Assign Delivery man`,
+      message: `Assign Delivery man`,
       data: save,
     });
   }
@@ -554,7 +554,7 @@ export const orderStatusUpdate = asyncHandler(
 
       return res.status(200).json({
         success: true,
-        msg: `Order Status Update of id ${req.params.id}`,
+        message: `Order Status Update of id ${req.params.id}`,
         data: save,
       });
     } catch (error) {
@@ -562,7 +562,7 @@ export const orderStatusUpdate = asyncHandler(
       console.error("Transaction failed:", error);
       return res.status(500).json({
         success: false,
-        msg: "Failed to create Order",
+        message: "Failed to create Order",
       });
     } finally {
       await queryRunner.release();
@@ -587,7 +587,7 @@ export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Order of id ${req.params.id}`,
+    message: `Delete a single Order of id ${req.params.id}`,
     data: result,
   });
 });

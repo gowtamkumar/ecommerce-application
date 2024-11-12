@@ -26,7 +26,7 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Payment",
+    message: "Get all Payment",
     data: result,
   });
 });
@@ -47,7 +47,7 @@ export const getPayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Payment of id ${req.params.id}`,
+      message: `Get a single Payment of id ${req.params.id}`,
       data: result,
     });
   }
@@ -82,7 +82,7 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Payment",
+    message: "Create a new Payment",
     data: save,
   });
 });
@@ -111,7 +111,7 @@ export const createDashboardPayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Payment by dashboard",
+      message: "Create a new Payment by dashboard",
       data: save,
     });
   }
@@ -138,7 +138,7 @@ export const updatePayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Payment of id ${req.params.id}`,
+      message: `Update a single Payment of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -162,7 +162,7 @@ export const deletePayment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Payment of id ${req.params.id}`,
+      message: `Delete a single Payment of id ${req.params.id}`,
       data: result,
     });
   }

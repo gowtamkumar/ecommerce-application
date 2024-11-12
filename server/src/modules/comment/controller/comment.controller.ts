@@ -25,7 +25,7 @@ export const getComments = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Comment",
+    message: "Get all Comment",
     data: result,
   });
 });
@@ -46,7 +46,7 @@ export const getComment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Comment of id ${req.params.id}`,
+      message: `Get a single Comment of id ${req.params.id}`,
       data: result,
     });
   }
@@ -82,7 +82,7 @@ export const createComment = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Comment",
+    message: "Create a new Comment",
     data: save,
   });
 });
@@ -122,7 +122,7 @@ export const updateComment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Comment of id ${req.params.id}`,
+      message: `Update a single Comment of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -147,7 +147,7 @@ export const commentLike = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Comment of id ${req.params.id}`,
+    message: `Update a single Comment of id ${req.params.id}`,
     data: result,
   });
 });
@@ -169,7 +169,7 @@ export const commentDisLike = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Comment of id ${req.params.id}`,
+      message: `Update a single Comment of id ${req.params.id}`,
       data: result,
     });
   }
@@ -193,7 +193,7 @@ export const deleteComment = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Comment of id ${req.params.id}`,
+      message: `Delete a single Comment of id ${req.params.id}`,
       data: result,
     });
   }

@@ -24,7 +24,7 @@ export const getUnions = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Union",
+    message: "Get all Union",
     data: result,
   });
 });
@@ -45,7 +45,7 @@ export const getUnion = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Union of id ${req.params.id}`,
+      message: `Get a single Union of id ${req.params.id}`,
       data: result,
     });
   }
@@ -86,7 +86,7 @@ export const createUnion = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Union",
+    message: "Create a new Union",
     data: save,
   });
 });
@@ -108,7 +108,7 @@ export const createUnion = asyncHandler(async (req: any, res: Response) => {
 
 //   return res.status(200).json({
 //     success: true,
-//     msg: `Update a single Union of id ${req.params.id}`,
+//     message: `Update a single Union of id ${req.params.id}`,
 //     data: updateData,
 //   });
 // });
@@ -130,7 +130,7 @@ export const createUnion = asyncHandler(async (req: any, res: Response) => {
 
 //   return res.status(200).json({
 //     success: true,
-//     msg: `Delete a single Union of id ${req.params.id}`,
+//     message: `Delete a single Union of id ${req.params.id}`,
 //     data: result,
 //   });
 // });

@@ -15,7 +15,7 @@ export const getSizes = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Size",
+    message: "Get all Size",
     data: result,
   });
 });
@@ -36,7 +36,7 @@ export const getSize = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Size of id ${req.params.id}`,
+      message: `Get a single Size of id ${req.params.id}`,
       data: result,
     });
   }
@@ -70,7 +70,7 @@ export const createSize = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Size",
+    message: "Create a new Size",
     data: save,
   });
 });
@@ -111,7 +111,7 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Size of id ${req.params.id}`,
+    message: `Update a single Size of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -133,7 +133,7 @@ export const deleteSize = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Size of id ${req.params.id}`,
+    message: `Delete a single Size of id ${req.params.id}`,
     data: result,
   });
 });

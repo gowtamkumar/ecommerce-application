@@ -15,7 +15,7 @@ export const getUnits = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Unit",
+    message: "Get all Unit",
     data: result,
   });
 });
@@ -36,7 +36,7 @@ export const getUnit = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Unit of id ${req.params.id}`,
+      message: `Get a single Unit of id ${req.params.id}`,
       data: result,
     });
   }
@@ -71,7 +71,7 @@ export const createUnit = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Unit",
+    message: "Create a new Unit",
     data: save,
   });
 });
@@ -97,7 +97,7 @@ export const updateUnit = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Unit of id ${req.params.id}`,
+    message: `Update a single Unit of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -119,7 +119,7 @@ export const deleteUnit = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Unit of id ${req.params.id}`,
+    message: `Delete a single Unit of id ${req.params.id}`,
     data: result,
   });
 });

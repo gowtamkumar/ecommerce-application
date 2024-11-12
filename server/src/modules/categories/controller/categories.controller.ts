@@ -20,7 +20,7 @@ export const getAllCategories = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all categories",
+      message: "Get all categories",
       data: user,
     });
   }
@@ -62,7 +62,7 @@ export const getCategories = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all Categorys",
+      message: "Get all Categorys",
       data: ress,
     });
   }
@@ -94,7 +94,7 @@ export const getCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Category of id ${req.params.id}`,
+      message: `Get a single Category of id ${req.params.id}`,
       data: result,
     });
   }
@@ -256,7 +256,7 @@ export const deleteCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Category of id ${req.params.id}`,
+      message: `Delete a single Category of id ${req.params.id}`,
       data: result,
     });
   }

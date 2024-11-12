@@ -26,7 +26,7 @@ export const getDistricts = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all District",
+      message: "Get all District",
       data: result,
     });
   }
@@ -48,7 +48,7 @@ export const getDistrict = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single District of id ${req.params.id}`,
+      message: `Get a single District of id ${req.params.id}`,
       data: result,
     });
   }
@@ -79,7 +79,7 @@ export const createDistrict = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new District",
+    message: "Create a new District",
     data: save,
   });
 });
@@ -102,7 +102,7 @@ export const createDistrict = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Update a single District of id ${req.params.id}`,
+//       message: `Update a single District of id ${req.params.id}`,
 //       data: updateData,
 //     });
 //   }
@@ -126,7 +126,7 @@ export const createDistrict = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Delete a single District of id ${req.params.id}`,
+//       message: `Delete a single District of id ${req.params.id}`,
 //       data: result,
 //     });
 //   }

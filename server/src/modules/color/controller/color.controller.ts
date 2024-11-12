@@ -16,7 +16,7 @@ export const getColors = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Color",
+    message: "Get all Color",
     data: result,
   });
 });
@@ -37,7 +37,7 @@ export const getColor = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Color of id ${req.params.id}`,
+      message: `Get a single Color of id ${req.params.id}`,
       data: result,
     });
   }
@@ -71,7 +71,7 @@ export const createColor = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Color",
+    message: "Create a new Color",
     data: save,
   });
 });
@@ -109,7 +109,7 @@ export const updateColor = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Color of id ${req.params.id}`,
+    message: `Update a single Color of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -131,7 +131,7 @@ export const deleteColor = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Color of id ${req.params.id}`,
+    message: `Delete a single Color of id ${req.params.id}`,
     data: result,
   });
 });

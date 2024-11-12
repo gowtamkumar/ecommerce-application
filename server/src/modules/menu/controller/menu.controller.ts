@@ -20,7 +20,7 @@ export const getMemus = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all memus",
+    message: "Get all memus",
     data: result,
   });
 });
@@ -41,7 +41,7 @@ export const getMemu = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Memu of id ${req.params.id}`,
+      message: `Get a single Memu of id ${req.params.id}`,
       data: result,
     });
   }
@@ -77,7 +77,7 @@ export const createMemu = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Memu",
+    message: "Create a new Memu",
     data: save,
   });
 });
@@ -120,7 +120,7 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Memu of id ${req.params.id}`,
+    message: `Update a single Memu of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -152,7 +152,7 @@ export const deleteMemu = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Memu of id ${req.params.id}`,
+    message: `Delete a single Memu of id ${req.params.id}`,
     data: result,
   });
 });

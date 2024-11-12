@@ -14,7 +14,7 @@ export const getVisitors = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Visitor",
+    message: "Get all Visitor",
     data: result,
   });
 });
@@ -35,7 +35,7 @@ export const getVisitor = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Visitor of id ${req.params.id}`,
+      message: `Get a single Visitor of id ${req.params.id}`,
       data: result,
     });
   }
@@ -61,7 +61,7 @@ export const createVisitor = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Visitor",
+    message: "Create a new Visitor",
     data: visit,
   });
 });
@@ -84,7 +84,7 @@ export const updateVisitor = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Visitor of id ${req.params.id}`,
+      message: `Update a single Visitor of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -108,7 +108,7 @@ export const deleteVisitor = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Visitor of id ${req.params.id}`,
+      message: `Delete a single Visitor of id ${req.params.id}`,
       data: result,
     });
   }

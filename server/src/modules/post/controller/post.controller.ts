@@ -31,7 +31,7 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Post",
+    message: "Get all Post",
     data: result,
   });
 });
@@ -66,7 +66,7 @@ export const getPost = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Post of id ${req.params.id}`,
+      message: `Get a single Post of id ${req.params.id}`,
       data: result,
     });
   }
@@ -121,7 +121,7 @@ export const createPost = asyncHandler(async (req: any, res: Response) => {
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Post",
+      message: "Create a new Post",
       data: save,
     });
   } catch (error) {
@@ -129,7 +129,7 @@ export const createPost = asyncHandler(async (req: any, res: Response) => {
     console.error("Transaction failed:", error);
     return res.status(500).json({
       success: false,
-      msg: "Failed to create Post",
+      message: "Failed to create Post",
     });
   } finally {
     await queryRunner.release();
@@ -193,7 +193,7 @@ export const updatePost = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Post of id ${req.params.id}`,
+    message: `Update a single Post of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -215,7 +215,7 @@ export const deletePost = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Post of id ${req.params.id}`,
+    message: `Delete a single Post of id ${req.params.id}`,
     data: result,
   });
 });

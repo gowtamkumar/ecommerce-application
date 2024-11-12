@@ -80,7 +80,7 @@ export const register = asyncHandler(
     delete user.password;
     return res.status(200).json({
       success: true,
-      msg: "Create a new Register",
+      message: "Create a new Register",
       data: user,
       accessToken: token,
     });
@@ -122,7 +122,7 @@ export const getUsers = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all users",
+      message: "Get all users",
       data: results,
     });
   }
@@ -145,7 +145,7 @@ export const getUser = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get a user",
+      message: "Get a user",
       data: user,
     });
   }
@@ -177,7 +177,7 @@ export const getUserByEmail = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "user create by email successfully",
+      message: "user create by email successfully",
       data: { ...user, accessToken: token },
     });
   }
@@ -205,7 +205,7 @@ export const getUserByEmail = asyncHandler(
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: "Get a user",
+//       message: "Get a user",
 //       data: user,
 //     });
 //   }
@@ -282,7 +282,7 @@ export const login = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Login Successful",
+      message: "Login Successful",
       data: oldUser,
       accessToken: token,
     });
@@ -328,7 +328,7 @@ export const logout = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Logout Successful",
+      message: "Logout Successful",
       data: null,
     });
   }
@@ -465,7 +465,7 @@ export const getMe = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "I am Here",
+      message: "I am Here",
       data: user,
     });
   }
@@ -527,7 +527,7 @@ export const forgotPassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Forget password successful. Please check your email address",
+      message: "Forget password successful. Please check your email address",
       data: {},
     });
   }
@@ -579,7 +579,7 @@ export const resetPassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Reset password",
+      message: "Reset password",
       data: {},
     });
   }
@@ -629,7 +629,7 @@ export const updatePassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Update password",
+      message: "Update password",
     });
   }
 );
@@ -668,7 +668,7 @@ export const updateUser = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a User of id ${req.params.id}`,
+      message: `Update a User of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -705,7 +705,7 @@ export const deleteUser = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a user of id ${req.params.id}`,
+      message: `Delete a user of id ${req.params.id}`,
       data: user,
     });
   }

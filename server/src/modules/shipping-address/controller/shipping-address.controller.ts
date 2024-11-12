@@ -19,7 +19,7 @@ export const getShippingAddresses = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all ShippingAddress",
+      message: "Get all ShippingAddress",
       data: result,
     });
   }
@@ -41,7 +41,7 @@ export const getShippingAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Shipping Address of id ${req.params.id}`,
+      message: `Get a single Shipping Address of id ${req.params.id}`,
       data: result,
     });
   }
@@ -85,7 +85,7 @@ export const createShippingAddress = asyncHandler(
     const save = await repository.save(newShippingAddress);
     return res.status(200).json({
       success: true,
-      msg: "Create a new Shipping Address",
+      message: "Create a new Shipping Address",
       data: save,
     });
   }
@@ -129,7 +129,7 @@ export const updateShippingAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single ShippingAddress of id ${req.params.id}`,
+      message: `Update a single ShippingAddress of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -161,7 +161,7 @@ export const activeShippingAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Active Shipping address of id ${req.params.id}`,
+      message: `Active Shipping address of id ${req.params.id}`,
       data: findOneAddress,
     });
   }
@@ -185,7 +185,7 @@ export const deleteShippingAddress = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single ShippingAddress of id ${req.params.id}`,
+      message: `Delete a single ShippingAddress of id ${req.params.id}`,
       data: result,
     });
   }

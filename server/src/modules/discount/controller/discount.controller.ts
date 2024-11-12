@@ -18,7 +18,7 @@ export const getDiscounts = asyncHandler(
     const result = await repository.find({ where: newQuery });
     return res.status(200).json({
       success: true,
-      msg: "Get all Discounts",
+      message: "Get all Discounts",
       data: result,
     });
   }
@@ -40,7 +40,7 @@ export const getDiscount = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Discount of id ${req.params.id}`,
+      message: `Get a single Discount of id ${req.params.id}`,
       data: result,
     });
   }
@@ -77,7 +77,7 @@ export const createDiscount = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Discount",
+    message: "Create a new Discount",
     data: save,
   });
 });
@@ -119,7 +119,7 @@ export const updateDiscount = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Discount of id ${req.params.id}`,
+      message: `Update a single Discount of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -143,7 +143,7 @@ export const deleteDiscount = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Discount of id ${req.params.id}`,
+      message: `Delete a single Discount of id ${req.params.id}`,
       data: result,
     });
   }

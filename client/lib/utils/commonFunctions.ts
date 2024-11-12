@@ -24,7 +24,6 @@ export const handleAsyncAction = async (
   }
 };
 
-
 export async function getAuthHeaders() {
   const session = await getServerSession(authOptions);
   // if (!session?.user?.accessToken) {
@@ -40,40 +39,36 @@ export async function getAuthHeaders() {
 export async function handleResponse(res: Response) {
   if (!res.ok) {
     const errorData = await res.json();
-    console.log("🚀 ~ errorData:", errorData)
-    
-    throw new Error(errorData?.message || "Failed");
+    return errorData
+    // throw new Error(errorData?.message || "Failed");
   }
   return res.json();
 }
 
+// const handleSubmit = async (values: any) => {
+//   try {
+//     let newData = { ...values };
+//     // return console.log("newData:", newData);
+//     dispatch(setLoading({ save: true }));
+//     const result = newData.id
+//       ? await updateLead(newData)
+//       : await saveLead(newData);
 
-  // const handleSubmit = async (values: any) => {
-  //   try {
-  //     let newData = { ...values };
-  //     // return console.log("newData:", newData);
-  //     dispatch(setLoading({ save: true }));
-  //     const result = newData.id
-  //       ? await updateLead(newData)
-  //       : await saveLead(newData);
+//     newData.id
+//       ? successNotification({ message: "Successfully Updated" })
+//       : successNotification({ message: "Successfully Added" });
 
-  //     newData.id
-  //       ? successNotification({ message: "Successfully Updated" })
-  //       : successNotification({ message: "Successfully Added" });
-
-  //     setTimeout(async () => {
-  //       dispatch(setLoading({ save: false }));
-  //       dispatch(setAction({}));
-  //       form.resetFields();
-  //     }, 100);
-  //   } catch (error: any) {
-  //     errorNotification({ message: error.message });
-  //     dispatch(setLoading({ save: false }));
-  //     dispatch(setAction({}));
-  //   }
-  // };
-
-
+//     setTimeout(async () => {
+//       dispatch(setLoading({ save: false }));
+//       dispatch(setAction({}));
+//       form.resetFields();
+//     }, 100);
+//   } catch (error: any) {
+//     errorNotification({ message: error.message });
+//     dispatch(setLoading({ save: false }));
+//     dispatch(setAction({}));
+//   }
+// };
 
 // export const handleClose = (dispatch: any, form: any) => {
 //   dispatch(setAction({}));

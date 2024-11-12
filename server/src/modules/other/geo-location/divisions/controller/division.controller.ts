@@ -20,7 +20,7 @@ export const getDivisions = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all Division",
+      message: "Get all Division",
       data: result,
     });
   }
@@ -66,7 +66,7 @@ export const getDivision = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Division of id ${req.params.id}`,
+      message: `Get a single Division of id ${req.params.id}`,
       data: result,
     });
   }
@@ -171,7 +171,7 @@ export const syncGeoLocation = asyncHandler(
       // Send success response
       return res.status(201).json({
         success: true,
-        msg: "Division, Upazila and Union created",
+        message: "Division, Upazila and Union created",
       });
     } catch (error) {
       console.error("Transaction failed:", error);
@@ -179,7 +179,7 @@ export const syncGeoLocation = asyncHandler(
       // Send error response
       return res
         .status(500)
-        .json({ success: false, msg: "Could not sync geolocation data" });
+        .json({ success: false, message: "Could not sync geolocation data" });
     } finally {
       await queryRunner.release();
     }
@@ -271,7 +271,7 @@ export const syncGeoLocation = asyncHandler(
 
 //   return res.status(200).json({
 //     success: true,
-//     msg: "Sync all geolocation data",
+//     message: "Sync all geolocation data",
 //     data: {
 //       divisions: saveDivisions,
 //       district: saveDistrict,
@@ -313,7 +313,7 @@ export const createDivision = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Division",
+    message: "Create a new Division",
     data: save,
   });
 });
@@ -336,7 +336,7 @@ export const createDivision = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Update a single Division of id ${req.params.id}`,
+//       message: `Update a single Division of id ${req.params.id}`,
 //       data: updateData,
 //     });
 //   }
@@ -360,7 +360,7 @@ export const createDivision = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Delete a single Division of id ${req.params.id}`,
+//       message: `Delete a single Division of id ${req.params.id}`,
 //       data: result,
 //     });
 //   }

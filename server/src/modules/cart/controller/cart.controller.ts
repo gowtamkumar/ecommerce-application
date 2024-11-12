@@ -104,7 +104,7 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get cart by user",
+    message: "Get cart by user",
     data: results,
   });
 });
@@ -120,7 +120,7 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Cart",
+    message: "Get all Cart",
     data: result,
   });
 });
@@ -141,7 +141,7 @@ export const getCart = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Cart of id ${req.params.id}`,
+      message: `Get a single Cart of id ${req.params.id}`,
       data: result,
     });
   }
@@ -182,7 +182,7 @@ export const createCart = asyncHandler(async (req: any, res: Response) => {
     const save = await repository.save(updateData);
     return res.status(200).json({
       success: true,
-      msg: "Cart increment",
+      message: "Cart increment",
       data: save,
     });
     // await repository.save({ id: findCart.id, qty: findCart.qty++ });
@@ -193,7 +193,7 @@ export const createCart = asyncHandler(async (req: any, res: Response) => {
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Cart",
+      message: "Create a new Cart",
       data: save,
     });
   }
@@ -234,7 +234,7 @@ export const updateCart = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Cart of id ${req.params.id}`,
+    message: `Update a single Cart of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -256,7 +256,7 @@ export const deleteCart = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Cart of id ${req.params.id}`,
+    message: `Delete a single Cart of id ${req.params.id}`,
     data: result,
   });
 });

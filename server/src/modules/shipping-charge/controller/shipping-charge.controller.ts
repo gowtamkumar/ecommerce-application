@@ -29,7 +29,7 @@ export const getShippingCharges = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all shippingCharge",
+      message: "Get all shippingCharge",
       data: result,
     });
   }
@@ -51,7 +51,7 @@ export const getShippingCharge = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single shippingCharge of id ${req.params.id}`,
+      message: `Get a single shippingCharge of id ${req.params.id}`,
       data: result,
     });
   }
@@ -87,7 +87,7 @@ export const createShippingCharge = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new shippingCharge",
+      message: "Create a new shippingCharge",
       data: save,
     });
   }
@@ -129,7 +129,7 @@ export const updateShippingCharge = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single shippingCharge of id ${req.params.id}`,
+      message: `Update a single shippingCharge of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -153,7 +153,7 @@ export const deleteShippingCharge = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single shippingCharge of id ${req.params.id}`,
+      message: `Delete a single shippingCharge of id ${req.params.id}`,
       data: result,
     });
   }

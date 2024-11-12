@@ -15,7 +15,7 @@ export const getTaxs = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Tax",
+    message: "Get all Tax",
     data: result,
   });
 });
@@ -36,7 +36,7 @@ export const getTax = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Tax of id ${req.params.id}`,
+      message: `Get a single Tax of id ${req.params.id}`,
       data: result,
     });
   }
@@ -71,7 +71,7 @@ export const createTax = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Tax",
+    message: "Create a new Tax",
     data: save,
   });
 });
@@ -110,7 +110,7 @@ export const updateTax = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Tax of id ${req.params.id}`,
+    message: `Update a single Tax of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -132,7 +132,7 @@ export const deleteTax = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Tax of id ${req.params.id}`,
+    message: `Delete a single Tax of id ${req.params.id}`,
     data: result,
   });
 });

@@ -20,7 +20,7 @@ export const getWishlists = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Wishlists",
+    message: "Get all Wishlists",
     data: result,
   });
 });
@@ -41,7 +41,7 @@ export const getWishlist = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Wishlist of id ${req.params.id}`,
+      message: `Get a single Wishlist of id ${req.params.id}`,
       data: result,
     });
   }
@@ -83,7 +83,7 @@ export const createWishlist = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Wishlist",
+    message: "Create a new Wishlist",
     data: save,
   });
 });
@@ -110,7 +110,7 @@ export const updateWishlist = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Wishlist of id ${req.params.id}`,
+      message: `Update a single Wishlist of id ${req.params.id}`,
       data: updateWishdata,
     });
   }
@@ -134,7 +134,7 @@ export const deleteWishlist = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Wishlist of id ${req.params.id}`,
+      message: `Delete a single Wishlist of id ${req.params.id}`,
       data: result,
     });
   }

@@ -15,7 +15,7 @@ export const getStatuss = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Status",
+    message: "Get all Status",
     data: result,
   });
 });
@@ -36,7 +36,7 @@ export const getStatus = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Status of id ${req.params.id}`,
+      message: `Get a single Status of id ${req.params.id}`,
       data: result,
     });
   }
@@ -70,7 +70,7 @@ export const createStatus = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Status",
+    message: "Create a new Status",
     data: save,
   });
 });
@@ -110,7 +110,7 @@ export const updateStatus = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Status of id ${req.params.id}`,
+      message: `Update a single Status of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -134,7 +134,7 @@ export const deleteStatus = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Status of id ${req.params.id}`,
+      message: `Delete a single Status of id ${req.params.id}`,
       data: result,
     });
   }

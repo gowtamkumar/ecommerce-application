@@ -17,7 +17,7 @@ export const getCurrencies = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all Currency",
+      message: "Get all Currency",
       data: result,
     });
   }
@@ -39,7 +39,7 @@ export const getCurrency = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Currency of id ${req.params.id}`,
+      message: `Get a single Currency of id ${req.params.id}`,
       data: result,
     });
   }
@@ -74,7 +74,7 @@ export const createCurrency = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Currency",
+    message: "Create a new Currency",
     data: save,
   });
 });
@@ -115,7 +115,7 @@ export const updateCurrency = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Currency of id ${req.params.id}`,
+      message: `Update a single Currency of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -139,7 +139,7 @@ export const deleteCurrency = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Currency of id ${req.params.id}`,
+      message: `Delete a single Currency of id ${req.params.id}`,
       data: result,
     });
   }

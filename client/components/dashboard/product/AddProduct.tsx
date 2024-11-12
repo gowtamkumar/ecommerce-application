@@ -25,6 +25,20 @@ import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { errorNotification } from "@/lib/utils/notification";
+
+const uploadButton = (
+  <div>
+    <PlusOutlined />
+    <div
+      style={{
+        marginTop: 8,
+      }}
+    >
+      Upload
+    </div>
+  </div>
+);
 
 const AddProduct = ({
   sizes,
@@ -123,21 +137,9 @@ const AddProduct = ({
 
     form.resetFields();
     setTags([]);
+    setFormValues({});
     // route.push(`/dashboard/product`);
   };
-
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div
-        style={{
-          marginTop: 8,
-        }}
-      >
-        Upload
-      </div>
-    </div>
-  );
 
   const setFormData = (value: any) => {
     const newData = { ...value };
@@ -176,7 +178,7 @@ const AddProduct = ({
       const res = await uploadFile(formData);
 
       if (!res || !res.data) {
-        throw new Error("Invalid response format");
+        errorNotification({ message: res.message });
       }
 
       const newfile = res.data.map((item: { filename: string }) => ({
@@ -184,7 +186,7 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: item.filename,
-        url: `${appConfig.apiUrl}/uploads/${item.filename || "no-data.png"}`,
+        url: `${appConfig.apiUrl}/uploads/${item.filename}`,
       }));
 
       const newFileName = res.data.length ? res.data[0].filename : null;
@@ -651,12 +653,20 @@ const AddProduct = ({
                 <table width="100%">
                   <thead className="mb-1">
                     <tr className="text-start">
-                      <th className="text-start w-1/6">Sale Price</th>
-                      <th className="text-start w-1/6">Purchase Price</th>
-                      <th className="text-start w-1/6">Size</th>
+                      <th className="text-start w-1/6">
+                        <label className="text-red-500">*</label>Sale Price
+                      </th>
+                      <th className="text-start w-1/6">
+                        <label className="text-red-500">*</label>Purchase Price
+                      </th>
+                      <th className="text-start w-1/6">
+                        <label className="text-red-500">*</label>Size
+                      </th>
                       <th className="text-start w-1/6">Color</th>
                       <th className="text-start w-1/6">Weight</th>
-                      <th className="text-start w-1/6">Qty</th>
+                      <th className="text-start w-1/6">
+                        <label className="text-red-500">*</label>Qty
+                      </th>
                     </tr>
                   </thead>
 

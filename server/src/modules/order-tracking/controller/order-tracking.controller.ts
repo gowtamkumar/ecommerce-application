@@ -17,7 +17,7 @@ export const getOrderTrackings = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Get all OrderTracking",
+      message: "Get all OrderTracking",
       data: results,
     });
   }
@@ -39,7 +39,7 @@ export const getOrderTracking = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single OrderTracking of id ${req.params.id}`,
+      message: `Get a single OrderTracking of id ${req.params.id}`,
       data: result,
     });
   }
@@ -77,7 +77,7 @@ export const createOrderTracking = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new OrderTracking",
+      message: "Create a new OrderTracking",
       data: save,
     });
   }
@@ -119,7 +119,7 @@ export const updateOrderTracking = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single OrderTracking of id ${req.params.id}`,
+      message: `Update a single OrderTracking of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -143,7 +143,7 @@ export const deleteOrderTracking = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single OrderTracking of id ${req.params.id}`,
+      message: `Delete a single OrderTracking of id ${req.params.id}`,
       data: result,
     });
   }

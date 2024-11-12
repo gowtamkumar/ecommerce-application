@@ -19,7 +19,7 @@ export const getBrands = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Brands",
+    message: "Get all Brands",
     data: result,
   });
 });
@@ -40,7 +40,7 @@ export const getBrand = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Brand of id ${req.params.id}`,
+      message: `Get a single Brand of id ${req.params.id}`,
       data: result,
     });
   }
@@ -75,7 +75,7 @@ export const createBrand = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Brand",
+    message: "Create a new Brand",
     data: save,
   });
 });
@@ -117,7 +117,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Brand of id ${req.params.id}`,
+    message: `Update a single Brand of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -149,7 +149,7 @@ export const deleteBrand = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Brand of id ${req.params.id}`,
+    message: `Delete a single Brand of id ${req.params.id}`,
     data: result,
   });
 });

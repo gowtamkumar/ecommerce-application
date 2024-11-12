@@ -17,7 +17,7 @@ export const getSettings = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Setting",
+    message: "Get all Setting",
     data: result,
   });
 });
@@ -38,7 +38,7 @@ export const getSetting = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Setting of id ${req.params.id}`,
+      message: `Get a single Setting of id ${req.params.id}`,
       data: result,
     });
   }
@@ -75,7 +75,7 @@ export const createSetting = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Setting",
+    message: "Create a new Setting",
     data: save,
   });
 });
@@ -105,7 +105,7 @@ export const createDashboardSetting = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: "Create a new Setting by dashboard",
+      message: "Create a new Setting by dashboard",
       data: save,
     });
   }
@@ -124,7 +124,7 @@ export const updateSetting = asyncHandler(
     await repository.save(updateData);
     return res.status(200).json({
       success: true,
-      msg: `Update a single Setting of id ${req.params.id}`,
+      message: `Update a single Setting of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -148,7 +148,7 @@ export const deleteSetting = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Setting of id ${req.params.id}`,
+      message: `Delete a single Setting of id ${req.params.id}`,
       data: result,
     });
   }

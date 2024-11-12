@@ -21,7 +21,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Banner",
+    message: "Get all Banner",
     data: result,
   });
 });
@@ -42,7 +42,7 @@ export const getBanner = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Banner of id ${req.params.id}`,
+      message: `Get a single Banner of id ${req.params.id}`,
       data: result,
     });
   }
@@ -77,7 +77,7 @@ export const createBanner = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Banner",
+    message: "Create a new Banner",
     data: save,
   });
 });
@@ -118,7 +118,7 @@ export const updateBanner = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Banner of id ${req.params.id}`,
+      message: `Update a single Banner of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -142,7 +142,7 @@ export const deleteBanner = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Banner of id ${req.params.id}`,
+      message: `Delete a single Banner of id ${req.params.id}`,
       data: result,
     });
   }

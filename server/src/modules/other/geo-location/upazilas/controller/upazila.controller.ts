@@ -25,7 +25,7 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Upazila",
+    message: "Get all Upazila",
     data: result,
   });
 });
@@ -46,7 +46,7 @@ export const getUpazila = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Upazila of id ${req.params.id}`,
+      message: `Get a single Upazila of id ${req.params.id}`,
       data: result,
     });
   }
@@ -86,7 +86,7 @@ export const createUpazila = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Upazila",
+    message: "Create a new Upazila",
     data: save,
   });
 });
@@ -109,7 +109,7 @@ export const createUpazila = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Update a single Upazila of id ${req.params.id}`,
+//       message: `Update a single Upazila of id ${req.params.id}`,
 //       data: updateData,
 //     });
 //   }
@@ -133,7 +133,7 @@ export const createUpazila = asyncHandler(async (req: any, res: Response) => {
 
 //     return res.status(200).json({
 //       success: true,
-//       msg: `Delete a single Upazila of id ${req.params.id}`,
+//       message: `Delete a single Upazila of id ${req.params.id}`,
 //       data: result,
 //     });
 //   }

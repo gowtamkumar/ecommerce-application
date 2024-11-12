@@ -25,7 +25,7 @@ export const getReviews = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Review",
+    message: "Get all Review",
     data: result,
   });
 });
@@ -46,7 +46,7 @@ export const getReview = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Review of id ${req.params.id}`,
+      message: `Get a single Review of id ${req.params.id}`,
       data: result,
     });
   }
@@ -83,7 +83,7 @@ export const createReview = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Review",
+    message: "Create a new Review",
     data: save,
   });
 });
@@ -122,7 +122,7 @@ export const updateReview = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Review of id ${req.params.id}`,
+      message: `Update a single Review of id ${req.params.id}`,
       data: updateData,
     });
   }
@@ -147,7 +147,7 @@ export const reviewLike = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Review of id ${req.params.id}`,
+    message: `Update a single Review of id ${req.params.id}`,
     data: result,
   });
 });
@@ -169,7 +169,7 @@ export const reviewDisLike = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Update a single Review of id ${req.params.id}`,
+      message: `Update a single Review of id ${req.params.id}`,
       data: result,
     });
   }
@@ -193,7 +193,7 @@ export const deleteReview = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Delete a single Review of id ${req.params.id}`,
+      message: `Delete a single Review of id ${req.params.id}`,
       data: result,
     });
   }

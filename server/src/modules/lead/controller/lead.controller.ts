@@ -14,7 +14,7 @@ export const getLeads = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Get all Lead",
+    message: "Get all Lead",
     data: result,
   });
 });
@@ -35,7 +35,7 @@ export const getLead = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      msg: `Get a single Lead of id ${req.params.id}`,
+      message: `Get a single Lead of id ${req.params.id}`,
       data: result,
     });
   }
@@ -74,7 +74,7 @@ export const createLead = asyncHandler(async (req: any, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: "Create a new Lead",
+    message: "Create a new Lead",
     data: save,
   });
 });
@@ -116,7 +116,7 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Update a single Lead of id ${req.params.id}`,
+    message: `Update a single Lead of id ${req.params.id}`,
     data: updateData,
   });
 });
@@ -139,7 +139,7 @@ export const deleteLead = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    msg: `Delete a single Lead of id ${req.params.id}`,
+    message: `Delete a single Lead of id ${req.params.id}`,
     data: result,
   });
 });
