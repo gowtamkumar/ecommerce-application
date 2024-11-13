@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   Button,
   Checkbox,
@@ -16,7 +16,13 @@ import {
   Tag,
   Upload,
 } from "antd";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setLoading,
+  setPreviewImage,
+  setPreviewOpen,
+  setPreviewTitle,
+} from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
@@ -52,20 +58,16 @@ const AddProduct = ({
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [product, setProduct] = useState<ProductType | null>(null);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
   const [formValues, setFormValues] = useState({
     fileList: [],
     images: [],
   }) as any;
-  const [previewTitle, setPreviewTitle] = useState("");
 
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const params = useParams();
-  const route = useRouter();
 
   useEffect(() => {
     // Call the async function
@@ -224,19 +226,21 @@ const AddProduct = ({
     }
   };
 
-  const handleCancel = () => setPreviewOpen(false);
-
   // file Preview
   const handlePreview = async (file: any) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    dispatch(setPreviewImage(file.url || file.preview));
+    dispatch(setPreviewOpen(true));
+    dispatch(
+      setPreviewTitle(
+        file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+      )
     );
   };
+
+  const handleCancel = () => dispatch(setPreviewOpen(false));
 
   const getBase64 = (file: any) =>
     new Promise((resolve, reject) => {
@@ -245,6 +249,8 @@ const AddProduct = ({
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+
+  // file Preview end
 
   if (global?.loading?.loading) {
     return <Spin />;
@@ -587,7 +593,7 @@ const AddProduct = ({
                       }
                     }}
                     className="avatar-uploader"
-                    onPreview={handlePreview}
+                    onPreview={(file) => handlePreview(file)}
                     customRequest={customUploadRequest}
                     maxCount={5}
                   >
@@ -602,8 +608,8 @@ const AddProduct = ({
               </Form.Item>
 
               <Modal
-                open={previewOpen}
-                title={previewTitle}
+                open={global.previewOpen}
+                title={global.previewTitle}
                 footer={null}
                 onCancel={handleCancel}
               >
@@ -612,7 +618,8 @@ const AddProduct = ({
                   style={{
                     width: "100%",
                   }}
-                  src={previewImage}
+                  src={global.previewImage}
+                  preview={false}
                 />
               </Modal>
             </div>
@@ -757,7 +764,6 @@ const AddProduct = ({
                             <InputNumber placeholder="Enter" min={1} />
                           </Form.Item>
                         </td>
-
                         <MinusCircleOutlined onClick={() => remove(name)} />
                       </tr>
                     </tbody>

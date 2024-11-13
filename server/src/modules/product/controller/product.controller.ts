@@ -10,11 +10,13 @@ import { join } from "path";
 import { FileEntity } from "../../other/file/model/file.entity";
 import fs from "fs";
 import { updateProductValidationSchema } from "../../../validation/product/updateProductValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Products
 // @route GET /api/v1/products
 // @access Public
 export const getProducts = async (req: Request, res: Response) => {
+  logger.info(`Service: getProducts ${req.method} ${req.url}`);
   try {
     const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
     const productRepository = connection.getRepository(ProductEntity);
@@ -134,6 +136,7 @@ export const getProducts = async (req: Request, res: Response) => {
 // @access Public
 export const getProduct = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getProduct ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);
@@ -197,6 +200,7 @@ export const getProduct = asyncHandler(
 // @route POST /api/v1/products
 // @access Public
 export const createProduct = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createProduct ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
@@ -269,11 +273,9 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateProduct = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateProduct ${req.method} ${req.url}`);
     const { id } = req.params;
-    console.log("req.body", req.body);
 
-    
-    
     // Validate request body
     const validation = updateProductValidationSchema.safeParse(req.body);
 
@@ -443,34 +445,49 @@ export const updateProduct = asyncHandler(
 // @access Public
 export const deleteProduct = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteProduct ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const productRepository = await connection.getRepository(ProductEntity);
 
-    const result = await productRepository.findOneBy({ id });
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+    // Check if the product exists
+    const product = await productRepository.findOneBy({ id });
+    if (!product) {
+      throw new Error(`Product not found with id #${id}`);
     }
 
-    if (result.images) {
+    // If there are images associated with the product, delete them
+    if (product.images && product.images.length > 0) {
       const repository = connection.getRepository(FileEntity);
       const directory = join(process.cwd(), "/public/uploads");
-      result.images?.forEach(async (item: string) => {
+
+      // Use Promise.all to handle multiple file deletions in parallel
+      const fileDeletions = product.images.map(async (item: any) => {
         const filePath = `${directory}/${item}`;
-        const [deleteFile] = await Promise.all([
-          repository.findOne({ where: { filename: item } }),
-          fs.promises.unlink(filePath),
-        ]);
-        await repository.remove(deleteFile);
+
+        // Find and remove file record from the database
+        const fileRecord = await repository.findOne({
+          where: { filename: item },
+        });
+        if (fileRecord) {
+          await repository.remove(fileRecord); // Remove from DB
+        }
+
+        // Delete the file from the filesystem
+        await fs.promises.unlink(filePath); // Delete file
       });
+
+      // Wait for all file deletions to complete
+      await Promise.all(fileDeletions);
     }
 
+    // Delete the product
     await productRepository.delete({ id });
 
     return res.status(200).json({
       success: true,
-      message: `Delete a single Product of id ${req.params.id}`,
-      data: result,
+      message: `Product with id ${id} deleted successfully.`,
+      data: product,
     });
   }
 );

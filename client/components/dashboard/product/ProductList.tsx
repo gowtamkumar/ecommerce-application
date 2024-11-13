@@ -17,7 +17,6 @@ import {
   RestOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { toast } from "react-toastify";
 import { deleteProduct, getProducts } from "@/lib/apis/product";
 import { useRouter } from "next/navigation";
 import appConfig from "@/appConfig";
@@ -54,33 +53,35 @@ const ProductList: React.FC = () => {
   }, []);
 
   const fetchProductData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      dispatch(setLoading({ loading: true }));
       const res = await getProducts();
       const newProducts = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
       }));
       setProducts(newProducts);
-      dispatch(setLoading({ loading: false }));
     } catch (error: any) {
       console.log(error);
+    } finally {
+      dispatch(setLoading({ loading: false }));
     }
   };
 
   const handleDelete = async (id: string) => {
+    console.log("🚀 ~ id:", id)
+    dispatch(setLoading({ save: true }));
     try {
-      dispatch(setLoading({ save: true }));
-      const deleted = await deleteProduct(id);
-      deleted.success &&
+      const result = await deleteProduct(id);
+      if (result.success) {
         successNotification({ message: "Successfully deleted" });
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-      }, 500);
+        fetchProductData();
+      }
     } catch (error: any) {
       errorNotification({ message: error.message });
-      dispatch(setLoading({}));
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -244,8 +245,7 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${
-              value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -383,8 +383,7 @@ const ProductList: React.FC = () => {
           <h2>
             Discount:
             {value?.discount &&
-              `${value?.discount.value}${
-                value?.discount.discountType === "Percentage" ? "%" : "BDT"
+              `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
               }`}
           </h2>
           <h2>Tax: {value.tax.value}%</h2>

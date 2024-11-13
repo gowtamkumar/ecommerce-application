@@ -8,6 +8,9 @@ export interface globalState {
   action: any;
   searchText: string;
   searchedColumn: string;
+  previewImage: string;
+  previewTitle: string;
+  previewOpen: boolean;
   formValues: any;
   productView: boolean;
   productRating: any;
@@ -22,6 +25,9 @@ const initialState: globalState = {
   action: {},
   searchText: "",
   searchedColumn: "",
+  previewImage: "",
+  previewTitle: "",
+  previewOpen: false,
   formValues: {},
   productView: false,
   productRating: {},
@@ -67,6 +73,16 @@ export const globalSlice = createSlice({
     setSetting: (state, action: PayloadAction<any>): any => {
       state.setting = action.payload;
     },
+    // down 3 state only for image preview
+    setPreviewImage: (state, action: PayloadAction<any>): any => {
+      state.previewImage = action.payload;
+    },
+    setPreviewOpen: (state, action: PayloadAction<any>): any => {
+      state.previewOpen = action.payload;
+    },
+    setPreviewTitle: (state, action: PayloadAction<any>): any => {
+      state.previewOpen = action.payload;
+    },
   },
 });
 
@@ -80,7 +96,10 @@ export const {
   setProductRating,
   setProductView,
   setProductFilter,
-  setSetting
+  setSetting,
+  setPreviewImage,
+  setPreviewOpen,
+  setPreviewTitle
 } = globalSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
 export const selectGlobal = (state: RootState) => state.global;
