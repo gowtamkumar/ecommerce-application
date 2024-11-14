@@ -16,13 +16,7 @@ import {
   Tag,
   Upload,
 } from "antd";
-import {
-  selectGlobal,
-  setLoading,
-  setPreviewImage,
-  setPreviewOpen,
-  setPreviewTitle,
-} from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
@@ -30,7 +24,12 @@ import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
 import { ProductType } from "@/lib/types/product";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
 
 const uploadButton = (
@@ -209,13 +208,6 @@ const AddProduct = ({
     }
   };
 
-  const normFile = (e: { fileList: string }) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
   // this function for tag
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
@@ -226,38 +218,12 @@ const AddProduct = ({
     }
   };
 
-  // file Preview
-  const handlePreview = async (file: any) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    dispatch(setPreviewImage(file.url || file.preview));
-    dispatch(setPreviewOpen(true));
-    dispatch(
-      setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-      )
-    );
-  };
-
-  const handleCancel = () => dispatch(setPreviewOpen(false));
-
-  const getBase64 = (file: any) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
-  // file Preview end
-
   if (global?.loading?.loading) {
     return <Spin />;
   }
 
   return (
-    <div>
+    <>
       <Divider orientation="left">Create New Product</Divider>
       <Form
         layout="vertical"
@@ -593,12 +559,11 @@ const AddProduct = ({
                       }
                     }}
                     className="avatar-uploader"
-                    onPreview={(file) => handlePreview(file)}
+                    onPreview={(file) => handlePreview(file, dispatch)}
                     customRequest={customUploadRequest}
                     maxCount={5}
                   >
                     {uploadButton}
-                    {/* {formValues?.fileList?.length >= 5 ? null : uploadButton} */}
                   </Upload>
                 </ImgCrop>
               </Form.Item>
@@ -611,7 +576,7 @@ const AddProduct = ({
                 open={global.previewOpen}
                 title={global.previewTitle}
                 footer={null}
-                onCancel={handleCancel}
+                onCancel={() => handlePreviewCancel(dispatch)}
               >
                 <Image
                   alt="example"
@@ -794,7 +759,7 @@ const AddProduct = ({
           </Button>
         </div>
       </Form>
-    </div>
+    </>
   );
 };
 

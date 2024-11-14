@@ -1,4 +1,10 @@
-import { setAction, setLoading } from "@/redux/features/global/globalSlice";
+import {
+  setAction,
+  setLoading,
+  setPreviewImage,
+  setPreviewOpen,
+  setPreviewTitle,
+} from "@/redux/features/global/globalSlice";
 import { errorNotification, successNotification } from "./notification";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
@@ -39,13 +45,45 @@ export async function getAuthHeaders() {
 export async function handleResponse(res: Response) {
   if (!res.ok) {
     const errorData = await res.json();
-    return errorData
+    return errorData;
     // throw new Error(errorData?.message || "Failed");
   }
   return res.json();
 }
 
+// image Preview
+export const handlePreview = async (file: any, dispatch: any) => {
+  if (!file.url && !file.preview) {
+    file.preview = await getBase64(file.originFileObj);
+  }
+  dispatch(setPreviewImage(file.url || file.preview));
+  dispatch(setPreviewOpen(true));
+  dispatch(
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    )
+  );
+};
 
+export const handlePreviewCancel = (dispatch: any) => {
+  dispatch(setPreviewOpen(false));
+};
+
+const getBase64 = (file: any) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
+export const normFile = (e: { fileList: string }) => {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e && e.fileList;
+};
+// image Preview end
 
 // const handleSubmit = async (values: any) => {
 //   try {
