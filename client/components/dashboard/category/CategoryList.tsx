@@ -61,20 +61,23 @@ const CategoryList: React.FC = () => {
     }
   };
 
+
   const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
     try {
-      dispatch(setLoading({ delete: true }));
-      await deleteCategory(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
+      const result = await deleteCategory(id);
+      if (result.success) {
         successNotification({ message: "Successfully deleted" });
-        dispatch(setAction({}));
         fetchCategoryData();
-      }, 5000);
+      }
     } catch (error: any) {
       errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
     }
   };
+
 
   const handleSearch = (
     selectedKeys: string[],

@@ -16,14 +16,20 @@ export const handleAsyncAction = async (
 ) => {
   try {
     dispatch(setLoading({ save: true }));
-    await asyncFn();
+    const res = await asyncFn();
+    console.log("🚀 ~ ressss:", res);
+
     setTimeout(() => {
-      successNotification({ message: successMessage });
+      successNotification({ message: res.message });
       dispatch(setAction({}));
       dispatch(setLoading({ save: false }));
-    }, 5000);
+    }, 1000);
   } catch (error: any) {
-    errorNotification({ message: error.message });
+    console.log("🚀 ~ error rrrrrrrrr:", error?.message);
+
+    const errorMessage = error?.message || "An unexpected error occurred";
+    errorNotification({ message: errorMessage });
+    // Ensure loading and action states are reset in case of an error
     dispatch(setLoading({ save: false }));
     dispatch(setAction({}));
   }
@@ -44,8 +50,6 @@ export const handleAsyncDeleteAction = async (
     //   dispatch(setAction({}));
     // }, 100);
   } catch (error: any) {
-    console.log("error", error);
-
     errorNotification({ message: error.message });
     dispatch(setLoading({ save: false }));
     dispatch(setAction({}));
@@ -71,8 +75,8 @@ export async function getAuthHeaders() {
 export async function handleResponse(res: Response) {
   if (!res.ok) {
     const errorData = await res.json();
-    return errorData;
-    // throw new Error(errorData?.message || "Failed");
+    // return errorData;
+    throw new Error(errorData?.message);
   }
   return res.json();
 }

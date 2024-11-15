@@ -31,6 +31,10 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -57,20 +61,20 @@ const AddCategory = () => {
   const { payload, type } = global.action;
 
   useEffect(() => {
-    fetchCategoryData();
+    fetchData();
     return () => {
       setFormValues({});
       form.resetFields();
     };
   }, []);
 
-  const fetchCategoryData = async () => {
+  const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
       const categories = await getCategories();
       setCategories(categories.data);
-      setFormData(newData);
+      setFormData(newData); // Use product.data?.tags or default to empty array
       setFormValues(newData);
     } catch (err) {
       console.error("Error fetching Category data:", err);
@@ -79,21 +83,48 @@ const AddCategory = () => {
     }
   };
 
-
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
+      let newData = values as any;
 
-    const asyncFn = newData.id
-      ? () => updateCategory(newData)
-      : () => saveCategory(newData);
+      // return console.log("newData:", newData);
 
-    const successMessage = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
 
-    await handleAsyncAction(asyncFn, successMessage, dispatch);
-    form.resetFields();
-    setFormValues({});
+
+      const result = newData.id ?
+        () => updateCategory(newData) :
+        () => saveCategory(newData);
+
+
+      await handleAsyncAction(result, "successfuly", dispatch)
+
+
+
+
+
+      // console.log("result", result);
+
+      // if (result.success) {
+      //   newData.id
+      //     ? successNotification({ message: "Successfully Updated" })
+      //     : successNotification({ message: "Successfully Added" });
+      // }
+
+      // if (result.issues) {
+      //   errorNotification({ message: "Please Fill the form carefully" });
+      //   dispatch(setLoading({ save: false }));
+      // }
+
+      // if (!result.success && !result.issues) {
+      //   errorNotification({ message: "Please Fill the form carefully" });
+      //   dispatch(setLoading({ save: false }));
+      // }
+
+      // setTimeout(async () => {
+      //   dispatch(setLoading({ save: false }));
+      //   form.resetFields();
+      //   setFormValues({});
+      // }, 1000);
+   
   };
 
   const handleClose = () => {
@@ -203,7 +234,7 @@ const AddCategory = () => {
                 treeDefaultExpandAll
                 // onChange={onChange}
                 treeData={categories}
-                // onPopupScroll={onPopupScroll}
+              // onPopupScroll={onPopupScroll}
               />
 
               {/* <Select.Option value={false}>Inactive</Select.Option> */}

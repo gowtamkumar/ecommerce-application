@@ -70,6 +70,7 @@ const ProductList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
     try {
       const result = await deleteProduct(id);
       if (result.success) {

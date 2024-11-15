@@ -16,7 +16,11 @@ import {
   Tag,
   Upload,
 } from "antd";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
@@ -30,7 +34,11 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
+import { saveLead, updateLead } from "@/lib/apis/leads";
 
 const uploadButton = (
   <div>
@@ -122,25 +130,38 @@ const AddProduct = ({
     }
   };
 
-  const handleSubmit = async () => {
-    const values = await form.validateFields();
-    let newData = { ...values, tags };
-    delete newData.fileList;
+  const handleSubmit = async (values: any) => {
+    dispatch(setLoading({ save: true }));
+    let newData = { ...values };
+    // return console.log("newData:", newData);
 
-    const asyncFn = newData.id
-      ? () => updateProduct(newData)
-      : () => saveProduct(newData);
+    const result = newData.id
+      ? await updateLead(newData)
+      : await saveLead(newData);
 
-    const successMessage = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
+      console.log("result", result);
+      
 
-    await handleAsyncAction(asyncFn, successMessage, dispatch);
+    if (result.success) {
+      newData.id
+        ? successNotification({ message: "Successfully Updated" })
+        : successNotification({ message: "Successfully Added" });
+    } 
+    
+    if(!result.success) {
+      errorNotification({ message: "error.message" });
+      dispatch(setLoading({ save: false }));
+      return;
+    }
 
-    form.resetFields();
-    setTags([]);
-    setFormValues({});
-    route.push(`/dashboard/product`);
+    setTimeout(async () => {
+      dispatch(setLoading({ save: false }));
+      form.resetFields();
+      setTags([]);
+      setFormValues({});
+      route.push(`/dashboard/product`);
+    }, 1000);
+
   };
 
   const setFormData = (value: any) => {
@@ -541,7 +562,6 @@ const AddProduct = ({
                   <Upload
                     name="images"
                     listType="picture-card"
-                    
                     fileList={formValues?.fileList || []}
                     onRemove={async (v) => {
                       const find = (form.getFieldValue("images") || []).filter(
@@ -633,9 +653,7 @@ const AddProduct = ({
                       <th className="text-start w-1/6">
                         <label className="text-red-500">*</label>Purchase Price
                       </th>
-                      <th className="text-start w-1/6">
-                        Size
-                      </th>
+                      <th className="text-start w-1/6">Size</th>
                       <th className="text-start w-1/6">Color</th>
                       <th className="text-start w-1/6">Weight</th>
                       <th className="text-start w-1/6">
