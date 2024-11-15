@@ -24,6 +24,7 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { handleAsyncDeleteAction } from "@/lib/utils/commonFunctions";
 
 interface DataType {
   key: string;
@@ -68,11 +69,21 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+
   const handleDelete = async (id: string) => {
-    console.log("🚀 ~ id:", id)
-    dispatch(setLoading({ save: true }));
+
+
+    // const asyncFn = () => deleteProduct(id);
+
+    // const successMessage = "Successfully deleted"
+
+    // await handleAsyncDeleteAction(asyncFn, successMessage, dispatch);
+    // fetchProductData();
+
     try {
       const result = await deleteProduct(id);
+      console.log("🚀 ~ result:", result)
       if (result.success) {
         successNotification({ message: "Successfully deleted" });
         fetchProductData();

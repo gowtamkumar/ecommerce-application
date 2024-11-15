@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   Button,
   Checkbox,
@@ -67,6 +67,7 @@ const AddProduct = ({
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const params = useParams();
+  const route = useRouter()
 
   useEffect(() => {
     // Call the async function
@@ -139,7 +140,7 @@ const AddProduct = ({
     form.resetFields();
     setTags([]);
     setFormValues({});
-    // route.push(`/dashboard/product`);
+    route.push(`/dashboard/product`);
   };
 
   const setFormData = (value: any) => {

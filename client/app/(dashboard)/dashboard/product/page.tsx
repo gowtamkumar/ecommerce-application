@@ -5,7 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const ProductList = dynamic(() => import('@/components/dashboard/product/ProductList'))
+const ProductList = dynamic(() => import('@/components/dashboard/product/ProductList'), { ssr: false })
 
 export default function Product() {
   const [tabKey, setTabKey] = useState("product_list");

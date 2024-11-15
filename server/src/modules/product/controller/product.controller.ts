@@ -6,11 +6,9 @@ import { productValidationSchema } from "../../../validation";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 import { Brackets } from "typeorm";
-import { join } from "path";
-import { FileEntity } from "../../other/file/model/file.entity";
-import fs from "fs";
 import { updateProductValidationSchema } from "../../../validation/product/updateProductValidation";
 import { logger } from "../../../middlewares/logger";
+import { fileDeleteFunction } from "../../../utils/fileDeleteFunction";
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -458,27 +456,7 @@ export const deleteProduct = asyncHandler(
 
     // If there are images associated with the product, delete them
     if (product.images && product.images.length > 0) {
-      const repository = connection.getRepository(FileEntity);
-      const directory = join(process.cwd(), "/public/uploads");
-
-      // Use Promise.all to handle multiple file deletions in parallel
-      const fileDeletions = product.images.map(async (item: any) => {
-        const filePath = `${directory}/${item}`;
-
-        // Find and remove file record from the database
-        const fileRecord = await repository.findOne({
-          where: { filename: item },
-        });
-        if (fileRecord) {
-          await repository.remove(fileRecord); // Remove from DB
-        }
-
-        // Delete the file from the filesystem
-        await fs.promises.unlink(filePath); // Delete file
-      });
-
-      // Wait for all file deletions to complete
-      await Promise.all(fileDeletions);
+      fileDeleteFunction(product.images);
     }
 
     // Delete the product

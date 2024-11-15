@@ -19,7 +19,9 @@ export class ReviewEntity {
 
   @Column({ name: "product_id" })
   productId!: number;
-  @ManyToOne((_type) => ProductEntity, (product) => product.reviews)
+  @ManyToOne((_type) => ProductEntity, (product) => product.reviews, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
@@ -44,7 +46,9 @@ export class ReviewEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
-  @ManyToOne((_type) => UserEntity, (user) => user.reviews)
+  @ManyToOne((_type) => UserEntity, (user) => user.reviews, {
+    onDelete: "SET NULL",
+  })
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
 

@@ -17,14 +17,41 @@ export const handleAsyncAction = async (
   try {
     dispatch(setLoading({ save: true }));
     await asyncFn();
-    successNotification({ message: successMessage });
 
-    setTimeout(() => {
-      dispatch(setLoading({ save: false }));
-      dispatch(setAction({}));
-    }, 100);
+    // setTimeout(() => {}, 100);
   } catch (error: any) {
     errorNotification({ message: error.message });
+    dispatch(setLoading({ save: false }));
+    dispatch(setAction({}));
+  } finally {
+    successNotification({ message: successMessage });
+    dispatch(setLoading({ save: false }));
+    dispatch(setAction({}));
+  }
+};
+
+export const handleAsyncDeleteAction = async (
+  asyncFn: () => Promise<any>,
+  successMessage: string,
+  dispatch: any
+) => {
+  try {
+    dispatch(setLoading({ save: true }));
+    await asyncFn();
+    // successNotification({ message: successMessage });
+
+    // setTimeout(() => {
+    //   dispatch(setLoading({ save: false }));
+    //   dispatch(setAction({}));
+    // }, 100);
+  } catch (error: any) {
+    console.log("error", error);
+
+    errorNotification({ message: error.message });
+    dispatch(setLoading({ save: false }));
+    dispatch(setAction({}));
+  } finally {
+    successNotification({ message: successMessage });
     dispatch(setLoading({ save: false }));
     dispatch(setAction({}));
   }
@@ -83,6 +110,7 @@ export const normFile = (e: { fileList: string }) => {
   }
   return e && e.fileList;
 };
+
 // image Preview end
 
 // const handleSubmit = async (values: any) => {
