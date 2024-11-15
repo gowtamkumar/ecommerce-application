@@ -41,9 +41,7 @@ export const updateProductValidationSchema = z.object({
         purchasePrice: z.string({
           required_error: "Purchase Price is required",
         }),
-        sizeId: z.number({
-          required_error: "Purchase Price is required",
-        }),
+        sizeId: z.number().optional().nullable(),
         colorId: z.number().optional().nullable(),
         weight: z.string().optional().nullable(),
         stockQty: z.number({

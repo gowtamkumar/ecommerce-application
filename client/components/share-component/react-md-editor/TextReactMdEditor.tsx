@@ -3,7 +3,7 @@ import MDEditor from "@uiw/react-md-editor";
 
 interface TextQuillEditorProps {
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setValue: any;
 }
 
 const TextReactMdEditor: React.FC<TextQuillEditorProps> = ({

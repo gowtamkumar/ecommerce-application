@@ -24,7 +24,7 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
-import { handleAsyncDeleteAction } from "@/lib/utils/commonFunctions";
+import MDEditor from "@uiw/react-md-editor";
 
 interface DataType {
   key: string;
@@ -69,21 +69,9 @@ const ProductList: React.FC = () => {
     }
   };
 
-
-
   const handleDelete = async (id: string) => {
-
-
-    // const asyncFn = () => deleteProduct(id);
-
-    // const successMessage = "Successfully deleted"
-
-    // await handleAsyncDeleteAction(asyncFn, successMessage, dispatch);
-    // fetchProductData();
-
     try {
       const result = await deleteProduct(id);
-      console.log("🚀 ~ result:", result)
       if (result.success) {
         successNotification({ message: "Successfully deleted" });
         fetchProductData();
@@ -256,7 +244,8 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${
+              value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -325,10 +314,17 @@ const ProductList: React.FC = () => {
   const expandedRowRender = (value: any) => {
     const childColumns: any = [
       {
+        title: "Purchse Price",
+        dataIndex: "purchasePrice",
+        key: "purchasePrice",
+      },
+      { title: "Sale Price", dataIndex: "price", key: "price" },
+
+      {
         title: "Size",
         key: "size",
         dataIndex: "size",
-        render: (v: any) => <span>{v.name}</span>,
+        render: (v: any) => <span>{v?.name}</span>,
       },
 
       {
@@ -344,12 +340,6 @@ const ProductList: React.FC = () => {
         dataIndex: "weight",
       },
       { title: "Stock Qty", dataIndex: "stockQty", key: "stockQty" },
-      {
-        title: "Purchse Price",
-        dataIndex: "purchasePrice",
-        key: "purchasePrice",
-      },
-      { title: "Sale Price", dataIndex: "price", key: "price" },
 
       {
         title: "Tax",
@@ -386,50 +376,87 @@ const ProductList: React.FC = () => {
 
     return (
       <>
-        <div className="p-4">
-          <h1 className="font-bold">Product Details: </h1>
-          <h2>Type: {value.type}</h2>
-          <h2>Product Name: {value.name}</h2>
-          <h2>Url slug: {value.urlSlug}</h2>
-          <h2>
-            Discount:
-            {value?.discount &&
-              `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
-              }`}
-          </h2>
-          <h2>Tax: {value.tax.value}%</h2>
-          <h2>Limit Purchase Qty: {value.limitPurchaseQty}</h2>
-          <h2>Alert Qty: {value.alertQty}</h2>
-          <h2>Enable Review: {value.enableReview ? "Yes" : "No"}</h2>
-          <h2>Tags: {value.tags}</h2>
-          <h2>Short Description: {value.shortDescription}</h2>
-          <h2>Description: {value.description}</h2>
-          <h2>
-            Enable Review:{" "}
-            <Tag color={value.enableReview ? "green" : "red"}>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="col-span-2">
+            <h1 className="font-bold">Product Details: </h1>
+            <h2>
+              <strong>Type:</strong> {value.type}
+            </h2>
+            <h2>
+              <strong>Product Name: </strong> {value.name}
+            </h2>
+            <h2>
+              <strong>Url slug:</strong> {value.urlSlug}
+            </h2>
+            <h2>
+              <strong>Discount:</strong>
+              {value?.discount &&
+                `${value?.discount.value}${
+                  value?.discount.discountType === "Percentage" ? "%" : "BDT"
+                }`}
+            </h2>
+            <h2>
+              <strong>Tax:</strong> {value.tax.value}%
+            </h2>
+            <h2>
+              <strong>Limit Purchase Qty: </strong> {value.limitPurchaseQty}
+            </h2>
+            <h2>
+              <strong>Alert Qty:</strong> {value.alertQty}
+            </h2>
+            <h2>
+              <strong>Enable Review:</strong>{" "}
               {value.enableReview ? "Yes" : "No"}
-            </Tag>
-          </h2>
+            </h2>
+            <h2>
+              <strong>Tags:</strong> {value.tags}
+            </h2>
+            <h2>
+              <strong>Short Description:</strong>
+              <MDEditor.Markdown
+                source={value.shortDescription}
+                style={{ whiteSpace: "pre-wrap" }}
+              />
+              {/* {value.shortDescription} */}
+            </h2>
+            <h2>
+              <strong>Description:</strong>
+              <MDEditor.Markdown
+                source={value.description}
+                style={{ whiteSpace: "pre-wrap" }}
+              />
+              {/* {value.description} */}
+            </h2>
+            <h2>
+              Enable Review:{" "}
+              <Tag color={value.enableReview ? "green" : "red"}>
+                {value.enableReview ? "Yes" : "No"}
+              </Tag>
+            </h2>
 
-          <h2>
-            Status:{" "}
-            <Tag color={value.status === "Active" ? "green" : "red"}>
-              {value.status}
-            </Tag>
-          </h2>
+            <h2>
+              Status:{" "}
+              <Tag color={value.status === "Active" ? "green" : "red"}>
+                {value.status}
+              </Tag>
+            </h2>
 
-          <div className="flex gap-2">
-            Images:
-            {value.images?.map((item: string) => {
-              return (
-                <Image
-                  key={item}
-                  width={200}
-                  alt={item}
-                  src={`${appConfig.apiUrl}/uploads/${item || "no-data.png"}`}
-                />
-              );
-            })}
+            <div className="flex gap-2">
+              Images:
+              {value.images?.map((item: string) => {
+                return (
+                  <Image
+                    key={item}
+                    width={200}
+                    alt={item}
+                    src={`${appConfig.apiUrl}/uploads/${item || "no-data.png"}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <div className="col-span-1">
+            hare need to show review product related review
           </div>
         </div>
 

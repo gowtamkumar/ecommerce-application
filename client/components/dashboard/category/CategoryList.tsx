@@ -21,6 +21,10 @@ import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
 import { deleteCategory, getCategories } from "@/lib/apis/categories";
 import appConfig from "@/appConfig";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: React.ReactNode;
@@ -36,18 +40,26 @@ type DataIndex = keyof DataType;
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState([] as any);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
+  // hook
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getCategories();
-      setCategories(res?.data);
+    fetchCategoryData();
+  }, []);
+
+  const fetchCategoryData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
+      const categories = await getCategories();
+      setCategories(categories.data);
+    } catch (err) {
+      console.error("Error fetching Category data:", err);
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -55,11 +67,12 @@ const CategoryList: React.FC = () => {
       await deleteCategory(id);
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
-        toast.success("Category deleted successfully");
+        successNotification({ message: "Successfully deleted" });
         dispatch(setAction({}));
-      }, 500);
+        fetchCategoryData();
+      }, 5000);
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
     }
   };
 
@@ -92,11 +105,10 @@ const CategoryList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -179,13 +191,6 @@ const CategoryList: React.FC = () => {
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
     },
-    // {
-    //   title: "Url Slug",
-    //   dataIndex: "urlSlug",
-    //   key: "urlSlug",
-    //   ...getColumnSearchProps("urlSlug"),
-    // },
-
     {
       title: "Image",
       dataIndex: "image",
@@ -198,9 +203,8 @@ const CategoryList: React.FC = () => {
         />
       ),
     },
-
     {
-      title: "Description",
+      title: "Noted",
       dataIndex: "description",
       key: "description",
       ...getColumnSearchProps("description"),
@@ -240,9 +244,8 @@ const CategoryList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${
-                    newData.image || "no-data.png"
-                  }`,
+                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+                    }`,
                 };
                 newData.fileList = [file];
               }

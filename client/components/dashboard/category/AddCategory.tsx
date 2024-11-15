@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -11,7 +10,6 @@ import {
   Upload,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import {
   selectGlobal,
   setAction,
@@ -27,6 +25,12 @@ import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import ImgCrop from "antd-img-crop";
 import { PlusOutlined } from "@ant-design/icons";
 import appConfig from "@/appConfig";
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
 
 const uploadButton = (
   <div>
@@ -43,49 +47,53 @@ const uploadButton = (
 
 const AddCategory = () => {
   const [categories, setCategories] = useState([]);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-  const [previewTitle, setPreviewTitle] = useState("");
-  const global = useSelector(selectGlobal);
-  const { payload } = global.action;
   // hook
+  const global = useSelector(selectGlobal);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { payload, type } = global.action;
 
   useEffect(() => {
-    (async () => {
-      const newData = { ...payload };
-      const categories = await getCategories();
-      setCategories(categories.data);
-      setFormData(newData);
-    })();
-
+    fetchCategoryData();
     return () => {
       setFormValues({});
       form.resetFields();
     };
-  }, [payload]);
+  }, []);
+
+  const fetchCategoryData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
+      const newData = { ...payload };
+      const categories = await getCategories();
+      setCategories(categories.data);
+      setFormData(newData);
+      setFormValues(newData);
+    } catch (err) {
+      console.error("Error fetching Category data:", err);
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
+
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateCategory(newData)
-        : await saveCategory(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-        setFormValues({});
-        form.resetFields();
-      }, 100);
-    } catch (err: any) {
-      console.error(err);
-    }
+    let newData = { ...values };
+
+    const asyncFn = newData.id
+      ? () => updateCategory(newData)
+      : () => saveCategory(newData);
+
+    const successMessage = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(asyncFn, successMessage, dispatch);
+    form.resetFields();
+    setFormValues({});
   };
 
   const handleClose = () => {
@@ -146,49 +154,12 @@ const AddCategory = () => {
     }
   };
 
-  const normFile = (e: { fileList: string }) => {
-    console.log("🚀 ~ e:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
-  const handleCancel = () => setPreviewOpen(false);
-
-  // file Preview
-  const handlePreview = async (file: any) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
-  };
-
-  const getBase64 = (file: any) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
   return (
     <Modal
-      title={
-        global.action.type === ActionType.UPDATE
-          ? "Update Category"
-          : "Create Category"
-      }
+      title={type === ActionType.UPDATE ? "Update Category" : "Create Category"}
       width={850}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
-      }
+      open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
       footer={null}
     >
@@ -266,7 +237,7 @@ const AddCategory = () => {
                     }
                   }}
                   className="avatar-uploader"
-                  onPreview={handlePreview}
+                  onPreview={(file) => handlePreview(file, dispatch)}
                   customRequest={customUploadRequest}
                   maxCount={1}
                 >
@@ -280,24 +251,24 @@ const AddCategory = () => {
             </Form.Item>
 
             <Modal
-              open={previewOpen}
-              title={previewTitle}
+              open={global.previewOpen}
+              title={global.previewTitle}
               footer={null}
-              onCancel={handleCancel}
+              onCancel={() => handlePreviewCancel(dispatch)}
             >
               <Image
                 alt="example"
                 style={{
                   width: "100%",
                 }}
-                src={previewImage}
+                src={global.previewImage}
               />
             </Modal>
           </div>
 
           <div className="col-span-1">
             <Form.Item
-              hidden={!payload?.id}
+              hidden={!global.action.payload?.id}
               name="status"
               label="Status"
               className="mb-1"

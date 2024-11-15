@@ -17,14 +17,13 @@ export const handleAsyncAction = async (
   try {
     dispatch(setLoading({ save: true }));
     await asyncFn();
-
-    // setTimeout(() => {}, 100);
+    setTimeout(() => {
+      successNotification({ message: successMessage });
+      dispatch(setAction({}));
+      dispatch(setLoading({ save: false }));
+    }, 5000);
   } catch (error: any) {
     errorNotification({ message: error.message });
-    dispatch(setLoading({ save: false }));
-    dispatch(setAction({}));
-  } finally {
-    successNotification({ message: successMessage });
     dispatch(setLoading({ save: false }));
     dispatch(setAction({}));
   }

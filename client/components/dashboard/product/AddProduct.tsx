@@ -67,7 +67,7 @@ const AddProduct = ({
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const params = useParams();
-  const route = useRouter()
+  const route = useRouter();
 
   useEffect(() => {
     // Call the async function
@@ -298,7 +298,7 @@ const AddProduct = ({
                 },
               ]}
             >
-              <Input.TextArea placeholder="Enter" rows={3} />
+              <Input.TextArea placeholder="Enter" rows={8} />
             </Form.Item>
 
             <Form.Item
@@ -311,7 +311,7 @@ const AddProduct = ({
                 },
               ]}
             >
-              <Input.TextArea placeholder="Enter" rows={8} />
+              <Input.TextArea placeholder="Enter" rows={10} />
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-2">
@@ -537,10 +537,11 @@ const AddProduct = ({
                   },
                 ]}
               >
-                <ImgCrop rotationSlider>
+                <ImgCrop rotationSlider showReset>
                   <Upload
                     name="images"
                     listType="picture-card"
+                    
                     fileList={formValues?.fileList || []}
                     onRemove={async (v) => {
                       const find = (form.getFieldValue("images") || []).filter(
@@ -633,7 +634,7 @@ const AddProduct = ({
                         <label className="text-red-500">*</label>Purchase Price
                       </th>
                       <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Size
+                        Size
                       </th>
                       <th className="text-start w-1/6">Color</th>
                       <th className="text-start w-1/6">Weight</th>
@@ -673,13 +674,7 @@ const AddProduct = ({
                           </Form.Item>
                         </td>
                         <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "sizeId"]}
-                            rules={[
-                              { required: true, message: "Size Is Required" },
-                            ]}
-                          >
+                          <Form.Item {...restField} name={[name, "sizeId"]}>
                             <Select allowClear showSearch placeholder="Select">
                               {(sizes || []).map((item: any) => (
                                 <Select.Option key={item.id} value={item.id}>

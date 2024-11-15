@@ -44,9 +44,7 @@ export const productValidationSchema = z.object({
         purchasePrice: z.number({
           required_error: "Purchase Price is required",
         }),
-        sizeId: z.number({
-          required_error: "Purchase Price is required",
-        }),
+        sizeId: z.number().optional(),
         colorId: z.number().optional(),
         weight: z.string().optional(),
         stockQty: z.number({
