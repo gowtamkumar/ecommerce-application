@@ -31,10 +31,7 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
+import { errorNotification } from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -66,7 +63,7 @@ const AddCategory = () => {
       setFormValues({});
       form.resetFields();
     };
-  }, []);
+  }, [global.action]);
 
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
@@ -74,57 +71,28 @@ const AddCategory = () => {
       const newData = { ...payload };
       const categories = await getCategories();
       setCategories(categories.data);
+
       setFormData(newData); // Use product.data?.tags or default to empty array
       setFormValues(newData);
-    } catch (err) {
-      console.error("Error fetching Category data:", err);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   };
 
   const handleSubmit = async (values: any) => {
-    let newData = values as any;
-
-    // return console.log("newData:", newData);
+    let newData = {...values};
 
     const result = newData.id
       ? () => updateCategory(newData)
       : () => saveCategory(newData);
 
-    const ress = await handleAsyncAction(result, "successfuly", dispatch);
+    const messageData = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
 
-     setTimeout(async () => {
-      form.resetFields();
-      fetchData();
-    }, 1000);
-    console.log("🚀 ~ ress called:", ress);
-
-   
-
-    // console.log("result", result);
-
-    // if (result.success) {
-    //   newData.id
-    //     ? successNotification({ message: "Successfully Updated" })
-    //     : successNotification({ message: "Successfully Added" });
-    // }
-
-    // if (result.issues) {
-    //   errorNotification({ message: "Please Fill the form carefully" });
-    //   dispatch(setLoading({ save: false }));
-    // }
-
-    // if (!result.success && !result.issues) {
-    //   errorNotification({ message: "Please Fill the form carefully" });
-    //   dispatch(setLoading({ save: false }));
-    // }
-
-    // setTimeout(async () => {
-    //   dispatch(setLoading({ save: false }));
-    //   form.resetFields();
-    //   setFormValues({});
-    // }, 1000);
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const handleClose = () => {
@@ -185,17 +153,26 @@ const AddCategory = () => {
     }
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 6, span: 14 },
+  };
+
   return (
     <Modal
       title={type === ActionType.UPDATE ? "Update Category" : "Create Category"}
-      width={850}
+      // width={650}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => setFormValues(values)}
@@ -206,122 +183,105 @@ const AddCategory = () => {
           <Input />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-5">
-          <div className="col-span-1">
-            <Form.Item
-              name="name"
-              label="name"
-              rules={[
-                {
-                  required: true,
-                  message: "name is required",
-                },
-              ]}
-            >
-              <Input placeholder="Enter " />
-            </Form.Item>
-          </div>
+        <Form.Item
+          name="name"
+          label="Name"
+          rules={[
+            {
+              required: true,
+              message: "name is required",
+            },
+          ]}
+        >
+          <Input placeholder="Enter " />
+        </Form.Item>
 
-          <div className="col-span-1">
-            <Form.Item name="parentId" label="parent">
-              <TreeSelect
-                showSearch
-                style={{ width: "100%" }}
-                // value={value}
-                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                placeholder="Please select"
-                allowClear
-                treeDefaultExpandAll
-                // onChange={onChange}
-                treeData={categories}
-                // onPopupScroll={onPopupScroll}
-              />
+        <Form.Item name="parentId" label="Parent">
+          <TreeSelect
+            showSearch
+            style={{ width: "100%" }}
+            dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+            placeholder="Please select"
+            allowClear
+            treeDefaultExpandAll
+            treeData={categories}
+          />
+        </Form.Item>
 
-              {/* <Select.Option value={false}>Inactive</Select.Option> */}
-            </Form.Item>
-          </div>
+        <Form.Item name="description" label="Note">
+          <Input.TextArea placeholder="Enter " />
+        </Form.Item>
 
-          <div className="col-span-1">
-            <Form.Item name="description" label="Description">
-              <Input placeholder="Enter " />
-            </Form.Item>
-          </div>
+        <Form.Item
+          name="status"
+          label="Status"
+          className="mb-1"
+        >
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select"
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.children as any)
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            <Select.Option value={"Active"}>Active</Select.Option>
+            <Select.Option value={"Inactive"}>Inactive</Select.Option>
+          </Select>
+        </Form.Item>
 
-          <div>
-            <Form.Item
-              name="fileList"
-              label="Image"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-            >
-              <ImgCrop rotationSlider>
-                <Upload
-                  name="image"
-                  listType="picture-card"
-                  fileList={formValues?.fileList || []}
-                  onRemove={async (v) => {
-                    if (v.fileName) {
-                      form.setFieldsValue({ image: null, fileList: [] });
-                      setFormValues({ image: null, fileList: [] });
-                      const params = { filename: v.fileName };
-                      await fileDeleteWithPhoto(params);
-                    }
-                  }}
-                  className="avatar-uploader"
-                  onPreview={(file) => handlePreview(file, dispatch)}
-                  customRequest={customUploadRequest}
-                  maxCount={1}
-                >
-                  {formValues?.fileList?.length >= 1 ? null : uploadButton}
-                </Upload>
-              </ImgCrop>
-            </Form.Item>
-
-            <Form.Item name="image" hidden>
-              <Input />
-            </Form.Item>
-
-            <Modal
-              open={global.previewOpen}
-              title={global.previewTitle}
-              footer={null}
-              onCancel={() => handlePreviewCancel(dispatch)}
-            >
-              <Image
-                alt="example"
-                style={{
-                  width: "100%",
-                }}
-                src={global.previewImage}
-              />
-            </Modal>
-          </div>
-
-          <div className="col-span-1">
-            <Form.Item
-              hidden={!global.action.payload?.id}
-              name="status"
-              label="Status"
-              className="mb-1"
-            >
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
+        <Form.Item
+          name="fileList"
+          label="Image"
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+        >
+          <ImgCrop rotationSlider>
+            <Upload
+              name="image"
+              listType="picture-card"
+              fileList={formValues?.fileList || []}
+              onRemove={async (v) => {
+                if (v.fileName) {
+                  form.setFieldsValue({ image: null, fileList: [] });
+                  setFormValues({ image: null, fileList: [] });
+                  const params = { filename: v.fileName };
+                  await fileDeleteWithPhoto(params);
                 }
-              >
-                <Select.Option value={"Active"}>Active</Select.Option>
-                <Select.Option value={"Inactive"}>Inactive</Select.Option>
-              </Select>
-            </Form.Item>
-          </div>
-        </div>
-        <div className="col-span-1 text-end">
+              }}
+              className="avatar-uploader"
+              onPreview={(file) => handlePreview(file, dispatch)}
+              customRequest={customUploadRequest}
+              maxCount={1}
+            >
+              {formValues?.fileList?.length >= 1 ? null : uploadButton}
+            </Upload>
+          </ImgCrop>
+        </Form.Item>
+        <Form.Item name="image" hidden>
+          <Input />
+        </Form.Item>
+
+        <Modal
+          open={global.previewOpen}
+          title={global.previewTitle}
+          footer={null}
+          onCancel={() => handlePreviewCancel(dispatch)}
+        >
+          <Image
+            alt="example"
+            preview={false}
+            style={{
+              width: "100%",
+            }}
+            src={global.previewImage}
+          />
+        </Modal>
+
+        <Form.Item {...tailLayout}>
           <Button
             className="mx-2 capitalize"
             size="small"
@@ -338,7 +298,7 @@ const AddCategory = () => {
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
-        </div>
+        </Form.Item>
       </Form>
     </Modal>
   );

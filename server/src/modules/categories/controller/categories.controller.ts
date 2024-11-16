@@ -125,7 +125,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     });
   }
   
-  const { name, image, userId, parentId } = validation.data;
+  const { name, image, userId, parentId, description } = validation.data;
   const categoriesRepository = connection.getRepository(CategoriesEntity);
 
   let level = 1;
@@ -158,6 +158,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     image,
     userId,
     level,
+    description,
     parent,
   });
 
@@ -178,7 +179,7 @@ export const updateCategory = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
     const { id } = req.params;
-    const { parentId, name, image, urlSlug } = req.body;
+    const { parentId, name, image, urlSlug, description } = req.body;
 
     const categoriesRepository = connection.getRepository(CategoriesEntity);
 
@@ -210,12 +211,13 @@ export const updateCategory = asyncHandler(
         name,
         image,
         urlSlug,
+        description,
         level: parentCategory.level,
         parent: parentCategory,
       });
     } else {
       // Merge the new data without changing the parent
-      Object.assign(category, { name, image, urlSlug });
+      Object.assign(category, { name, image, urlSlug, description });
     }
 
     // Save the updated category

@@ -73,10 +73,8 @@ const ProductList: React.FC = () => {
     dispatch(setLoading({ save: true }));
     try {
       const result = await deleteProduct(id);
-      if (result.success) {
-        successNotification({ message: "Successfully deleted" });
-        fetchProductData();
-      }
+      fetchProductData()
+      successNotification({ message: "Successfully deleted" });
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -245,8 +243,7 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${
-              value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -392,8 +389,7 @@ const ProductList: React.FC = () => {
             <h2>
               <strong>Discount:</strong>
               {value?.discount &&
-                `${value?.discount.value}${
-                  value?.discount.discountType === "Percentage" ? "%" : "BDT"
+                `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
                 }`}
             </h2>
             <h2>

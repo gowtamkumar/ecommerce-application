@@ -11,8 +11,8 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getCategories).post(AuthGuard, createCategory);
-router.route("/all").get(getAllCategories);
+router.route("/").get(AuthGuard, getCategories).post(AuthGuard, createCategory);
+router.route("/all").get(AuthGuard, getAllCategories);
 
 router
   .route("/:id")

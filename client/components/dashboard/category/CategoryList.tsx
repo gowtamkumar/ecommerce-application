@@ -18,7 +18,6 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { deleteCategory, getCategories } from "@/lib/apis/categories";
 import appConfig from "@/appConfig";
 import {
@@ -46,30 +45,27 @@ const CategoryList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchCategoryData();
-  }, []);
+    fetchData();
+  }, [global.action]);
 
-  const fetchCategoryData = async () => {
+  const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const categories = await getCategories();
       setCategories(categories.data);
-    } catch (err) {
-      console.error("Error fetching Category data:", err);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   };
 
-
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ save: true }));
     try {
-      const result = await deleteCategory(id);
-      if (result.success) {
-        successNotification({ message: "Successfully deleted" });
-        fetchCategoryData();
-      }
+      await deleteCategory(id);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -77,7 +73,6 @@ const CategoryList: React.FC = () => {
       dispatch(setAction({}));
     }
   };
-
 
   const handleSearch = (
     selectedKeys: string[],

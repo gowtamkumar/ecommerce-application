@@ -19,9 +19,9 @@ export const handleAsyncAction = async (
     const res = await asyncFn();
     // console.log("🚀 ~ Response:", res);
 
-    if (!res.success) {
-      throw new Error(res?.message || "Operation failed");
-    }
+    // if (!res.success) {
+    //   throw new Error(res?.message || "Operation failed");
+    // }
 
     successNotification({ message: successMessage });
     dispatch(setAction({}));
@@ -80,9 +80,10 @@ export async function getAuthHeaders() {
 export async function handleResponse(res: Response) {
   if (!res.ok) {
     const errorData = await res.json();
-    return errorData;
-    throw new Error(errorData?.message);
+    // return errorData;
+    throw new Error(errorData?.message || "An unexpected error occurred");
   }
+
   return res.json();
 }
 

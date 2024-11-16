@@ -130,38 +130,25 @@ const AddProduct = ({
     }
   };
 
-  const handleSubmit = async (values: any) => {
-    dispatch(setLoading({ save: true }));
-    let newData = { ...values };
-    // return console.log("newData:", newData);
+  const handleSubmit = async () => {
+    const newData = await form.validateFields()
+  
+    delete newData.fileList
 
     const result = newData.id
-      ? await updateLead(newData)
-      : await saveLead(newData);
+      ? () => updateProduct(newData)
+      : () => saveProduct(newData);
 
-      console.log("result", result);
-      
+    const messageData = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
 
-    if (result.success) {
-      newData.id
-        ? successNotification({ message: "Successfully Updated" })
-        : successNotification({ message: "Successfully Added" });
-    } 
-    
-    if(!result.success) {
-      errorNotification({ message: "error.message" });
-      dispatch(setLoading({ save: false }));
-      return;
-    }
+    await handleAsyncAction(result, messageData, dispatch);
 
-    setTimeout(async () => {
-      dispatch(setLoading({ save: false }));
-      form.resetFields();
-      setTags([]);
-      setFormValues({});
-      route.push(`/dashboard/product`);
-    }, 1000);
-
+    setTags([]);
+    setFormValues({});
+    route.push(`/dashboard/product`);
+    // form.resetFields();
   };
 
   const setFormData = (value: any) => {
