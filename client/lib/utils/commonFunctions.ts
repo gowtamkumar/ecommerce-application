@@ -13,25 +13,30 @@ export const handleAsyncAction = async (
   asyncFn: () => Promise<any>,
   successMessage: string,
   dispatch: any
-) => {
+): Promise<any> => {
   try {
     dispatch(setLoading({ save: true }));
     const res = await asyncFn();
-    console.log("🚀 ~ ressss:", res);
+    // console.log("🚀 ~ Response:", res);
 
-    setTimeout(() => {
-      successNotification({ message: res.message });
-      dispatch(setAction({}));
-      dispatch(setLoading({ save: false }));
-    }, 1000);
+    if (!res.success) {
+      throw new Error(res?.message || "Operation failed");
+    }
+
+    successNotification({ message: successMessage });
+    dispatch(setAction({}));
+    return res; // Return the successful response
   } catch (error: any) {
-    console.log("🚀 ~ error rrrrrrrrr:", error?.message);
+    // console.log("🚀 ~ Error:", error?.message);
 
     const errorMessage = error?.message || "An unexpected error occurred";
     errorNotification({ message: errorMessage });
-    // Ensure loading and action states are reset in case of an error
+
+    // Return the error object or reject as a Promise
+    return Promise.reject(error); // Ensures error propagation
+  } finally {
+    console.log("Finally block executed");
     dispatch(setLoading({ save: false }));
-    dispatch(setAction({}));
   }
 };
 
@@ -75,7 +80,7 @@ export async function getAuthHeaders() {
 export async function handleResponse(res: Response) {
   if (!res.ok) {
     const errorData = await res.json();
-    // return errorData;
+    return errorData;
     throw new Error(errorData?.message);
   }
   return res.json();

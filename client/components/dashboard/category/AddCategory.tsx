@@ -84,47 +84,47 @@ const AddCategory = () => {
   };
 
   const handleSubmit = async (values: any) => {
-      let newData = values as any;
+    let newData = values as any;
 
-      // return console.log("newData:", newData);
+    // return console.log("newData:", newData);
 
+    const result = newData.id
+      ? () => updateCategory(newData)
+      : () => saveCategory(newData);
 
+    const ress = await handleAsyncAction(result, "successfuly", dispatch);
 
-      const result = newData.id ?
-        () => updateCategory(newData) :
-        () => saveCategory(newData);
+     setTimeout(async () => {
+      form.resetFields();
+      fetchData();
+    }, 1000);
+    console.log("🚀 ~ ress called:", ress);
 
-
-      await handleAsyncAction(result, "successfuly", dispatch)
-
-
-
-
-
-      // console.log("result", result);
-
-      // if (result.success) {
-      //   newData.id
-      //     ? successNotification({ message: "Successfully Updated" })
-      //     : successNotification({ message: "Successfully Added" });
-      // }
-
-      // if (result.issues) {
-      //   errorNotification({ message: "Please Fill the form carefully" });
-      //   dispatch(setLoading({ save: false }));
-      // }
-
-      // if (!result.success && !result.issues) {
-      //   errorNotification({ message: "Please Fill the form carefully" });
-      //   dispatch(setLoading({ save: false }));
-      // }
-
-      // setTimeout(async () => {
-      //   dispatch(setLoading({ save: false }));
-      //   form.resetFields();
-      //   setFormValues({});
-      // }, 1000);
    
+
+    // console.log("result", result);
+
+    // if (result.success) {
+    //   newData.id
+    //     ? successNotification({ message: "Successfully Updated" })
+    //     : successNotification({ message: "Successfully Added" });
+    // }
+
+    // if (result.issues) {
+    //   errorNotification({ message: "Please Fill the form carefully" });
+    //   dispatch(setLoading({ save: false }));
+    // }
+
+    // if (!result.success && !result.issues) {
+    //   errorNotification({ message: "Please Fill the form carefully" });
+    //   dispatch(setLoading({ save: false }));
+    // }
+
+    // setTimeout(async () => {
+    //   dispatch(setLoading({ save: false }));
+    //   form.resetFields();
+    //   setFormValues({});
+    // }, 1000);
   };
 
   const handleClose = () => {
@@ -234,7 +234,7 @@ const AddCategory = () => {
                 treeDefaultExpandAll
                 // onChange={onChange}
                 treeData={categories}
-              // onPopupScroll={onPopupScroll}
+                // onPopupScroll={onPopupScroll}
               />
 
               {/* <Select.Option value={false}>Inactive</Select.Option> */}

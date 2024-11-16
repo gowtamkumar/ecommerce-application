@@ -165,6 +165,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const savedCategory = await categoriesRepository.save(newCategory);
 
   return res.status(200).json({
+    success: true,
     message: "Category created successfully",
     data: savedCategory,
   });
@@ -221,6 +222,7 @@ export const updateCategory = asyncHandler(
     await categoriesRepository.save(category);
 
     return res.status(200).json({
+      success: true,
       message: "Category updated successfully",
       data: category,
     });
