@@ -1,8 +1,8 @@
-import { getAllCategories } from "@/lib/apis/categories";
+import { getPublicCategories } from "@/lib/apis/categories";
 import React from "react";
 
 export default async function PostCategorySection() {
-  const categories = await getAllCategories();
+  const categories = await getPublicCategories();
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">

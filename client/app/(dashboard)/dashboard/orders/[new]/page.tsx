@@ -31,7 +31,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
 import { getTaxs } from "@/lib/apis/tax";
-import { getAllCategories } from "@/lib/apis/categories";
+import { getCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
 import { getUsers } from "@/lib/apis/user";
 
@@ -65,7 +65,7 @@ const AddOrder = () => {
 
       const resSize = await getSizes();
       const resProducts = await getProducts();
-      const resCategory = await getAllCategories();
+      const resCategory = await getCategories();
       const resTax = await getTaxs();
       setSizes(resSize.data);
       setProducts(resProducts.data);

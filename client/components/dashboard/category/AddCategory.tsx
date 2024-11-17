@@ -17,7 +17,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getCategories,
+  getAntdCategories,
   saveCategory,
   updateCategory,
 } from "@/lib/apis/categories";
@@ -69,7 +69,7 @@ const AddCategory = () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
-      const categories = await getCategories();
+      const categories = await getAntdCategories();
       setCategories(categories.data);
 
       setFormData(newData); // Use product.data?.tags or default to empty array

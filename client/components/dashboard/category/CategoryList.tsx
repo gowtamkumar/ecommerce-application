@@ -18,7 +18,7 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { deleteCategory, getCategories } from "@/lib/apis/categories";
+import { deleteCategory, getAntdCategories } from "@/lib/apis/categories";
 import appConfig from "@/appConfig";
 import {
   errorNotification,
@@ -51,7 +51,7 @@ const CategoryList: React.FC = () => {
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
-      const categories = await getCategories();
+      const categories = await getAntdCategories();
       setCategories(categories.data);
     } catch (err: any) {
       errorNotification({ message: err.message });

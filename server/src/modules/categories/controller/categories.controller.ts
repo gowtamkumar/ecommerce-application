@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
-
 import { CategoriesEntity } from "../model/categories.entity";
 import { categoriesValidationSchema } from "../../../validation/categories/categoriesValidation";
 import { FileEntity } from "../../other/file/model/file.entity";
@@ -11,7 +10,7 @@ import fs from "fs";
 // @desc Get all Categorys
 // @route GET /api/v1/categories/all
 // @access Public
-export const getAllCategories = asyncHandler(
+export const getPublicCategories = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
     const repository = connection.getRepository(CategoriesEntity);
@@ -26,11 +25,12 @@ export const getAllCategories = asyncHandler(
   }
 );
 
-// @desc Get all Categorys
-// @route GET /api/v1/Categorys
-// @access Public
 
-export const getCategories = asyncHandler(
+
+// @desc Get all for antd Categorys
+// @route GET /api/v1/categories/antd
+// @access Public
+export const getAntdCategories = asyncHandler(
   async (req: Request, res: Response) => {
     const connection = await getDBConnection();
     const repository = connection.getTreeRepository(CategoriesEntity);
@@ -62,14 +62,33 @@ export const getCategories = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "Get all Categorys",
+      message: "Get all for antd table Categorys",
       data: ress,
     });
   }
 );
 
+// @desc Get all Categorys
+// @route GET /api/v1/categories
+// @access Public
+export const getCategories = asyncHandler(
+  async (req: Request, res: Response) => {
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(CategoriesEntity);
+
+    const user = await repository.find();
+
+    return res.status(200).json({
+      success: true,
+      message: "Get all categories",
+      data: user,
+    });
+  }
+);
+
+
 // @desc Get a single Category
-// @route GET /api/v1/Categorys/:id
+// @route GET /api/v1/categories/:id
 // @access Public
 export const getCategory = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -101,7 +120,7 @@ export const getCategory = asyncHandler(
 );
 
 // @desc Create a single Category
-// @route POST /api/v1/Categorys
+// @route POST /api/v1/categories
 // @access Public
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
   const connection = await getDBConnection();
@@ -173,7 +192,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
 });
 
 // @desc Update a single Category
-// @route PUT /api/v1/Categorys/:id
+// @route PUT /api/v1/categories/:id
 // @access Public
 export const updateCategory = asyncHandler(
   async (req: Request, res: Response) => {

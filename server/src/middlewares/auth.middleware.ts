@@ -27,7 +27,14 @@ const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!,
+      (error: any, decodedToken: any) => {
+        if (error) {
+          throw new Error("Invalid or expired reset token new");
+        }
+      }
+
+    ) as unknown as TokenPayload;
     const { name, username, id, role } = decoded;
     req.name = name;
     req.username = username;

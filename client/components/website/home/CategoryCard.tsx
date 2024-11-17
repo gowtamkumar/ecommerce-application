@@ -1,9 +1,9 @@
-// import { getAllCategories } from "@/lib/apis/categories";
+// import { getPublicCategories } from "@/lib/apis/categories";
 // import Image from "next/image";
 // import Link from "next/link";
 
 // const CategoryCard = async () => {
-//   const categories = await getAllCategories();
+//   const categories = await getPublicCategories();
 //   return (
 //     <section className="mb-8">
     

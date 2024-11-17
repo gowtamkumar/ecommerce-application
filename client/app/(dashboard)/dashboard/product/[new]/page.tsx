@@ -1,5 +1,5 @@
 import { getBrands } from "@/lib/apis/brand";
-import { getAllCategories } from "@/lib/apis/categories";
+import { getCategories } from "@/lib/apis/categories";
 import { getColors } from "@/lib/apis/color";
 import { getFilterDiscounts } from "@/lib/apis/discount";
 import { getSizes } from "@/lib/apis/size";
@@ -13,22 +13,6 @@ const AddProduct = dynamic(
 );
 
 export default async function Product() {
-  // const [brands, setBrands] = useState([])
-  // const [sizes, setSizes] = useState([])
-  // const [units, setUnits] = useState([])
-  // const [colors, setColers] = useState([])
-  // const [discounts, setDiscounts] = useState([])
-  // const [categories, setCategories] = useState([])
-  // const [taxs, setTax] = useState<[]>([])
-
-  // const resBrand = await getBrands();
-  // const resSize = await getSizes();
-  // const resUnit = await getUnits();
-  // const resColor = await getColors();
-  // const resDiscount = await getFilterDiscounts({ type: "Discount" });
-  // const resCategory = await getAllCategories();
-  // const resTax = await getTaxs();
-
   const [
     resBrand,
     resSize,
@@ -43,30 +27,10 @@ export default async function Product() {
     getUnits(),
     getColors(),
     getFilterDiscounts({ type: "Discount" }),
-    getAllCategories(),
+    getCategories(),
     getTaxs(),
   ]);
 
-  // useEffect(() => {
-  //   (async () => {
-
-  //     const resBrand = await getBrands();
-  //     const resSize = await getSizes();
-  //     const resUnit = await getUnits();
-  //     const resColor = await getColors();
-  //     const resDiscount = await getFilterDiscounts({ type: "Discount" });
-  //     const resCategory = await getAllCategories();
-  //     const resTax = await getTaxs();
-  //     setBrands(resBrand.data)
-  //     setSizes(resSize.data)
-  //     setUnits(resUnit.data)
-  //     setColers(resColor.data)
-  //     setDiscounts(resDiscount.data)
-  //     setTax(resTax.data)
-  //     setCategories(resCategory.data)
-
-  //   })();
-  // }, []);
 
   return (
     <div className="container mx-auto p-2">

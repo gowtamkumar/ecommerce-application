@@ -19,12 +19,11 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionType } from "@/constants/constants";
 import { savePost, updatePost } from "@/lib/apis/posts";
 import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import { getAllCategories } from "@/lib/apis/categories";
+import { getCategories } from "@/lib/apis/categories";
 import appConfig from "@/appConfig";
 import TextQuillEditor from "@/components/share-component/editor-quill/TextQuillEditor";
 import { useParams, useRouter } from "next/navigation";
@@ -68,7 +67,7 @@ const AddPost = () => {
   useEffect(() => {
     (async () => {
       const newData = { ...payload };
-      const resCategory = await getAllCategories();
+      const resCategory = await getCategories();
       const postCategories = newData?.postCategories?.map(
         ({ categoryId }: { categoryId: number }) => categoryId
       );
