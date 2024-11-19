@@ -71,7 +71,6 @@ const AddCategory = () => {
       const newData = { ...payload };
       const categories = await getAntdCategories();
       setCategories(categories.data);
-
       setFormData(newData); // Use product.data?.tags or default to empty array
       setFormValues(newData);
     } catch (err: any) {
@@ -82,7 +81,7 @@ const AddCategory = () => {
   };
 
   const handleSubmit = async (values: any) => {
-    let newData = {...values};
+    let newData = { ...values };
 
     const result = newData.id
       ? () => updateCategory(newData)
@@ -212,11 +211,7 @@ const AddCategory = () => {
           <Input.TextArea placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item
-          name="status"
-          label="Status"
-          className="mb-1"
-        >
+        <Form.Item name="status" label="Status" className="mb-1">
           <Select
             showSearch
             allowClear
@@ -294,6 +289,7 @@ const AddCategory = () => {
             type="primary"
             htmlType="submit"
             className="capitalize"
+            disabled={global.loading.save}
             loading={global.loading.save}
           >
             {payload?.id ? "Update" : "Save"}

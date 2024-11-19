@@ -7,12 +7,12 @@ export const bannerValidationSchema = z.object({
   title: z.string({
     required_error: "title is required",
   }),
-  url: z.string().optional(),
+  url: z.string().nullable(),
   image: z.string({
     required_error: "User is required",
   }),
   userId: z.number({
     required_error: "User is required",
   }),
-  description: z.string().optional(),
+  description: z.string().nullable(),
 });

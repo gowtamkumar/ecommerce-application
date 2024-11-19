@@ -5,8 +5,10 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import CategoryList from "@/components/dashboard/category/CategoryList";
-import AddCategory from "@/components/dashboard/category/AddCategory";
+import dynamic from "next/dynamic";
+
+const AddCategory = dynamic(() => import('@/components/dashboard/category/AddCategory'), { ssr: false })
+const CategoryList = dynamic(() => import('@/components/dashboard/category/CategoryList'), { ssr: false })
 
 export default function Category() {
   const [tabKey, setTabKey] = useState("category_list");

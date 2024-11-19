@@ -5,8 +5,10 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import BannerList from "@/components/dashboard/banner/BannerLIst";
-import AddBanner from "@/components/dashboard/banner/AddBanner";
+import dynamic from "next/dynamic";
+
+const AddBanner = dynamic(() => import('@/components/dashboard/banner/AddBanner'), { ssr: false })
+const BannerList = dynamic(() => import('@/components/dashboard/banner/BannerList'), { ssr: false })
 
 export default function Banner() {
   const [tabKey, setTabKey] = useState("banner_list");

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import {
   selectGlobal,
   setAction,
@@ -13,6 +12,12 @@ import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { saveBanner, updateBanner } from "@/lib/apis/banner";
 import appConfig from "@/appConfig";
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
 
 const uploadButton = (
   <div>
@@ -28,14 +33,11 @@ const uploadButton = (
 );
 
 const AddBanner = () => {
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-  const [previewTitle, setPreviewTitle] = useState("");
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, type } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -47,27 +49,20 @@ const AddBanner = () => {
       setFormValues({});
       form.resetFields();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, payload]);
+  }, [payload]);
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateBanner(newData)
-        : await saveBanner(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-        setFormValues({});
-        form.resetFields();
-      }, 100);
-    } catch (err: any) {
-      console.log("🚀 ~ err:", err);
-      toast.error(err);
-    }
+    let newData = { ...values };
+
+    const result = newData.id
+      ? () => updateBanner(newData)
+      : () => saveBanner(newData);
+
+    const messageData = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const customUploadRequest = async (options: any) => {
@@ -107,36 +102,6 @@ const AddBanner = () => {
     }
   };
 
-  const normFile = (e: { fileList: string }) => {
-    console.log("🚀 ~ e:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
-  const handleCancel = () => setPreviewOpen(false);
-
-  // file Preview
-  const handlePreview = async (file: any) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
-  };
-
-  const getBase64 = (file: any) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
@@ -158,25 +123,29 @@ const AddBanner = () => {
     }
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 6, span: 14 },
+  };
+
   return (
     <Modal
-      title={
-        global.action.type === ActionType.UPDATE
-          ? "Update Banner"
-          : "Create Banner"
-      }
-      width={550}
+      title={type === ActionType.UPDATE ? "Update Banner" : "Create Banner"}
+      // width={550}
       zIndex={1050}
       open={
         global.action.banner &&
-        (global.action.type === ActionType.CREATE ||
-          global.action.type === ActionType.UPDATE)
+        (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => setFormValues(values)}
@@ -277,7 +246,7 @@ const AddBanner = () => {
                 }
               }}
               className="avatar-uploader"
-              onPreview={handlePreview}
+              onPreview={(file) => handlePreview(file, dispatch)}
               customRequest={customUploadRequest}
               maxCount={1}
             >
@@ -291,26 +260,21 @@ const AddBanner = () => {
         </Form.Item>
 
         <Modal
-          open={previewOpen}
-          title={previewTitle}
+          open={global.previewOpen}
+          title={global.previewTitle}
           footer={null}
-          onCancel={handleCancel}
+          onCancel={() => handlePreviewCancel(dispatch)}
         >
           <Image
             alt="example"
             style={{
               width: "100%",
             }}
-            src={previewImage}
+            src={global.previewImage}
           />
         </Modal>
 
-        <Form.Item
-          hidden={!payload?.id}
-          name="status"
-          label="Status"
-          className="mb-1"
-        >
+        <Form.Item name="status" label="Status" className="mb-1">
           <Select
             showSearch
             allowClear
@@ -327,22 +291,25 @@ const AddBanner = () => {
           </Select>
         </Form.Item>
 
-        <Button
-          className="mx-2 capitalize"
-          size="small"
-          onClick={() => resetFormData(payload)}
-        >
-          Reset
-        </Button>
-        <Button
-          size="small"
-          type="primary"
-          htmlType="submit"
-          className="capitalize"
-          loading={global.loading.save}
-        >
-          {payload?.id ? "Update" : "Save"}
-        </Button>
+        <Form.Item {...tailLayout}>
+          <Button
+            className="mx-2 capitalize"
+            size="small"
+            onClick={() => resetFormData(payload)}
+          >
+            Reset
+          </Button>
+          <Button
+            size="small"
+            type="primary"
+            htmlType="submit"
+            className="capitalize"
+            disabled={global.loading.save}
+            loading={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </Form.Item>
       </Form>
     </Modal>
   );

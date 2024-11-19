@@ -18,9 +18,9 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { deleteBanner, getBanners } from "@/lib/apis/banner";
 import appConfig from "@/appConfig";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -41,27 +41,36 @@ const BannerList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getBanners();
-      setBanners(res?.data);
-      dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch]);
+    fetchData();
+  }, [global.action]);
 
-  const handleDelete = async (id: string) => {
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      dispatch(setLoading({ delete: true }));
-      await deleteBanner(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Banner deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
-    } catch (error: any) {
-      toast.error(error);
+      const res = await getBanners();
+      setBanners(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
     }
   };
+
+
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
+    try {
+      await deleteBanner(id);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
+    } catch (error: any) {
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
+    }
+  };
+
 
   const handleSearch = (
     selectedKeys: string[],
