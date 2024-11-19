@@ -18,32 +18,45 @@ interface TokenPayload {
 }
 
 // AuthGuard middleware
-const AuthGuard: MiddlewareFunction = (req: any, res, next) => {
+const AuthGuard = (req: any, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
-  let token = authorization?.split(" ")[1] || req.cookies.accessToken;
+  const token = authorization?.split(" ")[1] || req.cookies?.accessToken;
 
   if (!token) {
-    return next({ message: "Authentication Failed" });
+    return res
+      .status(401)
+      .json({ message: "Authentication Failed: Token is missing" });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!,
-      (error: any, decodedToken: any) => {
-        if (error) {
-          throw new Error("Invalid or expired reset token new");
-        }
-      }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
 
-    ) as unknown as TokenPayload;
-    const { name, username, id, role } = decoded;
-    req.name = name;
-    req.username = username;
-    req.role = role;
-    req.id = id;
+    // Attach user information to the request object
+    req.name = decoded.name;
+    req.username = decoded.username;
+    req.role = decoded.role;
+    req.id = decoded.id;
+
     next();
-  } catch (err) {
-    console.log("erro", err);
-    next({ message: "authorized faild!" });
+  } catch (error) {
+    console.error("Authentication Error:", error);
+
+    if (error instanceof jwt.TokenExpiredError) {
+      return res
+        .status(401)
+        .json({ message: "Authentication Failed: Token has expired" });
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res
+        .status(401)
+        .json({ message: "Authentication Failed: Invalid token" });
+    }
+
+    // General error fallback
+    res
+      .status(500)
+      .json({ message: "Authentication Failed: An unexpected error occurred" });
   }
 };
 
