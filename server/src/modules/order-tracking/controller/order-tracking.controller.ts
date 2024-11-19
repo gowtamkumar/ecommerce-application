@@ -4,12 +4,15 @@ import { getDBConnection } from "../../../config/db";
 import { OrderTrackingEntity } from "../model/order-tracking.entity";
 import { orderTrackingValidationSchema } from "../../../validation";
 import { updateOrderTrackingValidationSchema } from "../../../validation/order-tracking/updateOrderTrackingValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all OrderTracking
 // @route GET /api/v1/OrderTracking
 // @access Public
 export const getOrderTrackings = asyncHandler(
   async (req: Request, res: Response) => {
+      logger.info(`Service: getOrderTrackings ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const repository = connection.getRepository(OrderTrackingEntity);
 
@@ -28,6 +31,8 @@ export const getOrderTrackings = asyncHandler(
 // @access Public
 export const getOrderTracking = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+      logger.info(`Service: getOrderTracking ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(OrderTrackingEntity);
@@ -50,6 +55,8 @@ export const getOrderTracking = asyncHandler(
 // @access Public
 export const createOrderTracking = asyncHandler(
   async (req: any, res: Response) => {
+      logger.info(`Service: createOrderTracking ${req.method} ${req.url}`);
+
     const validation = orderTrackingValidationSchema.safeParse({
       ...req.body,
       userId: req.id,
@@ -68,11 +75,8 @@ export const createOrderTracking = asyncHandler(
     }
 
     const connection = await getDBConnection();
-
     const repository = connection.getRepository(OrderTrackingEntity);
-
     const newOrderTracking = repository.create(validation.data);
-
     const save = await repository.save(newOrderTracking);
 
     return res.status(200).json({
@@ -88,6 +92,8 @@ export const createOrderTracking = asyncHandler(
 // @access Public
 export const updateOrderTracking = asyncHandler(
   async (req: Request, res: Response) => {
+      logger.info(`Service: updateOrderTracking ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const validation = updateOrderTrackingValidationSchema.safeParse(req.body);
 
@@ -104,9 +110,7 @@ export const updateOrderTracking = asyncHandler(
     }
 
     const connection = await getDBConnection();
-
     const repository = await connection.getRepository(OrderTrackingEntity);
-
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -114,7 +118,6 @@ export const updateOrderTracking = asyncHandler(
     }
 
     const updateData = await repository.merge(result, validation.data); // orderId update hobe na
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -130,6 +133,8 @@ export const updateOrderTracking = asyncHandler(
 // @access Public
 export const deleteOrderTracking = asyncHandler(
   async (req: Request, res: Response) => {
+      logger.info(`Service: deleteOrderTracking ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(OrderTrackingEntity);

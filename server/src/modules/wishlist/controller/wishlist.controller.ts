@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { wishListhValidationSchema } from "../../../validation";
 import { WishListEntity } from "../model/wishlist.entity";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Wishlists
 // @route GET /api/v1/Wishlists
 // @access Public
 export const getWishlists = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: getWishlists ${req.method} ${req.url}`);
+
   const { userId }: any = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(WishListEntity);
@@ -30,6 +33,8 @@ export const getWishlists = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const getWishlist = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getWishlist ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(WishListEntity);
@@ -51,6 +56,8 @@ export const getWishlist = asyncHandler(
 // @route POST /api/v1/Wishlists
 // @access Public
 export const createWishlist = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createWishlist ${req.method} ${req.url}`);
+
   const validation = wishListhValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
@@ -93,6 +100,8 @@ export const createWishlist = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateWishlist = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateWishlist ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
 
@@ -121,6 +130,8 @@ export const updateWishlist = asyncHandler(
 // @access Public
 export const deleteWishlist = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteWishlist ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(WishListEntity);

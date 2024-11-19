@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type {  TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -18,9 +18,9 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { deleteBrand, getBrands } from "@/lib/apis/brand";
 import appConfig from "@/appConfig";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -38,26 +38,35 @@ const BrandList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
+
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getBrands();
-      setBrands(res?.data);
+      setBrands(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    }
+  };
+
 
   const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
     try {
-      dispatch(setLoading({ delete: true }));
       await deleteBrand(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Brand deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -90,7 +99,7 @@ const BrandList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
+          onChange={(e) => {
             setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
@@ -222,9 +231,8 @@ const BrandList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${
-                    newData.image || "no-data.png"
-                  }`,
+                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+                    }`,
                 };
                 newData.fileList = [file];
               }

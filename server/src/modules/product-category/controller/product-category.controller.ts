@@ -3,12 +3,15 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { ProductCategoryEntity } from "../model/product-category.entity";
 import { productCategoryValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/ProductCategorys
 // @access Public
-export const getProductCategorys = asyncHandler(
+export const getProductCategories = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getProductCategories ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductCategoryEntity);
 
@@ -27,6 +30,8 @@ export const getProductCategorys = asyncHandler(
 // @access Public
 export const getProductCategory = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getProductCategory ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ProductCategoryEntity);
@@ -49,6 +54,8 @@ export const getProductCategory = asyncHandler(
 // @access Public
 export const createProductCategory = asyncHandler(
   async (req: any, res: Response) => {
+    logger.info(`Service: createProductCategory ${req.method} ${req.url}`);
+
     const validation = productCategoryValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -83,6 +90,8 @@ export const createProductCategory = asyncHandler(
 // @access Public
 export const updateProductCategory = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateProductCategory ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const validation = productCategoryValidationSchema.safeParse(req.body);
 
@@ -99,9 +108,7 @@ export const updateProductCategory = asyncHandler(
     }
 
     const connection = await getDBConnection();
-
     const repository = await connection.getRepository(ProductCategoryEntity);
-
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -109,7 +116,6 @@ export const updateProductCategory = asyncHandler(
     }
 
     const updateData = await repository.merge(result, validation.data);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -125,6 +131,8 @@ export const updateProductCategory = asyncHandler(
 // @access Public
 export const deleteProductCategory = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteProductCategory ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ProductCategoryEntity);

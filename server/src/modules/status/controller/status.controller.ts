@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { StatusEntity } from "../model/status.entity";
 import { statusValidationSchema } from "../../../validation/status/statusValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Status
 // @route GET /api/v1/Status
 // @access Public
-export const getStatuss = asyncHandler(async (req: Request, res: Response) => {
+export const getStatuses = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getStatuses ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(StatusEntity);
 
@@ -25,6 +28,8 @@ export const getStatuss = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getStatus = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getStatus ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(StatusEntity);
@@ -46,8 +51,9 @@ export const getStatus = asyncHandler(
 // @route POST /api/v1/Status
 // @access Public
 export const createStatus = asyncHandler(async (req: any, res: Response) => {
-  const validation = statusValidationSchema.safeParse(req.body);
+  logger.info(`Service: createStatus ${req.method} ${req.url}`);
 
+  const validation = statusValidationSchema.safeParse(req.body);
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
       path: issue.path.join("."),
@@ -61,11 +67,8 @@ export const createStatus = asyncHandler(async (req: any, res: Response) => {
   }
 
   const connection = await getDBConnection();
-
   const repository = connection.getRepository(StatusEntity);
-
   const newStatus = repository.create(validation.data);
-
   const save = await repository.save(newStatus);
 
   return res.status(200).json({
@@ -80,6 +83,8 @@ export const createStatus = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateStatus = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateStatus ${req.method} ${req.url}`);
+
     const { id } = req.params;
 
     const validation = statusValidationSchema.safeParse(req.body);
@@ -105,7 +110,6 @@ export const updateStatus = asyncHandler(
     }
 
     const updateData = await repository.merge(result, validation.data);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -121,6 +125,8 @@ export const updateStatus = asyncHandler(
 // @access Public
 export const deleteStatus = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteStatus ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(StatusEntity);

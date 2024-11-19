@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { UnitEntity } from "../model/unit.entity";
 import { unitValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Unit
 // @route GET /api/v1/Unit
 // @access Public
 export const getUnits = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getUnits ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(UnitEntity);
 
@@ -25,6 +28,8 @@ export const getUnits = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getUnit = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getUnit ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(UnitEntity);
@@ -46,6 +51,8 @@ export const getUnit = asyncHandler(
 // @route POST /api/v1/Unit
 // @access Public
 export const createUnit = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createUnit ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const validation = unitValidationSchema.safeParse({
     ...req.body,
@@ -80,11 +87,11 @@ export const createUnit = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Unit/:id
 // @access Public
 export const updateUnit = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateUnit ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(UnitEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -92,7 +99,6 @@ export const updateUnit = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const updateData = await repository.merge(result, req.body);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -106,6 +112,8 @@ export const updateUnit = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Unit/:id
 // @access Public
 export const deleteUnit = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteUnit ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(UnitEntity);

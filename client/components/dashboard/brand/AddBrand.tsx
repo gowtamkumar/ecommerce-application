@@ -1,29 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Image,
-  Input,
-  Modal,
-  Select,
-  TreeSelect,
-  Upload,
-} from "antd";
+import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
+import { toast } from "react-toastify";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAntdCategories,
-  saveCategory,
-  updateCategory,
-} from "@/lib/apis/categories";
+import { saveBrand, updateBrand } from "@/lib/apis/brand";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import ImgCrop from "antd-img-crop";
 import { PlusOutlined } from "@ant-design/icons";
+import ImgCrop from "antd-img-crop";
 import appConfig from "@/appConfig";
 import {
   handleAsyncAction,
@@ -31,7 +19,6 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -46,73 +33,37 @@ const uploadButton = (
   </div>
 );
 
-const AddCategory = () => {
-  const [categories, setCategories] = useState([]);
+const AddBrand = () => {
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-  // hook
   const global = useSelector(selectGlobal);
+  const { payload, type } = global.action;
+  // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { payload, type } = global.action;
 
   useEffect(() => {
-    fetchData();
+    const newData = { ...payload };
+    setFormData(newData);
     return () => {
       setFormValues({});
       form.resetFields()
     };
-  }, [global.action]);
-
-  const fetchData = async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const newData = { ...payload };
-      const categories = await getAntdCategories();
-      setCategories(categories.data);
-      setFormData(newData); // Use product.data?.tags or default to empty array
-      setFormValues(newData);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  };
+  }, [payload]);
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
 
     const result = newData.id
-      ? () => updateCategory(newData)
-      : () => saveCategory(newData);
+      ? () => updateBrand(newData)
+      : () => saveBrand(newData);
 
     const messageData = newData.id
       ? "Successfully Updated"
       : "Successfully Added";
 
     await handleAsyncAction(result, messageData, dispatch);
-  };
-
-  const handleClose = () => {
-    dispatch(setAction({}));
-    dispatch(setLoading({}));
-  };
-
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    setFormValues(form.getFieldsValue());
-  };
-
-  const resetFormData = (value: any) => {
-    if (value?.id) {
-      form.setFieldsValue(value);
-      setFormValues(form.getFieldsValue());
-    } else {
-      form.resetFields();
-      setFormValues(form.getFieldsValue());
-    }
   };
 
   const customUploadRequest = async (options: any) => {
@@ -152,6 +103,27 @@ const AddCategory = () => {
     }
   };
 
+  const handleClose = () => {
+    dispatch(setAction({}));
+    dispatch(setLoading({}));
+  };
+
+  const setFormData = (v: any) => {
+    const newData = { ...v };
+    form.setFieldsValue(newData);
+    setFormValues(form.getFieldsValue());
+  };
+
+  const resetFormData = (value: any) => {
+    if (value?.id) {
+      form.setFieldsValue(value);
+      setFormValues(form.getFieldsValue());
+    } else {
+      form.resetFields();
+      setFormValues(form.getFieldsValue());
+    }
+  };
+
   const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
@@ -163,8 +135,8 @@ const AddCategory = () => {
 
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Category" : "Create Category"}
-      // width={650}
+      title={type === ActionType.UPDATE ? "Update Brand" : "Create Brand"}
+      width={550}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
@@ -195,27 +167,12 @@ const AddCategory = () => {
           <Input placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item name="parentId" label="Parent">
-          <TreeSelect
-            showSearch
-            style={{ width: "100%" }}
-            dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-            placeholder="Please select"
-            allowClear
-            treeDefaultExpandAll
-            treeData={categories}
-          />
-        </Form.Item>
-
-        <Form.Item name="description" label="Note">
-          <Input.TextArea placeholder="Enter " />
-        </Form.Item>
 
         <Form.Item name="status" label="Status" className="mb-1">
           <Select
             showSearch
             allowClear
-            placeholder="Select"
+            placeholder="Select Status"
             optionFilterProp="children"
             filterOption={(input, option) =>
               (option?.children as any)
@@ -223,8 +180,8 @@ const AddCategory = () => {
                 .indexOf(input.toLowerCase()) >= 0
             }
           >
-            <Select.Option value={"Active"}>Active</Select.Option>
-            <Select.Option value={"Inactive"}>Inactive</Select.Option>
+            <Select.Option value="Active">Active</Select.Option>
+            <Select.Option value="Inactive">Inactive</Select.Option>
           </Select>
         </Form.Item>
 
@@ -256,6 +213,7 @@ const AddCategory = () => {
             </Upload>
           </ImgCrop>
         </Form.Item>
+
         <Form.Item name="image" hidden>
           <Input />
         </Form.Item>
@@ -268,13 +226,13 @@ const AddCategory = () => {
         >
           <Image
             alt="example"
-            preview={false}
             style={{
               width: "100%",
             }}
             src={global.previewImage}
           />
         </Modal>
+
 
         <Form.Item {...tailLayout}>
           <Button
@@ -300,4 +258,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default AddBrand;

@@ -4,11 +4,13 @@ import { getDBConnection } from "../../../config/db";
 import { ColorEntity } from "../model/color.entity";
 import { colorValidationSchema } from "../../../validation";
 import { updateColorValidationSchema } from "../../../validation/color/updateColorValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Color
 // @route GET /api/v1/Color
 // @access Public
 export const getColors = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getColors ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const repository = connection.getRepository(ColorEntity);
 
@@ -26,6 +28,7 @@ export const getColors = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getColor = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getColor ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ColorEntity);
@@ -47,6 +50,7 @@ export const getColor = asyncHandler(
 // @route POST /api/v1/Color
 // @access Public
 export const createColor = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createColor ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = colorValidationSchema.safeParse({
     ...req.body,
@@ -80,6 +84,7 @@ export const createColor = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Color/:id
 // @access Public
 export const updateColor = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateColor ${req.method} ${req.url}`);
   const { id } = req.params;
   const connection = await getDBConnection();
 
@@ -100,11 +105,8 @@ export const updateColor = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const repository = await connection.getRepository(ColorEntity);
-
   const result = await repository.findOneBy({ id });
-
   const updateData = await repository.merge(result, validation.data);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -118,6 +120,7 @@ export const updateColor = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Color/:id
 // @access Public
 export const deleteColor = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteColor ${req.method} ${req.url}`);
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(ColorEntity);

@@ -4,11 +4,13 @@ import { getDBConnection } from "../../../config/db";
 import { BannerEntity } from "../model/banner.entity";
 import { bannerValidationSchema } from "../../../validation";
 import { updateBannerValidationSchema } from "../../../validation/banner/updateBannerValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Banner
 // @route GET /api/v1/Banner
 // @access Public
 export const getBanners = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getBanners ${req.method} ${req.url}`);
   const { type } = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(BannerEntity);
@@ -31,6 +33,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getBanner = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getBanner ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(BannerEntity);
@@ -52,6 +55,7 @@ export const getBanner = asyncHandler(
 // @route POST /api/v1/Banner
 // @access Public
 export const createBanner = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createBanner ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = bannerValidationSchema.safeParse({
     ...req.body,
@@ -87,6 +91,7 @@ export const createBanner = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateBanner = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateBanner ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
 
@@ -129,6 +134,7 @@ export const updateBanner = asyncHandler(
 // @access Public
 export const deleteBanner = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteBanner ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(BannerEntity);

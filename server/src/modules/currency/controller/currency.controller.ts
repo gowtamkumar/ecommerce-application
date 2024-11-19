@@ -4,12 +4,14 @@ import { getDBConnection } from "../../../config/db";
 import { CurrencyEntity } from "../model/currency.entity";
 import { currencyValidationSchema } from "../../../validation";
 import { updateCurrencyValidationSchema } from "../../../validation/currency/updateCurrencyValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Currency
 // @route GET /api/v1/Currency
 // @access Public
 export const getCurrencies = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getCurrencies ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const repository = connection.getRepository(CurrencyEntity);
 
@@ -28,6 +30,7 @@ export const getCurrencies = asyncHandler(
 // @access Public
 export const getCurrency = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getCurrency ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CurrencyEntity);
@@ -49,6 +52,7 @@ export const getCurrency = asyncHandler(
 // @route POST /api/v1/Currency
 // @access Public
 export const createCurrency = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createCurrency ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = currencyValidationSchema.safeParse({
     ...req.body,
@@ -84,6 +88,7 @@ export const createCurrency = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateCurrency = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateCurrency ${req.method} ${req.url}`);
     const { id } = req.params;
 
     const validation = updateCurrencyValidationSchema.safeParse(req.body);
@@ -99,18 +104,14 @@ export const updateCurrency = asyncHandler(
         issues: formattedErrors,
       });
     }
-
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CurrencyEntity);
-
     const result = await repository.findOneBy({ id });
 
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
-
     const updateData = await repository.merge(result, validation.data);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -126,6 +127,7 @@ export const updateCurrency = asyncHandler(
 // @access Public
 export const deleteCurrency = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteCurrency ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CurrencyEntity);

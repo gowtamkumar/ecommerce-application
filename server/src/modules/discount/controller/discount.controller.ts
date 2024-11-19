@@ -4,12 +4,15 @@ import { getDBConnection } from "../../../config/db";
 import { DiscountEntity } from "../model/discount.entity";
 import { discountValidationSchema } from "../../../validation";
 import { updateDiscountValidation } from "../../../validation/discount/updateDiscountValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Discounts
 // @route GET /api/v1/Discounts
 // @access Public
 export const getDiscounts = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getDiscounts ${req.method} ${req.url}`);
+
     const { type } = req.query;
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
@@ -29,6 +32,7 @@ export const getDiscounts = asyncHandler(
 // @access Public
 export const getDiscount = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getDiscount ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
@@ -50,6 +54,7 @@ export const getDiscount = asyncHandler(
 // @route POST /api/v1/Discounts
 // @access Public
 export const createDiscount = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createDiscount ${req.method} ${req.url}`);
   const connection = await getDBConnection();
 
   const validation = discountValidationSchema.safeParse({
@@ -70,9 +75,7 @@ export const createDiscount = asyncHandler(async (req: any, res: Response) => {
   }
 
   const repository = connection.getRepository(DiscountEntity);
-
   const newDiscount = repository.create(validation.data);
-
   const save = await repository.save(newDiscount);
 
   return res.status(200).json({
@@ -87,6 +90,7 @@ export const createDiscount = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateDiscount = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateDiscount ${req.method} ${req.url}`);
     const { id } = req.params;
 
     const validation = updateDiscountValidation.safeParse(req.body);
@@ -130,6 +134,8 @@ export const updateDiscount = asyncHandler(
 // @access Public
 export const deleteDiscount = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteDiscount ${req.method} ${req.url}`);
+    
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);

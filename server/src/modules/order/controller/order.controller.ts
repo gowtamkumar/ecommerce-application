@@ -17,12 +17,15 @@ import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
 import { PaymentType } from "../../payment/enums/payment-type.enum";
 import { OrderItemEntity } from "../model/order-item.entity";
 import { CartEntity } from "../../cart/model/cart.entity";
+import { logger } from "../../../middlewares/logger";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order
 // @route GET /api/v1/Order
 // @access Public
 export const getOrders = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getOrders ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const orderRepository = connection.getRepository(OrderEntity);
 
@@ -60,6 +63,8 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getUserOrders = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
+
   const userId = req.id;
   const connection = await getDBConnection();
   const orderRepository = connection.getRepository(OrderEntity);
@@ -98,6 +103,8 @@ export const getUserOrders = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const getOrder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getOrder ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(OrderEntity);
@@ -126,6 +133,8 @@ export const getOrder = asyncHandler(
 // @route POST /api/v1/Order
 // @access Public
 export const createOrder = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createOrder ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const queryRunner = connection.createQueryRunner();
 
@@ -258,6 +267,8 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 
     // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
     // sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
+    logger.info(`Service: getMemu ${req.method} ${req.url}`);
+
     //   // Redirect the user to payment gateway
     //   let GatewayPageURL = apiResponse.GatewayPageURL;
     //   res.redirect(GatewayPageURL);
@@ -300,6 +311,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 // export const orderTracking = asyncHandler(
 //   async (req: any, res: Response, next: NextFunction) => {
+
 //     const { trackingNo } = req.query;
 //     const userId = req.id;
 //     const connection = await getDBConnection();
@@ -342,6 +354,8 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Order/:id
 // @access Public
 export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateOrder ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const validation = orderUpdateValidationSchema.safeParse(req.body);
@@ -402,6 +416,8 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
 // @route PUT /api/v1/Order/:id
 // @access Public
 export const orderReview = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: orderReview ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
 
@@ -447,6 +463,8 @@ export const orderReview = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const assignDeliveryMan = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: assignDeliveryMan ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const validation = orderDeliveryManValidationSchema.safeParse(req.body);
 
@@ -486,6 +504,8 @@ export const assignDeliveryMan = asyncHandler(
 
 export const orderStatusUpdate = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: orderStatusUpdate ${req.method} ${req.url}`);
+
     const { id } = req.params;
 
     const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
@@ -574,6 +594,8 @@ export const orderStatusUpdate = asyncHandler(
 // @route DELETE /api/v1/Order/:id
 // @access Public
 export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteOrder ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(OrderEntity);

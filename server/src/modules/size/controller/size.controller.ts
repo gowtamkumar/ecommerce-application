@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { SizeEntity } from "../model/size.entity";
 import { sizeValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Size
 // @route GET /api/v1/Size
 // @access Public
 export const getSizes = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getSizes ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(SizeEntity);
 
@@ -25,6 +28,8 @@ export const getSizes = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getSize = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getSize ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(SizeEntity);
@@ -46,6 +51,8 @@ export const getSize = asyncHandler(
 // @route POST /api/v1/Size
 // @access Public
 export const createSize = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createSize ${req.method} ${req.url}`);
+
   const validation = sizeValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
@@ -79,6 +86,8 @@ export const createSize = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Size/:id
 // @access Public
 export const updateSize = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateSize ${req.method} ${req.url}`);
+
   const { id } = req.params;
 
   const validation = sizeValidationSchema.safeParse(req.body);
@@ -96,9 +105,7 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(SizeEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -106,7 +113,6 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const updateData = await repository.merge(result, validation.data);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -120,6 +126,8 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Size/:id
 // @access Public
 export const deleteSize = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteSize ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(SizeEntity);

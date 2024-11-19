@@ -4,11 +4,14 @@ import { getDBConnection } from "../../../config/db";
 import { ReviewEntity } from "../model/review.entity";
 import { reviewValidationSchema } from "../../../validation";
 import { updateReviewValidationSchema } from "../../../validation/review/updateReviewValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Review
 // @route GET /api/v1/Review
 // @access Public
 export const getReviews = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getReviews ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(ReviewEntity);
 
@@ -35,6 +38,8 @@ export const getReviews = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getReview = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getReview ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ReviewEntity);
@@ -56,6 +61,8 @@ export const getReview = asyncHandler(
 // @route POST /api/v1/Review
 // @access Public
 export const createReview = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createReview ${req.method} ${req.url}`);
+
   const validation = reviewValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
@@ -93,6 +100,8 @@ export const createReview = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateReview = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateReview ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const validation = updateReviewValidationSchema.safeParse(req.body);
 
@@ -132,6 +141,8 @@ export const updateReview = asyncHandler(
 // @route PUT /api/v1/reviews/increage:id
 // @access Public
 export const reviewLike = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: reviewLike ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
 
@@ -154,6 +165,8 @@ export const reviewLike = asyncHandler(async (req: Request, res: Response) => {
 
 export const reviewDisLike = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: reviewDisLike ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
 
@@ -180,6 +193,8 @@ export const reviewDisLike = asyncHandler(
 // @access Public
 export const deleteReview = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteReview ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ReviewEntity);

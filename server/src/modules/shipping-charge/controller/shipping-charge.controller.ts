@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { ShippingChargeEntity } from "../model/shipping-charge.entity";
 import { shippingChargeValidationSchema } from "../../../validation/shipping-charge/shippingChargeValidation";
 import { updateShippingChargeValidationSchema } from "../../../validation/shipping-charge/updateShippingChargeValidation";
+import { logger } from "../../../middlewares/logger";
 // import { shippingChargeValidationSchema } from "../../../validation";
 
 // @desc Get all shippingCharge
@@ -11,6 +12,8 @@ import { updateShippingChargeValidationSchema } from "../../../validation/shippi
 // @access Public
 export const getShippingCharges = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getShippingCharges ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const repository = connection.getRepository(ShippingChargeEntity);
 
@@ -40,6 +43,8 @@ export const getShippingCharges = asyncHandler(
 // @access Public
 export const getShippingCharge = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getShippingCharge ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ShippingChargeEntity);
@@ -62,6 +67,8 @@ export const getShippingCharge = asyncHandler(
 // @access Public
 export const createShippingCharge = asyncHandler(
   async (req: any, res: Response) => {
+    logger.info(`Service: createShippingCharge ${req.method} ${req.url}`);
+
     const validation = shippingChargeValidationSchema.safeParse({
       ...req.body,
       userId: req.id,
@@ -98,6 +105,8 @@ export const createShippingCharge = asyncHandler(
 // @access Public
 export const updateShippingCharge = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateShippingCharge ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const validation = updateShippingChargeValidationSchema.safeParse(req.body);
 
@@ -114,9 +123,7 @@ export const updateShippingCharge = asyncHandler(
     }
 
     const connection = await getDBConnection();
-
     const repository = await connection.getRepository(ShippingChargeEntity);
-
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -124,7 +131,6 @@ export const updateShippingCharge = asyncHandler(
     }
 
     const updateData = await repository.merge(result, validation.data);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -140,6 +146,8 @@ export const updateShippingCharge = asyncHandler(
 // @access Public
 export const deleteShippingCharge = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteShippingCharge ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ShippingChargeEntity);

@@ -8,11 +8,14 @@ import { getDBConnection } from "../../../config/db";
 import { MenuEntity } from "../model/menu.entity";
 import { menuValidationSchema } from "../../../validation/menu/menuValidation";
 import { updateMenuValidationSchema } from "../../../validation/menu/updateMenuValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all memus
 // @route GET /api/v1/memus
 // @access Public
 export const getMemus = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getMemus ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(MenuEntity);
 
@@ -30,6 +33,8 @@ export const getMemus = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getMemu = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getMemu ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(MenuEntity);
@@ -51,6 +56,8 @@ export const getMemu = asyncHandler(
 // @route POST /api/v1/memus
 // @access Public
 export const createMemu = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createMemu ${req.method} ${req.url}`);
+
   const validation = menuValidationSchema.safeParse({
     items: req.body.children,
     name: req.body.name,
@@ -71,7 +78,6 @@ export const createMemu = asyncHandler(async (req: any, res: Response) => {
 
   const connection = await getDBConnection();
   const repository = connection.getRepository(MenuEntity);
-
   const newMemu = repository.create(validation.data);
   const save = await repository.save(newMemu);
 
@@ -86,8 +92,9 @@ export const createMemu = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/memus/:id
 // @access Public
 export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  logger.info(`Service: updateMemu ${req.method} ${req.url}`);
 
+  const { id } = req.params;
   const validation = updateMenuValidationSchema.safeParse({
     ...req.body,
   });
@@ -105,9 +112,7 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(MenuEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -115,7 +120,6 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const updateData = await repository.merge(result, req.body);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -129,6 +133,8 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/memus/:id
 // @access Public
 export const deleteMemu = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteMemu ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(MenuEntity);
@@ -138,16 +144,6 @@ export const deleteMemu = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  // if (result.image) {
-  //   const repository = connection.getRepository(FileEntity);
-  //   const directory = join(process.cwd(), "/public/uploads");
-  //   const filePath = `${directory}/${result.image}`;
-  //   const [deleteFile] = await Promise.all([
-  //     repository.findOne({ where: { filename: result.image } }),
-  //     fs.promises.unlink(filePath),
-  //   ]);
-  //   await repository.remove(deleteFile);
-  // }
   await repository.delete({ id });
 
   return res.status(200).json({

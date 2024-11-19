@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { TaxEntity } from "../model/tax.entity";
 import { taxValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Tax
 // @route GET /api/v1/Tax
 // @access Public
 export const getTaxs = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getTaxs ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(TaxEntity);
 
@@ -25,6 +28,8 @@ export const getTaxs = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getTax = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getTax ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(TaxEntity);
@@ -46,6 +51,8 @@ export const getTax = asyncHandler(
 // @route POST /api/v1/Tax
 // @access Public
 export const createTax = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createTax ${req.method} ${req.url}`);
+
   const validation = taxValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
@@ -63,9 +70,7 @@ export const createTax = asyncHandler(async (req: any, res: Response) => {
     });
   }
   const connection = await getDBConnection();
-
   const repository = connection.getRepository(TaxEntity);
-
   const newTax = repository.create(validation.data);
   const save = await repository.save(newTax);
 
@@ -80,8 +85,9 @@ export const createTax = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Tax/:id
 // @access Public
 export const updateTax = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  logger.info(`Service: updateTax ${req.method} ${req.url}`);
 
+  const { id } = req.params;
   const validation = taxValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -96,16 +102,13 @@ export const updateTax = asyncHandler(async (req: Request, res: Response) => {
     });
   }
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(TaxEntity);
-
   const result = await repository.findOneBy({ id });
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
   const updateData = await repository.merge(result, validation.data);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -119,6 +122,8 @@ export const updateTax = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Tax/:id
 // @access Public
 export const deleteTax = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteTax ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(TaxEntity);

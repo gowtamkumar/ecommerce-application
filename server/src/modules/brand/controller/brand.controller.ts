@@ -7,11 +7,13 @@ import { join } from "path";
 import { FileEntity } from "../../other/file/model/file.entity";
 import fs from "fs";
 import { updateBrandValidationSchema } from "../../../validation/brand/updateBrandValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Brands
 // @route GET /api/v1/Brands
 // @access Public
 export const getBrands = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getBrands ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const repository = connection.getRepository(BrandEntity);
 
@@ -29,6 +31,7 @@ export const getBrands = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getBrand = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getBrand ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(BrandEntity);
@@ -50,6 +53,7 @@ export const getBrand = asyncHandler(
 // @route POST /api/v1/Brands
 // @access Public
 export const createBrand = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createBrand ${req.method} ${req.url}`);
   const connection = await getDBConnection();
 
   const validation = brandValidationSchema.safeParse({
@@ -84,6 +88,7 @@ export const createBrand = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Brands/:id
 // @access Public
 export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateBrand ${req.method} ${req.url}`);
   const { id } = req.params;
   const connection = await getDBConnection();
 
@@ -104,15 +109,11 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const repository = await connection.getRepository(BrandEntity);
-
   const result = await repository.findOneBy({ id });
-
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
-
   const updateData = await repository.merge(result, validation.data);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -126,6 +127,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Brands/:id
 // @access Public
 export const deleteBrand = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteBrand ${req.method} ${req.url}`);
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(BrandEntity);

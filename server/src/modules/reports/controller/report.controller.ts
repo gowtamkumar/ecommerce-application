@@ -184,6 +184,8 @@ export const getDashboardReport = asyncHandler(
 
 export const getTopSellingProduct = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getTopSellingProduct ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
 
     const top_selling_product = await connection.query(

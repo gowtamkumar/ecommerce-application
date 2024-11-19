@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { LeadEntity } from "../model/lead.entity";
 import { leadValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Lead
 // @route GET /api/v1/Lead
 // @access Public
 export const getLeads = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getLeads ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(LeadEntity);
   const result = await repository.find();
@@ -24,6 +27,8 @@ export const getLeads = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getLead = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getLead ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(LeadEntity);
@@ -45,6 +50,8 @@ export const getLead = asyncHandler(
 // @route POST /api/v1/Lead
 // @access Public
 export const createLead = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createLead ${req.method} ${req.url}`);
+
   const validation = leadValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -83,6 +90,8 @@ export const createLead = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Lead/:id
 // @access Public
 export const updateLead = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateLead ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
 
@@ -103,7 +112,6 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const repository = await connection.getRepository(LeadEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -111,9 +119,7 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const updateData = await repository.merge(result, validation.data);
-
   await repository.save(updateData);
-
   return res.status(200).json({
     success: true,
     message: `Update a single Lead of id ${req.params.id}`,
@@ -125,6 +131,8 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Lead/:id
 // @access Public
 export const deleteLead = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteLead ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(LeadEntity);

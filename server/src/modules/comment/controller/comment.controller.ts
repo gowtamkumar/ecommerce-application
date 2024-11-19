@@ -2,13 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { CommentEntity } from "../model/comment.entity";
-import {commentValidationSchema } from "../../../validation";
+import { commentValidationSchema } from "../../../validation";
 import { updateCommentValidationSchema } from "../../../validation/comment/updateCommentValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Comment
 // @route GET /api/v1/Comment
 // @access Public
 export const getComments = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getComments ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const repository = connection.getRepository(CommentEntity);
 
@@ -35,6 +37,7 @@ export const getComments = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getComment = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getComment ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CommentEntity);
@@ -56,6 +59,7 @@ export const getComment = asyncHandler(
 // @route POST /api/v1/Comment
 // @access Public
 export const createComment = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createComment ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = commentValidationSchema.safeParse({
     ...req.body,
@@ -92,32 +96,29 @@ export const createComment = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateComment = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateComment ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
 
     const validation = updateCommentValidationSchema.safeParse(req.body);
-  
+
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
         path: issue.path.join("."),
         message: issue.message,
       }));
-  
+
       return res.status(400).json({
         success: false,
         issues: formattedErrors,
       });
     }
-
     const repository = await connection.getRepository(CommentEntity);
-
     const result = await repository.findOneBy({ id });
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
-
     const updateData = await repository.merge(result, validation.data);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -132,6 +133,7 @@ export const updateComment = asyncHandler(
 // @route PUT /api/v1/Comments/increage:id
 // @access Public
 export const commentLike = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: commentLike ${req.method} ${req.url}`);
   const { id } = req.params;
   const connection = await getDBConnection();
 
@@ -154,6 +156,7 @@ export const commentLike = asyncHandler(async (req: Request, res: Response) => {
 
 export const commentDisLike = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: commentDisLike ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
 
@@ -180,6 +183,7 @@ export const commentDisLike = asyncHandler(
 // @access Public
 export const deleteComment = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteComment ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CommentEntity);
@@ -188,9 +192,7 @@ export const deleteComment = asyncHandler(
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
-
     await repository.delete({ id });
-
     return res.status(200).json({
       success: true,
       message: `Delete a single Comment of id ${req.params.id}`,

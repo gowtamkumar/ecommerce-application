@@ -1,68 +1,60 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Select,
-} from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveWishlist, updateWishlist } from "@/lib/apis/wishlist";
 import { getProducts } from "@/lib/apis/product";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { errorNotification } from "@/lib/utils/notification";
 
-const AddWishlists = () => {
+const AddWishlist = () => {
   const [products, setProducts] = useState([]);
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, type } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      const products = await getProducts();
-      setProducts(products.data);
-      const newData = { ...payload };
-      setFormData(newData);
-    })();
+    fetchData();
     return () => {
-      dispatch(setFormValues({}));
       form.resetFields();
     };
   }, [global.action]);
 
-  const handleSubmit = async (values: any) => {
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateWishlist(newData)
-        : await saveWishlist(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        
-        toast.success(
-          `Wishlist ${newData?.id ? "Updated" : "Created"} Successfully`
-        );
-        dispatch(setAction({}));
-      }, 100);
+      const newData = { ...payload };
+      const categories = await getProducts();
+      setProducts(categories.data);
+      setFormData(newData); // Use product.data?.tags or default to empty array
     } catch (err: any) {
-      toast.error(err);
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
     }
   };
 
+  const handleSubmit = async (values: any) => {
+    let newData = { ...values };
+
+    const result = newData.id
+      ? () => updateWishlist(newData)
+      : () => saveWishlist(newData);
+
+    const messageData = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
+  };
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
@@ -71,32 +63,22 @@ const AddWishlists = () => {
   const setFormData = (v: any) => {
     const newData = { ...v };
     form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
   };
 
   const resetFormData = () => {
     if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+      form.setFieldsValue(payload);
     } else {
       form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
     }
   };
 
   return (
     <Modal
-      title={
-        global.action.type === ActionType.UPDATE
-          ? "Update Wishlist"
-          : "Create Wishlist"
-      }
+      title={type === ActionType.UPDATE ? "Update Wishlist" : "Create Wishlist"}
       width={550}
       zIndex={1050}
-      open={
-        global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE
-      }
+      open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
       footer={null}
     >
@@ -104,7 +86,7 @@ const AddWishlists = () => {
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        onValuesChange={(_v, values) => setFormValues(values)}
+        // onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -114,7 +96,16 @@ const AddWishlists = () => {
 
         <div className="grid gap-5">
           <div className="col-span-1">
-            <Form.Item name="productId" label="Product">
+            <Form.Item
+              name="productId"
+              label="Product"
+              rules={[
+                {
+                  required: true,
+                  message: "Product is required",
+                },
+              ]}
+            >
               <Select
                 showSearch
                 allowClear
@@ -158,4 +149,4 @@ const AddWishlists = () => {
   );
 };
 
-export default AddWishlists;
+export default AddWishlist;

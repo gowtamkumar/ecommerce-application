@@ -5,8 +5,10 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import AddWishlists from "@/components/dashboard/wishlists/AddWishlists";
-import WishlistsList from "@/components/dashboard/wishlists/WishlistsList";
+import dynamic from "next/dynamic";
+
+const AddWishlist = dynamic(() => import('@/components/dashboard/wishlist/AddWishlist'), { ssr: false })
+const WishlistsList = dynamic(() => import('@/components/dashboard/wishlist/WishlistsList'), { ssr: false })
 
 
 export default function Wishlists() {
@@ -41,7 +43,7 @@ export default function Wishlists() {
           </Button>
         }
       />
-      <AddWishlists />
+      <AddWishlist />
     </div>
   );
 }

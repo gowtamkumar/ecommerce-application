@@ -15,6 +15,7 @@ import { fileDeleteFunction } from "../../../utils/fileDeleteFunction";
 // @access Public
 export const getProducts = async (req: Request, res: Response) => {
   logger.info(`Service: getProducts ${req.method} ${req.url}`);
+
   try {
     const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
     const productRepository = connection.getRepository(ProductEntity);
@@ -135,6 +136,7 @@ export const getProducts = async (req: Request, res: Response) => {
 export const getProduct = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     logger.info(`Service: getProduct ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);
@@ -199,6 +201,7 @@ export const getProduct = asyncHandler(
 // @access Public
 export const createProduct = asyncHandler(async (req: any, res: Response) => {
   logger.info(`Service: createProduct ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
@@ -272,8 +275,8 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 export const updateProduct = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: updateProduct ${req.method} ${req.url}`);
-    const { id } = req.params;
 
+    const { id } = req.params;
     // Validate request body
     const validation = updateProductValidationSchema.safeParse(req.body);
 
@@ -444,6 +447,7 @@ export const updateProduct = asyncHandler(
 export const deleteProduct = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: deleteProduct ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const productRepository = await connection.getRepository(ProductEntity);

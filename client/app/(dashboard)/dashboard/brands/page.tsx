@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import BrandList from "@/components/dashboard/brand/BrandLIst";
-import AddBrand from "@/components/dashboard/brand/AddBrands";
+
+const AddBrand = dynamic(() => import('@/components/dashboard/brand/AddBrand'), { ssr: false })
+const BrandList = dynamic(() => import('@/components/dashboard/brand/BrandList'), { ssr: false })
+
 
 
 export default function Brand() {

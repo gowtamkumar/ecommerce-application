@@ -6,12 +6,14 @@ import { categoriesValidationSchema } from "../../../validation/categories/categ
 import { FileEntity } from "../../other/file/model/file.entity";
 import { join } from "path";
 import fs from "fs";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Categorys
 // @route GET /api/v1/categories/all
 // @access Public
 export const getPublicCategories = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getPublicCategories ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const repository = connection.getRepository(CategoriesEntity);
 
@@ -32,6 +34,7 @@ export const getPublicCategories = asyncHandler(
 // @access Public
 export const getAntdCategories = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getPublicCategorie ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const repository = connection.getTreeRepository(CategoriesEntity);
 
@@ -73,6 +76,7 @@ export const getAntdCategories = asyncHandler(
 // @access Public
 export const getCategories = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getCategories ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const repository = connection.getRepository(CategoriesEntity);
 
@@ -92,6 +96,7 @@ export const getCategories = asyncHandler(
 // @access Public
 export const getCategory = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getCategory ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const { id } = req.params;
 
@@ -123,8 +128,8 @@ export const getCategory = asyncHandler(
 // @route POST /api/v1/categories
 // @access Public
 export const createCategory = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createCategory ${req.method} ${req.url}`);
   const connection = await getDBConnection();
-
   // Validate request body
   const validation = categoriesValidationSchema.safeParse({
     ...req.body,
@@ -196,6 +201,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateCategory = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateCategory ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const { id } = req.params;
     const { parentId, name, image, urlSlug, description } = req.body;
@@ -255,6 +261,7 @@ export const updateCategory = asyncHandler(
 // @access Public
 export const deleteCategory = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteCategory ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CategoriesEntity);

@@ -5,11 +5,14 @@ import { PostEntity } from "../model/post.entity";
 import { postValidationSchema } from "../../../validation";
 import { PostCategoryEntity } from "../model/post-category.entity";
 import { updatePostValidationSchema } from "../../../validation/post/updatePostValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Post
 // @route GET /api/v1/Post
 // @access Public
 export const getPosts = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getPosts ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(PostEntity);
 
@@ -41,6 +44,8 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getPost = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getPost ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(PostEntity);
@@ -76,6 +81,8 @@ export const getPost = asyncHandler(
 // @route POST /api/v1/Post
 // @access Public
 export const createPost = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createPost ${req.method} ${req.url}`);
+
   const validation = postValidationSchema.safeParse({
     ...req.body,
     userId: req.id,
@@ -140,6 +147,8 @@ export const createPost = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Post/:id
 // @access Public
 export const updatePost = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updatePost ${req.method} ${req.url}`);
+
   const { id } = req.params;
 
   const validation = updatePostValidationSchema.safeParse(req.body);
@@ -157,11 +166,8 @@ export const updatePost = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const { postCategories, ...postData } = validation.data;
-
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(PostEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -169,12 +175,10 @@ export const updatePost = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const updateData = await repository.merge(result, postData);
-
   await repository.save(updateData);
 
   if (postCategories && id) {
     const repoPostCategories = connection.getRepository(PostCategoryEntity);
-
     // remove post category
     const existingVariants = await repoPostCategories.find({
       where: { postId: id },
@@ -202,6 +206,8 @@ export const updatePost = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Post/:id
 // @access Public
 export const deletePost = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deletePost ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(PostEntity);

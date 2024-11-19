@@ -19,9 +19,10 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
+
 import { deleteWishlist, getWishlists } from "@/lib/apis/wishlist";
 import dayjs from "dayjs";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -34,30 +35,37 @@ type DataIndex = keyof DataType;
 
 const WishlistsList: React.FC = () => {
   const [wishlists, setWishLists] = useState([]);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getWishlists();
-      setWishLists(res?.data);
-      dispatch(setLoading({ loading: false }));
-    })();
+    fetchData();
   }, [global.action]);
 
-  const handleDelete = async (id: string) => {
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      dispatch(setLoading({ delete: true }));
+      const res = await getWishlists();
+      setWishLists(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
+    try {
       await deleteWishlist(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("wishlist deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -91,10 +99,9 @@ const WishlistsList: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }

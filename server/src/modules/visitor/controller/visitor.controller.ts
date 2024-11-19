@@ -2,11 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { VisitorEntity } from "../model/visitor.entity";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Visitor
 // @route GET /api/v1/Visitor
 // @access Public
 export const getVisitors = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getVisitors ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(VisitorEntity);
 
@@ -24,6 +27,8 @@ export const getVisitors = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getVisitor = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getVisitor ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(VisitorEntity);
@@ -45,6 +50,8 @@ export const getVisitor = asyncHandler(
 // @route POST /api/v1/Visitor
 // @access Public
 export const createVisitor = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createVisitor ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
 
   const visitorRepository = connection.getRepository(VisitorEntity);
@@ -71,15 +78,18 @@ export const createVisitor = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const updateVisitor = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateVisitor ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
-
     const repository = await connection.getRepository(VisitorEntity);
-
     const result = await repository.findOneBy({ id });
 
-    const updateData = await repository.merge(result, req.body);
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
 
+    const updateData = await repository.merge(result, req.body);
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -95,6 +105,8 @@ export const updateVisitor = asyncHandler(
 // @access Public
 export const deleteVisitor = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteVisitor ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(VisitorEntity);

@@ -3,12 +3,15 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { ProductVariantEntity } from "../model/product-variant.entity";
 import { productVariantValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all ProductVariants
 // @route GET /api/v1/ProductVariants
 // @access Public
 export const getProductVariants = asyncHandler(
   async (req: Request, res: Response) => {
+     logger.info(`Service: getProductVariants ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductVariantEntity);
 
@@ -27,6 +30,8 @@ export const getProductVariants = asyncHandler(
 // @access Public
 export const getProductVariant = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+     logger.info(`Service: getProductVariant ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ProductVariantEntity);
@@ -49,6 +54,8 @@ export const getProductVariant = asyncHandler(
 // @access Public
 export const createProductVariant = asyncHandler(
   async (req: any, res: Response) => {
+     logger.info(`Service: createProductVariant ${req.method} ${req.url}`);
+
     const validation = productVariantValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -82,6 +89,8 @@ export const createProductVariant = asyncHandler(
 // @access Public
 export const updateProductVariant = asyncHandler(
   async (req: Request, res: Response) => {
+     logger.info(`Service: updateProductVariant ${req.method} ${req.url}`);
+
     const { id } = req.params;
     
 
@@ -126,6 +135,8 @@ export const updateProductVariant = asyncHandler(
 // @access Public
 export const deleteProductVariant = asyncHandler(
   async (req: Request, res: Response) => {
+     logger.info(`Service: deleteProductVariant ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ProductVariantEntity);

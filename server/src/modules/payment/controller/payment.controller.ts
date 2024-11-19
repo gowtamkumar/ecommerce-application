@@ -3,11 +3,14 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { PaymentEntity } from "../model/payment.entity";
 import { paymentValidationSchema } from "../../../validation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Payment
 // @route GET /api/v1/Payment
 // @access Public
 export const getPayments = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getPayments ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(PaymentEntity);
 
@@ -36,6 +39,8 @@ export const getPayments = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getPayment = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getPayment ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(PaymentEntity);
@@ -57,6 +62,8 @@ export const getPayment = asyncHandler(
 // @route POST /api/v1/Payment
 // @access Public
 export const createPayment = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createPayment ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const validation = paymentValidationSchema.safeParse({
     ...req.body,
@@ -75,9 +82,7 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
     });
   }
   const repository = connection.getRepository(PaymentEntity);
-
   const newPayment = repository.create(validation.data);
-
   const save = await repository.save(newPayment);
 
   return res.status(200).json({
@@ -89,6 +94,8 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
 
 export const createDashboardPayment = asyncHandler(
   async (req: any, res: Response) => {
+    logger.info(`Service: createDashboardPayment ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const validation = paymentValidationSchema.safeParse(req.body);
 
@@ -104,9 +111,7 @@ export const createDashboardPayment = asyncHandler(
       });
     }
     const repository = connection.getRepository(PaymentEntity);
-
     const newPayment = repository.create(validation.data);
-
     const save = await repository.save(newPayment);
 
     return res.status(200).json({
@@ -122,6 +127,8 @@ export const createDashboardPayment = asyncHandler(
 // @access Public
 export const updatePayment = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updatePayment ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
 
@@ -133,7 +140,6 @@ export const updatePayment = asyncHandler(
     }
 
     const updateData = await repository.merge(result, req.body);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -149,6 +155,8 @@ export const updatePayment = asyncHandler(
 // @access Public
 export const deletePayment = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deletePayment ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(PaymentEntity);

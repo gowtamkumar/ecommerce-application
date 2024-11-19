@@ -6,11 +6,14 @@ import { fileValidationSchema } from "../../../../validation";
 import { join } from "path";
 import fs from "fs";
 import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { logger } from "../../../../middlewares/logger";
 
 // @desc Get all Files
 // @route GET /api/v1/Files
 // @access Public
 export const getFiles = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getFiles ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(FileEntity);
 
@@ -28,6 +31,8 @@ export const getFiles = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getFile = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getFile ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(FileEntity);
@@ -49,6 +54,8 @@ export const getFile = asyncHandler(
 // @route POST /api/v1/Files
 // @access Public
 export const createFile = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createFile ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const validation = fileValidationSchema.safeParse(req.body);
 
@@ -65,9 +72,7 @@ export const createFile = asyncHandler(async (req: any, res: Response) => {
   }
 
   const repository = connection.getRepository(FileEntity);
-
   const newFile = repository.create(validation.data);
-
   const save = await repository.save(newFile);
 
   return res.status(200).json({
@@ -81,6 +86,8 @@ export const createFile = asyncHandler(async (req: any, res: Response) => {
 // @route POST /api/v1/Files
 // @access Public
 export const fileUpload = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: fileUpload ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(FileEntity);
   //   const validation = fileValidationSchema.safeParse(req.files);
@@ -106,11 +113,11 @@ export const fileUpload = asyncHandler(async (req: any, res: Response) => {
 // @route PUT /api/v1/Files/:id
 // @access Public
 export const updateFile = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateFile ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(FileEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -118,7 +125,6 @@ export const updateFile = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const updateData = await repository.merge(result, req.body);
-
   await repository.save(updateData);
 
   return res.status(200).json({
@@ -132,6 +138,8 @@ export const updateFile = asyncHandler(async (req: Request, res: Response) => {
 // @route DELETE /api/v1/Files/:id
 // @access Public
 export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteFile ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(FileEntity);
@@ -155,7 +163,9 @@ export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const deleteFileWithPhoto = asyncHandler(
   async (req: Request, res: Response) => {
-    const { filename } = req.body;    
+    logger.info(`Service: deleteFileWithPhoto ${req.method} ${req.url}`);
+
+    const { filename } = req.body;
     const connection = await getDBConnection();
     const repository = connection.getRepository(FileEntity);
     const directory = join(process.cwd(), "/public/uploads");

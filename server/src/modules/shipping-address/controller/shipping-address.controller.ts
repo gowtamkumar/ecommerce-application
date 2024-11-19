@@ -4,12 +4,15 @@ import { getDBConnection } from "../../../config/db";
 import { shippingAddressValidationSchema } from "../../../validation";
 import { ShippingAddressEntity } from "../model/shipping-address.entity";
 import { updateShippingAddressValidationSchema } from "../../../validation/shipping-address/updateShippingAddressValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all ShippingAddress
 // @route GET /api/v1/shipping-address
 // @access Public
 export const getShippingAddresses = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: getShippingAddresses ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const repository = connection.getRepository(ShippingAddressEntity);
 
@@ -30,6 +33,8 @@ export const getShippingAddresses = asyncHandler(
 // @access Public
 export const getShippingAddress = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getShippingAddress ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ShippingAddressEntity);
@@ -52,6 +57,8 @@ export const getShippingAddress = asyncHandler(
 // @access Public
 export const createShippingAddress = asyncHandler(
   async (req: any, res: Response) => {
+    logger.info(`Service: createShippingAddress ${req.method} ${req.url}`);
+
     const validation = shippingAddressValidationSchema.safeParse({
       ...req.body,
       userId: req.id,
@@ -96,6 +103,8 @@ export const createShippingAddress = asyncHandler(
 // @access Public
 export const updateShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: updateShippingAddress ${req.method} ${req.url}`);
+
     const { id } = req.params;
 
     const validation = updateShippingAddressValidationSchema.safeParse(
@@ -114,9 +123,7 @@ export const updateShippingAddress = asyncHandler(
       });
     }
     const connection = await getDBConnection();
-
     const repository = await connection.getRepository(ShippingAddressEntity);
-
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -124,7 +131,6 @@ export const updateShippingAddress = asyncHandler(
     }
 
     const updateData = await repository.merge(result, req.body);
-
     await repository.save(updateData);
 
     return res.status(200).json({
@@ -140,6 +146,8 @@ export const updateShippingAddress = asyncHandler(
 // @access Public
 export const activeShippingAddress = asyncHandler(
   async (req: any, res: Response) => {
+    logger.info(`Service: activeShippingAddress ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
 
@@ -172,6 +180,8 @@ export const activeShippingAddress = asyncHandler(
 // @access Public
 export const deleteShippingAddress = asyncHandler(
   async (req: Request, res: Response) => {
+    logger.info(`Service: deleteShippingAddress ${req.method} ${req.url}`);
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(ShippingAddressEntity);
