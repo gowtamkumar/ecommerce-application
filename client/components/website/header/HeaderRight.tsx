@@ -8,6 +8,8 @@ import { CiSearch, CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
 import HeaderSearch from "./HeaderSearch";
 import appConfig from "@/appConfig";
+import ViewCart from "./ViewCart";
+import { FiShoppingBag, FiUser } from "react-icons/fi";
 
 export default function HeaderRight() {
   const [open, setOpen] = useState(false);
@@ -29,6 +31,18 @@ export default function HeaderRight() {
           <IoBagOutline size={22} className="font-medium" />
         </Badge>
       </Link>
+
+      <div className="relative group">
+        <Badge
+          size="default"
+          count={0}
+          className="px-4 py-2 font-semibold text-white rounded-md cursor-pointer"
+        >
+          <FiShoppingBag size={25} className="font-medium" />
+        </Badge>
+
+      <ViewCart/>
+      </div>
       {session.status === "authenticated" ? (
         <Dropdown
           menu={{ items: userProfileRoute as any }}
@@ -58,6 +72,7 @@ export default function HeaderRight() {
           </div>
         </div>
       )}
+
       <Modal
         // title="Search Something"
         // centered
