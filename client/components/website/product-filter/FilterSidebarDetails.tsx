@@ -68,13 +68,16 @@ export default function FilterSidebarDetails({
     <aside className="shadow-sm px-1 text-center">
       <div className="flex justify-between">
         <h2 className="text-lg font-bold md:mb-2">Filters</h2>
-        <Button size="middle" onClick={filterClear}>Clear</Button>
+        <Button size="middle" onClick={filterClear}>
+          Clear
+        </Button>
       </div>
 
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Price </p>
       </Divider>
-      <div className="md:flex">
+
+      <Space.Compact block size="middle" className="w-full">
         <InputNumber
           placeholder="Min"
           value={price.minPrice}
@@ -89,17 +92,17 @@ export default function FilterSidebarDetails({
           size="middle"
           className="w-full"
         />
-      </div>
-      <Button
-        onClick={() => {
-          dispatch(setProductFilter({ ...global.productFilter, ...price }));
-        }}
-        type="default"
-        size="middle"
-        className="mt-1"
-      >
-        Apply
-      </Button>
+        <Button
+          onClick={() => {
+            dispatch(setProductFilter({ ...global.productFilter, ...price }));
+          }}
+          type="default"
+          size="middle"
+          className="mt-1"
+        >
+          Apply
+        </Button>
+      </Space.Compact>
 
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Discount </p>
