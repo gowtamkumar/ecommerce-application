@@ -13,6 +13,7 @@ export const userValidationSchema = z.object({
       required_error: "password is required",
     })
     .min(6, { message: "Must be 5 or more characters long" }),
+  phone: z.string().optional(),
   email: z
     .string({
       required_error: "email is required",

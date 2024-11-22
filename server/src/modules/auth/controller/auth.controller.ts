@@ -666,9 +666,7 @@ export const updateUser = asyncHandler(
     logger.info(`Service: updateUser ${req.method} ${req.url}`);
 
     const { id } = req.params;
-
     const validation = updateUserValidationSchema.safeParse(req.body);
-
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
         path: issue.path.join("."),
@@ -680,16 +678,15 @@ export const updateUser = asyncHandler(
         issues: formattedErrors,
       });
     }
+    
     const connection = await getDBConnection();
     const userRepository = await connection.getRepository(UserEntity);
 
     const user = await userRepository.findOneBy({ id });
-
     if (!user) {
       throw new Error("User is not found");
     }
     const updateData = await userRepository.merge(user, validation.data);
-
     await userRepository.save(updateData);
 
     return res.status(200).json({

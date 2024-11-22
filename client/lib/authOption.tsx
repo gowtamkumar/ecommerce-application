@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
         const newUser = {
           name: profile.name,
           email: profile.email,
+          username: profile.email
         };
         const res = await fetch(
           `${appConfig.apiUrl}/api/v1/auth/get-user-by-email`,
