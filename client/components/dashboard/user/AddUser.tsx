@@ -65,13 +65,12 @@ const AddUser = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
 
-    const result = newData.id
-      ? () => updateUser(newData)
-      : () => saveUser(newData);
+    const result = values.id
+      ? () => updateUser(values)
+      : () => saveUser(values);
 
-    const messageData = newData.id
+    const messageData = values.id
       ? "Successfully Updated"
       : "Successfully Added";
 

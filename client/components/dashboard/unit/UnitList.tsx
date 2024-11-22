@@ -19,7 +19,7 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -35,27 +35,34 @@ const UnitList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
+
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getUnits();
-      setUnits(res?.data);
-      dispatch(setLoading({ loading: false }));
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData();
   }, [global.action]);
 
-  const handleDelete = async (id: string) => {
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      dispatch(setLoading({ delete: true }));
+      const res = await getUnits();
+      setUnits(res?.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ delete: true }));
+    try {
       await deleteUnit(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Unit deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 

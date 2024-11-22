@@ -19,8 +19,10 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
-import { errorNotification, successNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -37,11 +39,8 @@ const SizeList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData()
+    fetchData();
   }, [global.action]);
-
-
-
 
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
@@ -99,10 +98,9 @@ const SizeList: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }

@@ -25,11 +25,9 @@ const AddSize = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values, shippingAmount: +values.shippingAmount };
-
-    const result = newData.id
-      ? () => updateSize(newData)
-      : () => saveSize(newData);
+    const result = values.id
+      ? () => updateSize(values)
+      : () => saveSize(values);
 
     const messageData = values.id
       ? "Successfully Updated"
