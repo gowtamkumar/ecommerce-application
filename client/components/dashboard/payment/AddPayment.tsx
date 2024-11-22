@@ -9,73 +9,64 @@ import {
   Select,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  saveDashboardPayment,
-  savePayment,
-  updatePayment,
-} from "@/lib/apis/payment";
+import { saveDashboardPayment, updatePayment } from "@/lib/apis/payment";
 import { getUsers } from "@/lib/apis/user";
 import dayjs from "dayjs";
+import { errorNotification } from "@/lib/utils/notification";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddPayment = () => {
   const [users, setUsers] = useState([] as any);
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, payment, type } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { payload } = global.action; // Destructure to get payload
-        const newData = {
-          ...payload,
-          paymentDate: payload.paymentDate ? dayjs(payload.paymentDate) : undefined, // Optional chaining
-        };
-        form.setFieldsValue(newData);
-        
-        const response = await getUsers();
-        if (response?.data) {
-          setUsers(response.data);
-        } else {
-          console.warn("No user data found in the response.");
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-  
     fetchData();
-    
     return () => {
       form.resetFields();
     };
-  }, [form, global.action]);
-  
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
+      const newData = {
+        ...payload,
+        paymentDate: payload?.paymentDate
+          ? dayjs(payload.paymentDate)
+          : dayjs(), // Optional chaining
+      };
+      form.setFieldsValue(newData);
+      const response = await getUsers();
+      setUsers(response.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updatePayment(newData)
-        : await saveDashboardPayment(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      toast.error(err);
-    }
+    let newData = { ...values };
+
+    const result = newData.id
+      ? () => updatePayment(newData)
+      : () => saveDashboardPayment(newData);
+
+    const messageData = newData.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const handleClose = () => {
@@ -91,25 +82,28 @@ const AddPayment = () => {
     }
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 6, span: 16 },
+  };
+
   return (
     <Modal
-      title={
-        global.action.type === ActionType.UPDATE
-          ? "Update Payment"
-          : "Create Payment"
-      }
-      width={500}
+      title={type === ActionType.UPDATE ? "Update Payment" : "Create Payment"}
+      width={600}
       zIndex={1050}
       open={
-        global.action.payment &&
-        (global.action.type === ActionType.CREATE ||
-          global.action.type === ActionType.UPDATE)
+        payment && (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
@@ -124,128 +118,116 @@ const AddPayment = () => {
           <Input />
         </Form.Item>
 
-        <div className="my-5 flex items-start justify-between gap-4">
-          <div className="grid flex-grow grid-cols-1 gap-5">
-            <div className="col-span-1">
-              <Form.Item
-                name="paymentDate"
-                label="Payment Date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Date is required",
-                  },
-                ]}
-              >
-                <DatePicker />
-              </Form.Item>
-            </div>
-            <div className="col-span-1">
-              <Form.Item
-                name="userId"
-                label="Customer"
-                className="mb-1"
-                rules={[
-                  {
-                    required: true,
-                    message: "Customer is required",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Select"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.children as any)
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {(users || []).map((item: { name: string; id: number }) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </div>
+        <Form.Item
+          name="paymentDate"
+          label="Payment Date"
+          rules={[
+            {
+              required: true,
+              message: "Date is required",
+            },
+          ]}
+        >
+          <DatePicker />
+        </Form.Item>
 
-            <div className="col-span-1">
-              <Form.Item
-                name="amount"
-                label="Amount"
-                rules={[
-                  {
-                    required: true,
-                    message: "Name is required",
-                  },
-                ]}
-              >
-                <InputNumber placeholder="Enter Amount" />
-              </Form.Item>
-            </div>
+        <Form.Item
+          name="userId"
+          label="Customer"
+          className="mb-1"
+          rules={[
+            {
+              required: true,
+              message: "Customer is required",
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select"
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.children as any)
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            {(users || []).map((item: { name: string; id: number }) => (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
 
-            <div className="col-span-1">
-              <Form.Item
-                name="paymentType"
-                label="Payment Type"
-                className="mb-1"
-                rules={[
-                  {
-                    required: true,
-                    message: "Payment Type is required",
-                  },
-                ]}
-              >
-                <Select placeholder="Select">
-                  <Select.Option value="Debit"> Debit </Select.Option>
-                  <Select.Option value="Credit"> Credit </Select.Option>
-                </Select>
-              </Form.Item>
-            </div>
+        <Form.Item
+          name="amount"
+          label="Amount"
+          rules={[
+            {
+              required: true,
+              message: "Name is required",
+            },
+          ]}
+        >
+          <InputNumber placeholder="Enter Amount" />
+        </Form.Item>
 
-            <div className="col-span-1">
-              <Form.Item
-                name="paymentMethod"
-                label="Payment Method"
-                className="mb-1"
-                rules={[
-                  {
-                    required: true,
-                    message: "Payment Method is required",
-                  },
-                ]}
-              >
-                <Select placeholder="Select">
-                  <Select.Option value="Cash"> Cash </Select.Option>
-                  <Select.Option value="SSLCOMMERZ"> SSLCOMMERZ </Select.Option>
-                  <Select.Option value="Stripe"> Stripe </Select.Option>
-                </Select>
-              </Form.Item>
-            </div>
+        <Form.Item
+          name="paymentType"
+          label="Payment Type"
+          className="mb-1"
+          rules={[
+            {
+              required: true,
+              message: "Payment Type is required",
+            },
+          ]}
+        >
+          <Select placeholder="Select">
+            <Select.Option value="Debit"> Debit </Select.Option>
+            <Select.Option value="Credit"> Credit </Select.Option>
+          </Select>
+        </Form.Item>
 
-            <div className="col-span-1 text-end">
-              <Button
-                className="mx-2 capitalize"
-                size="small"
-                onClick={resetFormData}
-              >
-                Reset
-              </Button>
-              <Button
-                size="small"
-                color="primary"
-                htmlType="submit"
-                className="capitalize"
-                loading={global.loading.save}
-              >
-                {payload?.id ? "Update" : "Save"}
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Form.Item
+          name="paymentMethod"
+          label="Payment Method"
+          className="mb-1"
+          rules={[
+            {
+              required: true,
+              message: "Payment Method is required",
+            },
+          ]}
+        >
+          <Select placeholder="Select">
+            <Select.Option value="Cash"> Cash </Select.Option>
+            <Select.Option value="SSLCOMMERZ"> SSLCOMMERZ </Select.Option>
+            <Select.Option value="Stripe"> Stripe </Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item {...tailLayout}>
+          <Button
+            className="me-1"
+            size="small"
+            onClick={resetFormData}
+          >
+            Reset
+          </Button>
+          <Button
+            size="small"
+            color="primary"
+            htmlType="submit"
+
+            disabled={global.loading.save}
+            loading={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </Form.Item>
       </Form>
     </Modal>
   );

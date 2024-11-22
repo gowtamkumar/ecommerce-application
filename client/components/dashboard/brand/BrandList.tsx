@@ -20,7 +20,10 @@ import {
 import { ActionType } from "@/constants/constants";
 import { deleteBrand, getBrands } from "@/lib/apis/brand";
 import appConfig from "@/appConfig";
-import { errorNotification, successNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -34,10 +37,9 @@ type DataIndex = keyof DataType;
 
 const BrandList: React.FC = () => {
   const [brands, setBrands] = useState([] as any);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     fetchData();
@@ -54,7 +56,6 @@ const BrandList: React.FC = () => {
       dispatch(setLoading({ loading: false }));
     }
   };
-
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ save: true }));
@@ -100,10 +101,9 @@ const BrandList: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -231,8 +231,9 @@ const BrandList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
+                  url: `${appConfig.apiUrl}/uploads/${
+                    newData.image || "no-data.png"
+                  }`,
                 };
                 newData.fileList = [file];
               }

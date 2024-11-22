@@ -1,12 +1,21 @@
 "use client";
+import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import PaymentList from "@/components/dashboard/payment/PaymentList";
-import AddPayment from "@/components/dashboard/payment/AddPayment";
+
+const AddPayment = dynamic(
+  () => import("@/components/dashboard/payment/AddPayment"),
+  { ssr: false }
+);
+const PaymentList = dynamic(
+  () => import("@/components/dashboard/payment/PaymentList"),
+  { ssr: false },
+  
+);
 
 export default function Payment() {
   const [tabKey, setTabKey] = useState("payment");
@@ -31,7 +40,7 @@ export default function Payment() {
             onClick={() =>
               dispatch(
                 setAction({
-                  payment:true,
+                  payment: true,
                   type: ActionType.CREATE,
                 })
               )

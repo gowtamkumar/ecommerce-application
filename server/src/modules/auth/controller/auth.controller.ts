@@ -27,12 +27,15 @@ import { loginValidationSchema } from "../../../validation/user/loginValidation"
 import { forgotPasswordValidationSchema } from "../../../validation/user/forgotPasswordValidation";
 import { resetPasswordValidationSchema } from "../../../validation/user/resetPasswordValidation";
 import { updatePasswordValidationSchema } from "../../../validation/user/updatePasswordValidation";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
 // @access Public
 export const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: register ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const { password, username } = req.body;
 
@@ -92,6 +95,8 @@ export const register = asyncHandler(
 // @access Public
 export const getUsers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getUsers ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
 
     const userRepository = connection.getRepository(UserEntity);
@@ -133,6 +138,8 @@ export const getUsers = asyncHandler(
 // // @access Private
 export const getUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getUser ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
 
     const userRepository = connection.getRepository(UserEntity);
@@ -156,6 +163,8 @@ export const getUser = asyncHandler(
 // // @access Private
 export const getUserByEmail = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getUserByEmail ${req.method} ${req.url}`);
+
     const { email } = req.body;
 
     const connection = await getDBConnection();
@@ -188,6 +197,7 @@ export const getUserByEmail = asyncHandler(
 // // @access Private
 // export const createUserByEmail = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
+
 //     const { email } = req.body;
 
 //     console.log("🚀 ~ email:", email)
@@ -216,6 +226,8 @@ export const getUserByEmail = asyncHandler(
 // // @access Public
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: login ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const { username, password } = req.body;
 
@@ -294,6 +306,7 @@ export const login = asyncHandler(
 // // @access Public
 // export const googleAuth = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
+
 //     passport.authenticate("google", { scope: ["profile"] });
 //   }
 // );
@@ -303,6 +316,7 @@ export const login = asyncHandler(
 // // @access Public
 // export const googleAuthCallBack = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
+
 //     // Successful authentication, redirect home.
 //     res.redirect("/");
 //   }
@@ -313,6 +327,8 @@ export const login = asyncHandler(
 // // @access Private
 export const logout = asyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
+    logger.info(`Service: logout ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const userRepository = await connection.getRepository(UserEntity);
 
@@ -339,6 +355,8 @@ export const logout = asyncHandler(
 // // @access Private
 export const getMe = asyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
+    logger.info(`Service: getMe ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
 
     const userRepository = connection.getRepository(UserEntity);
@@ -476,6 +494,8 @@ export const getMe = asyncHandler(
 // // @access Private
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: forgotPassword ${req.method} ${req.url}`);
+
     const validation = forgotPasswordValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -538,6 +558,8 @@ export const forgotPassword = asyncHandler(
 // // @access Private
 export const resetPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: resetPassword ${req.method} ${req.url}`);
+
     const { token } = req.params;
     const connection = await getDBConnection();
 
@@ -590,6 +612,8 @@ export const resetPassword = asyncHandler(
 // // @access Private
 export const updatePassword = asyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
+    logger.info(`Service: updatePassword ${req.method} ${req.url}`);
+
     const validation = updatePasswordValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -639,6 +663,8 @@ export const updatePassword = asyncHandler(
 // // @access Public
 export const updateUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: updateUser ${req.method} ${req.url}`);
+
     const { id } = req.params;
 
     const validation = updateUserValidationSchema.safeParse(req.body);
@@ -679,6 +705,8 @@ export const updateUser = asyncHandler(
 // @access Public
 export const deleteUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: deleteUser ${req.method} ${req.url}`);
+
     const connection = await getDBConnection();
     const { id } = req.params;
 

@@ -18,9 +18,12 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { deletePayment, getPayments } from "@/lib/apis/payment";
 import dayjs from "dayjs";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -33,30 +36,38 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const PaymentList: React.FC = () => {
-  const [Statuss, setStatus] = useState([] as any);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [payments, setPayments] = useState([] as any);
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getPayments();
-      setStatus(res?.data);
+      setPayments(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    }
+  };
 
   const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
     try {
-      dispatch(setLoading({ delete: true }));
       await deletePayment(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -89,11 +100,10 @@ const PaymentList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -211,7 +221,7 @@ const PaymentList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  payment:true,
+                  payment: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })
@@ -249,7 +259,7 @@ const PaymentList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={Statuss}
+      dataSource={payments}
       pagination={{ pageSize: 15 }}
       bordered
       size="small"
