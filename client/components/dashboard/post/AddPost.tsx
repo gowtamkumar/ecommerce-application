@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import {
   Button,
-  ColorPickerProps,
   Divider,
   Form,
   Image,
@@ -12,12 +11,7 @@ import {
   Tag,
   Upload,
 } from "antd";
-import { toast } from "react-toastify";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { savePost, updatePost } from "@/lib/apis/posts";
 import { PlusOutlined } from "@ant-design/icons";
@@ -26,10 +20,13 @@ import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { getCategories } from "@/lib/apis/categories";
 import appConfig from "@/appConfig";
 import TextQuillEditor from "@/components/share-component/editor-quill/TextQuillEditor";
-import { useParams, useRouter } from "next/navigation";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
-
-// type Presets = Required<ColorPickerProps>["presets"][number];
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
+import { errorNotification } from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -48,24 +45,29 @@ const AddPost = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [categories, setCategories] = useState([]);
   const [inputValue, setInputValue] = useState<string>("");
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
+  const [editorContent, setEditorContent] = useState("");
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-  const [previewTitle, setPreviewTitle] = useState("");
-  const [editorContent, setEditorContent] = useState("");
 
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
-  const params = useParams();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
+    fetchData();
+    return () => {
+      setFormValues({});
+      form.resetFields();
+    };
+  }, [global.action]);
+
+  const fetchData = async () => {
+    try {
+      dispatch(setLoading({ loading: true }));
       const newData = { ...payload };
       const resCategory = await getCategories();
       const postCategories = newData?.postCategories?.map(
@@ -75,17 +77,16 @@ const AddPost = () => {
       setEditorContent(newData?.content || "");
       setCategories(resCategory.data);
       setFormData({ ...newData, postCategories });
-    })();
-    return () => {
-      setFormValues({});
-      form.resetFields();
-    };
-  }, [global.action]);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
     let newData = { ...values, content: editorContent, tags };
-    // return console.log("newData:", editorContent, newData);
 
     const asyncFn = newData.id
       ? () => updatePost(newData)
@@ -96,7 +97,6 @@ const AddPost = () => {
       : "Successfully Added";
 
     await handleAsyncAction(asyncFn, successMessage, dispatch);
-    form.resetFields();
   };
 
   // this function for tag
@@ -107,11 +107,6 @@ const AddPost = () => {
         setInputValue(" ");
       }
     }
-  };
-
-  const handleClose = () => {
-    dispatch(setAction({}));
-    dispatch(setLoading({}));
   };
 
   const setFormData = (v: any) => {
@@ -168,42 +163,13 @@ const AddPost = () => {
     }
   };
 
-  const normFile = (e: { fileList: string }) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
-  const handleCancel = () => setPreviewOpen(false);
-
-  // file Preview
-  const handlePreview = async (file: any) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
-  };
-
-  const getBase64 = (file: any) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
   return (
     <Form
       layout="vertical"
       form={form}
       // onFinish={handleSubmit}
-      onValuesChange={(_v, values) => setFormValues(values)}
       autoComplete="off"
+      onValuesChange={(_v, values) => setFormValues(values)}
       scrollToFirstError={true}
       initialValues={{ status: "Draft" }}
     >
@@ -216,7 +182,6 @@ const AddPost = () => {
           <div className="col-span-1">
             <Form.Item
               name="title"
-              className="mb-1"
               label="Post Title"
               rules={[
                 {
@@ -311,7 +276,7 @@ const AddPost = () => {
                     }
                   }}
                   className="avatar-uploader"
-                  onPreview={handlePreview}
+                  onPreview={(file) => handlePreview(file, dispatch)}
                   customRequest={customUploadRequest}
                   maxCount={1}
                 >
@@ -325,56 +290,34 @@ const AddPost = () => {
             </Form.Item>
 
             <Modal
-              open={previewOpen}
-              title={previewTitle}
+              open={global.previewOpen}
+              title={global.previewTitle}
               footer={null}
-              onCancel={handleCancel}
+              onCancel={handlePreviewCancel}
             >
               <Image
                 alt="example"
                 style={{
                   width: "100%",
                 }}
-                src={previewImage}
+                preview={false}
+                src={global.previewImage}
               />
             </Modal>
           </div>
 
           <div className="col-span-1">
             <label htmlFor="content">Content</label>
-            {/* <Form.Item
-                name="content"
-                className="mb-1"
-                label="Content"
-                rules={[
-                  {
-                    required: true,
-                    message: "content is required",
-                  },
-                ]}
-              > */}
 
             <TextQuillEditor
               editorContent={editorContent}
               setEditorContent={setEditorContent}
             />
-            {/* <Input.TextArea placeholder="Enter Title" /> */}
-            {/* </Form.Item> */}
           </div>
 
-          <div className={`col-span-1 `}>
+          <div className={`col-span-1`}>
             <Form.Item name="status" label="Status">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Status"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
+              <Select placeholder="Select Status">
                 <Select.Option value="Draft">Draft</Select.Option>
                 <Select.Option value="Published">Published</Select.Option>
                 <Select.Option value="Prchived">Prchived</Select.Option>
@@ -383,22 +326,25 @@ const AddPost = () => {
           </div>
 
           <div className="col-span-1 text-end">
-            <Button
-              className="mx-2 capitalize"
-              size="small"
-              onClick={resetFormData}
-            >
-              Reset
-            </Button>
-            <Button
-              size="small"
-              // htmlType="submit"
-              onClick={handleSubmit}
-              className="capitalize"
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
+            <Form.Item>
+              <Button
+                className="mx-2 capitalize"
+                size="small"
+                onClick={resetFormData}
+              >
+                Reset
+              </Button>
+              <Button
+                size="small"
+                type="primary"
+                // htmlType="submit"
+                onClick={handleSubmit}
+                disabled={global.loading.save}
+                loading={global.loading.save}
+              >
+                {payload?.id ? "Update" : "Save"}
+              </Button>
+            </Form.Item>
           </div>
         </div>
       </div>

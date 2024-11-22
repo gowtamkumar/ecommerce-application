@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type {  TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -18,9 +18,12 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { deleteDiscount, getDiscounts } from "@/lib/apis/discount";
 import dayjs from "dayjs";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -45,25 +48,32 @@ const DiscountList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getDiscounts();
       setDiscounts(res?.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    }
+  };
 
   const handleDelete = async (id: string) => {
+    dispatch(setLoading({ delete: true }));
     try {
-      dispatch(setLoading({ delete: true }));
       await deleteDiscount(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Discount deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -96,11 +106,10 @@ const DiscountList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -184,8 +193,6 @@ const DiscountList: React.FC = () => {
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
 
-  
-    
     {
       ...getColumnSearchProps("discountType"),
       title: "Discount Type",
@@ -215,7 +222,9 @@ const DiscountList: React.FC = () => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      render: (value) => <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      render: (value) => (
+        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+      ),
     },
 
     {
@@ -223,7 +232,9 @@ const DiscountList: React.FC = () => {
       title: "Expiry Date",
       dataIndex: "expiryDate",
       key: "expiryDate",
-      render: (value) => <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      render: (value) => (
+        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+      ),
       // sorter: (a, b) => a.expiryDate - b.expiryDate,
     },
     {
@@ -276,7 +287,7 @@ const DiscountList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  discount:true,
+                  discount: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

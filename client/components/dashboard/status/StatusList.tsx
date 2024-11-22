@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { deleteStatus, getStatuses } from "@/lib/apis/status";
@@ -19,7 +19,10 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -31,31 +34,37 @@ type DataIndex = keyof DataType;
 
 const StatusList = () => {
   const [status, setStatus] = useState([] as any);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getStatuses();
       setStatus(res?.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [global.action]);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
       await deleteStatus(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Status deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -89,10 +98,9 @@ const StatusList = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }

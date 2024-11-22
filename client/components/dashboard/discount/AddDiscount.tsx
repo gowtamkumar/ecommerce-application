@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
+import dayjs from "dayjs";
 import {
   Button,
-  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -11,7 +10,6 @@ import {
   Select,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
   selectGlobal,
@@ -21,11 +19,12 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveDiscount, updateDiscount } from "@/lib/apis/discount";
-import dayjs from "dayjs";
+
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddDiscount = () => {
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, type, discount } = global.action;
   // hook
   const [form] = Form.useForm();
   const router = useRouter();
@@ -41,22 +40,15 @@ const AddDiscount = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log('newData:', newData)
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateDiscount(newData)
-        : await saveDiscount(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-     
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      console.log(err);
-      toast.error(err.message);
-    }
+    const result = values.id
+      ? () => updateDiscount(values)
+      : () => saveDiscount(values);
+
+    const messageData = values.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const handleClose = () => {
@@ -85,24 +77,28 @@ const AddDiscount = () => {
     }
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 6, span: 14 },
+  };
+
   return (
     <Modal
-      title={
-        global.action.type === ActionType.UPDATE
-          ? "Update Discount"
-          : "Create Discount"
-      }
-      width={850}
+      title={type === ActionType.UPDATE ? "Update Discount" : "Create Discount"}
+      width={600}
       zIndex={1050}
-      open={global.action.discount &&
-       ( global.action.type === ActionType.CREATE ||
-        global.action.type === ActionType.UPDATE)
+      open={
+        discount && (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => dispatch(setFormValues(values))}
@@ -113,163 +109,132 @@ const AddDiscount = () => {
           <Input />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-5">
-          <div className={`col-span-1 `}>
+        <Form.Item
+          name="type"
+          label="Type"
+          rules={[
+            {
+              required: true,
+              message: "Type is required",
+            },
+          ]}
+        >
+          <Select allowClear placeholder="Select">
+            <Select.Option value="Discount">Discount</Select.Option>
+            <Select.Option value="CouponCode">Coupon Code</Select.Option>
+          </Select>
+        </Form.Item>
+
+        {global.formValues.type === "CouponCode" && (
+          <Form.Item
+            name="couponCode"
+            label="Coupon code"
+            rules={[
+              {
+                required: true,
+                message: "Name is required",
+              },
+            ]}
+          >
+            <Input placeholder="Enter coupon code" />
+          </Form.Item>
+        )}
+
+        <Form.Item
+          name="discountType"
+          label="Discount Type"
+          rules={[
+            {
+              required: true,
+              message: "Discount Type is required",
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            placeholder="Select"
+            optionFilterProp="children"
+          >
+            <Select.Option value="Percentage">Percentage</Select.Option>
+            <Select.Option value="FixedAmount">Fixed Amount</Select.Option>
+            <Select.Option value="FreeShipping">Free Shipping</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="value"
+          label="Value"
+          rules={[
+            {
+              required: true,
+              message: "value is required",
+            },
+          ]}
+        >
+          <InputNumber placeholder="Enter Value" />
+        </Form.Item>
+
+        {global.formValues.type === "CouponCode" && (
+          <>
             <Form.Item
-              name="type"
-              label="Type"
+              name="startDate"
+              label="Start Date"
               rules={[
                 {
                   required: true,
-                  message: "Type is required",
+                  message: "Start Date is required",
                 },
               ]}
             >
-              <Select allowClear placeholder="Select">
-                <Select.Option value="Discount">Discount</Select.Option>
-                <Select.Option value="CouponCode">Coupon Code</Select.Option>
-              </Select>
+              <DatePicker placeholder="Enter Start Date" />
             </Form.Item>
-          </div>
-
-          {global.formValues.type === "CouponCode" && (
-            <div className="col-span-1">
-              <Form.Item
-                name="couponCode"
-                label="Coupon code"
-                rules={[
-                  {
-                    required: true,
-                    message: "Name is required",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter coupon code" />
-              </Form.Item>
-            </div>
-          )}
-
-          <div className={`col-span-1 `}>
             <Form.Item
-              name="discountType"
-              label="Discount Type"
+              name="expiryDate"
+              label="Expiry Date"
               rules={[
                 {
                   required: true,
-                  message: "Discount Type is required",
+                  message: "Expiry Date is required",
                 },
               ]}
             >
-              <Select
-                allowClear
-                placeholder="Select Type"
-                optionFilterProp="children"
-              >
-                <Select.Option value="Percentage">Percentage</Select.Option>
-                <Select.Option value="FixedAmount">Fixed Amount</Select.Option>
-                <Select.Option value="FreeShipping">
-                  Free Shipping
-                </Select.Option>
-              </Select>
+              <DatePicker placeholder="Enter" />
             </Form.Item>
-          </div>
-          <div className="col-span-1">
-            <Form.Item
-              name="value"
-              label="Value"
-              rules={[
-                {
-                  required: true,
-                  message: "value is required",
-                },
-              ]}
-            >
-              <InputNumber placeholder="Enter Value" className="w-96" />
+
+            <Form.Item name="minOrderAmount" label="Min Order Amount">
+              <InputNumber placeholder="Enter" />
             </Form.Item>
-          </div>
 
-          {global.formValues.type === "CouponCode" && (
-            <>
-              <div className="col-span-1">
-                <Form.Item
-                  name="startDate"
-                  label="Start Date"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Start Date is required",
-                    },
-                  ]}
-                >
-                  <DatePicker placeholder="Enter Start Date" />
-                </Form.Item>
-              </div>
-              <div className="col-span-1">
-                <Form.Item
-                  name="expiryDate"
-                  label="Expiry Date"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Expiry Date is required",
-                    },
-                  ]}
-                >
-                  <DatePicker placeholder="Enter" className="w-auto" />
-                </Form.Item>
-              </div>
-
-              <div className="col-span-1">
-                <Form.Item name="minOrderAmount" label="Min Order Amount">
-                  <InputNumber placeholder="Enter" className="w-auto" />
-                </Form.Item>
-              </div>
-
-              <div className="col-span-1">
-                <Form.Item name="maxUser" label="Max user">
-                  <InputNumber placeholder="Enter" />
-                </Form.Item>
-              </div>
-            </>
-          )}
-
-          <div className={`col-span-1 `}>
-            <Form.Item hidden={!payload?.id} name="status" label="Status">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Status"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                <Select.Option value={"Active"}>Active</Select.Option>
-                <Select.Option value={"Inactive"}>Inactive</Select.Option>
-              </Select>
+            <Form.Item name="maxUser" label="Max user">
+              <InputNumber placeholder="Enter" />
             </Form.Item>
-          </div>
-        </div>
-        <div className="col-span-1 text-end">
+          </>
+        )}
+
+        <Form.Item name="status" label="Status">
+          <Select placeholder="Select Status">
+            <Select.Option value="Active">Active</Select.Option>
+            <Select.Option value="Inactive">Inactive</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item {...tailLayout}>
           <Button
-            className="mx-2 capitalize"
+            className="me-2"
             size="small"
-            onClick={() => resetFormData(global.action?.payload)}
+            onClick={() => resetFormData(payload)}
           >
             Reset
           </Button>
           <Button
             size="small"
-            color="primary"
+            type="primary"
             htmlType="submit"
-            className="capitalize"
+            disabled={global.loading.save}
             loading={global.loading.save}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
-        </div>
+        </Form.Item>
       </Form>
     </Modal>
   );

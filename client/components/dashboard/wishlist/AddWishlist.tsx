@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -22,6 +21,8 @@ const AddWishlist = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const newData = { ...payload };
+    form.setFieldsValue(newData);
     fetchData();
     return () => {
       form.resetFields();
@@ -31,10 +32,8 @@ const AddWishlist = () => {
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
-      const newData = { ...payload };
       const categories = await getProducts();
       setProducts(categories.data);
-      setFormData(newData); // Use product.data?.tags or default to empty array
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -60,17 +59,21 @@ const AddWishlist = () => {
     dispatch(setLoading({}));
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-  };
-
   const resetFormData = () => {
     if (payload?.id) {
       form.setFieldsValue(payload);
     } else {
       form.resetFields();
+      dispatch(setAction({}));
     }
+  };
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 6, span: 14 },
   };
 
   return (
@@ -83,10 +86,9 @@ const AddWishlist = () => {
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
-        // onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -94,56 +96,48 @@ const AddWishlist = () => {
           <Input />
         </Form.Item>
 
-        <div className="grid gap-5">
-          <div className="col-span-1">
-            <Form.Item
-              name="productId"
-              label="Product"
-              rules={[
-                {
-                  required: true,
-                  message: "Product is required",
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {(products || []).map((item: any, idx) => (
-                  <Select.Option key={idx} value={item.id}>
-                    {item.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </div>
-        </div>
-        <div className="col-span-1 text-end">
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={resetFormData}
+        <Form.Item
+          name="productId"
+          label="Product"
+          rules={[
+            {
+              required: true,
+              message: "Product is required",
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select"
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.children as any)
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
           >
+            {(products || []).map((item: any, idx) => (
+              <Select.Option key={idx} value={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item {...tailLayout}>
+          <Button className="me-2" size="small" onClick={resetFormData}>
             Reset
           </Button>
           <Button
             size="small"
-            color="primary"
+            type="primary"
             htmlType="submit"
-            className="capitalize"
+            disabled={global.loading.save}
             loading={global.loading.save}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
-        </div>
+        </Form.Item>
       </Form>
     </Modal>
   );

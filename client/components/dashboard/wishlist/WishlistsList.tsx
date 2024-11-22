@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -56,7 +55,7 @@ const WishlistsList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    dispatch(setLoading({ save: true }));
+    dispatch(setLoading({ delete: true }));
     try {
       await deleteWishlist(id);
       successNotification({ message: "Successfully deleted" });
@@ -64,7 +63,7 @@ const WishlistsList: React.FC = () => {
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      dispatch(setLoading({ save: false }));
+      dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
     }
   };

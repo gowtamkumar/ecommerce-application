@@ -5,8 +5,11 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import PostList from "./PostList";
-import AddPost from "./AddPost";
+import dynamic from "next/dynamic";
+
+const AddPost = dynamic(() => import('./AddPost'))
+const PostList = dynamic(() => import('./PostList'))
+
 
 export default function Post() {
   const [tabKey, setTabKey] = useState("post_list");
@@ -27,7 +30,6 @@ export default function Post() {
         tabBarExtraContent={
           <Button
             size="small"
-            className="capitalize"
             onClick={() =>
               dispatch(
                 setAction({

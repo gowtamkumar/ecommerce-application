@@ -54,11 +54,11 @@ const AddUnit = () => {
 
   const layout = {
     labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
+    wrapperCol: { span: 12 },
   };
 
   const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
+    wrapperCol: { offset: 6, span: 12 },
   };
 
   return (

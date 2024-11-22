@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type {  TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -18,10 +18,12 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
-import { deleteColor, getColors } from "@/lib/apis/color";
-import { getPosts } from "@/lib/apis/posts";
+import { deletePost, getPosts } from "@/lib/apis/posts";
 import appConfig from "@/appConfig";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -36,31 +38,37 @@ type DataIndex = keyof DataType;
 
 const PostList: React.FC = () => {
   const [posts, setPosts] = useState([]);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    try {
       dispatch(setLoading({ loading: true }));
       const res = await getPosts();
       setPosts(res?.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [global.action]);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteColor(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Color deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      await deletePost(id);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -94,10 +102,9 @@ const PostList: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-            setSearchInput(e.target.value)
-          }
-          }
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+            setSearchInput(e.target.value);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -219,8 +226,8 @@ const PostList: React.FC = () => {
       dataIndex: "content",
       key: "content",
       render: (value) => {
-        return <div dangerouslySetInnerHTML={{ __html: value }} />
-      }
+        return <div dangerouslySetInnerHTML={{ __html: value }} />;
+      },
     },
     {
       title: "Status",
@@ -248,8 +255,9 @@ const PostList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
+                  url: `${appConfig.apiUrl}/uploads/${
+                    newData.image || "no-data.png"
+                  }`,
                 };
                 newData.fileList = [file];
               }

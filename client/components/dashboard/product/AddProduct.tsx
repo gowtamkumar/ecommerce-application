@@ -79,7 +79,7 @@ const AddProduct = ({
 
   useEffect(() => {
     // Call the async function
-    fetchProductData();
+    fetchData();
     // Cleanup function
     return () => {
       if (params.new === "new") {
@@ -89,7 +89,7 @@ const AddProduct = ({
     };
   }, []);
 
-  const fetchProductData = async () => {
+  const fetchData = async () => {
     try {
       dispatch(setLoading({ loading: true }));
       if (params.new !== "new") {
@@ -123,12 +123,55 @@ const AddProduct = ({
         form.resetFields();
         setTags([]);
       }
-    } catch (err) {
-      console.error("Error fetching product data:", err);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   };
+
+  // const fetchProductData = async () => {
+  //   try {
+  //     dispatch(setLoading({ loading: true }));
+  //     if (params.new !== "new") {
+  //       const id = params.new.toString(); // Convert to string if necessary
+  //       // Fetch product data
+  //       const result = await getProduct(id);
+  //       const newData = { ...result.data };
+  //       const productCategories = newData?.productCategories?.map(
+  //         ({ categoryId }: { categoryId: number }) => categoryId
+  //       );
+  //       if (!newData.images) {
+  //         newData.images = [];
+  //       }
+  //       if (newData.images) {
+  //         const file = (newData.images || []).map(
+  //           (item: string, idx: number) => ({
+  //             uid: Math.random() * 1000 + "",
+  //             name: `photo ${idx}`,
+  //             status: "done",
+  //             fileName: item,
+  //             url: `${appConfig.apiUrl}/uploads/${item}`,
+  //           })
+  //         );
+  //         newData.fileList = file;
+  //       }
+  //       form.setFieldsValue({ ...newData, productCategories });
+  //       setProduct({ ...newData, productCategories });
+  //       setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
+  //       setFormValues(newData);
+  //     } else {
+  //       form.resetFields();
+  //       setTags([]);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching product data:", err);
+  //   } finally {
+  //     dispatch(setLoading({ loading: false }));
+  //   }
+  // };
+
+
 
   const handleSubmit = async () => {
     const newData = await form.validateFields()

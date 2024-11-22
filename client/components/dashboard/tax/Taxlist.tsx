@@ -18,8 +18,8 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import { deleteTax, getTaxs } from "@/lib/apis/tax";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -37,27 +37,35 @@ const TaxList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getTaxs();
       setTaxs(res?.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      dispatch(setLoading({ delete: true }));
-      await deleteTax(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Tax deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
-    } catch (error: any) {
-      toast.error(error);
     }
   };
+
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ delete: true }));
+    try {
+      await deleteTax(id);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
+    } catch (error: any) {
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
+    }
+  };
+
 
   const handleSearch = (
     selectedKeys: string[],

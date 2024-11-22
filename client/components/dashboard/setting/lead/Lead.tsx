@@ -30,7 +30,6 @@ export default function Lead() {
         tabBarExtraContent={
           <Button
             size="small"
-            className="capitalize"
             onClick={() =>
               dispatch(
                 setAction({

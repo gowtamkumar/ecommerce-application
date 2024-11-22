@@ -50,35 +50,36 @@ const ProductList: React.FC = () => {
   const route = useRouter();
 
   useEffect(() => {
-    fetchProductData();
+    fetchData();
   }, []);
 
-  const fetchProductData = async () => {
-    dispatch(setLoading({ loading: true }));
+  const fetchData = async () => {
     try {
+      dispatch(setLoading({ loading: true }));
       const res = await getProducts();
       const newProducts = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
       }));
       setProducts(newProducts);
-    } catch (error: any) {
-      console.log(error);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   };
 
+
   const handleDelete = async (id: string) => {
-    dispatch(setLoading({ save: true }));
     try {
-      const result = await deleteProduct(id);
-      fetchProductData()
+      dispatch(setLoading({ delete: true }));
+      await deleteProduct(id);
+      fetchData()
       successNotification({ message: "Successfully deleted" });
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      dispatch(setLoading({ save: false }));
+      dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
     }
   };

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal } from "antd";
 import {
@@ -13,35 +12,30 @@ import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddLead = () => {
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, type, lead } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const newData = { ...payload };
-    setFormData(newData);
+    form.setFieldsValue(newData);
     return () => {
       form.resetFields();
     };
-  }, [payload]);
-
+  }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
+    const asyncFn = values.id
+      ? () => updateLead(values)
+      : () => saveLead(values);
 
-    const asyncFn = newData.id
-      ? () => updateLead(newData)
-      : () => saveLead(newData);
-
-    const successMessage = newData.id
+    const successMessage = values.id
       ? "Successfully Updated"
       : "Successfully Added";
 
     await handleAsyncAction(asyncFn, successMessage, dispatch);
-    form.resetFields();
   };
-
 
   const handleClose = () => {
     dispatch(setAction({}));
@@ -49,37 +43,43 @@ const AddLead = () => {
     form.resetFields();
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-  };
 
   const resetFormData = () => {
     if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
+      form.setFieldsValue(payload);
     } else {
       form.resetFields();
       dispatch(setLoading({ loading: false }));
     }
   };
 
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 6, span: 14 },
+  };
+
+
   return (
     <Modal
       title={
-        global.action.type === ActionType.UPDATE ? "Update Lead" : "Create Lead"
+        type === ActionType.UPDATE ? "Update Lead" : "Create Lead"
       }
       width={500}
       zIndex={1050}
       open={
-        global.action.lead &&
-        (global.action.type === ActionType.CREATE ||
-          global.action.type === ActionType.UPDATE)
+        lead &&
+        (type === ActionType.CREATE ||
+          type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
@@ -91,7 +91,6 @@ const AddLead = () => {
 
         <Form.Item
           name="email"
-          className="mb-1"
           label="E-mail"
           rules={[
             {
@@ -100,24 +99,26 @@ const AddLead = () => {
             },
           ]}
         >
-          <Input placeholder="Enter Title" />
+          <Input placeholder="Enter E-mail" />
         </Form.Item>
-        <Button
-          className="mx-2 capitalize"
-          size="small"
-          onClick={resetFormData}
-        >
-          Reset
-        </Button>
-        <Button
-          size="small"
-          htmlType="submit"
-          className="capitalize "
-          loading={global.loading.save}
-          disabled={global.loading.save}
-        >
-          {payload?.id ? "Update" : "Save"}
-        </Button>
+        <Form.Item {...tailLayout}>
+          <Button
+            className="me-2"
+            size="small"
+            onClick={resetFormData}
+          >
+            Reset
+          </Button>
+          <Button
+            size="small"
+            htmlType="submit"
+            type="primary"
+            loading={global.loading.save}
+            disabled={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </Form.Item>
       </Form>
     </Modal>
   );

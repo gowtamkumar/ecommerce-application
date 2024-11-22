@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -21,7 +21,10 @@ import {
 import { ActionType } from "@/constants/constants";
 import { deleteLead, getLeads } from "@/lib/apis/leads";
 import dayjs from "dayjs";
-import { errorNotification, successNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -38,26 +41,32 @@ const LeadList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getLeads();
       setLeads(res?.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, []);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
-      dispatch(setLoading({ save: true }));
-      const deleted = await deleteLead(id);
-      deleted.success && successNotification({ message: "Successfully deleted" });
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-      }, 500);
+      dispatch(setLoading({ delete: true }));
+      await deleteLead(id);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      errorNotification({ message: error.message })
-      dispatch(setLoading({ save: false }));
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 

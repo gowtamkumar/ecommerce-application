@@ -58,7 +58,7 @@ const BannerList: React.FC = () => {
 
 
   const handleDelete = async (id: string) => {
-    dispatch(setLoading({ save: true }));
+    dispatch(setLoading({ delete: true }));
     try {
       await deleteBanner(id);
       successNotification({ message: "Successfully deleted" });
@@ -66,7 +66,7 @@ const BannerList: React.FC = () => {
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      dispatch(setLoading({ save: false }));
+      dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
     }
   };
@@ -101,8 +101,7 @@ const BannerList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
-          {
+          onChange={(e) => {
             setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
