@@ -22,7 +22,8 @@ export default function Slider({ banners }: any) {
       modules={[Navigation, Pagination, Scrollbar, A11y, EffectFade, Autoplay]}
       spaceBetween={5}
       slidesPerView={1}
-      pagination={{ clickable: true, type: "bullets", dynamicBullets: true }}
+      pagination
+      // pagination={{ clickable: true, type: "bullets", dynamicBullets: true }}
       autoplay={true}
       speed={1000}
       // navigation
@@ -54,7 +55,7 @@ export default function Slider({ banners }: any) {
                   <p className="my-3 font-medium">
                     {description.slice(0, 100)}
                   </p>
-                  <Button size="large" type="primary">
+                  <Button type="primary">
                     <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>
                   </Button>
                 </div>
@@ -78,7 +79,7 @@ export default function Slider({ banners }: any) {
           </SwiperSlide>
         )
       )}
-      <SwiperNavButtons />
+      {/* <SwiperNavButtons /> */}
     </Swiper>
   );
 }

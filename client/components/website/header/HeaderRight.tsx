@@ -26,23 +26,19 @@ export default function HeaderRight() {
       <Link href="/profile" className="cursor-pointer md:inline hidden">
         <CiHeart size={22} className="font-medium" />
       </Link>
-      <Link href="/checkout" className="cursor-pointer mt-1 md:inline hidden">
-        <Badge size="default" count={10}>
-          <IoBagOutline size={22} className="font-medium" />
-        </Badge>
-      </Link>
 
       <div className="relative group">
         <Badge
           size="default"
           count={0}
-          className="px-4 py-2 font-semibold text-white rounded-md cursor-pointer"
+          className="px-4  font-semibold text-white rounded-md cursor-pointer"
         >
-          <FiShoppingBag size={25} className="font-medium" />
+          <FiShoppingBag size={22} className="font-medium" />
         </Badge>
 
-      <ViewCart/>
+        <ViewCart />
       </div>
+
       {session.status === "authenticated" ? (
         <Dropdown
           menu={{ items: userProfileRoute as any }}

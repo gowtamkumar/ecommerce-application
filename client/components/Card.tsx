@@ -1,24 +1,52 @@
+import appConfig from "@/appConfig";
 import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { FaRegHeart } from "react-icons/fa";
 interface CardItems {
-  title: string;
+  name: string;
   thumbnail: string;
   price: string | number;
   rating: string;
+  images: string[];
+  productVariants: any;
+  reviews: any;
+  discount: any;
+  discountId: number | string;
+  tax: any;
   id: string | number;
 }
 
 export default function Card({ item }: { item: CardItems }) {
+  const price = +item.productVariants[0]?.price || 0;
+  const reviewsCount = +item.reviews.length || 0;
+  const discount = item.discount;
+  const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
+
+  const disAmount =
+    discount?.discountType === "Percentage"
+      ? ((price + taxAmount) * (discount.value || 0)) / 100
+      : +discount?.value || 0;
+
+  const productRating =
+    item.reviews.reduce((acc: number, review: any) => acc + +review.rating, 0) /
+    reviewsCount;
+  const stockQty = item.productVariants.reduce(
+    (acc: number, variant: any) => acc + +variant.stockQty,
+    0
+  );
   return (
     <>
       <div className="relative group">
         <Link href={`/product/${item.id}`}>
           <Image
-            src={item.thumbnail}
-            alt={item.title}
+            src={
+              item.images
+                ? `${appConfig.apiUrl}/uploads/${item.images[0]}`
+                : "/pos_software.png"
+            }
+            alt={item.name}
             loading="lazy"
             width={800}
             height={800}
@@ -27,8 +55,12 @@ export default function Card({ item }: { item: CardItems }) {
           {/* Hover Overlay */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
             <Image
-              src={item.thumbnail}
-              alt={item.title}
+              src={
+                item.images
+                  ? `${appConfig.apiUrl}/uploads/${item.images[0]}`
+                  : "/pos_software.png"
+              }
+              alt={item.name}
               loading="lazy"
               width={800}
               height={800}
@@ -41,25 +73,39 @@ export default function Card({ item }: { item: CardItems }) {
           </div>
         </Link>
       </div>
-      <div className="grid grid-rows-[auto_1fr_auto] h-full">
-        <div className="py-4">
-          <code>৳{(+item.price || 0).toFixed(2)}</code>
-          <p className="font-semibold py-1">
-            <Link
-              href={`/product/${item.id}`}
-              className="text-black hover:underline"
-            >
-              {item.title}
-            </Link>
+
+      <div className="p-2 text-sm">
+        <h3 className="font-semibold text-sm mb-2">{item.name.slice(0, 50)}</h3>
+        <span className="flex gap-1 items-center">
+          <Rate disabled value={productRating || 0} />({reviewsCount})
+        </span>
+
+        <div className="flex justify-between items-center">
+          <p className="text-gray-500 mb-2 text-xs">
+            ৳{" "}
+            {item?.discountId
+              ? (price + taxAmount - disAmount).toFixed(2)
+              : (price + taxAmount).toFixed(2)}
           </p>
-          <Rate allowHalf value={+item.rating} />
+          <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
+            <p className="text-xs">
+              {" "}
+              {stockQty > 0 ? "In Stock" : "Out of Stock"}
+            </p>
+          </div>
         </div>
-        <button
-          className="self-end w-full"
-          onClick={() => console.log("Add To Cart")}
-        >
-          Add To Cart
-        </button>
+
+        {item?.discountId && (
+          <div className="text-xs">
+            <span className="line-through text-gray-500 ">
+              ৳ {(price + taxAmount).toFixed(2)}
+            </span>
+            <span className="text-red-600 ml-2">
+              -{discount?.value}
+              {discount?.discountType === "Percentage" ? "%" : "BDT"}
+            </span>
+          </div>
+        )}
       </div>
     </>
   );

@@ -22,6 +22,7 @@ import {
 } from "swiper/modules";
 import { SwiperNavButtons } from "../banner/SwiperNavButtons";
 import appConfig from "@/appConfig";
+import Card from "@/components/Card";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const ProductFeatured = () => {
@@ -63,7 +64,8 @@ const ProductFeatured = () => {
     >
       {products?.map((item: any) => (
         <SwiperSlide key={item.id}>
-          <ProductItem item={item} />
+          <Card item={item} />
+          {/* <ProductItem item={item} /> */}
         </SwiperSlide>
       ))}
       <SwiperNavButtons />
@@ -76,27 +78,29 @@ interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
-  const price = +item.productVariants[0]?.price || 0;
-  const reviewsCount = +item.reviews.length || 0;
-  const discount = item.discount;
-  const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
+  // const price = +item.productVariants[0]?.price || 0;
+  // const reviewsCount = +item.reviews.length || 0;
+  // const discount = item.discount;
+  // const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
 
-  const disAmount =
-    discount?.discountType === "Percentage"
-      ? ((price + taxAmount) * (discount.value || 0)) / 100
-      : +discount?.value || 0;
+  // const disAmount =
+  //   discount?.discountType === "Percentage"
+  //     ? ((price + taxAmount) * (discount.value || 0)) / 100
+  //     : +discount?.value || 0;
 
-  const productRating =
-    item.reviews.reduce((acc: number, review: any) => acc + +review.rating, 0) /
-    reviewsCount;
-  const stockQty = item.productVariants.reduce(
-    (acc: number, variant: any) => acc + +variant.stockQty,
-    0
-  );
-  
+  // const productRating =
+  //   item.reviews.reduce((acc: number, review: any) => acc + +review.rating, 0) /
+  //   reviewsCount;
+  // const stockQty = item.productVariants.reduce(
+  //   (acc: number, variant: any) => acc + +variant.stockQty,
+  //   0
+  // );
+
   return (
     <div className="bg-white border ">
-      <Link href={`/products/${item.id}`} title={item.name}>
+      <Card item={item} />
+
+      {/* <Link href={`/products/${item.id}`} title={item.name}>
         <Image
           src={
             item.images
@@ -143,7 +147,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
             <Rate disabled value={productRating || 0} />({reviewsCount})
           </span>
         </div>
-      </Link>
+      </Link> */}
     </div>
   );
 };
