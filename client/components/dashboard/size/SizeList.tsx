@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type {  TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -20,6 +20,7 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { toast } from "react-toastify";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -36,26 +37,35 @@ const SizeList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getSizes();
-      setSize(res?.data);
-      dispatch(setLoading({ loading: false }));
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData()
   }, [global.action]);
 
-  const handleDelete = async (id: string) => {
+
+
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      dispatch(setLoading({ delete: true }));
+      const res = await getSizes();
+      setSize(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ delete: true }));
+    try {
       await deleteSize(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Size deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      toast.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -88,7 +98,7 @@ const SizeList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
+          onChange={(e) => {
             setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
@@ -204,7 +214,7 @@ const SizeList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  size:true,
+                  size: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

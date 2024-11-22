@@ -25,6 +25,9 @@ const AddShippingCharge = () => {
 
   useEffect(() => {
     fetchData();
+    return () => {
+      form.resetFields();
+    };
   }, [global.action]);
 
   const fetchData = async () => {
@@ -53,8 +56,6 @@ const AddShippingCharge = () => {
       : "Successfully Added";
 
     await handleAsyncAction(result, messageData, dispatch);
-
-    form.resetFields();
   };
 
   const handleClose = () => {
