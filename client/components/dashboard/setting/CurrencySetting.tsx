@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 import {
   selectGlobal,
-  setAction,
   setFormValues
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const CurrencySetting = () => {
   const [loading, setLoading] = useState(false);
@@ -18,22 +18,17 @@ const CurrencySetting = () => {
 
   form.setFieldsValue(global.formValues);
 
+
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      setLoading(true)
-      const result = newData.id
-        ? await updateSetting(newData)
-        : await saveSetting(newData);
-      setTimeout(async () => {
-        setLoading(false)
-        dispatch(setFormValues({}));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      console.log("🚀 ~ err:", err);
-    }
+    const result = values.id
+      ? () => updateSetting(values)
+      : () => saveSetting(values);
+
+    const messageData = values.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const resetFormData = (value: any) => {

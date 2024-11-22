@@ -1,8 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal } from "antd";
 import { ActionType } from "../../../../constants/constants";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
   selectGlobal,
@@ -12,10 +10,11 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveCurrency, updateCurrency } from "@/lib/apis/currency";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddCurrency = () => {
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, currency, type } = global.action;
   // hook
   const [form] = Form.useForm();
   const router = useRouter();
@@ -23,7 +22,7 @@ const AddCurrency = () => {
 
   useEffect(() => {
     const newData = { ...payload };
-    setFormData(newData);
+    form.setFieldsValue(newData);
     return () => {
       dispatch(setFormValues({}));
       form.resetFields();
@@ -31,30 +30,20 @@ const AddCurrency = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateCurrency(newData)
-        : await saveCurrency(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      toast.error(err);
-    }
+    const result = values.id
+      ? () => updateCurrency(values)
+      : () => saveCurrency(values);
+
+    const messageData = values.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
-  };
-
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
   };
 
   const resetFormData = () => {
@@ -65,25 +54,28 @@ const AddCurrency = () => {
     }
   };
 
+  const layout = {
+    labelCol: { span: 7 },
+    wrapperCol: { span: 14 },
+  };
+
+  const tailLayout = {
+    wrapperCol: { offset: 7, span: 14 },
+  };
+
   return (
     <Modal
-      title={
-        global.action.type === ActionType.UPDATE
-          ? "Update Currency"
-          : "Create Currency"
-      }
+      title={type === ActionType.UPDATE ? "Update Currency" : "Create Currency"}
       width={500}
       zIndex={1050}
       open={
-        global.action.currency &&
-        (global.action.type === ActionType.CREATE ||
-          global.action.type === ActionType.UPDATE)
+        currency && (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={null}
     >
       <Form
-        layout="vertical"
+        {...layout}
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
@@ -122,21 +114,19 @@ const AddCurrency = () => {
           <Input placeholder="Enter Symbol" />
         </Form.Item>
 
-        <Button
-          className="mx-2 capitalize"
-          size="small"
-          onClick={resetFormData}
-        >
-          Reset
-        </Button>
-        <Button
-          size="small"
-          htmlType="submit"
-          className="capitalize"
-          loading={global.loading.save}
-        >
-          {payload?.id ? "Update" : "Save"}
-        </Button>
+        <Form.Item {...tailLayout}>
+          <Button className="me-2" size="small" onClick={resetFormData}>
+            Reset
+          </Button>
+          <Button
+            size="small"
+            htmlType="submit"
+            loading={global.loading.save}
+            disabled={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </Form.Item>
       </Form>
     </Modal>
   );

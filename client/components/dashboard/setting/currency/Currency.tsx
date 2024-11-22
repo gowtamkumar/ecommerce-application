@@ -5,8 +5,11 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import AddCurrency from "./AddCurrency";
-import CurrencyList from "./CurrencyList";
+import dynamic from "next/dynamic";
+const AddCurrency = dynamic(() => import('./AddCurrency'), { ssr: false })
+const CurrencyList = dynamic(() => import('./CurrencyList'), { ssr: false })
+
+
 
 export default function Currency() {
   const [tabKey, setTabKey] = useState("currency_list");

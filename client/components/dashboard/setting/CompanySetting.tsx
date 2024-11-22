@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import {
   selectGlobal,
-  setAction,
   setFormValues,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +11,12 @@ import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import appConfig from "@/appConfig";
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
 
 const uploadButton = (
   <div>
@@ -28,36 +33,23 @@ const uploadButton = (
 
 const CompanySetting = ({ currencies }: any) => {
   const [loading, setLoading] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  console.log("global.formValues", global.formValues);
-  
-
   form.setFieldsValue(global.formValues);
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      setLoading(true);
-      const result = newData.id
-        ? await updateSetting(newData)
-        : await saveSetting(newData);
-      console.log("🚀 ~ result:", result);
-      setTimeout(async () => {
-        setLoading(false);
-        dispatch(setFormValues({}));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      console.log("🚀 ~ err:", err);
-    }
+    const result = values.id
+      ? () => updateSetting(values)
+      : () => saveSetting(values);
+
+    const messageData = values.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const customUploadRequest = async (options: any) => {
@@ -93,40 +85,9 @@ const CompanySetting = ({ currencies }: any) => {
       );
       onSuccess("Ok");
     } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
       onError({ err });
     }
   };
-
-  const normFile = (e: { fileList: string }) => {
-    console.log("🚀 ~ e:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
-  const handleCancel = () => setPreviewOpen(false);
-
-  // file Preview
-  const handlePreview = async (file: any) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
-  };
-
-  const getBase64 = (file: any) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
 
   const resetFormData = (value: any) => {
     if (value?.id) {
@@ -214,7 +175,7 @@ const CompanySetting = ({ currencies }: any) => {
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
-          <ImgCrop rotationSlider>
+          <ImgCrop rotationSlider showReset>
             <Upload
               name="image"
               listType="picture-card"
@@ -228,7 +189,7 @@ const CompanySetting = ({ currencies }: any) => {
                 }
               }}
               className="avatar-uploader"
-              onPreview={handlePreview}
+              onPreview={(file) => handlePreview(file, dispatch)}
               customRequest={customUploadRequest}
               maxCount={1}
             >
@@ -242,45 +203,24 @@ const CompanySetting = ({ currencies }: any) => {
         </Form.Item>
 
         <Modal
-          open={previewOpen}
-          title={previewTitle}
+          open={global.previewOpen}
+          title={global.previewTitle}
           footer={null}
-          onCancel={handleCancel}
+          onCancel={() => handlePreviewCancel(dispatch)}
         >
           <Image
             alt="example"
             style={{
               width: "100%",
             }}
-            src={previewImage}
+            preview={false}
+            src={global.previewImage}
           />
         </Modal>
 
-        {/* <Form.Item
-              hidden={!payload?.id}
-              name="status"
-              label="Status"
-              className="mb-1"
-            >
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Status"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                <Select.Option value="Active">Active</Select.Option>
-                <Select.Option value="Inactive">Inactive</Select.Option>
-              </Select>
-            </Form.Item>
-         */}
         <Form.Item {...tailLayout}>
           <Button
-            className="mx-2 capitalize"
+            className="me-2"
             size="small"
             onClick={() => resetFormData(global.formValues)}
           >
@@ -290,7 +230,6 @@ const CompanySetting = ({ currencies }: any) => {
             size="small"
             color="primary"
             htmlType="submit"
-            className="capitalize"
             loading={loading}
           >
             Save

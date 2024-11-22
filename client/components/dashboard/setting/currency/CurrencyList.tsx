@@ -19,6 +19,10 @@ import {
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { deleteCurrency, getCurrencies } from "@/lib/apis/currency";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -30,29 +34,37 @@ type DataIndex = keyof DataType;
 
 const CurrencyList: React.FC = () => {
   const [currencies, setCurrencies] = useState([]);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData();
+  }, [global.action]);
+
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getCurrencies();
-      setCurrencies(res?.data);
+      setCurrencies(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    }
+  };
 
   const handleDelete = async (id: string) => {
+    dispatch(setLoading({ delete: true }));
     try {
-      dispatch(setLoading({ delete: true }));
       await deleteCurrency(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        dispatch(setAction({}));
-      }, 500);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
     } catch (error: any) {
-      console.error(error);
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ delete: false }));
+      dispatch(setAction({}));
     }
   };
 
@@ -83,15 +95,12 @@ const CurrencyList: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          // ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-            setSearchInput(e.target.value)
-          }
-          }
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+            setSearchInput(e.target.value);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }

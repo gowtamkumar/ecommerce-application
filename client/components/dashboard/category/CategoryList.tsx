@@ -61,7 +61,7 @@ const CategoryList: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    dispatch(setLoading({ save: true }));
+    dispatch(setLoading({ delete: true }));
     try {
       await deleteCategory(id);
       successNotification({ message: "Successfully deleted" });
@@ -69,7 +69,7 @@ const CategoryList: React.FC = () => {
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      dispatch(setLoading({ save: false }));
+      dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
     }
   };
