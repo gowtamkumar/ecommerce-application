@@ -16,15 +16,7 @@ export const orderValidationSchema = z.object({
   shippingAddressId: z.number({
     required_error: "Shipping Address is Required",
   }),
-
-  // phoneNo: z.string({
-  //   required_error: "Phone no is Required",
-  // }),
-  // email: z.string().optional(),
-  // deliveryAddress: z.string({ required_error: "Delivery Address is Required" }),
-  // paymentStatus: z.enum(["Paid", "NotPaid", "PertialPaid"], {
-  //   required_error: "Payment Status is required",
-  // }),
+ 
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
     required_error: "Payment Method is Required",
   }),

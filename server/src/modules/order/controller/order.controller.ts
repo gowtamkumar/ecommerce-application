@@ -267,7 +267,7 @@ export const createOrder = asyncHandler(async (req: any, res: Response) => {
 
     // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
     // sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
-    logger.info(`Service: getMemu ${req.method} ${req.url}`);
+    // logger.info(`Service: getMemu ${req.method} ${req.url}`);
 
     //   // Redirect the user to payment gateway
     //   let GatewayPageURL = apiResponse.GatewayPageURL;
@@ -429,36 +429,13 @@ export const orderReview = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  // const save = await repository.save(updateData);
-
-  // if (orderItems && save.id) {
-  //   const repoOrderitems = connection.getRepository(OrderItemEntity);
-
-  //   // remove order items
-  //   const existingVariants = await repoOrderitems.find({
-  //     where: { orderId: id },
-  //   });
-
-  //   await repoOrderitems.remove(existingVariants);
-  //   // new order items data
-  //   const newOrderItems = await repoOrderitems.create(
-  //     orderItems.map((item) => ({
-  //       productId: item.productId,
-  //       qty: item.qty,
-  //       price: item.price,
-  //       orderId: save.id,
-  //     }))
-  //   );
-  //   await repoOrderitems.save(newOrderItems);
-  // }
-
   return res.status(200).json({
     success: true,
-    message: `Update a single Order of id ${req.params.id}`,
+    message: `Order Review ${req.params.id}`,
     data: {},
   });
 });
-// @desc Update a single Order
+// @desc assign DeliveryMan
 // @route patch /api/v1/order/assign/:id
 // @access Public
 export const assignDeliveryMan = asyncHandler(
@@ -496,7 +473,7 @@ export const assignDeliveryMan = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: `Assign Delivery man`,
+      message: "Assign Delivery man",
       data: save,
     });
   }
@@ -579,7 +556,6 @@ export const orderStatusUpdate = asyncHandler(
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error("Transaction failed:", error);
       return res.status(500).json({
         success: false,
         message: "Failed to create Order",

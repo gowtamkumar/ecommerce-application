@@ -19,11 +19,11 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { toast } from "react-toastify";
 import {
   deleteShippingAddress,
   getShippingAddress,
 } from "@/lib/apis/shipping-address";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -50,28 +50,36 @@ const ShippingAddressList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getShippingAddress();
-      setAddress(res?.data);
-      dispatch(setLoading({ loading: false }));
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData()
   }, [global.action]);
 
-  const handleDelete = async (id: string) => {
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
     try {
-      dispatch(setLoading({ delete: true }));
-      await deleteShippingAddress(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Address deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
-    } catch (error: any) {
-      toast.error(error);
+      const res = await getShippingAddress();
+      setAddress(res.data);
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
     }
   };
+
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
+    try {
+      await deleteShippingAddress(id);
+      successNotification({ message: "Successfully deleted" });
+      fetchData();
+    } catch (error: any) {
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
+    }
+  };
+
+
 
   const handleSearch = (
     selectedKeys: string[],

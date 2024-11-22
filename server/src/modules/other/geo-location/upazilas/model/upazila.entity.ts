@@ -31,7 +31,7 @@ export class UpazilaEntity {
   @Column({ nullable: true })
   url!: string;
 
-  @OneToMany((_type) => UnionEntity, (union) => union.upazilla)
+  @OneToMany((_type) => UnionEntity, (union) => union.upazila)
   unions!: UnionEntity[];
 
   @OneToMany(

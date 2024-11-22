@@ -1,12 +1,17 @@
 "use client";
-import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
-import ShippingAddressList from "@/components/dashboard/shipping-address/ShippingAddressList";
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { ActionType } from "@/constants/constants";
 import { setAction } from "@/redux/features/global/globalSlice";
 import { Button, Tabs } from "antd";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
+
+const AddShippingAddress = dynamic(()=> import("@/components/dashboard/shipping-address/AddShippingAddress"), {ssr: false}) 
+const ShippingAddressList = dynamic(()=> import("@/components/dashboard/shipping-address/ShippingAddressList"), {ssr: false}) 
+
+
+
 export default function Page() {
   const [tabKey, setTabKey] = useState("shipping_address_list");
   const dispatch = useDispatch();
@@ -30,6 +35,7 @@ export default function Page() {
             onClick={() =>
               dispatch(
                 setAction({
+                  // shippingAddress:true,
                   type: ActionType.CREATE,
                 })
               )

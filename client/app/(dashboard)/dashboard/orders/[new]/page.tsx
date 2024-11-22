@@ -24,9 +24,7 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import {
-  MinusCircleOutlined,
-  PlusOutlined,
-  UploadOutlined,
+  MinusCircleOutlined
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
@@ -34,6 +32,8 @@ import { getTaxs } from "@/lib/apis/tax";
 import { getCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";
 import { getUsers } from "@/lib/apis/user";
+
+// TODO Order oparation module not complete
 
 const AddOrder = () => {
   const [users, setUsers] = useState([] as any);

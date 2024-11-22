@@ -15,11 +15,11 @@ export class UnionEntity {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({ name: "upazilla_id", nullable: true })
-  upazillaId!: number;
-  @ManyToOne((_type) => UpazilaEntity, (Upazila) => Upazila.unions)
-  @JoinColumn({ name: "upazilla_id" })
-  upazilla!: UpazilaEntity;
+  @Column({ name: "upazila_id", nullable: true })
+  upazilaId!: number;
+  @ManyToOne((_type) => UpazilaEntity, (upazila) => upazila.unions)
+  @JoinColumn({ name: "upazila_id" })
+  upazila!: UpazilaEntity;
 
   @Column()
   name!: string;

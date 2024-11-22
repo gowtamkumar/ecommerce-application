@@ -18,6 +18,7 @@ export const getUnions = asyncHandler(async (req: Request, res: Response) => {
   if (upazilaId) {
     customQuery.upazilaId = upazilaId;
   }
+  
   const result = await repository.find({
     where: { upazilaId: customQuery.upazilaId },
   });

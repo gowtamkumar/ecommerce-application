@@ -1,12 +1,16 @@
 "use client";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import AddShippingCharge from "@/components/dashboard/shipping-charge/AddShippingCharge";
-import ShippingChargeList from "@/components/dashboard/shipping-charge/ShippingChargeList";
+
+const AddShippingCharge = dynamic(()=> import("@/components/dashboard/shipping-charge/AddShippingCharge"), {ssr: false}) 
+const ShippingChargeList = dynamic(()=> import("@/components/dashboard/shipping-charge/ShippingChargeList"), {ssr: false}) 
+
+
 
 export default function ShippingCharge() {
   const [tabKey, setTabKey] = useState("shipping_charge_list");
@@ -28,7 +32,6 @@ export default function ShippingCharge() {
         tabBarExtraContent={
           <Button
             size="small"
-            className="capitalize"
             onClick={() =>
               dispatch(
                 setAction({
