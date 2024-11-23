@@ -21,15 +21,8 @@ export default function Slider({ banners }: any) {
       spaceBetween={5}
       slidesPerView={1}
       pagination
-      // pagination={{ clickable: true, type: "bullets", dynamicBullets: true }}
       autoplay={true}
       speed={1000}
-      // navigation
-      // navigation={{ nextEl: ".arrow-left", prevEl: ".arrow-right" }}
-      // wrapperTag="ul"
-      // scrollbar={{ draggable: true }}
-      // onSwiper={(swiper) => console.log(swiper)}
-      // onSlideChange={() => console.log("slide change")}
     >
       {banners?.map(
         ({

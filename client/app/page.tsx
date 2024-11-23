@@ -86,7 +86,6 @@ export default async function Home() {
             </Link>
           </div>
           <ProductFeatured />
-          {/* <ProductCard /> */}
         </section>
 
         {/* More discount */}

@@ -23,18 +23,10 @@ export default function HeaderDiscount({ discounts }: any) {
     <div className="container mx-auto">
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, Autoplay]}
-        // spaceBetween={5}
         slidesPerView={1}
         autoplay={true}
         speed={500}
-        pagination={{ clickable: true, type: "bullets", dynamicBullets: true }}
-      // navigation
-      // pagination={{ clickable: true, dynamicBullets: true }}
-
-      // pagination={{ clickable: true }}
-      // scrollbar={{ draggable: true }}
-      // onSwiper={(swiper) => console.log(swiper)}
-      // onSlideChange={() => console.log("slide change")}
+        pagination
       >
         {(discounts?.data || []).map((item: any, idx: number) => {
           return (
@@ -47,7 +39,6 @@ export default function HeaderDiscount({ discounts }: any) {
                       ? `${appConfig.apiUrl}/uploads/${item.image}`
                       : "/image-box-12.jpg"
                   }
-
                   loading="lazy"
                   // fill
                   width={0}
@@ -80,7 +71,6 @@ export default function HeaderDiscount({ discounts }: any) {
             </SwiperSlide>
           );
         })}
-        {/* <SwiperNavButtons /> */}
       </Swiper>
     </div>
   );
