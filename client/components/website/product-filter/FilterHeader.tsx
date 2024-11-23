@@ -6,8 +6,8 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { selectProduct } from "@/redux/features/products/productSlice";
 import { Button, Select } from "antd";
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 export default function FilterHeader() {
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);

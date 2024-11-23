@@ -1,9 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
@@ -11,11 +9,11 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { orderStatusUpdate, updateOrder } from "@/lib/apis/orders";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const OrderStatusUpdate = () => {
   const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+  const { payload, orderStatusUpdate, type } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -30,19 +28,13 @@ const OrderStatusUpdate = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id && (await orderStatusUpdate(newData));
+    const result = () => orderStatusUpdate(values);
 
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      toast.error(err);
-    }
+    const messageData = values.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const handleClose = () => {
@@ -69,7 +61,7 @@ const OrderStatusUpdate = () => {
   return (
     <Modal
       title={
-        global.action.type === ActionType.UPDATE
+        type === ActionType.UPDATE
           ? "Update Order Status "
           : "Create Order Status"
       }
@@ -77,8 +69,8 @@ const OrderStatusUpdate = () => {
       zIndex={1050}
       open={
         (global.action.type === ActionType.CREATE ||
-          global.action.type === ActionType.UPDATE) &&
-        global.action.orderStatusUpdate
+          type === ActionType.UPDATE) &&
+        orderStatusUpdate
       }
       onCancel={handleClose}
       footer={null}

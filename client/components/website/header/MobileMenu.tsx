@@ -1,9 +1,8 @@
 "use client";
-import { Badge, Drawer } from "antd";
 import { useState } from "react";
+import { Badge, Drawer } from "antd";
 import { IoMdMenu } from "react-icons/io";
 import Link from "next/link";
-import { CiHeart } from "react-icons/ci";
 import { IoBagHandleOutline } from "react-icons/io5";
 
 const menuData = [

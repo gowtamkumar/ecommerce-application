@@ -1,10 +1,9 @@
 "use client";
-import { Badge, Col, Dropdown, Menu, MenuProps, Row, Space } from "antd";
+import { Badge } from "antd";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
-import { getMenus } from "@/lib/apis/menu";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 
 

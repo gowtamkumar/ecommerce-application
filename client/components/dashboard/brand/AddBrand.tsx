@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import {
   selectGlobal,
   setAction,

@@ -2,7 +2,6 @@ import appConfig from "@/appConfig";
 import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { FaRegHeart } from "react-icons/fa";
 interface CardItems {
   name: string;

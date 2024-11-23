@@ -3,12 +3,9 @@ import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 import {
   selectGlobal,
-  setAction,
   setFormValues,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveSetting, updateSetting } from "@/lib/apis/setting";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const EmailSetting = () => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +15,7 @@ const EmailSetting = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = async (values: any) => {
-    const result = values.id
+    const result = values.id;
     //   ? () => updateSetting(values)
     //   : () => saveSetting(values);
 

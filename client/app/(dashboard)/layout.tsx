@@ -1,15 +1,16 @@
-/* eslint-disable @next/next/no-async-client-component */
 "use client";
+import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
 import { Layout, theme } from "antd";
 import React, { Suspense } from "react";
-import FooterOption from "@/components/dashboard/Footer";
-import BreadCrumb from "@/components/dashboard/BreadCrumb";
-import DashboardHeader from "@/components/dashboard/Header";
-import Sidebar from "@/components/dashboard/Sidebar";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import Loading from "./dashboard/loading";
 const { Content } = Layout;
+
+const FooterOption = dynamic(() => import("@/components/dashboard/Footer"), {ssr: false});
+const BreadCrumb = dynamic(() => import("@/components/dashboard/BreadCrumb"), {ssr: false});
+const Loading = dynamic(() => import("./dashboard/loading"), {ssr: false});
+const DashboardHeader = dynamic(() => import("@/components/dashboard/Header"), {ssr: false});
+const Sidebar = dynamic(() => import("@/components/dashboard/Sidebar"), {ssr: false});
 
 export default function DashboardLayout({
   children,

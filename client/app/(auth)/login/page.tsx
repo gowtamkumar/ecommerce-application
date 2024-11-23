@@ -1,7 +1,8 @@
-import WebFooter from "@/components/website/footer/Footer";
-import Header from "@/components/website/header/Header";
-import Login from "@/components/website/login/Login";
-import React from "react";
+import dynamic from "next/dynamic";
+
+const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+const Header = dynamic(() => import("@/components/website/header/Header"));
+const Login = dynamic(() => import("@/components/website/login/Login"));
 
 export default function page() {
   return (

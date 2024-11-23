@@ -5,8 +5,16 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import StatusList from "@/components/dashboard/status/StatusList";
-import AddStatus from "@/components/dashboard/status/AddStatus";
+import dynamic from "next/dynamic";
+
+const AddStatus = dynamic(() => import("@/components/dashboard/status/AddStatus"), {
+  ssr: false,
+});
+
+const StatusList = dynamic(() => import("@/components/dashboard/status/StatusList"), {
+  ssr: false,
+});
+
 
 export default function Status() {
   const [tabKey, setTabKey] = useState("status_list");

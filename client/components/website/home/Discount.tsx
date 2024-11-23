@@ -1,14 +1,14 @@
 "use client";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Scrollbar, A11y } from "swiper/modules";
+import { Navigation, Scrollbar } from "swiper/modules";
 import Image from "next/image";
 import { Button } from "antd";
 import { useDispatch } from "react-redux";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
-import { SwiperNavButtons } from "../banner/SwiperNavButtons";
 import appConfig from "@/appConfig";
+
 
 export default function Discount({ discounts }: any) {
   const dispatch = useDispatch();
@@ -83,7 +83,6 @@ export default function Discount({ discounts }: any) {
             </SwiperSlide>
           );
         })}
-        <SwiperNavButtons />
       </Swiper>
     </div>
   );

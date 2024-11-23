@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, Drawer, Layout, Menu, Button, Image } from "antd";
+import { Drawer, Layout, Menu, Button, Image } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {

@@ -7,15 +7,18 @@ import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 
-const AddShippingCharge = dynamic(()=> import("@/components/dashboard/shipping-charge/AddShippingCharge"), {ssr: false}) 
-const ShippingChargeList = dynamic(()=> import("@/components/dashboard/shipping-charge/ShippingChargeList"), {ssr: false}) 
-
-
+const AddShippingCharge = dynamic(
+  () => import("@/components/dashboard/shipping-charge/AddShippingCharge"),
+  { ssr: false }
+);
+const ShippingChargeList = dynamic(
+  () => import("@/components/dashboard/shipping-charge/ShippingChargeList"),
+  { ssr: false }
+);
 
 export default function ShippingCharge() {
   const [tabKey, setTabKey] = useState("shipping_charge_list");
   const dispatch = useDispatch();
-
 
   return (
     <div className="container bg-white p-3  ">

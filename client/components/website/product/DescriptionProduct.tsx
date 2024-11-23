@@ -1,5 +1,3 @@
-import React from "react";
-
 const DescriptionProduct = ({ product }: any) => {
   return (
     <div className="text-start">

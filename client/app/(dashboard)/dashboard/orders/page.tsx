@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
 import {
   Input,
   Space,
@@ -12,7 +12,6 @@ import {
   Divider,
 } from "antd";
 import {
-  FormOutlined,
   PlusOutlined,
   UserAddOutlined,
   RestOutlined,
@@ -29,17 +28,34 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
+import dynamic from "next/dynamic";
 import Highlighter from "react-highlight-words";
 import { ActionType } from "@/constants/constants";
 import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import AddOrderTracking from "@/components/dashboard/order-tracking/AddOrderTracking";
-import OrderStatusChange from "@/components/dashboard/order/OrderStatusUpdate";
 import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
-import AddPayment from "@/components/dashboard/payment/AddPayment";
-import AssignDeliveryMan from "@/components/dashboard/order/AssignDeliveryMan";
+
+const AddOrderTracking = dynamic(
+  () => import("@/components/dashboard/order-tracking/AddOrderTracking"),
+  { ssr: false }
+);
+
+const OrderStatusChange = dynamic(
+  () => import("@/components/dashboard/order/OrderStatusUpdate"),
+  { ssr: false }
+);
+
+const AddPayment = dynamic(
+  () => import("@/components/dashboard/payment/AddPayment"),
+  { ssr: false }
+);
+
+const AssignDeliveryMan = dynamic(
+  () => import("@/components/dashboard/order/AssignDeliveryMan"),
+  { ssr: false }
+);
 
 interface DataType {
   key: React.Key;
@@ -59,7 +75,7 @@ type DataIndex = keyof DataType;
 
 const Page: React.FC = () => {
   const [orders, setOrders] = useState([]);
-  const [searchInput, setSearchInput] = useState(null) as any ;
+  const [searchInput, setSearchInput] = useState(null) as any;
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -123,11 +139,9 @@ const Page: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-            setSearchInput(e.target.value)
-          }
-          }
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+            setSearchInput(e.target.value);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }

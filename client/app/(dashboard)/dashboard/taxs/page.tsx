@@ -5,9 +5,15 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import TaxList from "@/components/dashboard/tax/Taxlist";
-import AddTax from "@/components/dashboard/tax/AddTax";
+import dynamic from "next/dynamic";
 
+const TaxList = dynamic(() => import("@/components/dashboard/tax/Taxlist"), {
+  ssr: false,
+});
+
+const AddTax = dynamic(() => import("@/components/dashboard/tax/AddTax"), {
+  ssr: false,
+});
 
 export default function Tax() {
   const [tabKey, setTabKey] = useState("tax_list");
@@ -32,7 +38,7 @@ export default function Tax() {
             onClick={() =>
               dispatch(
                 setAction({
-                  tax:true,
+                  tax: true,
                   type: ActionType.CREATE,
                 })
               )

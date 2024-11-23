@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
-import { Breadcrumb, Spin } from "antd";
+import { Spin } from "antd";
 import RatingProduct from "./RatingProducts";
 import DescriptionProduct from "./DescriptionProduct";
 import { getProduct } from "@/lib/apis/product";
@@ -16,50 +16,50 @@ import { useDispatch, useSelector } from "react-redux";
 import ReviewTable from "./review-rating/ReviewTable";
 import ProductCard from "./ProductCard";
 import { getProductVariant } from "@/lib/apis/product-variant";
+import { errorNotification } from "@/lib/utils/notification";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
-
   const [checkStock, setCheckStock] = useState(0);
   const { id } = useParams();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      dispatch(setLoading({ loading: true }));
-
-      try {
-        const newProduct = await getProduct(id.toString());
-        if (newProduct?.data) {
-          setProduct({
-            ...newProduct.data,
-            qty: 1,
-            selectProductVariant: newProduct.data.productVariants[0],
-          });
-
-          if (newProduct.data.productVariants[0].id) {
-            const productVariant = await getProductVariant({
-              id: newProduct.data.productVariants[0].id,
-            });
-            setCheckStock(productVariant.data.stockQty);
-          }
-
-          const categoryIds = newProduct.data.productCategories
-            .map((item: { categoryId: number }) => item.categoryId)
-            .join(",");
-
-          dispatch(setProductFilter({ categoryId: categoryIds }));
-        }
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      } finally {
-        dispatch(setLoading({ loading: false }));
-      }
-    };
-
     fetchProductData();
   }, [dispatch, id]);
+
+  const fetchProductData = async () => {
+    dispatch(setLoading({ loading: true }));
+
+    try {
+      const newProduct = await getProduct(id.toString());
+      if (newProduct?.data) {
+        setProduct({
+          ...newProduct.data,
+          qty: 1,
+          selectProductVariant: newProduct.data.productVariants[0],
+        });
+
+        if (newProduct.data.productVariants[0].id) {
+          const productVariant = await getProductVariant({
+            id: newProduct.data.productVariants[0].id,
+          });
+          setCheckStock(productVariant.data.stockQty);
+        }
+
+        const categoryIds = newProduct.data.productCategories
+          .map((item: { categoryId: number }) => item.categoryId)
+          .join(",");
+
+        dispatch(setProductFilter({ categoryId: categoryIds }));
+      }
+    } catch (error: any) {
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
 
   const productRating = product?.reviews?.reduce(
     (

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +8,8 @@ import { resetPasswordValidationSchema } from "@/validation/user/resetPasswordVa
 import { resetPassword } from "@/lib/apis/resetPassword";
 import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
-import Button from "@/components/share-component/Button";
+
+const Button = dynamic(() => import("@/components/share-component/Button"));
 
 export default function ResetPassrod() {
   const params = useParams();

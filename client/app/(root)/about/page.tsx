@@ -1,7 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import WebFooter from "@/components/website/footer/Footer";
-import Header from "@/components/website/header/Header";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+
+const WebFooter = dynamic(
+  () => import("@/components/website/footer/Footer")
+);
+
+const Header = dynamic(
+  () => import("@/components/website/header/Header")
+);
 
 export default function About() {
   return (

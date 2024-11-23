@@ -8,13 +8,9 @@ import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
-  setAction,
-  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import { toast } from "react-toastify";
-import { deleteShippingAddress } from "@/lib/apis/shipping-address";
 
 interface DataType {
   key: string;
@@ -35,7 +31,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const MyShippingAddress = ({ shippingAddress }: any) => {
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -48,19 +44,18 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
   //   })();
   // }, [global.action]);
 
-  const handleDelete = async (id: string) => {
-    try {
-      dispatch(setLoading({ delete: true }));
-      await deleteShippingAddress(id);
-      setTimeout(async () => {
-        dispatch(setLoading({ delete: false }));
-        toast.success("Address deleted successfully");
-        dispatch(setAction({}));
-      }, 500);
-    } catch (error: any) {
-      toast.error(error);
-    }
-  };
+  // const handleDelete = async (id: string) => {
+  //   try {
+  //     dispatch(setLoading({ delete: true }));
+  //     await deleteShippingAddress(id);
+  //     setTimeout(async () => {
+  //       dispatch(setLoading({ delete: false }));
+  //       dispatch(setAction({}));
+  //     }, 500);
+  //   } catch (error: any) {
+  //     toast.error(error);
+  //   }
+  // };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -92,10 +87,9 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }

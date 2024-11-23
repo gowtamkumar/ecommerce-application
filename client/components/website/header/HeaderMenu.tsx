@@ -1,12 +1,12 @@
 "use client";
-import React, { useState } from "react";
-import { Badge, Menu, MenuProps } from "antd";
+import React from "react";
+import { Badge } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { CiHeart, CiSearch } from "react-icons/ci";
+import { CiHeart } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useSelector } from "react-redux";
+
 export default function HeaderMenu() {
   const cart = useSelector(selectCart);
   // const [current, setCurrent] = useState("mail");

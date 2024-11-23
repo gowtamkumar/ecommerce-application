@@ -1,10 +1,17 @@
-import React from "react";
-import Header from "@/components/website/header/Header";
-import FilterSidebar from "@/components/website/product-filter/FilterSidebar";
-import CategoryHeader from "@/components/website/product-filter/FilterHeader";
 import { Divider } from "antd";
-import ProductCard from "@/components/website/product/ProductCard";
-import WebFooter from "@/components/website/footer/Footer";
+import dynamic from "next/dynamic";
+
+const Header = dynamic(() => import("@/components/website/header/Header"));
+const FilterSidebar = dynamic(
+  () => import("@/components/website/product-filter/FilterSidebar")
+);
+const CategoryHeader = dynamic(
+  () => import("@/components/website/product-filter/FilterHeader")
+);
+const ProductCard = dynamic(
+  () => import("@/components/website/product/ProductCard")
+);
+const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 
 export default function SingleCategory() {
   return (

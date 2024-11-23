@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Avatar, Button, Card, Table } from "antd";
+import { Button, Card, Table } from "antd";
 
 const StockAlert = ({ productAlertStockReport }: any) => {
   const [tableParams, setTableParams] = useState({
@@ -36,7 +36,7 @@ const StockAlert = ({ productAlertStockReport }: any) => {
       extra={
         <Button
           size="small"
-        // onClick={() => navigate("/stock-report/stock-alert")}
+          // onClick={() => navigate("/stock-report/stock-alert")}
         >
           View All {">>"}
         </Button>

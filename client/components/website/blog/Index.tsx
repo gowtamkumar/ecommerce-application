@@ -1,14 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
-import WebFooter from "../footer/Footer";
+import appConfig from "@/appConfig";
 import dayjs from "dayjs";
 import Link from "next/link";
-import PostCategory from "./PostCategorySection";
-import PostSearchSection from "./PostSearchSection";
-import RecentPostSection from "./RecentPostSection";
-import Pagination from "./Pagination";
-import PostHeader from "./PostHeader";
-import appConfig from "@/appConfig";
+import dynamic from "next/dynamic";
+
+const PostCategory = dynamic(() => import("./PostCategorySection"));
+const PostSearchSection = dynamic(() => import("./PostSearchSection"));
+const RecentPostSection = dynamic(() => import("./RecentPostSection"));
+const Pagination = dynamic(() => import("./Pagination"));
+const PostHeader = dynamic(() => import("./PostHeader"));
 
 export default function Index({ posts }: any) {
   return (

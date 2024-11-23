@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setResponse } from "@/redux/features/global/globalSlice";
 import { sendForgotPassword } from "@/lib/apis/sendForgotPassword";
 import { useFormState } from "react-dom";
-import Button from "@/components/share-component/Button";
 import { forgotPasswordValidationSchema } from "@/validation/user/forgotPasswordValidation";
+import dynamic from "next/dynamic";
+const Button = dynamic(() => import("@/components/share-component/Button"), { ssr: false })
+
 
 export default function ForgotPassrod() {
   const global = useSelector(selectGlobal);
@@ -22,7 +24,7 @@ export default function ForgotPassrod() {
         errors: validatedFields.error.formErrors,
       };
     }
-    const result = await sendForgotPassword(validatedFields.data);    
+    const result = await sendForgotPassword(validatedFields.data);
     dispatch(setResponse(result));
     setTimeout(() => {
       dispatch(setResponse({}));

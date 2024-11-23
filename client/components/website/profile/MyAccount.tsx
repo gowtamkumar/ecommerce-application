@@ -1,9 +1,8 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { updateUser } from "@/lib/apis/user";
 import {
   selectGlobal,
-  setAction,
-  setFormValues,
   setLoading,
   setResponse,
 } from "@/redux/features/global/globalSlice";
@@ -19,13 +18,15 @@ import {
   Upload,
 } from "antd";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
-import ChangePassword from "./PasswordChange";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
+import dynamic from "next/dynamic";
+
+const ChangePassword = dynamic(()=> import("./PasswordChange"), {ssr: false})
+
 
 const uploadButton = (
   <div>

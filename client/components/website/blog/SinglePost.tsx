@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
-import PostSearchSection from "./PostSearchSection";
-import PostCategorySection from "./PostCategorySection";
-import RecentPostSection from "./RecentPostSection";
-import PostTagSection from "./PostTagSection";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const PostSearchSection = dynamic(() => import("./PostSearchSection"));
+const PostCategorySection = dynamic(() => import("./PostCategorySection"));
+const RecentPostSection = dynamic(() => import("./RecentPostSection"));
 
 export default function SinglePost() {
   return (

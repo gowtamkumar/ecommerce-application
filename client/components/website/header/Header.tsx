@@ -1,12 +1,12 @@
 import React from "react";
-import TopBar from "./TopBar";
-import Logo from "./Logo";
-import HeaderRight from "./HeaderRight";
-import HeaderSearch from "./HeaderSearch";
 import { getSettings } from "@/lib/apis/setting";
-import { getCartByUser } from "@/lib/apis/cart";
-import MobileMenu from "./MobileMenu";
-import MainMenu from "./Menu";
+import dynamic from "next/dynamic";
+
+const Logo = dynamic(() => import("./Logo"));
+const TopBar = dynamic(() => import("./TopBar"));
+const MainMenu = dynamic(() => import("./Menu"));
+const MobileMenu = dynamic(() => import("./MobileMenu"));
+const HeaderRight = dynamic(() => import("./HeaderRight"));
 
 export default async function Header() {
   //  const res = await saveVisitor({})
@@ -19,7 +19,6 @@ export default async function Header() {
       <TopBar />
       <div className="border-b-2">
         <div className="container mx-auto items-center py-4">
-
           <div className="flex justify-between items-center">
             <Logo settingData={setting} />
             <div className="md:hidden">

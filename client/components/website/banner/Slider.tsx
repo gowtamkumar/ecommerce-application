@@ -3,7 +3,6 @@ import Image from "next/image";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Button } from "antd";
-
 import {
   A11y,
   Autoplay,
@@ -13,7 +12,6 @@ import {
   Scrollbar,
 } from "swiper/modules";
 import Link from "next/link";
-import { SwiperNavButtons } from "./SwiperNavButtons";
 import appConfig from "@/appConfig";
 
 export default function Slider({ banners }: any) {

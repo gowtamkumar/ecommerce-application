@@ -5,11 +5,12 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { CiSearch, CiHeart } from "react-icons/ci";
-import { IoBagOutline } from "react-icons/io5";
-import HeaderSearch from "./HeaderSearch";
 import appConfig from "@/appConfig";
 import ViewCart from "./ViewCart";
-import { FiShoppingBag, FiUser } from "react-icons/fi";
+import { FiShoppingBag } from "react-icons/fi";
+import dynamic from "next/dynamic";
+
+const HeaderSearch = dynamic(() => import("./HeaderSearch"), { ssr: false });
 
 export default function HeaderRight() {
   const [open, setOpen] = useState(false);

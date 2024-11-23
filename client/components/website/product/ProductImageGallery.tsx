@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
+import React, { useState } from "react";
 import appConfig from "@/appConfig";
 import Image from "next/image";
-import React, { useState } from "react";
 
 const ProductImageGallery = ({ images }: any) => {
   const [selectedImage, setSelectedImage] = useState(images ? images[0] : null);

@@ -1,18 +1,25 @@
-import WebFooter from "@/components/website/footer/Footer";
-import React from "react";
-import Category from "@/components/website/home/Category";
-import ProductCard from "@/components/website/product/ProductCard";
-import SellerAds from "@/components/website/home/SellerAds";
-import Discount from "@/components/website/home/Discount";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { getBanners } from "@/lib/apis/banner";
-import Slider from "@/components/website/banner/Slider";
 import { getFilterDiscounts } from "@/lib/apis/discount";
-import ProductFeatured from "@/components/website/product/ProductFeatured";
-import HeaderDiscount from "@/components/website/banner/HeaderDiscount";
-import MoreDiscover from "@/components/website/home/MoreDiscover";
-import TopSellingProductCard from "@/components/website/product/TopSellingProductCard";
-import Header from "@/components/website/header/Header";
+
+const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+const Category = dynamic(() => import("@/components/website/home/Category"));
+const SellerAds = dynamic(() => import("@/components/website/home/SellerAds"));
+const Slider = dynamic(() => import("@/components/website/banner/Slider"));
+const ProductFeatured = dynamic(
+  () => import("@/components/website/product/ProductFeatured")
+);
+const HeaderDiscount = dynamic(
+  () => import("@/components/website/banner/HeaderDiscount")
+);
+const TopSellingProductCard = dynamic(
+  () => import("@/components/website/product/TopSellingProductCard")
+);
+const MoreDiscover = dynamic(
+  () => import("@/components/website/home/MoreDiscover")
+);
+const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
   const banners = await getBanners();

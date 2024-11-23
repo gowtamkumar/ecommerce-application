@@ -1,5 +1,5 @@
-import React from "react";
-import Subscribe from "../footer/Subscribe";
+import dynamic from "next/dynamic";
+const Subscribe = dynamic(()=> import("../footer/Subscribe"))
 
 export default function FourWeight() {
   return (

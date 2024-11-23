@@ -1,8 +1,3 @@
-"use client";
-import { Button } from "antd";
-import Link from "next/link";
-import React from "react";
-
 export default function TopBar() {
   return (
     <div className="text-center bg-[#F6F6F6] p-1 font-mono">

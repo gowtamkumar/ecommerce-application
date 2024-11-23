@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Avatar, Button, Card, Table } from "antd";
+import {  Button, Card, Table } from "antd";
 
 const TopSellingProduct = ({ topSellingProduct }: any) => {
   const [tableParams, setTableParams] = useState({

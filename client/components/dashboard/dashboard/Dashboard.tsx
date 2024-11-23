@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, DatePicker, Spin, Statistic } from "antd";
@@ -12,12 +11,27 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
-import WidgetStats from "./components/WidgetStats";
-import StockReport from "./components/StockReport";
-import TopCustomer from "./components/TopCustomer";
-import StockAlert from "./components/StockAlert";
-import TopSellingProduct from "./components/TopSallingProduct";
+
+import dynamic from "next/dynamic";
 // import CountUp from "react-countup";
+const WidgetStats = dynamic(() => import("./components/WidgetStats"), {
+  ssr: false,
+});
+
+const StockReport = dynamic(() => import("./components/StockReport"), {
+  ssr: false,
+});
+const TopCustomer = dynamic(() => import("./components/TopCustomer"), {
+  ssr: false,
+});
+const StockAlert = dynamic(() => import("./components/StockAlert"), {
+  ssr: false,
+});
+
+const TopSellingProduct = dynamic(
+  () => import("./components/TopSallingProduct"),
+  { ssr: false }
+);
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
@@ -153,7 +167,7 @@ const Dashboard = () => {
                 valueStyle={{
                   color:
                     saleAmount >=
-                      purchaseAmount + +total_sale_return_shipping_amount
+                    purchaseAmount + +total_sale_return_shipping_amount
                       ? "green"
                       : "red",
                 }}

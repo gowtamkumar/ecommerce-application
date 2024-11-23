@@ -5,8 +5,16 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import UserList from "@/components/dashboard/user/UserList";
-import AddUser from "@/components/dashboard/user/AddUser";
+import dynamic from "next/dynamic";
+
+
+const UserList = dynamic(() => import("@/components/dashboard/user/UserList"), {
+  ssr: false,
+});
+
+const AddUser = dynamic(() => import("@/components/dashboard/user/AddUser"), {
+  ssr: false,
+});
 
 
 export default function User() {

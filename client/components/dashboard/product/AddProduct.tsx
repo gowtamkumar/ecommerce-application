@@ -18,7 +18,6 @@ import {
 } from "antd";
 import {
   selectGlobal,
-  setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -34,11 +33,7 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
-import { saveLead, updateLead } from "@/lib/apis/leads";
+import { errorNotification } from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -171,12 +166,10 @@ const AddProduct = ({
   //   }
   // };
 
-
-
   const handleSubmit = async () => {
-    const newData = await form.validateFields()
-  
-    delete newData.fileList
+    const newData = await form.validateFields();
+
+    delete newData.fileList;
 
     const result = newData.id
       ? () => updateProduct(newData)

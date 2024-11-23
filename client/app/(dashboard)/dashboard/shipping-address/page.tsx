@@ -7,10 +7,14 @@ import { Button, Tabs } from "antd";
 import { useDispatch } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
 
-const AddShippingAddress = dynamic(()=> import("@/components/dashboard/shipping-address/AddShippingAddress"), {ssr: false}) 
-const ShippingAddressList = dynamic(()=> import("@/components/dashboard/shipping-address/ShippingAddressList"), {ssr: false}) 
-
-
+const AddShippingAddress = dynamic(
+  () => import("@/components/dashboard/shipping-address/AddShippingAddress"),
+  { ssr: false }
+);
+const ShippingAddressList = dynamic(
+  () => import("@/components/dashboard/shipping-address/ShippingAddressList"),
+  { ssr: false }
+);
 
 export default function Page() {
   const [tabKey, setTabKey] = useState("shipping_address_list");

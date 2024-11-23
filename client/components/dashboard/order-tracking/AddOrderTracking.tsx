@@ -1,13 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +11,7 @@ import {
   saveOrderTracking,
   updateOrderTracking,
 } from "@/lib/apis/order-tracking";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddOrderTracking = () => {
   const global = useSelector(selectGlobal);
@@ -25,31 +22,22 @@ const AddOrderTracking = () => {
 
   useEffect(() => {
     const newData = { ...payload };
-    setFormData(newData);
+    form.setFieldsValue(newData);
     return () => {
-      dispatch(setFormValues({}));
       form.resetFields();
     };
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      dispatch(setLoading({ save: true }));
-      const result = newData.id
-        ? await updateOrderTracking(newData)
-        : await saveOrderTracking(newData);
-      setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-        toast.success(
-          `Order Tracking${newData?.id ? "Updated" : "Created"} Successfully`
-        );
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      toast.error(err);
-    }
+    const result = values.id
+      ? () => updateOrderTracking(values)
+      : () => saveOrderTracking(values);
+
+    const messageData = values.id
+      ? "Successfully Updated"
+      : "Successfully Added";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const handleClose = () => {
@@ -57,19 +45,11 @@ const AddOrderTracking = () => {
     dispatch(setLoading({}));
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
-  };
-
   const resetFormData = () => {
     if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+      form.setFieldsValue(payload);
     } else {
       form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
     }
   };
 
@@ -94,7 +74,6 @@ const AddOrderTracking = () => {
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
       >

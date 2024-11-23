@@ -5,8 +5,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import dynamic from "next/dynamic";
 
-import PostList from "@/components/dashboard/post/PostList";
+const PostList = dynamic(() => import("@/components/dashboard/post/PostList"));
 
 export default function Page() {
   const [tabKey, setTabKey] = useState("post_list");

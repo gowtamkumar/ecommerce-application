@@ -13,7 +13,6 @@ import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";

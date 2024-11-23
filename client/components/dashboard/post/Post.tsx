@@ -7,8 +7,8 @@ import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 import dynamic from "next/dynamic";
 
-const AddPost = dynamic(() => import('./AddPost'))
-const PostList = dynamic(() => import('./PostList'))
+const AddPost = dynamic(() => import('./AddPost'), {ssr: false})
+const PostList = dynamic(() => import('./PostList'),{ssr: false})
 
 
 export default function Post() {

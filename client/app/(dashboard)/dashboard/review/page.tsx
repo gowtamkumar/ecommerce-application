@@ -5,8 +5,16 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import AddReview from "@/components/dashboard/review/AddReview";
-import ReviewList from "@/components/dashboard/review/ReviewList";
+import dynamic from "next/dynamic";
+
+const AddReview = dynamic(
+  () => import("@/components/dashboard/review/AddReview"),
+  { ssr: false }
+);
+const ReviewList = dynamic(
+  () => import("@/components/dashboard/review/ReviewList"),
+  { ssr: false }
+);
 
 export default function Review() {
   const [tabKey, setTabKey] = useState("reviews_list");
@@ -31,7 +39,7 @@ export default function Review() {
             onClick={() =>
               dispatch(
                 setAction({
-                  review:true,
+                  review: true,
                   type: ActionType.CREATE,
                 })
               )

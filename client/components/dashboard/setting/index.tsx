@@ -1,32 +1,54 @@
 "use client";
 
-import { Tabs } from "antd";
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { Tabs } from "antd";
 import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
   setFormValues,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import EmailSetting from "./EmailSetting";
-import Post from "../post/Post";
-import Lead from "./lead/Lead";
-import Currency from "./currency/Currency";
-import CompanySetting from "./CompanySetting";
 import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/appConfig";
-import Size from "@/app/(dashboard)/dashboard/size/page";
-import Unit from "@/app/(dashboard)/dashboard/unit/page";
-import Tax from "@/app/(dashboard)/dashboard/taxs/page";
-import Discount from "@/app/(dashboard)/dashboard/discounts/page";
-import Color from "@/app/(dashboard)/dashboard/color/page";
-import Banner from "@/app/(dashboard)/dashboard/banner/page";
-import Review from "@/app/(dashboard)/dashboard/review/page";
-import Status from "@/app/(dashboard)/dashboard/status/page";
+
+const Size = dynamic(() => import("@/app/(dashboard)/dashboard/size/page"), {
+  ssr: false,
+});
+const Unit = dynamic(() => import("@/app/(dashboard)/dashboard/unit/page"), {
+  ssr: false,
+});
+const Tax = dynamic(() => import("@/app/(dashboard)/dashboard/taxs/page"), {
+  ssr: false,
+});
+const Discount = dynamic(
+  () => import("@/app/(dashboard)/dashboard/discounts/page"),
+  { ssr: false }
+);
+const Color = dynamic(() => import("@/app/(dashboard)/dashboard/color/page"), {
+  ssr: false,
+});
+const Banner = dynamic(
+  () => import("@/app/(dashboard)/dashboard/banner/page"),
+  { ssr: false }
+);
+const Review = dynamic(
+  () => import("@/app/(dashboard)/dashboard/review/page"),
+  { ssr: false }
+);
+const Status = dynamic(
+  () => import("@/app/(dashboard)/dashboard/status/page"),
+  { ssr: false }
+);
+const EmailSetting = dynamic(() => import("./EmailSetting"), { ssr: false });
+const Lead = dynamic(() => import("./lead/Lead"), { ssr: false });
+const Currency = dynamic(() => import("./currency/Currency"), { ssr: false });
+const CompanySetting = dynamic(() => import("./CompanySetting"), {
+  ssr: false,
+});
 
 export default function Index() {
   const [currencies, setCurrencies] = useState([] as any);
-  const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -34,7 +56,6 @@ export default function Index() {
     let isMounted = true;
     const fetchSettings = async () => {
       try {
-        setLoading(true);
         const setting = await getSettings();
         const currency = await getCurrencies();
         if (isMounted) {
@@ -48,10 +69,8 @@ export default function Index() {
           };
           dispatch(setFormValues({ ...data, fileList: [newfile] }));
           setCurrencies(currency.data);
-          setLoading(false);
         }
       } catch (error) {
-        setLoading(false);
         console.error("Failed to fetch settings:", error);
       }
     };

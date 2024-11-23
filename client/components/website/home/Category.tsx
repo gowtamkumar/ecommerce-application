@@ -1,8 +1,7 @@
 import { getPublicCategories } from "@/lib/apis/categories";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import SmallCard from "./SmallCard";
+import dynamic from "next/dynamic";
+
+const SmallCard = dynamic(() => import("./SmallCard"));
 
 export default async function Category() {
   const categories = await getPublicCategories();

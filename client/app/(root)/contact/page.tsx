@@ -1,8 +1,8 @@
-import ContactForm from "@/components/website/contact/ContactForm";
-import WebFooter from "@/components/website/footer/Footer";
-import Header from "@/components/website/header/Header";
-import { Card } from "antd";
-import React from "react";
+import dynamic from "next/dynamic";
+
+const Header = dynamic(() => import("@/components/website/header/Header"));
+const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+const ContactForm = dynamic(() => import("@/components/website/contact/ContactForm"));
 
 export default function page() {
   return (

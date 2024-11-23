@@ -5,8 +5,14 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
-import AddUnit from "@/components/dashboard/unit/AddUnit";
-import UnitList from "@/components/dashboard/unit/UnitList";
+import dynamic from "next/dynamic";
+
+const AddUnit = dynamic(() => import("@/components/dashboard/unit/AddUnit"), {
+  ssr: false,
+});
+const UnitList = dynamic(() => import("@/components/dashboard/unit/UnitList"), {
+  ssr: false,
+});
 
 export default function Unit() {
   const [tabKey, setTabKey] = useState("unit_list");

@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import appConfig from "@/appConfig";
 import Image from "next/image";
-import React from "react";
 
 export default function AuthorSection({ author }: any) {
   return (

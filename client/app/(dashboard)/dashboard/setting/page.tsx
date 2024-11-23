@@ -1,5 +1,8 @@
-import Setting from "@/components/dashboard/setting";
-import React from "react";
+import dynamic from "next/dynamic";
+
+const Setting = dynamic(
+  () => import("@/components/dashboard/setting"),
+);
 
 export default function page() {
   return <Setting />;

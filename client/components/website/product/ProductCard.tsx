@@ -5,10 +5,10 @@ import {
   selectProduct,
   setProducts,
 } from "@/redux/features/products/productSlice";
-import { Button, Rate } from "antd";
+import {  Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import {  useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";

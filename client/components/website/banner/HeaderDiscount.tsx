@@ -13,7 +13,6 @@ import { Button } from "antd";
 import { useDispatch } from "react-redux";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
-import { SwiperNavButtons } from "./SwiperNavButtons";
 import appConfig from "@/appConfig";
 
 export default function HeaderDiscount({ discounts }: any) {

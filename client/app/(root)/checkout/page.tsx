@@ -1,7 +1,8 @@
-import Header from "@/components/website/header/Header";
-import CheckoutPage from "@/components/website/checkout/CheckoutPage";
-import React from "react";
-import WebFooter from "@/components/website/footer/Footer";
+import dynamic from "next/dynamic";
+
+const Header = dynamic(() => import("@/components/website/header/Header"));
+const CheckoutPage = dynamic(() => import("@/components/website/checkout/CheckoutPage"));
+const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 
 export default function CheckOut() {
   return (

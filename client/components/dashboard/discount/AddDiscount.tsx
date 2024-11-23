@@ -19,7 +19,6 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveDiscount, updateDiscount } from "@/lib/apis/discount";
-
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddDiscount = () => {

@@ -1,13 +1,10 @@
 "use client";
-import React from "react";
 import { Button } from "antd";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Navigation,
   Pagination,
-  Scrollbar,
-  A11y,
   Autoplay,
 } from "swiper/modules";
 import Image from "next/image";

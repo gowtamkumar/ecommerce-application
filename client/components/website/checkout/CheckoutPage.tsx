@@ -13,7 +13,6 @@ import {
   setResponse,
 } from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
-import AddShippingAddress from "@/components/dashboard/shipping-address/AddShippingAddress";
 import { useEffect, useState } from "react";
 import { getMe } from "@/lib/apis/user";
 import Image from "next/image";
@@ -23,6 +22,12 @@ import dayjs from "dayjs";
 import { getSettings } from "@/lib/apis/setting";
 import { deleteCart, getCartByUser } from "@/lib/apis/cart";
 import appConfig from "@/appConfig";
+import dynamic from "next/dynamic";
+
+const AddShippingAddress = dynamic(
+  () => import("@/components/dashboard/shipping-address/AddShippingAddress"),
+  { ssr: false }
+);
 
 export default function CheckoutPage() {
   const [checkoutFormData, setCheckoutFormData] = useState({} as any);
@@ -40,36 +45,36 @@ export default function CheckoutPage() {
   // const router = useRouter();
 
   useEffect(() => {
-    async function fetchData() {
-      const settingResult = await getSettings();
-      const res = await getCartByUser();
-      setSetting(settingResult.data?.length ? settingResult.data[0] : {});
-      setCarts(res.data);
-      const user = await getMe();
-      const activeShippingAddress = user.data?.shippingAddress?.find(
-        (item: { status: boolean }) => item.status
-      );
-      if (activeShippingAddress?.divisionId) {
-        const getShippingCharge = await getShippingCharges({
-          divisionId: activeShippingAddress.divisionId,
-        });
-        setShippingCharge(
-          getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
-        );
-      }
-
-      setShippingAddress(user.data?.shippingAddress);
-      setCheckoutFormData({
-        paymentMethod: "Cash",
-        shippingAddressId: activeShippingAddress?.id, //need to logic implements
-      });
-    }
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
       setShippingCharge({});
     };
-  }, [dispatch]);
+  }, []);
+
+  async function fetchData() {
+    const settingResult = await getSettings();
+    const res = await getCartByUser();
+    setSetting(settingResult.data?.length ? settingResult.data[0] : {});
+    setCarts(res.data);
+    const user = await getMe();
+    const activeShippingAddress = user.data?.shippingAddress?.find(
+      (item: { status: boolean }) => item.status
+    );
+    if (activeShippingAddress?.divisionId) {
+      const getShippingCharge = await getShippingCharges({
+        divisionId: activeShippingAddress.divisionId,
+      });
+      setShippingCharge(
+        getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
+      );
+    }
+    setShippingAddress(user.data?.shippingAddress);
+    setCheckoutFormData({
+      paymentMethod: "Cash",
+      shippingAddressId: activeShippingAddress?.id, //need to logic implements
+    });
+  }
 
   const { netAmount, taxAmount, orderTotalAmount, discountAmount } =
     carts?.reduce(
@@ -131,7 +136,6 @@ export default function CheckoutPage() {
       const res = await saveOrder(validatedFields.data);
 
       if (res.message?.formErrors) {
-        console.log("🚀 ~ res:", res.message.formErrors);
         dispatch(setLoading({ save: false }));
         return;
       }
@@ -154,9 +158,7 @@ export default function CheckoutPage() {
         setShippingAddress([]);
         setShippingCharge({});
       }, 1000);
-    } catch (err: any) {
-      console.log("🚀 ~ err:", err);
-    }
+    } catch (err: any) {}
   };
 
   const findAddress = shippingAddress?.find(
@@ -185,25 +187,6 @@ export default function CheckoutPage() {
       return item;
     });
     setCarts(data);
-
-    // const existingProductIndex = carts.findIndex(
-    //   (item: any) => item.id === value.id
-    // );
-
-    // if (existingProductIndex !== -1) {
-    //   carts[existingProductIndex].qty++;
-    // }
-
-    // try {
-    //   dispatch(setLoading({ remove: true }));
-    //   dispatch(removeCart(value));
-
-    //   setTimeout(async () => {
-    //     dispatch(setLoading({ remove: false }));
-    //   }, 1000);
-    // } catch (err) {
-    //   console.log("err");
-    // }
   }
 
   function decrementCart(value: { id: number }) {

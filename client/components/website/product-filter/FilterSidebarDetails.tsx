@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import {
   selectGlobal,
   setProductFilter,
@@ -8,12 +9,10 @@ import {
   Checkbox,
   Divider,
   InputNumber,
-  Rate,
   Slider,
   SliderSingleProps,
   Space,
 } from "antd";
-import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Category {

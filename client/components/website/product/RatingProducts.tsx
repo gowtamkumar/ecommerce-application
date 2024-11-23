@@ -1,12 +1,7 @@
-import { ActionType } from "@/constants/constants";
-import { setProductRating } from "@/redux/features/global/globalSlice";
-import { Button, Divider, Rate } from "antd";
-import React from "react";
+import { Divider, Rate } from "antd";
 import { useDispatch } from "react-redux";
-import NewReview from "./review-rating/NewReview";
 
 const RatingProduct = ({ product, productRating }: any) => {
-  const dispatch = useDispatch();
   const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
     productRating;
   return (

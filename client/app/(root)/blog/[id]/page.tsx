@@ -1,14 +1,32 @@
-import AuthorSection from "@/components/website/blog/AuthorSection";
-import CommentSection from "@/components/website/blog/CommentSection";
-import PostCategory from "@/components/website/blog/PostCategorySection";
-import PostSearchSection from "@/components/website/blog/PostSearchSection";
-import PostTagSection from "@/components/website/blog/PostTagSection";
-import RecentPostSection from "@/components/website/blog/RecentPostSection";
-import Subscribe from "@/components/website/footer/Subscribe";
 import appConfig from "@/appConfig";
 import { getPost } from "@/lib/apis/posts";
 import dayjs from "dayjs";
-import React from "react";
+import dynamic from "next/dynamic";
+
+const Subscribe = dynamic(
+  () => import("@/components/website/footer/Subscribe")
+);
+const PostTagSection = dynamic(
+  () => import("@/components/website/blog/PostTagSection")
+);
+const RecentPostSection = dynamic(
+  () => import("@/components/website/blog/RecentPostSection")
+);
+
+const PostSearchSection = dynamic(
+  () => import("@/components/website/blog/PostSearchSection")
+);
+
+const PostCategory = dynamic(
+  () => import("@/components/website/blog/PostCategorySection")
+);
+const CommentSection = dynamic(
+  () => import("@/components/website/blog/CommentSection")
+);
+
+const AuthorSection = dynamic(
+  () => import("@/components/website/blog/AuthorSection")
+);
 
 export default async function page({ params }: { params: { id: string } }) {
   const { data: post } = await getPost(params);
@@ -17,8 +35,9 @@ export default async function page({ params }: { params: { id: string } }) {
       <div
         className="bg-cover bg-center h-64"
         style={{
-          backgroundImage: `url('${appConfig.apiUrl}/uploads/${post?.image || "no-data.png"
-            }')`,
+          backgroundImage: `url('${appConfig.apiUrl}/uploads/${
+            post?.image || "no-data.png"
+          }')`,
         }}
       >
         <div className="flex items-center justify-center h-full bg-gray-900 bg-opacity-50">

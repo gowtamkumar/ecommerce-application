@@ -1,6 +1,5 @@
 import appConfig from '@/appConfig'
 import Image from 'next/image'
-import React from 'react'
 
 export default function TestImage({ image }: { image: string }) {
   

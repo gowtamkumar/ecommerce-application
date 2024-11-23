@@ -1,17 +1,8 @@
 "use client";
 import { getPublicProducts } from "@/lib/apis/product";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
-import {
-  selectProduct,
-  setProducts,
-} from "@/redux/features/products/productSlice";
-import { Rate } from "antd";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   A11y,
@@ -20,17 +11,11 @@ import {
   Pagination,
   Scrollbar,
 } from "swiper/modules";
-import { SwiperNavButtons } from "../banner/SwiperNavButtons";
-import appConfig from "@/appConfig";
 import Card from "@/components/Card";
 // import { GlobalState, Product, ProductVariant, Review } from "@/types"; // Import appropriate types from your types file
 
 const ProductFeatured = () => {
   const [products, setProducts] = useState([]);
-  const global = useSelector(selectGlobal);
-  // const { products } = useSelector(selectProduct);
-  // const dispatch = useDispatch<AppDispatch>();
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -60,7 +45,7 @@ const ProductFeatured = () => {
           slidesPerView: 5,
         },
       }}
-      pagination={{ clickable: true, dynamicBullets: true }}
+      pagination
     >
       {products?.map((item: any) => (
         <SwiperSlide key={item.id}>
@@ -68,7 +53,6 @@ const ProductFeatured = () => {
           {/* <ProductItem item={item} /> */}
         </SwiperSlide>
       ))}
-      <SwiperNavButtons />
     </Swiper>
   );
 };

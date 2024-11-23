@@ -1,14 +1,11 @@
 import { Alert, Button, Divider, Form, Input } from "antd";
-import React, { useEffect, useState } from "react";
-
-import { toast } from "react-toastify";
+import React, {useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
   setLoading,
   setResponse,
 } from "@/redux/features/global/globalSlice";
-
 import { updatePassword } from "@/lib/apis/user";
 
 export default function ChangePassword() {
@@ -16,6 +13,8 @@ export default function ChangePassword() {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
+
+  
 
   const handleSubmit = async (values: any) => {
     try {

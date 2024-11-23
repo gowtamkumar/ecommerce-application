@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
-import React from "react";
 
 export default function CommentSection() {
   return (

@@ -16,13 +16,17 @@ import { CiLocationOn } from "react-icons/ci";
 import { useDispatch } from "react-redux";
 import { setProductRating } from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
-import NewReview from "../product/review-rating/NewReview";
+import dynamic from "next/dynamic";
+
+const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
+  ssr: false,
+});
 
 export default function OrderTracker({ orders }: any) {
   const [order, setOrder] = useState({} as any);
   const [tracker, setTracker] = useState({} as { trackingNo: string });
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [form] = Form.useForm();
 
@@ -175,7 +179,6 @@ export default function OrderTracker({ orders }: any) {
                   size="small"
                   // disabled={!product.enableReview}
                   onClick={() =>
-
                     dispatch(
                       setProductRating({
                         type: ActionType.CREATE,

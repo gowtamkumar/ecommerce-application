@@ -1,6 +1,4 @@
-// src/components/DeliveryInfo.js
 import { Divider } from "antd";
-import React from "react";
 
 const DeliveryInfo = ({ delivery }: any) => {
   return (

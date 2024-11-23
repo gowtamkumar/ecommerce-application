@@ -1,8 +1,6 @@
-// src/components/ProductActions.js
-import { decrementCart, incrementCart } from "@/redux/features/cart/cartSlice";
 import { Button, Input } from "antd";
-import React from "react";
 import { useDispatch } from "react-redux";
+import { decrementCart, incrementCart } from "@/redux/features/cart/cartSlice";
 
 const ProductActions = ({ product, setProduct }: any) => {
   const dispatch = useDispatch();

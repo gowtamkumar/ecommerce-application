@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { getSettings } from "@/lib/apis/setting";
 import Link from "next/link";
 import {
@@ -6,10 +7,10 @@ import {
   FaLinkedinIn,
   FaTwitter,
 } from "react-icons/fa";
-import FourWeight from "../weight/FourWeight";
-import ThirdWeight from "../weight/ThirdWeight";
-import SecondWeight from "../weight/SecondWeight";
-import FirstWeight from "../weight/FirstWeight";
+const FourWeight = dynamic(() => import("../weight/FourWeight"));
+const ThirdWeight = dynamic(() => import("../weight/ThirdWeight"));
+const SecondWeight = dynamic(() => import("../weight/SecondWeight"));
+const FirstWeight = dynamic(() => import("../weight/FirstWeight"));
 
 export default async function WebFooter() {
   const setting = await getSettings();
