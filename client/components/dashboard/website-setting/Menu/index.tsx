@@ -1,16 +1,13 @@
-import React from "react";
-import { Form, Card, Input, Button, Space, Typography } from "antd";
+import { Form, Card, Input, Button, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { saveMenu } from "@/lib/apis/menu";
 
 const Index = () => {
   const [form] = Form.useForm();
-  const handelMenu=async(value: any)=> {
-  // console.log("🚀 ~ value:", value.items[0])
-  const menu = await saveMenu(value.items[0])
-  console.log("🚀 ~ menu:", menu)
-
-  }
+  const handelMenu = async (value: any) => {
+    const menu = await saveMenu(value.items[0]);
+    console.log("🚀 ~ menu:", menu);
+  };
 
   const NestedList = ({ parentField }: any) => (
     <Form.Item label="List">
@@ -33,10 +30,28 @@ const Index = () => {
                 }}
               >
                 <div className="flex gap-2">
-                  <Form.Item noStyle name={[subField.name, "label"]}>
+                  <Form.Item
+                    noStyle
+                    name={[subField.name, "label"]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "label is required",
+                      },
+                    ]}
+                  >
                     <Input placeholder="Label" />
                   </Form.Item>
-                  <Form.Item noStyle name={[subField.name, "url"]}>
+                  <Form.Item
+                    noStyle
+                    name={[subField.name, "url"]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Url is required",
+                      },
+                    ]}
+                  >
                     <Input placeholder="URL" />
                   </Form.Item>
                   <CloseOutlined
@@ -91,7 +106,16 @@ const Index = () => {
                   />
                 }
               >
-                <Form.Item label="Name" name={[field.name, "name"]}>
+                <Form.Item
+                  label="Name"
+                  name={[field.name, "name"]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Name is required",
+                    },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
                 {/* Recursive nested list */}
@@ -104,18 +128,16 @@ const Index = () => {
             </Button> */}
           </div>
         )}
-
       </Form.List>
 
       <Button
         size="small"
         color="primary"
         htmlType="submit"
-        className="capitalize"
+
       >
         Save
       </Button>
-
 
       <Form.Item shouldUpdate>
         {() => (
@@ -124,8 +146,6 @@ const Index = () => {
           </Typography>
         )}
       </Form.Item>
-
-
     </Form>
   );
 };

@@ -1,72 +1,108 @@
 "use client";
+import React, { useEffect } from "react";
 import { Tabs } from "antd";
-import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
   setFormValues,
+  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import SocialLink from "./SocialLink";
-import HeaderOption from "./HeaderOption";
-import FooterOption from "./FooterOption";
-import HomePage from "./HomePage";
-import AboutPage from "./AboutPage";
-import TermPolicyPage from "./TermPolicyPage";
-import ContactPage from "./ContactPage";
-import HelpSupport from "./HelpSupport";
-import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/appConfig";
-import Menu from "./Menu";
+import { errorNotification } from "@/lib/utils/notification";
+
+
+const Menu = dynamic(() => import("./Menu"), { ssr: false })
+const HomePage = dynamic(() => import("./HomePage"), { ssr: false })
+const AboutPage = dynamic(() => import("./AboutPage"), { ssr: false })
+const ContactPage = dynamic(() => import("./ContactPage"), { ssr: false })
+const TermPolicyPage = dynamic(() => import("./TermPolicyPage"), { ssr: false })
+const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false })
+const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false })
+const SocialLink = dynamic(() => import("./SocialLink"), { ssr: false })
+const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false })
 
 export default function Index() {
-  const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
+
+
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   const fetchSettings = async () => {
+
+  //     try {
+  //       setLoading(true)
+  //       const setting = await getSettings();
+
+  //       if (isMounted) {
+  //         const newData = setting.data?.length ? setting.data[0] : {};
+  //         if (newData.image) {
+  //           const newfile = {
+  //             uid: Math.random() * 1000 + "",
+  //             name: `logo ${Math.random() * 10000 + ""}`,
+  //             status: "done",
+  //             fileName: newData.image,
+  //             url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+  //               }`,
+  //           };
+  //           newData.fileList = [newfile];
+  //         }
+
+  //         dispatch(setFormValues(newData));
+  //       }
+
+  //       setLoading(false)
+  //     } catch (error) {
+  //       setLoading(false)
+  //       console.error("Failed to fetch settings:", error);
+  //     }
+  //   };
+
+  //   fetchSettings();
+  //   return () => {
+  //     isMounted = false;
+  //     dispatch(setFormValues({}));
+  //   };
+  // }, [dispatch, global.action]);
+
   useEffect(() => {
-    let isMounted = true;
-    const fetchSettings = async () => {
+    fetchData();
+  }, [global.action]);
 
-      try {
-        setLoading(true)
-        const setting = await getSettings();
 
-        if (isMounted) {
-          const newData = setting.data?.length ? setting.data[0] : {};
-          if (newData.image) {
-            const newfile = {
-              uid: Math.random() * 1000 + "",
-              name: `logo ${Math.random() * 10000 + ""}`,
-              status: "done",
-              fileName: newData.image,
-              url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
-                }`,
-            };
-            newData.fileList = [newfile];
-          }
+  const fetchData = async () => {
+    dispatch(setLoading({ loading: true }));
+    try {
+      const setting = await getSettings();
 
-          dispatch(setFormValues(newData));
-        }
-
-        setLoading(false)
-      } catch (error) {
-        setLoading(false)
-        console.error("Failed to fetch settings:", error);
+      const newData = setting.data?.length ? setting.data[0] : {};
+      if (newData?.image) {
+        const newfile = {
+          uid: Math.random() * 1000 + "",
+          name: `logo ${Math.random() * 10000 + ""}`,
+          status: "done",
+          fileName: newData.image,
+          url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+            }`,
+        };
+        newData.fileList = [newfile];
       }
-    };
 
-    fetchSettings();
-    return () => {
-      isMounted = false;
-      dispatch(setFormValues({}));
-    };
-  }, [dispatch, global.action]);
+      dispatch(setFormValues(newData));
+    } catch (err: any) {
+      errorNotification({ message: err.message });
+    } finally {
+      dispatch(setLoading({ loading: false }));
+    }
+  };
 
   return (
     <Tabs
       tabPosition="left"
-      defaultValue={"web_site_stting"}
+      defaultValue="web_site_stting"
       type="card"
       items={[
         {
