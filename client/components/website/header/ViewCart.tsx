@@ -1,12 +1,23 @@
+"use client";
+import { removeCart, selectCart } from "@/redux/features/cart/cartSlice";
+import { Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { TiDeleteOutline } from "react-icons/ti";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ViewCart() {
+  const cart = useSelector(selectCart);
+  const dispatch = useDispatch();
+
+  const handleRemove = (item: any) => {
+    dispatch(removeCart(item));
+  };
+  let total = 0;
   return (
     <div className="absolute w-96 z-10 right-0 mt-3 p-4 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-2 transform transition-all duration-300 ease-in-out">
       <div className="flex flex-col w-96 h-[50vh] gap-6 overflow-y-scroll">
-        {[{}, {}, {}, {}, {}, {}].map((item, idx) => (
+        {(cart.carts || []).map((item: any, idx: number) => (
           <div
             className="text-black flex gap-4 justify-between py-3 border-b"
             key={idx}
@@ -33,6 +44,7 @@ export default function ViewCart() {
                 <TiDeleteOutline
                   size={22}
                   className="cursor-pointer text-gray-500"
+                  onClick={() => handleRemove(item)}
                 />
               </div>
             </div>
@@ -42,17 +54,18 @@ export default function ViewCart() {
 
       <div className="flex justify-between py-4">
         <p className="text-bioxin-p">Subtotal:</p>
-        <p className="font-bold text-2xl">৳ 850.00</p>
+        <p className="font-bold text-2xl">৳ {(+total).toFixed(2)}</p>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <button className="btn-primary-bioxin w-full">
-          <Link href="/cart">View Cart</Link>
-        </button>
 
-        <button className="btn-primary-bioxin w-full">
+      <div className="flex flex-col gap-2">
+        <Button className=" w-full">
+          <Link href="/cart">View Cart</Link>
+        </Button>
+
+        <Button className=" w-full">
           <Link href="/checkout">Checkout</Link>
-        </button>
+        </Button>
       </div>
     </div>
   );
