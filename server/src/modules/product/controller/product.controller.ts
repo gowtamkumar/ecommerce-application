@@ -222,6 +222,7 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       issues: formattedErrors,
     });
   }
+  
 
   const { productVariants, productCategories, ...restData } = validation.data;
 
@@ -258,6 +259,7 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     }));
     promises.push(productCategoryRepository.save(productCategoryEntities));
   }
+
 
   // Execute all promises concurrently
   await Promise.all(promises);

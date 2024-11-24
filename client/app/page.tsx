@@ -37,7 +37,6 @@ export default async function Home() {
                 )}
               />
             </div>
-
             <div className="md:col-span-3 bg-black">
               <HeaderDiscount discounts={discounts} />
             </div>
@@ -54,9 +53,6 @@ export default async function Home() {
           <Category />
         </section>
 
-        {/* <section className="py-5 bg-[#F6F6F6]">
-          <SellerAds />
-        </section> */}
         {/* Popular products */}
         <section className="md:py-5 p-3 md:w-8/12 mx-auto">
           <div className="flex justify-between">
@@ -66,7 +62,6 @@ export default async function Home() {
             </Link>
           </div>
           <TopSellingProductCard />
-          {/* <ProductCard /> */}
         </section>
 
         {/* product banner */}

@@ -10,6 +10,8 @@ import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
 import { getProductVariant } from "@/lib/apis/product-variant";
 import { saveCart } from "@/lib/apis/cart";
+import AddToCartButton from "@/components/AddToCartButton";
+import { decrementCart, incrementCart } from "@/redux/features/cart/cartSlice";
 
 const ProductDetails = ({
   product,
@@ -26,27 +28,36 @@ const ProductDetails = ({
   const price = product.selectProductVariant?.price;
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
-  const addToCart = async (value: any) => {
-    const newData = {
-      productId: value.id,
-      productVariantId: value.selectProductVariant.id,
-      qty: product.qty,
-    };
-    const result = await saveCart(newData);
-  };
+  // const addToCart = async (value: any) => {
+  //   const newData = {
+  //     productId: value.id,
+  //     productVariantId: value.selectProductVariant.id,
+  //     qty: product.qty,
+  //   };
+  //   const result = await saveCart(newData);
+  // };
 
-  async function incrementToCart(product: any) {
-    setProduct({
-      ...product,
-      qty: product.qty + 1,
-    });
+  // async function incrementToCart(product: any) {
+  //   setProduct({
+  //     ...product,
+  //     qty: product.qty + 1,
+  //   });
+  // }
+
+  // async function decrementToCart(product: any) {
+  //   setProduct({
+  //     ...product,
+  //     qty: product.qty - 1,
+  //   });
+  // }
+
+
+  function handleIncrementCart(item: any) {
+    dispatch(incrementCart(item));
   }
 
-  async function decrementToCart(product: any) {
-    setProduct({
-      ...product,
-      qty: product.qty - 1,
-    });
+  function handleDecrementCart(item: any) {
+    dispatch(decrementCart(item));
   }
 
   async function AddToWishlist(productId: number) {
@@ -205,7 +216,7 @@ const ProductDetails = ({
       <div className="w-60 flex items-center mb-4">
         <span className="text-gray-600">Quantity: </span>
         <Button
-          onClick={() => decrementToCart(product)}
+          onClick={() => handleDecrementCart(product)}
           disabled={product.qty <= 1}
           className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300 focus:outline-none"
         >
@@ -219,7 +230,7 @@ const ProductDetails = ({
           className="w-12 text-center border-t border-b border-gray-300"
         />
         <Button
-          onClick={() => incrementToCart(product)}
+          onClick={() => handleIncrementCart(product)}
           className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300 focus:outline-none"
           disabled={stockCheckingAndPurchaseLimit(product, checkStock)}
         >
@@ -229,7 +240,9 @@ const ProductDetails = ({
 
       <Divider />
       <div className="flex gap-x-5">
-        <Button
+        <AddToCartButton item={product} />
+
+        {/* <Button
           type="primary"
           size="large"
           onClick={() => {
@@ -243,10 +256,9 @@ const ProductDetails = ({
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Add to Cart
-        </Button>
+        </Button> */}
 
         <Button
-          size="large"
           type="default"
           onClick={() => {
             if (session.status === "unauthenticated") {

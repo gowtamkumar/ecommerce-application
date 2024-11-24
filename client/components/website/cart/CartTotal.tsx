@@ -1,5 +1,21 @@
+import { selectCart } from "@/redux/features/cart/cartSlice";
+import { useSelector } from "react-redux";
 
 export default function CartTotal() {
+  const cart = useSelector(selectCart);
+
+  const { total, totalQty } = cart.carts?.reduce(
+    (pre: any, curr: any) => {
+      return {
+        total: +pre.total + (+curr.price || 0) * (+curr.qty || 0),
+        totalQty: +pre.totalQty + +curr.qty,
+      };
+    },
+    {
+      total: 0,
+      totalQty: 0,
+    }
+  );
   return (
     <div className="md:flex justify-between py-20">
       <div className="md:w-1/2"></div>

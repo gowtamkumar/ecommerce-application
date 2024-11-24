@@ -122,28 +122,7 @@ export default function SingleProduct() {
   }
 
   return (
-    <div className="md:py-5 p-2 md:w-8/12 mx-auto">
-      {/* <div className="py-2">
-        <Breadcrumb
-          separator=">"
-          items={[
-            {
-              title: "Home",
-            },
-            {
-              title: "Application Center",
-              href: "",
-            },
-            {Rate this product
-              title: "Application List",
-              href: "",
-            },
-            {
-              title: "An Application",
-            },
-          ]}
-        />
-      </div> */}
+    <div className="container md:py-5 p-2 mx-auto">
       <div className="bg-white grid grid-cols-1 md:grid-cols-4 pt-4">
         <div className="col-span-1">
           <ProductImageGallery images={product.images} />

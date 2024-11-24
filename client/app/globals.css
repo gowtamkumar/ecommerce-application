@@ -29,6 +29,8 @@ body {
 .page-title {
   @apply text-global-size-h1 p-0 m-0 font-bold leading-[80px];
 }
+
+
 /* @apply mobile-landscape:text-3xl; Mobile landscape 
 @apply md:text-4xl;  Tablet 
 @apply lg:text-5xl;  Laptop 
@@ -43,6 +45,10 @@ body {
 .global-btn-primary {
   @apply bg-[#000000] text-white text-global-size-p font-semibold py-3 px-4 rounded hover:bg-global-primary;
 }
+
+/* .antd-btn {
+  @apply hover:!bg-red !text-2xl !bg-black !text-white !border-none self-end !py-6 font-bold;
+} */
 
 .card-title {
   @apply text-global-size-h5 p-0 m-0 font-semibold leading-[38px];

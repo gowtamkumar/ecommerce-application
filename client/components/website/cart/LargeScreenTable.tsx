@@ -1,7 +1,29 @@
+import {
+  decrementCart,
+  incrementCart,
+  removeCart,
+  selectCart,
+} from "@/redux/features/cart/cartSlice";
 import Image from "next/image";
 import { TiDeleteOutline } from "react-icons/ti";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function LeargeScreenTable() {
+  const cart = useSelector(selectCart);
+  const dispatch = useDispatch();
+
+  const handleRemove = (item: any) => {
+    dispatch(removeCart(item));
+  };
+
+  function handleIncrementCart(item: any) {
+    dispatch(incrementCart(item));
+  }
+
+  function handleDecrementCart(item: any) {
+    dispatch(decrementCart(item));
+  }
+
   return (
     <div className="md:flex md:visible hidden">
       <table className="w-full border-collapse border border-gray-200 ">
@@ -21,14 +43,17 @@ export default function LeargeScreenTable() {
         </thead>
         <tbody>
           {/* Example Item 1 */}
-          {[{}, {}, {}, {},  {}].map((item, idx) => (
+          {(cart.carts || []).map((item: any, idx: number) => (
             <tr
               key={idx}
               className={`${idx % 2 === 0 ? " bg-white" : "bg-bioxin-accent"}`}
             >
               <td className="border border-gray-200 p-2 flex items-center">
                 <div className="flex items-center gap-2">
-                  <TiDeleteOutline size={22} className="cursor-pointer text-gray-500" />
+                  <TiDeleteOutline
+                    size={22}
+                    className="cursor-pointer text-gray-500"
+                  />
                   <Image
                     src="/logo.png"
                     alt="logo"
@@ -46,11 +71,18 @@ export default function LeargeScreenTable() {
               </td>
               <td className="border border-gray-200 p-2 text-center">
                 <div className="flex items-center justify-center space-x-2">
-                  <button className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded">
+                  <button
+                    className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                    onClick={() => handleDecrementCart(item)}
+                    disabled={item.qty <= 1}
+                  >
                     -
                   </button>
                   <span>1</span>
-                  <button className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded">
+                  <button
+                    className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                    onClick={() => handleIncrementCart(item)}
+                  >
                     +
                   </button>
                 </div>
@@ -60,8 +92,6 @@ export default function LeargeScreenTable() {
               </td>
             </tr>
           ))}
-
-
         </tbody>
       </table>
     </div>

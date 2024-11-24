@@ -114,6 +114,7 @@ const AddProduct = ({
         setProduct({ ...newData, productCategories });
         setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
         setFormValues(newData);
+        form.resetFields();
       } else {
         form.resetFields();
         setTags([]);

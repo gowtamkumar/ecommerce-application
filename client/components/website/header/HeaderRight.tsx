@@ -17,6 +17,10 @@ export default function HeaderRight() {
   const session = useSession();
   const profileImage = session.data?.user?.image;
 
+  // useEffect(() => {
+  //   setClientCartCount(cart.carts.length || 0); dehidration problem solved if use useEffect
+  // }, [cart.carts]);
+
   return (
     <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">
       <CiSearch

@@ -3,6 +3,7 @@ import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { FaRegHeart } from "react-icons/fa";
+import AddToCartButton from "./AddToCartButton";
 interface CardItems {
   name: string;
   thumbnail: string;
@@ -35,18 +36,18 @@ export default function Card({ item }: { item: CardItems }) {
     (acc: number, variant: any) => acc + +variant.stockQty,
     0
   );
+
   return (
     <>
       <div className="relative group">
-        <Link href={`/product/${item.id}`}>
+        <Link href={`/products/${item.id}`}>
           <Image
             src={
               item.images
                 ? `${appConfig.apiUrl}/uploads/${item.images[0]}`
                 : "/pos_software.png"
             }
-            alt={item.name}
-            loading="lazy"
+            alt={item.name || "dd"}
             width={800}
             height={800}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -59,8 +60,7 @@ export default function Card({ item }: { item: CardItems }) {
                   ? `${appConfig.apiUrl}/uploads/${item.images[0]}`
                   : "/pos_software.png"
               }
-              alt={item.name}
-              loading="lazy"
+              alt={item.name || "dd"}
               width={800}
               height={800}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -74,7 +74,9 @@ export default function Card({ item }: { item: CardItems }) {
       </div>
 
       <div className="p-2 text-sm">
-        <h3 className="font-semibold text-sm mb-2">{item.name.slice(0, 50)}</h3>
+        <h3 className="font-semibold text-sm mb-2">
+          <Link href={`/products/${item.id}`}>{item.name.slice(0, 50)}</Link>
+        </h3>
         <span className="flex gap-1 items-center">
           <Rate disabled value={productRating || 0} />({reviewsCount})
         </span>
@@ -106,6 +108,8 @@ export default function Card({ item }: { item: CardItems }) {
           </div>
         )}
       </div>
+
+      <AddToCartButton item={item} />
     </>
   );
 }
