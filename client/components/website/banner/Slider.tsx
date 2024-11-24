@@ -70,7 +70,6 @@ export default function Slider({ banners }: any) {
           </SwiperSlide>
         )
       )}
-      {/* <SwiperNavButtons /> */}
     </Swiper>
   );
 }
