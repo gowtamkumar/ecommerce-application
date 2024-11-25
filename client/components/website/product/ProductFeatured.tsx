@@ -47,7 +47,6 @@ const ProductFeatured = () => {
       {products?.map((item: any) => (
         <SwiperSlide key={item.id}>
           <Card item={item} />
-          {/* <ProductItem item={item} /> */}
         </SwiperSlide>
       ))}
     </Swiper>
@@ -126,7 +125,7 @@ const ProductFeatured = () => {
 //             <Rate disabled value={productRating || 0} />({reviewsCount})
 //           </span>
 //         </div>
-//       </Link> 
+//       </Link>
 //     </div>
 //   );
 // };

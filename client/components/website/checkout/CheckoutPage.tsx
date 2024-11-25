@@ -458,6 +458,7 @@ export default function CheckoutPage() {
                     const activeShippingAddress = shippingAddress?.find(
                       (item: { id: number }) => item.id === target.value
                     );
+                    
                     if (activeShippingAddress.divisionId) {
                       const getShippingCharge = await getShippingCharges({
                         divisionId: activeShippingAddress.divisionId,
@@ -471,6 +472,7 @@ export default function CheckoutPage() {
                   }}
                   value={checkoutFormData?.shippingAddressId}
                 >
+
                   {shippingAddress?.map(
                     (
                       item: { id: number; type: string; status: boolean },

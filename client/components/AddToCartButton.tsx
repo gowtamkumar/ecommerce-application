@@ -4,6 +4,7 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "@/redux/features/cart/cartSlice";
+import { FaCheckCircle } from "react-icons/fa";
 
 export default function AddToCartButton({ item }: any) {
   const global = useSelector(selectGlobal);
@@ -28,14 +29,22 @@ export default function AddToCartButton({ item }: any) {
   }
 
   return (
-    <Button
-      // className="antd-btn"
-      onClick={() => addToCart(item)}
-      style={{ fontFamily: "unset" }}
-      disabled={global.loading.productId === item.id}
-      loading={global.loading.productId === item.id}
-    >
-      Add To Cart
-    </Button>
+    <>
+      {global.loading.productId === item.id && (
+        <div className="flex gap-1 justify-center py-2">
+          <FaCheckCircle size={22} /> Added to cart
+        </div>
+      )}
+
+      <Button
+        className="w-full"
+        onClick={() => addToCart(item)}
+        style={{ fontFamily: "unset" }}
+        disabled={global.loading.productId === item.id}
+        loading={global.loading.productId === item.id}
+      >
+        Add To Cart
+      </Button>
+    </>
   );
 }

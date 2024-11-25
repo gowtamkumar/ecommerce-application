@@ -37,8 +37,10 @@ export default function Card({ item }: { item: CardItems }) {
     0
   );
 
+  
+
   return (
-    <>
+    <div className="border p-5">
       <div className="relative group">
         <Link href={`/products/${item.id}`}>
           <Image
@@ -110,6 +112,6 @@ export default function Card({ item }: { item: CardItems }) {
       </div>
 
       <AddToCartButton item={item} />
-    </>
+    </div>
   );
 }

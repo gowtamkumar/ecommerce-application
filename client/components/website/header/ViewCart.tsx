@@ -19,7 +19,8 @@ export default function ViewCart() {
     <div className="absolute w-96 z-10 right-0 mt-3 p-4 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-2 transform transition-all duration-300 ease-in-out">
       <div className="flex flex-col w-96 h-[50vh] gap-6 overflow-y-scroll">
         {(cart.carts || []).map((item: any, idx: number) => {
-          total += item.
+          console.log("🚀 ~ item:", item)
+          total += item.price
           return (
             <div
               className="text-black flex gap-4 justify-between py-3 border-b"

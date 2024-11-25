@@ -3,23 +3,29 @@ import { userProfileRoute } from "@/NavBarRoute";
 import { Avatar, Badge, Dropdown, Modal } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiSearch, CiHeart } from "react-icons/ci";
 import appConfig from "@/appConfig";
 import ViewCart from "./ViewCart";
 import { FiShoppingBag } from "react-icons/fi";
 import dynamic from "next/dynamic";
+import { selectCart } from "@/redux/features/cart/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const HeaderSearch = dynamic(() => import("./HeaderSearch"), { ssr: false });
 
 export default function HeaderRight() {
   const [open, setOpen] = useState(false);
+  const [clientCartCount, setClientCartCount] = useState();
+
+  const cart = useSelector(selectCart);
+
   const session = useSession();
   const profileImage = session.data?.user?.image;
 
-  // useEffect(() => {
-  //   setClientCartCount(cart.carts.length || 0); dehidration problem solved if use useEffect
-  // }, [cart.carts]);
+  useEffect(() => {
+    setClientCartCount(cart.carts.length || 0);
+  }, [cart.carts]);
 
   return (
     <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">
@@ -35,7 +41,7 @@ export default function HeaderRight() {
       <div className="relative group">
         <Badge
           size="default"
-          count={0}
+          count={clientCartCount}
           className="px-4  font-semibold text-white rounded-md cursor-pointer"
         >
           <FiShoppingBag size={22} className="font-medium" />

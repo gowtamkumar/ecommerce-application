@@ -1,4 +1,6 @@
+"use client";
 import { selectCart } from "@/redux/features/cart/cartSlice";
+import Link from "next/link";
 import { useSelector } from "react-redux";
 
 export default function CartTotal() {
@@ -21,18 +23,25 @@ export default function CartTotal() {
       <div className="md:w-1/2"></div>
 
       <div className="border border-gray-200 p-4 rounded shadow-sm md:w-1/2">
-        <h2 className="text-xl font-bold mb-4">Cart totals</h2>
         <div className="flex justify-between border-b pb-2 mb-2">
-          <span>Subtotal</span>
-          <span>৳1,600.00</span>
+          <h2 className="text-xl font-bold mb-4">Cart totals</h2>
+          <div className="flex items-center justify-center">
+            <p>Total Quantity</p>
+            <p className="w-5 rounded-full bg-bioxin-accent text-center">
+              {totalQty ? totalQty : 0}
+            </p>
+          </div>
         </div>
         <div className="flex justify-between">
           <span className="font-bold">Total</span>
-          <span className="font-bold text-2xl">৳1,600.00</span>
+          <span className="font-bold text-2xl">৳{+total.toFixed(2)}</span>
         </div>
-        <button className="btn-primary-bioxin w-full mt-4 rounded">
+        <Link
+          href="/checkout"
+          className="rounded md:ml-1 flex justify-center w-full"
+        >
           Proceed To Checkout
-        </button>
+        </Link>
       </div>
     </div>
   );
