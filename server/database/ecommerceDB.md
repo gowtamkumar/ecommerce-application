@@ -81,16 +81,20 @@ updatedAt
 
 product_varient:array come from onther table
 product_category:array come from onther table
-type: ['Simple Product', "Varient Product"]
+variant:boolean
+
+purchase_price:numeric,
+sale_price:numeric,(optional)
+stock_qty:number,
+
 
 ## product variants:(done)
 
 id,
-regular_price:numeric,
+purchase_price:numeric,
 sale_price:numeric,(optional)
 size_id,
 colorId,
-weight(kg):numeric
 product_id
 stock_qty:number,
 

@@ -12,7 +12,6 @@ import {
 import { UserEntity } from "../../auth/model/user.entity";
 import { ReviewEntity } from "../../review/model/review.entity";
 import { ProductStatus } from "../enums/product-status.enum";
-import { ProductType } from "../enums/product-type.enum";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { TaxEntity } from "../../tax/model/tax.entity";
 import { BrandEntity } from "../../brand/model/brand.entity";
@@ -33,8 +32,8 @@ export class ProductEntity {
   @Column({ name: "url_slug", unique: true })
   urlSlug!: string;
 
-  @Column({ type: "enum", enum: ProductType })
-  type!: ProductType;
+  @Column({ type: "boolean", default: false })
+  variant?: boolean;
 
   @Column()
   description?: string;

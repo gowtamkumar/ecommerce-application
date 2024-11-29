@@ -317,7 +317,7 @@ const ProductList: React.FC = () => {
         dataIndex: "purchasePrice",
         key: "purchasePrice",
       },
-      { title: "Sale Price", dataIndex: "price", key: "price" },
+      { title: "Sale Price", dataIndex: "salePrice", key: "salePrice" },
 
       {
         title: "Size",
@@ -343,7 +343,7 @@ const ProductList: React.FC = () => {
       {
         title: "Tax",
         render: (v: any) => {
-          const taxAmount = (+v.price * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
           return <span>{taxAmount.toFixed(2)}</span>;
         },
       },
@@ -351,10 +351,10 @@ const ProductList: React.FC = () => {
         title: "Discount",
         render: (v: any) => {
           const discount = value.discount;
-          const taxAmount = (+v.price * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
           const disAmount =
             discount?.discountType === "Percentage"
-              ? ((+v.price + taxAmount) * (discount.value || 0)) / 100
+              ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
           return <span>{disAmount.toFixed(2)}</span>;
         },
@@ -363,12 +363,12 @@ const ProductList: React.FC = () => {
         title: "Orginal Sale price",
         render: (v: any) => {
           const discount = value.discount;
-          const taxAmount = (+v.price * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
           const disAmount =
             discount?.discountType === "Percentage"
-              ? ((+v.price + taxAmount) * (discount.value || 0)) / 100
+              ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
-          return <span>{(+v.price + taxAmount - +disAmount).toFixed(2)}</span>;
+          return <span>{(+v.salePrice + taxAmount - +disAmount).toFixed(2)}</span>;
         },
       },
     ];

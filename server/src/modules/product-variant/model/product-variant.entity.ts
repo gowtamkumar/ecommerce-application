@@ -20,11 +20,12 @@ export class ProductVariantEntity {
   id!: number;
 
   @Column({
+    name:'sale_price',
     type: "numeric",
     precision: 15,
     scale: 2,
   })
-  price!: number;
+  salePrice!: number;
 
   @Column({
     name: "purchase_price",

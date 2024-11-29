@@ -16,10 +16,7 @@ import {
   Tag,
   Upload,
 } from "antd";
-import {
-  selectGlobal,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
@@ -169,6 +166,7 @@ const AddProduct = ({
 
   const handleSubmit = async () => {
     const newData = await form.validateFields();
+   return  console.log("🚀 ~ newData:", newData)
 
     delete newData.fileList;
 
@@ -303,37 +301,6 @@ const AddProduct = ({
             </Form.Item>
 
             <Form.Item
-              name="type"
-              label="Type"
-              className="p-0"
-              rules={[
-                {
-                  required: true,
-                  message: "Type is required",
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Type"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                <Select.Option value="SimpleProduct">
-                  Simple Product
-                </Select.Option>
-                <Select.Option value="VarientProduct">
-                  Varient Product
-                </Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
               name="shortDescription"
               label="Short Description"
               rules={[
@@ -441,6 +408,54 @@ const AddProduct = ({
               >
                 <InputNumber placeholder="Enter" className="w-full" />
               </Form.Item>
+            </div>
+            <div className="flex justify-between">
+              <Form.Item name="variant" valuePropName="checked">
+                <Checkbox>Product Variant</Checkbox>
+              </Form.Item>
+
+              {!formValues.variant && (
+                <>
+                  <Form.Item
+                    name="purchasePrice"
+                    label="Purchase Price"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Purchase Price is required",
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Enter" className="w-full" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="salePrice"
+                    label="Sale Price"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Sale Price is required",
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Enter" className="w-full" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="stockQty"
+                    label="Stock Qty"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Stock Qty is required",
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Enter" className="w-full" />
+                  </Form.Item>
+                </>
+              )}
             </div>
           </div>
 
@@ -637,145 +652,157 @@ const AddProduct = ({
           </div>
         </div>
 
-        <div>
-          <Form.List name="productVariants">
-            {(fields, { add, remove }) => (
-              <div>
-                <div className="grid grid-cols-4 justify-center items-center gap-1">
-                  <div className="col-span-3">
-                    <Divider
-                      orientation="center"
-                      style={{ margin: "0px", padding: "0px" }}
-                    >
-                      Product Variants
-                    </Divider>
-                  </div>
-                  <div className="col-span-1">
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                        disabled={
-                          form.getFieldValue("type") === "SimpleProduct" &&
-                          form.getFieldValue("productVariants")?.length === 1
-                        }
+        {formValues.variant && (
+          <div>
+            <Form.List name="productVariants">
+              {(fields, { add, remove }) => (
+                <div>
+                  <div className="grid grid-cols-4 justify-center items-center gap-1">
+                    <div className="col-span-3">
+                      <Divider
+                        orientation="center"
+                        style={{ margin: "0px", padding: "0px" }}
                       >
-                        Add
-                      </Button>
-                    </Form.Item>
+                        Product Variants
+                      </Divider>
+                    </div>
+                    <div className="col-span-1">
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                          disabled={
+                            form.getFieldValue("type") === "SimpleProduct" &&
+                            form.getFieldValue("productVariants")?.length === 1
+                          }
+                        >
+                          Add
+                        </Button>
+                      </Form.Item>
+                    </div>
                   </div>
-                </div>
 
-                <table width="100%">
-                  <thead className="mb-1">
-                    <tr className="text-start">
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Sale Price
-                      </th>
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Purchase Price
-                      </th>
-                      <th className="text-start w-1/6">Size</th>
-                      <th className="text-start w-1/6">Color</th>
-                      <th className="text-start w-1/6">Weight</th>
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Qty
-                      </th>
-                    </tr>
-                  </thead>
-
-                  {fields.map(({ key, name, ...restField }) => (
-                    <tbody key={key}>
-                      <tr>
-                        <td hidden>
-                          <Form.Item {...restField} name={[name, "id"]}>
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "price"]}
-                            rules={[{ required: true, message: "Sale Price" }]}
-                          >
-                            <InputNumber placeholder="Sale Price" min={1} />
-                          </Form.Item>
-                        </td>
-
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "purchasePrice"]}
-                            rules={[
-                              { required: true, message: "Purchase Price" },
-                            ]}
-                          >
-                            <InputNumber placeholder="Purchase Price" min={1} />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item {...restField} name={[name, "sizeId"]}>
-                            <Select allowClear showSearch placeholder="Select">
-                              {(sizes || []).map((item: any) => (
-                                <Select.Option key={item.id} value={item.id}>
-                                  {`${item.id} ${item.name}`}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item {...restField} name={[name, "colorId"]}>
-                            <Select
-                              showSearch
-                              allowClear
-                              placeholder="Select"
-                              optionFilterProp="children"
-                              filterOption={(input, option) =>
-                                (option?.children as any)
-                                  .toLowerCase()
-                                  .indexOf(input.toLowerCase()) >= 0
-                              }
-                            >
-                              {(colors || []).map((item: any) => (
-                                <Select.Option key={item.id} value={item.id}>
-                                  <ColorPicker
-                                    size="small"
-                                    value={item.color}
-                                  />{" "}
-                                  {item.name}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </td>
-
-                        <td>
-                          <Form.Item {...restField} name={[name, "weight"]}>
-                            <Input placeholder="Weight" />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          {" "}
-                          <Form.Item
-                            {...restField}
-                            name={[name, "stockQty"]}
-                            rules={[{ required: true, message: "Stock Qty" }]}
-                          >
-                            <InputNumber placeholder="Enter" min={1} />
-                          </Form.Item>
-                        </td>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
+                  <table width="100%">
+                    <thead className="mb-1">
+                      <tr className="text-start">
+                        <th className="text-start w-1/6">
+                          <label className="text-red-500">*</label>Sale Price
+                        </th>
+                        <th className="text-start w-1/6">
+                          <label className="text-red-500">*</label>Purchase
+                          Price
+                        </th>
+                        <th className="text-start w-1/6">Size</th>
+                        <th className="text-start w-1/6">Color</th>
+                        <th className="text-start w-1/6">Weight</th>
+                        <th className="text-start w-1/6">
+                          <label className="text-red-500">*</label>Qty
+                        </th>
                       </tr>
-                    </tbody>
-                  ))}
-                </table>
-              </div>
-            )}
-          </Form.List>
-        </div>
+                    </thead>
+
+                    {fields.map(({ key, name, ...restField }) => (
+                      <tbody key={key}>
+                        <tr>
+                          <td hidden>
+                            <Form.Item {...restField} name={[name, "id"]}>
+                              <Input />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "salePrice"]}
+                              rules={[
+                                { required: true, message: "Sale Price" },
+                              ]}
+                            >
+                              <InputNumber placeholder="Sale Price" min={1} />
+                            </Form.Item>
+                          </td>
+
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "purchasePrice"]}
+                              rules={[
+                                { required: true, message: "Purchase Price" },
+                              ]}
+                            >
+                              <InputNumber
+                                placeholder="Purchase Price"
+                                min={1}
+                              />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item {...restField} name={[name, "sizeId"]}>
+                              <Select
+                                allowClear
+                                showSearch
+                                placeholder="Select"
+                              >
+                                {(sizes || []).map((item: any) => (
+                                  <Select.Option key={item.id} value={item.id}>
+                                    {`${item.id} ${item.name}`}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item {...restField} name={[name, "colorId"]}>
+                              <Select
+                                showSearch
+                                allowClear
+                                placeholder="Select"
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                  (option?.children as any)
+                                    .toLowerCase()
+                                    .indexOf(input.toLowerCase()) >= 0
+                                }
+                              >
+                                {(colors || []).map((item: any) => (
+                                  <Select.Option key={item.id} value={item.id}>
+                                    <ColorPicker
+                                      size="small"
+                                      value={item.color}
+                                    />{" "}
+                                    {item.name}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </td>
+
+                          <td>
+                            <Form.Item {...restField} name={[name, "weight"]}>
+                              <Input placeholder="Weight" />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            {" "}
+                            <Form.Item
+                              {...restField}
+                              name={[name, "stockQty"]}
+                              rules={[{ required: true, message: "Stock Qty" }]}
+                            >
+                              <InputNumber placeholder="Enter" min={1} />
+                            </Form.Item>
+                          </td>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </tr>
+                      </tbody>
+                    ))}
+                  </table>
+                </div>
+              )}
+            </Form.List>
+          </div>
+        )}
 
         <div className="col-span-1 text-end">
           <Button
