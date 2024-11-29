@@ -57,7 +57,7 @@ export default function Slider({ banners }: any) {
                         ? `${appConfig.apiUrl}/uploads/${image}`
                         : "/pos_software.png"
                     }
-                    alt={image}
+                    alt={title}
                     loading="lazy"
                     width="0"
                     height="0"

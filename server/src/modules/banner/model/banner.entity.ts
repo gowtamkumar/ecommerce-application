@@ -23,7 +23,7 @@ export class BannerEntity {
   description!: string;
 
   @Column({ type: "boolean", default: true })
-  status!: boolean;
+  active!: boolean;
 
   @Column({ name: "user_id" })
   userId!: number;

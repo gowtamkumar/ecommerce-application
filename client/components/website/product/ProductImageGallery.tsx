@@ -1,21 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import appConfig from "@/appConfig";
-import Image from "next/image";
+import ImageN from "next/image";
+import { Image } from "antd";
 
 const ProductImageGallery = ({ images }: any) => {
   const [selectedImage, setSelectedImage] = useState(images ? images[0] : null);
 
   return (
     <div>
-      <img
-        className="w-full h-64 object-cover rounded-lg mb-4 hover:object-contain"
+      <Image
+        className="w-full object-cover rounded-lg mb-4"
         src={`${appConfig.apiUrl}/uploads/${selectedImage}`}
-        alt="Selected image"
+        alt={selectedImage}
       />
       <div className="flex space-x-2">
         {images?.map((image: any) => (
-          <Image
+          <ImageN
             src={
               image
                 ? `${appConfig.apiUrl}/uploads/${image}`

@@ -81,14 +81,14 @@ export const getProducts = async (req: Request, res: Response) => {
       });
 
     if (minPrice && maxPrice)
-      qb.andWhere(`productVariants.price BETWEEN ${minPrice} AND ${maxPrice}`);
+      qb.andWhere(`productVariants.sale_price BETWEEN ${minPrice} AND ${maxPrice}`);
 
     if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
 
     // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
 
-    if (lowPrice) qb.orderBy("productVariants.price", "ASC");
-    if (highPrice) qb.orderBy("productVariants.price", "DESC");
+    if (lowPrice) qb.orderBy("productVariants.sale_price", "ASC");
+    if (highPrice) qb.orderBy("productVariants.sale_price", "DESC");
 
     if (colorId)
       qb.andWhere("productVariants.colorId IN (:...colorIds)", {
@@ -279,9 +279,8 @@ export const updateProduct = asyncHandler(
     logger.info(`Service: updateProduct ${req.method} ${req.url}`);
 
     const { id } = req.params;
-    // Validate request body
+    // Validate request body    
     const validation = updateProductValidationSchema.safeParse(req.body);
-
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
         path: issue.path.join("."),
@@ -295,6 +294,7 @@ export const updateProduct = asyncHandler(
     }
 
     const { productVariants, productCategories, ...restData } = req.body;
+    
 
     // Get DB connection
     const connection = await getDBConnection();

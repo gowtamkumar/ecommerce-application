@@ -60,6 +60,8 @@ const AddProduct = ({
   const [formValues, setFormValues] = useState({
     fileList: [],
     images: [],
+    thumbnailImage: "",
+    fileThumbnailList: [],
   }) as any;
 
   // hook
@@ -89,6 +91,14 @@ const AddProduct = ({
         // Fetch product data
         const result = await getProduct(id);
         const newData = { ...result.data };
+
+        if (!newData.variant) {
+          newData.purchasePrice = +newData.productVariants[0].purchasePrice;
+          newData.salePrice = +newData.productVariants[0].salePrice;
+          newData.stockQty = newData.productVariants[0].stockQty;
+          newData.variantId = newData.productVariants[0].id;
+        }
+
         const productCategories = newData?.productCategories?.map(
           ({ categoryId }: { categoryId: number }) => categoryId
         );
@@ -107,68 +117,49 @@ const AddProduct = ({
           );
           newData.fileList = file;
         }
+        if (newData.thumbnailImage) {
+          const newfile = {
+            uid: Math.random() * 1000 + "",
+            name: `photo ${Math.random() * 10000 + ""}`,
+            status: "done",
+            fileName: newData.thumbnailImage,
+            url: `${appConfig.apiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
+              }`,
+          };
+          newData.fileThumbnailList = [newfile];
+        }
         form.setFieldsValue({ ...newData, productCategories });
         setProduct({ ...newData, productCategories });
         setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
         setFormValues(newData);
-        form.resetFields();
       } else {
         form.resetFields();
         setTags([]);
       }
-    } catch (err: any) {
-      errorNotification({ message: err.message });
+    } catch (err) {
+      console.error("Error fetching product data:", err);
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   };
 
-  // const fetchProductData = async () => {
-  //   try {
-  //     dispatch(setLoading({ loading: true }));
-  //     if (params.new !== "new") {
-  //       const id = params.new.toString(); // Convert to string if necessary
-  //       // Fetch product data
-  //       const result = await getProduct(id);
-  //       const newData = { ...result.data };
-  //       const productCategories = newData?.productCategories?.map(
-  //         ({ categoryId }: { categoryId: number }) => categoryId
-  //       );
-  //       if (!newData.images) {
-  //         newData.images = [];
-  //       }
-  //       if (newData.images) {
-  //         const file = (newData.images || []).map(
-  //           (item: string, idx: number) => ({
-  //             uid: Math.random() * 1000 + "",
-  //             name: `photo ${idx}`,
-  //             status: "done",
-  //             fileName: item,
-  //             url: `${appConfig.apiUrl}/uploads/${item}`,
-  //           })
-  //         );
-  //         newData.fileList = file;
-  //       }
-  //       form.setFieldsValue({ ...newData, productCategories });
-  //       setProduct({ ...newData, productCategories });
-  //       setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
-  //       setFormValues(newData);
-  //     } else {
-  //       form.resetFields();
-  //       setTags([]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching product data:", err);
-  //   } finally {
-  //     dispatch(setLoading({ loading: false }));
-  //   }
-  // };
-
   const handleSubmit = async () => {
     const newData = await form.validateFields();
-   return  console.log("🚀 ~ newData:", newData)
 
     delete newData.fileList;
+    delete newData.fileThumbnailList;
+
+    if (!newData.variant) {
+      const productVariants = {
+        purchasePrice: +newData.purchasePrice,
+        salePrice: +newData.salePrice,
+        stockQty: newData.stockQty,
+        id: newData?.variantId
+      };
+      newData.productVariants = [productVariants];
+    }
+
+    // return console.log("🚀 ~ newData:", newData);
 
     const result = newData.id
       ? () => updateProduct(newData)
@@ -198,6 +189,18 @@ const AddProduct = ({
       }));
       newData.fileList = file;
     }
+    if (newData.thumbnailImage) {
+      const newfile = {
+        uid: Math.random() * 1000 + "",
+        name: `photo ${Math.random() * 10000 + ""}`,
+        status: "done",
+        fileName: newData.thumbnailImage,
+        url: `${appConfig.apiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
+          }`,
+      };
+      newData.fileThumbnailList = [newfile];
+    }
+
     setFormValues(form.getFieldsValue());
   };
 
@@ -236,14 +239,31 @@ const AddProduct = ({
 
       const newFileName = res.data.length ? res.data[0].filename : null;
       // Assuming you're updating form data here:
-      form.setFieldsValue({
-        fileList: [...form.getFieldsValue().fileList, ...newfile],
-        images: [...form.getFieldsValue().images, newFileName],
-      });
-      setFormValues({
-        fileList: [...formValues.fileList, ...newfile],
-        images: [...formValues.images, newFileName],
-      });
+      if (filename === "images") {
+        form.setFieldsValue({
+          ...form.getFieldsValue(),
+          fileList: [...form.getFieldsValue().fileList, ...newfile],
+          images: [...form.getFieldsValue().images, newFileName],
+        });
+        setFormValues({
+          ...formValues,
+          fileList: [...formValues.fileList, ...newfile],
+          images: [...formValues.images, newFileName],
+        });
+      }
+
+      if (filename === "thumbnailImage") {
+        form.setFieldsValue({
+          ...form.getFieldsValue(),
+          fileThumbnailList: newfile,
+          thumbnailImage: newFileName,
+        });
+        setFormValues({
+          ...formValues,
+          fileThumbnailList: newfile,
+          thumbnailImage: newFileName,
+        });
+      }
 
       onSuccess("Ok");
     } catch (err) {
@@ -278,10 +298,15 @@ const AddProduct = ({
         initialValues={{
           productVariants: [{}],
           images: [],
+          thumbnailImage: "",
           fileList: [],
+          fileThumbnailList: [],
         }}
       >
         <Form.Item name="id" hidden>
+          <Input />
+        </Form.Item>
+        <Form.Item name="variantId" hidden>
           <Input />
         </Form.Item>
 
@@ -586,6 +611,60 @@ const AddProduct = ({
             {/* image upload section */}
             <div>
               <Form.Item
+                name="fileThumbnailList"
+                label="Thumbnail Image"
+                valuePropName="fileThumbnailList"
+                getValueFromEvent={normFile}
+                rules={[
+                  {
+                    required: true,
+                    message: "Thumbnail Image is required",
+                  },
+                ]}
+              >
+                <ImgCrop rotationSlider showReset>
+                  <Upload
+                    name="thumbnailImage"
+                    listType="picture-card"
+                    fileList={formValues?.fileThumbnailList || []}
+                    // onRemove={async (v) => {
+                    //   const find = (
+                    //     form.getFieldValue("thumbnailImage") || []
+                    //   ).filter((item: string) => item !== v.fileName);
+                    //   const newfind = (
+                    //     form.getFieldValue("fileList") || []
+                    //   ).filter(
+                    //     (item: { fileName: string }) =>
+                    //       item.fileName !== v.fileName
+                    //   );
+                    //   form.setFieldsValue({
+                    //     thumbnailImage: find,
+                    //     fileList: newfind,
+                    //   });
+                    //   setFormValues({
+                    //     thumbnailImage: find,
+                    //     fileList: newfind,
+                    //   });
+                    //   if (v.fileName) {
+                    //     const params = { filename: v.fileName };
+                    //     await fileDeleteWithPhoto(params);
+                    //   }
+                    // }}
+                    className="avatar-uploader"
+                    onPreview={(file) => handlePreview(file, dispatch)}
+                    customRequest={customUploadRequest}
+                    maxCount={1}
+                  >
+                    {uploadButton}
+                  </Upload>
+                </ImgCrop>
+              </Form.Item>
+
+              <Form.Item name="thumbnailImage" hidden>
+                <Input />
+              </Form.Item>
+
+              <Form.Item
                 name="fileList"
                 label="Images"
                 valuePropName="fileList"
@@ -696,7 +775,6 @@ const AddProduct = ({
                         </th>
                         <th className="text-start w-1/6">Size</th>
                         <th className="text-start w-1/6">Color</th>
-                        <th className="text-start w-1/6">Weight</th>
                         <th className="text-start w-1/6">
                           <label className="text-red-500">*</label>Qty
                         </th>
@@ -779,12 +857,6 @@ const AddProduct = ({
                           </td>
 
                           <td>
-                            <Form.Item {...restField} name={[name, "weight"]}>
-                              <Input placeholder="Weight" />
-                            </Form.Item>
-                          </td>
-                          <td>
-                            {" "}
                             <Form.Item
                               {...restField}
                               name={[name, "stockQty"]}

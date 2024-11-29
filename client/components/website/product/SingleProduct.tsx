@@ -123,11 +123,11 @@ export default function SingleProduct() {
 
   return (
     <div className="container md:py-5 p-2 mx-auto">
-      <div className="bg-white grid grid-cols-1 md:grid-cols-4 pt-4">
-        <div className="col-span-1">
+      <div className="bg-white grid grid-cols-1 md:grid-cols-12 pt-4">
+        <div className="col-span-6">
           <ProductImageGallery images={product.images} />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-6">
           <ProductDetails
             product={product}
             setProduct={setProduct}
@@ -136,10 +136,7 @@ export default function SingleProduct() {
             setCheckStock={setCheckStock}
           />
         </div>
-        <div className="bg-slate-400 text-center">
-          We can show any thing
-          {/* <DeliveryInfo delivery={products.delivery} /> */}
-        </div>
+
       </div>
       {product.reviews && (
         <RatingProduct product={product} productRating={productRating} />

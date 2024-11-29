@@ -18,6 +18,10 @@ router.route("/delete-file-with-photo").post(deleteFileWithPhoto);
 router.route("/uploads").post(
   upload.fields([
     {
+      name: "thumbnailImage",
+      maxCount: 1,
+    },
+    {
       name: "image",
       maxCount: 1,
     },

@@ -26,9 +26,7 @@ export const updateProductValidationSchema = z.object({
     required_error: "Short Description is required",
   }),
   enableReview: z.boolean().optional(),
-  type: z.enum(["SimpleProduct", "VarientProduct"], {
-    required_error: "Product type is required",
-  }),
+  variant: z.boolean().optional(),
   alertQty: z.number({
     required_error: "Alert Qty is Required",
   }),
@@ -37,13 +35,13 @@ export const updateProductValidationSchema = z.object({
   productVariants: z
     .array(
       z.object({
-        price: z.string({ required_error: "Regular Price is required" }),
-        purchasePrice: z.string({
+        id: z.number().optional().nullable(),
+        salePrice: z.any({ required_error: "Sale Price is required" }),
+        purchasePrice: z.any({
           required_error: "Purchase Price is required",
         }),
         sizeId: z.number().optional().nullable(),
         colorId: z.number().optional().nullable(),
-        weight: z.string().optional().nullable(),
         stockQty: z.number({
           required_error: "Stock Qty is required",
         }),

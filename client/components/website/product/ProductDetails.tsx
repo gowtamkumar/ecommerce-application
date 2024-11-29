@@ -28,30 +28,6 @@ const ProductDetails = ({
   const price = product.selectProductVariant?.price;
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
-  // const addToCart = async (value: any) => {
-  //   const newData = {
-  //     productId: value.id,
-  //     productVariantId: value.selectProductVariant.id,
-  //     qty: product.qty,
-  //   };
-  //   const result = await saveCart(newData);
-  // };
-
-  // async function incrementToCart(product: any) {
-  //   setProduct({
-  //     ...product,
-  //     qty: product.qty + 1,
-  //   });
-  // }
-
-  // async function decrementToCart(product: any) {
-  //   setProduct({
-  //     ...product,
-  //     qty: product.qty - 1,
-  //   });
-  // }
-
-
   function handleIncrementCart(item: any) {
     dispatch(incrementCart(item));
   }
@@ -99,7 +75,6 @@ const ProductDetails = ({
       <h1 className="md:text-2xl md:font-bold mb-2 font-semibold text-lg">
         {product?.name}
       </h1>
-      <h2>
         <Rate
           disabled
           value={
@@ -110,13 +85,13 @@ const ProductDetails = ({
           }
         />
         {product?.reviews?.length || 0} Ratings
-      </h2>
       <h2>
         Brand:
         <Link href={`/brand/${product?.brand?.id}`}>
           {product?.brand?.name}
         </Link>
       </h2>
+      
       <p className="text-gray-700 mb-4">{product?.shortDescription}</p>
 
       <div className="md:flex-row items-center mb-4">

@@ -59,7 +59,7 @@ id,
 featured: boolean, this field for only show home page(need to add)
 name:string,
 url_slug(unique),
-single_image,
+thumbnail_image,
 images:array
 
 <!-- shipping_cost:numeric, -->
@@ -79,13 +79,10 @@ status:['acitve/inactive'],
 createdAt,
 updatedAt
 
+
 product_varient:array come from onther table
 product_category:array come from onther table
 variant:boolean
-
-purchase_price:numeric,
-sale_price:numeric,(optional)
-stock_qty:number,
 
 
 ## product variants:(done)

@@ -69,12 +69,11 @@ const ProductList: React.FC = () => {
     }
   };
 
-
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
       await deleteProduct(id);
-      fetchData()
+      fetchData();
       successNotification({ message: "Successfully deleted" });
     } catch (error: any) {
       errorNotification({ message: error.message });
@@ -244,7 +243,8 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${
+              value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -368,7 +368,9 @@ const ProductList: React.FC = () => {
             discount?.discountType === "Percentage"
               ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
-          return <span>{(+v.salePrice + taxAmount - +disAmount).toFixed(2)}</span>;
+          return (
+            <span>{(+v.salePrice + taxAmount - +disAmount).toFixed(2)}</span>
+          );
         },
       },
     ];
@@ -390,7 +392,8 @@ const ProductList: React.FC = () => {
             <h2>
               <strong>Discount:</strong>
               {value?.discount &&
-                `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
+                `${value?.discount.value}${
+                  value?.discount.discountType === "Percentage" ? "%" : "BDT"
                 }`}
             </h2>
             <h2>

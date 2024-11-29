@@ -16,6 +16,7 @@ export async function saveBanner(data: any) {
 
 export async function getBanners(params?: any) {
   const searchParams = new URLSearchParams();
+  console.log("🚀 ~ params:", params);
 
   if (params?.type) {
     searchParams.append("type", params.type);

@@ -22,7 +22,8 @@ const MoreDiscover = dynamic(
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
-  const banners = await getBanners();
+  const banners = await getBanners({ type: "Slider" });
+
   const discounts = await getFilterDiscounts({ type: "Discount" });
   return (
     <>
@@ -32,9 +33,7 @@ export default async function Home() {
           <div className="grid md:grid-cols-12 grid-cols-1">
             <div className="md:col-span-9">
               <Slider
-                banners={(banners.data || []).filter(
-                  (item: { type: string }) => item.type === "Slider"
-                )}
+                banners={banners.data}
               />
             </div>
             <div className="md:col-span-3 bg-black">
