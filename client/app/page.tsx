@@ -7,8 +7,8 @@ const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const Category = dynamic(() => import("@/components/website/home/Category"));
 const SellerAds = dynamic(() => import("@/components/website/home/SellerAds"));
 const Slider = dynamic(() => import("@/components/website/banner/Slider"));
-const ProductFeatured = dynamic(
-  () => import("@/components/website/product/ProductFeatured")
+const FeaturedProduct = dynamic(
+  () => import("@/components/website/home/FeaturedProduct")
 );
 const HeaderDiscount = dynamic(
   () => import("@/components/website/banner/HeaderDiscount")
@@ -22,7 +22,7 @@ const MoreDiscover = dynamic(
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
-  const banners = await getBanners({ type: "Slider" });
+  const banners = await getBanners();
 
   const discounts = await getFilterDiscounts({ type: "Discount" });
   return (
@@ -79,7 +79,7 @@ export default async function Home() {
               View all
             </Link>
           </div>
-          <ProductFeatured />
+          <FeaturedProduct />
         </section>
 
         {/* More discount */}

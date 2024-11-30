@@ -38,7 +38,7 @@ export default function Card({ item }: { item: CardItems }) {
   );
 
   return (
-    <div className="border p-5">
+    <div className="border p-3">
       <div className="relative group">
         <Link href={`/products/${item.id}`}>
           <Image

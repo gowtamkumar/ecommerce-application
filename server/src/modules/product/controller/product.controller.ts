@@ -81,7 +81,9 @@ export const getProducts = async (req: Request, res: Response) => {
       });
 
     if (minPrice && maxPrice)
-      qb.andWhere(`productVariants.sale_price BETWEEN ${minPrice} AND ${maxPrice}`);
+      qb.andWhere(
+        `productVariants.sale_price BETWEEN ${minPrice} AND ${maxPrice}`
+      );
 
     if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
 
@@ -222,7 +224,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       issues: formattedErrors,
     });
   }
-  
 
   const { productVariants, productCategories, ...restData } = validation.data;
 
@@ -260,7 +261,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     promises.push(productCategoryRepository.save(productCategoryEntities));
   }
 
-
   // Execute all promises concurrently
   await Promise.all(promises);
 
@@ -279,7 +279,7 @@ export const updateProduct = asyncHandler(
     logger.info(`Service: updateProduct ${req.method} ${req.url}`);
 
     const { id } = req.params;
-    // Validate request body    
+    // Validate request body
     const validation = updateProductValidationSchema.safeParse(req.body);
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
@@ -294,7 +294,6 @@ export const updateProduct = asyncHandler(
     }
 
     const { productVariants, productCategories, ...restData } = req.body;
-    
 
     // Get DB connection
     const connection = await getDBConnection();

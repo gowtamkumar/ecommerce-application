@@ -94,6 +94,7 @@ size_id,
 colorId,
 product_id
 stock_qty:number,
+default:boolean
 
 ## product_category:(done)
 

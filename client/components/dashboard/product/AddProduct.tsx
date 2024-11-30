@@ -123,8 +123,9 @@ const AddProduct = ({
             name: `photo ${Math.random() * 10000 + ""}`,
             status: "done",
             fileName: newData.thumbnailImage,
-            url: `${appConfig.apiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
-              }`,
+            url: `${appConfig.apiUrl}/uploads/${
+              newData.thumbnailImage || "no-data.png"
+            }`,
           };
           newData.fileThumbnailList = [newfile];
         }
@@ -154,7 +155,7 @@ const AddProduct = ({
         purchasePrice: +newData.purchasePrice,
         salePrice: +newData.salePrice,
         stockQty: newData.stockQty,
-        id: newData?.variantId
+        id: newData?.variantId,
       };
       newData.productVariants = [productVariants];
     }
@@ -195,8 +196,9 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.thumbnailImage,
-        url: `${appConfig.apiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
-          }`,
+        url: `${appConfig.apiUrl}/uploads/${
+          newData.thumbnailImage || "no-data.png"
+        }`,
       };
       newData.fileThumbnailList = [newfile];
     }
@@ -627,29 +629,22 @@ const AddProduct = ({
                     name="thumbnailImage"
                     listType="picture-card"
                     fileList={formValues?.fileThumbnailList || []}
-                    // onRemove={async (v) => {
-                    //   const find = (
-                    //     form.getFieldValue("thumbnailImage") || []
-                    //   ).filter((item: string) => item !== v.fileName);
-                    //   const newfind = (
-                    //     form.getFieldValue("fileList") || []
-                    //   ).filter(
-                    //     (item: { fileName: string }) =>
-                    //       item.fileName !== v.fileName
-                    //   );
-                    //   form.setFieldsValue({
-                    //     thumbnailImage: find,
-                    //     fileList: newfind,
-                    //   });
-                    //   setFormValues({
-                    //     thumbnailImage: find,
-                    //     fileList: newfind,
-                    //   });
-                    //   if (v.fileName) {
-                    //     const params = { filename: v.fileName };
-                    //     await fileDeleteWithPhoto(params);
-                    //   }
-                    // }}
+                    onRemove={async (v) => {
+                      if (v.fileName) {
+                        form.setFieldsValue({
+                          ...form.getFieldsValue(),
+                          thumbnailImage: null,
+                          fileThumbnailList: [],
+                        });
+                        setFormValues({
+                          ...formValues,
+                          thumbnailImage: null,
+                          fileThumbnailList: [],
+                        });
+                        const params = { filename: v.fileName };
+                        await fileDeleteWithPhoto(params);
+                      }
+                    }}
                     className="avatar-uploader"
                     onPreview={(file) => handlePreview(file, dispatch)}
                     customRequest={customUploadRequest}

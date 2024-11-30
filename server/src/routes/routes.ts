@@ -28,7 +28,7 @@ import divisionRoute from "../modules/other/geo-location/divisions/route/divisio
 import districtRoute from "../modules/other/geo-location/districts/route/district.route";
 import upazilaRoute from "../modules/other/geo-location/upazilas/route/upazila.route";
 import unionsRoute from "../modules/other/geo-location/unions/route/union.route";
-import reportRoute from "../modules/reports/route/report.route";
+import reportRoute from "../modules/other/reports/route/report.route";
 import visitorRoute from "../modules/visitor/route/visitor.route";
 import leadRoute from "../modules/lead/route/lead.route";
 import postRoute from "../modules/post/route/post.route";

@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { OrderEntity } from "../../order/model/order.entity";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
+import { OrderEntity } from "../../../order/model/order.entity";
 import dayjs from "dayjs";
-import { UserEntity } from "../../auth/model/user.entity";
-import { logger } from "../../../middlewares/logger";
+import { UserEntity } from "../../../auth/model/user.entity";
+import { logger } from "../../../../middlewares/logger";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report

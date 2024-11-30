@@ -20,7 +20,7 @@ export class ProductVariantEntity {
   id!: number;
 
   @Column({
-    name:'sale_price',
+    name: "sale_price",
     type: "numeric",
     precision: 15,
     scale: 2,
@@ -59,11 +59,8 @@ export class ProductVariantEntity {
   @JoinColumn({ name: "color_id" })
   color!: ColorEntity;
 
-  // @Column({ type: "simple-array", nullable: true })
-  // images!: string[];
-
-  @Column({ nullable: true })
-  weight?: string;
+  @Column({ type: "boolean", default: false, nullable: true }) 
+  default?: boolean;
 
   @Column({ name: "stock_qty" })
   stockQty?: number;

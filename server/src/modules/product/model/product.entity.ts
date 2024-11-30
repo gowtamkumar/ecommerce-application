@@ -35,6 +35,9 @@ export class ProductEntity {
   @Column({ type: "boolean", default: false })
   variant?: boolean;
 
+  @Column({ type: "boolean", default: false })
+  featured?: boolean;
+
   @Column()
   description?: string;
 
@@ -80,7 +83,7 @@ export class ProductEntity {
   @Column({ type: "simple-array", nullable: true })
   tags!: string[];
 
-  @Column({ name: "thumbnail_image", nullable: true }) //need to remove nullable 
+  @Column({ name: "thumbnail_image", nullable: true }) //need to remove nullable
   thumbnailImage?: string;
 
   @Column({ type: "simple-array" })
