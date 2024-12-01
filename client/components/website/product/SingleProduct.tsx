@@ -18,7 +18,6 @@ import ProductCard from "./ProductCard";
 import { getProductVariant } from "@/lib/apis/product-variant";
 import { errorNotification } from "@/lib/utils/notification";
 
-
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
   const [checkStock, setCheckStock] = useState(0);
@@ -123,11 +122,12 @@ export default function SingleProduct() {
   }
 
   return (
-    <div className="container md:py-5 p-2 mx-auto">
-      <div className="bg-white grid grid-cols-1 md:grid-cols-12 pt-4">
+    <div className="container mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-12 pt-4">
         <div className="col-span-6">
           <ProductImageGallery images={product.images} />
         </div>
+
         <div className="col-span-6">
           <ProductDetails
             product={product}
@@ -137,8 +137,8 @@ export default function SingleProduct() {
             setCheckStock={setCheckStock}
           />
         </div>
-
       </div>
+
       {product.reviews && (
         <RatingProduct product={product} productRating={productRating} />
       )}
