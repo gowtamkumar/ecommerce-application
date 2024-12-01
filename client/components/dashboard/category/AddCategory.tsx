@@ -61,7 +61,7 @@ const AddCategory = () => {
     fetchData();
     return () => {
       setFormValues({});
-      form.resetFields()
+      form.resetFields();
     };
   }, [global.action]);
 
@@ -211,20 +211,10 @@ const AddCategory = () => {
           <Input.TextArea placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item name="status" label="Status" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            <Select.Option value={"Active"}>Active</Select.Option>
-            <Select.Option value={"Inactive"}>Inactive</Select.Option>
+        <Form.Item name="active" label="Status" className="mb-1">
+          <Select placeholder="Select">
+            <Select.Option value={true}>Active</Select.Option>
+            <Select.Option value={false}>Inactive</Select.Option>
           </Select>
         </Form.Item>
 

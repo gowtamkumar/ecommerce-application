@@ -69,12 +69,11 @@ const ProductList: React.FC = () => {
     }
   };
 
-
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
       await deleteProduct(id);
-      fetchData()
+      fetchData();
       successNotification({ message: "Successfully deleted" });
     } catch (error: any) {
       errorNotification({ message: error.message });
@@ -244,7 +243,8 @@ const ProductList: React.FC = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${value?.discountType === "Percentage" ? "%" : "BDT"
+            `${value?.value}${
+              value?.discountType === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -317,7 +317,7 @@ const ProductList: React.FC = () => {
         dataIndex: "purchasePrice",
         key: "purchasePrice",
       },
-      { title: "Sale Price", dataIndex: "price", key: "price" },
+      { title: "Sale Price", dataIndex: "salePrice", key: "salePrice" },
 
       {
         title: "Size",
@@ -343,7 +343,7 @@ const ProductList: React.FC = () => {
       {
         title: "Tax",
         render: (v: any) => {
-          const taxAmount = (+v.price * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
           return <span>{taxAmount.toFixed(2)}</span>;
         },
       },
@@ -351,10 +351,10 @@ const ProductList: React.FC = () => {
         title: "Discount",
         render: (v: any) => {
           const discount = value.discount;
-          const taxAmount = (+v.price * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
           const disAmount =
             discount?.discountType === "Percentage"
-              ? ((+v.price + taxAmount) * (discount.value || 0)) / 100
+              ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
           return <span>{disAmount.toFixed(2)}</span>;
         },
@@ -363,12 +363,14 @@ const ProductList: React.FC = () => {
         title: "Orginal Sale price",
         render: (v: any) => {
           const discount = value.discount;
-          const taxAmount = (+v.price * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
           const disAmount =
             discount?.discountType === "Percentage"
-              ? ((+v.price + taxAmount) * (discount.value || 0)) / 100
+              ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
-          return <span>{(+v.price + taxAmount - +disAmount).toFixed(2)}</span>;
+          return (
+            <span>{(+v.salePrice + taxAmount - +disAmount).toFixed(2)}</span>
+          );
         },
       },
     ];
@@ -390,7 +392,8 @@ const ProductList: React.FC = () => {
             <h2>
               <strong>Discount:</strong>
               {value?.discount &&
-                `${value?.discount.value}${value?.discount.discountType === "Percentage" ? "%" : "BDT"
+                `${value?.discount.value}${
+                  value?.discount.discountType === "Percentage" ? "%" : "BDT"
                 }`}
             </h2>
             <h2>

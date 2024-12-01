@@ -15,10 +15,11 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(BannerEntity);
 
-  let customQuery = { status: true } as any;
+  let customQuery = { active: true } as any;
   if (type) {
     customQuery.type = type;
   }
+  console.log("🚀 ~ customQuery:", customQuery)
   const result = await repository.find({ where: customQuery });
 
   return res.status(200).json({

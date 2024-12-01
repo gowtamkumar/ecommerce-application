@@ -19,7 +19,7 @@ interface CardItems {
 }
 
 export default function Card({ item }: { item: CardItems }) {
-  const price = +item.productVariants[0]?.price || 0;
+  const price = +item.productVariants[0]?.salePrice || 0;
   const reviewsCount = +item.reviews.length || 0;
   const discount = item.discount;
   const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
@@ -37,10 +37,8 @@ export default function Card({ item }: { item: CardItems }) {
     0
   );
 
-  
-
   return (
-    <div className="border p-5">
+    <div className="border p-3">
       <div className="relative group">
         <Link href={`/products/${item.id}`}>
           <Image

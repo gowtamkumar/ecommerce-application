@@ -10,7 +10,6 @@ import {
   Select,
 } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { useRouter } from "next/navigation";
 import {
   selectGlobal,
   setAction,
@@ -26,7 +25,6 @@ const AddDiscount = () => {
   const { payload, type, discount } = global.action;
   // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -210,10 +208,10 @@ const AddDiscount = () => {
           </>
         )}
 
-        <Form.Item name="status" label="Status">
-          <Select placeholder="Select Status">
-            <Select.Option value="Active">Active</Select.Option>
-            <Select.Option value="Inactive">Inactive</Select.Option>
+        <Form.Item name="active" label="Status">
+          <Select placeholder="Select">
+            <Select.Option value={true}>Active</Select.Option>
+            <Select.Option value={false}>Inactive</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item {...tailLayout}>

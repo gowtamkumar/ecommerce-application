@@ -17,12 +17,12 @@ export const getPublicCategories = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(CategoriesEntity);
 
-    const user = await repository.find();
+    const categories = await repository.find();
 
     return res.status(200).json({
       success: true,
       message: "Get all categories",
-      data: user,
+      data: categories,
     });
   }
 );

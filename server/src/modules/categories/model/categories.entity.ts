@@ -39,11 +39,10 @@ export class CategoriesEntity {
   description?: string;
 
   @Column({
-    type: "enum",
-    enum: CategoryStatus,
-    default: CategoryStatus.Active,
+    type: "boolean",
+    default: true,
   })
-  status!: CategoryStatus;
+  active!: boolean;
 
   @TreeChildren()
   children!: CategoriesEntity[];

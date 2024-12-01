@@ -11,7 +11,7 @@ import {
 } from "swiper/modules";
 import Card from "@/components/Card";
 
-const ProductFeatured = () => {
+const FeaturedProduct = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
@@ -130,4 +130,4 @@ const ProductFeatured = () => {
 //   );
 // };
 
-export default ProductFeatured;
+export default FeaturedProduct;

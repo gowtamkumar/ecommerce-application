@@ -59,11 +59,10 @@ export class DiscountEntity {
   // isSingleUse!: boolean;
 
   @Column({
-    type: "enum",
-    enum: DiscountStatus,
-    default: DiscountStatus.Active,
+    type: "boolean",
+    default: true,
   })
-  status!: DiscountStatus;
+  active!: boolean;
 
   @Column({ name: "user_id" })
   userId?: number;

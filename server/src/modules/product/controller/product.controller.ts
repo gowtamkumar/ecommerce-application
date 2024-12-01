@@ -81,14 +81,16 @@ export const getProducts = async (req: Request, res: Response) => {
       });
 
     if (minPrice && maxPrice)
-      qb.andWhere(`productVariants.price BETWEEN ${minPrice} AND ${maxPrice}`);
+      qb.andWhere(
+        `productVariants.sale_price BETWEEN ${minPrice} AND ${maxPrice}`
+      );
 
     if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
 
     // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
 
-    if (lowPrice) qb.orderBy("productVariants.price", "ASC");
-    if (highPrice) qb.orderBy("productVariants.price", "DESC");
+    if (lowPrice) qb.orderBy("productVariants.sale_price", "ASC");
+    if (highPrice) qb.orderBy("productVariants.sale_price", "DESC");
 
     if (colorId)
       qb.andWhere("productVariants.colorId IN (:...colorIds)", {
@@ -222,7 +224,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
       issues: formattedErrors,
     });
   }
-  
 
   const { productVariants, productCategories, ...restData } = validation.data;
 
@@ -260,7 +261,6 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     promises.push(productCategoryRepository.save(productCategoryEntities));
   }
 
-
   // Execute all promises concurrently
   await Promise.all(promises);
 
@@ -281,7 +281,6 @@ export const updateProduct = asyncHandler(
     const { id } = req.params;
     // Validate request body
     const validation = updateProductValidationSchema.safeParse(req.body);
-
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
         path: issue.path.join("."),

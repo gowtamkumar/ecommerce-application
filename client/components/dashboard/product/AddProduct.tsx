@@ -16,10 +16,7 @@ import {
   Tag,
   Upload,
 } from "antd";
-import {
-  selectGlobal,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
@@ -63,6 +60,8 @@ const AddProduct = ({
   const [formValues, setFormValues] = useState({
     fileList: [],
     images: [],
+    thumbnailImage: "",
+    fileThumbnailList: [],
   }) as any;
 
   // hook
@@ -92,6 +91,14 @@ const AddProduct = ({
         // Fetch product data
         const result = await getProduct(id);
         const newData = { ...result.data };
+
+        if (!newData.variant) {
+          newData.purchasePrice = +newData.productVariants[0].purchasePrice;
+          newData.salePrice = +newData.productVariants[0].salePrice;
+          newData.stockQty = newData.productVariants[0].stockQty;
+          newData.variantId = newData.productVariants[0].id;
+        }
+
         const productCategories = newData?.productCategories?.map(
           ({ categoryId }: { categoryId: number }) => categoryId
         );
@@ -110,67 +117,50 @@ const AddProduct = ({
           );
           newData.fileList = file;
         }
+        if (newData.thumbnailImage) {
+          const newfile = {
+            uid: Math.random() * 1000 + "",
+            name: `photo ${Math.random() * 10000 + ""}`,
+            status: "done",
+            fileName: newData.thumbnailImage,
+            url: `${appConfig.apiUrl}/uploads/${
+              newData.thumbnailImage || "no-data.png"
+            }`,
+          };
+          newData.fileThumbnailList = [newfile];
+        }
         form.setFieldsValue({ ...newData, productCategories });
         setProduct({ ...newData, productCategories });
         setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
         setFormValues(newData);
-        form.resetFields();
       } else {
         form.resetFields();
         setTags([]);
       }
-    } catch (err: any) {
-      errorNotification({ message: err.message });
+    } catch (err) {
+      console.error("Error fetching product data:", err);
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   };
 
-  // const fetchProductData = async () => {
-  //   try {
-  //     dispatch(setLoading({ loading: true }));
-  //     if (params.new !== "new") {
-  //       const id = params.new.toString(); // Convert to string if necessary
-  //       // Fetch product data
-  //       const result = await getProduct(id);
-  //       const newData = { ...result.data };
-  //       const productCategories = newData?.productCategories?.map(
-  //         ({ categoryId }: { categoryId: number }) => categoryId
-  //       );
-  //       if (!newData.images) {
-  //         newData.images = [];
-  //       }
-  //       if (newData.images) {
-  //         const file = (newData.images || []).map(
-  //           (item: string, idx: number) => ({
-  //             uid: Math.random() * 1000 + "",
-  //             name: `photo ${idx}`,
-  //             status: "done",
-  //             fileName: item,
-  //             url: `${appConfig.apiUrl}/uploads/${item}`,
-  //           })
-  //         );
-  //         newData.fileList = file;
-  //       }
-  //       form.setFieldsValue({ ...newData, productCategories });
-  //       setProduct({ ...newData, productCategories });
-  //       setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
-  //       setFormValues(newData);
-  //     } else {
-  //       form.resetFields();
-  //       setTags([]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching product data:", err);
-  //   } finally {
-  //     dispatch(setLoading({ loading: false }));
-  //   }
-  // };
-
   const handleSubmit = async () => {
     const newData = await form.validateFields();
 
     delete newData.fileList;
+    delete newData.fileThumbnailList;
+
+    if (!newData.variant) {
+      const productVariants = {
+        purchasePrice: +newData.purchasePrice,
+        salePrice: +newData.salePrice,
+        stockQty: newData.stockQty,
+        id: newData?.variantId,
+      };
+      newData.productVariants = [productVariants];
+    }
+
+    // return console.log("🚀 ~ newData:", newData);
 
     const result = newData.id
       ? () => updateProduct(newData)
@@ -200,6 +190,19 @@ const AddProduct = ({
       }));
       newData.fileList = file;
     }
+    if (newData.thumbnailImage) {
+      const newfile = {
+        uid: Math.random() * 1000 + "",
+        name: `photo ${Math.random() * 10000 + ""}`,
+        status: "done",
+        fileName: newData.thumbnailImage,
+        url: `${appConfig.apiUrl}/uploads/${
+          newData.thumbnailImage || "no-data.png"
+        }`,
+      };
+      newData.fileThumbnailList = [newfile];
+    }
+
     setFormValues(form.getFieldsValue());
   };
 
@@ -238,14 +241,31 @@ const AddProduct = ({
 
       const newFileName = res.data.length ? res.data[0].filename : null;
       // Assuming you're updating form data here:
-      form.setFieldsValue({
-        fileList: [...form.getFieldsValue().fileList, ...newfile],
-        images: [...form.getFieldsValue().images, newFileName],
-      });
-      setFormValues({
-        fileList: [...formValues.fileList, ...newfile],
-        images: [...formValues.images, newFileName],
-      });
+      if (filename === "images") {
+        form.setFieldsValue({
+          ...form.getFieldsValue(),
+          fileList: [...form.getFieldsValue().fileList, ...newfile],
+          images: [...form.getFieldsValue().images, newFileName],
+        });
+        setFormValues({
+          ...formValues,
+          fileList: [...formValues.fileList, ...newfile],
+          images: [...formValues.images, newFileName],
+        });
+      }
+
+      if (filename === "thumbnailImage") {
+        form.setFieldsValue({
+          ...form.getFieldsValue(),
+          fileThumbnailList: newfile,
+          thumbnailImage: newFileName,
+        });
+        setFormValues({
+          ...formValues,
+          fileThumbnailList: newfile,
+          thumbnailImage: newFileName,
+        });
+      }
 
       onSuccess("Ok");
     } catch (err) {
@@ -280,10 +300,15 @@ const AddProduct = ({
         initialValues={{
           productVariants: [{}],
           images: [],
+          thumbnailImage: "",
           fileList: [],
+          fileThumbnailList: [],
         }}
       >
         <Form.Item name="id" hidden>
+          <Input />
+        </Form.Item>
+        <Form.Item name="variantId" hidden>
           <Input />
         </Form.Item>
 
@@ -300,37 +325,6 @@ const AddProduct = ({
               ]}
             >
               <Input placeholder="Enter name" />
-            </Form.Item>
-
-            <Form.Item
-              name="type"
-              label="Type"
-              className="p-0"
-              rules={[
-                {
-                  required: true,
-                  message: "Type is required",
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select Type"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                <Select.Option value="SimpleProduct">
-                  Simple Product
-                </Select.Option>
-                <Select.Option value="VarientProduct">
-                  Varient Product
-                </Select.Option>
-              </Select>
             </Form.Item>
 
             <Form.Item
@@ -441,6 +435,54 @@ const AddProduct = ({
               >
                 <InputNumber placeholder="Enter" className="w-full" />
               </Form.Item>
+            </div>
+            <div className="flex justify-between">
+              <Form.Item name="variant" valuePropName="checked">
+                <Checkbox>Product Variant</Checkbox>
+              </Form.Item>
+
+              {!formValues.variant && (
+                <>
+                  <Form.Item
+                    name="purchasePrice"
+                    label="Purchase Price"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Purchase Price is required",
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Enter" className="w-full" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="salePrice"
+                    label="Sale Price"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Sale Price is required",
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Enter" className="w-full" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="stockQty"
+                    label="Stock Qty"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Stock Qty is required",
+                      },
+                    ]}
+                  >
+                    <InputNumber placeholder="Enter" className="w-full" />
+                  </Form.Item>
+                </>
+              )}
             </div>
           </div>
 
@@ -571,6 +613,53 @@ const AddProduct = ({
             {/* image upload section */}
             <div>
               <Form.Item
+                name="fileThumbnailList"
+                label="Thumbnail Image"
+                valuePropName="fileThumbnailList"
+                getValueFromEvent={normFile}
+                rules={[
+                  {
+                    required: true,
+                    message: "Thumbnail Image is required",
+                  },
+                ]}
+              >
+                <ImgCrop rotationSlider showReset>
+                  <Upload
+                    name="thumbnailImage"
+                    listType="picture-card"
+                    fileList={formValues?.fileThumbnailList || []}
+                    onRemove={async (v) => {
+                      if (v.fileName) {
+                        form.setFieldsValue({
+                          ...form.getFieldsValue(),
+                          thumbnailImage: null,
+                          fileThumbnailList: [],
+                        });
+                        setFormValues({
+                          ...formValues,
+                          thumbnailImage: null,
+                          fileThumbnailList: [],
+                        });
+                        const params = { filename: v.fileName };
+                        await fileDeleteWithPhoto(params);
+                      }
+                    }}
+                    className="avatar-uploader"
+                    onPreview={(file) => handlePreview(file, dispatch)}
+                    customRequest={customUploadRequest}
+                    maxCount={1}
+                  >
+                    {uploadButton}
+                  </Upload>
+                </ImgCrop>
+              </Form.Item>
+
+              <Form.Item name="thumbnailImage" hidden>
+                <Input />
+              </Form.Item>
+
+              <Form.Item
                 name="fileList"
                 label="Images"
                 valuePropName="fileList"
@@ -637,145 +726,150 @@ const AddProduct = ({
           </div>
         </div>
 
-        <div>
-          <Form.List name="productVariants">
-            {(fields, { add, remove }) => (
-              <div>
-                <div className="grid grid-cols-4 justify-center items-center gap-1">
-                  <div className="col-span-3">
-                    <Divider
-                      orientation="center"
-                      style={{ margin: "0px", padding: "0px" }}
-                    >
-                      Product Variants
-                    </Divider>
-                  </div>
-                  <div className="col-span-1">
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                        disabled={
-                          form.getFieldValue("type") === "SimpleProduct" &&
-                          form.getFieldValue("productVariants")?.length === 1
-                        }
+        {formValues.variant && (
+          <div>
+            <Form.List name="productVariants">
+              {(fields, { add, remove }) => (
+                <div>
+                  <div className="grid grid-cols-4 justify-center items-center gap-1">
+                    <div className="col-span-3">
+                      <Divider
+                        orientation="center"
+                        style={{ margin: "0px", padding: "0px" }}
                       >
-                        Add
-                      </Button>
-                    </Form.Item>
+                        Product Variants
+                      </Divider>
+                    </div>
+                    <div className="col-span-1">
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                          disabled={
+                            form.getFieldValue("type") === "SimpleProduct" &&
+                            form.getFieldValue("productVariants")?.length === 1
+                          }
+                        >
+                          Add
+                        </Button>
+                      </Form.Item>
+                    </div>
                   </div>
-                </div>
 
-                <table width="100%">
-                  <thead className="mb-1">
-                    <tr className="text-start">
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Sale Price
-                      </th>
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Purchase Price
-                      </th>
-                      <th className="text-start w-1/6">Size</th>
-                      <th className="text-start w-1/6">Color</th>
-                      <th className="text-start w-1/6">Weight</th>
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Qty
-                      </th>
-                    </tr>
-                  </thead>
-
-                  {fields.map(({ key, name, ...restField }) => (
-                    <tbody key={key}>
-                      <tr>
-                        <td hidden>
-                          <Form.Item {...restField} name={[name, "id"]}>
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "price"]}
-                            rules={[{ required: true, message: "Sale Price" }]}
-                          >
-                            <InputNumber placeholder="Sale Price" min={1} />
-                          </Form.Item>
-                        </td>
-
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "purchasePrice"]}
-                            rules={[
-                              { required: true, message: "Purchase Price" },
-                            ]}
-                          >
-                            <InputNumber placeholder="Purchase Price" min={1} />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item {...restField} name={[name, "sizeId"]}>
-                            <Select allowClear showSearch placeholder="Select">
-                              {(sizes || []).map((item: any) => (
-                                <Select.Option key={item.id} value={item.id}>
-                                  {`${item.id} ${item.name}`}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item {...restField} name={[name, "colorId"]}>
-                            <Select
-                              showSearch
-                              allowClear
-                              placeholder="Select"
-                              optionFilterProp="children"
-                              filterOption={(input, option) =>
-                                (option?.children as any)
-                                  .toLowerCase()
-                                  .indexOf(input.toLowerCase()) >= 0
-                              }
-                            >
-                              {(colors || []).map((item: any) => (
-                                <Select.Option key={item.id} value={item.id}>
-                                  <ColorPicker
-                                    size="small"
-                                    value={item.color}
-                                  />{" "}
-                                  {item.name}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </td>
-
-                        <td>
-                          <Form.Item {...restField} name={[name, "weight"]}>
-                            <Input placeholder="Weight" />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          {" "}
-                          <Form.Item
-                            {...restField}
-                            name={[name, "stockQty"]}
-                            rules={[{ required: true, message: "Stock Qty" }]}
-                          >
-                            <InputNumber placeholder="Enter" min={1} />
-                          </Form.Item>
-                        </td>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
+                  <table width="100%">
+                    <thead className="mb-1">
+                      <tr className="text-start">
+                        <th className="text-start w-1/6">
+                          <label className="text-red-500">*</label>Sale Price
+                        </th>
+                        <th className="text-start w-1/6">
+                          <label className="text-red-500">*</label>Purchase
+                          Price
+                        </th>
+                        <th className="text-start w-1/6">Size</th>
+                        <th className="text-start w-1/6">Color</th>
+                        <th className="text-start w-1/6">
+                          <label className="text-red-500">*</label>Qty
+                        </th>
                       </tr>
-                    </tbody>
-                  ))}
-                </table>
-              </div>
-            )}
-          </Form.List>
-        </div>
+                    </thead>
+
+                    {fields.map(({ key, name, ...restField }) => (
+                      <tbody key={key}>
+                        <tr>
+                          <td hidden>
+                            <Form.Item {...restField} name={[name, "id"]}>
+                              <Input />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "salePrice"]}
+                              rules={[
+                                { required: true, message: "Sale Price" },
+                              ]}
+                            >
+                              <InputNumber placeholder="Sale Price" min={1} />
+                            </Form.Item>
+                          </td>
+
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "purchasePrice"]}
+                              rules={[
+                                { required: true, message: "Purchase Price" },
+                              ]}
+                            >
+                              <InputNumber
+                                placeholder="Purchase Price"
+                                min={1}
+                              />
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item {...restField} name={[name, "sizeId"]}>
+                              <Select
+                                allowClear
+                                showSearch
+                                placeholder="Select"
+                              >
+                                {(sizes || []).map((item: any) => (
+                                  <Select.Option key={item.id} value={item.id}>
+                                    {`${item.id} ${item.name}`}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </td>
+                          <td>
+                            <Form.Item {...restField} name={[name, "colorId"]}>
+                              <Select
+                                showSearch
+                                allowClear
+                                placeholder="Select"
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                  (option?.children as any)
+                                    .toLowerCase()
+                                    .indexOf(input.toLowerCase()) >= 0
+                                }
+                              >
+                                {(colors || []).map((item: any) => (
+                                  <Select.Option key={item.id} value={item.id}>
+                                    <ColorPicker
+                                      size="small"
+                                      value={item.color}
+                                    />{" "}
+                                    {item.name}
+                                  </Select.Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </td>
+
+                          <td>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "stockQty"]}
+                              rules={[{ required: true, message: "Stock Qty" }]}
+                            >
+                              <InputNumber placeholder="Enter" min={1} />
+                            </Form.Item>
+                          </td>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </tr>
+                      </tbody>
+                    ))}
+                  </table>
+                </div>
+              )}
+            </Form.List>
+          </div>
+        )}
 
         <div className="col-span-1 text-end">
           <Button

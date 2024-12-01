@@ -12,6 +12,9 @@ export default function AddToCartButton({ item }: any) {
 
   function addToCart(value: any) {
     console.log("🚀 ~ value:", value);
+
+    
+
     try {
       dispatch(setLoading({ productId: value.id }));
       dispatch(

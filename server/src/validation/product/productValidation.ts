@@ -15,6 +15,9 @@ export const productValidationSchema = z.object({
       required_error: "Images is required",
     })
   ),
+  thumbnailImage:  z.string({
+    required_error: "Thumbnail Image is required",
+  }),
   brandId: z.number().optional(),
   unitId: z.number({
     required_error: "Unit is required",
@@ -29,9 +32,8 @@ export const productValidationSchema = z.object({
     required_error: "Short Description is required",
   }),
   enableReview: z.boolean().optional(),
-  type: z.enum(["SimpleProduct", "VarientProduct"], {
-    required_error: "Product type is required",
-  }),
+  variant: z.boolean().optional(),
+  featured:  z.boolean().optional(),
   alertQty: z.number({
     required_error: "Alert Qty is Required",
   }),
@@ -40,13 +42,13 @@ export const productValidationSchema = z.object({
   productVariants: z
     .array(
       z.object({
-        price: z.number({ required_error: "Regular Price is required" }),
+        salePrice: z.number({ required_error: "Sale Price is required" }),
         purchasePrice: z.number({
           required_error: "Purchase Price is required",
         }),
+        default: z.boolean().optional(),
         sizeId: z.number().optional(),
         colorId: z.number().optional(),
-        weight: z.string().optional(),
         stockQty: z.number({
           required_error: "Stock Qty is required",
         }),

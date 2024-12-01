@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { OrderEntity } from "../../order/model/order.entity";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
+import { OrderEntity } from "../../../order/model/order.entity";
 import dayjs from "dayjs";
-import { UserEntity } from "../../auth/model/user.entity";
-import { logger } from "../../../middlewares/logger";
+import { UserEntity } from "../../../auth/model/user.entity";
+import { logger } from "../../../../middlewares/logger";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
@@ -136,7 +136,7 @@ export const getDashboardReport = asyncHandler(
       with orderItems as (
       SELECT 
             oi.product_id AS product_id,
-            SUM(((COALESCE(oi.price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
+            SUM(((COALESCE(oi.sale_price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
             SUM(COALESCE(oi.purchase_price, 0) * COALESCE(oi.qty, 0)) AS total_purchase_amount
         FROM 
             order_items oi
@@ -214,7 +214,7 @@ export const getTopSellingProduct = asyncHandler(
             -- Aggregation for product variants
             json_agg(
                 json_build_object(
-                    'price', pv.price,
+                    'price', pv.sale_price,
                     'purchasePrice', pv.purchase_price,
                     'stockQty', pv.stock_qty,
                     'color_id', pv.color_id,

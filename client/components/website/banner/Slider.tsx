@@ -14,7 +14,6 @@ import {
   Scrollbar,
   Thumbs,
 } from "swiper/modules";
-import "./heroSectionSlider.css";
 import "swiper/css/free-mode";
 import "swiper/css/thumbs";
 import Image from "next/image";
@@ -22,7 +21,6 @@ import { FaCaretRight } from "react-icons/fa6";
 import { FaCaretLeft } from "react-icons/fa";
 
 export default function Slider({ banners }: any) {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
   return (
     <>
       <div className="relative w-full">
@@ -35,15 +33,14 @@ export default function Slider({ banners }: any) {
             EffectFade,
             Autoplay,
           ]}
-          thumbs={{ swiper: thumbsSwiper }}
           spaceBetween={5}
           slidesPerView={1}
-          pagination
+          pagination={{ clickable: true }}
           autoplay={true}
           speed={1000}
           navigation={{
-            nextEl: ".custom-next",
-            prevEl: ".custom-prev",
+            nextEl: ".hero-next",
+            prevEl: ".hero-prev",
           }}
         >
           {banners?.map(
@@ -59,7 +56,7 @@ export default function Slider({ banners }: any) {
               url: string;
             }) => (
               <SwiperSlide key={image}>
-                <div className="mx-auto md:h-[57vh] md:p-0 p-5">
+                <div className="md:h-[57vh] md:p-0 p-5 flex items-center">
                   <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
                     <div className="md:order-1 order-2 text-center md:text-start">
                       <h1 className="md:text-4xl text-2xl font-bold">
@@ -93,57 +90,16 @@ export default function Slider({ banners }: any) {
             )
           )}
         </Swiper>
-        <button className="custom-prev absolute z-40 top-1/2 -left-6 transform -translate-y-1/2">
+
+        <button className="hero-prev absolute z-40 top-1/2 -left-6 transform -translate-y-1/2">
           <FaCaretLeft size={40} className="text-bioxin-primary" />
         </button>
 
         {/* Custom Next Button */}
-        <button className="custom-next absolute z-40 top-1/2 -right-5 transform -translate-y-1/2">
-          {/* <span className="triangle-right-c"></span> */}
+        <button className="hero-next absolute z-40 top-1/2 -right-5 transform -translate-y-1/2">
           <FaCaretRight size={40} className="text-bioxin-primary" />
         </button>
       </div>
-
-      <Swiper
-        onSwiper={setThumbsSwiper}
-        loop={true}
-        spaceBetween={10}
-        slidesPerView={4}
-        freeMode={true}
-        watchSlidesProgress={true}
-        modules={[FreeMode, Navigation, Thumbs]}
-        className="mySwiper"
-      >
-        {banners?.map(
-          (
-            {
-              image,
-              title,
-              description,
-              url,
-            }: {
-              image: string;
-              title: string;
-              description: string;
-              url: string;
-            },
-            idx: number
-          ) => (
-            <SwiperSlide key={idx}>
-              <Image
-                fill
-                loading="lazy"
-                src={
-                  image
-                    ? `${appConfig.apiUrl}/uploads/${image}`
-                    : "/pos_software.png"
-                }
-                alt="unique_point"
-              />
-            </SwiperSlide>
-          )
-        )}
-      </Swiper>
     </>
   );
 }
