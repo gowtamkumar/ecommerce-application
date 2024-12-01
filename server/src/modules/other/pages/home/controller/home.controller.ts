@@ -146,37 +146,37 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
   const productRepository = connection.getRepository(ProductEntity);
   const qb = productRepository.createQueryBuilder("product");
   qb.select([
-    "product",
-    "user.id",
-    "user.name",
-    "brand.id",
-    "brand.name",
-    "reviews.id",
+    "product.id",
+    "product.name",
+    "product.thumbnailImage",
+    // "product.images",
+    // "product.urlSlug",
+    "product.variant",
+    "product.featured",
+    // "product.taxId",
+    // "product.tags",
+    // "product.brandId",
+    // "product.unitId",
+    // "product.discountId",
+    // "product.enableReview",
+    // "product.limitPurchaseQty",
+    // "product.alertQty",
+    // "product.status",
+    // "brand.name",
+    // "reviews.id",
     "reviews.rating",
-    "reviews.comment",
     "tax.name",
     "tax.value",
     "productVariants",
-    "productCategories",
-    "category.id",
-    "category.name",
-    "size.id",
-    "size.name",
-    "color.name",
     "discount.discountType",
     "discount.value",
     "discount.type",
   ]);
-  qb.leftJoin("product.user", "user");
-  qb.leftJoin("product.brand", "brand");
+//   qb.leftJoin("product.brand", "brand");
   qb.leftJoin("product.reviews", "reviews");
   qb.leftJoin("product.tax", "tax");
   qb.leftJoin("product.discount", "discount");
   qb.leftJoin("product.productVariants", "productVariants");
-  qb.leftJoin("product.productCategories", "productCategories");
-  qb.leftJoin("productCategories.category", "category");
-  qb.leftJoin("productVariants.size", "size");
-  qb.leftJoin("productVariants.color", "color");
   qb.orderBy("productVariants.id", "DESC");
   qb.addOrderBy("product.urlSlug", "ASC");
 
@@ -185,6 +185,6 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
     message: "Get Home page data",
-    data: { topSellingProduct, banners, discounts, categories, products },
+    data: {products, topSellingProduct, banners, discounts, categories },
   });
 });

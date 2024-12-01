@@ -63,7 +63,7 @@ export default function Slider({ banners }: any) {
                         {title.slice(0, 50)}
                       </h1>
                       <p className="my-3 font-medium">
-                        {description.slice(0, 100)}
+                        {description?.slice(0, 100)}
                       </p>
                       <Button type="primary">
                         <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>
