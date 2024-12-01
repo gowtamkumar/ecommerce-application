@@ -36,7 +36,7 @@ interface DataType {
   minOrderAmount: number;
   usageCount: number;
   maxUser: number;
-  status: string;
+  active: boolean;
 }
 
 type DataIndex = keyof DataType;
@@ -261,13 +261,13 @@ const DiscountList: React.FC = () => {
 
     {
       title: "Status",
-      key: "status",
-      ...getColumnSearchProps("status"),
+      key: "active",
+      ...getColumnSearchProps("active"),
       sortDirections: ["descend", "ascend"],
-      sorter: (a, b) => a.status.length - b.status.length,
+      // sorter: (a, b) => a.active.length - b.active.length,
       render: (value) => (
-        <Tag color={value.status === "Active" ? "green" : "red"}>
-          {value.status}
+        <Tag color={value.active ? "green" : "red"}>
+          {value.active ? "Active" : "Inactive"}
         </Tag>
       ),
     },

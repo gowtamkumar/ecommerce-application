@@ -17,7 +17,17 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   const bannerRepository = connection.getRepository(BannerEntity);
 
-  const banners = await bannerRepository.find({ where: { active: true } });
+  const banners = await bannerRepository.find({
+    where: { active: true },
+    select: {
+      id: true,
+      title: true,
+      type: true,
+      image: true,
+      url: true,
+      description: true,
+    },
+  });
 
   const topSellingProduct = await connection.query(
     `
@@ -103,11 +113,35 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const discountRepository = connection.getRepository(DiscountEntity);
-  const discounts = await discountRepository.find();
+  const discounts = await discountRepository.find({
+    where: { active: true },
+    select: {
+      id: true,
+      discountType: true,
+      couponCode: true,
+      type: true,
+      value: true,
+      startDate: true,
+      expiryDate: true,
+      minOrderAmount: true,
+      maxUser: true,
+      usageCount: true,
+      active: true,
+    },
+  });
 
   const categoriesRepository = connection.getRepository(CategoriesEntity);
-  const categories = await categoriesRepository.find();
-
+  const categories = await categoriesRepository.find({
+    where: { active: true },
+    select: {
+      id: true,
+      name: true,
+      urlSlug: true,
+      image: true,
+      description: true,
+      active: true,
+    },
+  });
 
   const productRepository = connection.getRepository(ProductEntity);
   const qb = productRepository.createQueryBuilder("product");

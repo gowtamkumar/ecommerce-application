@@ -19,13 +19,8 @@ const conditionalSchema = z.object({
     required_error: "user is required",
   }),
   maxUser: z.number().nullable().optional(),
-  // usageCount: z.number({
-  //   required_error: "usage Count is required",
-  // }),
-
-  // isSingleUse: z.boolean().optional(),
-
-  status: z.enum(["Active", "Inactive"]).optional(),
+ 
+  status: z.boolean().optional(),
 });
 
 export const discountValidationSchema = conditionalSchema

@@ -31,7 +31,7 @@ interface DataType {
   urlSlug: string;
   description: string;
   image: string;
-  status: string;
+  active: boolean;
   children?: DataType[];
 }
 
@@ -210,13 +210,13 @@ const CategoryList: React.FC = () => {
 
     {
       title: "Status",
-      key: "status",
-      ...getColumnSearchProps("status"),
+      key: "active",
+      ...getColumnSearchProps("active"),
       sortDirections: ["descend", "ascend"],
-      sorter: (a, b) => a.status.length - b.status.length,
+      // sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
-        <Tag color={value.status === "Active" ? "green" : "red"}>
-          {value.status}
+        <Tag color={value.active ? "green" : "red"}>
+          {value.active ? "Active" : "Inactive"}
         </Tag>
       ),
     },
