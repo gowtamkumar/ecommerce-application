@@ -24,9 +24,9 @@ export class ColorEntity {
   productVariants!: ProductVariantEntity[];
 
 
-  @OneToMany(
-    (_type) => OrderItemEntity,
-    (orderItems) => orderItems.color
-  )
-  orderItems!: OrderItemEntity[];
+  // @OneToMany(
+  //   (_type) => OrderItemEntity,
+  //   (orderItems) => orderItems.color
+  // )
+  // orderItems!: OrderItemEntity[];
 }

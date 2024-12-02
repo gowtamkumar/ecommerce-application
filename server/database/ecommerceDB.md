@@ -90,8 +90,8 @@ variant:boolean
 id,
 purchase_price:numeric,
 sale_price:numeric,(optional)
-size_id,
-colorId,
+<!-- size_id,
+colorId, -->
 product_id
 stock_qty:number,
 default:boolean

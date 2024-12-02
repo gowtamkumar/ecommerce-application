@@ -4,15 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { OrderEntity } from "./order.entity";
 import { ProductEntity } from "../../product/model/product.entity";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
-import { ColorEntity } from "../../color/model/color.entity";
-import { SizeEntity } from "../../size/model/size.entity";
 
 @Entity("order_items")
 export class OrderItemEntity {
@@ -62,21 +58,21 @@ export class OrderItemEntity {
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-  @Column({ name: "color_id", nullable: true })
-  colorId!: number;
-  @ManyToOne((_type) => ColorEntity, (color) => color.orderItems, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "color_id" })
-  color!: ColorEntity;
+  // @Column({ name: "color_id", nullable: true })
+  // colorId!: number;
+  // @ManyToOne((_type) => ColorEntity, (color) => color.orderItems, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "color_id" })
+  // color!: ColorEntity;
 
-  @Column({ name: "size_id", nullable: true })
-  sizeId!: number;
-  @ManyToOne((_type) => SizeEntity, (size) => size.orderItems, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "size_id" })
-  size!: SizeEntity;
+  // @Column({ name: "size_id", nullable: true })
+  // sizeId!: number;
+  // @ManyToOne((_type) => SizeEntity, (size) => size.orderItems, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "size_id" })
+  // size!: SizeEntity;
 
   @Column({ name: "product_variant_id" })
   productVariantId!: number;

@@ -225,11 +225,11 @@ const Page: React.FC = () => {
       },
       {
         title: "Color",
-        render: (v: any) => <span>{v.color?.name}</span>,
+        render: (v: any) => <span>Need to Get in product variant</span>,
       },
       {
         title: "Size",
-        render: (v: any) => <span>{v.size?.name}</span>,
+        render: (v: any) => <span>Need to Get in product variant</span>,
       },
       {
         title: "Purchase Price",

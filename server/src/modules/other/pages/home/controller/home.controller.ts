@@ -5,7 +5,6 @@ import { getDBConnection } from "../../../../../config/db";
 import { BannerEntity } from "../../../../banner/model/banner.entity";
 import { DiscountEntity } from "../../../../discount/model/discount.entity";
 import { CategoriesEntity } from "../../../../categories/model/categories.entity";
-import { ProductEntity } from "../../../../product/model/product.entity";
 
 // @desc Get getHome data
 // @route GET /api/v1/home
@@ -143,187 +142,273 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  const productRepository = connection.getRepository(ProductEntity);
-  const qb = productRepository.createQueryBuilder("product");
-  qb.select([
-    "product.id",
-    "product.name",
-    "product.thumbnailImage",
-    // "product.images",
-    // "product.urlSlug",
-    "product.variant",
-    "product.featured",
-    // "product.taxId",
-    // "product.tags",
-    // "product.brandId",
-    // "product.unitId",
-    // "product.discountId",
-    // "product.enableReview",
-    // "product.limitPurchaseQty",
-    // "product.alertQty",
-    // "product.status",
-    // "brand.name",
-    // "reviews.id",
-    "reviews.rating",
-    "tax.name",
-    "tax.value",
-    "productVariants",
-    "discount.discountType",
-    "discount.value",
-    "discount.type",
-  ]);
-//   qb.leftJoin("product.brand", "brand");
-  qb.leftJoin("product.reviews", "reviews");
-  qb.leftJoin("product.tax", "tax");
-  qb.leftJoin("product.discount", "discount");
-  qb.leftJoin("product.productVariants", "productVariants");
-  qb.orderBy("productVariants.id", "DESC");
-  qb.addOrderBy("product.urlSlug", "ASC");
+  const products = await connection.query(
+    `
+    WITH productTable AS (
+  SELECT 
+    p.*,
+    pv.sale_price,
+    pv.purchase_price,
+    pv.id AS product_variant_id
+  FROM 
+    products p
+  JOIN LATERAL (
+    SELECT 
+      pv.sale_price, 
+      pv.purchase_price, 
+      pv.id
+    FROM 
+      product_variants pv
+    WHERE 
+      pv.product_id = p.id
+    ORDER BY 
+      pv.default DESC, pv.id
+    LIMIT 1
+  ) pv ON true
+),
 
-  const products = await qb.getMany();
+reviewsTable AS (
+  SELECT 
+    product_id,
+    COUNT(*) AS reviews_count,
+    COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+  FROM reviews
+  GROUP BY product_id
+)
+
+SELECT 
+  p.id,
+  p.name,
+  p.thumbnail_image,
+  p.variant,
+  p.discount_id,
+  dis.discount_type,
+  dis.value as discount_value,
+  p.featured,
+  p.sale_price,
+  p.purchase_price,
+  p.product_variant_id,
+  rt.reviews_count,
+  rt.average_rating,
+
+  ROUND(SUM((p.sale_price * COALESCE(taxs.value, 0)) / 100), 2) AS tax_amount,
+
+  ROUND(
+    SUM(
+      CASE 
+        WHEN dis.discount_type = 'Percentage' THEN 
+          (p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
+        ELSE 
+          dis.value
+      END
+    ), 
+    2
+  ) AS dis_amount,
+
+  ROUND(
+    p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100) -
+    COALESCE(
+      CASE 
+        WHEN dis.discount_type = 'Percentage' THEN 
+          (p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
+        ELSE 
+          dis.value
+      END, 0
+    ),
+    2
+  ) AS final_price,
+
+  ROUND(
+    SUM(p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)), 
+    2
+  ) AS tax_with_price
+
+FROM 
+  productTable p
+LEFT JOIN 
+  reviewsTable rt ON rt.product_id = p.id
+LEFT JOIN 
+  taxs ON taxs.id = p.tax_id
+LEFT JOIN 
+  discounts dis ON dis.id = p.discount_id
+
+GROUP BY 
+  p.id, p.name, p.thumbnail_image, p.variant, p.discount_id, p.featured, 
+  p.sale_price, p.purchase_price, p.product_variant_id, 
+  rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value;
+
+ `
+  );
+
+  // const productRepository = connection.getRepository(ProductEntity);
+  // const qb = productRepository.createQueryBuilder("product");
+  // qb.select([
+  //   "product.id",
+  //   "product.name",
+  //   "product.thumbnailImage",
+  //   // "product.images",
+  //   // "product.urlSlug",
+  //   "product.variant",
+  //   "product.featured",
+  //   // "product.taxId",
+  //   // "product.tags",
+  //   // "product.brandId",
+  //   // "product.unitId",
+  //   // "product.discountId",
+  //   // "product.enableReview",
+  //   // "product.limitPurchaseQty",
+  //   // "product.alertQty",
+  //   // "product.status",
+  //   // "brand.name",
+  //   // "reviews.id",
+  //   "reviews.rating",
+  //   "tax.name",
+  //   "tax.value",
+  //   "productVariants",
+  //   "discount.discountType",
+  //   "discount.value",
+  //   "discount.type",
+  // ]);
+  // qb.leftJoin("product.reviews", "reviews");
+  // qb.leftJoin("product.tax", "tax");
+  // qb.leftJoin("product.discount", "discount");
+  // qb.leftJoin("product.productVariants", "productVariants");
+  // qb.orderBy("productVariants.id", "DESC");
+  // qb.addOrderBy("product.urlSlug", "ASC");
+
+  // const products = await qb.getMany();
 
   return res.status(200).json({
     success: true,
     message: "Get Home page data",
-    data: {products, topSellingProduct, banners, discounts, categories },
+    data: { products, topSellingProduct, banners, discounts, categories },
   });
 });
 
-
-
-// with productTable as (
-//   SELECT 
-//       *,
-//       (SELECT 
-//           pv.sale_price 
-//        FROM 
-//           product_variants pv
-//        WHERE 
-//      CASE 
-//               WHEN pv.default = true THEN
-//                   pv.product_id = products.id and pv.default = true
-//               ELSE pv.product_id = products.id and pv.default = false
-//           END
-//        LIMIT 1
-//       ) AS sale_price
-//   FROM 
-//       products
-//   ),
-//   reviewsTable AS (
-//   SELECT 
-//       product_id,
-//     COUNT(*) as reviews_count,
-//       COALESCE(SUM(CAST(rating AS FLOAT)) / COUNT(rating), 0) AS average_rating
-//   FROM reviews
-//   WHERE product_id IS NOT NULL
-//   GROUP BY product_id
-//   )
-  
-//   select 
-//      p.id,
-//       p.name,
-//       p.thumbnail_image,
-//       p.variant,
-//       p.discount_id,
-//       p.featured,
-//       p.sale_price,
-//     rt.reviews_count,
-//     rt.average_rating
-  
-//   from productTable p
-//   LEFT JOIN reviewsTable rt  ON rt.product_id = p.id
-//   GROUP BY 
-//      p.id,
-//       p.name,
-//       p.thumbnail_image,
-//       p.variant,
-//       p.discount_id,
-//       p.featured,
-//       p.sale_price,
-//     rt.reviews_count,
-//     rt.average_rating
-
-
-
-
-
-
-// WITH producVariants AS (
-//   SELECT *
-//   FROM product_variants
+// WITH productTable AS (
+//   SELECT
+//     *,
+//     (
+//       SELECT pv.sale_price
+//       FROM product_variants pv
+//       WHERE
+//         pv.product_id = products.id
+//         AND (
+//           (pv.default = true)
+//           OR (pv.default = false)
+//         )
+//       LIMIT 1
+//     ) AS sale_price,
+//      (
+//     SELECT pv.purchase_price
+//     FROM product_variants pv
+//     WHERE
+//       pv.product_id = products.id
+//       AND (
+//         (pv.default = true)
+//         OR (pv.default = false)
+//       )
+//     LIMIT 1
+//   ) AS purchase_price,
+//    (
+//     SELECT pv.id
+//     FROM product_variants pv
+//     WHERE
+//       pv.product_id = products.id
+//       AND (
+//         (pv.default = true)
+//         OR (pv.default = false)
+//       )
+//     LIMIT 1
+//   ) AS product_variant_id
+//   FROM products
 // ),
 
 // reviewsTable AS (
-// SELECT 
-//   product_id,
-// COUNT(*) as reviews_count,
-//   COALESCE(SUM(CAST(rating AS FLOAT)) / COUNT(rating), 0) AS average_rating
-// FROM reviews
-// WHERE product_id IS NOT NULL
-// GROUP BY product_id
+//   SELECT
+//     product_id,
+//     COUNT(*) AS reviews_count,
+//     COALESCE(SUM(CAST(rating AS FLOAT)) / COUNT(rating), 0) AS average_rating
+//   FROM reviews
+//   WHERE product_id IS NOT NULL
+//   GROUP BY product_id
 // )
 
-// -- select * from reviewsTable;
+// SELECT
+//   p.id,
+//   p.name,
+//   p.thumbnail_image as "thumbnailImage",
+//   p.variant,
+//   p.discount_id as "discountId",
+//   dis.discount_type as "discountType",
+//   dis.value as "discountValue",
+//   p.featured,
+//   p.sale_price as "salePrice",
+//   p.purchase_price as "purchasePrice",
+//   p.product_variant_id as "productVariantId",
+//   rt.reviews_count as "reviewsCount",
+//   rt.average_rating as "averageRating",
+//   SUM((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100) AS "taxAmount",
 
+//   SUM(
+//     ROUND(CASE
+//       WHEN dis.discount_type = 'Percentage' THEN
+//         ((COALESCE(p.sale_price, 0) + (COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
+//       ELSE
+//         COALESCE(dis.value, 0)
+//     END
+//   ,2)) AS "disAmount",
 
+//   CASE
+//     WHEN p.discount_id IS NOT NULL THEN
+//       ROUND(
+//         (
+//           (COALESCE(p.sale_price, 0) + ((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100)) -
+//           SUM(
+//             CASE
+//               WHEN dis.discount_type = 'Percentage' THEN
+//                 ((COALESCE(p.sale_price, 0) + (COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
+//               ELSE
+//                 COALESCE(dis.value, 0)
+//             END
+//           )
+//         ), 2
+//       )
+//     ELSE
+//       ROUND(
+//         COALESCE(p.sale_price, 0) + ((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100),
+//         2
+//       )
+//   END AS "price",
 
-// -- SELECT * FROM producVariants pv
-// SELECT 
+//   SUM(
+//     ROUND(
+//       COALESCE(p.sale_price, 0) + ((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100),
+//       2
+//     )
+//   ) AS "taxWithPrice"
+
+// FROM
+//   productTable p
+// LEFT JOIN
+//   reviewsTable rt ON rt.product_id = p.id
+// LEFT JOIN
+//   taxs ON taxs.id = p.tax_id
+// LEFT JOIN
+//   discounts dis ON dis.id = p.discount_id
+
+// GROUP BY
 //   p.id,
 //   p.name,
 //   p.thumbnail_image,
 //   p.variant,
 //   p.discount_id,
-//   dis.value,
-//   dis.discount_type,
 //   p.featured,
-//   pv.sale_price,
-// rt.reviews_count,
-// rt.average_rating,
-//   -- Calculate tax amount
-//   SUM((COALESCE(pv.sale_price, 0) * COALESCE(taxs.value, 0)) / 100) AS taxAmount,
-//   -- COUNT(reviews.id) AS reviews,
-//   -- Calculate discount amount
-//   SUM(
-//       CASE 
-//           WHEN dis.discount_type = 'Percentage' THEN
-//               ((COALESCE(pv.sale_price, 0) + (COALESCE(pv.sale_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
-//           ELSE COALESCE(dis.value, 0)
-//       END
-//   ) AS dis_amount,
-//   -- Calculate final price
-//   CASE 
-//       WHEN p.discount_id IS NOT NULL THEN 
-//           ROUND(
-//               (
-//                   (COALESCE(pv.sale_price, 0) + ((COALESCE(pv.sale_price, 0) * COALESCE(taxs.value, 0)) / 100)) - 
-//                   SUM(
-//                       CASE 
-//                           WHEN dis.discount_type = 'Percentage' THEN
-//                               ((COALESCE(pv.sale_price, 0) + (COALESCE(pv.sale_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
-//                           ELSE COALESCE(dis.value, 0)
-//                       END
-//                   )
-//               ), 2
-//           )
-//       ELSE 
-//           ROUND(COALESCE(pv.sale_price, 0) + ((COALESCE(pv.sale_price, 0) * COALESCE(taxs.value, 0)) / 100), 2)
-//   END AS final_price,
-//   -- Calculate tax with price
-//   SUM(ROUND(COALESCE(pv.sale_price, 0) + ((COALESCE(pv.sale_price, 0) * COALESCE(taxs.value, 0)) / 100), 2)) AS tax_with_price
-// FROM 
-//   producVariants pv
-// LEFT JOIN products p ON p.id = pv.product_id
-// LEFT JOIN taxs ON taxs.id = p.tax_id
-// LEFT JOIN reviews ON reviews.product_id = p.id
-// LEFT JOIN discounts dis ON dis.id = p.discount_id
-// LEFT JOIN reviewsTable rt  ON rt.product_id = p.id
-// GROUP BY 
-//   p.id,
-//   pv.sale_price,
-//   taxs.value,
-//   dis.value,
-//   dis.discount_type,
+//   p.sale_price,
+//   p.purchase_price,
+//   p.product_variant_id,
 //   rt.reviews_count,
-//   rt.average_rating
-  
+//   rt.average_rating,
+//   taxs.value,
+//   dis.discount_type,
+//   dis.value

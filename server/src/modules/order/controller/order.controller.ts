@@ -33,8 +33,6 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   qb.select([
     "order",
     "orderItems",
-    "size.name",
-    "color.name",
     "product",
     "payments",
     "orderTrackings",
@@ -45,8 +43,6 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 
   qb.leftJoin("order.orderItems", "orderItems");
   qb.leftJoin("orderItems.product", "product");
-  qb.leftJoin("orderItems.size", "size");
-  qb.leftJoin("orderItems.color", "color");
   qb.leftJoin("order.orderTrackings", "orderTrackings");
   qb.leftJoin("order.deliveryMan", "deliveryMan");
   qb.leftJoin("order.user", "user");

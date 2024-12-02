@@ -23,6 +23,6 @@ export class SizeEntity {
   )
   productVariants!: ProductVariantEntity[];
 
-  @OneToMany((_type) => OrderItemEntity, (orderItem) => orderItem.size)
-  orderItems!: OrderItemEntity[];
+  // @OneToMany((_type) => OrderItemEntity, (orderItem) => orderItem.size)
+  // orderItems!: OrderItemEntity[];
 }
