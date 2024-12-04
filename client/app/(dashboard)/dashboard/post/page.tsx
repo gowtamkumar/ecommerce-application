@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 import dynamic from "next/dynamic";
 
-const PostList = dynamic(() => import("@/components/dashboard/post/PostList"));
+const PostList = dynamic(() => import("@/components/dashboard/post/PostList"), {ssr: false});
 
 export default function Page() {
   const [tabKey, setTabKey] = useState("post_list");

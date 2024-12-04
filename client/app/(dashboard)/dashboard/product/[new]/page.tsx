@@ -8,8 +8,7 @@ import dynamic from "next/dynamic";
 import { getTaxs } from "@/lib/apis/tax";
 
 const AddProduct = dynamic(
-  () => import("@/components/dashboard/product/AddProduct"),
-  { ssr: false }
+  () => import("@/components/dashboard/product/AddProduct")
 );
 
 export default async function Product() {
