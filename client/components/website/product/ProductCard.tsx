@@ -5,17 +5,17 @@ import {
   selectProduct,
   setProducts,
 } from "@/redux/features/products/productSlice";
-import { Rate } from "antd";
-import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import appConfig from "@/appConfig";
 import Card from "@/components/Card";
+import Pagination from "@/components/Pagination";
+
+const ITEMS_PER_PAGE = 12;
 
 const ProductCard: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   // const { category } = useParams<{ category: string }>();
   // console.log("🚀 ~ category:", category)
   const searchQuery = useSearchParams();
@@ -48,6 +48,13 @@ const ProductCard: React.FC = () => {
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
   if (newSearchs) newSearch += newSearchs;
+
+  // const filteredProducts = ( this code front-end pagination
+  //   products.products.slice(
+  //     (currentPage - 1) * ITEMS_PER_PAGE,
+  //     currentPage * ITEMS_PER_PAGE
+  //   ) || []
+  // )
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -96,6 +103,14 @@ const ProductCard: React.FC = () => {
         </div>
         // <ProductItem key={item.id} item={item} />
       ))}
+
+<Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(products.products.length / ITEMS_PER_PAGE)}
+          onPageChange={setCurrentPage}
+        />
+
+
     </div>
   );
 };
