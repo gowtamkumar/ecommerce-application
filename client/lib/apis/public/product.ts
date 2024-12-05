@@ -16,7 +16,6 @@ interface getParams {
   status?: boolean;
 }
 
-
 export async function getPublicProducts(params: getParams) {
   const {
     brandId,
@@ -89,7 +88,19 @@ export async function getPublicProduct(id: string) {
     cache: "no-cache",
     headers,
   });
-
   return await handleResponse(res);
 }
 
+export async function getProductBySlug(slug: string) {
+  console.log("🚀 ~ slug:", slug)
+  const headers = await getAuthHeaders();
+  const res = await fetch(
+    `${appConfig.apiUrl}/api/v1/products/slug/${slug}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+      headers,
+    }
+  );
+  return await handleResponse(res);
+}

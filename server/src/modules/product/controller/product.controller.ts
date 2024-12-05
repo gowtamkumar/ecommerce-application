@@ -65,7 +65,7 @@ export const getProducts = async (req: Request, res: Response) => {
     qb.leftJoin("productVariants.size", "size");
     qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
-    qb.addOrderBy("product.urlSlug", "ASC");
+    qb.addOrderBy("product.slug", "ASC");
 
     // if (brandId) qb.andWhere({ brandId });
     if (status) qb.andWhere({ status });
@@ -198,6 +198,72 @@ export const getProduct = asyncHandler(
   }
 );
 
+// @desc Get a single Product
+// @route GET /api/v1/products/:id
+// @access Public
+export const getProductByslug = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getProductByslug ${req.method} ${req.url}`);
+
+    const { slug } = req.params;
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(ProductEntity);
+
+    const qb = repository.createQueryBuilder("product");
+    qb.select([
+      "product",
+      "user.id",
+      "user.name",
+      "reviewUser.name",
+      "brand",
+      "reviews.id",
+      "reviews.rating",
+      "reviews.comment",
+      "reviews.like",
+      "reviews.disLike",
+      "tax",
+      "productVariants",
+      "category.id",
+      "category.name",
+      "size.id",
+      "size.name",
+      "color",
+      "discount.discountType",
+      "discount.value",
+      "discount.type",
+      "productCategories",
+    ]);
+    qb.leftJoin("product.user", "user");
+    qb.leftJoin("product.brand", "brand");
+    qb.leftJoin("product.reviews", "reviews");
+    qb.leftJoin("reviews.user", "reviewUser");
+    qb.leftJoin("product.tax", "tax");
+    qb.leftJoin("product.discount", "discount");
+    qb.leftJoin("product.productVariants", "productVariants");
+    qb.leftJoin("product.productCategories", "productCategories");
+    qb.leftJoin("productCategories.category", "category");
+    qb.leftJoin("productVariants.size", "size");
+    qb.leftJoin("productVariants.color", "color");
+    qb.orderBy("productVariants.id", "DESC");
+    qb.where({ slug });
+
+    const result = await qb.getOne();
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: `Resource not found with id #${slug}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Fetched product with id #${slug}`,
+      data: result,
+    });
+  }
+);
+
 // @desc Create a single Product
 // @route POST /api/v1/products
 // @access Public
@@ -229,10 +295,10 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 
   // Generate URL slug
   const count = (await productRepository.count()) + 1;
-  const urlSlug = `SKU-${count.toString().padStart(6, "0")}`;
+  const sku = `SKU-${count.toString().padStart(6, "0")}`;
 
   // Create product entity
-  const product = productRepository.create({ ...restData, urlSlug });
+  const product = productRepository.create({ ...restData, sku });
 
   // Save product to database
   const savedProduct = await productRepository.save(product);

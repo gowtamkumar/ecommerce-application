@@ -13,37 +13,43 @@ import {
   setProductFilter,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import ReviewTable from "./review-rating/ReviewTable";
-import ProductCard from "./ProductCard";
 import { getProductVariant } from "@/lib/apis/product-variant";
 import { errorNotification } from "@/lib/utils/notification";
+import { getProductBySlug } from "@/lib/apis/public/product";
+import ReviewTable from "./review-rating/ReviewTable";
+import ProductCard from "./ProductCard";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
   const [checkStock, setCheckStock] = useState(0);
-  const { id } = useParams();
+  const { slug } = useParams();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
   useEffect(() => {
     fetchProductData();
-  }, [dispatch, id]);
+  }, [dispatch, slug]);
 
   const fetchProductData = async () => {
     dispatch(setLoading({ loading: true }));
 
     try {
-      const newProduct = await getProduct(id.toString());
-      if (newProduct?.data) {
+      const newProduct = await getProductBySlug(slug?.toString() as any);
+      const { productVariants } = newProduct.data;
+
+      if (newProduct?.success) {
+        const findVariantProduct = productVariants.find(
+          (item: { default: boolean }) => item.default
+        );
         setProduct({
           ...newProduct.data,
           qty: 1,
-          selectProductVariant: newProduct.data.productVariants[0],
+          defaultProduct: findVariantProduct,
         });
 
-        if (newProduct.data.productVariants[0].id) {
+        if (findVariantProduct.id) {
           const productVariant = await getProductVariant({
-            id: newProduct.data.productVariants[0].id,
+            id: findVariantProduct.id,
           });
           setCheckStock(productVariant.data.stockQty);
         }
@@ -92,27 +98,6 @@ export default function SingleProduct() {
     }
   );
 
-  // const products = {
-  //   name: "New LED Watch",
-  //   description: "A stylish watch available in multiple colors.",
-  //   price: 199,
-  //   originalPrice: 580,
-  //   discount: 66,
-  //   colors: ["Black", "Red", "Blue", "Orange"],
-  //   images: ["/images/watch1.jpg", "/images/watch2.jpg"],
-  //   ratings: 37,
-  //   seller: {
-  //     name: "AltasawuQ",
-  //     rating: 68,
-  //     onTime: 86,
-  //     response: 46,
-  //   },
-  //   delivery: {
-  //     price: 120,
-  //     estimatedDate: "6 Jul - 10 Jul",
-  //   },
-  // };
-
   if (global.loading.loading) {
     return (
       <div className="text-center">
@@ -122,6 +107,7 @@ export default function SingleProduct() {
   }
 
   return (
+    // <h1>asdf</h1>
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-12 pt-4">
         <div className="col-span-6">
@@ -146,8 +132,8 @@ export default function SingleProduct() {
       <DescriptionProduct product={product} />
       <section className="py-5">
         <ProductCard />
-        {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
       </section>
+        {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
     </div>
   );
 }

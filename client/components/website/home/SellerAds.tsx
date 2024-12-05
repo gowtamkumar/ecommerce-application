@@ -12,7 +12,7 @@ import appConfig from "@/appConfig";
 
 const SellerAds = ({ banners }: any) => {
   return (
-    <div>
+    <section className="py-10 text-center bg-[#F6F6F6]">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         slidesPerView={1}
@@ -57,24 +57,8 @@ const SellerAds = ({ banners }: any) => {
           );
         })}
       </Swiper>
-    </div>
-    // <div className="w-8/12 mx-auto grid min-h-[40vh] grid-cols-12 items-center gap-5">
-    //   <div className="col-span-12 lg:col-span-6 lg:text-start text-center">
-    //     <h1 className="text-xl font-bold">Sell your Proudct</h1>
-    //     <p className="my-3 text-xl font-medium">
-    //       Easily create an advert for your Proudct and reach millions of
-    //       potential buyers per month
-    //     </p>
-    //     <Button size="large" type="primary">
-    //       <Link href="/products"> Shop Now</Link>
-    //     </Button>
-    //   </div>
-    //   <div className="col-span-12 overflow-hidden  lg:col-span-6">
-    //     <div className="flex h-[40vh] w-auto items-center rounded-full bg-red-300/5 ">
-    //       <img src="/image-box-12.jpg" className="h-auto w-full" alt="" />
-    //     </div>
-    //   </div>
-    // </div>
+    </section>
+
   );
 };
 

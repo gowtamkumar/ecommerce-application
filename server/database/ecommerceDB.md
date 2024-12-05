@@ -54,11 +54,10 @@ status,
 
 ## products :(done) note: need to change product varitant as like wordpress
 
-
 id,
 featured: boolean, this field for only show home page(need to add)
 name:string,
-url_slug(unique),
+slug(unique),
 thumbnail_image,
 images:array
 
@@ -79,19 +78,19 @@ status:['acitve/inactive'],
 createdAt,
 updatedAt
 
-
 product_varient:array come from onther table
 product_category:array come from onther table
 variant:boolean
-
 
 ## product variants:(done)
 
 id,
 purchase_price:numeric,
 sale_price:numeric,(optional)
+
 <!-- size_id,
 colorId, -->
+
 product_id
 stock_qty:number,
 default:boolean
@@ -148,7 +147,8 @@ updatedAt
 
 id,
 name,
-url_slug(unique)
+sku(unique)
+sku: string(unique)
 parent_id,
 user_id,
 description
@@ -346,7 +346,6 @@ email,
 created_at,
 updated_at,
 
-
 ## post(back end done)
 
 title,
@@ -376,4 +375,3 @@ content TEXT NOT NULL,
 status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
 created_at,
 updated_at,
-

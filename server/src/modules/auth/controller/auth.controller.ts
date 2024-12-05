@@ -1,7 +1,5 @@
 import "reflect-metadata";
 import { Request, Response, NextFunction } from "express";
-import passport from "passport";
-import { v4 as uuidv4 } from "uuid";
 import {
   sendCookiesResponse,
   hashedPassword,
@@ -14,7 +12,6 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { sendEmail } from "../../../middlewares/sendMail.middleware";
 import { UserEntity } from "../model/user.entity";
 import { getDBConnection } from "../../../config/db";
-import { UpdateUserDto } from "../model/dtos";
 import {
   updateUserValidationSchema,
   userValidationSchema,
@@ -402,7 +399,7 @@ export const getMe = asyncHandler(
       "products.shortDescription",
       "products.status",
       "products.tags",
-      "products.urlSlug",
+      "products.slug",
 
       "product",
       "productVariants.price",

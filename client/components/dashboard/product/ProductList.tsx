@@ -30,7 +30,7 @@ interface DataType {
   key: string;
   name: string;
   type: string;
-  urlSlug: string;
+  slug: string;
   singleImage: string;
   limitPurchaseQty: number;
   alertQty: number;
@@ -192,11 +192,11 @@ const ProductList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("urlSlug"),
+      ...getColumnSearchProps("slug"),
       title: "Slug",
-      dataIndex: "urlSlug",
-      key: "urlSlug",
-      sorter: (a, b) => a.urlSlug.length - b.urlSlug.length,
+      dataIndex: "slug",
+      key: "slug",
+      sorter: (a, b) => a.slug.length - b.slug.length,
     },
 
     {
@@ -387,7 +387,7 @@ const ProductList: React.FC = () => {
               <strong>Product Name: </strong> {value.name}
             </h2>
             <h2>
-              <strong>Url slug:</strong> {value.urlSlug}
+              <strong>Url slug:</strong> {value.slug}
             </h2>
             <h2>
               <strong>Discount:</strong>

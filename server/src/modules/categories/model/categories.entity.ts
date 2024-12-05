@@ -23,8 +23,8 @@ export class CategoriesEntity {
   @Column({ nullable: true })
   name!: string;
 
-  @Column({ name: "url_slug", nullable: true })
-  urlSlug!: string;
+  @Column({ nullable: true }) //need to remove nullable true
+  slug!: string;
 
   // @Column({ name: "parent_id", nullable: true })
   // parentId!: string;

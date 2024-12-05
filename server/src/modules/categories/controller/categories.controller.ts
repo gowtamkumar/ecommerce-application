@@ -204,7 +204,7 @@ export const updateCategory = asyncHandler(
     logger.info(`Service: updateCategory ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const { id } = req.params;
-    const { parentId, name, image, urlSlug, description } = req.body;
+    const { parentId, name, image, slug, description } = req.body;
 
     const categoriesRepository = connection.getRepository(CategoriesEntity);
 
@@ -235,14 +235,14 @@ export const updateCategory = asyncHandler(
       Object.assign(category, {
         name,
         image,
-        urlSlug,
+        slug,
         description,
         level: parentCategory.level,
         parent: parentCategory,
       });
     } else {
       // Merge the new data without changing the parent
-      Object.assign(category, { name, image, urlSlug, description });
+      Object.assign(category, { name, image, slug, description });
     }
 
     // Save the updated category

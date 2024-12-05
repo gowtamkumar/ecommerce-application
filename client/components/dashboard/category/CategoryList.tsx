@@ -28,7 +28,7 @@ import {
 interface DataType {
   key: React.ReactNode;
   name: string;
-  urlSlug: string;
+  slug: string;
   description: string;
   image: string;
   active: boolean;

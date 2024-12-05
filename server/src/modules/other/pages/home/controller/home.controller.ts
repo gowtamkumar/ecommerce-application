@@ -135,7 +135,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
     select: {
       id: true,
       name: true,
-      urlSlug: true,
+      slug: true,
       image: true,
       description: true,
       active: true,
@@ -179,19 +179,20 @@ reviewsTable AS (
 SELECT 
   p.id,
   p.name,
-  p.thumbnail_image,
+  p.slug,
+  p.thumbnail_image as "thumbnailImage",
   p.variant,
-  p.discount_id,
-  dis.discount_type,
-  dis.value as discount_value,
+  p.discount_id as "discountId",
+  dis.discount_type as "discountType",
+  dis.value as "discountValue",
   p.featured,
-  p.sale_price,
-  p.purchase_price,
-  p.product_variant_id,
-  rt.reviews_count,
-  rt.average_rating,
+  p.sale_price as "salePrice", 
+  p.purchase_price as "purchasePrice",
+  p.product_variant_id as "productVariantId",
+  rt.reviews_count as "reviewsCount",
+  rt.average_rating as "averageRating",
 
-  ROUND(SUM((p.sale_price * COALESCE(taxs.value, 0)) / 100), 2) AS tax_amount,
+  ROUND(SUM((p.sale_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
 
   ROUND(
     SUM(
@@ -203,7 +204,7 @@ SELECT
       END
     ), 
     2
-  ) AS dis_amount,
+  ) AS "disAmount",
 
   ROUND(
     p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100) -
@@ -216,12 +217,12 @@ SELECT
       END, 0
     ),
     2
-  ) AS final_price,
+  ) AS "price",
 
   ROUND(
     SUM(p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)), 
     2
-  ) AS tax_with_price
+  ) AS "taxWithPrice"
 
 FROM 
   productTable p
@@ -234,7 +235,7 @@ LEFT JOIN
 
 GROUP BY 
   p.id, p.name, p.thumbnail_image, p.variant, p.discount_id, p.featured, 
-  p.sale_price, p.purchase_price, p.product_variant_id, 
+  p.sale_price, p.purchase_price, p.product_variant_id, p.slug,
   rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value;
 
  `
@@ -247,7 +248,7 @@ GROUP BY
   //   "product.name",
   //   "product.thumbnailImage",
   //   // "product.images",
-  //   // "product.urlSlug",
+  //   // "product.slug",
   //   "product.variant",
   //   "product.featured",
   //   // "product.taxId",
@@ -274,7 +275,7 @@ GROUP BY
   // qb.leftJoin("product.discount", "discount");
   // qb.leftJoin("product.productVariants", "productVariants");
   // qb.orderBy("productVariants.id", "DESC");
-  // qb.addOrderBy("product.urlSlug", "ASC");
+  // qb.addOrderBy("product.slug", "ASC");
 
   // const products = await qb.getMany();
 

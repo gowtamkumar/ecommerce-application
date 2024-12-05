@@ -4,7 +4,7 @@ export const categoriesValidationSchema = z.object({
   name: z.string({
     required_error: "name 1 is required",
   }),
-  // urlSlug: z.string({
+  // slug: z.string({
   //   required_error: "url slug is required",
   // }),
 

@@ -5,6 +5,7 @@ import {
   updateProduct,
   deleteProduct,
   getProduct,
+  getProductByslug,
 } from "../controller/product.controller";
 import { AuthGuard } from "../../../middlewares/auth.middleware";
 
@@ -14,7 +15,7 @@ router.route("/").get(getProducts).post(AuthGuard, createProduct);
 // router.route("/active").get(getActiveProducts);
 // router.route("/findbyname").get(getFindByName);
 // router.route("/queryhelper").get(getQueryHelper);
-
+router.route("/slug/:slug").get(getProductByslug);
 router
   .route("/:id")
   .get(getProduct)

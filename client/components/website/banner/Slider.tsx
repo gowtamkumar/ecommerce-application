@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "antd";
 import Link from "next/link";
 import appConfig from "@/appConfig";
@@ -8,11 +8,9 @@ import {
   A11y,
   Autoplay,
   EffectFade,
-  FreeMode,
   Navigation,
   Pagination,
   Scrollbar,
-  Thumbs,
 } from "swiper/modules";
 import "swiper/css/free-mode";
 import "swiper/css/thumbs";
@@ -22,7 +20,7 @@ import { FaCaretLeft } from "react-icons/fa";
 
 export default function Slider({ banners }: any) {
   return (
-    <>
+    <div className="md:col-span-9">
       <div className="relative w-full">
         <Swiper
           modules={[
@@ -100,6 +98,6 @@ export default function Slider({ banners }: any) {
           <FaCaretRight size={40} className="text-bioxin-primary" />
         </button>
       </div>
-    </>
+    </div>
   );
 }

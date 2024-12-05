@@ -20,58 +20,60 @@ export default function HeaderDiscount({ discounts }: any) {
   const router = useRouter();
 
   return (
-    <div className="container mx-auto">
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, Autoplay]}
-        slidesPerView={1}
-        autoplay={true}
-        speed={500}
-        pagination
-      >
-        {(discounts?.data || []).map((item: any, idx: number) => {
-          return (
-            <SwiperSlide key={idx}>
-              <div className="relative gap-3">
-                <Image
-                  alt={item.image}
-                  src={
-                    item.image
-                      ? `${appConfig.apiUrl}/uploads/${item.image}`
-                      : "/image-box-12.jpg"
-                  }
-                  loading="lazy"
-                  // fill
-                  width={0}
-                  height={0}
-                  className="h-[500px] w-full"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-                <div className="absolute flex items-center justify-center bottom-0 left-0 top-0 w-full text-white">
-                  <div className="flex flex-col items-center justify-center">
-                    <h4 className="text-3xl font-bold"> Discount</h4>
-                    <h2 className="font-bold text-1xl">{item.value}% Off</h2>
-                    <div className="text-center">
-                      <div className="flex justify-center items-center">
-                        <Button
-                          className="px-2 text-5xl font-bold"
-                          onClick={() => {
-                            dispatch(
-                              setProductFilter({ discount: item.value })
-                            );
-                            router.push("/products");
-                          }}
-                        >
-                          Shop Now
-                        </Button>
+    <div className="md:col-span-3 bg-black">
+      <div className="container mx-auto">
+        <Swiper
+          modules={[Navigation, Pagination, Scrollbar, Autoplay]}
+          slidesPerView={1}
+          autoplay={true}
+          speed={500}
+          pagination
+        >
+          {(discounts?.data || []).map((item: any, idx: number) => {
+            return (
+              <SwiperSlide key={idx}>
+                <div className="relative gap-3">
+                  <Image
+                    alt={item.image}
+                    src={
+                      item.image
+                        ? `${appConfig.apiUrl}/uploads/${item.image}`
+                        : "/image-box-12.jpg"
+                    }
+                    loading="lazy"
+                    // fill
+                    width={0}
+                    height={0}
+                    className="h-[500px] w-full"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                  <div className="absolute flex items-center justify-center bottom-0 left-0 top-0 w-full text-white">
+                    <div className="flex flex-col items-center justify-center">
+                      <h4 className="text-3xl font-bold"> Discount</h4>
+                      <h2 className="font-bold text-1xl">{item.value}% Off</h2>
+                      <div className="text-center">
+                        <div className="flex justify-center items-center">
+                          <Button
+                            className="px-2 text-5xl font-bold"
+                            onClick={() => {
+                              dispatch(
+                                setProductFilter({ discount: item.value })
+                              );
+                              router.push("/products");
+                            }}
+                          >
+                            Shop Now
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </div>
     </div>
   );
 }

@@ -29,8 +29,11 @@ export class ProductEntity {
   @Column()
   name!: string;
 
-  @Column({ name: "url_slug", unique: true })
-  urlSlug!: string;
+  @Column({ unique: true, nullable: true }) //need to change this nullable true
+  sku!: string;
+
+  @Column()
+  slug!: string;
 
   @Column({ type: "boolean", default: false })
   variant?: boolean;

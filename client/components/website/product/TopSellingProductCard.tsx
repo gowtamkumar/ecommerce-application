@@ -22,11 +22,19 @@ const TopSellingProductCard: React.FC = () => {
   }, []);
 
   return (
-    <div className="grid gap-1 lg:grid-cols-5">
-      {products?.map((item: any) => (
-        <ProductItem key={item.id} item={item} />
-      ))}
-    </div>
+    <section className="md:py-5 p-3 md:w-8/12 mx-auto">
+      <div className="flex justify-between">
+        <h2 className="text-xl font-semibold pb-8">Best Seller</h2>
+        <Link href={"/products"} className="hover:underline text-xl">
+          View all
+        </Link>
+      </div>
+      <div className="grid gap-1 lg:grid-cols-5">
+        {products?.map((item: any) => (
+          <ProductItem key={item.id} item={item} />
+        ))}
+      </div>
+    </section>
   );
 };
 
@@ -57,6 +65,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item?.images?.split(",") || [];
 
   return (
+
     <div className="bg-white border">
       <Link href={`/products/${item.id}`} title={item.name}>
         <Image

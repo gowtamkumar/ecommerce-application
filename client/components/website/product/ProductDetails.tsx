@@ -24,7 +24,7 @@ const ProductDetails = ({
   const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
   const session = useSession();
-  const price = product.selectProductVariant?.price;
+  const price = product.defaultProduct?.salePrice;
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
   function handleIncrementCart(item: any) {
@@ -143,7 +143,7 @@ const ProductDetails = ({
               }}
               className="mr-2 px-2 py-1 rounded text-white hover:bg-gray-300 focus:outline-none"
             >
-              {item.color.name}
+              {item?.color?.name}
             </Button>
           ))}
         </div>
@@ -168,7 +168,7 @@ const ProductDetails = ({
               }}
               className="mr-2 text-white px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none"
             >
-              {item.size.name}
+              {item?.size?.name}
             </Button>
           ))}
         </div>
@@ -217,7 +217,7 @@ const ProductDetails = ({
         Add to Wishlist
       </Button>
       <Divider />
-      <div>SKU: {product.urlSlug}</div>
+      <div>SKU: {product.slug}</div>
       <div className="flex gap-4 items-center justify-center">
         <p>Share: </p>
         <div className="flex">

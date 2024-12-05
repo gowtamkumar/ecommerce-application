@@ -1,10 +1,12 @@
+import Discount from "@/components/website/home/Discount";
+import { getHomeApi } from "@/lib/apis/public/home";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { getBanners } from "@/lib/apis/banner";
-import { getFilterDiscounts } from "@/lib/apis/discount";
 
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
-const Category = dynamic(() => import("@/components/website/home/Category"));
+const CategoryCard = dynamic(
+  () => import("@/components/website/home/Category")
+);
 const SellerAds = dynamic(() => import("@/components/website/home/SellerAds"));
 const Slider = dynamic(() => import("@/components/website/banner/Slider"));
 const FeaturedProduct = dynamic(
@@ -22,83 +24,45 @@ const MoreDiscover = dynamic(
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
-  const banners = await getBanners();
-
-  const discounts = await getFilterDiscounts({ type: "Discount" });
+  const home = await getHomeApi();
+  const { banners, discounts, categories, products } = home.data;
   return (
     <>
       <header>
         <Header />
         <div className="container mx-auto">
           <div className="grid md:grid-cols-12 grid-cols-1">
-            <div className="md:col-span-9">
-              <Slider
-                banners={banners.data}
-              />
-            </div>
-            <div className="md:col-span-3 bg-black">
-              <HeaderDiscount discounts={discounts} />
-            </div>
+            <Slider banners={banners} />
+            <HeaderDiscount discounts={home.discounts} />
           </div>
         </div>
       </header>
 
       <main>
         {/* all category show */}
-        <section className="md:py-7 p-3 bg-[#F6F6F6] border-t-2">
-          <h2 className="text-xl pb-8 text-center font-semibold ">
-            Shop by Category
-          </h2>
-          <Category />
-        </section>
+        <CategoryCard categories={categories} />
 
         {/* Popular products */}
-        <section className="md:py-5 p-3 md:w-8/12 mx-auto">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Best Seller</h2>
-            <Link href={"/products"} className="hover:underline text-xl">
-              View all
-            </Link>
-          </div>
-          <TopSellingProductCard />
-        </section>
+        <TopSellingProductCard />
 
         {/* product banner */}
-        <section className="py-10 text-center bg-[#F6F6F6]">
-          <SellerAds
-            banners={(banners.data || []).filter(
-              (item: { type: string }) => item.type === "Middle"
-            )}
-          />
-        </section>
+        <SellerAds
+          banners={(banners || []).filter(
+            (item: { type: string }) => item.type === "Middle"
+          )}
+        />
+
         {/* Featured Products */}
-        <section className="md:w-8/12 mx-auto md:py-5 p-3">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <FeaturedProduct />
-        </section>
+        <FeaturedProduct products={products} />
 
         {/* More discount */}
-        {/* <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
+        <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
           <Discount discounts={discounts} />
-        </section> */}
-        {/* More Discover */}
-        <section className="w-8/12 mx-auto py-5 text-center">
-          <div className="py-5">
-            <h2 className="text-xl font-semibold pb-4">More to Discover</h2>
-            <p>
-              Our bundles were designed to conveniently package your tanning
-              essentials while saving you money.
-            </p>
-          </div>
-          <MoreDiscover />
         </section>
-      </main>
 
+        {/* More Discover */}
+        <MoreDiscover />
+      </main>
       <WebFooter />
     </>
   );
