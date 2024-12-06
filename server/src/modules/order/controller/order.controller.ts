@@ -8,9 +8,7 @@ import {
   orderUpdateValidationSchema,
   orderValidationSchema,
 } from "../../../validation";
-import axios from "axios";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
-import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import dayjs from "dayjs";
 import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
@@ -18,6 +16,7 @@ import { PaymentType } from "../../payment/enums/payment-type.enum";
 import { OrderItemEntity } from "../model/order-item.entity";
 import { CartEntity } from "../../cart/model/cart.entity";
 import { logger } from "../../../middlewares/logger";
+import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Get all Order

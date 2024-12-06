@@ -57,7 +57,9 @@ status,
 id,
 featured: boolean, this field for only show home page(need to add)
 name:string,
+sku(unique),
 slug(unique),
+hover_image,
 thumbnail_image,
 images:array
 
@@ -77,20 +79,16 @@ enable_review: boolean,
 status:['acitve/inactive'],
 createdAt,
 updatedAt
-
 product_varient:array come from onther table
 product_category:array come from onther table
+colors:array come from onther table
 variant:boolean
 
 ## product variants:(done)
 
 id,
 purchase_price:numeric,
-sale_price:numeric,(optional)
-
-<!-- size_id,
-colorId, -->
-
+sale_price:numeric
 product_id
 stock_qty:number,
 default:boolean

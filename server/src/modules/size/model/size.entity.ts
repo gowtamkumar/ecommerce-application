@@ -1,8 +1,6 @@
 import "reflect-metadata";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
-import { OrderItemEntity } from "../../order/model/order-item.entity";
-
+import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 @Entity("sizes")
 export class SizeEntity {
   @PrimaryGeneratedColumn()

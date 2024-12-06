@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { CategoryStatus } from "../enums/category-status.enum";
-import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
+import { ProductCategoryEntity } from "../../products/product-category/model/product-category.entity";
 import { PostCategoryEntity } from "../../post/model/post-category.entity";
 
 @Entity("categories")

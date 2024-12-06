@@ -10,7 +10,7 @@ import {
 import { DiscountType } from "../enums/discount-type.enum";
 import { DiscountStatus } from "../enums/discount-status.enum";
 import { Type } from "../enums";
-import { ProductEntity } from "../../product/model/product.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
 
 @Entity("discounts")
 export class DiscountEntity {

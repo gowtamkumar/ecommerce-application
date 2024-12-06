@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { OrderEntity } from "../../order/model/order.entity";
 
 @Entity("status")

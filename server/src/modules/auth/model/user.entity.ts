@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { ProductEntity } from "../../product/model/product.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
 import { GenderEnum, TypeEnum } from "../enums";
 import { StatusEnum } from "../enums/status.enum";
 import { OrderEntity } from "../../order/model/order.entity";

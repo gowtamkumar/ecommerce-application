@@ -1,40 +1,40 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { ProductVariantEntity } from "../model/product-variant.entity";
-import { productVariantValidationSchema } from "../../../validation";
-import { logger } from "../../../middlewares/logger";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
+import { ProductCategoryEntity } from "../model/product-category.entity";
+import { productCategoryValidationSchema } from "../../../../validation";
+import { logger } from "../../../../middlewares/logger";
 
-// @desc Get all ProductVariants
-// @route GET /api/v1/ProductVariants
+// @desc Get all ProductCategorys
+// @route GET /api/v1/ProductCategorys
 // @access Public
-export const getProductVariants = asyncHandler(
+export const getProductCategories = asyncHandler(
   async (req: Request, res: Response) => {
-     logger.info(`Service: getProductVariants ${req.method} ${req.url}`);
+    logger.info(`Service: getProductCategories ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
-    const repository = connection.getRepository(ProductVariantEntity);
+    const repository = connection.getRepository(ProductCategoryEntity);
 
     const result = await repository.find();
 
     return res.status(200).json({
       success: true,
-      message: "Get all Product Variants",
+      message: "Get all ProductCategory",
       data: result,
     });
   }
 );
 
-// @desc Get a single ProductVariant
-// @route GET /api/v1/ProductVariants/:id
+// @desc Get a single ProductCategory
+// @route GET /api/v1/ProductCategorys/:id
 // @access Public
-export const getProductVariant = asyncHandler(
+export const getProductCategory = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-     logger.info(`Service: getProductVariant ${req.method} ${req.url}`);
+    logger.info(`Service: getProductCategory ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(ProductVariantEntity);
+    const repository = await connection.getRepository(ProductCategoryEntity);
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -43,20 +43,20 @@ export const getProductVariant = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: `Get a single ProductVariant of id ${req.params.id}`,
+      message: `Get a single ProductCategory of id ${req.params.id}`,
       data: result,
     });
   }
 );
 
-// @desc Create a single ProductVariant
-// @route POST /api/v1/ProductVariants
+// @desc Create a single ProductCategory
+// @route POST /api/v1/ProductCategorys
 // @access Public
-export const createProductVariant = asyncHandler(
+export const createProductCategory = asyncHandler(
   async (req: any, res: Response) => {
-     logger.info(`Service: createProductVariant ${req.method} ${req.url}`);
+    logger.info(`Service: createProductCategory ${req.method} ${req.url}`);
 
-    const validation = productVariantValidationSchema.safeParse(req.body);
+    const validation = productCategoryValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
@@ -71,30 +71,29 @@ export const createProductVariant = asyncHandler(
     }
 
     const connection = await getDBConnection();
-    const repository = connection.getRepository(ProductVariantEntity);
+    const repository = connection.getRepository(ProductCategoryEntity);
 
-    const result = await repository.create(validation.data);
-    await repository.save(result);
+    const newProductCategory = repository.create(validation.data);
+
+    const save = await repository.save(newProductCategory);
 
     return res.status(200).json({
       success: true,
-      message: "Create a new Product Variant",
-      data: result,
+      message: "Create a new Product Category",
+      data: save,
     });
   }
 );
 
-// @desc Update a single ProductVariant
-// @route PUT /api/v1/ProductVariants/:id
+// @desc Update a single ProductCategory
+// @route PUT /api/v1/ProductCategorys/:id
 // @access Public
-export const updateProductVariant = asyncHandler(
+export const updateProductCategory = asyncHandler(
   async (req: Request, res: Response) => {
-     logger.info(`Service: updateProductVariant ${req.method} ${req.url}`);
+    logger.info(`Service: updateProductCategory ${req.method} ${req.url}`);
 
     const { id } = req.params;
-    
-
-    const validation = productVariantValidationSchema.safeParse(req.body);
+    const validation = productCategoryValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
@@ -109,9 +108,7 @@ export const updateProductVariant = asyncHandler(
     }
 
     const connection = await getDBConnection();
-
-    const repository = await connection.getRepository(ProductVariantEntity);
-
+    const repository = await connection.getRepository(ProductCategoryEntity);
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -119,27 +116,26 @@ export const updateProductVariant = asyncHandler(
     }
 
     const updateData = await repository.merge(result, validation.data);
-
     await repository.save(updateData);
 
     return res.status(200).json({
       success: true,
-      message: `Update a single ProductVariant of id ${req.params.id}`,
+      message: `Update a single ProductCategory of id ${req.params.id}`,
       data: updateData,
     });
   }
 );
 
-// @desc Delete a single ProductVariant
-// @route DELETE /api/v1/ProductVariants/:id
+// @desc Delete a single ProductCategory
+// @route DELETE /api/v1/ProductCategorys/:id
 // @access Public
-export const deleteProductVariant = asyncHandler(
+export const deleteProductCategory = asyncHandler(
   async (req: Request, res: Response) => {
-     logger.info(`Service: deleteProductVariant ${req.method} ${req.url}`);
+    logger.info(`Service: deleteProductCategory ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(ProductVariantEntity);
+    const repository = await connection.getRepository(ProductCategoryEntity);
 
     const result = await repository.findOneBy({ id });
     if (!result) {
@@ -150,7 +146,7 @@ export const deleteProductVariant = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: `Delete a single ProductVariant of id ${req.params.id}`,
+      message: `Delete a single ProductCategory of id ${req.params.id}`,
       data: result,
     });
   }

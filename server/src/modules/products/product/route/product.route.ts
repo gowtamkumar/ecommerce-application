@@ -7,7 +7,7 @@ import {
   getProduct,
   getProductByslug,
 } from "../controller/product.controller";
-import { AuthGuard } from "../../../middlewares/auth.middleware";
+import { AuthGuard } from "../../../../middlewares/auth.middleware";
 
 const router = express.Router();
 

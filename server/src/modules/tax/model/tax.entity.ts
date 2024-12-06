@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductEntity } from "../../product/model/product.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
 import { Status } from "../../../enums/status.enum";
 
 @Entity("taxs")

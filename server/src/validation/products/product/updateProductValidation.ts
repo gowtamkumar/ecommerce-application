@@ -1,11 +1,8 @@
 import { z } from "zod";
 
-export const productValidationSchema = z.object({
+export const updateProductValidationSchema = z.object({
   name: z.string({
     required_error: "name is required",
-  }),
-  userId: z.number({
-    required_error: "User is required",
   }),
   taxId: z.number({
     required_error: "Tax is required",
@@ -15,16 +12,13 @@ export const productValidationSchema = z.object({
       required_error: "Images is required",
     })
   ),
-  thumbnailImage:  z.string({
-    required_error: "Thumbnail Image is required",
-  }),
-  brandId: z.number().optional(),
+  brandId: z.number().optional().nullable(),
   unitId: z.number({
     required_error: "Unit is required",
   }),
-  discountId: z.number().optional(),
-  limitPurchaseQty: z.number().optional(),
-  tags: z.array(z.string()).optional(),
+  discountId: z.number().optional().nullable(),
+  limitPurchaseQty: z.number().optional().nullable(),
+  tags: z.array(z.string()).optional().nullable(),
   description: z.string({
     required_error: "Description is required",
   }),
@@ -33,7 +27,6 @@ export const productValidationSchema = z.object({
   }),
   enableReview: z.boolean().optional(),
   variant: z.boolean().optional(),
-  featured:  z.boolean().optional(),
   alertQty: z.number({
     required_error: "Alert Qty is Required",
   }),
@@ -42,13 +35,12 @@ export const productValidationSchema = z.object({
   productVariants: z
     .array(
       z.object({
-        salePrice: z.number({ required_error: "Sale Price is required" }),
-        purchasePrice: z.number({
+        id: z.number().optional().nullable(),
+        salePrice: z.any({ required_error: "Sale Price is required" }),
+        purchasePrice: z.any({
           required_error: "Purchase Price is required",
         }),
-        default: z.boolean().optional(),
-        sizeId: z.number().optional(),
-        colorId: z.number().optional(),
+        sizeId: z.number().optional().nullable(),
         stockQty: z.number({
           required_error: "Stock Qty is required",
         }),

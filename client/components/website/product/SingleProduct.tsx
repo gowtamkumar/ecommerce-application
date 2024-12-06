@@ -18,6 +18,7 @@ import { errorNotification } from "@/lib/utils/notification";
 import { getProductBySlug } from "@/lib/apis/public/product";
 import ReviewTable from "./review-rating/ReviewTable";
 import ProductCard from "./ProductCard";
+import ProductModal from "@/components/ProductModal";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
@@ -107,33 +108,43 @@ export default function SingleProduct() {
   }
 
   return (
-    // <h1>asdf</h1>
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-12 pt-4">
         <div className="col-span-6">
-          <ProductImageGallery images={product.images} />
+          <ProductImageGallery images={product.images} thumbnailImage={product.thumbnailImage} />
         </div>
 
         <div className="col-span-6">
-          <ProductDetails
+
+        <ProductModal/>
+        
+          {/* <ProductDetails
             product={product}
             setProduct={setProduct}
             productRating={productRating}
             checkStock={checkStock}
             setCheckStock={setCheckStock}
-          />
+          /> */}
         </div>
       </div>
+      <div className="grid grid-cols-1">
+        {product.reviews && (
+          <RatingProduct product={product} productRating={productRating} />
+        )}
+      </div>
 
-      {product.reviews && (
-        <RatingProduct product={product} productRating={productRating} />
-      )}
+      <div></div>
+
       <ReviewTable reviews={product.reviews} />
       <DescriptionProduct product={product} />
       <section className="py-5">
         <ProductCard />
       </section>
-        {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
+      <div>
+
+   
+      </div>
+      {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
     </div>
   );
 }

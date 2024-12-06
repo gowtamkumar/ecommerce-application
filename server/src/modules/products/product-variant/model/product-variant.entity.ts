@@ -5,14 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ProductEntity } from "../../product/model/product.entity";
-import { SizeEntity } from "../../size/model/size.entity";
-import { ColorEntity } from "../../color/model/color.entity";
-import { OrderItemEntity } from "../../order/model/order-item.entity";
-import { CartEntity } from "../../cart/model/cart.entity";
+import { SizeEntity } from "../../../size/model/size.entity";
+import { OrderItemEntity } from "../../../order/model/order-item.entity";
+import { CartEntity } from "../../../cart/model/cart.entity";
 
 @Entity("product_variants")
 export class ProductVariantEntity {
@@ -52,13 +50,7 @@ export class ProductVariantEntity {
   @JoinColumn({ name: "size_id" })
   size!: SizeEntity;
 
-  @Column({ name: "color_id", nullable: true })
-  colorId!: number;
-  @ManyToOne((_type) => ColorEntity, (color) => color.productVariants, {
-    onDelete: "SET NULL",
-  })
-  @JoinColumn({ name: "color_id" })
-  color!: ColorEntity;
+ 
 
   @Column({ type: "boolean", default: false, nullable: true }) 
   default?: boolean;

@@ -7,9 +7,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
-import { ProductEntity } from "../../product/model/product.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
 import { UserEntity } from "../../auth/model/user.entity";
-import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
+import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 
 @Entity("carts")
 export class CartEntity {

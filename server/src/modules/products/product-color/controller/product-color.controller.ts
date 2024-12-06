@@ -1,40 +1,40 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { ProductCategoryEntity } from "../model/product-category.entity";
-import { productCategoryValidationSchema } from "../../../validation";
-import { logger } from "../../../middlewares/logger";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
+import { ProductColorEntity } from "../model/product-color.entity";
+import { productColorValidationSchema } from "../../../../validation";
+import { logger } from "../../../../middlewares/logger";
 
-// @desc Get all ProductCategorys
-// @route GET /api/v1/ProductCategorys
+// @desc Get all ProductColors
+// @route GET /api/v1/ProductColors
 // @access Public
-export const getProductCategories = asyncHandler(
+export const getProductColors = asyncHandler(
   async (req: Request, res: Response) => {
-    logger.info(`Service: getProductCategories ${req.method} ${req.url}`);
+    logger.info(`Service: getProductColors ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
-    const repository = connection.getRepository(ProductCategoryEntity);
+    const repository = connection.getRepository(ProductColorEntity);
 
     const result = await repository.find();
 
     return res.status(200).json({
       success: true,
-      message: "Get all ProductCategory",
+      message: "Get all ProductColor",
       data: result,
     });
   }
 );
 
-// @desc Get a single ProductCategory
-// @route GET /api/v1/ProductCategorys/:id
+// @desc Get a single ProductColor
+// @route GET /api/v1/ProductColors/:id
 // @access Public
-export const getProductCategory = asyncHandler(
+export const getProductColor = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getProductCategory ${req.method} ${req.url}`);
+    logger.info(`Service: getProductColor ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(ProductCategoryEntity);
+    const repository = await connection.getRepository(ProductColorEntity);
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -43,20 +43,20 @@ export const getProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: `Get a single ProductCategory of id ${req.params.id}`,
+      message: `Get a single ProductColor of id ${req.params.id}`,
       data: result,
     });
   }
 );
 
-// @desc Create a single ProductCategory
-// @route POST /api/v1/ProductCategorys
+// @desc Create a single ProductColor
+// @route POST /api/v1/ProductColors
 // @access Public
-export const createProductCategory = asyncHandler(
+export const createProductColor = asyncHandler(
   async (req: any, res: Response) => {
-    logger.info(`Service: createProductCategory ${req.method} ${req.url}`);
+    logger.info(`Service: createProductColor ${req.method} ${req.url}`);
 
-    const validation = productCategoryValidationSchema.safeParse(req.body);
+    const validation = productColorValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
@@ -71,29 +71,29 @@ export const createProductCategory = asyncHandler(
     }
 
     const connection = await getDBConnection();
-    const repository = connection.getRepository(ProductCategoryEntity);
+    const repository = connection.getRepository(ProductColorEntity);
 
-    const newProductCategory = repository.create(validation.data);
+    const newProductColor = repository.create(validation.data);
 
-    const save = await repository.save(newProductCategory);
+    const save = await repository.save(newProductColor);
 
     return res.status(200).json({
       success: true,
-      message: "Create a new Product Category",
+      message: "Create a new Product Color",
       data: save,
     });
   }
 );
 
-// @desc Update a single ProductCategory
-// @route PUT /api/v1/ProductCategorys/:id
+// @desc Update a single ProductColor
+// @route PUT /api/v1/ProductColors/:id
 // @access Public
-export const updateProductCategory = asyncHandler(
+export const updateProductColor = asyncHandler(
   async (req: Request, res: Response) => {
-    logger.info(`Service: updateProductCategory ${req.method} ${req.url}`);
+    logger.info(`Service: updateProductColor ${req.method} ${req.url}`);
 
     const { id } = req.params;
-    const validation = productCategoryValidationSchema.safeParse(req.body);
+    const validation = productColorValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
@@ -108,7 +108,7 @@ export const updateProductCategory = asyncHandler(
     }
 
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(ProductCategoryEntity);
+    const repository = await connection.getRepository(ProductColorEntity);
     const result = await repository.findOneBy({ id });
 
     if (!result) {
@@ -120,22 +120,22 @@ export const updateProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: `Update a single ProductCategory of id ${req.params.id}`,
+      message: `Update a single ProductColor of id ${req.params.id}`,
       data: updateData,
     });
   }
 );
 
-// @desc Delete a single ProductCategory
-// @route DELETE /api/v1/ProductCategorys/:id
+// @desc Delete a single ProductColor
+// @route DELETE /api/v1/ProductColors/:id
 // @access Public
-export const deleteProductCategory = asyncHandler(
+export const deleteProductColor = asyncHandler(
   async (req: Request, res: Response) => {
-    logger.info(`Service: deleteProductCategory ${req.method} ${req.url}`);
+    logger.info(`Service: deleteProductColor ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(ProductCategoryEntity);
+    const repository = await connection.getRepository(ProductColorEntity);
 
     const result = await repository.findOneBy({ id });
     if (!result) {
@@ -146,7 +146,7 @@ export const deleteProductCategory = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: `Delete a single ProductCategory of id ${req.params.id}`,
+      message: `Delete a single ProductColor of id ${req.params.id}`,
       data: result,
     });
   }

@@ -6,7 +6,7 @@ import {
   deleteProductVariant,
   getProductVariants,
 } from "../controller/product-variant.controller";
-import { AuthGuard } from "../../../middlewares/auth.middleware";
+import { AuthGuard } from "../../../../middlewares/auth.middleware";
 
 const router = express.Router();
 

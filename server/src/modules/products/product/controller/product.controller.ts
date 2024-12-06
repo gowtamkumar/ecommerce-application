@@ -1,14 +1,97 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
 import { ProductEntity } from "../model/product.entity";
-import { getDBConnection } from "../../../config/db";
-import { productValidationSchema } from "../../../validation";
+import { getDBConnection } from "../../../../config/db";
+import { productValidationSchema } from "../../../../validation";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
 import { Brackets } from "typeorm";
-import { updateProductValidationSchema } from "../../../validation/product/updateProductValidation";
-import { logger } from "../../../middlewares/logger";
-import { fileDeleteFunction } from "../../../utils/fileDeleteFunction";
+import { updateProductValidationSchema } from "../../../../validation/products/product/updateProductValidation";
+import { logger } from "../../../../middlewares/logger";
+import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
+import { ProductColorEntity } from "../../product-color/model/product-color.entity";
+
+// @desc Create a Product
+// @route POST /api/v1/products
+// @access Public
+export const createProduct = asyncHandler(async (req: any, res: Response) => {
+  logger.info(`Service: createProduct ${req.method} ${req.url}`);
+
+  const connection = await getDBConnection();
+  const productRepository = connection.getRepository(ProductEntity);
+
+  // Validate request body
+  const validation = productValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join("."),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
+  const { productVariants, productCategories, productColors, ...restData } =
+    validation.data;
+  // Generate URL slug
+  const count = (await productRepository.count()) + 1;
+  const sku = `SKU-${count.toString().padStart(6, "0")}`;
+
+  // Create product entity
+  const product = productRepository.create({ ...restData, sku });
+
+  // Save product to database
+  const savedProduct = await productRepository.save(product);
+
+  // Prepare promises for saving product variants and categories
+  const promises = [];
+
+  if (productVariants?.length) {
+    const productVariantRepository =
+      connection.getRepository(ProductVariantEntity);
+    const productVariantEntities = productVariants.map((variant) => ({
+      ...variant,
+      productId: savedProduct.id,
+    }));
+    promises.push(productVariantRepository.save(productVariantEntities));
+  }
+
+  if (productColors?.length) {
+    const productColorRepository = connection.getRepository(ProductColorEntity);
+    const productColorEntities = productColors.map((color) => ({
+      colorId: color,
+      productId: savedProduct.id,
+    }));
+    promises.push(productColorRepository.save(productColorEntities));
+  }
+
+  if (productCategories?.length) {
+    const productCategoryRepository = connection.getRepository(
+      ProductCategoryEntity
+    );
+    const productCategoryEntities = productCategories.map((item) => ({
+      categoryId: item,
+      productId: savedProduct.id,
+    }));
+    promises.push(productCategoryRepository.save(productCategoryEntities));
+  }
+
+  // Execute all promises concurrently
+  await Promise.all(promises);
+
+  return res.status(201).json({
+    success: true,
+    message: "Product created successfully",
+    data: savedProduct,
+  });
+});
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -28,7 +111,6 @@ export const getProducts = async (req: Request, res: Response) => {
       categoryId,
       minPrice,
       maxPrice,
-      colorId,
       discount,
     } = req.query;
     const qb = productRepository.createQueryBuilder("product");
@@ -49,7 +131,6 @@ export const getProducts = async (req: Request, res: Response) => {
       "category.name",
       "size.id",
       "size.name",
-      "color.name",
       "discount.discountType",
       "discount.value",
       "discount.type",
@@ -63,7 +144,6 @@ export const getProducts = async (req: Request, res: Response) => {
     qb.leftJoin("product.productCategories", "productCategories");
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
-    qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
     qb.addOrderBy("product.slug", "ASC");
 
@@ -92,10 +172,10 @@ export const getProducts = async (req: Request, res: Response) => {
     if (lowPrice) qb.orderBy("productVariants.sale_price", "ASC");
     if (highPrice) qb.orderBy("productVariants.sale_price", "DESC");
 
-    if (colorId)
-      qb.andWhere("productVariants.colorId IN (:...colorIds)", {
-        colorIds: colorId.toString().split(","),
-      });
+    // if (colorId)
+    //   qb.andWhere("productVariants.colorId IN (:...colorIds)", {
+    //     colorIds: colorId.toString().split(","),
+    //   });
 
     if (search) {
       qb.andWhere(
@@ -161,7 +241,6 @@ export const getProduct = asyncHandler(
       "category.name",
       "size.id",
       "size.name",
-      "color",
       "discount.discountType",
       "discount.value",
       "discount.type",
@@ -177,7 +256,6 @@ export const getProduct = asyncHandler(
     qb.leftJoin("product.productCategories", "productCategories");
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
-    qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
     qb.where("product.id = :id", { id });
 
@@ -227,11 +305,12 @@ export const getProductByslug = asyncHandler(
       "category.name",
       "size.id",
       "size.name",
-      "color",
       "discount.discountType",
       "discount.value",
       "discount.type",
       "productCategories",
+      "productColors.colorId",
+      "color.name",
     ]);
     qb.leftJoin("product.user", "user");
     qb.leftJoin("product.brand", "brand");
@@ -242,8 +321,10 @@ export const getProductByslug = asyncHandler(
     qb.leftJoin("product.productVariants", "productVariants");
     qb.leftJoin("product.productCategories", "productCategories");
     qb.leftJoin("productCategories.category", "category");
+    qb.leftJoin("product.productColors", "productColors");
+    qb.leftJoin("productColors.color", "color");
+    
     qb.leftJoin("productVariants.size", "size");
-    qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
     qb.where({ slug });
 
@@ -263,79 +344,6 @@ export const getProductByslug = asyncHandler(
     });
   }
 );
-
-// @desc Create a single Product
-// @route POST /api/v1/products
-// @access Public
-export const createProduct = asyncHandler(async (req: any, res: Response) => {
-  logger.info(`Service: createProduct ${req.method} ${req.url}`);
-
-  const connection = await getDBConnection();
-  const productRepository = connection.getRepository(ProductEntity);
-
-  // Validate request body
-  const validation = productValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
-
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
-
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
-    });
-  }
-
-  const { productVariants, productCategories, ...restData } = validation.data;
-
-  // Generate URL slug
-  const count = (await productRepository.count()) + 1;
-  const sku = `SKU-${count.toString().padStart(6, "0")}`;
-
-  // Create product entity
-  const product = productRepository.create({ ...restData, sku });
-
-  // Save product to database
-  const savedProduct = await productRepository.save(product);
-
-  // Prepare promises for saving product variants and categories
-  const promises = [];
-
-  if (productVariants?.length) {
-    const productVariantRepository =
-      connection.getRepository(ProductVariantEntity);
-    const productVariantEntities = productVariants.map((variant) => ({
-      ...variant,
-      productId: savedProduct.id,
-    }));
-    promises.push(productVariantRepository.save(productVariantEntities));
-  }
-
-  if (productCategories?.length) {
-    const productCategoryRepository = connection.getRepository(
-      ProductCategoryEntity
-    );
-    const productCategoryEntities = productCategories.map((item) => ({
-      categoryId: item,
-      productId: savedProduct.id,
-    }));
-    promises.push(productCategoryRepository.save(productCategoryEntities));
-  }
-
-  // Execute all promises concurrently
-  await Promise.all(promises);
-
-  return res.status(201).json({
-    success: true,
-    message: "Product created successfully",
-    data: savedProduct,
-  });
-});
 
 // @desc Update a single Product
 // @route PUT /api/v1/products/:id
@@ -359,7 +367,8 @@ export const updateProduct = asyncHandler(
       });
     }
 
-    const { productVariants, productCategories, ...restData } = req.body;
+    const { productVariants, productCategories, productColors, ...restData } =
+      req.body;
 
     // Get DB connection
     const connection = await getDBConnection();
@@ -389,22 +398,6 @@ export const updateProduct = asyncHandler(
             await repoProductVariant.save(productVariantCreate);
           }
         });
-
-        // const existingVariants = await repoProductVariant.find({
-        //   where: { productId: id },
-        // });
-        // await repoProductVariant.remove(existingVariants);
-
-        // const newProductVariantItems = productVariants.map((item: any) => ({
-        //   ...item,
-        //   productId: id,
-        // }));
-        // console.log("🚀 ~ newProductVariantItems:", newProductVariantItems)
-        // const productVariantCreate = repoProductVariant.create(
-        //   newProductVariantItems
-        // );
-
-        // await repoProductVariant.save(productVariantCreate);
       })();
     }
 
@@ -428,8 +421,32 @@ export const updateProduct = asyncHandler(
       })();
     }
 
+    // Handle product categories
+    let productColorPromise = Promise.resolve();
+    if (productColors) {
+      productCategoryPromise = (async () => {
+        const repoPCategory = connection.getRepository(ProductCategoryEntity);
+
+        const existingColors = await repoPCategory.find({
+          where: { productId: id },
+        });
+        await repoPCategory.remove(existingColors);
+
+        const productCategoryItems = productColors.map((item: number) => ({
+          colorId: item,
+          productId: id,
+        }));
+
+        await repoPCategory.save(productCategoryItems);
+      })();
+    }
+
     // Wait for both operations to complete
-    await Promise.all([productVariantPromise, productCategoryPromise]);
+    await Promise.all([
+      productVariantPromise,
+      productCategoryPromise,
+      productColorPromise,
+    ]);
 
     // Merge and save the updated product data
     const updatedProduct = repository.merge(product, restData);

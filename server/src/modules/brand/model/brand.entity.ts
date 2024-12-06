@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { BrandStatus } from "../enums/brand-status.enum";
-import { ProductEntity } from "../../product/model/product.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
 
 @Entity("brands")
 export class BrandEntity {

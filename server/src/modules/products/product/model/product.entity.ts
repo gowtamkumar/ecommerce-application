@@ -9,17 +9,19 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { UserEntity } from "../../auth/model/user.entity";
-import { ReviewEntity } from "../../review/model/review.entity";
+import { UserEntity } from "../../../auth/model/user.entity";
+import { ReviewEntity } from "../../../review/model/review.entity";
 import { ProductStatus } from "../enums/product-status.enum";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
-import { TaxEntity } from "../../tax/model/tax.entity";
-import { BrandEntity } from "../../brand/model/brand.entity";
+import { TaxEntity } from "../../../tax/model/tax.entity";
+import { BrandEntity } from "../../../brand/model/brand.entity";
 import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
-import { WishListEntity } from "../../wishlist/model/wishlist.entity";
-import { OrderItemEntity } from "../../order/model/order-item.entity";
-import { UnitEntity } from "../../unit/model/unit.entity";
-import { DiscountEntity } from "../../discount/model/discount.entity";
+import { WishListEntity } from "../../../wishlist/model/wishlist.entity";
+import { OrderItemEntity } from "../../../order/model/order-item.entity";
+import { UnitEntity } from "../../../unit/model/unit.entity";
+import { DiscountEntity } from "../../../discount/model/discount.entity";
+import { ColorEntity } from "../../../color/model/color.entity";
+import { ProductColorEntity } from "../../product-color/model/product-color.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -87,7 +89,10 @@ export class ProductEntity {
   tags!: string[];
 
   @Column({ name: "thumbnail_image", nullable: true }) //need to remove nullable
-  thumbnailImage?: string;
+  thumbnailImage!: string;
+
+  @Column({ name: "hover_image", nullable: true }) //need to remove nullable
+  hoverImage!: string;
 
   @Column({ type: "simple-array" })
   images!: string[];
@@ -125,4 +130,7 @@ export class ProductEntity {
 
   @OneToMany((_type) => OrderItemEntity, (items) => items.product)
   orderItems!: OrderItemEntity[];
+
+  @OneToMany((_type) => ProductColorEntity, (items) => items.product)
+  productColors!: ProductColorEntity[];
 }

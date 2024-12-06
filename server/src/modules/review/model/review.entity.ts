@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { reviewStatusEnum } from "../enums/review.status.enum";
-import { ProductEntity } from "../../product/model/product.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
 import { UserEntity } from "../../auth/model/user.entity";
 
 @Entity("reviews")

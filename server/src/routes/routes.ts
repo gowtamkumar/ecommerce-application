@@ -1,6 +1,6 @@
 import { Express } from "express";
 import authRoutes from "../modules/auth/route/auth.route";
-import productRoutes from "../modules/product/route/product.route";
+import productRoutes from "../modules/products/product/route/product.route";
 import wishlistRoutes from "../modules/wishlist/route/wishlist.route";
 import orderRoutes from "../modules/order/route/order.route";
 import orderTrackingRoutes from "../modules/order-tracking/route/order-tracking.route";
@@ -23,7 +23,7 @@ import cartRoute from "../modules/cart/route/cart.route";
 import menuRoute from "../modules/menu/route/menu.route";
 import fileRoute from "../modules/other/file/route/file.route";
 import categoriesRoute from "../modules/categories/route/category.route";
-import productVariantRoute from "../modules/product-variant/route/product-variant.route";
+import productVariantRoute from "../modules/products/product-variant/route/product-variant.route";
 import divisionRoute from "../modules/other/geo-location/divisions/route/division.route";
 import districtRoute from "../modules/other/geo-location/districts/route/district.route";
 import upazilaRoute from "../modules/other/geo-location/upazilas/route/upazila.route";
@@ -41,15 +41,14 @@ type ExpressApp = Express;
 // Export the routes setup function
 export const setupRoutes = (app: any) => {
   app.use("/api/v1/auth", authRoutes);
-  app.use("/api/v1/products", productRoutes);
   app.use("/api/v1/files", fileRoute);
+  app.use("/api/v1/products", productRoutes);
+  app.use("/api/v1/product-variants", productVariantRoute);
   app.use("/api/v1/settings", settingRoute);
   app.use("/api/v1/currencies", currencyRoute);
   app.use("/api/v1/banners", bannerRoute);
   app.use("/api/v1/carts", AuthGuard, cartRoute);
   app.use("/api/v1/menus", AuthGuard, menuRoute);
-
-  app.use("/api/v1/product-variants", productVariantRoute);
   app.use("/api/v1/categories", categoriesRoute);
   app.use("/api/v1/brands", brandRoutes);
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
