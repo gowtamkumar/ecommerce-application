@@ -26,17 +26,21 @@ import {
 } from "@/lib/utils/notification";
 import MDEditor from "@uiw/react-md-editor";
 
+interface Discount {
+  discountType: string;
+  value: number;
+  type: string;
+}
 interface DataType {
   key: string;
   name: string;
-  type: string;
-  slug: string;
-  singleImage: string;
+  sku: string;
+  variant: boolean;
+  enableReview: boolean;
+  featured: boolean;
   limitPurchaseQty: number;
   alertQty: number;
-  discount: any;
-  shortDescription: string;
-  description: string;
+  discount: Discount;
   status: string;
 }
 
@@ -192,14 +196,6 @@ const ProductList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("slug"),
-      title: "Slug",
-      dataIndex: "slug",
-      key: "slug",
-      sorter: (a, b) => a.slug.length - b.slug.length,
-    },
-
-    {
       ...getColumnSearchProps("name"),
       title: "Name",
       dataIndex: "name",
@@ -207,33 +203,26 @@ const ProductList: React.FC = () => {
       sorter: (a, b) => a.name.length - b.name.length,
     },
     {
-      ...getColumnSearchProps("type"),
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      sorter: (a, b) => a.type.length - b.type.length,
-      render: (value) => <Tag color="cyan">{value}</Tag>,
+      ...getColumnSearchProps("sku"),
+      title: "SKU",
+      dataIndex: "sku",
+      key: "sku",
+      sorter: (a, b) => a.sku.length - b.sku.length,
     },
 
     {
-      title: "Images",
-      dataIndex: "images",
-      key: "images",
-      render: (value) => (
-        <div className="grid grid-cols-2 gap-3">
-          {value?.map((item: string) => {
-            return (
-              <div key={item}>
-                <Image
-                  width={60}
-                  src={`${appConfig.apiUrl}/uploads/${item}`}
-                  alt={item}
-                />
-              </div>
-            );
-          })}
-        </div>
-      ),
+      ...getColumnSearchProps("variant"),
+      title: "Variant",
+      dataIndex: "variant",
+      key: "variant",
+      render: (value) => (value ? <span>Yes</span> : <span>No</span>),
+    },
+
+    {
+      ...getColumnSearchProps("alertQty"),
+      title: "Alert Qty",
+      dataIndex: "alertQty",
+      key: "alertQty",
     },
 
     {
@@ -255,6 +244,14 @@ const ProductList: React.FC = () => {
       dataIndex: "limitPurchaseQty",
       key: "limitPurchaseQty",
       sorter: (a, b) => a.limitPurchaseQty - b.limitPurchaseQty,
+    },
+
+    {
+      ...getColumnSearchProps("featured"),
+      title: "Featured",
+      dataIndex: "featured",
+      key: "featured",
+      render: (value) => (value ? <span>Yes</span> : <span>No</span>),
     },
 
     {
@@ -381,13 +378,16 @@ const ProductList: React.FC = () => {
           <div className="col-span-2">
             <h1 className="font-bold">Product Details: </h1>
             <h2>
-              <strong>Type:</strong> {value.type}
+              <strong>Variant:</strong> {value.variant ? "Yes" : "No"}
             </h2>
             <h2>
               <strong>Product Name: </strong> {value.name}
             </h2>
             <h2>
-              <strong>Url slug:</strong> {value.slug}
+              <strong>Slug:</strong> {value.slug}
+            </h2>
+            <h2>
+              <strong>SKU:</strong> {value.sku}
             </h2>
             <h2>
               <strong>Discount:</strong>
@@ -426,7 +426,6 @@ const ProductList: React.FC = () => {
                 source={value.description}
                 style={{ whiteSpace: "pre-wrap" }}
               />
-              {/* {value.description} */}
             </h2>
             <h2>
               Enable Review:{" "}

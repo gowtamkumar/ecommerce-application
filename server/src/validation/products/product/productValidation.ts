@@ -21,6 +21,9 @@ export const productValidationSchema = z.object({
   thumbnailImage: z.string({
     required_error: "Thumbnail Image is required",
   }),
+  hoverImage: z.string({
+    required_error: "Hover Image is required",
+  }),
   brandId: z.number().optional(),
   unitId: z.number({
     required_error: "Unit is required",

@@ -6,8 +6,7 @@ const ProductModal = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 md:flex md:gap-6">
         {/* Left Section - Product Images */}
-        {/* <div className="flex flex-col gap-4 md:w-1/2">
-        
+        <div className="flex flex-col gap-4 md:w-1/2">
           <img
             src="https://via.placeholder.com/300"
             alt="Main Product"
@@ -23,15 +22,17 @@ const ProductModal = () => {
               />
             ))}
           </div>
-        </div> */}
+        </div>
 
         {/* Right Section - Product Details */}
         <div className="md:w-1/2">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Praesent in ante</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Praesent in ante
+          </h2>
           <p className="text-red-500 text-lg font-semibold mb-2">$129.00</p>
           <p className="text-gray-600 mb-4">
-            Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
-            egestas. Vestibulum tortor quam, feugiat vitae.
+            Pellentesque habitant morbi tristique senectus et netus et malesuada
+            fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae.
           </p>
           <div className="flex items-center gap-4 mb-4">
             <span className="text-gray-600 font-medium">Size:</span>

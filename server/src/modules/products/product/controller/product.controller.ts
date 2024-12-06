@@ -53,7 +53,7 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
   // Prepare promises for saving product variants and categories
   const promises = [];
 
-  if (productVariants?.length) {
+  if (productVariants) {
     const productVariantRepository =
       connection.getRepository(ProductVariantEntity);
     const productVariantEntities = productVariants.map((variant) => ({
@@ -63,21 +63,21 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
     promises.push(productVariantRepository.save(productVariantEntities));
   }
 
-  if (productColors?.length) {
+  if (productColors) {
     const productColorRepository = connection.getRepository(ProductColorEntity);
     const productColorEntities = productColors.map((color) => ({
-      colorId: color,
+      colorId: +color,
       productId: savedProduct.id,
     }));
     promises.push(productColorRepository.save(productColorEntities));
   }
 
-  if (productCategories?.length) {
+  if (productCategories) {
     const productCategoryRepository = connection.getRepository(
       ProductCategoryEntity
     );
     const productCategoryEntities = productCategories.map((item) => ({
-      categoryId: item,
+      categoryId: +item,
       productId: savedProduct.id,
     }));
     promises.push(productCategoryRepository.save(productCategoryEntities));
@@ -245,6 +245,7 @@ export const getProduct = asyncHandler(
       "discount.value",
       "discount.type",
       "productCategories",
+      "productColors",
     ]);
     qb.leftJoin("product.user", "user");
     qb.leftJoin("product.brand", "brand");
@@ -254,6 +255,7 @@ export const getProduct = asyncHandler(
     qb.leftJoin("product.discount", "discount");
     qb.leftJoin("product.productVariants", "productVariants");
     qb.leftJoin("product.productCategories", "productCategories");
+    qb.leftJoin("product.productColors", "productColors");
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
     qb.orderBy("productVariants.id", "DESC");
@@ -323,7 +325,7 @@ export const getProductByslug = asyncHandler(
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("product.productColors", "productColors");
     qb.leftJoin("productColors.color", "color");
-    
+
     qb.leftJoin("productVariants.size", "size");
     qb.orderBy("productVariants.id", "DESC");
     qb.where({ slug });
@@ -369,7 +371,6 @@ export const updateProduct = asyncHandler(
 
     const { productVariants, productCategories, productColors, ...restData } =
       req.body;
-
     // Get DB connection
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);
@@ -382,7 +383,7 @@ export const updateProduct = asyncHandler(
     }
     // Handle product variants
     let productVariantPromise = Promise.resolve();
-    if (productVariants) {
+    if (productVariants.length) {
       productVariantPromise = (async () => {
         const repoProductVariant =
           connection.getRepository(ProductVariantEntity);
@@ -410,26 +411,31 @@ export const updateProduct = asyncHandler(
         const existingCategories = await repoPCategory.find({
           where: { productId: id },
         });
-        await repoPCategory.remove(existingCategories);
 
-        const productCategoryItems = productCategories.map((item: number) => ({
-          categoryId: item,
-          productId: id,
-        }));
+        if (existingCategories) {
+          const res = await repoPCategory.remove(existingCategories);
+        }
 
+        const productCategoryItems = productCategories.map((item: number) => {
+          return {
+            categoryId: +item,
+            productId: +id,
+          };
+        });
         await repoPCategory.save(productCategoryItems);
       })();
     }
 
-    // Handle product categories
+    // Handle product color
     let productColorPromise = Promise.resolve();
     if (productColors) {
-      productCategoryPromise = (async () => {
-        const repoPCategory = connection.getRepository(ProductCategoryEntity);
+      productColorPromise = (async () => {
+        const repoPCategory = connection.getRepository(ProductColorEntity);
 
         const existingColors = await repoPCategory.find({
           where: { productId: id },
         });
+
         await repoPCategory.remove(existingColors);
 
         const productCategoryItems = productColors.map((item: number) => ({

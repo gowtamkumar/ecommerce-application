@@ -18,7 +18,6 @@ import { errorNotification } from "@/lib/utils/notification";
 import { getProductBySlug } from "@/lib/apis/public/product";
 import ReviewTable from "./review-rating/ReviewTable";
 import ProductCard from "./ProductCard";
-import ProductModal from "@/components/ProductModal";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
@@ -115,16 +114,13 @@ export default function SingleProduct() {
         </div>
 
         <div className="col-span-6">
-
-        <ProductModal/>
-        
-          {/* <ProductDetails
+          <ProductDetails
             product={product}
             setProduct={setProduct}
             productRating={productRating}
             checkStock={checkStock}
             setCheckStock={setCheckStock}
-          /> */}
+          />
         </div>
       </div>
       <div className="grid grid-cols-1">
@@ -142,7 +138,7 @@ export default function SingleProduct() {
       </section>
       <div>
 
-   
+
       </div>
       {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
     </div>

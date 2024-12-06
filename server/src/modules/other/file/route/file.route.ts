@@ -22,12 +22,16 @@ router.route("/uploads").post(
       maxCount: 1,
     },
     {
+      name: "hoverImage",
+      maxCount: 1,
+    },
+    {
       name: "image",
       maxCount: 1,
     },
     {
       name: "images",
-      maxCount: 2,
+      maxCount: 5,
     },
   ]),
   AuthGuard,

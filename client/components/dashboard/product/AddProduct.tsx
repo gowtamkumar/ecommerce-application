@@ -68,7 +68,7 @@ const AddProduct = ({
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const params = useParams();
+  const params = useParams<{ new: string }>();
   const route = useRouter();
 
   useEffect(() => {
@@ -84,58 +84,76 @@ const AddProduct = ({
   }, []);
 
   const fetchData = async () => {
+    const generateFile = (fileName: string, identifier: string | number) => ({
+      uid: `${Math.random() * 1000}`,
+      name: `photo ${identifier}`,
+      status: "done",
+      fileName,
+      url: `${appConfig.apiUrl}/uploads/${fileName || "no-data.png"}`,
+    });
+
     try {
       dispatch(setLoading({ loading: true }));
-      if (params.new !== "new") {
-        const id = params.new.toString(); // Convert to string if necessary
-        // Fetch product data
-        const result = await getProduct(id);
-        const newData = { ...result.data };
 
-        if (!newData.variant) {
-          newData.purchasePrice = +newData.productVariants[0].purchasePrice;
-          newData.salePrice = +newData.productVariants[0].salePrice;
-          newData.stockQty = newData.productVariants[0].stockQty;
-          newData.variantId = newData.productVariants[0].id;
-        }
-
-        const productCategories = newData?.productCategories?.map(
-          ({ categoryId }: { categoryId: number }) => categoryId
-        );
-        if (!newData.images) {
-          newData.images = [];
-        }
-        if (newData.images) {
-          const file = (newData.images || []).map(
-            (item: string, idx: number) => ({
-              uid: Math.random() * 1000 + "",
-              name: `photo ${idx}`,
-              status: "done",
-              fileName: item,
-              url: `${appConfig.apiUrl}/uploads/${item}`,
-            })
-          );
-          newData.fileList = file;
-        }
-        if (newData.thumbnailImage) {
-          const newfile = {
-            uid: Math.random() * 1000 + "",
-            name: `photo ${Math.random() * 10000 + ""}`,
-            status: "done",
-            fileName: newData.thumbnailImage,
-            url: `${appConfig.apiUrl}/uploads/${
-              newData.thumbnailImage || "no-data.png"
-            }`,
-          };
-          newData.fileThumbnailList = [newfile];
-        }
-        form.setFieldsValue({ ...newData, productCategories });
-        setProduct({ ...newData, productCategories });
-        setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
-        setFormValues(newData);
-      } else {
+      if (params.new === "new") {
         form.resetFields();
         setTags([]);
+        return;
+      }
+
+      if (params.new !== "new") {
+        const id = params.new.toString();
+        const result = await getProduct(id);
+        const productData = { ...result.data };
+
+        // Populate variant data if no variant is selected
+        if (!productData.variant && productData.productVariants?.length) {
+          const [firstVariant] = productData.productVariants;
+          Object.assign(productData, {
+            purchasePrice: +firstVariant.purchasePrice,
+            salePrice: +firstVariant.salePrice,
+            stockQty: firstVariant.stockQty,
+            variantId: firstVariant.id,
+          });
+        }
+
+        // Map categories
+        const productCategories = productData.productCategories?.map(
+          (category: any) => category.categoryId
+        );
+
+        // Map color
+        const productColors = productData.productColors?.map(
+          (color: any) => color.colorId
+        );
+
+        // Handle images, thumbnails, and hover images
+        productData.fileList =
+          productData.images?.map((image: string, idx: number) =>
+            generateFile(image, idx)
+          ) || [];
+
+        if (productData.thumbnailImage) {
+          productData.fileThumbnailList = [
+            generateFile(productData.thumbnailImage, "thumbnail"),
+          ];
+        }
+
+        if (productData.hoverImage) {
+          productData.fileHoverList = [
+            generateFile(productData.hoverImage, "hover"),
+          ];
+        }
+
+        // Update form and state
+        form.setFieldsValue({
+          ...productData,
+          productCategories,
+          productColors,
+        });
+        setProduct({ ...productData, productCategories, productColors });
+        setTags(productData.tags || []);
+        setFormValues(productData);
       }
     } catch (err) {
       console.error("Error fetching product data:", err);
@@ -144,11 +162,73 @@ const AddProduct = ({
     }
   };
 
+  // const fetchData = async () => {
+  //   try {
+  //     dispatch(setLoading({ loading: true }));
+  //     if (params.new !== "new") {
+  //       const id = params.new.toString(); // Convert to string if necessary
+  //       // Fetch product data
+  //       const result = await getProduct(id);
+  //       const newData = { ...result.data };
+
+  //       if (!newData.variant) {
+  //         newData.purchasePrice = +newData.productVariants[0].purchasePrice;
+  //         newData.salePrice = +newData.productVariants[0].salePrice;
+  //         newData.stockQty = newData.productVariants[0].stockQty;
+  //         newData.variantId = newData.productVariants[0].id;
+  //       }
+
+  //       const productCategories = newData?.productCategories?.map(
+  //         ({ categoryId }: { categoryId: number }) => categoryId
+  //       );
+  //       if (!newData.images) {
+  //         newData.images = [];
+  //       }
+  //       if (newData.images) {
+  //         const file = (newData.images || []).map(
+  //           (item: string, idx: number) => ({
+  //             uid: Math.random() * 1000 + "",
+  //             name: `photo ${idx}`,
+  //             status: "done",
+  //             fileName: item,
+  //             url: `${appConfig.apiUrl}/uploads/${item}`,
+  //           })
+  //         );
+  //         newData.fileList = file;
+  //       }
+  //       if (newData.thumbnailImage) {
+  //         const newfile = {
+  //           uid: Math.random() * 1000 + "",
+  //           name: `photo ${Math.random() * 10000 + ""}`,
+  //           status: "done",
+  //           fileName: newData.thumbnailImage,
+  //           url: `${appConfig.apiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
+  //             }`,
+  //         };
+  //         newData.fileThumbnailList = [newfile];
+  //       }
+  //       form.setFieldsValue({ ...newData, productCategories });
+  //       setProduct({ ...newData, productCategories });
+  //       setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
+  //       setFormValues(newData);
+  //     } else {
+  //       form.resetFields();
+  //       setTags([]);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching product data:", err);
+  //   } finally {
+  //     dispatch(setLoading({ loading: false }));
+  //   }
+  // };
+
   const handleSubmit = async () => {
     const newData = await form.validateFields();
-
+    console.log("🚀 ~ newData:", newData);
+    // return;
     delete newData.fileList;
     delete newData.fileThumbnailList;
+    delete newData.fileHoverList;
 
     if (!newData.variant) {
       const productVariants = {
@@ -159,8 +239,6 @@ const AddProduct = ({
       };
       newData.productVariants = [productVariants];
     }
-
-    // return console.log("🚀 ~ newData:", newData);
 
     const result = newData.id
       ? () => updateProduct(newData)
@@ -190,8 +268,9 @@ const AddProduct = ({
       }));
       newData.fileList = file;
     }
+
     if (newData.thumbnailImage) {
-      const newfile = {
+      const newfileThumbnail = {
         uid: Math.random() * 1000 + "",
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
@@ -200,7 +279,20 @@ const AddProduct = ({
           newData.thumbnailImage || "no-data.png"
         }`,
       };
-      newData.fileThumbnailList = [newfile];
+      newData.fileThumbnailList = [newfileThumbnail];
+    }
+
+    if (newData.hoverImage) {
+      const newfileHover = {
+        uid: Math.random() * 1000 + "",
+        name: `photo ${Math.random() * 10000 + ""}`,
+        status: "done",
+        fileName: newData.hoverImage,
+        url: `${appConfig.apiUrl}/uploads/${
+          newData.hoverImage || "no-data.png"
+        }`,
+      };
+      newData.fileHoverList = [newfileHover];
     }
 
     setFormValues(form.getFieldsValue());
@@ -267,6 +359,19 @@ const AddProduct = ({
         });
       }
 
+      if (filename === "hoverImage") {
+        form.setFieldsValue({
+          ...form.getFieldsValue(),
+          fileHoverList: newfile,
+          hoverImage: newFileName,
+        });
+        setFormValues({
+          ...formValues,
+          fileHoverList: newfile,
+          hoverImage: newFileName,
+        });
+      }
+
       onSuccess("Ok");
     } catch (err) {
       console.error("🚀 ~ Upload error:", err);
@@ -300,9 +405,11 @@ const AddProduct = ({
         initialValues={{
           productVariants: [{}],
           images: [],
-          thumbnailImage: "",
           fileList: [],
+          thumbnailImage: "",
           fileThumbnailList: [],
+          hoverImage: "",
+          fileHoverList: [],
         }}
       >
         <Form.Item name="id" hidden>
@@ -324,7 +431,26 @@ const AddProduct = ({
                 },
               ]}
             >
-              <Input placeholder="Enter name" />
+              <Input
+                placeholder="Enter"
+                onChange={(value) => {
+                  const slug = value.target.value.trim().split(" ").join("-");
+                  form.setFieldsValue({ slug });
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="slug"
+              label="Slug"
+              rules={[
+                {
+                  required: true,
+                  message: "Slug is required",
+                },
+              ]}
+            >
+              <Input placeholder="Enter" />
             </Form.Item>
 
             <Form.Item
@@ -553,6 +679,27 @@ const AddProduct = ({
               </Select>
             </Form.Item>
 
+            <Form.Item name="productColors" label="Color">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select"
+                mode="multiple"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {(colors || []).map((item: any) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    <ColorPicker size="small" value={item.color} /> {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
             <Form.Item
               name="unitId"
               label="Unit"
@@ -611,54 +758,106 @@ const AddProduct = ({
               </div>
             </div>
             {/* image upload section */}
+            <div className="flex justify-between">
+              <div>
+                <Form.Item
+                  name="fileThumbnailList"
+                  label="Thumbnail Image"
+                  valuePropName="fileThumbnailList"
+                  getValueFromEvent={normFile}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Thumbnail Image is required",
+                    },
+                  ]}
+                >
+                  <ImgCrop rotationSlider showReset>
+                    <Upload
+                      name="thumbnailImage"
+                      listType="picture-card"
+                      fileList={formValues?.fileThumbnailList || []}
+                      onRemove={async (v) => {
+                        if (v.fileName) {
+                          form.setFieldsValue({
+                            ...form.getFieldsValue(),
+                            thumbnailImage: null,
+                            fileThumbnailList: [],
+                          });
+                          setFormValues({
+                            ...formValues,
+                            thumbnailImage: null,
+                            fileThumbnailList: [],
+                          });
+                          const params = { filename: v.fileName };
+                          await fileDeleteWithPhoto(params);
+                        }
+                      }}
+                      className="avatar-uploader"
+                      onPreview={(file) => handlePreview(file, dispatch)}
+                      customRequest={customUploadRequest}
+                      maxCount={1}
+                    >
+                      {!formValues.thumbnailImage && uploadButton}
+                    </Upload>
+                  </ImgCrop>
+                </Form.Item>
+
+                <Form.Item name="thumbnailImage" hidden>
+                  <Input />
+                </Form.Item>
+              </div>
+
+              <div>
+                <Form.Item
+                  name="fileHoverList"
+                  label="Hover Image"
+                  valuePropName="fileHoverList"
+                  getValueFromEvent={normFile}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hover Image is required",
+                    },
+                  ]}
+                >
+                  <ImgCrop rotationSlider showReset>
+                    <Upload
+                      name="hoverImage"
+                      listType="picture-card"
+                      fileList={formValues?.fileHoverList || []}
+                      onRemove={async (v) => {
+                        if (v.fileName) {
+                          form.setFieldsValue({
+                            ...form.getFieldsValue(),
+                            hoverImage: null,
+                            fileHoverList: [],
+                          });
+                          setFormValues({
+                            ...formValues,
+                            hoverImage: null,
+                            fileHoverList: [],
+                          });
+                          const params = { filename: v.fileName };
+                          await fileDeleteWithPhoto(params);
+                        }
+                      }}
+                      className="avatar-uploader"
+                      onPreview={(file) => handlePreview(file, dispatch)}
+                      customRequest={customUploadRequest}
+                      maxCount={1}
+                    >
+                      {!formValues.hoverImage && uploadButton}
+                    </Upload>
+                  </ImgCrop>
+                </Form.Item>
+
+                <Form.Item name="hoverImage" hidden>
+                  <Input />
+                </Form.Item>
+              </div>
+            </div>
             <div>
-              <Form.Item
-                name="fileThumbnailList"
-                label="Thumbnail Image"
-                valuePropName="fileThumbnailList"
-                getValueFromEvent={normFile}
-                rules={[
-                  {
-                    required: true,
-                    message: "Thumbnail Image is required",
-                  },
-                ]}
-              >
-                <ImgCrop rotationSlider showReset>
-                  <Upload
-                    name="thumbnailImage"
-                    listType="picture-card"
-                    fileList={formValues?.fileThumbnailList || []}
-                    onRemove={async (v) => {
-                      if (v.fileName) {
-                        form.setFieldsValue({
-                          ...form.getFieldsValue(),
-                          thumbnailImage: null,
-                          fileThumbnailList: [],
-                        });
-                        setFormValues({
-                          ...formValues,
-                          thumbnailImage: null,
-                          fileThumbnailList: [],
-                        });
-                        const params = { filename: v.fileName };
-                        await fileDeleteWithPhoto(params);
-                      }
-                    }}
-                    className="avatar-uploader"
-                    onPreview={(file) => handlePreview(file, dispatch)}
-                    customRequest={customUploadRequest}
-                    maxCount={1}
-                  >
-                    {uploadButton}
-                  </Upload>
-                </ImgCrop>
-              </Form.Item>
-
-              <Form.Item name="thumbnailImage" hidden>
-                <Input />
-              </Form.Item>
-
               <Form.Item
                 name="fileList"
                 label="Images"
@@ -769,7 +968,6 @@ const AddProduct = ({
                           Price
                         </th>
                         <th className="text-start w-1/6">Size</th>
-                        <th className="text-start w-1/6">Color</th>
                         <th className="text-start w-1/6">
                           <label className="text-red-500">*</label>Qty
                         </th>
@@ -825,32 +1023,6 @@ const AddProduct = ({
                               </Select>
                             </Form.Item>
                           </td>
-                          <td>
-                            <Form.Item {...restField} name={[name, "colorId"]}>
-                              <Select
-                                showSearch
-                                allowClear
-                                placeholder="Select"
-                                optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                  (option?.children as any)
-                                    .toLowerCase()
-                                    .indexOf(input.toLowerCase()) >= 0
-                                }
-                              >
-                                {(colors || []).map((item: any) => (
-                                  <Select.Option key={item.id} value={item.id}>
-                                    <ColorPicker
-                                      size="small"
-                                      value={item.color}
-                                    />{" "}
-                                    {item.name}
-                                  </Select.Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          </td>
-
                           <td>
                             <Form.Item
                               {...restField}
