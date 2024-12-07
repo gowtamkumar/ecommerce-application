@@ -89,12 +89,12 @@ export default function Slider({ banners }: any) {
           )}
         </Swiper>
 
-        <button className="hero-prev absolute z-40 top-1/2 -left-6 transform -translate-y-1/2">
+        <button className="hero-prev absolute z-10 top-1/2 -left-0 transform -translate-y-1/2">
           <FaCaretLeft size={40} className="text-bioxin-primary" />
         </button>
 
         {/* Custom Next Button */}
-        <button className="hero-next absolute z-40 top-1/2 -right-5 transform -translate-y-1/2">
+        <button className="hero-next absolute z-10 top-1/2 -right-0 transform -translate-y-1/2">
           <FaCaretRight size={40} className="text-bioxin-primary" />
         </button>
       </div>

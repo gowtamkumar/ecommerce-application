@@ -177,6 +177,7 @@ SELECT
   p.name,
   p.slug,
   p.thumbnail_image as "thumbnailImage",
+  p.hover_image as "hoverImage",
   p.variant,
   p.discount_id as "discountId",
   dis.discount_type as "discountType",
@@ -230,7 +231,7 @@ LEFT JOIN
   discounts dis ON dis.id = p.discount_id
 
 GROUP BY 
-  p.id, p.name, p.thumbnail_image, p.variant, p.discount_id, p.featured, 
+  p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
   p.sale_price, p.purchase_price, p.product_variant_id, p.slug,
   rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value;
 

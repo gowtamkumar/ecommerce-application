@@ -39,7 +39,7 @@ export default function Discount({ discounts }: any) {
       // onSwiper={(swiper) => console.log(swiper)}
       // onSlideChange={() => console.log("slide change")}
       >
-        {(discounts?.data || []).map((item: any, idx: number) => {
+        {(discounts || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
               <div className="relative gap-3">

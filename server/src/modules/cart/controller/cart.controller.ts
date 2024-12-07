@@ -34,9 +34,6 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
       pv.purchase_price as "purchasePrice",
       pv.stock_qty as "stockQty",
       pv.weight,
-      c.name as "colorName",
-      c.id as "colorId",
-      s.id as "sizeId",
       s.name as "sizeName",
       (COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
       (COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
@@ -57,7 +54,6 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
       LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
       LEFT JOIN discounts as d ON d.id = p.discount_id
       LEFT JOIN sizes as s ON s.id = pv.size_id
-      LEFT JOIN colors as c ON c.id = pv.color_id
 `
   );
 

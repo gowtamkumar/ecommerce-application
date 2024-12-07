@@ -217,10 +217,9 @@ export const getTopSellingProduct = asyncHandler(
                     'price', pv.sale_price,
                     'purchasePrice', pv.purchase_price,
                     'stockQty', pv.stock_qty,
-                    'color_id', pv.color_id,
                     'size_id', pv.size_id,
-                    'size', json_build_object('name', sizes.name), -- Direct join for sizes
-                    'color', json_build_object('name', colors.name) -- Direct join for colors
+                    'size', json_build_object('name', sizes.name)-- Direct join for sizes
+                    
                 )
             ) FILTER (WHERE pv.product_id IS NOT NULL) AS "productVariants",
 
@@ -259,8 +258,6 @@ export const getTopSellingProduct = asyncHandler(
             discounts d ON d.id = products.discount_id    
         LEFT JOIN
             reviews ON reviews.product_id = products.id
-        LEFT JOIN
-            colors ON colors.id = pv.color_id
         GROUP BY
             oI.product_id, oI.total_amount, products.name,
              products.images, products.alert_qty, taxs.name,

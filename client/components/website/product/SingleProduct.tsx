@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import ProductImageGallery from "./ProductImageGallery";
 import ProductDetails from "./ProductDetails";
 import { Spin } from "antd";
 import RatingProduct from "./RatingProducts";
-import DescriptionProduct from "./DescriptionProduct";
-import { getProduct } from "@/lib/apis/product";
+import ProductDescription from "./ProductDescription";
 import {
   selectGlobal,
   setLoading,
@@ -108,38 +106,25 @@ export default function SingleProduct() {
 
   return (
     <div className="container mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-12 pt-4">
-        <div className="col-span-6">
-          <ProductImageGallery images={product.images} thumbnailImage={product.thumbnailImage} />
-        </div>
+      <ProductDetails
+        product={product}
+        setProduct={setProduct}
+        productRating={productRating}
+        checkStock={checkStock}
+        setCheckStock={setCheckStock}
+      />
 
-        <div className="col-span-6">
-          <ProductDetails
-            product={product}
-            setProduct={setProduct}
-            productRating={productRating}
-            checkStock={checkStock}
-            setCheckStock={setCheckStock}
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-1">
-        {product.reviews && (
-          <RatingProduct product={product} productRating={productRating} />
-        )}
-      </div>
-
-      <div></div>
+      {product.reviews && (
+        <RatingProduct product={product} productRating={productRating} />
+      )}
 
       <ReviewTable reviews={product.reviews} />
-      <DescriptionProduct product={product} />
+      <ProductDescription product={product} />
       <section className="py-5">
+        <h3 className="text-lg font-bold mb-4">Related Product</h3>
         <ProductCard />
       </section>
-      <div>
 
-
-      </div>
       {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
     </div>
   );

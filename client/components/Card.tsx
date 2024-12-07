@@ -19,6 +19,7 @@ interface CardItems {
 }
 
 export default function Card({ item }: any) {
+  console.log("🚀 ~ item:", item)
   // const price = +item.productVariants[0]?.salePrice || 0;
   // const reviewsCount = +item.reviews.length || 0;
   // const discount = item.discount;
@@ -56,8 +57,8 @@ export default function Card({ item }: any) {
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
             <Image
               src={
-                item.thumbnailImage
-                  ? `${appConfig.apiUrl}/uploads/${item.thumbnailImage}`
+                item.hoverImage
+                  ? `${appConfig.apiUrl}/uploads/${item.hoverImage}`
                   : "/pos_software.png"
               }
               alt={item.name}
@@ -83,7 +84,7 @@ export default function Card({ item }: any) {
         </span>
 
         <div className="flex justify-between items-center">
-          <p className="text-gray-500 mb-2 text-xs">
+          <p className="text-gray-500 mb-1 text-md">
             ৳ {item?.discountId ? item.price : item.taxWithPrice}
             {/* {item?.discountId
               ? (price + taxAmount - disAmount).toFixed(2)
@@ -99,7 +100,7 @@ export default function Card({ item }: any) {
 
         {item?.discountId && (
           <div className="text-xs">
-            <span className="line-through text-gray-500 ">
+            <span className="line-through text-gray-500">
               {/* ৳ {(price + taxAmount).toFixed(2)} */}৳ {item.taxWithPrice}
             </span>
             <span className="text-red-600 ml-2">

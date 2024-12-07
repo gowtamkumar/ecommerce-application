@@ -33,7 +33,7 @@ export default async function Home() {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-12 grid-cols-1">
             <Slider banners={banners} />
-            <HeaderDiscount discounts={home.discounts} />
+            <HeaderDiscount discounts={discounts} />
           </div>
         </div>
       </header>
