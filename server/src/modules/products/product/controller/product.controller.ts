@@ -291,41 +291,58 @@ export const getProductByslug = asyncHandler(
 
     const qb = repository.createQueryBuilder("product");
     qb.select([
-      "product",
-      "user.id",
-      "user.name",
+      "product.id",
+      "product.name",
+      "product.hoverImage",
+      "product.images",
+      "product.thumbnailImage",
+      "product.limitPurchaseQty",
+      "product.sku",
+      "product.slug",
+      "product.tags",
+      "product.taxId",
+      "product.variant",
+      "product.shortDescription",
+      "product.discountId",
+
+      "brand.id",
+      "brand.name",
+      "brand.image",
+
       "reviewUser.name",
-      "brand",
       "reviews.id",
       "reviews.rating",
       "reviews.comment",
       "reviews.like",
       "reviews.disLike",
-      "tax",
-      "productVariants",
-      "category.id",
-      "category.name",
+
+      "tax.name",
+      "tax.value",
+
+      "productVariants.default",
+      "productVariants.id",
+      "productVariants.purchasePrice",
+      "productVariants.salePrice",
+      "productVariants.stockQty",
+
       "size.id",
       "size.name",
+
       "discount.discountType",
       "discount.value",
       "discount.type",
-      "productCategories",
+
       "productColors.colorId",
       "color.name",
     ]);
-    qb.leftJoin("product.user", "user");
     qb.leftJoin("product.brand", "brand");
     qb.leftJoin("product.reviews", "reviews");
     qb.leftJoin("reviews.user", "reviewUser");
     qb.leftJoin("product.tax", "tax");
     qb.leftJoin("product.discount", "discount");
     qb.leftJoin("product.productVariants", "productVariants");
-    qb.leftJoin("product.productCategories", "productCategories");
-    qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("product.productColors", "productColors");
     qb.leftJoin("productColors.color", "color");
-
     qb.leftJoin("productVariants.size", "size");
     qb.orderBy("productVariants.id", "DESC");
     qb.where({ slug });

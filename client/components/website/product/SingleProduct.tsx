@@ -33,7 +33,7 @@ export default function SingleProduct() {
 
     try {
       const newProduct = await getProductBySlug(slug?.toString() as any);
-      const { productVariants } = newProduct.data;
+      const { productVariants, stockQty } = newProduct.data;
 
       if (newProduct?.success) {
         const findVariantProduct = productVariants.find(
@@ -45,18 +45,20 @@ export default function SingleProduct() {
           defaultProduct: findVariantProduct,
         });
 
-        if (findVariantProduct.id) {
-          const productVariant = await getProductVariant({
-            id: findVariantProduct.id,
-          });
-          setCheckStock(productVariant.data.stockQty);
-        }
+        setCheckStock(findVariantProduct.stockQty);
 
-        const categoryIds = newProduct.data.productCategories
-          .map((item: { categoryId: number }) => item.categoryId)
-          .join(",");
+        // if (findVariantProduct.id) {
+        //   const productVariant = await getProductVariant({
+        //     id: findVariantProduct.id,
+        //   });
+        //   setCheckStock(productVariant.data.stockQty);
+        // }
 
-        dispatch(setProductFilter({ categoryId: categoryIds }));
+        // const categoryIds = newProduct.data.productCategories
+        //   .map((item: { categoryId: number }) => item.categoryId)
+        //   .join(",");
+
+        // dispatch(setProductFilter({ categoryId: categoryIds }));
       }
     } catch (error: any) {
       errorNotification({ message: error.message });

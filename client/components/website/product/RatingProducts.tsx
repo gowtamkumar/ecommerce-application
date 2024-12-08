@@ -1,7 +1,26 @@
+import { ProductType } from "@/lib/types/product";
 import { Divider, Rate } from "antd";
-import { useDispatch } from "react-redux";
+interface ProductRating {
+  totalReview: number;
+  rating1: number;
+  rating2: number;
+  rating3: number;
+  rating4: number;
+  rating5: number;
+}
 
-const RatingProduct = ({ product, productRating }: any) => {
+interface Review {
+  reviews: [];
+  product: ProductType;
+}
+
+const RatingProduct = ({
+  product,
+  productRating,
+}: {
+  product: Review;
+  productRating: ProductRating;
+}) => {
   const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
     productRating;
   return (

@@ -18,6 +18,11 @@ import { TfiPencil } from "react-icons/tfi";
 import { FaXTwitter } from "react-icons/fa6";
 import ProductImageGallery from "./ProductImageGallery";
 
+interface ProductColor {
+  colorId: number;
+  color: { name: string };
+}
+
 const ProductDetails = ({
   product,
   setProduct,
@@ -28,6 +33,9 @@ const ProductDetails = ({
   const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
   const session = useSession();
+
+  console.log("product", product);
+
   const price = product.defaultProduct?.salePrice;
   let taxAmount = (+price * (product.tax?.value || 0)) / 100;
 
@@ -107,51 +115,45 @@ const ProductDetails = ({
 
         <div>
           <p className="text-2xl font-semibold text-blue-600 mr-4">
-            {/* price + taxAmount + product discount */}৳{" "}
-            {product?.discountId ? (+444).toFixed(2) : (+222 || 0).toFixed(2)}
-            {/* +price + +taxAmount  */}
+            {product?.discountId
+              ? (
+                  +price +
+                  +taxAmount - productDiscountCalculation(product)
+                ).toFixed(2)
+              : (+price + +taxAmount || 0).toFixed(2)}
           </p>
 
-          {product?.discountId ? (
+          {product?.discountId && (
             <>
               <span className="line-through text-gray-500">
-                {/* ৳ {(+price + +taxAmount || 0).toFixed(2)} */}৳{" "}
-                {(+33 || 0).toFixed(2)}
+                ৳ {(+price + +taxAmount || 0).toFixed(2)}
               </span>
               <span className="text-red-600 ml-2">
                 - {product?.discount?.value}
                 {product?.discount?.discountType === "Percentage" ? "%" : "BDT"}
               </span>
             </>
-          ) : null}
+          )}
         </div>
 
         <div
           className="text-gray-700 mb-4 leading-6"
           dangerouslySetInnerHTML={{
-            __html:
-              product.shortDescription 
+            __html: product.shortDescription,
           }}
         />
 
-        {product?.variant && (
+        {product?.productColors && (
           <div className="mb-4">
             <span className="text-gray-600">Color: </span>
-            {product.productVariants.map((item: any, idx: number) => (
+            {product.productColors.map((item: ProductColor) => (
               <Button
-                key={idx}
+                key={item.colorId}
                 onClick={async () => {
                   setProduct({
                     ...product,
-                    selectProductVariant: item,
+                    colorId: item.colorId,
                   });
-
-                  if (product.productVariants[0].id) {
-                    const productVariant = await getProductVariant({
-                      id: product.productVariants[0].id,
-                    });
-                    setCheckStock(productVariant.data.stockQty);
-                  }
                 }}
                 className="mr-2 px-2 py-1 rounded text-white hover:bg-gray-300 focus:outline-none"
               >
@@ -172,12 +174,7 @@ const ProductDetails = ({
                     ...product,
                     selectProductVariant: item,
                   });
-                  if (product.productVariants[0].id) {
-                    const productVariant = await getProductVariant({
-                      id: product.productVariants[0].id,
-                    });
-                    setCheckStock(productVariant.data.stockQty);
-                  }
+                  setCheckStock(item.stockQty);
                 }}
                 className="mr-2 text-white px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none"
               >
@@ -186,7 +183,7 @@ const ProductDetails = ({
             ))}
           </div>
         )}
-        <p>In stock 420 Items</p>
+        <p>In stock {checkStock} Items</p>
 
         {/* product Action section */}
         <div className="flex items-center gap-2 mb-4">
