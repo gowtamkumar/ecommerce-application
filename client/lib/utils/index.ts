@@ -1,5 +1,5 @@
 export function productDiscountCalculation(value: any) {
-  const price = +value.selectProductVariant?.price;
+  const price = +value.defaultProduct?.salePrice;
   const discount = value.discount;
   let taxAmount = (+price * (+value?.tax?.value || 0)) / 100;
 

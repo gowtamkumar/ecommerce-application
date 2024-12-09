@@ -9,8 +9,6 @@ export interface ProductVariant {
   purchasePrice: number;
   productId: number;
   sizeId: number;
-  colorId: number;
-  weight: string;
   stockQty: number;
 }
 

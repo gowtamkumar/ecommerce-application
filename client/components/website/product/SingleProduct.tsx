@@ -36,16 +36,19 @@ export default function SingleProduct() {
       const { productVariants, stockQty } = newProduct.data;
 
       if (newProduct?.success) {
+
         const findVariantProduct = productVariants.find(
           (item: { default: boolean }) => item.default
         );
+
         setProduct({
           ...newProduct.data,
           qty: 1,
-          defaultProduct: findVariantProduct,
+          defaultProduct: findVariantProduct ? findVariantProduct : productVariants[0],
         });
 
-        setCheckStock(findVariantProduct.stockQty);
+
+        setCheckStock(findVariantProduct.stockQty || productVariants[0].stockQty);
 
         // if (findVariantProduct.id) {
         //   const productVariant = await getProductVariant({

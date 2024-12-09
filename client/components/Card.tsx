@@ -19,7 +19,6 @@ interface CardItems {
 }
 
 export default function Card({ item }: any) {
-  console.log("🚀 ~ item:", item)
   // const price = +item.productVariants[0]?.salePrice || 0;
   // const reviewsCount = +item.reviews.length || 0;
   // const discount = item.discount;

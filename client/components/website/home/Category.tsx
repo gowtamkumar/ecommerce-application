@@ -35,8 +35,8 @@ export default function CategoryCard({ categories }: any) {
             spaceBetween={5}
             slidesPerView={1}
             pagination={{ clickable: true }}
-            autoplay={true}
-            speed={1000}
+            // autoplay={true}
+            // speed={1000}
             navigation={{
               nextEl: ".custom-next",
               prevEl: ".custom-prev",

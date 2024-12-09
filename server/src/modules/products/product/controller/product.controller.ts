@@ -319,8 +319,9 @@ export const getProductByslug = asyncHandler(
       "tax.name",
       "tax.value",
 
-      "productVariants.default",
       "productVariants.id",
+      "productVariants.sizeId",
+      "productVariants.default",
       "productVariants.purchasePrice",
       "productVariants.salePrice",
       "productVariants.stockQty",

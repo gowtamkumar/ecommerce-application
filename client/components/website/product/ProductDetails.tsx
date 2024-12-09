@@ -23,6 +23,15 @@ interface ProductColor {
   color: { name: string };
 }
 
+export interface ProductVariant {
+  id: number;
+  price: number;
+  purchasePrice: number;
+  sizeId: number;
+  size: { name: string };
+  stockQty: number;
+}
+
 const ProductDetails = ({
   product,
   setProduct,
@@ -34,10 +43,26 @@ const ProductDetails = ({
   const dispatch = useDispatch();
   const session = useSession();
 
-  console.log("product", product);
+  const {
+    name,
+    defaultProduct,
+    tax,
+    reviews,
+    brand,
+    discountId,
+    discount,
+    productColors,
+    variant,
+    productVariants,
+    qty,
+    slug,
+    images,
+    thumbnailImage,
+    shortDescription,
+  } = product;
 
-  const price = product.defaultProduct?.salePrice;
-  let taxAmount = (+price * (product.tax?.value || 0)) / 100;
+  const salePrice = +defaultProduct?.salePrice;
+  let taxAmount = (+salePrice * (+tax?.value || 0)) / 100;
 
   function handleIncrementCart(item: any) {
     dispatch(incrementCart(item));
@@ -84,53 +109,42 @@ const ProductDetails = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 py-5 leading-10">
       <div className="col-span-6">
-        <ProductImageGallery
-          images={product.images}
-          thumbnailImage={product.thumbnailImage}
-        />
+        <ProductImageGallery images={images} thumbnailImage={thumbnailImage} />
       </div>
       <div className="col-span-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="md:text-2xl md:font-bold mb-2 font-semibold text-lg">
-              {product?.name}
+              {name}
             </h1>
             <Rate
               disabled
               value={
-                +(
-                  (productRating?.totalReview || 0) /
-                  (product?.reviews?.length || 0)
-                )
+                +((productRating?.totalReview || 0) / (reviews?.length || 0))
               }
             />
-            <span className="mx-2">
-              Reviews ({product?.reviews?.length || 0})
-            </span>
+            <span className="mx-2">Reviews ({reviews?.length || 0})</span>
           </div>
-          <div>
-            {product?.brand?.name && <h2>Brand: {product.brand.name}</h2>}
-          </div>
+          <div>{brand?.name && <h2>Brand: {brand.name}</h2>}</div>
         </div>
 
         <div>
           <p className="text-2xl font-semibold text-blue-600 mr-4">
-            {product?.discountId
+            {discountId
               ? (
-                  +price +
-                  +taxAmount - productDiscountCalculation(product)
+                  (salePrice +  +taxAmount) - productDiscountCalculation(product)
                 ).toFixed(2)
-              : (+price + +taxAmount || 0).toFixed(2)}
+              : (salePrice + +taxAmount || 0).toFixed(2)}
           </p>
 
-          {product?.discountId && (
+          {discountId && (
             <>
               <span className="line-through text-gray-500">
-                ৳ {(+price + +taxAmount || 0).toFixed(2)}
+                ৳ {(salePrice + +taxAmount || 0).toFixed(2)}
               </span>
               <span className="text-red-600 ml-2">
-                - {product?.discount?.value}
-                {product?.discount?.discountType === "Percentage" ? "%" : "BDT"}
+                - {discount?.value}
+                {discount?.discountType === "Percentage" ? "%" : "BDT"}
               </span>
             </>
           )}
@@ -139,14 +153,14 @@ const ProductDetails = ({
         <div
           className="text-gray-700 mb-4 leading-6"
           dangerouslySetInnerHTML={{
-            __html: product.shortDescription,
+            __html: shortDescription,
           }}
         />
 
-        {product?.productColors && (
+        {productColors && (
           <div className="mb-4">
             <span className="text-gray-600">Color: </span>
-            {product.productColors.map((item: ProductColor) => (
+            {(productColors || []).map((item: ProductColor) => (
               <Button
                 key={item.colorId}
                 onClick={async () => {
@@ -163,24 +177,26 @@ const ProductDetails = ({
           </div>
         )}
 
-        {product.variant && (
+        {variant && (
           <div className="mb-4">
             <span>Size: </span>
-            {product?.productVariants.map((item: any, idx: number) => (
-              <Button
-                key={idx}
-                onClick={async () => {
-                  setProduct({
-                    ...product,
-                    selectProductVariant: item,
-                  });
-                  setCheckStock(item.stockQty);
-                }}
-                className="mr-2 text-white px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none"
-              >
-                {item?.size?.name}
-              </Button>
-            ))}
+            {(productVariants || []).map(
+              (item: ProductVariant, idx: number) => (
+                <Button
+                  key={idx}
+                  onClick={async () => {
+                    setProduct({
+                      ...product,
+                      defaultProduct: item,
+                    });
+                    setCheckStock(item.stockQty);
+                  }}
+                  className="mr-2 text-white px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none"
+                >
+                  {item?.size?.name}
+                </Button>
+              )
+            )}
           </div>
         )}
         <p>In stock {checkStock} Items</p>
@@ -190,13 +206,13 @@ const ProductDetails = ({
           <div className="flex items-center">
             <Button
               onClick={() => handleDecrementCart(product)}
-              disabled={product.qty <= 1}
+              disabled={qty <= 1}
               className="bg-gray-200 hover:bg-gray-300 focus:outline-none"
             >
               -
             </Button>
             <Button type="default" className="w-12 text-center border-gray-300">
-              {product.qty}
+              {qty}
             </Button>
             <Button
               onClick={() => handleIncrementCart(product)}
@@ -237,7 +253,7 @@ const ProductDetails = ({
         </div>
         <Divider />
         <div>
-          SKU: <span className="text-gray-500">{product.slug}</span>
+          SKU: <span className="text-gray-500">{slug}</span>
         </div>
         <div className="flex gap-4 items-center">
           <div>Share:</div>
