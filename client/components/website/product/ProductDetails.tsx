@@ -61,6 +61,7 @@ const ProductDetails = ({
     shortDescription,
   } = product;
 
+
   const salePrice = +defaultProduct?.salePrice;
   let taxAmount = (+salePrice * (+tax?.value || 0)) / 100;
 
@@ -109,7 +110,7 @@ const ProductDetails = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 py-5 leading-10">
       <div className="col-span-6">
-        <ProductImageGallery images={images} thumbnailImage={thumbnailImage} />
+        <ProductImageGallery images={images} />
       </div>
       <div className="col-span-6">
         <div className="flex justify-between items-center">
@@ -225,9 +226,9 @@ const ProductDetails = ({
           <div>
             <AddToCartButton item={product} />
           </div>
-          <Button className="px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none">
+          {/* <Button className="px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none">
             BUY NOW
-          </Button>
+          </Button> */}
         </div>
 
         <div className="flex items-center gap-4">

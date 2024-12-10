@@ -7,6 +7,8 @@ import AddToCartButton from "./AddToCartButton";
 interface CardItems {
   id: string | number;
   name: string;
+  hoverImage: string;
+  
   thumbnailImage: string;
   price: string | number;
   taxWithPrice: string;
@@ -18,25 +20,7 @@ interface CardItems {
   slug: string;
 }
 
-export default function Card({ item }: any) {
-  // const price = +item.productVariants[0]?.salePrice || 0;
-  // const reviewsCount = +item.reviews.length || 0;
-  // const discount = item.discount;
-  // const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
-
-  // const disAmount =
-  //   discount?.discountType === "Percentage"
-  //     ? ((price + taxAmount) * (discount.value || 0)) / 100
-  //     : +discount?.value || 0;
-
-  // const productRating =
-  //   item.reviews.reduce((acc: number, review: any) => acc + +review.rating, 0) /
-  //   reviewsCount;
-  // const stockQty = item.productVariants.reduce(
-  //   (acc: number, variant: any) => acc + +variant.stockQty,
-  //   0
-  // );
-
+export default function Card({ item }: {item: CardItems}) {
   return (
     <div className="border p-3">
       <div className="relative group">
