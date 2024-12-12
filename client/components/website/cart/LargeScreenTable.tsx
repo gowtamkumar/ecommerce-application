@@ -37,6 +37,10 @@ export default function LeargeScreenTable() {
             <th className="border border-gray-200 p-2 text-bioxin-p">
               Quantity
             </th>
+            {/* <th className="border border-gray-200 p-2 text-bioxin-p">Vat</th>
+            <th className="border border-gray-200 p-2 text-bioxin-p">
+              Discount
+            </th> */}
             <th className="border border-gray-200 p-2 text-bioxin-p">
               Subtotal
             </th>
@@ -88,8 +92,21 @@ export default function LeargeScreenTable() {
                   </button>
                 </div>
               </td>
+              {/* <td className="border border-gray-200 p-2 text-center">
+                    <p className="text-bioxin-p">
+                      ৳ {(+item.tax_amount * +item.qty).toFixed(2)}
+                    </p>
+                  </td>
+                  <td className="border border-gray-200 p-2 text-center">
+                    <p className="text-bioxin-p">
+                      ৳ {(+item.discount_amount * +item.qty).toFixed(2)}
+                    </p>
+                  </td> */}
               <td className="border border-gray-200 p-2 text-center">
                 <p className="text-bioxin-p font-bold">৳850.00</p>
+                {/* <p className="text-bioxin-p font-bold">
+                      ৳{(+item.unit_price * +item.qty).toFixed(2)}
+                    </p> */}
               </td>
             </tr>
           ))}

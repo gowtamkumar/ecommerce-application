@@ -5,6 +5,7 @@ import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { FaCheckCircle } from "react-icons/fa";
+import { discountTaxCalculationFun } from "@/lib/share/discountTaxCalculationFun";
 
 export default function AddToCartButton({ item }: any) {
   const global = useSelector(selectGlobal);
@@ -12,6 +13,8 @@ export default function AddToCartButton({ item }: any) {
 
   function addToCart(value: any) {
     console.log("🚀 ~ value:", value);
+
+    // const res = discountTaxCalculationFun(value);
 
     
 

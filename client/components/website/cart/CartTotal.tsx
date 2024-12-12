@@ -6,6 +6,24 @@ import { useSelector } from "react-redux";
 export default function CartTotal() {
   const cart = useSelector(selectCart);
 
+
+  // const [cartResult, setCartResult] = useState<CartResult>({
+  //   total: 0,
+  //   total_qty: 0,
+  //   total_tax: 0,
+  //   total_discount: 0,
+  // });
+
+  // useEffect(() => {
+  //   async function calculateCart() {
+  //     const result = await cartCalculationFun(cart.carts);
+  //     setCartResult(result);
+  //   }
+
+  //   calculateCart();
+  // }, [cart.carts]);
+
+
   const { total, totalQty } = cart.carts?.reduce(
     (pre: any, curr: any) => {
       return {
@@ -18,6 +36,8 @@ export default function CartTotal() {
       totalQty: 0,
     }
   );
+
+
   return (
     <div className="md:flex justify-between py-20">
       <div className="md:w-1/2"></div>
