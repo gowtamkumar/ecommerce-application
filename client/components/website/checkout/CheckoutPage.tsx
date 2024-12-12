@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { clearCart } from "@/redux/features/cart/cartSlice";
+import { clearCart, decrementCart, incrementCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { orderValidationSchema } from "@/validation";
@@ -40,13 +40,14 @@ export default function CheckoutPage() {
   const [setting, setSetting] = useState({} as any);
 
   const dispatch = useDispatch();
-  // const cart = useSelector(selectCart);
+  const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   // const currentUrl = window.location.pathname
   // const router = useRouter();
 
   useEffect(() => {
     fetchData();
+
     return () => {
       dispatch(setLoading({ save: false }));
       setShippingCharge({});
@@ -56,6 +57,7 @@ export default function CheckoutPage() {
   async function fetchData() {
     const settingResult = await getSettings();
     const res = await getCartByUser();
+
     setSetting(settingResult.data?.length ? settingResult.data[0] : {});
     setCarts(res.data);
     const user = await getMe();
@@ -116,7 +118,7 @@ export default function CheckoutPage() {
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = orderValidationSchema.safeParse({
-        orderItems: carts,
+        orderItems: cart.carts,
         orderDate: dayjs().toISOString(),
         netAmount,
         orderTax: taxAmount,
@@ -180,25 +182,12 @@ export default function CheckoutPage() {
     }
   }
 
-  function incrementCart(value: { id: number }) {
-    const data = carts.map((item: any) => {
-      if (item.id === value.id) {
-        item.qty++;
-      }
-      return item;
-    });
-    setCarts(data);
+  function incrementCartHandle(value:any) {
+    dispatch(incrementCart(value))
   }
 
-  function decrementCart(value: { id: number }) {
-    const data = carts.map((item: any) => {
-      if (item.id === value.id) {
-        item.qty--;
-      }
-      return item;
-    });
-
-    setCarts(data);
+  function decrementCartHandle(value:any) {
+    dispatch(decrementCart(value))
   }
 
   function stockCheckingAndPurchaseLimit(value: any) {
@@ -215,7 +204,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-     <Breadcrumb
+      <Breadcrumb
         homeElement={"Home"}
         separator={<span>___</span>}
         activeClasses="text-amber-500"
@@ -223,124 +212,81 @@ export default function CheckoutPage() {
         listClasses="hover:underline mx-2 font-bold"
         capitalizeLinks
       />
-      <div className="lg:w-8/12 lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
+      <div className="container lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
         <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
           <div className="col-span-2 bg-white rounded-md overflow-hidden content-between">
             <div className="p-4 border-b">
               <h2 className="text-2xl font-semibold">Order summary</h2>
             </div>
             <div>
-              {carts.map((item: any, idx: number) => {
-                // const product = item.product;
-                // const productVariant = item.productVariant;
-                // let taxAmount =
-
-                //   (+item.price * (product?.tax?.value || 0)) / 100;
-
-                // let disAmount =
-                //   item.type === "Percentage"
-                //     ? ((+item.price + +item.taxAmount) *
-                //         (+product.discount.value || 0)) /
-                //       100
-                //     : +product.discount?.value;
-
-                //     console.log("disAmount", disAmount);
-                //     console.log("🚀 ~ taxAmount:", taxAmount)
-
+              {cart.carts.map((item: any, idx: number) => {
                 return (
                   <div key={idx} className="p-3 flex border-b">
-                    {/* <TestImage image={item.images}/> */}
                     <Image
                       src={
-                        item.images
-                          ? `${appConfig.apiUrl}/uploads/${item.images}`
+                        item.thumbnailImage
+                          ? `${appConfig.apiUrl}/uploads/${item.thumbnailImage}`
                           : "/pos_software.png"
                       }
                       width={100}
                       height={100}
-                      alt={item.images}
+                      alt={item.name}
                       className="w-24 h-24 object-cover"
                     />
                     <div className="ml-4 flex-grow">
                       <h3 className="text-base font-semibold">{item?.name}</h3>
-                      {item.sizeName && (
-                        <span className="mx-2">Size: {item.sizeName}</span>
+                      {item.size?.name && (
+                        <span className="mx-2">Size: {item.size?.name}</span>
                       )}
 
-                      {item.colorName && <span>Color: {item.colorName}</span>}
-
-                      <div className="mt-2 lg:flex items-center">
-                        <div className="flex">
-                          <Button
-                            className="px-2 py-1 bg-gray-200"
-                            onClick={() => decrementCart(item)}
-                            disabled={item?.qty <= 1}
-                          >
-                            -
-                          </Button>
-                          <input
-                            type="text"
-                            className="mx-2 w-10 text-center border"
-                            value={item.qty}
-                            readOnly
-                          />
-                          <Button
-                            className="px-2 py-1 bg-gray-200"
-                            onClick={() => incrementCart(item)}
-                            disabled={stockCheckingAndPurchaseLimit(item)}
-                          >
-                            +
-                          </Button>
-                        </div>
-
-                        <div className="mx-2 text-base font-semibold text-green-600">
-                          ৳
-                          {item.discountId
-                            ? (
-                                +item.price +
-                                +item.tax -
-                                +item.discountA
-                              ).toFixed(2)
-                            : (+item.price + +item.tax || 0).toFixed(2)}
-                        </div>
-                        <div>
-                          {item?.discountId ? (
-                            <div className="text-base">
-                              <span className="line-through text-gray-500">
-                                ৳ {(+item.price + +item.tax || 0).toFixed(2)}
-                              </span>
-                              <span className="text-green-600 ml-2">
-                                - {item.discountValue}
-                                {item.discountType === "Percentage"
-                                  ? "%"
-                                  : "BDT"}
-                              </span>
-                            </div>
-                          ) : null}
-                        </div>
+                      {item.color?.name && <span>Color: {item.color?.name}</span>}
+                    </div>
+                    <div className="lg:flex items-center">
+                      <div className="flex">
+                        <Button
+                          className="px-2 py-1 bg-gray-200"
+                          onClick={() => decrementCartHandle(item)}
+                          disabled={item?.qty <= 1}
+                        >
+                          -
+                        </Button>
+                        <input
+                          type="text"
+                          className="mx-2 w-10 text-center border"
+                          value={item.qty}
+                          readOnly
+                        />
+                        <Button
+                          className="px-2 py-1 bg-gray-200"
+                          onClick={() => incrementCartHandle(item)}
+                          disabled={stockCheckingAndPurchaseLimit(item)}
+                        >
+                          +
+                        </Button>
                       </div>
                     </div>
-
-                    <div>
-                      <Popconfirm
-                        title="Delete Order item"
-                        description="Are you sure to delete this Order item?"
-                        onConfirm={() => removeItemCart(item.id)}
-                        okText="Yes"
-                        cancelText="No"
-                        okButtonProps={{ loading: global.loading.remove }}
-                        placement="left"
-                      >
-                        <MdDelete size={20} className="cursor-pointer" />
-                      </Popconfirm>
+                    <div className="mx-2 text-base font-semibold text-green-600">
+                     Price: ৳{(+item.price).toFixed(2)}
                     </div>
 
-                    {/* 
-                  <CiSquareRemove
-                    size={30}
-                    className="cursor-pointer"
-                    onClick={() => dispatch(removeCart(item))}
-                  /> */}
+                    <div className="mx-2 text-base font-semibold text-green-600">
+                      tax ৳{(+item.taxAmount).toFixed(2)}
+                    </div>
+                    <div className="mx-2 text-base font-semibold text-green-600">
+                      DisAmount: ৳{(+item.disAmount).toFixed(2)}
+                    </div>
+
+                    <Popconfirm
+                      title="Delete Order item"
+                      description="Are you sure to delete this Order item?"
+                      onConfirm={() => removeItemCart(item.id)}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{ loading: global.loading.remove }}
+                      placement="left"
+                    >
+                      <MdDelete size={20} className="cursor-pointer" />
+                    </Popconfirm>
                   </div>
                 );
               })}
@@ -467,7 +413,7 @@ export default function CheckoutPage() {
                     const activeShippingAddress = shippingAddress?.find(
                       (item: { id: number }) => item.id === target.value
                     );
-                    
+
                     if (activeShippingAddress.divisionId) {
                       const getShippingCharge = await getShippingCharges({
                         divisionId: activeShippingAddress.divisionId,
@@ -481,7 +427,6 @@ export default function CheckoutPage() {
                   }}
                   value={checkoutFormData?.shippingAddressId}
                 >
-
                   {shippingAddress?.map(
                     (
                       item: { id: number; type: string; status: boolean },

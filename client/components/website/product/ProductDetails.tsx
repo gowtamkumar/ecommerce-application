@@ -62,6 +62,15 @@ const ProductDetails = ({
   } = product;
 
 
+
+
+  // const fff = await discountTaxCalculationFun({
+  //   discount: value.discount,
+  //   salePrice: value.defaultProduct.salePrice,
+  //   tax: value.tax.value,
+  // })
+
+
   const salePrice = +defaultProduct?.salePrice;
   let taxAmount = (+salePrice * (+tax?.value || 0)) / 100;
 
@@ -164,10 +173,11 @@ const ProductDetails = ({
             {(productColors || []).map((item: ProductColor) => (
               <Button
                 key={item.colorId}
-                onClick={async () => {
+                onClick={() => {
                   setProduct({
                     ...product,
-                    colorId: item.colorId,
+                    color: item?.color,
+                    colorId: item?.colorId,
                   });
                 }}
                 className="mr-2 px-2 py-1 rounded text-white hover:bg-gray-300 focus:outline-none"

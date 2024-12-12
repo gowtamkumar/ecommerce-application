@@ -1,7 +1,6 @@
 export interface DiscountTaxCalculationFun {
-  discount: string;
-  discount_type: string;
-  unit_price: string;
+  discount: {value: number, discountType: string};
+  salePrice: string;
   tax: string;
 }
 
@@ -9,7 +8,7 @@ export interface DiscountTaxCalculationFun {
 export interface CartCalculationFun {
   discount: string;
   discount_type: string;
-  unit_price: string;
+  price: string;
   tax: string;
 }
 
@@ -17,7 +16,7 @@ export interface CartProduct{
   
     thumbnail_img_url: string;
     name: string;
-    unit_price: string;
+    price: string;
     qty: number;
     tax_amount: number;
     discount_amount: number;

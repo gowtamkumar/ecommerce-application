@@ -25,16 +25,13 @@ export const cartSlice = createSlice({
       const { id } = action.payload;
 
       const existingProductIndex = state.carts.findIndex(
-        (item: any) => item.id === action.payload.id
+        (item: any) => item.id === id
       );
 
       if (existingProductIndex !== -1) {
         state.carts[existingProductIndex].qty++;
       } else {
-        state.carts.push({
-          ...action.payload,
-          productId: +id,
-        });
+        state.carts.push(action.payload);
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
