@@ -36,11 +36,11 @@ export default function AddToCartButton({ item }: any) {
 
   return (
     <>
-      {global.loading.productId === item.id && (
+      {/* {global.loading.productId === item.id && (
         <div className="flex gap-1 justify-center py-2">
           <FaCheckCircle size={22} /> Added to cart
         </div>
-      )}
+      )} */}
 
       <Button
         className="w-full"

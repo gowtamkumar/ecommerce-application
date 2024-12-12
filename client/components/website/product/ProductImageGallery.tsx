@@ -4,8 +4,9 @@ import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 import Image from "next/image";
 import "./heroSectionSlider.css";
+import appConfig from "@/appConfig";
 
-const ProductImageGallery = ({ images }: any) => {
+const ProductImageGallery = ({ images }: { images: string[] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
 
   return (
@@ -17,53 +18,25 @@ const ProductImageGallery = ({ images }: any) => {
           thumbs={{ swiper: thumbsSwiper }}
           modules={[FreeMode, Navigation, Thumbs]}
         >
-          <SwiperSlide>
-            <Image
-              height={400}
-              width={400}
-              className="object-cover"
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/unique_point.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <Image
-              height={400}
-              width={400}
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_comp.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              height={400}
-              width={400}
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_image2.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              height={400}
-              width={400}
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_image2.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              height={400}
-              width={400}
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_image3.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
+          {(images || []).map((item: string, idx: number) => {
+            return (
+              <SwiperSlide key={idx}>
+                <Image
+                  height={400}
+                  width={400}
+                  className="object-cover"
+                  loading="lazy"
+                  src={
+                    item
+                      ? `${appConfig.apiUrl}/uploads/${item}`
+                      : "/pos_software.png"
+                  }
+                  // src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/unique_point.png"
+                  alt="unique_point"
+                />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
       <div>
@@ -82,47 +55,23 @@ const ProductImageGallery = ({ images }: any) => {
             prevEl: ".custom-prev",
           }}
         >
-          <SwiperSlide>
-            <Image
-              fill
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/unique_point.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <Image
-              fill
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_comp.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              fill
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_image2.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              fill
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_image2.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              fill
-              loading="lazy"
-              src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/product_image3.png"
-              alt="unique_point"
-            />
-          </SwiperSlide>
+          {(images || []).map((item: string, idx: number) => {
+            return (
+              <SwiperSlide key={idx}>
+                <Image
+                  height={200}
+                  width={200}
+                  loading="lazy"
+                  src={
+                    item
+                      ? `${appConfig.apiUrl}/uploads/${item}`
+                      : "/pos_software.png"
+                  }
+                  alt="unique_point"
+                />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
         {/* Custom Previous Button */}
         {/* <div className="flex justify-between"> */}
