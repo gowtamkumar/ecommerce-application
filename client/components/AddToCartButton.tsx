@@ -4,7 +4,7 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "@/redux/features/cart/cartSlice";
-import { discountTaxCalculationFun } from "@/lib/share/discountTaxCalculationFun";
+import { discountTaxCalculationFun } from "@/lib/utils/discountTaxCalculationFun";
 
 export default function AddToCartButton({ item }: any) {
   console.log("🚀 ~ AddToCartButton:", item)
@@ -69,7 +69,7 @@ export default function AddToCartButton({ item }: any) {
         disabled={global.loading.productId === item.id}
         loading={global.loading.productId === item.id}
       >
-        Add To Cart adgsdfg
+        Add To Cart
       </Button>
     </>
   );

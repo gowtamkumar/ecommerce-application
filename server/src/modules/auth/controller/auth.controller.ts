@@ -389,7 +389,7 @@ export const getMe = asyncHandler(
       "orders.trackingNo",
 
       "products.name",
-      "products.type",
+      // "products.type",
       "products.createdAt",
       "products.description",
       "products.enableReview",
@@ -402,7 +402,7 @@ export const getMe = asyncHandler(
       "products.slug",
 
       "product",
-      "productVariants.price",
+      // "productVariants.price",
 
       "discount.discountType",
       "discount.value",
@@ -446,8 +446,8 @@ export const getMe = asyncHandler(
       "orderTrackings.status",
       "deliveryMan.name",
       // "payments",
-      "size.name",
-      "color.name",
+      // "size.name",
+      // "color.name",
     ]);
 
     qb.leftJoin("user.orders", "orders");
@@ -458,15 +458,15 @@ export const getMe = asyncHandler(
     qb.leftJoin("orders.deliveryMan", "deliveryMan");
     qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
 
-    qb.leftJoin("orderItems.size", "size");
-    qb.leftJoin("orderItems.color", "color");
+    // qb.leftJoin("orderItems.size", "size");
+    // qb.leftJoin("orderItems.color", "color");
 
     qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");
     qb.leftJoin("user.orderDeliveries", "orderDeliveries");
     qb.leftJoin("user.wishlists", "wishlists");
     qb.leftJoin("wishlists.product", "product");
-    qb.leftJoin("product.productVariants", "productVariants");
+    // qb.leftJoin("product.productVariants", "productVariants");
     qb.leftJoin("product.discount", "discount");
     qb.leftJoin("product.tax", "tax");
     qb.leftJoin("product.reviews", "reviews");

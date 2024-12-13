@@ -87,11 +87,11 @@ export default function CategoryCard({ categories }: any) {
           </Swiper>
           {/* Custom Previous Button */}
           <button className="custom-prev absolute z-40 top-1/2 -left-6 transform -translate-y-1/2">
-            <FaCaretLeft size={40} className="text-bioxin-primary" />
+            <FaCaretLeft size={40} />
           </button>
           {/* Custom Next Button */}
           <button className="custom-next absolute z-40 top-1/2 -right-5 transform -translate-y-1/2">
-            <FaCaretRight size={40} className="text-bioxin-primary" />
+            <FaCaretRight size={40} />
           </button>
         </div>
       </div>

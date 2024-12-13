@@ -204,7 +204,7 @@ export default function MainMenu() {
         {/* Top-level Link */}
         <a
           href={item.url || "#"}
-          className="hover:text-bioxin-primary flex items-center"
+          className=" flex items-center"
         >
           <div className="flex items-center gap-1 font-semibold">
             {item.label} {item.children && <MdKeyboardArrowDown />}
@@ -256,7 +256,7 @@ export default function MainMenu() {
       onMouseLeave={() => setHoveredKey(null)}
     >
       {/* Dropdown Item */}
-      <a href="#" className="block px-4 py-2 hover:text-bioxin-primary">
+      <a href="#" className="block px-4 py-2 ">
         <div className="flex items-center gap-1">
           {item.label} {item.children && <MdKeyboardArrowRight />}
         </div>
@@ -280,7 +280,7 @@ export default function MainMenu() {
                     <li key={deepNestedItem.key}>
                       <a
                         href="#"
-                        className="text-gray-600 hover:text-bioxin-primary"
+                        className="text-gray-600 "
                       >
                         {deepNestedItem.label}
                       </a>

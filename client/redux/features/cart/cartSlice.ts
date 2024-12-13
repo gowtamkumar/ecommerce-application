@@ -60,6 +60,8 @@ export const cartSlice = createSlice({
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     removeCart: (state, action: PayloadAction<any>): any => {
+      console.log("🚀 ~ state:", state)
+      console.log("🚀 ~ action:", action)
       const findProduct = state.carts.find(
         (item: any) => item.id === action.payload.id
       );

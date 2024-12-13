@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function ViewCart() {
   const cart = useSelector(selectCart);
-  console.log("🚀 ~ cart:", cart.carts);
   const dispatch = useDispatch();
 
   const handleRemove = (item: any) => {
@@ -21,12 +20,12 @@ export default function ViewCart() {
   return (
     <div className="absolute w-96 z-10 right-0 mt-3 p-4 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-2 transform transition-all duration-300 ease-in-out">
       <div className="flex flex-col w-96 h-[50vh] gap-6 overflow-y-scroll">
-        {(cart.carts || []).map((item: any, idx: number) => {
-          total += +item.price;
+        {(cart.carts || []).map((item: any) => {
+          total += +item.price * +item.qty;
           return (
             <div
-              className="text-black flex gap-4 justify-between py-3 border-b"
-              key={idx}
+              key={item.id}
+              className="text-black flex gap-4 items-center justify-between py-3 border-b"
             >
               <div>
                 <Image
@@ -44,8 +43,8 @@ export default function ViewCart() {
 
               <div className="flex justify-between">
                 <div>
-                  <p className="text-bioxin-p">{item.name}</p>
-                  <p className="text-bioxin-p">
+                  <p>{item.name}</p>
+                  <p>
                     {item.qty} × ৳{+item.qty * +item.price}
                   </p>
                 </div>
@@ -63,19 +62,13 @@ export default function ViewCart() {
       </div>
 
       <div className="flex justify-between py-4">
-        <p className="text-bioxin-p">Subtotal:</p>
+        <p>Subtotal:</p>
         <p className="font-bold text-2xl">৳ {(+total).toFixed(2)}</p>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Button className=" w-full">
-          <Link href="/cart">View Cart</Link>
-        </Button>
-
-        <Button className=" w-full">
-          <Link href="/checkout">Checkout</Link>
-        </Button>
-      </div>
+      <Button className=" w-full">
+        <Link href="/checkout">Checkout</Link>
+      </Button>
     </div>
   );
 }
