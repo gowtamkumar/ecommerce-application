@@ -45,7 +45,7 @@ export default function ViewCart() {
                 <div>
                   <p>{item.name}</p>
                   <p>
-                    {item.qty} × ৳{+item.qty * +item.price}
+                    {item.qty} × ৳{(+item.price * +item.qty).toFixed(2)}
                   </p>
                 </div>
                 <div className="px-5">

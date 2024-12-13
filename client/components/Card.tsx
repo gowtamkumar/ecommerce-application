@@ -11,6 +11,7 @@ interface CardItems {
   
   thumbnailImage: string;
   price: string | number;
+  salePrice: string | number;
   taxWithPrice: string;
   discountId: number | string;
   averageRating: string;
@@ -68,23 +69,14 @@ export default function Card({ item }: {item: CardItems}) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-1 text-md">
-            ৳ {item?.discountId ? item.price : item.taxWithPrice}
-            {/* {item?.discountId
-              ? (price + taxAmount - disAmount).toFixed(2)
-              : (price + taxAmount).toFixed(2)} */}
+            ৳ {item?.discountId ? item.price : item.salePrice}
           </p>
-          {/* <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>
-            <p className="text-xs">
-              {" "}
-              {stockQty > 0 ? "In Stock" : "Out of Stock"}
-            </p>
-          </div> */}
         </div>
 
         {item?.discountId && (
           <div className="text-xs">
             <span className="line-through text-gray-500">
-              {/* ৳ {(price + taxAmount).toFixed(2)} */}৳ {item.taxWithPrice}
+              {/* ৳ {(price + taxAmount).toFixed(2)} */}৳ {item.salePrice}
             </span>
             <span className="text-red-600 ml-2">
               -{item.discountValue}

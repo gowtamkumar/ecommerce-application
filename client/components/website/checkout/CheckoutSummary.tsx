@@ -9,6 +9,7 @@ import {
   setResponse,
 } from "@/redux/features/global/globalSlice";
 import { orderValidationSchema } from "@/validation";
+import { onlineOrderValidationSchema } from "@/validation/order/onlineOrderValidation";
 import { Button } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -22,10 +23,8 @@ export default function CheckoutSummary({
   setShippingCharge,
 }: any) {
   const cart = useSelector(selectCart);
-
-  const dispatch = useDispatch();
-
   const global = useSelector(selectGlobal);
+  const dispatch = useDispatch();
 
   const [cartResult, setCartResult] = useState<CartResult>({
     total: 0,
@@ -45,9 +44,11 @@ export default function CheckoutSummary({
 
   // State for form inputs
   const handleOrder = async () => {
+    console.log("Dfasdf", cart.carts);
+    
     try {
       dispatch(setLoading({ save: true }));
-      const validatedFields = orderValidationSchema.safeParse({
+      const validatedFields = onlineOrderValidationSchema.safeParse({
         orderItems: cart.carts,
         orderDate: dayjs().toISOString(),
         netAmount: cartResult.total,
@@ -58,6 +59,8 @@ export default function CheckoutSummary({
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
+      console.log("validatedFields", validatedFields);
+      
 
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
@@ -66,6 +69,10 @@ export default function CheckoutSummary({
         };
       }
 
+      console.log("validatedFields.data", validatedFields.data);
+
+      return
+      
       const res = await saveOrder(validatedFields.data);
 
       if (res.message?.formErrors) {
@@ -116,6 +123,11 @@ export default function CheckoutSummary({
         </div>
 
         <div className="flex justify-between">
+          <span>Shipping Cost</span>
+          <span>{(+shippingCharge?.shippingAmount || 0).toFixed(2)}</span>
+        </div>
+
+        <div className="flex justify-between">
           <span className="font-bold">Total</span>
           <span className="font-bold text-2xl">
             ৳{(+cartResult.total).toFixed(2)}
@@ -126,27 +138,32 @@ export default function CheckoutSummary({
           <span className="font-bold">Total payable</span>
           <span className="font-bold text-2xl">
             ৳
-            {+cartResult.total + cartResult.totalTax - cartResult.totalDiscount}
+            {(
+              +cartResult.total +
+              +cartResult.totalTax -
+              +cartResult.totalDiscount
+            ).toFixed(2)}
           </span>
         </div>
       </div>
 
-      <div className="lg:hidden inline">
-        <Button
-          type="primary"
-          size="large"
-          className=" w-full"
-          onClick={() => handleOrder()}
-          loading={global.loading.save}
-          disabled={global.loading.save}
-        >
-          <span className="me-1">Confirm Order</span>
-          {(+cartResult.total + (+shippingCharge?.shippingAmount || 0)).toFixed(
-            2
-          )}
-          TK.
-        </Button>
-      </div>
+      <Button
+        type="primary"
+        size="large"
+        className=" w-full"
+        onClick={handleOrder}
+        loading={global.loading.save}
+        disabled={global.loading.save}
+      >
+        <span className="me-1">Confirm Order</span>
+        {(
+          +cartResult.total +
+          +cartResult.totalTax -
+          +cartResult.totalDiscount +
+          (+shippingCharge?.shippingAmount || 0)
+        ).toFixed(2)}
+        TK.
+      </Button>
     </div>
   );
 }
