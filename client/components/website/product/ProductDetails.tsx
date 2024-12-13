@@ -1,15 +1,12 @@
 "use client";
-import { Button, Divider, Input, Rate } from "antd";
+import { Button, Divider, Rate } from "antd";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import Link from "next/link";
 import { productDiscountCalculation } from "@/lib/utils";
 import { setResponse } from "@/redux/features/global/globalSlice";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
-import { getProductVariant } from "@/lib/apis/product-variant";
-import { saveCart } from "@/lib/apis/cart";
 import AddToCartButton from "@/components/AddToCartButton";
 import { decrementCart, incrementCart } from "@/redux/features/cart/cartSlice";
 import { FaFacebook, FaLinkedin, FaPinterest } from "react-icons/fa";
@@ -60,15 +57,6 @@ const ProductDetails = ({
     thumbnailImage,
     shortDescription,
   } = product;
-
-
-
-
-  // const fff = await discountTaxCalculationFun({
-  //   discount: value.discount,
-  //   unitPrice: value.defaultProduct.unitPrice,
-  //   tax: value.tax.value,
-  // })
 
 
   const unitPrice = +defaultProduct?.unitPrice;

@@ -44,8 +44,6 @@ export default function CheckoutSummary({
 
   // State for form inputs
   const handleOrder = async () => {
-    console.log("Dfasdf", cart.carts);
-
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = onlineOrderValidationSchema.safeParse({
@@ -59,19 +57,20 @@ export default function CheckoutSummary({
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-      
+
       console.log("validatedFields", validatedFields);
 
       if (!validatedFields.success) {
+        const formattedErrors = validatedFields.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        }));
+
         dispatch(setLoading({ save: false }));
         return {
           errors: validatedFields.error.formErrors,
         };
       }
-
-      console.log("validatedFields.data", validatedFields.data);
-
-      return;
 
       const res = await saveOrder(validatedFields.data);
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const orderValidationSchema = z.object({
+export const onlineCreateOrderValidationSchema = z.object({
   orderDate: z.string({
     required_error: "order Date is required",
   }),
@@ -16,7 +16,7 @@ export const orderValidationSchema = z.object({
   shippingAddressId: z.number({
     required_error: "Shipping Address is Required",
   }),
- 
+
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
     required_error: "Payment Method is Required",
   }),
@@ -35,17 +35,18 @@ export const orderValidationSchema = z.object({
   orderItems: z
     .array(
       z.object({
-        price: z.string({ required_error: "Price is required" }),
-        purchasePrice: z.string({
-          required_error: "Purchase Price is required",
-        }),
-        tax: z.string({ required_error: "Tax is required" }),
-        discountA: z.string().optional(),
-        id: z.number({ required_error: "Cart id is required" }),
         productId: z.number({ required_error: "Product is required" }),
+        colorId: z.number().optional().nullable(),
+        sizeId: z.number().optional().nullable(),
+        unitPrice: z.number({ required_error: "Unit Price is required" }),
         productVariantId: z.number({
           required_error: "Product Variant is required",
         }),
+        discountAmount: z.number().optional(),
+        purchasePrice: z.number({
+          required_error: "Purchase Price is required",
+        }),
+        taxAmount: z.number({ required_error: "Tax Amount is required" }),
         qty: z.number({ required_error: "qty is required" }),
       })
     )

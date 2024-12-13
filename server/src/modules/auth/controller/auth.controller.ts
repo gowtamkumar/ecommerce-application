@@ -434,10 +434,10 @@ export const getMe = asyncHandler(
       "wishlists",
 
       "orderItems.purchasePrice",
-      "orderItems.discountA",
+      "orderItems.discountAmount",
       "orderItems.unitPrice",
       "orderItems.qty",
-      "orderItems.tax",
+      "orderItems.taxAmount",
       "orderItems.productId",
 
       "orderProduct.name",

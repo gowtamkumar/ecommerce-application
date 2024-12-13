@@ -33,7 +33,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
          WITH orderItems AS (
           SELECT
               oi.product_id AS product_id,
-              SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+              SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
           FROM
               order_items oi
           LEFT JOIN

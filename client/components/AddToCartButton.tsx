@@ -27,25 +27,31 @@ export default function AddToCartButton({ item }: { item: Product }) {
 
   async function addToCart(values: any) {
     const value = { ...values };
-    console.log("🚀 ~ value:", value)
 
     if (value.defaultProduct) {
       const { unitPrice, purchasePrice, size, id } = value.defaultProduct;
       const defaultProduct = {
         discount: value.discount,
         unitPrice,
-        tax: value.tax.value,
+        tax: value.tax?.value,
       };
-      const res = await discountTaxCalculationFun(defaultProduct);
-      value.discountAmount = res.discountAmount;
-      value.taxAmount = res.taxAmount;
-      value.productVariantId = id;
-      value.purchasePrice = purchasePrice;
-      value.unitPrice = unitPrice;
-      value.size = size;
+
+      const { discountAmount, taxAmount } = await discountTaxCalculationFun(
+        defaultProduct
+      );
+
+      Object.assign(value, {
+        discountAmount,
+        taxAmount,
+        productVariantId: id,
+        purchasePrice,
+        unitPrice,
+        size,
+      });
     }
 
     const newData = {
+      productId: value.id,
       id: value.id,
       name: value.name,
       productVariantId: value.productVariantId,
@@ -53,10 +59,10 @@ export default function AddToCartButton({ item }: { item: Product }) {
       colorId: value?.colorId,
       size: value?.size,
       sizeId: value?.size?.id,
-      purchasePrice: +value.purchasePrice,
-      unitPrice: +value.unitPrice,
-      taxAmount: +value.taxAmount || 0,
-      discountAmount: +value.discountAmount || 0,
+      purchasePrice: Number(value.purchasePrice) || 0,
+      unitPrice: Number(value.unitPrice) || 0,
+      taxAmount: Number(value.taxAmount) || 0,
+      discountAmount: Number(value.discountAmount) || 0,
       thumbnailImage: value.thumbnailImage,
       qty: 1,
     };

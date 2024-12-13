@@ -44,8 +44,14 @@ export class OrderItemEntity {
   @Column()
   qty!: number;
 
-  @Column({ type: "numeric", precision: 10, scale: 2, nullable: true })
-  tax!: string;
+  @Column({
+    name: "tax_amount",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  taxAmount!: string;
 
   @Column({
     name: "discount_amount",
@@ -54,7 +60,7 @@ export class OrderItemEntity {
     scale: 2,
     nullable: true,
   })
-  discountA!: string;
+  discountAmount!: string;
 
   @Column({ name: "product_id" })
   productId!: number;
@@ -64,16 +70,16 @@ export class OrderItemEntity {
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-  // @Column({ name: "color_id", nullable: true })
-  // colorId!: number;
+  @Column({ name: "color_id", nullable: true })
+  colorId!: number;
   // @ManyToOne((_type) => ColorEntity, (color) => color.orderItems, {
   //   onDelete: "CASCADE",
   // })
   // @JoinColumn({ name: "color_id" })
   // color!: ColorEntity;
 
-  // @Column({ name: "size_id", nullable: true })
-  // sizeId!: number;
+  @Column({ name: "size_id", nullable: true })
+  sizeId!: number;
   // @ManyToOne((_type) => SizeEntity, (size) => size.orderItems, {
   //   onDelete: "CASCADE",
   // })

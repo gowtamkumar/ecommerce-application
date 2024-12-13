@@ -68,7 +68,7 @@ export const getDashboardReport = asyncHandler(
       `with orderItems as (
           SELECT 
             oi.product_id AS product_id,
-            SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+            SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
           FROM 
             order_items oi
           LEFT JOIN 
@@ -136,7 +136,7 @@ export const getDashboardReport = asyncHandler(
       with orderItems as (
       SELECT 
             oi.product_id AS product_id,
-            SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
+            SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
             SUM(COALESCE(oi.purchase_price, 0) * COALESCE(oi.qty, 0)) AS total_purchase_amount
         FROM 
             order_items oi
@@ -193,7 +193,7 @@ export const getTopSellingProduct = asyncHandler(
          WITH orderItems AS (
           SELECT
               oi.product_id AS product_id,
-              SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+              SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
           FROM
               order_items oi
           LEFT JOIN
