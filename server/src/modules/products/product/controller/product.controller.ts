@@ -162,15 +162,15 @@ export const getProducts = async (req: Request, res: Response) => {
 
     if (minPrice && maxPrice)
       qb.andWhere(
-        `productVariants.sale_price BETWEEN ${minPrice} AND ${maxPrice}`
+        `productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
       );
 
     if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
 
     // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
 
-    if (lowPrice) qb.orderBy("productVariants.sale_price", "ASC");
-    if (highPrice) qb.orderBy("productVariants.sale_price", "DESC");
+    if (lowPrice) qb.orderBy("productVariants.unit_price", "ASC");
+    if (highPrice) qb.orderBy("productVariants.unit_price", "DESC");
 
     // if (colorId)
     //   qb.andWhere("productVariants.colorId IN (:...colorIds)", {
@@ -323,7 +323,7 @@ export const getProductByslug = asyncHandler(
       "productVariants.sizeId",
       "productVariants.default",
       "productVariants.purchasePrice",
-      "productVariants.salePrice",
+      "productVariants.unitPrice",
       "productVariants.stockQty",
 
       "size.id",

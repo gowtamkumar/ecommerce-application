@@ -111,7 +111,7 @@ const AddProduct = ({
           const [firstVariant] = productData.productVariants;
           Object.assign(productData, {
             purchasePrice: +firstVariant.purchasePrice,
-            salePrice: +firstVariant.salePrice,
+            unitPrice: +firstVariant.unitPrice,
             stockQty: firstVariant.stockQty,
             variantId: firstVariant.id,
           });
@@ -173,7 +173,7 @@ const AddProduct = ({
 
   //       if (!newData.variant) {
   //         newData.purchasePrice = +newData.productVariants[0].purchasePrice;
-  //         newData.salePrice = +newData.productVariants[0].salePrice;
+  //         newData.unitPrice = +newData.productVariants[0].unitPrice;
   //         newData.stockQty = newData.productVariants[0].stockQty;
   //         newData.variantId = newData.productVariants[0].id;
   //       }
@@ -233,7 +233,7 @@ const AddProduct = ({
     if (!newData.variant) {
       const productVariants = {
         purchasePrice: +newData.purchasePrice,
-        salePrice: +newData.salePrice,
+        unitPrice: +newData.unitPrice,
         stockQty: newData.stockQty,
         id: newData?.variantId,
       };
@@ -583,12 +583,12 @@ const AddProduct = ({
                   </Form.Item>
 
                   <Form.Item
-                    name="salePrice"
-                    label="Sale Price"
+                    name="unitPrice"
+                    label="Unit Price"
                     rules={[
                       {
                         required: true,
-                        message: "Sale Price is required",
+                        message: "Unit Price is required",
                       },
                     ]}
                   >
@@ -961,7 +961,7 @@ const AddProduct = ({
                     <thead className="mb-1">
                       <tr className="text-start">
                         <th className="text-start w-1/6">
-                          <label className="text-red-500">*</label>Sale Price
+                          <label className="text-red-500">*</label>Unit Price
                         </th>
                         <th className="text-start w-1/6">
                           <label className="text-red-500">*</label>Purchase
@@ -985,12 +985,12 @@ const AddProduct = ({
                           <td>
                             <Form.Item
                               {...restField}
-                              name={[name, "salePrice"]}
+                              name={[name, "unitPrice"]}
                               rules={[
-                                { required: true, message: "Sale Price" },
+                                { required: true, message: "Unit Price" },
                               ]}
                             >
-                              <InputNumber placeholder="Sale Price" min={1} />
+                              <InputNumber placeholder="Unit Price" min={1} />
                             </Form.Item>
                           </td>
 

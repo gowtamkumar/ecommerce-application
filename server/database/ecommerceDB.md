@@ -88,7 +88,7 @@ variant:boolean
 
 id,
 purchase_price:numeric,
-sale_price:numeric
+unit_price:numeric
 product_id
 stock_qty:number,
 default:boolean

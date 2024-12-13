@@ -393,7 +393,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
       orderItems.map((item) => ({
         productId: item.productId,
         qty: item.qty,
-        price: item.price,
+        unitPrice: item.unitPrice,
         orderId: save.id,
       }))
     );

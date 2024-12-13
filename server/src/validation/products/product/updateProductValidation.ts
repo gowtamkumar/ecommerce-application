@@ -36,7 +36,7 @@ export const updateProductValidationSchema = z.object({
     .array(
       z.object({
         id: z.number().optional().nullable(),
-        salePrice: z.any({ required_error: "Sale Price is required" }),
+        unitPrice: z.any({ required_error: "Unit Price is required" }),
         purchasePrice: z.any({
           required_error: "Purchase Price is required",
         }),

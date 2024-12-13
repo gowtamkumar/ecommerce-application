@@ -1,11 +1,11 @@
 export function productDiscountCalculation(value: any) {
-  const price = +value.defaultProduct?.salePrice;
+  const price = +value.defaultProduct?.unitPrice;
   const discount = value.discount;
   let taxAmount = (+price * (+value?.tax?.value || 0)) / 100;
 
-  let disAmount =
+  let discountAmount =
     discount?.discountType === "Percentage"
       ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
       : +discount?.value;
-  return disAmount;
+  return discountAmount;
 }

@@ -30,18 +30,18 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
       d.value as "discountValue",
       brands.name as "brandName",
       pv.id as "productVariantId",
-      pv.price,
+      pv.unitPrice,
       pv.purchase_price as "purchasePrice",
       pv.stock_qty as "stockQty",
       pv.weight,
       s.name as "sizeName",
-      (COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
-      (COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
+      (COALESCE(pv.unitPrice, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
+      (COALESCE(pv.unitPrice, 0) + COALESCE((COALESCE(pv.unitPrice, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
         CASE 
           WHEN 
             d.discount_type = 'Percentage'
           THEN 
-            ((COALESCE(pv.price, 0) + COALESCE((COALESCE(pv.price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
+            ((COALESCE(pv.unitPrice, 0) + COALESCE((COALESCE(pv.unitPrice, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
           ELSE
             COALESCE(d.value, 0)
         END
@@ -74,7 +74,7 @@ export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
   //   "discount.value",
   //   "brand.name",
   //   "productVariant.id",
-  //   "productVariant.price",
+  //   "productVariant.unitPrice",
   //   "productVariant.purchasePrice",
   //   "productVariant.stockQty",
   //   "productVariant.weight",

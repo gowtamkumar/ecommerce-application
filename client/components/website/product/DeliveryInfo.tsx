@@ -10,7 +10,7 @@ const DeliveryInfo = ({ delivery }: any) => {
       </div>
       <hr />
       <span className="text-gray-700 text-sm">
-        Shipping Cost: ৳ {delivery.price}
+        Shipping Cost: ৳ {delivery.unitPrice}
       </span>
       <Divider />
       <h2 className="text-sm text-gray-600 font-semibold">Service</h2>

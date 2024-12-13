@@ -402,7 +402,7 @@ export const getMe = asyncHandler(
       "products.slug",
 
       "product",
-      // "productVariants.price",
+      // "productVariants.unitPrice",
 
       "discount.discountType",
       "discount.value",
@@ -435,7 +435,7 @@ export const getMe = asyncHandler(
 
       "orderItems.purchasePrice",
       "orderItems.discountA",
-      "orderItems.price",
+      "orderItems.unitPrice",
       "orderItems.qty",
       "orderItems.tax",
       "orderItems.productId",

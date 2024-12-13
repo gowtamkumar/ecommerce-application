@@ -79,7 +79,7 @@ export default function OrderTracker({ orders }: any) {
     {
       title: "Price",
       render: (v: { price: number; tax: number; discountA: number }) => (
-        <span>{(+v.price + +v.tax - +v.discountA).toFixed(2)}</span>
+        <span>{(+v.unitPrice + +v.tax - +v.discountA).toFixed(2)}</span>
       ),
     },
     { title: "Qty", dataIndex: "qty", key: "qty" },
@@ -91,7 +91,7 @@ export default function OrderTracker({ orders }: any) {
         discountA: number;
         qty: number;
       }) => (
-        <span>{((+v.price + +v.tax - +v.discountA) * v.qty).toFixed(2)}</span>
+        <span>{((+v.unitPrice + +v.tax - +v.discountA) * v.qty).toFixed(2)}</span>
       ),
     },
   ];

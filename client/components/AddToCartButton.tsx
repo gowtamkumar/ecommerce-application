@@ -6,39 +6,57 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { discountTaxCalculationFun } from "@/lib/utils/discountTaxCalculationFun";
 
-export default function AddToCartButton({ item }: any) {
-  console.log("🚀 ~ AddToCartButton:", item)
+type Product = {
+  id: string;
+  name: string;
+  color: any;
+  thumbnailImage: string;
+  defaultProduct?: {
+    id: string;
+    unitPrice: number;
+    purchasePrice: number;
+    size: any;
+  };
+  discount?: number;
+  tax?: { value: number };
+};
+
+export default function AddToCartButton({ item }: { item: Product }) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  async function addToCart(newDataa: any) {
-  const value = {...newDataa}
+  async function addToCart(values: any) {
+    const value = { ...values };
+    console.log("🚀 ~ value:", value)
 
     if (value.defaultProduct) {
+      const { unitPrice, purchasePrice, size, id } = value.defaultProduct;
       const defaultProduct = {
         discount: value.discount,
-        salePrice: value.defaultProduct.salePrice,
+        unitPrice,
         tax: value.tax.value,
       };
       const res = await discountTaxCalculationFun(defaultProduct);
-      value.disAmount = res.disAmount;
+      value.discountAmount = res.discountAmount;
       value.taxAmount = res.taxAmount;
-      value.productVariantId = value.defaultProduct.id;
-      value.purchasePrice = value.defaultProduct.purchasePrice;
-      value.salePrice = value.defaultProduct.salePrice;
-      value.size = value.defaultProduct.size;
+      value.productVariantId = id;
+      value.purchasePrice = purchasePrice;
+      value.unitPrice = unitPrice;
+      value.size = size;
     }
 
     const newData = {
       id: value.id,
       name: value.name,
       productVariantId: value.productVariantId,
-      color: value.color,
-      size: value.size,
-      purchasePrice: value.purchasePrice,
-      price: value.salePrice,
-      taxAmount: value.taxAmount,
-      disAmount: value.disAmount,
+      color: value?.color,
+      colorId: value?.colorId,
+      size: value?.size,
+      sizeId: value?.size?.id,
+      purchasePrice: +value.purchasePrice,
+      unitPrice: +value.unitPrice,
+      taxAmount: +value.taxAmount || 0,
+      discountAmount: +value.discountAmount || 0,
       thumbnailImage: value.thumbnailImage,
       qty: 1,
     };
@@ -55,22 +73,14 @@ export default function AddToCartButton({ item }: any) {
   }
 
   return (
-    <>
-      {/* {global.loading.productId === item.id && (
-        <div className="flex gap-1 justify-center py-2">
-          <FaCheckCircle size={22} /> Added to cart
-        </div>
-      )} */}
-
-      <Button
-        className="w-full"
-        onClick={() => addToCart(item)}
-        style={{ fontFamily: "unset" }}
-        disabled={global.loading.productId === item.id}
-        loading={global.loading.productId === item.id}
-      >
-        Add To Cart
-      </Button>
-    </>
+    <Button
+      className="w-full"
+      onClick={() => addToCart(item)}
+      style={{ fontFamily: "unset" }}
+      disabled={global.loading.productId === item.id}
+      loading={global.loading.productId === item.id}
+    >
+      Add To Cart
+    </Button>
   );
 }

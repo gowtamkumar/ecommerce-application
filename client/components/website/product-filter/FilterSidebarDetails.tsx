@@ -80,20 +80,20 @@ export default function FilterSidebarDetails({
         <InputNumber
           placeholder="Min"
           value={price.minPrice}
-          onChange={(value) => setPrice({ ...price, minPrice: value })}
+          onChange={(value) => setPrice({ ...unitPrice, minPrice: value })}
           size="middle"
           className="w-full"
         />
         <InputNumber
           placeholder="Max"
           value={price.maxPrice}
-          onChange={(value) => setPrice({ ...price, maxPrice: value })}
+          onChange={(value) => setPrice({ ...unitPrice, maxPrice: value })}
           size="middle"
           className="w-full"
         />
         <Button
           onClick={() => {
-            dispatch(setProductFilter({ ...global.productFilter, ...price }));
+            dispatch(setProductFilter({ ...global.productFilter, ...unitPrice }));
           }}
           type="default"
           size="middle"

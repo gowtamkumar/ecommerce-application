@@ -8,7 +8,6 @@ import {
   setLoading,
   setResponse,
 } from "@/redux/features/global/globalSlice";
-import { orderValidationSchema } from "@/validation";
 import { onlineOrderValidationSchema } from "@/validation/order/onlineOrderValidation";
 import { Button } from "antd";
 import dayjs from "dayjs";
@@ -31,6 +30,7 @@ export default function CheckoutSummary({
     totalQty: 0,
     totalTax: 0,
     totalDiscount: 0,
+    subTotal: 0,
   });
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function CheckoutSummary({
   // State for form inputs
   const handleOrder = async () => {
     console.log("Dfasdf", cart.carts);
-    
+
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = onlineOrderValidationSchema.safeParse({
@@ -59,8 +59,8 @@ export default function CheckoutSummary({
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-      console.log("validatedFields", validatedFields);
       
+      console.log("validatedFields", validatedFields);
 
       if (!validatedFields.success) {
         dispatch(setLoading({ save: false }));
@@ -71,8 +71,8 @@ export default function CheckoutSummary({
 
       console.log("validatedFields.data", validatedFields.data);
 
-      return
-      
+      return;
+
       const res = await saveOrder(validatedFields.data);
 
       if (res.message?.formErrors) {
@@ -137,12 +137,7 @@ export default function CheckoutSummary({
         <div className="flex justify-between">
           <span className="font-bold">Total payable</span>
           <span className="font-bold text-2xl">
-            ৳
-            {(
-              +cartResult.total +
-              +cartResult.totalTax -
-              +cartResult.totalDiscount
-            ).toFixed(2)}
+            ৳{(+cartResult.subTotal).toFixed(2)}
           </span>
         </div>
       </div>
@@ -150,17 +145,14 @@ export default function CheckoutSummary({
       <Button
         type="primary"
         size="large"
-        className=" w-full"
+        className="w-full"
         onClick={handleOrder}
         loading={global.loading.save}
         disabled={global.loading.save}
       >
-        <span className="me-1">Confirm Order</span>
+        <span>Confirm Order</span>
         {(
-          +cartResult.total +
-          +cartResult.totalTax -
-          +cartResult.totalDiscount +
-          (+shippingCharge?.shippingAmount || 0)
+          +cartResult.subTotal + (+shippingCharge?.shippingAmount || 0)
         ).toFixed(2)}
         TK.
       </Button>

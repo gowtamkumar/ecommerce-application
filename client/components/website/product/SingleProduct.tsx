@@ -19,6 +19,7 @@ import ProductCard from "./ProductCard";
 
 export default function SingleProduct() {
   const [product, setProduct] = useState({} as any);
+  console.log("🚀 ~ product:", product);
   const [checkStock, setCheckStock] = useState(0);
   const { slug } = useParams();
   const dispatch = useDispatch();
@@ -33,10 +34,9 @@ export default function SingleProduct() {
 
     try {
       const newProduct = await getProductBySlug(slug?.toString() as any);
-      const { productVariants, stockQty } = newProduct.data;
+      const { productVariants, stockQty, variant } = newProduct.data;
 
       if (newProduct?.success) {
-
         const findVariantProduct = productVariants.find(
           (item: { default: boolean }) => item.default
         );
@@ -44,11 +44,12 @@ export default function SingleProduct() {
         setProduct({
           ...newProduct.data,
           qty: 1,
-          defaultProduct: findVariantProduct ? findVariantProduct : productVariants[0],
+          defaultProduct: variant ? findVariantProduct : productVariants[0],
         });
 
-
-        setCheckStock(findVariantProduct.stockQty || productVariants[0].stockQty);
+        setCheckStock(
+          variant ? findVariantProduct : productVariants[0].stockQty
+        );
 
         // if (findVariantProduct.id) {
         //   const productVariant = await getProductVariant({

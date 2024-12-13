@@ -1,6 +1,6 @@
 export interface DiscountTaxCalculationFun {
   discount: {value: number, discountType: string};
-  salePrice: string;
+  unitPrice: string;
   tax: string;
 }
 

@@ -43,12 +43,12 @@ interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
-  const price = +item.productVariants[0]?.price || 0;
+  const price = +item.productVariants[0]?.unitPrice || 0;
   const reviewsCount = +item?.reviews?.length || 0;
   const discount = item.discount;
   const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
 
-  const disAmount =
+  const discountAmount =
     discount?.discountType === "Percentage"
       ? ((price + taxAmount) * (discount.value || 0)) / 100
       : +discount?.value || 0;
@@ -92,7 +92,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
             <p className="text-gray-500 mb-2 text-xs">
               ৳{" "}
               {item?.discountId
-                ? (price + taxAmount - disAmount).toFixed(2)
+                ? (price + taxAmount - discountAmount).toFixed(2)
                 : (price + taxAmount).toFixed(2)}
             </p>
             <div className={stockQty > 0 ? "text-green-500" : "text-red-500"}>

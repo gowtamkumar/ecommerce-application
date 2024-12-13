@@ -23,8 +23,14 @@ export class OrderItemEntity {
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
-  @Column({ type: "numeric", precision: 10, scale: 2 })
-  price!: string;
+  @Column({
+    name: "unit_price",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  }) //need to remove nullable ture
+  unitPrice!: string;
 
   @Column({
     name: "purchase_price",

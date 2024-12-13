@@ -15,13 +15,6 @@ export const onlineOrderValidationSchema = z.object({
   orderTax: z.number().optional(),
   shippingAmount: z.number().optional(),
   note: z.string().optional(),
-  // phoneNo: z.string({
-  //   required_error: "Phone no is Required",
-  // }),
-  // email: z.string().optional(),
-  // paymentStatus: z.enum(["Paid", "NotPaid", "PertialPaid"], {
-  //   required_error: "Payment Status is required",
-  // }),
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
     required_error: "Payment Method is Required",
   }),
@@ -34,25 +27,25 @@ export const onlineOrderValidationSchema = z.object({
       "Completed",
       "Pending",
       "Returned",
-      "Canceled"
+      "Canceled",
     ])
     .optional(),
   orderItems: z
     .array(
       z.object({
-        purchasePrice: z.string({
+        purchasePrice: z.number({
           required_error: "Purchase Price is required",
         }),
-        price: z.string({ required_error: "Price is required" }),
-        taxAmount: z.string({ required_error: "Tax is required" }),
-        disAmount: z.string().optional(),
+        unitPrice: z.number({ required_error: "Unit Price is required" }),
+        taxAmount: z.number({ required_error: "Tax Amount is required" }),
+        discountAmount: z.number().optional(),
         id: z.number({ required_error: "cart is required" }),
-        productId: z.number({ required_error: "Product is required" }),
         productVariantId: z.number({
           required_error: "Product Variant is required",
         }),
         sizeId: z.number().optional().nullable(),
-        qty: z.number({ required_error: "qty is required" }),
+        colorId: z.number().optional().nullable(),
+        qty: z.number({ required_error: "Qty is required" }),
       })
     )
     .nonempty({ message: "can't be empty!" }),

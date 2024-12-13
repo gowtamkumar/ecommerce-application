@@ -18,13 +18,13 @@ export class ProductVariantEntity {
   id!: number;
 
   @Column({
-    name: "sale_price",
+    name: "unit_price",
     type: "numeric",
     precision: 15,
     scale: 2,
     nullable: true
   }) //need to remove nullable
-  salePrice!: number;
+  unitPrice!: number;
 
   @Column({
     name: "purchase_price",
@@ -51,7 +51,6 @@ export class ProductVariantEntity {
   size!: SizeEntity;
 
  
-
   @Column({ type: "boolean", default: false, nullable: true }) 
   default?: boolean;
 

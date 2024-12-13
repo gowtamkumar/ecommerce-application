@@ -33,7 +33,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
          WITH orderItems AS (
           SELECT
               oi.product_id AS product_id,
-              SUM(((COALESCE(oi.price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+              SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
           FROM
               order_items oi
           LEFT JOIN
@@ -54,7 +54,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
             -- Aggregation for product variants
             json_agg(
                 json_build_object(
-                    'price', pv.sale_price,
+                    'unit_price', pv.unit_price,
                     'purchasePrice', pv.purchase_price,
                     'stockQty', pv.stock_qty,
                     'size_id', pv.size_id,
@@ -143,14 +143,14 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
     WITH productTable AS (
   SELECT 
     p.*,
-    pv.sale_price,
+    pv.unit_price,
     pv.purchase_price,
     pv.id AS product_variant_id
   FROM 
     products p
   JOIN LATERAL (
     SELECT 
-      pv.sale_price, 
+      pv.unit_price, 
       pv.purchase_price, 
       pv.id
     FROM 
@@ -183,43 +183,26 @@ SELECT
   dis.discount_type as "discountType",
   dis.value as "discountValue",
   p.featured,
-  p.sale_price as "salePrice", 
+  p.unit_price as "unitPrice", 
   p.purchase_price as "purchasePrice",
   p.product_variant_id as "productVariantId",
   rt.reviews_count as "reviewsCount",
   rt.average_rating as "averageRating",
 
-  ROUND(SUM((p.sale_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
+  ROUND(SUM((p.unit_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
 
   ROUND(
     SUM(
       CASE 
         WHEN dis.discount_type = 'Percentage' THEN 
-          (p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
+          (p.unit_price + (p.unit_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
         ELSE 
           dis.value
       END
     ), 
     2
-  ) AS "disAmount",
+  ) AS "discountAmount"
 
-  ROUND(
-    p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100) -
-    COALESCE(
-      CASE 
-        WHEN dis.discount_type = 'Percentage' THEN 
-          (p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
-        ELSE 
-          dis.value
-      END, 0
-    ),
-    2
-  ) AS "price",
-
-  ROUND(
-    SUM(p.sale_price + (p.sale_price * COALESCE(taxs.value, 0) / 100)), 
-    2
-  ) AS "taxWithPrice"
 
 FROM 
   productTable p
@@ -232,7 +215,7 @@ LEFT JOIN
 
 GROUP BY 
   p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
-  p.sale_price, p.purchase_price, p.product_variant_id, p.slug,
+  p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
   rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value;
 
  `
@@ -287,7 +270,7 @@ GROUP BY
 //   SELECT
 //     *,
 //     (
-//       SELECT pv.sale_price
+//       SELECT pv.unit_price
 //       FROM product_variants pv
 //       WHERE
 //         pv.product_id = products.id
@@ -296,7 +279,7 @@ GROUP BY
 //           OR (pv.default = false)
 //         )
 //       LIMIT 1
-//     ) AS sale_price,
+//     ) AS unit_price,
 //      (
 //     SELECT pv.purchase_price
 //     FROM product_variants pv
@@ -341,31 +324,31 @@ GROUP BY
 //   dis.discount_type as "discountType",
 //   dis.value as "discountValue",
 //   p.featured,
-//   p.sale_price as "salePrice",
+//   p.unit_price as "unitPrice",
 //   p.purchase_price as "purchasePrice",
 //   p.product_variant_id as "productVariantId",
 //   rt.reviews_count as "reviewsCount",
 //   rt.average_rating as "averageRating",
-//   SUM((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100) AS "taxAmount",
+//   SUM((COALESCE(p.unit_price, 0) * COALESCE(taxs.value, 0)) / 100) AS "taxAmount",
 
 //   SUM(
 //     ROUND(CASE
 //       WHEN dis.discount_type = 'Percentage' THEN
-//         ((COALESCE(p.sale_price, 0) + (COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
+//         ((COALESCE(p.unit_price, 0) + (COALESCE(p.unit_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
 //       ELSE
 //         COALESCE(dis.value, 0)
 //     END
-//   ,2)) AS "disAmount",
+//   ,2)) AS "discountAmount",
 
 //   CASE
 //     WHEN p.discount_id IS NOT NULL THEN
 //       ROUND(
 //         (
-//           (COALESCE(p.sale_price, 0) + ((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100)) -
+//           (COALESCE(p.unit_price, 0) + ((COALESCE(p.unit_price, 0) * COALESCE(taxs.value, 0)) / 100)) -
 //           SUM(
 //             CASE
 //               WHEN dis.discount_type = 'Percentage' THEN
-//                 ((COALESCE(p.sale_price, 0) + (COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
+//                 ((COALESCE(p.unit_price, 0) + (COALESCE(p.unit_price, 0) * COALESCE(taxs.value, 0) / 100)) * COALESCE(dis.value, 0)) / 100
 //               ELSE
 //                 COALESCE(dis.value, 0)
 //             END
@@ -374,14 +357,14 @@ GROUP BY
 //       )
 //     ELSE
 //       ROUND(
-//         COALESCE(p.sale_price, 0) + ((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100),
+//         COALESCE(p.unit_price, 0) + ((COALESCE(p.unit_price, 0) * COALESCE(taxs.value, 0)) / 100),
 //         2
 //       )
 //   END AS "price",
 
 //   SUM(
 //     ROUND(
-//       COALESCE(p.sale_price, 0) + ((COALESCE(p.sale_price, 0) * COALESCE(taxs.value, 0)) / 100),
+//       COALESCE(p.unit_price, 0) + ((COALESCE(p.unit_price, 0) * COALESCE(taxs.value, 0)) / 100),
 //       2
 //     )
 //   ) AS "taxWithPrice"
@@ -402,7 +385,7 @@ GROUP BY
 //   p.variant,
 //   p.discount_id,
 //   p.featured,
-//   p.sale_price,
+//   p.unit_price,
 //   p.purchase_price,
 //   p.product_variant_id,
 //   rt.reviews_count,

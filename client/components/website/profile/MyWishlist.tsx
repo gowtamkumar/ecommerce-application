@@ -19,7 +19,7 @@ export default function MyWishlist({ wishlists }: any) {
   const global = useSelector(selectGlobal);
 
   async function addToCart(value: any) {
-    const price = +value.selectProductVariant.price;
+    const price = +value.selectProductVariant.unitPrice;
     let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
     dispatch(
       addCart({
@@ -53,12 +53,12 @@ export default function MyWishlist({ wishlists }: any) {
   return (
     <div className="grid grid-cols-4 gap-4">
       {(wishlists || []).map((item: any, idx: any) => {
-        let price = +item.product.productVariants[0]?.price;
+        let price = +item.product.productVariants[0]?.unitPrice;
         let discount = item.product?.discount;
 
         let taxAmount = (+price * (+item?.product?.tax?.value || 0)) / 100;
 
-        let disAmount =
+        let discountAmount =
           discount?.discountType === "Percentage"
             ? ((price + taxAmount) * (discount.value || 0)) / 100
             : +discount?.value;
@@ -79,7 +79,7 @@ export default function MyWishlist({ wishlists }: any) {
               <p className="text-gray-500 mb-2">
                 ৳
                 {item?.product.discountId
-                  ? (price + taxAmount - (disAmount || 0)).toFixed(2)
+                  ? (price + taxAmount - (discountAmount || 0)).toFixed(2)
                   : (price + taxAmount).toFixed(2)}
               </p>
 

@@ -314,7 +314,7 @@ const ProductList: React.FC = () => {
         dataIndex: "purchasePrice",
         key: "purchasePrice",
       },
-      { title: "Sale Price", dataIndex: "salePrice", key: "salePrice" },
+      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
 
       {
         title: "Size",
@@ -340,7 +340,7 @@ const ProductList: React.FC = () => {
       {
         title: "Tax",
         render: (v: any) => {
-          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
+          const taxAmount = (+v.unitPrice * (+value?.tax?.value || 0)) / 100;
           return <span>{taxAmount.toFixed(2)}</span>;
         },
       },
@@ -348,25 +348,25 @@ const ProductList: React.FC = () => {
         title: "Discount",
         render: (v: any) => {
           const discount = value.discount;
-          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
-          const disAmount =
+          const taxAmount = (+v.unitPrice * (+value?.tax?.value || 0)) / 100;
+          const discountAmount =
             discount?.discountType === "Percentage"
-              ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
+              ? ((+v.unitPrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
-          return <span>{disAmount.toFixed(2)}</span>;
+          return <span>{discountAmount.toFixed(2)}</span>;
         },
       },
       {
-        title: "Orginal Sale price",
+        title: "Orginal Unit Price",
         render: (v: any) => {
           const discount = value.discount;
-          const taxAmount = (+v.salePrice * (+value?.tax?.value || 0)) / 100;
-          const disAmount =
+          const taxAmount = (+v.unitPrice * (+value?.tax?.value || 0)) / 100;
+          const discountAmount =
             discount?.discountType === "Percentage"
-              ? ((+v.salePrice + taxAmount) * (discount.value || 0)) / 100
+              ? ((+v.unitPrice + taxAmount) * (discount.value || 0)) / 100
               : +discount?.value || 0;
           return (
-            <span>{(+v.salePrice + taxAmount - +disAmount).toFixed(2)}</span>
+            <span>{(+v.unitPrice + taxAmount - +discountAmount).toFixed(2)}</span>
           );
         },
       },

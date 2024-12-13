@@ -5,15 +5,14 @@ import Link from "next/link";
 import { FaRegHeart } from "react-icons/fa";
 import AddToCartButton from "./AddToCartButton";
 interface CardItems {
-  id: string | number;
+  id: number;
   name: string;
   hoverImage: string;
-  
+  discountAmount: number;
+  taxAmount: number;
   thumbnailImage: string;
-  price: string | number;
-  salePrice: string | number;
-  taxWithPrice: string;
-  discountId: number | string;
+  unitPrice: string | number;
+  discountId: number;
   averageRating: string;
   reviewsCount: string;
   discountValue: string;
@@ -21,7 +20,7 @@ interface CardItems {
   slug: string;
 }
 
-export default function Card({ item }: {item: CardItems}) {
+export default function Card({ item }: { item: CardItems }) {
   return (
     <div className="border p-3">
       <div className="relative group">
@@ -69,14 +68,16 @@ export default function Card({ item }: {item: CardItems}) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-1 text-md">
-            ৳ {item?.discountId ? item.price : item.salePrice}
+            ৳ {item?.discountId
+              ? (+item.unitPrice - +item.discountAmount).toFixed(2)
+              : item.unitPrice}
           </p>
         </div>
 
         {item?.discountId && (
           <div className="text-xs">
             <span className="line-through text-gray-500">
-              {/* ৳ {(price + taxAmount).toFixed(2)} */}৳ {item.salePrice}
+              ৳ {(+item.unitPrice).toFixed(2)}
             </span>
             <span className="text-red-600 ml-2">
               -{item.discountValue}

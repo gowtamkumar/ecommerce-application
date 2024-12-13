@@ -118,18 +118,18 @@ export default function OrderSummary() {
                 </div>
               </div>
               <div className="mx-2 text-base font-semibold text-green-600">
-                Price: ৳{(+item.price).toFixed(2)}
+                Price: ৳{(+item.unitPrice).toFixed(2)}
               </div>
 
               <div className="mx-2 text-base font-semibold text-green-600">
                 tax ৳{(+item.taxAmount * +item.qty).toFixed(2)}
               </div>
               <div className="mx-2 text-base font-semibold text-green-600">
-                DisAmount: ৳{(+item.disAmount * +item.qty).toFixed(2)}
+                discountAmount: ৳{(+item.discountAmount * +item.qty).toFixed(2)}
               </div>
 
               <div>
-                <span>Subtotal: {+item.price * +item.qty}</span>
+                <span>Subtotal: {+item.unitPrice * +item.qty}</span>
               </div>
             </div>
           );

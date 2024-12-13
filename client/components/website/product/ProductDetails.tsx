@@ -66,13 +66,13 @@ const ProductDetails = ({
 
   // const fff = await discountTaxCalculationFun({
   //   discount: value.discount,
-  //   salePrice: value.defaultProduct.salePrice,
+  //   unitPrice: value.defaultProduct.unitPrice,
   //   tax: value.tax.value,
   // })
 
 
-  const salePrice = +defaultProduct?.salePrice;
-  let taxAmount = (+salePrice * (+tax?.value || 0)) / 100;
+  const unitPrice = +defaultProduct?.unitPrice;
+  let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
 
   function handleIncrementCart(item: any) {
     dispatch(incrementCart(item));
@@ -142,15 +142,15 @@ const ProductDetails = ({
           <p className="text-2xl font-semibold text-blue-600 mr-4">
             {discountId
               ? (
-                  (salePrice +  +taxAmount) - productDiscountCalculation(product)
+                  (unitPrice +  +taxAmount) - productDiscountCalculation(product)
                 ).toFixed(2)
-              : (salePrice + +taxAmount || 0).toFixed(2)}
+              : (unitPrice + +taxAmount || 0).toFixed(2)}
           </p>
 
           {discountId && (
             <>
               <span className="line-through text-gray-500">
-                ৳ {(salePrice + +taxAmount || 0).toFixed(2)}
+                ৳ {(unitPrice + +taxAmount || 0).toFixed(2)}
               </span>
               <span className="text-red-600 ml-2">
                 - {discount?.value}

@@ -165,19 +165,19 @@ const AddOrder = () => {
     //     quantity: 1,
     //     productId: 12,
     //     product,
-    //     price: product.price || 0,
+    //     price: product.unitPrice || 0,
     //     itemBarcode: product.itemBarcode,
     //     taxId: product.taxId,
-    //     // productTax: product.tax ? ((product.salePrice || 0) * (product.tax.rate || 0)) / 100 : 0,
+    //     // productTax: product.tax ? ((product.unitPrice || 0) * (product.tax.rate || 0)) / 100 : 0,
     //     // discountId: product.discountId,
     //     // productDiscount: product.discount
     //     //   ? product.discount.type === 'Fixed'
     //     //     ? product.discount.rate
-    //     //     : (product.salePrice * product.discount.rate) / 100
+    //     //     : (product.unitPrice * product.discount.rate) / 100
     //     //   : 0,
     //   } as any
 
-    //   orderItem.subTotal = orderItem.price + orderItem.productTax - orderItem.productDiscount
+    //   orderItem.subTotal = orderItem.unitPrice + orderItem.productTax - orderItem.productDiscount
     //   newData.orderItems = [...(newData.orderItems || []), orderItem]
     // }
     // newData.productId = null
@@ -345,10 +345,10 @@ const AddOrder = () => {
                         <td>
                           <Form.Item
                             {...restField}
-                            name={[name, "salePrice"]}
-                            rules={[{ required: true, message: "sale price" }]}
+                            name={[name, "unitPrice"]}
+                            rules={[{ required: true, message: "Unit Price" }]}
                           >
-                            <InputNumber placeholder="Enter sale price" />
+                            <InputNumber placeholder="Enter Unit Price" />
                           </Form.Item>
                         </td>
                         <td>
