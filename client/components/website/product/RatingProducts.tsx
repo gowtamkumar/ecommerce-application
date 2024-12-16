@@ -1,5 +1,7 @@
-import { ProductType } from "@/lib/types/product";
+"use client";
+import { selectProduct } from "@/redux/features/products/productSlice";
 import { Divider, Rate } from "antd";
+import { useSelector } from "react-redux";
 interface ProductRating {
   totalReview: number;
   rating1: number;
@@ -9,20 +11,12 @@ interface ProductRating {
   rating5: number;
 }
 
-interface Review {
-  reviews: [];
-  product: ProductType;
-}
-
-const RatingProduct = ({
-  product,
-  productRating,
-}: {
-  product: Review;
-  productRating: ProductRating;
-}) => {
+const RatingProduct = ({ productRating }: { productRating: ProductRating }) => {
+  const products = useSelector(selectProduct);
+  const { reviews } = products.product;
   const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
     productRating;
+    
   return (
     <div className="mt-8">
       <h3 className="text-lg font-bold mb-4">Ratings & Reviews</h3>
@@ -30,16 +24,14 @@ const RatingProduct = ({
         <div className="flex basis-2/3 items-center">
           <div>
             <p className="text-2xl font-bold">
-              {(
-                (totalReview || 0) / (product?.reviews?.length || 0) || 0
-              ).toFixed(1)}
+              {((totalReview || 0) / (reviews?.length || 0) || 0).toFixed(1)}
             </p>
             <Rate
               allowHalf
-              value={(totalReview || 0) / (product?.reviews?.length || 0) || 0}
+              value={(totalReview || 0) / (reviews?.length || 0) || 0}
               disabled
             />
-            <p>{product?.reviews?.length || 0} ratings</p>
+            <p>{reviews?.length || 0} ratings</p>
           </div>
           <Divider
             type="vertical"

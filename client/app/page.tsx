@@ -15,9 +15,7 @@ const FeaturedProduct = dynamic(
 const HeaderDiscount = dynamic(
   () => import("@/components/website/banner/HeaderDiscount")
 );
-const TopSellingProductCard = dynamic(
-  () => import("@/components/website/product/TopSellingProductCard")
-);
+
 const MoreDiscover = dynamic(
   () => import("@/components/website/home/MoreDiscover")
 );
@@ -42,8 +40,7 @@ export default async function Home() {
         {/* all category show */}
         <CategoryCard categories={categories} />
 
-        {/* Popular products */}
-        {/* <TopSellingProductCard topSellingProduct={products} /> */}
+        {/* Top Selling Product */}
         <FeaturedProduct products={products}  />
 
         {/* product banner */}

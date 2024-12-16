@@ -1,7 +1,7 @@
 "use client";
 import { Button, Divider, Rate } from "antd";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { productDiscountCalculation } from "@/lib/utils";
 import { setResponse } from "@/redux/features/global/globalSlice";
 import { saveWishlist } from "@/lib/apis/wishlist";
@@ -14,6 +14,10 @@ import { CiHeart } from "react-icons/ci";
 import { TfiPencil } from "react-icons/tfi";
 import { FaXTwitter } from "react-icons/fa6";
 import ProductImageGallery from "./ProductImageGallery";
+import {
+  selectProduct,
+  setProduct,
+} from "@/redux/features/products/productSlice";
 
 interface ProductColor {
   colorId: number;
@@ -30,18 +34,16 @@ export interface ProductVariant {
   default: boolean;
 }
 
-const ProductDetails = ({
-  product,
-  setProduct,
-  productRating,
-  checkStock,
-  setCheckStock,
-}: any) => {
+const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
   const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
   const session = useSession();
 
+  const products = useSelector(selectProduct);
+  const { product } = products;
+
   const {
+    id,
     name,
     defaultProduct,
     tax,
@@ -57,7 +59,7 @@ const ProductDetails = ({
     images,
     thumbnailImage,
     shortDescription,
-  } = product;
+  } = products.product;
 
   const unitPrice = +defaultProduct?.unitPrice;
   let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
@@ -164,11 +166,13 @@ const ProductDetails = ({
               <Button
                 key={item.colorId}
                 onClick={() => {
-                  setProduct({
-                    ...product,
-                    color: item?.color,
-                    colorId: item?.colorId,
-                  });
+                  dispatch(
+                    setProduct({
+                      ...product,
+                      color: item?.color,
+                      colorId: item?.colorId,
+                    })
+                  );
                 }}
                 className={`mr-2 px-2 py-1 focus:outline-none  ${
                   product.colorId === item.colorId ? "!bg-gray-200" : ""
@@ -239,7 +243,7 @@ const ProductDetails = ({
               if (session.status === "unauthenticated") {
                 setUnAuthorize(true);
               } else {
-                AddToWishlist(product.id);
+                AddToWishlist(id);
               }
             }}
           >

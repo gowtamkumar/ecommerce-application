@@ -5,6 +5,8 @@ import { BiDislike, BiLike } from "react-icons/bi";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useSelector } from "react-redux";
+import { selectProduct } from "@/redux/features/products/productSlice";
 dayjs.extend(relativeTime);
 
 interface DataType {
@@ -15,7 +17,10 @@ interface DataType {
   status: string;
 }
 
-const ReviewTable = ({ reviews }: any) => {
+const ReviewTable = () => {
+  const products = useSelector(selectProduct);
+  const { reviews }: { reviews: DataType[] } = products.product;
+
   async function reviewIncrement(value: any) {
     try {
       await reviewLike({ id: value.id });

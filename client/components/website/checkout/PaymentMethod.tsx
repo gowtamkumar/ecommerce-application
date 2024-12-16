@@ -1,13 +1,18 @@
 "use client";
+import {
+  selectCheckout,
+  setCheckoutFormData,
+} from "@/redux/features/checkout/checkoutSlice";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { Alert, Checkbox, Radio } from "antd";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function PaymentMethod({
-  setCheckoutFormData,
-  checkoutFormData,
-}: any) {
+export default function PaymentMethod() {
   const global = useSelector(selectGlobal);
+  const checkout = useSelector(selectCheckout);
+  const dispatch = useDispatch();
+  const { checkoutFormData } = checkout || {};
+  const { response } = global || {};
   return (
     <div className="mx-auto bg-white ">
       <div className="p-4 border-b">
@@ -19,10 +24,12 @@ export default function PaymentMethod({
         <Radio.Group
           name="paymentMethod"
           onChange={({ target }) =>
-            setCheckoutFormData({
-              ...checkoutFormData,
-              paymentMethod: target.value,
-            })
+            dispatch(
+              setCheckoutFormData({
+                ...checkoutFormData,
+                paymentMethod: target.value,
+              })
+            )
           }
           value={checkoutFormData.paymentMethod}
           size="large"
@@ -48,11 +55,11 @@ export default function PaymentMethod({
                 </a>
               </span>
             </span>
-            {global.response.type && (
+            {response.type && (
               <Alert
                 className="p-0 m-0"
-                message={`${global.response.message}`}
-                type={global.response.type}
+                message={`${response.message}`}
+                type={response.type}
               />
             )}
           </label>

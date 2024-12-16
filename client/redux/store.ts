@@ -4,11 +4,12 @@ import layoutSlice from "./features/layout/layoutSlice";
 import globalSlice from "./features/global/globalSlice";
 import cartSlice from "./features/cart/cartSlice";
 import  productSlice  from "./features/products/productSlice";
+import  checkoutSlice  from "./features/checkout/checkoutSlice";
 
 export const store = () => {
   return configureStore({
     reducer: {
-      counter: counterSlice,
+      checkout: checkoutSlice,
       layout: layoutSlice,
       global: globalSlice,
       cart: cartSlice,

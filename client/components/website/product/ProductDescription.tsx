@@ -1,4 +1,8 @@
-const ProductDescription= ({ product }: any) => {
+import { selectProduct } from "@/redux/features/products/productSlice";
+import { useSelector } from "react-redux";
+
+const ProductDescription= () => {
+  const products = useSelector(selectProduct);
   return (
     <div className="text-start">
       <h3 className="text-lg font-bold mb-4">Description</h3>
@@ -6,7 +10,7 @@ const ProductDescription= ({ product }: any) => {
         <div
           className="text-gray-700 mb-4 leading-6"
           dangerouslySetInnerHTML={{
-            __html: product.description,
+            __html: products.product.description,
           }}
         />
       </div>

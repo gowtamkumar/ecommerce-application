@@ -31,8 +31,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
                       ? `${appConfig.apiUrl}/uploads/${item}`
                       : "/pos_software.png"
                   }
-                  // src="https://dev.ecomfixr.com/wp-content/uploads/2024/11/unique_point.png"
-                  alt="unique_point"
+                  alt={item}
                 />
               </SwiperSlide>
             );
@@ -67,7 +66,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
                       ? `${appConfig.apiUrl}/uploads/${item}`
                       : "/pos_software.png"
                   }
-                  alt="unique_point"
+                  alt={item}
                 />
               </SwiperSlide>
             );

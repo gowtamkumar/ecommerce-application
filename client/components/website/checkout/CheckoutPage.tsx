@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 import { getMe } from "@/lib/apis/user";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dynamic from "next/dynamic";
+import {
+  setCheckoutFormData,
+  setShippingAddress,
+  setShippingCharge,
+} from "@/redux/features/checkout/checkoutSlice";
 
 const Breadcrumb = dynamic(() => import("@/components/Breadcrumb"), {
   ssr: false,
@@ -21,16 +26,13 @@ const CheckoutShippingAddress = dynamic(
 );
 
 export default function CheckoutPage() {
-  const [checkoutFormData, setCheckoutFormData] = useState({} as any);
-  const [shippingAddress, setShippingAddress] = useState([] as any);
-  const [shippingCharge, setShippingCharge] = useState({} as any);
   const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
-      setShippingCharge({});
+      dispatch(setShippingCharge({}));
     };
   }, []);
 
@@ -43,15 +45,19 @@ export default function CheckoutPage() {
       const getShippingCharge = await getShippingCharges({
         divisionId: activeShippingAddress.divisionId,
       });
-      setShippingCharge(
-        getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
+      dispatch(
+        setShippingCharge(
+          getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
+        )
       );
     }
-    setShippingAddress(user.data?.shippingAddress);
-    setCheckoutFormData({
-      paymentMethod: "Cash",
-      shippingAddressId: activeShippingAddress?.id, //need to logic implements
-    });
+    dispatch(setShippingAddress(user.data?.shippingAddress));
+    dispatch(
+      setCheckoutFormData({
+        paymentMethod: "Cash",
+        shippingAddressId: activeShippingAddress?.id, //need to logic implements
+      })
+    );
   }
 
   return (
@@ -68,25 +74,12 @@ export default function CheckoutPage() {
         <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
           <div className="col-span-2 bg-white rounded-md content-between">
             <OrderSummary />
-            <PaymentMethod
-              setCheckoutFormData={setCheckoutFormData}
-              checkoutFormData={checkoutFormData}
-            />
+            <PaymentMethod />
           </div>
 
           <div className="col-span-1 gap-2 rounded-md">
-            <CheckoutShippingAddress
-              setCheckoutFormData={setCheckoutFormData}
-              setShippingCharge={setShippingCharge}
-              checkoutFormData={checkoutFormData}
-              shippingAddress={shippingAddress}
-            />
-            <CheckoutSummary
-              checkoutFormData={checkoutFormData}
-              shippingCharge={shippingCharge}
-              setCheckoutFormData={setCheckoutFormData}
-              setShippingAddress={setShippingAddress}
-            />
+            <CheckoutShippingAddress />
+            <CheckoutSummary />
           </div>
           <div className="text-blue-500 hover:underline lg:text-start text-center">
             <Link href="/products">Back to Shopping</Link>

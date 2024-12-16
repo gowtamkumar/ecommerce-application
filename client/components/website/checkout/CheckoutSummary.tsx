@@ -1,7 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { saveOrder } from "@/lib/apis/orders";
-import { cartCalculationFun, CartResult } from "@/lib/utils/cartCalculationFun";
-import { clearCart, selectCart } from "@/redux/features/cart/cartSlice";
+import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
+import {
+  clearCart,
+  selectCart,
+  setCartResult,
+} from "@/redux/features/cart/cartSlice";
+import {
+  selectCheckout,
+  setCheckoutFormData,
+  setShippingAddress,
+  setShippingCharge,
+} from "@/redux/features/checkout/checkoutSlice";
 import {
   selectGlobal,
   setAction,
@@ -11,32 +22,26 @@ import {
 import { onlineOrderValidationSchema } from "@/validation/order/onlineOrderValidation";
 import { Button } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function CheckoutSummary({
-  checkoutFormData,
-  shippingCharge,
-  setCheckoutFormData,
-  setShippingAddress,
-  setShippingCharge,
-}: any) {
+export default function CheckoutSummary() {
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const checkout = useSelector(selectCheckout);
+  const route = useRouter();
 
-  const [cartResult, setCartResult] = useState<CartResult>({
-    total: 0,
-    totalQty: 0,
-    totalTax: 0,
-    totalDiscount: 0,
-    subTotal: 0,
-  });
+  const { total, totalDiscount, totalQty, totalTax, subTotal } =
+    cart.cartResult || {};
+  const { shippingCharge, checkoutFormData } = checkout || {};
+  const { loading } = global || {};
 
   useEffect(() => {
     async function calculateCart() {
       const result = await cartCalculationFun(cart.carts);
-      setCartResult(result);
+      dispatch(setCartResult(result));
     }
 
     calculateCart();
@@ -49,16 +54,14 @@ export default function CheckoutSummary({
       const validatedFields = onlineOrderValidationSchema.safeParse({
         orderItems: cart.carts,
         orderDate: dayjs().toISOString(),
-        netAmount: cartResult.total,
-        orderTax: cartResult.totalTax,
-        orderTotalAmount: cartResult.total,
+        netAmount: +total,
+        orderTax: +totalTax,
+        orderTotalAmount: +total,
         shippingAmount: +shippingCharge?.shippingAmount || 0,
-        discountAmount: cartResult.totalDiscount,
+        discountAmount: +totalDiscount,
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
       });
-
-      console.log("validatedFields", validatedFields);
 
       if (!validatedFields.success) {
         const formattedErrors = validatedFields.error.issues.map((issue) => ({
@@ -68,7 +71,7 @@ export default function CheckoutSummary({
 
         dispatch(setLoading({ save: false }));
         return {
-          errors: validatedFields.error.formErrors,
+          errors: formattedErrors,
         };
       }
 
@@ -92,9 +95,10 @@ export default function CheckoutSummary({
         dispatch(setAction({}));
         dispatch(setResponse({}));
         dispatch(clearCart());
-        setCheckoutFormData({});
-        setShippingAddress([]);
-        setShippingCharge({});
+        dispatch(setCheckoutFormData({}));
+        dispatch(setShippingAddress([]));
+        dispatch(setShippingCharge({}));
+        route.push("/");
       }, 1000);
     } catch (err: any) {}
   };
@@ -108,17 +112,17 @@ export default function CheckoutSummary({
       <div className="p-4 rounded">
         <div className="flex justify-between">
           <span>Total Quantity</span>
-          <span>{+cartResult.totalQty}</span>
+          <span>{+totalQty}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Total Discount</span>
-          <span>{(+cartResult.totalDiscount).toFixed(2)}</span>
+          <span>{(+totalDiscount).toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Total Tax</span>
-          <span>{(+cartResult.totalTax).toFixed(2)}</span>
+          <span>{(+totalTax).toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between">
@@ -128,15 +132,13 @@ export default function CheckoutSummary({
 
         <div className="flex justify-between">
           <span className="font-bold">Total</span>
-          <span className="font-bold text-2xl">
-            ৳{(+cartResult.total).toFixed(2)}
-          </span>
+          <span className="font-bold text-2xl">৳{(+total).toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between">
           <span className="font-bold">Total payable</span>
           <span className="font-bold text-2xl">
-            ৳{(+cartResult.subTotal + (+shippingCharge?.shippingAmount || 0)).toFixed(2)}
+            ৳{(+subTotal + (+shippingCharge?.shippingAmount || 0)).toFixed(2)}
           </span>
         </div>
       </div>
@@ -146,13 +148,11 @@ export default function CheckoutSummary({
         size="large"
         className="w-full"
         onClick={handleOrder}
-        loading={global.loading.save}
-        disabled={global.loading.save}
+        loading={loading.save}
+        disabled={loading.save}
       >
         <span>Confirm Order</span>
-        {(
-          +cartResult.subTotal + (+shippingCharge?.shippingAmount || 0)
-        ).toFixed(2)}
+        {(+subTotal + (+shippingCharge?.shippingAmount || 0)).toFixed(2)}
         TK.
       </Button>
     </div>

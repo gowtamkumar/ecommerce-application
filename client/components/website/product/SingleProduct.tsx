@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -8,22 +9,24 @@ import ProductDescription from "./ProductDescription";
 import {
   selectGlobal,
   setLoading,
-  setProductFilter,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { getProductVariant } from "@/lib/apis/product-variant";
 import { errorNotification } from "@/lib/utils/notification";
 import { getProductBySlug } from "@/lib/apis/public/product";
 import ReviewTable from "./review-rating/ReviewTable";
 import ProductCard from "./ProductCard";
+import {
+  selectProduct,
+  setProduct,
+} from "@/redux/features/products/productSlice";
 
 export default function SingleProduct() {
-  const [product, setProduct] = useState({} as any);
-  console.log("🚀 ~ product:", product);
-  const [checkStock, setCheckStock] = useState(0);
   const { slug } = useParams();
+  const [checkStock, setCheckStock] = useState(0);
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
+  const products = useSelector(selectProduct);
+  const { product } = products;
 
   useEffect(() => {
     fetchProductData();
@@ -34,7 +37,7 @@ export default function SingleProduct() {
 
     try {
       const newProduct = await getProductBySlug(slug?.toString() as any);
-      const { productVariants, stockQty, variant } = newProduct.data;
+      const { productVariants, variant } = newProduct.data;
 
       if (newProduct?.success) {
         const findVariantProduct = productVariants.find(
@@ -45,11 +48,13 @@ export default function SingleProduct() {
           ? findVariantProduct
           : productVariants[0];
 
-        setProduct({
-          ...newProduct.data,
-          qty: 1,
-          defaultProduct,
-        });
+        dispatch(
+          setProduct({
+            ...newProduct.data,
+            qty: 1,
+            defaultProduct,
+          })
+        );
 
         setCheckStock(defaultProduct.stockQty);
 
@@ -114,19 +119,15 @@ export default function SingleProduct() {
   return (
     <div className="container mx-auto">
       <ProductDetails
-        product={product}
-        setProduct={setProduct}
         productRating={productRating}
         checkStock={checkStock}
         setCheckStock={setCheckStock}
       />
 
-      {product.reviews && (
-        <RatingProduct product={product} productRating={productRating} />
-      )}
+      {product.reviews && <RatingProduct productRating={productRating} />}
 
-      <ReviewTable reviews={product.reviews} />
-      <ProductDescription product={product} />
+      <ReviewTable />
+      <ProductDescription />
       <section className="py-5">
         <h3 className="text-lg font-bold mb-4">Related Product</h3>
         <ProductCard />

@@ -1,10 +1,11 @@
+import { CartResult } from "@/lib/utils/cartCalculationFun";
 import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
 export interface CartState {
   carts: any;
-  setCarts: any;
+  cartResult: CartResult;
 }
 
 // Define the initial state using that type
@@ -13,7 +14,13 @@ const initialState: CartState = {
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("carts") || "[]")
       : [],
-  setCarts: [],
+  cartResult: {
+    total: 0,
+    totalQty: 0,
+    totalTax: 0,
+    totalDiscount: 0,
+    subTotal: 0,
+  },
 };
 
 export const cartSlice = createSlice({
@@ -60,8 +67,6 @@ export const cartSlice = createSlice({
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     removeCart: (state, action: PayloadAction<any>): any => {
-      console.log("🚀 ~ state:", state)
-      console.log("🚀 ~ action:", action)
       const findProduct = state.carts.find(
         (item: any) => item.id === action.payload.id
       );
@@ -72,11 +77,20 @@ export const cartSlice = createSlice({
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
+    setCartResult: (state, action: PayloadAction<CartResult>): any => {
+      state.cartResult = action.payload;
+    },
   },
 });
 
-export const { addCart, decrementCart, removeCart, incrementCart, clearCart } =
-  cartSlice.actions;
+export const {
+  addCart,
+  decrementCart,
+  removeCart,
+  incrementCart,
+  clearCart,
+  setCartResult,
+} = cartSlice.actions;
 export const selectCart = (state: RootState) => state.cart;
 
 export default cartSlice.reducer;
