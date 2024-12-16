@@ -41,15 +41,17 @@ export default function SingleProduct() {
           (item: { default: boolean }) => item.default
         );
 
+        const defaultProduct = variant
+          ? findVariantProduct
+          : productVariants[0];
+
         setProduct({
           ...newProduct.data,
           qty: 1,
-          defaultProduct: variant ? findVariantProduct : productVariants[0],
+          defaultProduct,
         });
 
-        setCheckStock(
-          variant ? findVariantProduct : productVariants[0].stockQty
-        );
+        setCheckStock(defaultProduct.stockQty);
 
         // if (findVariantProduct.id) {
         //   const productVariant = await getProductVariant({
@@ -57,7 +59,6 @@ export default function SingleProduct() {
         //   });
         //   setCheckStock(productVariant.data.stockQty);
         // }
-
         // const categoryIds = newProduct.data.productCategories
         //   .map((item: { categoryId: number }) => item.categoryId)
         //   .join(",");

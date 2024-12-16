@@ -136,7 +136,7 @@ export default function CheckoutSummary({
         <div className="flex justify-between">
           <span className="font-bold">Total payable</span>
           <span className="font-bold text-2xl">
-            ৳{(+cartResult.subTotal).toFixed(2)}
+            ৳{(+cartResult.subTotal + (+shippingCharge?.shippingAmount || 0)).toFixed(2)}
           </span>
         </div>
       </div>

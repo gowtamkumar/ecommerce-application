@@ -5,21 +5,23 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getTopSellingProducts } from "@/lib/apis/reports";
 import appConfig from "@/appConfig";
+import Card from "@/components/Card";
 
-const TopSellingProductCard: React.FC = () => {
-  const [products, setProducts] = useState([]);
+const TopSellingProductCard = ({topSellingProduct}: any) => {
+  console.log("🚀 ~ topSellingProduct:", topSellingProduct);
+  // const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const products = await getTopSellingProducts();
-        setProducts(products?.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
-    fetchProducts();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     try {
+  //       const products = await getTopSellingProducts();
+  //       setProducts(products?.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch products:", error);
+  //     }
+  //   };
+  //   fetchProducts();
+  // }, []);
 
   return (
     <section className="md:py-5 p-3 md:w-8/12 mx-auto">
@@ -30,8 +32,10 @@ const TopSellingProductCard: React.FC = () => {
         </Link>
       </div>
       <div className="grid gap-1 lg:grid-cols-5">
-        {products?.map((item: any) => (
-          <ProductItem key={item.id} item={item} />
+        {topSellingProduct?.map((item: any) => (
+          <div key={item.id}>
+            <Card item={item} />
+          </div>
         ))}
       </div>
     </section>
@@ -65,7 +69,6 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
   const image = item?.images?.split(",") || [];
 
   return (
-
     <div className="bg-white border">
       <Link href={`/products/${item.id}`} title={item.name}>
         <Image

@@ -57,6 +57,7 @@ export default function Profile() {
     <Tabs
       onChange={(key) => setTabKey(key)}
       defaultValue={tabKey}
+      tabPosition="left"
       items={[
         {
           label: `My Account`,

@@ -7,7 +7,7 @@ import { addCart } from "@/redux/features/cart/cartSlice";
 import { discountTaxCalculationFun } from "@/lib/utils/discountTaxCalculationFun";
 
 type Product = {
-  id: string;
+  id: number;
   name: string;
   color: any;
   thumbnailImage: string;

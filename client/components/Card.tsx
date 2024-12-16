@@ -18,9 +18,17 @@ interface CardItems {
   discountValue: string;
   discountType: string;
   slug: string;
+  color: any;
+  defaultProduct?: {
+    id: string;
+    unitPrice: number;
+    purchasePrice: number;
+    size: any;
+  };
 }
 
-export default function Card({ item }: { item: CardItems }) {
+
+export default function Card({ item }: { item: any }) {
   return (
     <div className="border p-3">
       <div className="relative group">

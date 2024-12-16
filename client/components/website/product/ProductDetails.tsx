@@ -27,6 +27,7 @@ export interface ProductVariant {
   sizeId: number;
   size: { name: string };
   stockQty: number;
+  default: boolean;
 }
 
 const ProductDetails = ({
@@ -57,7 +58,6 @@ const ProductDetails = ({
     thumbnailImage,
     shortDescription,
   } = product;
-
 
   const unitPrice = +defaultProduct?.unitPrice;
   let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
@@ -130,7 +130,9 @@ const ProductDetails = ({
           <p className="text-2xl font-semibold text-blue-600 mr-4">
             {discountId
               ? (
-                  (unitPrice +  +taxAmount) - productDiscountCalculation(product)
+                  unitPrice +
+                  +taxAmount -
+                  productDiscountCalculation(product)
                 ).toFixed(2)
               : (unitPrice + +taxAmount || 0).toFixed(2)}
           </p>
@@ -168,7 +170,9 @@ const ProductDetails = ({
                     colorId: item?.colorId,
                   });
                 }}
-                className="mr-2 px-2 py-1 rounded text-white hover:bg-gray-300 focus:outline-none"
+                className={`mr-2 px-2 py-1 focus:outline-none  ${
+                  product.colorId === item.colorId ? "!bg-gray-200" : ""
+                }`}
               >
                 {item?.color?.name}
               </Button>
@@ -190,7 +194,9 @@ const ProductDetails = ({
                     });
                     setCheckStock(item.stockQty);
                   }}
-                  className="mr-2 text-white px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none"
+                  className={`mr-2 px-2 py-1 focus:outline-none  ${
+                    defaultProduct.id === item.id ? "!bg-gray-200" : ""
+                  }`}
                 >
                   {item?.size?.name}
                 </Button>
@@ -224,9 +230,6 @@ const ProductDetails = ({
           <div>
             <AddToCartButton item={product} />
           </div>
-          {/* <Button className="px-2 py-1 bg-gray-200 hover:bg-gray-300 focus:outline-none">
-            BUY NOW
-          </Button> */}
         </div>
 
         <div className="flex items-center gap-4">

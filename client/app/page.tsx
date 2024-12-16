@@ -25,7 +25,7 @@ const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
   const home = await getHomeApi();
-  const { banners, discounts, categories, products } = home.data;
+  const { banners, discounts, categories, products, topSellingProduct } = home.data;
   return (
     <>
       <header>
@@ -43,7 +43,8 @@ export default async function Home() {
         <CategoryCard categories={categories} />
 
         {/* Popular products */}
-        <TopSellingProductCard />
+        {/* <TopSellingProductCard topSellingProduct={products} /> */}
+        <FeaturedProduct products={products}  />
 
         {/* product banner */}
         <SellerAds
