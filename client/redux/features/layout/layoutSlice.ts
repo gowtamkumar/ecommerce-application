@@ -1,4 +1,3 @@
-import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
@@ -36,6 +35,6 @@ export const layoutSlice = createSlice({
 
 export const { setOpen, setCollapsed, setScreenWidth } = layoutSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
-export const selectLayout = (state: RootState) => state.layout;
+export const selectLayout = (state: { layout: any; }) => state.layout;
 
 export default layoutSlice.reducer;

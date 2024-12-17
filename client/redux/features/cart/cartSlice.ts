@@ -1,5 +1,5 @@
 import { CartResult } from "@/lib/utils/cartCalculationFun";
-import type { RootState } from "@/redux/store";
+// import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
@@ -91,6 +91,6 @@ export const {
   clearCart,
   setCartResult,
 } = cartSlice.actions;
-export const selectCart = (state: RootState) => state.cart;
+export const selectCart = (state: { cart: any; }) => state.cart;
 
 export default cartSlice.reducer;

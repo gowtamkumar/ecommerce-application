@@ -1,4 +1,4 @@
-import type { RootState } from "@/redux/store";
+// import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
@@ -35,6 +35,6 @@ export const checkoutSlice = createSlice({
 export const { setCheckoutFormData, setShippingAddress, setShippingCharge } = checkoutSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectCheckout = (state: RootState) => state.checkout;
+export const selectCheckout = (state: { checkout: any; }) => state.checkout;
 
 export default checkoutSlice.reducer;

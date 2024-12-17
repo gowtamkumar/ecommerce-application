@@ -4,7 +4,8 @@ import "react-quill/dist/quill.snow.css"; // Import Quill styles
 
 interface TextQuillEditorProps {
   editorContent: string;
-  setEditorContent: React.Dispatch<React.SetStateAction<string>>;
+  // setEditorContent: React.Dispatch<React.SetStateAction<string>>;
+  setEditorContent: any;
 }
 
 const TextQuillEditor: React.FC<TextQuillEditorProps> = ({ editorContent, setEditorContent }) => {

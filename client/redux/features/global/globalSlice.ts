@@ -1,25 +1,24 @@
-import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-export interface globalState {
-  response: any;
-  loading: any;
-  action: any;
+export interface GlobalState {
+  response: Record<string, any>;
+  loading: Record<string, any>;
+  action: Record<string, any>;
   searchText: string;
   searchedColumn: string;
   previewImage: string;
   previewTitle: string;
   previewOpen: boolean;
-  formValues: any;
+  formValues: Record<string, any>;
   productView: boolean;
-  productRating: any;
-  productFilter: any;
-  setting: any;
+  productRating: Record<string, any>;
+  productFilter: Record<string, any>;
+  setting: Record<string, any>;
 }
 
 // Define the initial state using that type
-const initialState: globalState = {
+const initialState: GlobalState = {
   response: {},
   loading: {},
   action: {},
@@ -37,55 +36,51 @@ const initialState: globalState = {
 
 export const globalSlice = createSlice({
   name: "global",
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setResponse: (state, action: PayloadAction<any>): any => {
+    setResponse: (state, action: PayloadAction<Record<string, any>>) => {
       state.response = action.payload;
     },
-
-    setLoading: (state, action: PayloadAction<any>): any => {
+    setLoading: (state, action: PayloadAction<Record<string, any>>) => {
       state.loading = action.payload;
     },
-
-    setAction: (state, action: PayloadAction<any>): any => {
+    setAction: (state, action: PayloadAction<Record<string, any>>) => {
       state.action = action.payload;
     },
-    setSearchText: (state, action: PayloadAction<any>): any => {
+    setSearchText: (state, action: PayloadAction<string>) => {
       state.searchText = action.payload;
     },
-    setSearchedColumn: (state, action: PayloadAction<any>): any => {
+    setSearchedColumn: (state, action: PayloadAction<string>) => {
       state.searchedColumn = action.payload;
     },
-    setFormValues: (state, action: PayloadAction<any>): any => {
+    setFormValues: (state, action: PayloadAction<Record<string, any>>) => {
       state.formValues = action.payload;
     },
-    setProductView: (state, action: PayloadAction<any>): any => {
+    setProductView: (state, action: PayloadAction<boolean>) => {
       state.productView = action.payload;
     },
-    setProductRating: (state, action: PayloadAction<any>): any => {
+    setProductRating: (state, action: PayloadAction<Record<string, any>>) => {
       state.productRating = action.payload;
     },
-
-    setProductFilter: (state, action: PayloadAction<any>): any => {
+    setProductFilter: (state, action: PayloadAction<Record<string, any>>) => {
       state.productFilter = action.payload;
     },
-    setSetting: (state, action: PayloadAction<any>): any => {
+    setSetting: (state, action: PayloadAction<Record<string, any>>) => {
       state.setting = action.payload;
     },
-    // down 3 state only for image preview
-    setPreviewImage: (state, action: PayloadAction<any>): any => {
+    setPreviewImage: (state, action: PayloadAction<string>) => {
       state.previewImage = action.payload;
     },
-    setPreviewOpen: (state, action: PayloadAction<any>): any => {
+    setPreviewOpen: (state, action: PayloadAction<boolean>) => {
       state.previewOpen = action.payload;
     },
-    setPreviewTitle: (state, action: PayloadAction<any>): any => {
-      state.previewOpen = action.payload;
+    setPreviewTitle: (state, action: PayloadAction<string>) => {
+      state.previewTitle = action.payload;
     },
   },
 });
 
+// Export actions
 export const {
   setResponse,
   setLoading,
@@ -99,9 +94,11 @@ export const {
   setSetting,
   setPreviewImage,
   setPreviewOpen,
-  setPreviewTitle
+  setPreviewTitle,
 } = globalSlice.actions;
-// Other code such as selectors can use the imported `RootState` type
-export const selectGlobal = (state: RootState) => state.global;
 
+// Selector for accessing the global state
+export const selectGlobal = (state: { global: any; }) => state.global;
+
+// Export reducer
 export default globalSlice.reducer;
