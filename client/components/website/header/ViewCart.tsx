@@ -1,11 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import appConfig from "@/appConfig";
-import { cartCalculationFun, CartResult } from "@/lib/utils/cartCalculationFun";
-import { removeCart, selectCart } from "@/redux/features/cart/cartSlice";
+import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
+import {
+  removeCart,
+  selectCart,
+  setCartResult,
+} from "@/redux/features/cart/cartSlice";
 import { Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { TiDeleteOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,31 +22,19 @@ export default function ViewCart() {
     dispatch(removeCart(item));
   };
 
-  const [cartResult, setCartResult] = useState<CartResult>({
-    total: 0,
-    totalQty: 0,
-    totalTax: 0,
-    totalDiscount: 0,
-    subTotal: 0,
-  });
-
   useEffect(() => {
     async function calculateCart() {
       const result = await cartCalculationFun(cart.carts);
-      setCartResult(result);
+      dispatch(setCartResult(result));
     }
 
     calculateCart();
   }, [cart.carts]);
 
-  // let total = 0;
-
   return (
     <div className="absolute w-96 z-10 right-0 mt-3 p-4 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-2 transform transition-all duration-300 ease-in-out">
       <div className="flex flex-col w-96 h-[50vh] gap-6 overflow-y-scroll">
         {(cart.carts || []).map((item: any) => {
-          // total +=
-          //   (+item.unitPrice * +item.qty) - (+item.discountAmount * +item.qty)
           return (
             <div
               key={item.id}
@@ -88,7 +81,8 @@ export default function ViewCart() {
       <div className="flex justify-between py-4">
         <p>Subtotal:</p>
         <p className="font-bold text-2xl">
-          ৳ {(+cartResult.total - +cartResult.totalDiscount).toFixed(2)}
+          ৳{" "}
+          {(+cart.cartResult.total - +cart.cartResult.totalDiscount).toFixed(2)}
         </p>
       </div>
 

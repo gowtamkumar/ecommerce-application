@@ -11,16 +11,19 @@ import { FiShoppingBag } from "react-icons/fi";
 import dynamic from "next/dynamic";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
+import { setOpen } from "@/redux/features/layout/layoutSlice";
 
-const HeaderSearch = dynamic(() => import("./HeaderSearch"), { ssr: false });
+const HeaderSearch = dynamic(() => import("./HeaderSearch"));
 
 export default function HeaderRight() {
-  const [open, setOpen] = useState(false);
-  const [clientCartCount, setClientCartCount] = useState();
-
+  const [clientCartCount, setClientCartCount] = useState(0);
+  // hook
   const cart = useSelector(selectCart);
-
+  const global = useSelector(selectGlobal);
+  const dispatch = useDispatch();
   const session = useSession();
+
   const profileImage = session.data?.user?.image;
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export default function HeaderRight() {
       <CiSearch
         size={22}
         className="font-medium cursor-pointer "
-        onClick={() => setOpen(true)}
+        onClick={() => dispatch(setOpen(true))}
       />
       <Link href="/profile" className="cursor-pointer md:inline hidden">
         <CiHeart size={22} className="font-medium" />
@@ -83,13 +86,13 @@ export default function HeaderRight() {
       <Modal
         // title="Search Something"
         // centered
-        open={open}
-        onOk={() => setOpen(false)}
-        onCancel={() => setOpen(false)}
+        open={global.open}
+        onOk={() => dispatch(setOpen(false))}
+        onCancel={() => dispatch(setOpen(false))}
         width={1000}
         footer={null}
       >
-        <HeaderSearch setOpen={setOpen} />
+        <HeaderSearch />
       </Modal>
     </div>
   );

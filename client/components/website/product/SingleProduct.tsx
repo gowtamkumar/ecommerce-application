@@ -6,10 +6,7 @@ import ProductDetails from "./ProductDetails";
 import { Spin } from "antd";
 import RatingProduct from "./RatingProducts";
 import ProductDescription from "./ProductDescription";
-import {
-  selectGlobal,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { errorNotification } from "@/lib/utils/notification";
 import { getProductBySlug } from "@/lib/apis/public/product";

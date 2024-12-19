@@ -7,8 +7,9 @@ import {
 import { Input } from "antd";
 import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
+import { setOpen } from "@/redux/features/layout/layoutSlice";
 
-export default function HeaderSearch({ setOpen }: any) {
+export default function HeaderSearch() {
   const [serach, setSearch] = useState({} as any);
   // hook
   const dispatch = useDispatch();
@@ -73,7 +74,7 @@ export default function HeaderSearch({ setOpen }: any) {
             queryRouter += `search=${getData.search}&`;
           }
           router.push(`/products?${queryRouter}`);
-          setOpen(false);
+          dispatch(setOpen(false));
           // dispatch(
           //   setProductFilter({
           //     ...global.productFilter,

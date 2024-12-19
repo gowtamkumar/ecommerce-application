@@ -2,7 +2,6 @@
 import appConfig from "@/appConfig";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 export default function HeaderLogo({ settingData }: any) {
   const logo = settingData?.data ? settingData?.data[0] : {};

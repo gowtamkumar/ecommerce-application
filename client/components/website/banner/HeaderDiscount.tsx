@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import appConfig from "@/appConfig";
 
 export default function HeaderDiscount({ discounts }: any) {
+  console.log("🚀 ~ discounts:", discounts)
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -33,7 +34,7 @@ export default function HeaderDiscount({ discounts }: any) {
             <SwiperSlide key={idx}>
               <div className="relative gap-3">
                 <Image
-                  alt={item.image}
+                  alt={item.type}
                   src={
                     item.image
                       ? `${appConfig.apiUrl}/uploads/${item.image}`

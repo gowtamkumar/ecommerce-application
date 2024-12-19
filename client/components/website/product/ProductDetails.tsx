@@ -8,7 +8,11 @@ import { saveWishlist } from "@/lib/apis/wishlist";
 import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
 import AddToCartButton from "@/components/AddToCartButton";
-import { decrementCart, incrementCart } from "@/redux/features/cart/cartSlice";
+import {
+  decrementCart,
+  incrementCart,
+  selectCart,
+} from "@/redux/features/cart/cartSlice";
 import { FaFacebook, FaLinkedin, FaPinterest } from "react-icons/fa";
 import { CiHeart } from "react-icons/ci";
 import { TfiPencil } from "react-icons/tfi";
@@ -18,6 +22,7 @@ import {
   selectProduct,
   setProduct,
 } from "@/redux/features/products/productSlice";
+import { useRouter } from "next/navigation";
 
 interface ProductColor {
   colorId: number;
@@ -38,8 +43,11 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
   const [unAuthorize, setUnAuthorize] = useState(false);
   const dispatch = useDispatch();
   const session = useSession();
+  const route = useRouter();
 
   const products = useSelector(selectProduct);
+  const cart = useSelector(selectCart);
+
   const { product } = products;
 
   const {
@@ -63,14 +71,6 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
 
   const unitPrice = +defaultProduct?.unitPrice;
   let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
-
-  function handleIncrementCart(item: any) {
-    dispatch(incrementCart(item));
-  }
-
-  function handleDecrementCart(item: any) {
-    dispatch(decrementCart(item));
-  }
 
   async function AddToWishlist(productId: number) {
     try {
@@ -105,6 +105,10 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
     }
     return false;
   }
+
+  const findProduct = cart.carts.find(
+    ({ id }: { id: number }) => id === product.id
+  );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 py-5 leading-10">
@@ -211,29 +215,23 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
         <p>In stock {checkStock} Items</p>
 
         {/* product Action section */}
+
         <div className="flex items-center gap-2 mb-4">
-          <div className="flex items-center">
-            <Button
-              onClick={() => handleDecrementCart(product)}
-              disabled={qty <= 1}
-              className="bg-gray-200 hover:bg-gray-300 focus:outline-none"
-            >
-              -
-            </Button>
-            <Button type="default" className="w-12 text-center border-gray-300">
-              {qty}
-            </Button>
-            <Button
-              onClick={() => handleIncrementCart(product)}
-              className="bg-gray-200 hover:bg-gray-300 focus:outline-none"
-              disabled={stockCheckingAndPurchaseLimit(product, checkStock)}
-            >
-              +
-            </Button>
-          </div>
-          <div>
-            <AddToCartButton item={product} />
-          </div>
+          {findProduct ? (
+            <div>
+              <Button
+                className="w-full"
+                onClick={() => route.push("/checkout")}
+                style={{ fontFamily: "unset" }}
+              >
+                Go To Cart
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <AddToCartButton item={product} />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-4">

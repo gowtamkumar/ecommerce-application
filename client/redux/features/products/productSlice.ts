@@ -12,13 +12,13 @@ export interface Product {
 // Define a type for the slice state
 export interface ProductState {
   products: Product[]; // Array of products
-  product: Product | null; // Single product or null
+  product: any; // Single product or null
 }
 
 // Define the initial state using the defined type
 const initialState: ProductState = {
   products: [],
-  product: null,
+  product: {},
 };
 
 export const productSlice = createSlice({

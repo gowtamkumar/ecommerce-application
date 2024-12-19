@@ -1,3 +1,4 @@
+"use client";
 import type { TableColumnsType } from "antd";
 import { Rate, Table } from "antd";
 import { reviewDisLike, reviewLike } from "@/lib/apis/review";

@@ -44,7 +44,7 @@ export default function Discount({ discounts }: any) {
             <SwiperSlide key={idx}>
               <div className="relative gap-3">
                 <Image
-                  alt={item?.image}
+                  alt={item?.type}
                   src={
                     item.image
                       ? `${appConfig.apiUrl}/uploads/${item?.image}`

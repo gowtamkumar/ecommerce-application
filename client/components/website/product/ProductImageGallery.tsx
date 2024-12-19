@@ -9,16 +9,19 @@ import appConfig from "@/appConfig";
 const ProductImageGallery = ({ images }: { images: string[] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
 
+  // Ensure a minimum number of slides for the loop
+  const enhancedImages = images?.length < 3 ? [...images, ...images] : images;
+
   return (
     <div>
       <div>
         <Swiper
-          loop={true}
+          loop={enhancedImages?.length >= 3}
           spaceBetween={10}
           thumbs={{ swiper: thumbsSwiper }}
           modules={[FreeMode, Navigation, Thumbs]}
         >
-          {(images || []).map((item: string, idx: number) => {
+          {(enhancedImages || []).map((item: string, idx: number) => {
             return (
               <SwiperSlide key={idx}>
                 <Image
@@ -41,7 +44,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
       <div>
         <Swiper
           onSwiper={(swiper) => setThumbsSwiper(swiper)}
-          loop={true}
+          loop={enhancedImages?.length >= 3}
           direction="horizontal"
           spaceBetween={10}
           slidesPerView={4}
@@ -54,7 +57,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
             prevEl: ".custom-prev",
           }}
         >
-          {(images || []).map((item: string, idx: number) => {
+          {(enhancedImages || []).map((item: string, idx: number) => {
             return (
               <SwiperSlide key={idx}>
                 <Image
@@ -72,16 +75,13 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
             );
           })}
         </Swiper>
-        {/* Custom Previous Button */}
-        {/* <div className="flex justify-between"> */}
+        {/* Custom Previous and Next Buttons */}
         <button className="custom-prev">
           <CiSquareChevRight size={40} />
         </button>
-        {/* Custom Next Button */}
         <button className="custom-next">
           <CiSquareChevLeft size={40} />
         </button>
-        {/* </div> */}
       </div>
     </div>
   );
