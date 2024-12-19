@@ -236,31 +236,28 @@ const Page: React.FC = () => {
         dataIndex: "purchasePrice",
         key: "purchasePrice",
       },
-      { title: "Price", dataIndex: "price", key: "price" },
-
-      { title: "Discount", dataIndex: "discountA", key: "discountA" },
-      {
-        title: "Tax",
-        key: "tax",
-        dataIndex: "tax",
-      },
+      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
 
       {
-        title: "Unit Price",
-        render: (v: { price: number; tax: number; discountA: number }) => (
-          <span>{(+v.unitPrice + +v.tax - +v.discountA).toFixed(2)}</span>
-        ),
+        title: "Discount Amount",
+        dataIndex: "discountAmount",
+        key: "discountAmount",
       },
+      {
+        title: "Tax Amount",
+        key: "taxAmount",
+        dataIndex: "taxAmount",
+        // render: (v: {
+        //   taxAmount: number;
+        //   qty: number;
+        // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
+      },
+
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
         title: "Total item Amount",
-        render: (v: {
-          price: number;
-          tax: number;
-          discountA: number;
-          qty: number;
-        }) => (
-          <span>{((+v.unitPrice + +v.tax - +v.discountA) * v.qty).toFixed(2)}</span>
+        render: (v: { unitPrice: number; qty: number }) => (
+          <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
         ),
       },
     ];
@@ -316,13 +313,22 @@ const Page: React.FC = () => {
             <div className="col-span-4">dasdf</div>
             <div className="grid gap-y-3 col-span-4">
               <div className="flex justify-between">
-                <h1>
-                  Net Amount: (+tax {value.orderTax}, - Discount{" "}
-                  {value.discountAmount})
-                </h1>
+                <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
                   ${(+value.netAmount).toFixed(2)}
                 </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Discount Amount:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.discountAmount).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Tax Amount:</h1>
+                <h1 className="font-semibold">${value.orderTax}</h1>
               </div>
 
               <div className="flex justify-between">
@@ -341,7 +347,7 @@ const Page: React.FC = () => {
               <div className="flex justify-between">
                 <h1>Discount:</h1>
                 <h1 className="font-semibold">
-                  - ${(+value.discountAmount || 0).toFixed(2)}
+                  - ${(+value.discountAmountmount || 0).toFixed(2)}
                 </h1>
               </div> */}
 
@@ -349,8 +355,7 @@ const Page: React.FC = () => {
                 <h1>Total Amount:</h1>
                 <h1 className="font-semibold">
                   ${" "}
-                  {(
-                    +value.orderTotalAmount + +value.shippingAmount || 0
+                  {( (+value.netAmount + +value.shippingAmount + +value.orderTax) - +value.discountAmount
                   ).toFixed(2)}
                 </h1>
               </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -10,6 +11,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { orderStatusUpdateApi } from "@/lib/apis/orders";
 
 const OrderStatusUpdate = () => {
   const global = useSelector(selectGlobal);
@@ -28,7 +30,8 @@ const OrderStatusUpdate = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    const result = () => orderStatusUpdate(values);
+    console.log("🚀 ~ values:", values)
+    const result = () => orderStatusUpdateApi(values);
 
     const messageData = values.id
       ? "Successfully Updated"
@@ -70,7 +73,7 @@ const OrderStatusUpdate = () => {
       open={
         (global.action.type === ActionType.CREATE ||
           type === ActionType.UPDATE) &&
-        orderStatusUpdate
+          global.action.orderStatusUpdate
       }
       onCancel={handleClose}
       footer={null}

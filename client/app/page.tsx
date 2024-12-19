@@ -41,8 +41,15 @@ export default async function Home() {
         <CategoryCard categories={categories} />
 
         {/* Top Selling Product */}
-        <FeaturedProduct products={products}  />
-
+        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Top Selling Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <FeaturedProduct products={topSellingProduct} />
+        </section>
         {/* product banner */}
         <SellerAds
           banners={(banners || []).filter(
@@ -51,7 +58,15 @@ export default async function Home() {
         />
 
         {/* Featured Products */}
-        <FeaturedProduct products={products} />
+        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <FeaturedProduct products={products} />
+        </section>
 
         {/* More discount */}
         <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">

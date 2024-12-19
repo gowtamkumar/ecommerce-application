@@ -71,7 +71,7 @@ export async function orderReview(data: any) {
   return await handleResponse(res);
 }
 
-export async function orderStatusUpdate(data: any) {
+export async function orderStatusUpdateApi(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(
     `${appConfig.apiUrl}/api/v1/orders/order-status-update/${data.id}`,
