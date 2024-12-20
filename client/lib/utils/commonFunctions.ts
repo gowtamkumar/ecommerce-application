@@ -5,9 +5,9 @@ import {
   setPreviewOpen,
   setPreviewTitle,
 } from "@/redux/features/global/globalSlice";
-import { errorNotification, successNotification } from "./notification";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../authOption";
+import { errorNotification, successNotification } from "./notification";
 
 export const handleAsyncAction = async (
   asyncFn: () => Promise<any>,

@@ -1,38 +1,62 @@
-import { Form, Card, Input, Button, Typography, Select, Space } from "antd";
+"use client";
+import {
+  Form,
+  Card,
+  Input,
+  Button,
+  Typography,
+  Select,
+  Space,
+  notification,
+} from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import { getDashboardMenus, saveMenu } from "@/lib/apis/admin/menu";
+import {
+  getDashboardMenus,
+  getMenus,
+  saveMenu,
+  updateMenu,
+} from "@/lib/apis/admin/menu";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const Index = () => {
-  const [menuData, setMenuData] = useState({});
+  const [menus, setMenus] = useState([]);
   const [newMenu, setNewMenu] = useState("");
+  const [selectData, setSelectData] = useState({});
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
-  useEffect(()=> {
-    (async()=> {
-      const menu = await getDashboardMenus()
-      console.log("🚀 ~ menu dsfasdf:", menu)
+  useEffect(() => {
+    (async () => {
+      const menu = await getMenus();
+      setMenus(menu.data);
+    })();
+  }, []);
 
-    })()
-  }, [])
+  const handelSave = async (value: any) => {
+    const result = () => updateMenu(value);
 
-  const handelMenu = async (value: any) => {
-    const menu = await saveMenu(value.items[0]);
-    console.log("🚀 ~ menu:", menu);
+    const messageData = "Successfully Save";
+
+    await handleAsyncAction(result, messageData, dispatch);
   };
 
   const createMenu = async () => {
-    dispatch(setLoading({ menuName: true }));
+    const result = () => saveMenu({ name: newMenu });
 
-    const menu = await saveMenu({ name: newMenu });
-    console.log("🚀 ~ menu:", menu);
+    const messageData = "Successfully Created";
 
-    form.setFieldsValue({ name: menu.data.name });
+    const handleRes = await handleAsyncAction(result, messageData, dispatch);
+    form.setFieldsValue({ name: handleRes.data.name, items: [{}] });
+    setNewMenu("");
+  };
 
+  const selectMenu = async () => {
+    dispatch(setLoading({ selectMenu: true }));
+    form.setFieldsValue(selectData);
     setTimeout(() => {
       dispatch(setLoading({}));
     }, 1000);
@@ -114,29 +138,58 @@ const Index = () => {
         <div>
           <Space.Compact>
             <Select
-              defaultValue="lucy"
               style={{ width: 170 }}
-              // onChange={handleChange}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-              ]}
-            />
+              showSearch
+              allowClear
+              placeholder="Select "
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children as any)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+              onChange={(value) => {
+                if (value) {
+                  const singlseMenu: any = menus.find(
+                    (item: { id: number }) => item.id === value
+                  );
 
-            <Button type="primary">Select</Button>
+                  (singlseMenu.items = singlseMenu.items
+                    ? singlseMenu.items
+                    : [{}]),
+                    setSelectData(singlseMenu);
+                } else {
+                  form.resetFields();
+                }
+              }}
+            >
+              {menus.map((item: { name: string; id: number }) => (
+                <Select.Option key={item.id} value={item.id}>
+                  {`${item.name}`}
+                </Select.Option>
+              ))}
+            </Select>
+
+            <Button
+              type="primary"
+              loading={global.loading.selectMenu}
+              onClick={selectMenu}
+            >
+              Select
+            </Button>
           </Space.Compact>
         </div>
         <div className="flex">
           <Space.Compact>
             <Input
               placeholder="Enter Name"
+              value={newMenu}
               onChange={(v) => setNewMenu(v.target.value)}
             />
             <Button
-              disabled={!newMenu}
+              disabled={!newMenu || global.loading.save}
               onClick={createMenu}
-              loading={global.loading.menuName}
+              loading={global.loading.save}
             >
               Create Menu
             </Button>
@@ -149,12 +202,16 @@ const Index = () => {
         // wrapperCol={{ span: 18 }}
         form={form}
         name="dynamic_form_complex"
-        onFinish={handelMenu}
+        onFinish={handelSave}
         // style={{ maxWidth: 900 }}
         autoComplete="off"
         initialValues={{ items: [{}] }}
       >
-        <Card size="small" title={`Main menu`}>
+        <Card size="small" title={`${form.getFieldValue("name") || ""}`}>
+          <Form.Item hidden name="id">
+            <Input />
+          </Form.Item>
+
           <Form.Item
             label="Name"
             name="name"

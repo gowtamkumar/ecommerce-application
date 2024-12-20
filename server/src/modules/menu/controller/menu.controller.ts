@@ -42,6 +42,7 @@ export const getDashboardMemus = asyncHandler(
       select: {
         id: true,
         name: true,
+        default: true
       },
     });
 
@@ -124,6 +125,8 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
     ...req.body,
   });
 
+  console.log("req.body", req.body);
+  
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
       path: issue.path.join("."),

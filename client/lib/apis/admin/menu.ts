@@ -12,23 +12,26 @@ export async function saveMenu(data: any) {
     body: JSON.stringify(data),
   });
 
-  return handleResponse(res);
+  return await handleResponse(res);
 }
 
 export async function getMenus() {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus`);
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus`, {
+    headers,
+    cache: "no-cache",
+  });
 
-  return handleResponse(res);
+  return await handleResponse(res);
 }
 
 export async function getDashboardMenus() {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/dashboard`);
-
-  return handleResponse(res);
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/dashboard`, {
+    headers,
+  });
+  return await handleResponse(res);
 }
-
-
-
 
 export async function updateMenu(data: any) {
   const headers = await getAuthHeaders();
@@ -39,7 +42,7 @@ export async function updateMenu(data: any) {
     headers,
     body: JSON.stringify(data),
   });
-  return handleResponse(res);
+  return await handleResponse(res);
 }
 
 export async function deleteMenu(id: string) {
@@ -51,5 +54,5 @@ export async function deleteMenu(id: string) {
     headers,
   });
 
-  return handleResponse(res);
+  return await handleResponse(res);
 }
