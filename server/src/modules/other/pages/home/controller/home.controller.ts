@@ -48,6 +48,8 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
             oI.total_amount AS "totalAmount",
             products.name,
             products.images,
+            products.thumbnail_image AS "thumbnailImage",
+            products.hover_image AS "hoverImage",
             products.discount_id as "discountId",
             products.alert_qty AS "alertQty",
             
@@ -99,7 +101,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
             reviews ON reviews.product_id = products.id
         GROUP BY
             oI.product_id, oI.total_amount, products.name,
-             products.images, products.alert_qty, taxs.name,
+             products.images, products.hover_image,products.thumbnail_image, products.alert_qty, taxs.name,
               taxs.value, d.value, d.discount_type,
               products.discount_id
         ORDER BY
