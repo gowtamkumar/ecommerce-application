@@ -25,15 +25,30 @@ export class MenuEntity {
 
   @Column({
     type: "boolean",
-    default: true,
+    name: "footer_menu",
+    default: false,
   })
-  active!: boolean;
+  footerMenu!: boolean;
+
+  @Column({
+    type: "boolean",
+    name: "top_bar_menu",
+    default: false,
+  })
+  topBarMenu!: boolean;
+
+  @Column({
+    type: "boolean",
+    name: "main_menu",
+    default: false,
+  })
+  mainMenu!: boolean;
 
   @Column({
     type: "boolean",
     default: true,
   })
-  default!: boolean;
+  active!: boolean;
 
   @Column({ name: "user_id" })
   userId!: number;

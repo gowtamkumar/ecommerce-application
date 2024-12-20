@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.route("/dashboard").get(getDashboardMemus)
+router.route("/dashboard").get(AuthGuard, getDashboardMemus)
 router.route("/").get(getMemus).post(AuthGuard, createMemu);
 
 router

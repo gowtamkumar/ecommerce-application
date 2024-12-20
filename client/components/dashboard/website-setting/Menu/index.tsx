@@ -8,6 +8,7 @@ import {
   Select,
   Space,
   notification,
+  Checkbox,
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import {
@@ -31,7 +32,7 @@ const Index = () => {
 
   useEffect(() => {
     (async () => {
-      const menu = await getMenus();
+      const menu = await getDashboardMenus();
       setMenus(menu.data);
     })();
   }, []);
@@ -50,8 +51,14 @@ const Index = () => {
     const messageData = "Successfully Created";
 
     const handleRes = await handleAsyncAction(result, messageData, dispatch);
-    form.setFieldsValue({ name: handleRes.data.name, items: [{}] });
-    setNewMenu("");
+
+    if (handleRes.success) {
+      form.setFieldsValue({
+        ...handleRes.data,
+        items: [{}],
+      });
+      setNewMenu("");
+    }
   };
 
   const selectMenu = async () => {
@@ -242,18 +249,68 @@ const Index = () => {
             )}
           </Form.List>
 
-          <Button size="small" color="primary" htmlType="submit">
+          <div className="flex justify-between items-center">
+            <div>
+              <Form.Item
+                // labelCol={{ span: 8 }}
+                // wrapperCol={{ span: 16 }}
+                name="topBarMenu"
+                valuePropName="checked"
+                label={null}
+                className="m-0 p-0"
+              >
+                <Checkbox>Top Bar Menu</Checkbox>
+              </Form.Item>
+
+              <Form.Item
+                name="mainMenu"
+                valuePropName="checked"
+                label={null}
+                className="m-0 p-0"
+              >
+                <Checkbox>Main Menu</Checkbox>
+              </Form.Item>
+
+              <Form.Item
+                name="footerMenu"
+                valuePropName="checked"
+                label={null}
+                className="m-0 p-0"
+              >
+                <Checkbox>Footer Menu</Checkbox>
+              </Form.Item>
+            </div>
+
+            <div>
+              <Form.Item
+                name="active"
+                valuePropName="checked"
+                label={null}
+                className="m-0 p-0"
+              >
+                <Checkbox>Active</Checkbox>
+              </Form.Item>
+            </div>
+          </div>
+
+          <Button
+            size="small"
+            color="primary"
+            loading={global.loading.save}
+            disabled={global.loading.save}
+            htmlType="submit"
+          >
             Save
           </Button>
         </Card>
 
-        <Form.Item shouldUpdate>
+        {/* <Form.Item shouldUpdate>
           {() => (
             <Typography>
               <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
             </Typography>
           )}
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </div>
   );

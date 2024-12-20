@@ -29,6 +29,7 @@ export async function getDashboardMenus() {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/dashboard`, {
     headers,
+    cache: "no-cache",
   });
   return await handleResponse(res);
 }

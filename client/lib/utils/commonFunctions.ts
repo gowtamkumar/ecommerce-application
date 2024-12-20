@@ -78,12 +78,12 @@ export async function getAuthHeaders() {
 
 // Function to handle API responses
 export async function handleResponse(res: Response) {
-  if (!res.ok) {
-    const errorData = await res.json();
-    console.log("🚀 ~ errorData:", errorData)
-    // return errorData;
-    throw new Error(errorData?.message || "An unexpected error occurred");
-  }
+  // if (!res.ok) {
+  //   const errorData = await res.json();
+  //   console.log("🚀 ~ errorData:", errorData)
+  //   // return errorData;
+  //   throw new Error(errorData?.message || "An unexpected error occurred");
+  // }
 
   return res.json();
 }

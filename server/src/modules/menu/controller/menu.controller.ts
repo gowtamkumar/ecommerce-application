@@ -38,13 +38,7 @@ export const getDashboardMemus = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(MenuEntity);
 
-    const result = await repository.find({
-      select: {
-        id: true,
-        name: true,
-        default: true
-      },
-    });
+    const result = await repository.find();
 
     return res.status(200).json({
       success: true,
