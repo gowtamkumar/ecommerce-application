@@ -2,6 +2,8 @@
   "compilerOptions": {
     "emitDecoratorMetadata": true, //for typeorm
     "experimentalDecorators": true, //for typeorm
+    "target": "ESNext",
+    "forceConsistentCasingInFileNames": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -28,7 +30,7 @@
         "./*"
       ]
     },
-    "target": "ES2017"
+    // "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
