@@ -11,8 +11,6 @@ const AddProduct = dynamic(
   () => import("@/components/dashboard/product/AddProduct")
 );
 
-
-
 export default async function Product() {
   const [
     resBrand,

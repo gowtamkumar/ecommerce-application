@@ -15,8 +15,7 @@ import {
 import "swiper/css/free-mode";
 import "swiper/css/thumbs";
 import Image from "next/image";
-import { FaCaretRight } from "react-icons/fa6";
-import { FaCaretLeft } from "react-icons/fa";
+import { CiCircleChevLeft, CiCircleChevRight } from "react-icons/ci";
 
 export default function Slider({ banners }: any) {
   return (
@@ -35,6 +34,7 @@ export default function Slider({ banners }: any) {
           slidesPerView={1}
           pagination={{ clickable: true }}
           autoplay={true}
+          loop
           speed={1000}
           navigation={{
             nextEl: ".hero-next",
@@ -54,7 +54,7 @@ export default function Slider({ banners }: any) {
               url: string;
             }) => (
               <SwiperSlide key={image}>
-                <div className="md:h-[57vh] md:p-0 p-5 flex items-center">
+                <div className="md:h-[57vh] md:w-[60vw] mx-auto md:p-0 p-5 flex items-center">
                   <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
                     <div className="md:order-1 order-2 text-center md:text-start">
                       <h1 className="md:text-4xl text-2xl font-bold">
@@ -89,13 +89,13 @@ export default function Slider({ banners }: any) {
           )}
         </Swiper>
 
-        <button className="hero-prev absolute z-10 top-1/2 -left-0 transform -translate-y-1/2">
-          <FaCaretLeft size={40}/>
+        <button className="hero-prev absolute z-[5] top-1/2 -left-0 transform -translate-y-1/2">
+          <CiCircleChevLeft size={30} />
         </button>
 
         {/* Custom Next Button */}
-        <button className="hero-next absolute z-10 top-1/2 -right-0 transform -translate-y-1/2">
-          <FaCaretRight size={40}/>
+        <button className="hero-next absolute z-[5] top-1/2 -right-0 transform -translate-y-1/2">
+          <CiCircleChevRight size={30} />
         </button>
       </div>
     </div>

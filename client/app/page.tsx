@@ -40,8 +40,20 @@ export default async function Home() {
         {/* all category show */}
         <CategoryCard categories={categories} />
 
-        {/* Top Selling Product */}
+        {/* Featured Products */}
         <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <FeaturedProduct products={products} />
+        </section>
+
+
+        {/* Top Selling Product */}
+        {/* <section className="md:w-8/12 mx-auto md:py-5 p-3">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold pb-8">Top Selling Products</h2>
             <Link href={"/products"} className="hover:underline">
@@ -49,7 +61,7 @@ export default async function Home() {
             </Link>
           </div>
           <FeaturedProduct products={topSellingProduct} />
-        </section>
+        </section> */}
         {/* product banner */}
         <SellerAds
           banners={(banners || []).filter(

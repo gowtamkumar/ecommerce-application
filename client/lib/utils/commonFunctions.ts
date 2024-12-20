@@ -36,7 +36,7 @@ export const handleAsyncAction = async (
     return Promise.reject(error); // Ensures error propagation
   } finally {
     console.log("Finally block executed");
-    dispatch(setLoading({ save: false }));
+    dispatch(setLoading({}));
   }
 };
 

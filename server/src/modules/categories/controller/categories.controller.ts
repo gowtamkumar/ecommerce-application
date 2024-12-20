@@ -27,8 +27,6 @@ export const getPublicCategories = asyncHandler(
   }
 );
 
-
-
 // @desc Get all for antd Categorys
 // @route GET /api/v1/categories/antd
 // @access Public
@@ -90,7 +88,6 @@ export const getCategories = asyncHandler(
   }
 );
 
-
 // @desc Get a single Category
 // @route GET /api/v1/categories/:id
 // @access Public
@@ -136,7 +133,6 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
     userId: req.id,
   });
 
-
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
       path: issue.path.join("."),
@@ -148,7 +144,7 @@ export const createCategory = asyncHandler(async (req: any, res: Response) => {
       issues: formattedErrors,
     });
   }
-  
+
   const { name, image, userId, parentId, description } = validation.data;
   const categoriesRepository = connection.getRepository(CategoriesEntity);
 
@@ -204,7 +200,8 @@ export const updateCategory = asyncHandler(
     logger.info(`Service: updateCategory ${req.method} ${req.url}`);
     const connection = await getDBConnection();
     const { id } = req.params;
-    const { parentId, name, image, slug, description } = req.body;
+    const { parentId, name, image, slug, description, active } = req.body;
+    console.log("🚀 ~ req.body:", req.body);
 
     const categoriesRepository = connection.getRepository(CategoriesEntity);
 
@@ -239,10 +236,11 @@ export const updateCategory = asyncHandler(
         description,
         level: parentCategory.level,
         parent: parentCategory,
+        active,
       });
     } else {
       // Merge the new data without changing the parent
-      Object.assign(category, { name, image, slug, description });
+      Object.assign(category, { name, image, slug, description, active });
     }
 
     // Save the updated category

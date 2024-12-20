@@ -71,6 +71,9 @@ const AddProduct = ({
   const params = useParams<{ new: string }>();
   const route = useRouter();
 
+  console.log("global.loading.", global.loading);
+  
+
   useEffect(() => {
     // Call the async function
     fetchData();
