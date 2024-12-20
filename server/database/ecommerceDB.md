@@ -373,3 +373,15 @@ content TEXT NOT NULL,
 status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
 created_at,
 updated_at,
+
+
+
+## menu (working)
+
+id,
+user_id,
+item:any,
+status boolean,
+default boolean,
+created_at,
+updated_at,

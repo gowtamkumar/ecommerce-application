@@ -3,6 +3,7 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 import {
   createMemu,
   deleteMemu,
+  getDashboardMemus,
   getMemu,
   getMemus,
   updateMemu,
@@ -10,6 +11,7 @@ import {
 
 const router = express.Router();
 
+router.route("/dashboard").get(getDashboardMemus)
 router.route("/").get(getMemus).post(AuthGuard, createMemu);
 
 router

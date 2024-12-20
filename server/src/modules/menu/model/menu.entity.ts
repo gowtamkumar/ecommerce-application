@@ -24,11 +24,16 @@ export class MenuEntity {
   // image!: string;
 
   @Column({
-    type: "enum",
-    enum: MenuStatus,
-    default: MenuStatus.Inactive,
+    type: "boolean",
+    default: true,
   })
-  status!: MenuStatus;
+  active!: boolean;
+
+  @Column({
+    type: "boolean",
+    default: true,
+  })
+  default!: boolean;
 
   @Column({ name: "user_id" })
   userId!: number;

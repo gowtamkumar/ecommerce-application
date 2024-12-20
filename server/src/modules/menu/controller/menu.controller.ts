@@ -28,6 +28,31 @@ export const getMemus = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// @desc Get all memus
+// @route GET /api/v1/memus
+// @access Public
+export const getDashboardMemus = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: getDashboardMemus ${req.method} ${req.url}`);
+
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(MenuEntity);
+
+    const result = await repository.find({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Get all Dashboard memus",
+      data: result,
+    });
+  }
+);
+
 // @desc Get a single Memu
 // @route GET /api/v1/memus/:id
 // @access Public

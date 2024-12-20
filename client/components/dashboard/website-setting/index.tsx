@@ -77,6 +77,7 @@ export default function Index() {
     dispatch(setLoading({ loading: true }));
     try {
       const setting = await getSettings();
+      
 
       const newData = setting.data?.length ? setting.data[0] : {};
       if (newData?.image) {

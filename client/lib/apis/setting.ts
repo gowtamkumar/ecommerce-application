@@ -31,6 +31,7 @@ export async function saveSetting(data: Setting) {
 
 // Function to get all settings
 export async function getSettings() {
+  
   const res = await fetch(`${appConfig.apiUrl}/api/v1/settings`, {
     cache: "no-cache",
   });
