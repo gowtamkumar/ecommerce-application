@@ -78,6 +78,9 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
         productId: productId,
       });
 
+      console.log("res", res);
+      
+
       // if (res.status === 500) {
       //   dispatch(setResponse({ type: "error", message: res.message }));
       // } else {

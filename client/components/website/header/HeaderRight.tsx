@@ -1,6 +1,6 @@
 "use client";
 import { userProfileRoute } from "@/NavBarRoute";
-import { Avatar, Badge, Dropdown, Modal } from "antd";
+import { Avatar, Badge, Drawer, Dropdown, Modal } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -84,8 +84,6 @@ export default function HeaderRight() {
       )}
 
       <Modal
-        // title="Search Something"
-        // centered
         open={global.open}
         onOk={() => dispatch(setOpen(false))}
         onCancel={() => dispatch(setOpen(false))}

@@ -6,14 +6,17 @@ export const updateUserValidationSchema = z.object({
     invalid_type_error: "Name must be a string",
   }),
   image: z.string().optional(),
+  phone: z.string().optional(),
   username: z
     .string()
-    .min(5, { message: "Must be 5 or more characters long" }).optional(),
+    .min(5, { message: "Must be 5 or more characters long" })
+    .optional(),
   email: z
     .string({
       required_error: "email is required",
     })
     .email(),
+  gender: z.enum(["Female", "Male"]).optional(),
   role: z.enum(["Admin", "User"]).optional(),
   dob: z.string().optional().nullable(),
   type: z.enum(["Customer", "Vendor", "Delivery Man", "Admin"]).optional(),

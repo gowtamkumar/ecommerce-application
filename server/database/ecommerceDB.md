@@ -134,6 +134,7 @@ value,
 start_date,
 expiry_date
 min_order_amount,
+image
 max_user,
 usageCount,
 status:(Active/Inactive)

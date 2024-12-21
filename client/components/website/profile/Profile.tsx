@@ -51,7 +51,6 @@ export default function Profile() {
       dispatch(setLoading({ loading: false }));
     })();
   }, [dispatch, global.action]);
-  
 
   return (
     <Tabs
@@ -79,7 +78,7 @@ export default function Profile() {
           icon: <AndroidOutlined />,
         },
         {
-          label: `Wishlist`,
+          label: `Wishlist`, /// need to work wishlist
           key: "wishlist",
           children: <MyWishlist wishlists={user?.wishlists} />,
           icon: <AndroidOutlined />,

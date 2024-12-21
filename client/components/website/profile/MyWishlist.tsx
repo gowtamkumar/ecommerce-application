@@ -52,8 +52,10 @@ export default function MyWishlist({ wishlists }: any) {
 
   return (
     <div className="grid grid-cols-4 gap-4">
+
       {(wishlists || []).map((item: any, idx: any) => {
-        let price = +item.product.productVariants[0]?.unitPrice;
+
+        let price = +22;
         let discount = item.product?.discount;
 
         let taxAmount = (+price * (+item?.product?.tax?.value || 0)) / 100;

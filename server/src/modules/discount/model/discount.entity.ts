@@ -55,8 +55,8 @@ export class DiscountEntity {
   @Column({ name: "usage_count", nullable: true })
   usageCount!: number;
 
-  // @Column({ name: "is_single_use", type: "boolean", default: false })
-  // isSingleUse!: boolean;
+  @Column({ nullable: true })
+  image!: string;
 
   @Column({
     type: "boolean",

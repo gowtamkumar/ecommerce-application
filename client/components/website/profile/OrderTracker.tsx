@@ -56,42 +56,35 @@ export default function OrderTracker({ orders }: any) {
     },
     {
       title: "Color",
-      render: (v: any) => <span>{v.color?.name}</span>,
+      render: (v: any) => <span>Need to Get in product variant</span>,
     },
     {
       title: "Size",
-      render: (v: any) => <span>{v.size?.name}</span>,
+      render: (v: any) => <span>Need to Get in product variant</span>,
     },
-    // {
-    //   title: "Purchase Price",
-    //   dataIndex: "purchasePrice",
-    //   key: "purchasePrice",
-    // },
-    // { title: "Price", dataIndex: "price", key: "price" },
 
-    // { title: "Discount", dataIndex: "discountA", key: "discountA" },
-    // {
-    //   title: "Tax",
-    //   key: "tax",
-    //   dataIndex: "tax",
-    // },
+    { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
 
     {
-      title: "Price",
-      render: (v: { price: number; tax: number; discountA: number }) => (
-        <span>{(+v.unitPrice + +v.tax - +v.discountA).toFixed(2)}</span>
-      ),
+      title: "Discount Amount",
+      dataIndex: "discountAmount",
+      key: "discountAmount",
     },
+    {
+      title: "Tax Amount",
+      key: "taxAmount",
+      dataIndex: "taxAmount",
+      // render: (v: {
+      //   taxAmount: number;
+      //   qty: number;
+      // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
+    },
+
     { title: "Qty", dataIndex: "qty", key: "qty" },
     {
-      title: "Item Amount",
-      render: (v: {
-        price: number;
-        tax: number;
-        discountA: number;
-        qty: number;
-      }) => (
-        <span>{((+v.unitPrice + +v.tax - +v.discountA) * v.qty).toFixed(2)}</span>
+      title: "Total item Amount",
+      render: (v: { unitPrice: number; qty: number }) => (
+        <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
       ),
     },
   ];
@@ -99,7 +92,6 @@ export default function OrderTracker({ orders }: any) {
   return (
     <>
       <Form
-        // {...layout}
         form={form}
         onFinish={handleOrderTracking}
         scrollToFirstError={true}
@@ -207,21 +199,26 @@ export default function OrderTracker({ orders }: any) {
                 bordered
               />
             </div>
-            <div className="grid grid-cols-6 mt-5">
-              <div className="col-span-4"></div>
-              <div className="grid gap-y-3 col-span-2">
+            <div className="grid grid-cols-8 mt-5">
+              <div className="col-span-4">dasdf</div>
+              <div className="grid gap-y-3 col-span-4">
                 <div className="flex justify-between">
-                  <h1>Total Items:</h1>
+                  <h1>Net Amount:</h1>
                   <h1 className="font-semibold">
-                    {order.orderItems.length} Product(s)
+                    ${(+order.netAmount).toFixed(2)}
                   </h1>
                 </div>
 
                 <div className="flex justify-between">
-                  <h1>Sub Total:</h1>
+                  <h1>Discount Amount:</h1>
                   <h1 className="font-semibold">
-                    ${(+order.netAmount).toFixed(2)}
+                    ${(+order.discountAmount).toFixed(2)}
                   </h1>
+                </div>
+
+                <div className="flex justify-between">
+                  <h1>Tax Amount:</h1>
+                  <h1 className="font-semibold">${order.orderTax}</h1>
                 </div>
 
                 <div className="flex justify-between">
@@ -230,13 +227,29 @@ export default function OrderTracker({ orders }: any) {
                     + ${(+order.shippingAmount || 0).toFixed(2)}
                   </h1>
                 </div>
+                {/* <div className="flex justify-between">
+                <h1>Total Order Tax</h1>
+                <h1 className="font-semibold">
+                  + ${(+order.orderTax || 0).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Discount:</h1>
+                <h1 className="font-semibold">
+                  - ${(+order.discountAmountmount || 0).toFixed(2)}
+                </h1>
+              </div> */}
 
                 <div className="flex justify-between border-t-2">
-                  <h1>Payable Amount:</h1>
+                  <h1>Total Amount:</h1>
                   <h1 className="font-semibold">
                     ${" "}
                     {(
-                      +order.orderTotalAmount + +order.shippingAmount || 0
+                      +order.netAmount +
+                      +order.shippingAmount +
+                      +order.orderTax -
+                      +order.discountAmount
                     ).toFixed(2)}
                   </h1>
                 </div>

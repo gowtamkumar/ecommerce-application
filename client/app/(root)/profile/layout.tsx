@@ -25,7 +25,7 @@ export default async function ProfileLayout({
   return (
     <main>
       <Header />
-      <div className="w-8/12 mx-auto">{children}</div>
+      <div className="container mx-auto">{children}</div>
       <WebFooter />
     </main>
   );

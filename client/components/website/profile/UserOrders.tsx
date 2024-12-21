@@ -23,7 +23,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const UserOrders = ({ orders }: any) => {
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -70,10 +70,9 @@ const UserOrders = ({ orders }: any) => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -156,24 +155,36 @@ const UserOrders = ({ orders }: any) => {
         render: (v: { name: string }) => <span>{v.name}</span>,
       },
       {
-        title: "Price",
-        key: "price",
-        render: (v: { price: number; tax: number; discountA: number }) => (
-          <span>{(+v.unitPrice + +v.tax - +v.discountA).toFixed(2)}</span>
-        ),
+        title: "Color",
+        render: (v: any) => <span>Need to Get in product variant</span>,
+      },
+      {
+        title: "Size",
+        render: (v: any) => <span>Need to Get in product variant</span>,
+      },
+
+      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
+
+      {
+        title: "Discount Amount",
+        dataIndex: "discountAmount",
+        key: "discountAmount",
+      },
+      {
+        title: "Tax Amount",
+        key: "taxAmount",
+        dataIndex: "taxAmount",
+        // render: (v: {
+        //   taxAmount: number;
+        //   qty: number;
+        // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
       },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
         title: "Total item Amount",
-        key: "total_item_amount",
-        render: (v: {
-          price: number;
-          tax: number;
-          discountA: number;
-          qty: number;
-        }) => (
-          <span>{((+v.unitPrice + +v.tax - +v.discountA) * v.qty).toFixed(2)}</span>
+        render: (v: { unitPrice: number; qty: number }) => (
+          <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
         ),
       },
     ];
@@ -181,7 +192,18 @@ const UserOrders = ({ orders }: any) => {
     return (
       <div className="grid grid-cols-4 p-2">
         <div className="col-span-1 p-2">
-          <h1 className="font-bold">Order No:{value.trackingNo}</h1>
+          <h1>
+            <span className="font-bold">Order No: </span>
+            <code>{value.trackingNo}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Delivery Man: </span>
+            <code>{value?.deliveryMan?.name}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Shipping Address: </span>
+            <code> {value.shippingAddress?.address}</code>
+          </h1>
           <Divider dashed />
           <Timeline
             items={(value?.orderTrackings || []).map(
@@ -214,14 +236,26 @@ const UserOrders = ({ orders }: any) => {
               bordered
             />
           </div>
-          <div className="grid grid-cols-3 mt-5">
-            <div className="col-span-2">dasdf</div>
-            <div className="grid gap-y-3 col-span-1">
+          <div className="grid grid-cols-8 mt-5">
+            <div className="col-span-4">dasdf</div>
+            <div className="grid gap-y-3 col-span-4">
               <div className="flex justify-between">
-                <h1>Net Amount: </h1>
+                <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
                   ${(+value.netAmount).toFixed(2)}
                 </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Discount Amount:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.discountAmount).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Tax Amount:</h1>
+                <h1 className="font-semibold">${value.orderTax}</h1>
               </div>
 
               <div className="flex justify-between">
@@ -240,7 +274,7 @@ const UserOrders = ({ orders }: any) => {
               <div className="flex justify-between">
                 <h1>Discount:</h1>
                 <h1 className="font-semibold">
-                  - ${(+value.discountAmount || 0).toFixed(2)}
+                  - ${(+value.discountAmountmount || 0).toFixed(2)}
                 </h1>
               </div> */}
 
@@ -249,7 +283,10 @@ const UserOrders = ({ orders }: any) => {
                 <h1 className="font-semibold">
                   ${" "}
                   {(
-                    +value.orderTotalAmount + +value.shippingAmount || 0
+                    +value.netAmount +
+                    +value.shippingAmount +
+                    +value.orderTax -
+                    +value.discountAmount
                   ).toFixed(2)}
                 </h1>
               </div>
@@ -259,7 +296,7 @@ const UserOrders = ({ orders }: any) => {
       </div>
     );
   };
-
+  
   const columns: TableColumnsType<DataType> = [
     {
       ...getColumnSearchProps("trackingNo"),
