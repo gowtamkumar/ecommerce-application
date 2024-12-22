@@ -1,16 +1,33 @@
 "use client";
-import React, { useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
+  setAction,
+  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
+import {
+  FormOutlined,
+  RestOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import { ActionType } from "@/constants/constants";
+import {
+  deleteShippingAddress,
+  getShippingAddress,
+} from "@/lib/apis/shipping-address";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
+import AddShippingAddress from "./AddShippingAddress";
 
 interface DataType {
   key: string;
@@ -30,32 +47,24 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const MyShippingAddress = ({ shippingAddress }: any) => {
+const ShippingAddressList = ({ shippingAddress }: any) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     dispatch(setLoading({ loading: true }));
-  //     const res = await getShippingAddress();
-  //     setAddress(res?.data);
-  //     dispatch(setLoading({ loading: false }));
-  //   })();
-  // }, [global.action]);
-
-  // const handleDelete = async (id: string) => {
-  //   try {
-  //     dispatch(setLoading({ delete: true }));
-  //     await deleteShippingAddress(id);
-  //     setTimeout(async () => {
-  //       dispatch(setLoading({ delete: false }));
-  //       dispatch(setAction({}));
-  //     }, 500);
-  //   } catch (error: any) {
-  //     toast.error(error);
-  //   }
-  // };
+  const handleDelete = async (id: string) => {
+    dispatch(setLoading({ save: true }));
+    try {
+      await deleteShippingAddress(id);
+      successNotification({ message: "Successfully deleted" });
+      // fetchData();
+    } catch (error: any) {
+      errorNotification({ message: error.message });
+    } finally {
+      dispatch(setLoading({ save: false }));
+      dispatch(setAction({}));
+    }
+  };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -84,6 +93,7 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
+          ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
@@ -173,13 +183,6 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
     },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name"),
-    },
 
     {
       title: "Phone No",
@@ -193,8 +196,6 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
       title: "E-mail",
       dataIndex: "email",
       key: "email",
-      // width: "15%",
-      // responsive: ['md'],
       sorter: (a, b) => a.email.length - b.email.length,
       ...getColumnSearchProps("email"),
     },
@@ -240,15 +241,6 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
       sorter: (a, b) => a.address.length - b.address.length,
     },
 
-    // {
-    //   ...getColumnSearchProps("user"),
-    //   title: "User",
-    //   dataIndex: "user",
-    //   key: "user",
-    //   sorter: (a, b) => a.user - b.user,
-    //   render: (value) => <span>{value.name}</span>,
-    // },
-
     {
       title: "Status",
       key: "status",
@@ -261,65 +253,87 @@ const MyShippingAddress = ({ shippingAddress }: any) => {
       ),
     },
 
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   sortDirections: ["descend", "ascend"],
-    //   className: "text-end",
-    //   width: "12%",
-    //   render: (value) => (
-    //     <div className="gap-2">
-    //       <Button
-    //         size="small"
-    //         icon={<FormOutlined />}
-    //         title="Edit"
-    //         className="me-1"
-    //         onClick={() =>
-    //           dispatch(
-    //             setAction({
-    //               type: ActionType.UPDATE,
-    //               payload: value,
-    //             })
-    //           )
-    //         }
-    //       />
-    //       <Popconfirm
-    //         title={
-    //           <span>
-    //             Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-    //             this Address?
-    //           </span>
-    //         }
-    //         onConfirm={() => handleDelete(value.id)}
-    //         placement="left"
-    //         okText="Yes"
-    //         okType="danger"
-    //         cancelText="No"
-    //         icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-    //       >
-    //         <Button
-    //           size="small"
-    //           danger
-    //           loading={global.loading?.delete}
-    //           icon={<RestOutlined />}
-    //         />
-    //       </Popconfirm>
-    //     </div>
-    //   ),
-    // },
+    {
+      title: "Action",
+      key: "action",
+      sortDirections: ["descend", "ascend"],
+      className: "text-end",
+      width: "12%",
+      render: (value) => (
+        <div className="gap-2">
+          <Button
+            size="small"
+            icon={<FormOutlined />}
+            title="Edit"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  userShippingAddress: true,
+                  type: ActionType.UPDATE,
+                  payload: value,
+                })
+              )
+            }
+          />
+          <Popconfirm
+            title={
+              <span>
+                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                this Address?
+              </span>
+            }
+            onConfirm={() => handleDelete(value.id)}
+            placement="left"
+            okText="Yes"
+            okType="danger"
+            cancelText="No"
+            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+          >
+            <Button
+              size="small"
+              danger
+              loading={global.loading?.delete}
+              icon={<RestOutlined />}
+            />
+          </Popconfirm>
+        </div>
+      ),
+    },
   ];
 
   return (
-    <Table
-      scroll={{ x: "auto" }}
-      loading={global.loading.loading}
-      columns={columns}
-      dataSource={shippingAddress}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
-    />
+    <div>
+      <div className="flex justify-between my-5">
+        <h4>Address List</h4>
+        <Button
+          size="small"
+          className="capitalize"
+          onClick={() =>
+            dispatch(
+              setAction({
+                userShippingAddress: true,
+                type: ActionType.CREATE,
+              })
+            )
+          }
+        >
+          <PlusOutlined className="mx-1" /> New Address
+        </Button>
+      </div>
+
+      <Table
+        scroll={{ x: "auto" }}
+        loading={global.loading.loading}
+        columns={columns}
+        dataSource={shippingAddress}
+        pagination={{ pageSize: 10 }}
+        bordered
+        size="small"
+      />
+      <AddShippingAddress />
+    </div>
   );
 };
 
-export default MyShippingAddress;
+export default ShippingAddressList;

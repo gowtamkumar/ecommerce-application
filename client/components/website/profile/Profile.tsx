@@ -29,7 +29,7 @@ const MyWishlist = dynamic(
     ssr: false,
   }
 );
-const MyShippingAddress = dynamic(() => import("./MyShippingAddress"), {
+const MyShippingAddress = dynamic(() => import("./shipping-address/ShippingAddressList"), {
   ssr: false,
 });
 const OrderTracker = dynamic(() => import("./OrderTracker"), {
