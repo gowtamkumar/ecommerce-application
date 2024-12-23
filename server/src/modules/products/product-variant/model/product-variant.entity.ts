@@ -51,7 +51,7 @@ export class ProductVariantEntity {
   size!: SizeEntity;
 
  
-  @Column({ type: "boolean", default: false, nullable: true }) 
+  @Column({ type: "boolean", default: false }) 
   default?: boolean;
 
   @Column({ name: "stock_qty" })

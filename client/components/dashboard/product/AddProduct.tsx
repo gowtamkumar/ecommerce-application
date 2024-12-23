@@ -31,6 +31,7 @@ import {
   normFile,
 } from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
+import ProductVariant from "./ProductVariant";
 
 const uploadButton = (
   <div>
@@ -70,9 +71,6 @@ const AddProduct = ({
   const global = useSelector(selectGlobal);
   const params = useParams<{ new: string }>();
   const route = useRouter();
-
-  console.log("global.loading.", global.loading);
-  
 
   useEffect(() => {
     // Call the async function
@@ -165,70 +163,9 @@ const AddProduct = ({
     }
   };
 
-  // const fetchData = async () => {
-  //   try {
-  //     dispatch(setLoading({ loading: true }));
-  //     if (params.new !== "new") {
-  //       const id = params.new.toString(); // Convert to string if necessary
-  //       // Fetch product data
-  //       const result = await getProduct(id);
-  //       const newData = { ...result.data };
-
-  //       if (!newData.variant) {
-  //         newData.purchasePrice = +newData.productVariants[0].purchasePrice;
-  //         newData.unitPrice = +newData.productVariants[0].unitPrice;
-  //         newData.stockQty = newData.productVariants[0].stockQty;
-  //         newData.variantId = newData.productVariants[0].id;
-  //       }
-
-  //       const productCategories = newData?.productCategories?.map(
-  //         ({ categoryId }: { categoryId: number }) => categoryId
-  //       );
-  //       if (!newData.images) {
-  //         newData.images = [];
-  //       }
-  //       if (newData.images) {
-  //         const file = (newData.images || []).map(
-  //           (item: string, idx: number) => ({
-  //             uid: Math.random() * 1000 + "",
-  //             name: `photo ${idx}`,
-  //             status: "done",
-  //             fileName: item,
-  //             url: `${appConfig.apiUrl}/uploads/${item}`,
-  //           })
-  //         );
-  //         newData.fileList = file;
-  //       }
-  //       if (newData.thumbnailImage) {
-  //         const newfile = {
-  //           uid: Math.random() * 1000 + "",
-  //           name: `photo ${Math.random() * 10000 + ""}`,
-  //           status: "done",
-  //           fileName: newData.thumbnailImage,
-  //           url: `${appConfig.apiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
-  //             }`,
-  //         };
-  //         newData.fileThumbnailList = [newfile];
-  //       }
-  //       form.setFieldsValue({ ...newData, productCategories });
-  //       setProduct({ ...newData, productCategories });
-  //       setTags(newData?.tags || []); // Use product.data?.tags or default to empty array
-  //       setFormValues(newData);
-  //     } else {
-  //       form.resetFields();
-  //       setTags([]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching product data:", err);
-  //   } finally {
-  //     dispatch(setLoading({ loading: false }));
-  //   }
-  // };
-
   const handleSubmit = async () => {
     const newData = await form.validateFields();
-    console.log("🚀 ~ newData:", newData);
-    // return;
+  
     delete newData.fileList;
     delete newData.fileThumbnailList;
     delete newData.fileHoverList;
@@ -256,7 +193,7 @@ const AddProduct = ({
     setTags([]);
     setFormValues({});
     route.push(`/dashboard/product`);
-    // form.resetFields();
+    form.resetFields();
   };
 
   const setFormData = (value: any) => {
@@ -682,7 +619,7 @@ const AddProduct = ({
               </Select>
             </Form.Item>
 
-            <Form.Item name="productColors" label="Color">
+            <Form.Item name="productColors" label="Color" tooltip="First color will be default">
               <Select
                 showSearch
                 allowClear
@@ -928,124 +865,11 @@ const AddProduct = ({
           </div>
         </div>
 
-        {formValues.variant && (
-          <div>
-            <Form.List name="productVariants">
-              {(fields, { add, remove }) => (
-                <div>
-                  <div className="grid grid-cols-4 justify-center items-center gap-1">
-                    <div className="col-span-3">
-                      <Divider
-                        orientation="center"
-                        style={{ margin: "0px", padding: "0px" }}
-                      >
-                        Product Variants
-                      </Divider>
-                    </div>
-                    <div className="col-span-1">
-                      <Form.Item>
-                        <Button
-                          type="dashed"
-                          onClick={() => add()}
-                          block
-                          icon={<PlusOutlined />}
-                          disabled={
-                            form.getFieldValue("type") === "SimpleProduct" &&
-                            form.getFieldValue("productVariants")?.length === 1
-                          }
-                        >
-                          Add
-                        </Button>
-                      </Form.Item>
-                    </div>
-                  </div>
+        <ProductVariant formValues={formValues} form={form} sizes={sizes}    />
 
-                  <table width="100%">
-                    <thead className="mb-1">
-                      <tr className="text-start">
-                        <th className="text-start w-1/6">
-                          <label className="text-red-500">*</label>Unit Price
-                        </th>
-                        <th className="text-start w-1/6">
-                          <label className="text-red-500">*</label>Purchase
-                          Price
-                        </th>
-                        <th className="text-start w-1/6">Size</th>
-                        <th className="text-start w-1/6">
-                          <label className="text-red-500">*</label>Qty
-                        </th>
-                      </tr>
-                    </thead>
 
-                    {fields.map(({ key, name, ...restField }) => (
-                      <tbody key={key}>
-                        <tr>
-                          <td hidden>
-                            <Form.Item {...restField} name={[name, "id"]}>
-                              <Input />
-                            </Form.Item>
-                          </td>
-                          <td>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "unitPrice"]}
-                              rules={[
-                                { required: true, message: "Unit Price" },
-                              ]}
-                            >
-                              <InputNumber placeholder="Unit Price" min={1} />
-                            </Form.Item>
-                          </td>
 
-                          <td>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "purchasePrice"]}
-                              rules={[
-                                { required: true, message: "Purchase Price" },
-                              ]}
-                            >
-                              <InputNumber
-                                placeholder="Purchase Price"
-                                min={1}
-                              />
-                            </Form.Item>
-                          </td>
-                          <td>
-                            <Form.Item {...restField} name={[name, "sizeId"]}>
-                              <Select
-                                allowClear
-                                showSearch
-                                placeholder="Select"
-                              >
-                                {(sizes || []).map((item: any) => (
-                                  <Select.Option key={item.id} value={item.id}>
-                                    {`${item.id} ${item.name}`}
-                                  </Select.Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          </td>
-                          <td>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "stockQty"]}
-                              rules={[{ required: true, message: "Stock Qty" }]}
-                            >
-                              <InputNumber placeholder="Enter" min={1} />
-                            </Form.Item>
-                          </td>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </tr>
-                      </tbody>
-                    ))}
-                  </table>
-                </div>
-              )}
-            </Form.List>
-          </div>
-        )}
-
+        
         <div className="col-span-1 text-end">
           <Button
             className="mx-2 capitalize"

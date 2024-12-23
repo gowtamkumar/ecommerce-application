@@ -14,6 +14,9 @@ export class ProductColorEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ type: "boolean", default: false }) 
+  default?: boolean;
+
   @Column({ name: "color_id" })
   colorId?: number;
   @ManyToOne((_type) => ColorEntity, (color) => color.productColors, {
@@ -21,6 +24,8 @@ export class ProductColorEntity {
   })
   @JoinColumn({ name: "color_id" })
   color!: ColorEntity;
+
+
  
   @Column({ name: "product_id" })
   productId?: number;
@@ -29,4 +34,5 @@ export class ProductColorEntity {
   })
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
+  
 }

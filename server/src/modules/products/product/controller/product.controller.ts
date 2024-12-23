@@ -65,8 +65,9 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 
   if (productColors) {
     const productColorRepository = connection.getRepository(ProductColorEntity);
-    const productColorEntities = productColors.map((color) => ({
+    const productColorEntities = productColors.map((color, idx: number) => ({
       colorId: +color,
+      default: idx === 0 ? true : false,
       productId: savedProduct.id,
     }));
     promises.push(productColorRepository.save(productColorEntities));
