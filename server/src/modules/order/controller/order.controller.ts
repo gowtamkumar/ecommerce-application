@@ -539,7 +539,7 @@ export const orderStatusUpdate = asyncHandler(
 
       const save = await repository.save({
         id: result.id,
-        status: validation.data.status,
+        ...validation.data,
       });
 
       await queryRunner.commitTransaction();

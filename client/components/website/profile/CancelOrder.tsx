@@ -2,36 +2,32 @@
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { orderStatusUpdateApi } from "@/lib/apis/orders";
 
-const OrderStatusUpdate = () => {
+const CancelOrder = () => {
   const global = useSelector(selectGlobal);
-  const { payload, orderStatusUpdate, type } = global.action;
+  const { payload, cancelOrder, type } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const newData = { ...payload };
-    setFormData(newData);
+  useEffect(() => {    
+    form.setFieldsValue(payload);
     return () => {
-      dispatch(setFormValues({}));
       form.resetFields();
     };
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    console.log("🚀 ~ values:", values);
-    const result = () => orderStatusUpdateApi(values);
+    
+    const result =  () => values.id && orderStatusUpdateApi(values);
 
     const messageData = values.id
       ? "Successfully Updated"
@@ -45,35 +41,22 @@ const OrderStatusUpdate = () => {
     dispatch(setLoading({}));
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    dispatch(setFormValues(form.getFieldsValue()));
-  };
+
 
   const resetFormData = () => {
     if (payload?.id) {
-      form.setFieldsValue(global.action?.payload);
-      dispatch(setFormValues(global.action?.payload));
+      form.setFieldsValue(payload);
     } else {
       form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
     }
   };
 
   return (
     <Modal
-      title={
-        type === ActionType.UPDATE
-          ? "Update Order Status "
-          : "Create Order Status"
-      }
+      title={`Cancel Order`}
       width={500}
       zIndex={1050}
-      open={
-        (type === ActionType.CREATE || type === ActionType.UPDATE) &&
-        orderStatusUpdate
-      }
+      open={type === ActionType.UPDATE && cancelOrder}
       onCancel={handleClose}
       footer={null}
     >
@@ -81,7 +64,6 @@ const OrderStatusUpdate = () => {
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -89,23 +71,12 @@ const OrderStatusUpdate = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item name="status" label="Status" className="mb-1">
-          <Select placeholder="Select Status">
-            {[
-              "Processing",
-              "Approved",
-              "On Shipping",
-              "Shipped",
-              "Completed",
-              "Pending",
-              "Returned",
-              "Canceled",
-            ].map((item, idx) => (
-              <Select.Option key={idx} value={item}>
-                {item}
-              </Select.Option>
-            ))}
-          </Select>
+        <Form.Item name="status" hidden>
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="cancelResson" label="Reason">
+          <Input.TextArea role="alert" placeholder="Enter Reason" />
         </Form.Item>
 
         <div className="text-end">
@@ -120,7 +91,6 @@ const OrderStatusUpdate = () => {
             size="small"
             color="primary"
             htmlType="submit"
-            className="capitalize"
             loading={global.loading.save}
             disabled={!payload?.id}
           >
@@ -132,4 +102,4 @@ const OrderStatusUpdate = () => {
   );
 };
 
-export default OrderStatusUpdate;
+export default CancelOrder;

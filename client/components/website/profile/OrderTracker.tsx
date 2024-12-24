@@ -126,28 +126,7 @@ export default function OrderTracker({ orders }: any) {
         <>
           <div className="grid grid-cols-3">
             <div className="col-span-1 p-2">
-              <h1 className="font-bold">
-                Order Tracking No:{order.trackingNo}
-              </h1>
-              <Divider dashed />
-              <Timeline
-                items={(order?.orderTrackings || []).map(
-                  (timeline: any, idx: number) => ({
-                    children: (
-                      <div key={idx}>
-                        <div> {timeline.status}</div>
-                        <div>
-                          {" "}
-                          {dayjs(timeline.createdAt).format(
-                            "MMMM D, YYYY h:mm A"
-                          )}
-                        </div>
-                        <div> {timeline.location}</div>
-                      </div>
-                    ),
-                  })
-                )}
-              />
+              <h1 className="font-bold">Order No:{order.trackingNo}</h1>
             </div>
             <div className="col-span-1 p-2 flex gap-2">
               <div>
@@ -169,7 +148,6 @@ export default function OrderTracker({ orders }: any) {
                 <Button
                   type="primary"
                   size="small"
-                  // disabled={!product.enableReview}
                   onClick={() =>
                     dispatch(
                       setProductRating({
@@ -189,7 +167,7 @@ export default function OrderTracker({ orders }: any) {
 
           <div className="p-4">
             <div className="p-4 bg-white">
-              <h1 className="font-semibold">Order Items</h1>
+              <h2 className="font-semibold">Order Items</h2>
               <Table
                 columns={childColumns}
                 size="small"
@@ -200,7 +178,27 @@ export default function OrderTracker({ orders }: any) {
               />
             </div>
             <div className="grid grid-cols-8 mt-5">
-              <div className="col-span-4">dasdf</div>
+              <div className="col-span-4">
+                <h2 className="font-semibold">Order Trackings</h2>
+                <Timeline
+                  items={(order?.orderTrackings || []).map(
+                    (timeline: any, idx: number) => ({
+                      children: (
+                        <div key={idx}>
+                          <div> {timeline.status}</div>
+                          <div>
+                            {" "}
+                            {dayjs(timeline.createdAt).format(
+                              "MMMM D, YYYY h:mm A"
+                            )}
+                          </div>
+                          <div> {timeline.location}</div>
+                        </div>
+                      ),
+                    })
+                  )}
+                />
+              </div>
               <div className="grid gap-y-3 col-span-4">
                 <div className="flex justify-between">
                   <h1>Net Amount:</h1>

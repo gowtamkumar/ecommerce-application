@@ -265,6 +265,12 @@ const Page: React.FC = () => {
     return (
       <div className="grid grid-cols-4 p-2">
         <div className="col-span-1 p-2">
+          {value.status === "Canceled" && (
+            <h2 className="bg-red-500">
+              <span className="font-bold">Order Resson: </span>
+              <code>{value.cancelResson}</code>
+            </h2>
+          )}
           <h1>
             <span className="font-bold">Order No: </span>
             <code>{value.trackingNo}</code>
@@ -355,7 +361,11 @@ const Page: React.FC = () => {
                 <h1>Total Amount:</h1>
                 <h1 className="font-semibold">
                   ${" "}
-                  {( (+value.netAmount + +value.shippingAmount + +value.orderTax) - +value.discountAmount
+                  {(
+                    +value.netAmount +
+                    +value.shippingAmount +
+                    +value.orderTax -
+                    +value.discountAmount
                   ).toFixed(2)}
                 </h1>
               </div>

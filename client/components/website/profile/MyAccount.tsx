@@ -19,13 +19,13 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
-import { PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
 import dynamic from "next/dynamic";
 
-const ChangePassword = dynamic(()=> import("./PasswordChange"), {ssr: false})
+const ChangePassword = dynamic(() => import("./PasswordChange"), { ssr: false })
 
 
 const uploadButton = (
@@ -68,11 +68,10 @@ export default function MyAccount({ user }: any) {
     setFormValues(newData);
   }, [form, user]);
 
-  // console.log("formValues", formValues);
 
   const handleSubmit = async (values: any) => {
     try {
-      let newData = { ...values};
+      let newData = { ...values };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = await updateUser(newData);
@@ -90,7 +89,6 @@ export default function MyAccount({ user }: any) {
         dispatch(setLoading({ saveProfile: false }));
         dispatch(setLoading({ save: false }));
       }
-      // console.log("🚀 ~ result:", result);
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
         dispatch(setResponse({}));
@@ -183,7 +181,7 @@ export default function MyAccount({ user }: any) {
   //   });
 
   const layout = {
-    labelCol: { span: 6 },
+    labelCol: { span: 5 },
     wrapperCol: { span: 12 },
   };
   const tailLayout = {
@@ -193,9 +191,11 @@ export default function MyAccount({ user }: any) {
   return (
     <div className="py-10">
       <div className="flex justify-between items-center gap-2">
-        <Divider orientation="left"> Personal Information</Divider>
+        <div > Personal Information</div>
         <div hidden={edit}>
           <Button
+            icon={<EditOutlined />}
+            title="Edit Profile"
             onClick={() => {
               const newData = { ...user };
               if (newData.dob) newData.dob = dayjs(user.dob);
@@ -203,9 +203,8 @@ export default function MyAccount({ user }: any) {
               setEdit(true);
             }}
             size="small"
-          >
-            Change Information
-          </Button>
+          />
+
         </div>
       </div>
       {global.response.type && (
@@ -225,7 +224,7 @@ export default function MyAccount({ user }: any) {
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
-        
+
         <Form.Item
           name="name"
           label="Name"
@@ -339,7 +338,7 @@ export default function MyAccount({ user }: any) {
         </div>
         <Form.Item {...tailLayout}>
           <Button
-            className="mx-2"
+          
             size="small"
             type="default"
             onClick={() => resetFormData(formValues)}
@@ -347,10 +346,11 @@ export default function MyAccount({ user }: any) {
             Reset
           </Button>
           <Button
+            className="mx-2"
             size="small"
             type="primary"
             htmlType="submit"
-            
+
             loading={global.loading.save}
           >
             {global.action.payload?.id ? "Update" : "Save"}

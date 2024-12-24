@@ -47,6 +47,7 @@ export default function Profile() {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getMe();
+      console.log("🚀 ~ res:", res)
       setUser(res.data);
       dispatch(setLoading({ loading: false }));
     })();

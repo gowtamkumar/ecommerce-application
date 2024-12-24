@@ -1,5 +1,5 @@
 import { Alert, Button, Divider, Form, Input } from "antd";
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -7,14 +7,13 @@ import {
   setResponse,
 } from "@/redux/features/global/globalSlice";
 import { updatePassword } from "@/lib/apis/user";
+import { EditOutlined } from "@ant-design/icons";
 
 export default function ChangePassword() {
   const [changePassword, setChangePassword] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-
-  
 
   const handleSubmit = async (values: any) => {
     try {
@@ -43,14 +42,13 @@ export default function ChangePassword() {
     }
   };
 
-
   const resetFormData = () => {
     form.resetFields();
     setChangePassword(false);
   };
 
   const layout = {
-    labelCol: { span: 6 },
+    labelCol: { span: 5 },
     wrapperCol: { span: 12 },
   };
 
@@ -75,9 +73,11 @@ export default function ChangePassword() {
         </Divider>
 
         <div hidden={changePassword}>
-          <Button onClick={() => setChangePassword(true)} size="small">
-            Change Password
-          </Button>
+          <Button
+            onClick={() => setChangePassword(true)}
+            icon={<EditOutlined />}
+            size="small"
+          />
         </div>
       </div>
 

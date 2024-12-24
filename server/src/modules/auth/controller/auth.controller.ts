@@ -376,9 +376,9 @@ export const getMe = asyncHandler(
       "user.lastLogout",
       "user.lastLogout",
 
+      "orders.id",
       "orders.discountAmount",
       "orders.netAmount",
-      "orders.note",
       "orders.orderDate",
       "orders.orderTax",
       "orders.orderTotalAmount",

@@ -14,4 +14,5 @@ export const orderStatusUpdateValidationSchema = z.object({
     ],
     { required_error: "Order Status is Required" }
   ),
+  note: z.string().optional(),
 });

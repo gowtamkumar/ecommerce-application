@@ -81,8 +81,8 @@ export class OrderEntity {
   @JoinColumn({ name: "shipping_address_id" })
   shippingAddress!: ShippingAddressEntity;
 
-  @Column({ nullable: true })
-  note!: string;
+  @Column({ name: "cancel_resson", nullable: true })
+  cancelResson!: string;
 
   @Column({
     name: "payment_status",

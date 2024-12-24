@@ -23,14 +23,16 @@ export const handleAsyncAction = async (
     //   throw new Error(res?.message || "Operation failed");
     // }
 
-    successNotification({ message: successMessage });
     dispatch(setAction({}));
+    console.log("call back function");
+    
+    // successNotification({ message: successMessage });
     return res; // Return the successful response
   } catch (error: any) {
     // console.log("🚀 ~ Error:", error?.message);
 
-    const errorMessage = error?.message || "An unexpected error occurred";
-    errorNotification({ message: errorMessage });
+    // const errorMessage = error?.message || "An unexpected error occurred";
+    // errorNotification({ message: errorMessage });
 
     // Return the error object or reject as a Promise
     return Promise.reject(error); // Ensures error propagation

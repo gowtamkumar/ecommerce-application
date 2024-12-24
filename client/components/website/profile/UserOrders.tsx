@@ -1,18 +1,30 @@
 "use client";
 import React, { useState } from "react";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Input, Space, Table, Button, Tag, Timeline, Divider } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import {
+  Input,
+  Space,
+  Table,
+  Button,
+  Tag,
+  Timeline,
+  Divider,
+  Popconfirm,
+} from "antd";
+import { CheckOutlined, SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
+  setAction,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import Highlighter from "react-highlight-words";
 import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
+import { ActionType } from "@/constants/constants";
+import CancelOrder from "./CancelOrder";
 
 interface DataType {
   key: React.Key;
@@ -296,7 +308,7 @@ const UserOrders = ({ orders }: any) => {
       </div>
     );
   };
-  
+
   const columns: TableColumnsType<DataType> = [
     {
       ...getColumnSearchProps("trackingNo"),
@@ -344,13 +356,53 @@ const UserOrders = ({ orders }: any) => {
         <Tag color={getStatus(orderStatus.status)}>{orderStatus.status}</Tag>
       ),
     },
+    {
+      title: "Action",
+      key: "operation",
+      render: (value) => (
+        <div className="flex gap-2 justify-end">
+          {/* <Button
+            size="small"
+            icon={<CheckOutlined />}
+            title="Renew Order"
+            className="me-1"
+            disabled={value.status !== "Returned"}
+          /> */}
+          <Button
+            size="small"
+            // icon={<Outlined />}
+            title="Cancel Order"
+            className="me-1"
+            onClick={() =>
+             {
+              console.log("value", value);
+              
+              dispatch(
+                setAction({
+                  type: ActionType.UPDATE,
+                  cancelOrder: true,
+                  payload: { id: value.id, status: "Canceled" },
+                })
+              )
+             }
+            }
+            disabled={value.status === "Completed"}
+          >
+            Cancel Order
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
     <div className="p-3">
       <Table
         scroll={{ x: "auto" }}
-        dataSource={orders}
+        dataSource={orders.map((items: any, idx: number) => ({
+          ...items,
+          key: idx.toString(),
+        }))}
         columns={columns}
         expandable={{ expandedRowRender }}
         loading={global.loading.loading}
@@ -358,6 +410,7 @@ const UserOrders = ({ orders }: any) => {
         bordered
         size="large"
       />
+      <CancelOrder />
     </div>
   );
 };
