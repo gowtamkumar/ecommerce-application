@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 import appConfig from "@/appConfig";
 
 export default function HeaderDiscount({ discounts }: any) {
-  console.log("🚀 ~ discounts:", discounts)
   const dispatch = useDispatch();
   const router = useRouter();
 
