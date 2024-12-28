@@ -13,6 +13,7 @@ import {
   SliderSingleProps,
   Space,
 } from "antd";
+import "./index.css";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Category {
@@ -67,37 +68,35 @@ export default function FilterSidebarDetails({
     <aside className="shadow-sm px-1 text-center">
       <div className="flex justify-between">
         <h2 className="text-lg font-bold md:mb-2">Filters</h2>
-        <Button size="middle" onClick={filterClear}>
-          Clear
-        </Button>
+        <div>
+          <Button className="me-2" onClick={filterClear}>
+            Clear
+          </Button>
+          <Button>Filter</Button>
+        </div>
       </div>
 
       <Divider orientation="left" className="font-semibold">
         <p className="font-semibold">Price </p>
       </Divider>
 
-      <Space.Compact block size="middle" className="w-full">
+      <Space.Compact className="w-full">
         <InputNumber
           placeholder="Min"
           value={price.minPrice}
-          onChange={(value) => setPrice({ ...unitPrice, minPrice: value })}
-          size="middle"
-          className="w-full"
+          onChange={(value) => setPrice({ ...price, minPrice: value })}
+          // className="w-full"
         />
         <InputNumber
           placeholder="Max"
           value={price.maxPrice}
-          onChange={(value) => setPrice({ ...unitPrice, maxPrice: value })}
-          size="middle"
-          className="w-full"
+          onChange={(value) => setPrice({ ...price, maxPrice: value })}
+          // className="w-full"
         />
         <Button
           onClick={() => {
-            dispatch(setProductFilter({ ...global.productFilter, ...unitPrice }));
+            dispatch(setProductFilter({ ...global.productFilter, ...price }));
           }}
-          type="default"
-          size="middle"
-          className="mt-1"
         >
           Apply
         </Button>
@@ -119,7 +118,7 @@ export default function FilterSidebarDetails({
           <p className="font-semibold">Category </p>
         </Divider>
         <li>
-          <label className="flex items-center">
+          <label className="flex flex-col">
             <Checkbox.Group
               name="categoryId"
               value={
@@ -127,12 +126,10 @@ export default function FilterSidebarDetails({
                   ? global.productFilter?.categoryId
                   : global.productFilter?.categoryId?.toString()
               }
-              options={(categories || []).map(
-                (item): Option => ({
-                  label: item.name,
-                  value: item.id.toString(),
-                })
-              )}
+              options={(categories || []).map((item): any => ({
+                label: item.name,
+                value: item.id.toString(),
+              }))}
               onChange={(value) => handleFilter(value, "categoryId")}
             />
           </label>

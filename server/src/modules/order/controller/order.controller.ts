@@ -224,6 +224,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   qb.leftJoin("order.user", "user");
   qb.leftJoin("order.payments", "payments");
   qb.leftJoin("order.shippingAddress", "shippingAddress");
+  qb.addOrderBy("order.trackingNo", "DESC");
 
   const results = await qb.getMany();
 

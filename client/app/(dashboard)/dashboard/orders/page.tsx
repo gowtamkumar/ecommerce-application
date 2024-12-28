@@ -410,12 +410,7 @@ const Page: React.FC = () => {
       key: "paymentMethod",
       // render: (value) => <span>{value.address}</span>,
     },
-    {
-      title: "Delivered Man",
-      dataIndex: "deliveryMan",
-      key: "deliveryMan",
-      render: (deliveryMan) => <span>{deliveryMan?.name}</span>,
-    },
+  
     {
       title: "Date",
       dataIndex: "createdAt",

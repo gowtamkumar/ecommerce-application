@@ -1,4 +1,3 @@
-import { Divider } from "antd";
 import dynamic from "next/dynamic";
 
 const CategoryHeader = dynamic(
@@ -18,13 +17,12 @@ export default function Products() {
     <>
       <Header />
       <section className="container mx-auto lg:py-5 px-3">
-        <div className="grid md:grid-cols-12">
-          <div className="md:col-span-2 py-3">
+        <div className="grid md:grid-cols-12 gap-4">
+          <div className="md:col-span-3 py-3">
             <FilterSidebar />
           </div>
-          <div className="md:col-span-10">
+          <div className="md:col-span-9">
             <CategoryHeader />
-            <Divider />
             <ProductCard />
           </div>
         </div>
