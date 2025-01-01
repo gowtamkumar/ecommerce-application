@@ -39,10 +39,7 @@ export default function FilterHeader() {
         {/* Item Count and Filter */}
         <div className="flex items-center space-x-2 mb-4 md:mb-0">
           <div className="text-sm text-gray-600">
-            {products?.length || 0} items found for
-            <span className="text-orange-500 font-semibold">
-              Need to show filter category
-            </span>
+            {products?.length || 0} items found
           </div>
         </div>
 

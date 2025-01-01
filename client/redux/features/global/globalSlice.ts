@@ -15,6 +15,7 @@ export interface GlobalState {
   productRating: Record<string, any>;
   productFilter: Record<string, any>;
   setting: Record<string, any>;
+  unAuthorize: boolean;
 }
 
 // Define the initial state using that type
@@ -32,6 +33,7 @@ const initialState: GlobalState = {
   productRating: {},
   productFilter: {},
   setting: {},
+  unAuthorize: false,
 };
 
 export const globalSlice = createSlice({
@@ -77,6 +79,9 @@ export const globalSlice = createSlice({
     setPreviewTitle: (state, action: PayloadAction<string>) => {
       state.previewTitle = action.payload;
     },
+    setUnAuthorize: (state, action: PayloadAction<boolean>) => {
+      state.unAuthorize = action.payload;
+    },
   },
 });
 
@@ -95,10 +100,11 @@ export const {
   setPreviewImage,
   setPreviewOpen,
   setPreviewTitle,
+  setUnAuthorize,
 } = globalSlice.actions;
 
 // Selector for accessing the global state
-export const selectGlobal = (state: { global: any; }) => state.global;
+export const selectGlobal = (state: { global: any }) => state.global;
 
 // Export reducer
 export default globalSlice.reducer;

@@ -101,7 +101,7 @@ export const getProducts = async (req: Request, res: Response) => {
   logger.info(`Service: getProducts ${req.method} ${req.url}`);
 
   try {
-    const connection = await getDBConnection(); // Assuming getDBConnection returns a Promise
+    const connection = await getDBConnection();
     const productRepository = connection.getRepository(ProductEntity);
     const {
       search,

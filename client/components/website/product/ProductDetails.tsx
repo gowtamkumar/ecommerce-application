@@ -1,5 +1,5 @@
 "use client";
-import { Button, Divider, Rate } from "antd";
+import { Button, Divider, message, Rate } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { productDiscountCalculation } from "@/lib/utils";
@@ -78,8 +78,13 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
         productId: productId,
       });
 
-      console.log("res", res);
-      
+      if (res.success) {
+        message.success(`${res.message}`);
+      }
+
+      if (!res.success) {
+        message.success(`${res.message}`);
+      }
 
       // if (res.status === 500) {
       //   dispatch(setResponse({ type: "error", message: res.message }));
