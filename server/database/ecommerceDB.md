@@ -138,7 +138,8 @@ image
 max_user,
 usageCount,
 status:(Active/Inactive)
-user_id
+user_id,
+products:[],(optoinal)
 createdAt
 updatedAt
 
