@@ -105,18 +105,29 @@ export const getProducts = async (req: Request, res: Response) => {
     lowPrice,
     highPrice,
     brandId,
-    categoryId, // e.g., "2,3,4"
+    colorId,
+    categoryId,
     minPrice,
     maxPrice,
     discount,
   } = req.query;
 
-  const categoryFilter = categoryId
-    ? `${categoryId}`.split(",").map((id) => parseInt(id.trim()))
-    : "";
-  const brandFilter = brandId
-    ? `${brandId}`.split(",").map((id) => parseInt(id.trim()))
-    : "";
+  // Helper function to parse filters
+  const parseFilter = (filter: any) => {
+    if (!filter) return [];
+    return [
+      ...new Set(
+        filter
+          .split(",")
+          .filter((id: any) => id.trim() !== "" && !isNaN(id)) // Ensure valid numbers
+          .map((id: any) => parseInt(id.trim()))
+      ),
+    ];
+  };
+
+  const categoryFilter = parseFilter(categoryId);
+  const brandFilter = parseFilter(brandId);
+  const colorFilter = parseFilter(colorId);
 
   const products = await connection.query(
     `
@@ -189,14 +200,25 @@ export const getProducts = async (req: Request, res: Response) => {
       LEFT JOIN 
         product_categories pc ON pc.product_id = p.id
       LEFT JOIN 
+        product_colors pcolor ON pcolor.product_id = p.id
+      LEFT JOIN 
         brands b ON b.id = p.brand_id
       WHERE 1=1
         ${
-          categoryFilter
+          colorFilter.length
+            ? `AND pcolor.color_id IN (${colorFilter.join(",")})`
+            : ""
+        }
+        ${
+          categoryFilter.length
             ? `AND pc.category_id IN (${categoryFilter.join(",")})`
             : ""
         }
-        ${brandFilter ? `AND p.brand_id IN (${brandFilter.join(",")})` : ""}
+        ${
+          brandFilter.length
+            ? `AND p.brand_id IN (${brandFilter.join(",")})`
+            : ""
+        }
         ${
           minPrice && maxPrice
             ? `AND p.unit_price BETWEEN ${minPrice} AND ${maxPrice}`

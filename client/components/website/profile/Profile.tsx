@@ -79,9 +79,9 @@ export default function Profile() {
           icon: <AndroidOutlined />,
         },
         {
-          label: `Wishlist`, /// need to work wishlist
+          label: `Wishlist`,
           key: "wishlist",
-          children: <MyWishlist wishlists={user?.wishlists} />,
+          children: <MyWishlist />,
           icon: <AndroidOutlined />,
         },
 

@@ -10,15 +10,28 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { productDiscountCalculation } from "@/lib/utils";
-import { deleteWishlist } from "@/lib/apis/wishlist";
+import { deleteWishlist, getUserWishlists } from "@/lib/apis/wishlist";
 import { RestOutlined } from "@ant-design/icons";
 import { FaShoppingCart } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
-export default function MyWishlist({ wishlists }: any) {
+export default function MyWishlist() {
+  const [wishlists, setWishlists] = useState([]);
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
+  useEffect(() => {
+    (async () => {
+      dispatch(setLoading({ loading: true }));
+      const wishlistRes = await getUserWishlists();
+      setWishlists(wishlistRes.data);
+      dispatch(setLoading({ loading: false }));
+    })();
+  }, [dispatch, global.action]);
+
   async function addToCart(value: any) {
+    console.log("value", value);
+
     const price = +value.selectProductVariant.unitPrice;
     let taxAmount = (+price * (value?.tax?.value || 0)) / 100;
     dispatch(
@@ -52,9 +65,7 @@ export default function MyWishlist({ wishlists }: any) {
 
   return (
     <div className="grid grid-cols-4 gap-4">
-
       {(wishlists || []).map((item: any, idx: any) => {
-
         let price = +22;
         let discount = item.product?.discount;
 

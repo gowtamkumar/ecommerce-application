@@ -11,7 +11,6 @@ import { logger } from "../../../middlewares/logger";
 export const getWishlists = asyncHandler(async (req: any, res: Response) => {
   logger.info(`Service: getWishlists ${req.method} ${req.url}`);
 
-  const { userId }: any = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(WishListEntity);
 
@@ -48,6 +47,102 @@ export const getWishlist = asyncHandler(
       success: true,
       message: `Get a single Wishlist of id ${req.params.id}`,
       data: result,
+    });
+  }
+);
+
+// @desc Get a single Wishlist
+// @route GET /api/v1/Wishlists/:id
+// @access Public
+export const getUserWishlist = asyncHandler(
+  async (req: any, res: Response, next: NextFunction) => {
+    logger.info(`Service: getUserWishlist ${req.method} ${req.url}`);
+    const userId = req.id;
+    const connection = await getDBConnection();
+    const products = await connection.query(
+      `
+     WITH productTable AS (
+    SELECT 
+      p.*,
+      pv.unit_price,
+      pv.purchase_price,
+      pv.id AS product_variant_id
+    FROM 
+      products p
+    JOIN LATERAL (
+      SELECT 
+        pv.unit_price, 
+        pv.purchase_price, 
+        pv.id
+      FROM 
+        product_variants pv
+      WHERE 
+        pv.product_id = p.id
+      ORDER BY 
+        pv.default DESC, pv.id
+      LIMIT 1
+    ) pv ON true
+),
+reviewsTable AS (
+    SELECT 
+      product_id,
+      COUNT(*) AS reviews_count,
+      COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+    FROM reviews
+    GROUP BY product_id
+)
+SELECT 
+    p.id,
+    p.name,
+    p.slug,
+    p.thumbnail_image AS "thumbnailImage",
+    p.hover_image AS "hoverImage",
+    p.variant,
+    p.discount_id AS "discountId",
+    dis.discount_type AS "discountType",
+    dis.value AS "discountValue",
+    p.featured,
+    p.unit_price AS "unitPrice", 
+    p.purchase_price AS "purchasePrice",
+    p.product_variant_id AS "productVariantId",
+    rt.reviews_count AS "reviewsCount",
+    rt.average_rating AS "averageRating",
+    ROUND(SUM((p.unit_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
+    ROUND(
+      SUM(
+        CASE 
+          WHEN dis.discount_type = 'Percentage' THEN 
+            (p.unit_price + (p.unit_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
+          ELSE 
+            dis.value
+        END
+      ), 
+      2
+    ) AS "discountAmount"
+FROM 
+    productTable p
+LEFT JOIN 
+    reviewsTable rt ON rt.product_id = p.id
+LEFT JOIN 
+    taxs ON taxs.id = p.tax_id
+LEFT JOIN 
+    discounts dis ON dis.id = p.discount_id
+INNER JOIN 
+    wishlists w ON w.product_id = p.id
+WHERE 
+    w.user_id = ${userId} 
+GROUP BY 
+    p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
+    p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
+    rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value
+
+   `
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `Get a single Wishlist of id ${req.params.id}`,
+      data: products,
     });
   }
 );

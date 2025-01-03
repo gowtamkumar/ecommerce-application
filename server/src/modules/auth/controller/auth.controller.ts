@@ -34,7 +34,6 @@ export const register = asyncHandler(
     logger.info(`Service: register ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
-    const { password, username } = req.body;
 
     const validation = userValidationSchema.safeParse(req.body);
 

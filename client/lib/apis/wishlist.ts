@@ -28,6 +28,15 @@ export async function getWishlists() {
   });
 }
 
+export async function getUserWishlists() {
+  return await fetchWithAuth(
+    `${appConfig.apiUrl}/api/v1/wishlists/user-wishlist`,
+    {
+      cache: "no-cache",
+    }
+  );
+}
+
 export async function updateWishlist(data: Wishlist) {
   return await fetchWithAuth(
     `${appConfig.apiUrl}/api/v1/wishlists/${data.id}`,
