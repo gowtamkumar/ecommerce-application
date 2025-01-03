@@ -219,7 +219,6 @@ GROUP BY
   p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
   p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
   rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value;
-
  `
   );
 

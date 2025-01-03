@@ -99,119 +99,242 @@ export const createProduct = asyncHandler(async (req: any, res: Response) => {
 // @access Public
 export const getProducts = async (req: Request, res: Response) => {
   logger.info(`Service: getProducts ${req.method} ${req.url}`);
+  const connection = await getDBConnection();
+  const {
+    search,
+    lowPrice,
+    highPrice,
+    brandId,
+    categoryId, // e.g., "2,3,4"
+    minPrice,
+    maxPrice,
+    discount,
+  } = req.query;
 
-  try {
-    const connection = await getDBConnection();
-    const productRepository = connection.getRepository(ProductEntity);
-    const {
-      search,
-      lowPrice,
-      highPrice,
-      brandId,
-      status,
-      categoryId,
-      minPrice,
-      maxPrice,
-      discount,
-    } = req.query;
-    const qb = productRepository.createQueryBuilder("product");
-    qb.select([
-      "product",
-      "user.id",
-      "user.name",
-      "brand.id",
-      "brand.name",
-      "reviews.id",
-      "reviews.rating",
-      "reviews.comment",
-      "tax.name",
-      "tax.value",
-      "productVariants",
-      "productCategories",
-      "category.id",
-      "category.name",
-      "size.id",
-      "size.name",
-      "discount.discountType",
-      "discount.value",
-      "discount.type",
-    ]);
-    qb.leftJoin("product.user", "user");
-    qb.leftJoin("product.brand", "brand");
-    qb.leftJoin("product.reviews", "reviews");
-    qb.leftJoin("product.tax", "tax");
-    qb.leftJoin("product.discount", "discount");
-    qb.leftJoin("product.productVariants", "productVariants");
-    qb.leftJoin("product.productCategories", "productCategories");
-    qb.leftJoin("productCategories.category", "category");
-    qb.leftJoin("productVariants.size", "size");
-    qb.orderBy("productVariants.id", "DESC");
-    qb.addOrderBy("product.slug", "ASC");
+  const categoryFilter = categoryId
+    ? `${categoryId}`.split(",").map((id) => parseInt(id.trim()))
+    : "";
+  const brandFilter = brandId
+    ? `${brandId}`.split(",").map((id) => parseInt(id.trim()))
+    : "";
 
-    // if (brandId) qb.andWhere({ brandId });
-    if (status) qb.andWhere({ status });
+  const products = await connection.query(
+    `
+      WITH productTable AS (
+        SELECT 
+          p.*,
+          pv.unit_price,
+          pv.purchase_price,
+          pv.id AS product_variant_id
+        FROM 
+          products p
+        JOIN LATERAL (
+          SELECT 
+            pv.unit_price, 
+            pv.purchase_price, 
+            pv.id
+          FROM 
+            product_variants pv
+          WHERE 
+            pv.product_id = p.id
+          ORDER BY 
+            pv.default DESC, pv.id
+          LIMIT 1
+        ) pv ON true
+      ),
+      reviewsTable AS (
+        SELECT 
+          product_id,
+          COUNT(*) AS reviews_count,
+          COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+        FROM reviews
+        GROUP BY product_id
+      )
+      SELECT 
+        p.id,
+        p.name,
+        p.slug,
+        p.thumbnail_image AS "thumbnailImage",
+        p.hover_image AS "hoverImage",
+        p.variant,
+        p.discount_id AS "discountId",
+        dis.discount_type AS "discountType",
+        dis.value AS "discountValue",
+        p.featured,
+        p.unit_price AS "unitPrice", 
+        p.purchase_price AS "purchasePrice",
+        p.product_variant_id AS "productVariantId",
+        rt.reviews_count AS "reviewsCount",
+        rt.average_rating AS "averageRating",
+        ROUND(SUM((p.unit_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
+        ROUND(
+          SUM(
+            CASE 
+              WHEN dis.discount_type = 'Percentage' THEN 
+                (p.unit_price + (p.unit_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
+              ELSE 
+                dis.value
+            END
+          ), 
+          2
+        ) AS "discountAmount"
+      FROM 
+        productTable p
+      LEFT JOIN 
+        reviewsTable rt ON rt.product_id = p.id
+      LEFT JOIN 
+        taxs ON taxs.id = p.tax_id
+      LEFT JOIN 
+        discounts dis ON dis.id = p.discount_id
+      LEFT JOIN 
+        product_categories pc ON pc.product_id = p.id
+      LEFT JOIN 
+        brands b ON b.id = p.brand_id
+      WHERE 1=1
+        ${
+          categoryFilter
+            ? `AND pc.category_id IN (${categoryFilter.join(",")})`
+            : ""
+        }
+        ${brandFilter ? `AND p.brand_id IN (${brandFilter.join(",")})` : ""}
+        ${
+          minPrice && maxPrice
+            ? `AND p.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
+            : ""
+        }
+        ${discount ? `AND dis.value BETWEEN 0 AND ${discount}` : ""}
+        ${
+          search
+            ? `
+          AND (
+            LOWER(p.name) ILIKE LOWER('%${search}%') OR
+            LOWER(p.description) ILIKE LOWER('%${search}%') OR
+            LOWER(p.shortDescription) ILIKE LOWER('%${search}%')
+          )
+        `
+            : ""
+        }
+      GROUP BY 
+        p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
+        p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
+        rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value
+      ${lowPrice ? "ORDER BY p.unit_price ASC" : ""}
+      ${highPrice ? "ORDER BY p.unit_price DESC" : ""}
+    `
+  );
 
-    if (categoryId)
-      qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
-        categoryIds: categoryId.toString().split(","),
-      });
+  return res.status(200).json({
+    success: true,
+    message: "Get product filter data",
+    data: products,
+  });
 
-    if (brandId)
-      qb.andWhere("product.brandId IN (:...brandIds)", {
-        brandIds: brandId.toString().split(","),
-      });
+  // try {
+  //   const connection = await getDBConnection();
+  //   const productRepository = connection.getRepository(ProductEntity);
+  //   const {
+  //     search,
+  //     lowPrice,
+  //     highPrice,
+  //     brandId,
+  //     status,
+  //     categoryId,
+  //     minPrice,
+  //     maxPrice,
+  //     discount,
+  //   } = req.query;
+  //   const qb = productRepository.createQueryBuilder("product");
+  //   qb.select([
+  //     "product",
+  //     "user.id",
+  //     "user.name",
+  //     "brand.id",
+  //     "brand.name",
+  //     "reviews.id",
+  //     "reviews.rating",
+  //     "reviews.comment",
+  //     "tax.name",
+  //     "tax.value",
+  //     "productVariants",
+  //     "productCategories",
+  //     "category.id",
+  //     "category.name",
+  //     "size.id",
+  //     "size.name",
+  //     "discount.discountType",
+  //     "discount.value",
+  //     "discount.type",
+  //   ]);
+  //   qb.leftJoin("product.user", "user");
+  //   qb.leftJoin("product.brand", "brand");
+  //   qb.leftJoin("product.reviews", "reviews");
+  //   qb.leftJoin("product.tax", "tax");
+  //   qb.leftJoin("product.discount", "discount");
+  //   qb.leftJoin("product.productVariants", "productVariants");
+  //   qb.leftJoin("product.productCategories", "productCategories");
+  //   qb.leftJoin("productCategories.category", "category");
+  //   qb.leftJoin("productVariants.size", "size");
+  //   qb.orderBy("productVariants.id", "DESC");
+  //   qb.addOrderBy("product.slug", "ASC");
 
-    if (minPrice && maxPrice)
-      qb.andWhere(
-        `productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
-      );
+  //   if (status) qb.andWhere({ status });
 
-    if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
+  //   if (categoryId)
+  //     qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
+  //       categoryIds: categoryId.toString().split(","),
+  //     });
 
-    // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
+  //   if (brandId)
+  //     qb.andWhere("product.brandId IN (:...brandIds)", {
+  //       brandIds: brandId.toString().split(","),
+  //     });
 
-    if (lowPrice) qb.orderBy("productVariants.unit_price", "ASC");
-    if (highPrice) qb.orderBy("productVariants.unit_price", "DESC");
+  //   if (minPrice && maxPrice)
+  //     qb.andWhere(
+  //       `productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
+  //     );
 
-    // if (colorId)
-    //   qb.andWhere("productVariants.colorId IN (:...colorIds)", {
-    //     colorIds: colorId.toString().split(","),
-    //   });
+  //   if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
 
-    if (search) {
-      qb.andWhere(
-        new Brackets((db) => {
-          db.orWhere("LOWER(product.name) ILIKE LOWER(:search)", {
-            search: `%${search}%`,
-          });
-          db.orWhere("LOWER(product.description) ILIKE LOWER(:search)", {
-            search: `%${search}%`,
-          });
-          db.orWhere("LOWER(product.shortDescription) ILIKE LOWER(:search)", {
-            search: `%${search}%`,
-          });
-          db.orWhere("LOWER(brand.name) ILIKE LOWER(:search)", {
-            search: `%${search}%`,
-          });
-        })
-      );
-    }
+  //   // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
 
-    const results = await qb.getMany();
+  //   if (lowPrice) qb.orderBy("productVariants.unit_price", "ASC");
+  //   if (highPrice) qb.orderBy("productVariants.unit_price", "DESC");
 
-    res.status(200).json({
-      success: true,
-      message: "Fetched all products successfully",
-      totalItem: results.length,
-      data: results,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while fetching the products.",
-      error: error.message,
-    });
-  }
+  //   if (search) {
+  //     qb.andWhere(
+  //       new Brackets((db) => {
+  //         db.orWhere("LOWER(product.name) ILIKE LOWER(:search)", {
+  //           search: `%${search}%`,
+  //         });
+  //         db.orWhere("LOWER(product.description) ILIKE LOWER(:search)", {
+  //           search: `%${search}%`,
+  //         });
+  //         db.orWhere("LOWER(product.shortDescription) ILIKE LOWER(:search)", {
+  //           search: `%${search}%`,
+  //         });
+  //         db.orWhere("LOWER(brand.name) ILIKE LOWER(:search)", {
+  //           search: `%${search}%`,
+  //         });
+  //       })
+  //     );
+  //   }
+
+  //   const results = await qb.getMany();
+
+  //   res.status(200).json({
+  //     success: true,
+  //     message: "Fetched all products successfully",
+  //     totalItem: results.length,
+  //     data: results,
+  //   });
+  // } catch (error: any) {
+  //   res.status(500).json({
+  //     success: false,
+  //     message: "An error occurred while fetching the products.",
+  //     error: error.message,
+  //   });
+  // }
 };
 // @desc Get a single Product
 // @route GET /api/v1/products/:id
