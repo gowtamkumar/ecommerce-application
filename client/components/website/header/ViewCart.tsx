@@ -32,8 +32,8 @@ export default function ViewCart() {
   }, [cart.carts]);
 
   return (
-    <div className="absolute w-96 z-10 right-0 mt-3 p-4 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-2 transform transition-all duration-300 ease-in-out">
-      <div className="flex flex-col w-96 h-[50vh] gap-6 overflow-y-scroll">
+    <div className="flex flex-col h-full justify-between">
+      <div className="flex flex-col flex-grow gap-6 overflow-y-auto">
         {(cart.carts || []).map((item: any) => {
           return (
             <div
@@ -43,8 +43,8 @@ export default function ViewCart() {
               <div>
                 <Image
                   src={
-                    item.images
-                      ? `${appConfig.apiUrl}/uploads/${item.images[0]}`
+                    item.thumbnailImage
+                      ? `${appConfig.apiUrl}/uploads/${item.thumbnailImage}`
                       : "/pos_software.png"
                   }
                   alt={item.name}
@@ -56,7 +56,7 @@ export default function ViewCart() {
 
               <div className="flex justify-between">
                 <div>
-                  <p>{item.name}</p>
+                  <p>{item.name.slice(0, 60)}</p>
                   <p>
                     {item.qty} × ৳
                     {(
@@ -78,17 +78,20 @@ export default function ViewCart() {
         })}
       </div>
 
-      <div className="flex justify-between py-4">
-        <p>Subtotal:</p>
-        <p className="font-bold text-2xl">
-          ৳{" "}
-          {(+cart.cartResult.total - +cart.cartResult.totalDiscount).toFixed(2)}
-        </p>
+      <div>
+        <div className="flex justify-between">
+          <p>Subtotal:</p>
+          <p className="font-bold text-2xl">
+            ৳{" "}
+            {(+cart.cartResult.total - +cart.cartResult.totalDiscount).toFixed(
+              2
+            )}
+          </p>
+        </div>
+        <Button className="w-full">
+          <Link href="/checkout">Checkout</Link>
+        </Button>
       </div>
-
-      <Button className=" w-full">
-        <Link href="/checkout">Checkout</Link>
-      </Button>
     </div>
   );
 }

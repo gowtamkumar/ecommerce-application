@@ -11,13 +11,14 @@ import { FiShoppingBag } from "react-icons/fi";
 import dynamic from "next/dynamic";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { setOpen } from "@/redux/features/layout/layoutSlice";
 
 const HeaderSearch = dynamic(() => import("./HeaderSearch"));
 
 export default function HeaderRight() {
   const [clientCartCount, setClientCartCount] = useState(0);
+  const [drawarCart, setDrawarCart] = useState(false);
   // hook
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
@@ -29,6 +30,16 @@ export default function HeaderRight() {
   useEffect(() => {
     setClientCartCount(cart.carts.length || 0);
   }, [cart.carts]);
+
+  const showLoading = () => {
+    setDrawarCart(true);
+    dispatch(setLoading({ drawerLoading: true }));
+
+    // Simple loading mock. You should add cleanup logic in real world.
+    setTimeout(() => {
+      dispatch(setLoading({}));
+    }, 2000);
+  };
 
   return (
     <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">
@@ -45,12 +56,24 @@ export default function HeaderRight() {
         <Badge
           size="default"
           count={clientCartCount}
+          onClick={showLoading}
           className="px-4  font-semibold text-white rounded-md cursor-pointer"
         >
           <FiShoppingBag size={22} className="font-medium" />
         </Badge>
 
-        <ViewCart />
+        <Drawer
+          closable
+          destroyOnClose
+          title={<p>Carts</p>}
+          placement="right"
+          open={drawarCart}
+          loading={global.loading.drawerLoading}
+          onClose={() => setDrawarCart(false)}
+          width={450}
+        >
+          <ViewCart />
+        </Drawer>
       </div>
 
       {session.status === "authenticated" ? (

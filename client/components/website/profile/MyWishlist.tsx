@@ -14,6 +14,7 @@ import { deleteWishlist, getUserWishlists } from "@/lib/apis/wishlist";
 import { RestOutlined } from "@ant-design/icons";
 import { FaShoppingCart } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import Card from "@/components/Card";
 
 export default function MyWishlist() {
   const [wishlists, setWishlists] = useState([]);
@@ -30,6 +31,7 @@ export default function MyWishlist() {
   }, [dispatch, global.action]);
 
   async function addToCart(value: any) {
+
     console.log("value", value);
 
     const price = +value.selectProductVariant.unitPrice;
@@ -65,7 +67,12 @@ export default function MyWishlist() {
 
   return (
     <div className="grid grid-cols-4 gap-4">
-      {(wishlists || []).map((item: any, idx: any) => {
+      {
+        wishlists.map(item=> {
+          return <Card item={item}/>
+        })
+      }
+      {/* {(wishlists || []).map((item: any, idx: any) => {
         let price = +22;
         let discount = item.product?.discount;
 
@@ -136,7 +143,7 @@ export default function MyWishlist() {
             </div>
           </div>
         );
-      })}
+      })} */}
     </div>
   );
 }

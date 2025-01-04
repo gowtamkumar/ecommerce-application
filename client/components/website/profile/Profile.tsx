@@ -9,6 +9,10 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 // api
 import { getMe } from "@/lib/apis/user";
 
+const ProfileDashboard = dynamic(() => import("./profileDashboard"), {
+  ssr: false,
+});
+
 const UserOrders = dynamic(
   () => import("@/components/website/profile/UserOrders"),
   {
@@ -29,9 +33,12 @@ const MyWishlist = dynamic(
     ssr: false,
   }
 );
-const MyShippingAddress = dynamic(() => import("./shipping-address/ShippingAddressList"), {
-  ssr: false,
-});
+const MyShippingAddress = dynamic(
+  () => import("./shipping-address/ShippingAddressList"),
+  {
+    ssr: false,
+  }
+);
 const OrderTracker = dynamic(() => import("./OrderTracker"), {
   ssr: false,
 });
@@ -47,7 +54,7 @@ export default function Profile() {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getMe();
-      console.log("🚀 ~ res:", res)
+      console.log("🚀 ~ res:", res);
       setUser(res.data);
       dispatch(setLoading({ loading: false }));
     })();
@@ -59,6 +66,12 @@ export default function Profile() {
       defaultValue={tabKey}
       tabPosition="left"
       items={[
+        {
+          label: `Dashboard`,
+          key: "dashboard",
+          children: <ProfileDashboard />,
+          icon: <AppleOutlined />,
+        },
         {
           label: `My Account`,
           key: "my_account",

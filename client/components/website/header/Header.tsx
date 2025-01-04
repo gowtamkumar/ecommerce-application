@@ -9,11 +9,8 @@ const MobileMenu = dynamic(() => import("./MobileMenu"));
 const HeaderRight = dynamic(() => import("./HeaderRight"));
 
 export default async function Header() {
-  //  const res = await saveVisitor({})
-  //  console.log("🚀 ~ res:", res)
   const setting = await getSettings();
-  // const res = await getCartByUser();
-  // const singleLogo = logo.data ? logo.data[0]?.image : null;
+
   return (
     <>
       <TopBar />
