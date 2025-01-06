@@ -88,7 +88,7 @@ export default function ViewCart() {
             )}
           </p>
         </div>
-        <Button className="w-full">
+        <Button className="w-full" >
           <Link href="/checkout">Checkout</Link>
         </Button>
       </div>
