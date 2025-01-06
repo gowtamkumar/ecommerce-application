@@ -3,7 +3,7 @@ import appConfig from "@/appConfig";
 import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function getPublicCategories() {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories/all`, {
+  const res = await fetch(`${appConfig.apiUrl}/categories/all`, {
     next: { revalidate: 30 },
   });
 
@@ -12,7 +12,7 @@ export async function getPublicCategories() {
 
 export async function getAntdCategories() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories/antd`, {
+  const res = await fetch(`${appConfig.apiUrl}/categories/antd`, {
     cache: "no-cache",
     headers,
   });
@@ -22,7 +22,7 @@ export async function getAntdCategories() {
 
 export async function getCategories() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories`, {
+  const res = await fetch(`${appConfig.apiUrl}/categories`, {
     cache: "no-cache",
     headers,
   });
@@ -31,7 +31,7 @@ export async function getCategories() {
 }
 export async function saveCategory(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories`, {
+  const res = await fetch(`${appConfig.apiUrl}/categories`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -43,7 +43,7 @@ export async function saveCategory(data: any) {
 
 export async function updateCategory(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/categories/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -54,7 +54,7 @@ export async function updateCategory(data: any) {
 
 export async function deleteCategory(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/categories/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/categories/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

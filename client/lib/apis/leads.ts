@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Save a new lead
 export async function saveLead(data: any) {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
+  const res = await fetch(`${appConfig.apiUrl}/leads`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -20,7 +20,7 @@ export async function saveLead(data: any) {
 export async function getLeads() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads`, {
+  const res = await fetch(`${appConfig.apiUrl}/leads`, {
     cache: "no-cache",
     headers,
   });
@@ -32,7 +32,7 @@ export async function getLeads() {
 export async function updateLead(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/leads/${data.id}`, {
     method: "PUT",
     headers,
     body: JSON.stringify(data),
@@ -45,7 +45,7 @@ export async function updateLead(data: any) {
 export async function deleteLead(id: string) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/leads/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/leads/${id}`, {
     method: "DELETE",
     headers,
   });

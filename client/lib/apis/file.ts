@@ -6,7 +6,7 @@ import { authOptions } from "../authOption";
 
 export async function saveFile(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/files`, {
+  const res = await fetch(`${appConfig.apiUrl}/files`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -18,7 +18,7 @@ export async function saveFile(data: any) {
 
 export async function uploadFile(data: any) {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/files/uploads`, {
+  const res = await fetch(`${appConfig.apiUrl}/files/uploads`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -33,7 +33,7 @@ export async function uploadFile(data: any) {
 export async function fileDeleteWithPhoto(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/files/delete-file-with-photo`,
+    `${appConfig.apiUrl}/files/delete-file-with-photo`,
     {
       method: "POST",
       cache: "no-cache",
@@ -47,7 +47,7 @@ export async function fileDeleteWithPhoto(data: any) {
 
 export async function getFiles() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/files`, {
+  const res = await fetch(`${appConfig.apiUrl}/files`, {
     cache: "no-cache",
     headers,
   });
@@ -57,7 +57,7 @@ export async function getFiles() {
 
 export async function updateFile(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/files/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/files/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -69,7 +69,7 @@ export async function updateFile(data: any) {
 
 export async function getFile(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/files/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/files/${data.id}`, {
     method: "GET",
     headers,
   });
@@ -79,7 +79,7 @@ export async function getFile(data: any) {
 
 export async function deleteFile(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/files/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/files/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

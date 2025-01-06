@@ -11,7 +11,7 @@ export async function saveDivision(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/divisions`, {
+  const res = await fetch(`${appConfig.apiUrl}/divisions`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -35,7 +35,7 @@ export async function getDivisions() {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/divisions`, {
+  const res = await fetch(`${appConfig.apiUrl}/divisions`, {
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
@@ -57,7 +57,7 @@ export async function getDivision(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/divisions/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/divisions/${data.id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -74,7 +74,7 @@ export async function getDivision(data: any) {
 // export async function updateDivision(data: any) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/divisions/${data.id}`,
+//     `${appConfig.apiUrl}/divisions/${data.id}`,
 //     {
 //       method: "PUT",
 //       cache: "no-cache",
@@ -91,7 +91,7 @@ export async function getDivision(data: any) {
 // export async function deleteDivision(id: string) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/divisions/${id}`,
+//     `${appConfig.apiUrl}/divisions/${id}`,
 //     {
 //       method: "DELETE",
 //       cache: "no-cache",

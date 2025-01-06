@@ -7,7 +7,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 // Function to save a new size
 export async function saveSize(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/sizes`, {
+  const res = await fetch(`${appConfig.apiUrl}/sizes`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -20,7 +20,7 @@ export async function saveSize(data: any) {
 // Function to get all sizes
 export async function getSizes() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/sizes`, {
+  const res = await fetch(`${appConfig.apiUrl}/sizes`, {
     cache: "no-cache",
     headers,
   });
@@ -30,7 +30,7 @@ export async function getSizes() {
 // Function to get a specific size by ID
 export async function getSize(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/sizes/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/sizes/${id}`, {
     method: "GET",
     headers,
   });
@@ -41,7 +41,7 @@ export async function getSize(id: string) {
 // Function to update a size
 export async function updateSize(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/sizes/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/sizes/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -53,7 +53,7 @@ export async function updateSize(data: any) {
 // Function to delete a size by ID
 export async function deleteSize(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/sizes/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/sizes/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

@@ -11,7 +11,7 @@ export async function saveUnion(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions`, {
+  const res = await fetch(`${appConfig.apiUrl}/unions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export async function getUnions(params: { upazilaId: string }) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions${queryData}`, {
+  const res = await fetch(`${appConfig.apiUrl}/unions${queryData}`, {
     headers: {
       Authorization: `Bearer ${session.user.accessToken}`,
     },
@@ -57,7 +57,7 @@ export async function getUnion(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/unions/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/unions/${data.id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export async function getUnion(data: any) {
 // export async function updateUnion(data: any) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/unions/${data.id}`,
+//     `${appConfig.apiUrl}/unions/${data.id}`,
 //     {
 //       method: "PUT",
 //       cache: "no-cache",
@@ -92,7 +92,7 @@ export async function getUnion(data: any) {
 // export async function deleteUnion(id: string) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/unions/${id}`,
+//     `${appConfig.apiUrl}/unions/${id}`,
 //     {
 //       method: "DELETE",
 //       cache: "no-cache",

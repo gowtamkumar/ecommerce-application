@@ -6,7 +6,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 export async function saveReview(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/reviews`, {
+  const res = await fetch(`${appConfig.apiUrl}/reviews`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -19,7 +19,7 @@ export async function saveReview(data: any) {
 export async function getReviews() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/reviews`, {
+  const res = await fetch(`${appConfig.apiUrl}/reviews`, {
     cache: "no-cache",
     headers,
   });
@@ -30,7 +30,7 @@ export async function getReviews() {
 export async function updateReview(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/reviews/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/reviews/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -44,7 +44,7 @@ export async function reviewLike(data: any) {
   const headers = await getAuthHeaders();
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/reviews/like/${data.id}`,
+    `${appConfig.apiUrl}/reviews/like/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -60,7 +60,7 @@ export async function reviewDisLike(data: any) {
   const headers = await getAuthHeaders();
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/reviews/dislike/${data.id}`,
+    `${appConfig.apiUrl}/reviews/dislike/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -75,7 +75,7 @@ export async function reviewDisLike(data: any) {
 export async function deleteReview(id: string) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/reviews/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/reviews/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

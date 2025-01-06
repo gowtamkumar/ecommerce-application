@@ -19,7 +19,7 @@ interface ApiResponse<T> {
 // Function to save a setting
 export async function saveSetting(data: Setting) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings`, {
+  const res = await fetch(`${appConfig.apiUrl}/settings`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -32,7 +32,7 @@ export async function saveSetting(data: Setting) {
 // Function to get all settings
 export async function getSettings() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings`, {
+  const res = await fetch(`${appConfig.apiUrl}/settings`, {
     headers,
     cache: "no-cache",
   });
@@ -43,7 +43,7 @@ export async function getSettings() {
 // Function to get a specific setting
 export async function getSetting(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/settings/${id}`, {
     headers,
   });
 
@@ -53,7 +53,7 @@ export async function getSetting(id: string) {
 // Function to update a setting
 export async function updateSetting(data: Setting) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/settings/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -66,7 +66,7 @@ export async function updateSetting(data: Setting) {
 // Function to delete a setting
 export async function deleteSetting(id: string){
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/settings/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

@@ -39,6 +39,7 @@ import { CartEntity } from "../modules/cart/model/cart.entity";
 import { CommentEntity } from "../modules/comment/model/comment.entity";
 import { MenuEntity } from "../modules/menu/model/menu.entity";
 import { ProductColorEntity } from "../modules/products/product-color/model/product-color.entity";
+import { NotificationEntity } from "../modules/notification/model/notification.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -111,6 +112,7 @@ const dbConnection = new DataSource({
     PostCategoryEntity,
     CommentEntity,
     MenuEntity,
+    NotificationEntity
   ],
   subscribers: [],
   migrations: [],

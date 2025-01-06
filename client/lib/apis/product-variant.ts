@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveProductVariant(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/product-variants`, {
+  const res = await fetch(`${appConfig.apiUrl}/product-variants`, {
     method: "POST",
     headers,
     body: JSON.stringify(data),
@@ -14,7 +14,7 @@ export async function saveProductVariant(data: any) {
 
 export async function getProductVariants() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/product-variants`, {
+  const res = await fetch(`${appConfig.apiUrl}/product-variants`, {
     headers,
   });
   return await handleResponse(res);
@@ -23,7 +23,7 @@ export async function getProductVariants() {
 export async function getProductVariant(data: { id: string }) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/product-variants/${data.id}`,
+    `${appConfig.apiUrl}/product-variants/${data.id}`,
     {
       method: "GET",
       headers,
@@ -35,7 +35,7 @@ export async function getProductVariant(data: { id: string }) {
 export async function updateProductVariant(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/product-variants/${data.id}`,
+    `${appConfig.apiUrl}/product-variants/${data.id}`,
     {
       method: "PUT",
       headers,
@@ -47,7 +47,7 @@ export async function updateProductVariant(data: any) {
 
 export async function deleteProductVariant(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/product-variants/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/product-variants/${id}`, {
     method: "DELETE",
     headers,
   });

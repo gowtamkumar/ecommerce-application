@@ -18,7 +18,7 @@ const handleBackup = async (): Promise<void> => {
     // const response = await backupDB();
 
     const response = await fetch(
-      `${appConfig.apiUrl}/api/v1/settings/db-backup`,
+      `${appConfig.apiUrl}/settings/db-backup`,
       {
         method: "POST",
         headers: {

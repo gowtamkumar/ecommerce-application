@@ -22,7 +22,7 @@ export async function getDashboardReports(params: {
   }
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/reports/dashboard?${queryParams.toString()}`,
+    `${appConfig.apiUrl}/reports/dashboard?${queryParams.toString()}`,
     {
       cache: "no-cache",
       headers,
@@ -34,7 +34,7 @@ export async function getDashboardReports(params: {
 // Function to get top-selling products
 export async function getTopSellingProducts() {
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/reports/top-selling-products`,
+    `${appConfig.apiUrl}/reports/top-selling-products`,
     {
       cache: "no-cache",
     }

@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 export async function saveBanner(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/banners`, {
+  const res = await fetch(`${appConfig.apiUrl}/banners`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -23,7 +23,7 @@ export async function getBanners(params?: any) {
   }
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/banners?${searchParams.toString()}`
+    `${appConfig.apiUrl}/banners?${searchParams.toString()}`
   );
 
   return await handleResponse(res);
@@ -32,7 +32,7 @@ export async function getBanners(params?: any) {
 export async function updateBanner(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/banners/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/banners/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -45,7 +45,7 @@ export async function updateBanner(data: any) {
 export async function deleteBanner(id: string) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/banners/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/banners/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials: any) {
         const res = await fetch(
-          `${appConfig.apiUrl}/api/v1/auth/login`,
+          `${appConfig.apiUrl}/auth/login`,
           {
             method: "POST",
             body: JSON.stringify(credentials),
@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
           username: profile.email
         };
         const res = await fetch(
-          `${appConfig.apiUrl}/api/v1/auth/get-user-by-email`,
+          `${appConfig.apiUrl}/auth/get-user-by-email`,
           {
             method: "POST",
             body: JSON.stringify(newUser),
@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
           email: profile.email,
         };
         const res = await fetch(
-          `${appConfig.apiUrl}/api/v1/auth/get-user-by-email`,
+          `${appConfig.apiUrl}/auth/get-user-by-email`,
           {
             method: "POST",
             body: JSON.stringify(newUser),

@@ -11,7 +11,7 @@ export async function saveUpazila(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/upazilas`, {
+  const res = await fetch(`${appConfig.apiUrl}/upazilas`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,7 +42,7 @@ export async function getUpazilas(params: any) {
   }
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/upazilas?${queryParams.toString()}`,
+    `${appConfig.apiUrl}/upazilas?${queryParams.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${session.user.accessToken}`,
@@ -65,7 +65,7 @@ export async function getUpazila(data: any) {
   }
 
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/upazilas/${data.id}`,
+    `${appConfig.apiUrl}/upazilas/${data.id}`,
     {
       method: "GET",
       headers: {
@@ -85,7 +85,7 @@ export async function getUpazila(data: any) {
 // export async function updateUpazila(data: any) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/upazilas/${data.id}`,
+//     `${appConfig.apiUrl}/upazilas/${data.id}`,
 //     {
 //       method: "PUT",
 //       cache: "no-cache",
@@ -102,7 +102,7 @@ export async function getUpazila(data: any) {
 // export async function deleteUpazila(id: string) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/upazilas/${id}`,
+//     `${appConfig.apiUrl}/upazilas/${id}`,
 //     {
 //       method: "DELETE",
 //       cache: "no-cache",

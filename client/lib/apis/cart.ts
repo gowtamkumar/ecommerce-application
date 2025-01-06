@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 export async function saveCart(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/carts`, {
+  const res = await fetch(`${appConfig.apiUrl}/carts`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -16,7 +16,7 @@ export async function saveCart(data: any) {
 }
 
 export async function getCarts() {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/carts`, {
+  const res = await fetch(`${appConfig.apiUrl}/carts`, {
     cache: "no-cache",
   });
 
@@ -26,7 +26,7 @@ export async function getCarts() {
 export async function getCartByUser() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/carts/user`, {
+  const res = await fetch(`${appConfig.apiUrl}/carts/user`, {
     cache: "no-cache",
     headers,
   });
@@ -36,7 +36,7 @@ export async function getCartByUser() {
 export async function updateCart(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/carts/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/carts/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -49,7 +49,7 @@ export async function updateCart(data: any) {
 export async function deleteCart(id: string) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/carts/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/carts/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

@@ -20,7 +20,7 @@ interface ApiResponse<T> {
 // Function to save a new status
 export async function saveStatus(data: Status): Promise<ApiResponse<Status>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/status`, {
+  const res = await fetch(`${appConfig.apiUrl}/status`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -33,7 +33,7 @@ export async function saveStatus(data: Status): Promise<ApiResponse<Status>> {
 // Function to get all statuses
 export async function getStatuses(): Promise<ApiResponse<Status[]>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/status`, {
+  const res = await fetch(`${appConfig.apiUrl}/status`, {
     cache: "no-cache",
     headers,
   });
@@ -44,7 +44,7 @@ export async function getStatuses(): Promise<ApiResponse<Status[]>> {
 // Function to update a status
 export async function updateStatus(data: Status): Promise<ApiResponse<Status>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/status/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/status/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -57,7 +57,7 @@ export async function updateStatus(data: Status): Promise<ApiResponse<Status>> {
 // Function to delete a status by ID
 export async function deleteStatus(id: string): Promise<ApiResponse<null>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/status/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/status/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

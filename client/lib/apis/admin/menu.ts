@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "@/lib/utils/commonFunctions";
 export async function saveMenu(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus`, {
+  const res = await fetch(`${appConfig.apiUrl}/menus`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -17,7 +17,7 @@ export async function saveMenu(data: any) {
 
 export async function getMenus() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus`, {
+  const res = await fetch(`${appConfig.apiUrl}/menus`, {
     headers,
     cache: "no-cache",
   });
@@ -27,7 +27,7 @@ export async function getMenus() {
 
 export async function getDashboardMenus() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/dashboard`, {
+  const res = await fetch(`${appConfig.apiUrl}/menus/dashboard`, {
     headers,
     cache: "no-cache",
   });
@@ -37,7 +37,7 @@ export async function getDashboardMenus() {
 export async function updateMenu(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/menus/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -49,7 +49,7 @@ export async function updateMenu(data: any) {
 export async function deleteMenu(id: string) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/menus/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/menus/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

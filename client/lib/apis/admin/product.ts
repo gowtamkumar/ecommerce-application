@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "@/lib/utils/commonFunctions";
 
 export async function saveProduct(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
+  const res = await fetch(`${appConfig.apiUrl}/products`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -31,7 +31,7 @@ interface getParams {
 export async function getProducts() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products`, {
+  const res = await fetch(`${appConfig.apiUrl}/products`, {
     method: "GET",
     headers,
   });
@@ -44,7 +44,7 @@ export async function getProducts() {
 
 export async function getProduct(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/products/${id}`, {
     method: "GET",
     cache: "no-cache",
     headers,
@@ -55,7 +55,7 @@ export async function getProduct(id: string) {
 
 export async function updateProduct(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/products/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -67,7 +67,7 @@ export async function updateProduct(data: any) {
 
 export async function deleteProduct(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/products/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

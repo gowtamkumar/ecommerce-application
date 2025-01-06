@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveOrderTracking(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/order-trackings`, {
+  const res = await fetch(`${appConfig.apiUrl}/order-trackings`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -17,7 +17,7 @@ export async function saveOrderTracking(data: any) {
 export async function getOrderTracking(data: { id: string }) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/order-trackings/${data.id}`,
+    `${appConfig.apiUrl}/order-trackings/${data.id}`,
     {
       cache: "no-cache",
       headers,
@@ -29,7 +29,7 @@ export async function getOrderTracking(data: { id: string }) {
 
 export async function getOrderTrackings() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/order-trackings`, {
+  const res = await fetch(`${appConfig.apiUrl}/order-trackings`, {
     cache: "no-cache",
     headers,
   });
@@ -40,7 +40,7 @@ export async function getOrderTrackings() {
 export async function updateOrderTracking(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/order-trackings/${data.id}`,
+    `${appConfig.apiUrl}/order-trackings/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -54,7 +54,7 @@ export async function updateOrderTracking(data: any) {
 
 export async function deleteOrderTracking(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/order-trackings/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/order-trackings/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

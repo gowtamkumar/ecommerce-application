@@ -19,7 +19,7 @@ interface ApiResponse<T> {
 
 // Function to save a new user
 export async function saveUser(data: User) {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/register`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/register`, {
     method: "POST",
     cache: "no-cache",
     body: JSON.stringify(data),
@@ -30,7 +30,7 @@ export async function saveUser(data: User) {
 // Function to get the current user's information
 export async function getMe() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/me`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/me`, {
     method: "GET",
     cache: "no-cache",
     headers,
@@ -42,7 +42,7 @@ export async function getMe() {
 // Function to get all users
 export async function getUsers() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/users`, {
     cache: "no-cache",
     headers,
   });
@@ -53,7 +53,7 @@ export async function getUsers() {
 // Function to update a user
 export async function updateUser(data: User) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/users/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -69,7 +69,7 @@ export async function updatePassword(data: {
   newPassword: string;
 }) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/update-password`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/update-password`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -82,7 +82,7 @@ export async function updatePassword(data: {
 // Function to delete a user by ID
 export async function deleteUser(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/auth/users/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/users/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

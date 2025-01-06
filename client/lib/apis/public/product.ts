@@ -76,14 +76,14 @@ export async function getPublicProducts(params: getParams) {
     queryString += `search=${search}&`;
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products?${queryString}`);
+  const res = await fetch(`${appConfig.apiUrl}/products?${queryString}`);
 
   return await handleResponse(res);
 }
 
 export async function getPublicProduct(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/products/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/products/${id}`, {
     method: "GET",
     cache: "no-cache",
     headers,
@@ -95,7 +95,7 @@ export async function getProductBySlug(slug: string) {
   console.log("🚀 ~ slug:", slug)
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/products/slug/${slug}`,
+    `${appConfig.apiUrl}/products/slug/${slug}`,
     {
       method: "GET",
       cache: "no-cache",

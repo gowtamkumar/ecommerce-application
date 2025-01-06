@@ -25,7 +25,7 @@ export async function saveShippingAddress(
   data: ShippingAddress
 ): Promise<ApiResponse<ShippingAddress>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/shipping-address`, {
+  const res = await fetch(`${appConfig.apiUrl}/shipping-address`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -40,7 +40,7 @@ export async function getShippingAddress(): Promise<
   ApiResponse<ShippingAddress[]>
 > {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/shipping-address`, {
+  const res = await fetch(`${appConfig.apiUrl}/shipping-address`, {
     cache: "no-cache",
     headers,
   });
@@ -54,7 +54,7 @@ export async function updateShippingAddress(
 ): Promise<ApiResponse<ShippingAddress>> {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/shipping-address/${data.id}`,
+    `${appConfig.apiUrl}/shipping-address/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -71,7 +71,7 @@ export async function deleteShippingAddress(
   id: string
 ): Promise<ApiResponse<null>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/shipping-address/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/shipping-address/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

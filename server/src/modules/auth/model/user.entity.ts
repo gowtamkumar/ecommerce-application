@@ -19,6 +19,7 @@ import { PaymentEntity } from "../../payment/model/payment.entity";
 import { UserActivityEntity } from "./user-activity.entity";
 import { PostEntity } from "../../post/model/post.entity";
 import { CommentEntity } from "../../comment/model/comment.entity";
+import { NotificationEntity } from "../../notification/model/notification.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -121,6 +122,10 @@ export class UserEntity {
 
   @OneToMany((_type) => CommentEntity, (comment) => comment.user)
   comments!: CommentEntity[];
+
+  @OneToMany((_type) => NotificationEntity, (notification) => notification.user)
+  notifications!: NotificationEntity[];
+
 
   
 

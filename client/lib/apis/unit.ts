@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 // Function to save a new unit
 export async function saveUnit(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/units`, {
+  const res = await fetch(`${appConfig.apiUrl}/units`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -18,7 +18,7 @@ export async function saveUnit(data: any) {
 // Function to get all units
 export async function getUnits() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/units`, {
+  const res = await fetch(`${appConfig.apiUrl}/units`, {
     cache: "no-cache",
     headers,
   });
@@ -29,7 +29,7 @@ export async function getUnits() {
 // Function to update a unit
 export async function updateUnit(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/units/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/units/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -42,7 +42,7 @@ export async function updateUnit(data: any) {
 // Function to delete a unit by ID
 export async function deleteUnit(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/units/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/units/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

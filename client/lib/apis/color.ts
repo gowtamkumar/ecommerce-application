@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveColor(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {
+  const res = await fetch(`${appConfig.apiUrl}/colors`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -16,7 +16,7 @@ export async function saveColor(data: any) {
 
 export async function getColors() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors`, {
+  const res = await fetch(`${appConfig.apiUrl}/colors`, {
     cache: "no-cache",
     headers,
   });
@@ -26,7 +26,7 @@ export async function getColors() {
 
 export async function updateColor(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/colors/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -38,7 +38,7 @@ export async function updateColor(data: any) {
 
 export async function deleteColor(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/colors/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/colors/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

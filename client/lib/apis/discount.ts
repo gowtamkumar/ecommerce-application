@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveDiscount(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts`, {
+  const res = await fetch(`${appConfig.apiUrl}/discounts`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -16,7 +16,7 @@ export async function saveDiscount(data: any) {
 
 export async function getDiscounts() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts`, {
+  const res = await fetch(`${appConfig.apiUrl}/discounts`, {
     cache: "no-cache",
     headers,
   });
@@ -27,7 +27,7 @@ export async function getDiscounts() {
 export async function getFilterDiscounts(params?: { type: string }) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/discounts?type=${params?.type}`,
+    `${appConfig.apiUrl}/discounts?type=${params?.type}`,
     {
       headers,
     }
@@ -38,7 +38,7 @@ export async function getFilterDiscounts(params?: { type: string }) {
 
 export async function updateDiscount(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/discounts/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -50,7 +50,7 @@ export async function updateDiscount(data: any) {
 
 export async function deleteDiscount(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/discounts/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/discounts/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

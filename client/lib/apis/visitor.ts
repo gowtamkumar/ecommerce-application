@@ -19,7 +19,7 @@ interface ApiResponse<T> {
 export async function saveVisitor(
   data: Visitor
 ): Promise<ApiResponse<Visitor>> {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors`, {
+  const res = await fetch(`${appConfig.apiUrl}/visitors`, {
     method: "POST",
     cache: "no-cache",
     body: JSON.stringify(data),
@@ -30,7 +30,7 @@ export async function saveVisitor(
 // Function to get all visitors
 export async function getVisitors(): Promise<ApiResponse<Visitor[]>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors`, {
+  const res = await fetch(`${appConfig.apiUrl}/visitors`, {
     cache: "no-cache",
     headers,
   });
@@ -40,7 +40,7 @@ export async function getVisitors(): Promise<ApiResponse<Visitor[]>> {
 // Function to get a specific visitor by ID
 export async function getVisitor(id: string): Promise<ApiResponse<Visitor>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/visitors/${id}`, {
     method: "GET",
     headers,
   });
@@ -52,7 +52,7 @@ export async function updateVisitor(
   data: Visitor
 ): Promise<ApiResponse<Visitor>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/visitors/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,
@@ -64,7 +64,7 @@ export async function updateVisitor(
 // Function to delete a visitor by ID
 export async function deleteVisitor(id: string): Promise<ApiResponse<null>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/visitors/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/visitors/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

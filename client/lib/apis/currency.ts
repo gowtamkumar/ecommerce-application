@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveCurrency(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
+  const res = await fetch(`${appConfig.apiUrl}/currencies`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -16,7 +16,7 @@ export async function saveCurrency(data: any) {
 
 export async function getCurrencies() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies`, {
+  const res = await fetch(`${appConfig.apiUrl}/currencies`, {
     cache: "no-cache",
     headers,
   });
@@ -26,7 +26,7 @@ export async function getCurrencies() {
 
 export async function updateCurrency(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/currencies/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -38,7 +38,7 @@ export async function updateCurrency(data: any) {
 
 export async function deleteCurrency(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/currencies/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/currencies/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

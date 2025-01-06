@@ -21,7 +21,7 @@ interface ApiResponse<T> {
 // Function to save a new tax
 export async function saveTax(data: Tax) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs`, {
+  const res = await fetch(`${appConfig.apiUrl}/taxs`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -35,7 +35,7 @@ export async function saveTax(data: Tax) {
 export async function getTaxs() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs`, {
+  const res = await fetch(`${appConfig.apiUrl}/taxs`, {
     cache: "no-cache",
     headers,
   });
@@ -46,7 +46,7 @@ export async function getTaxs() {
 // Function to update a tax
 export async function updateTax(data: Tax) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/taxs/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -59,7 +59,7 @@ export async function updateTax(data: Tax) {
 // Function to delete a tax by ID
 export async function deleteTax(id: string): Promise<ApiResponse<null>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/taxs/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/taxs/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

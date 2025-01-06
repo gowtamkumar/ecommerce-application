@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function savePayment(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/payments`, {
+  const res = await fetch(`${appConfig.apiUrl}/payments`, {
     method: "POST",
     headers,
     body: JSON.stringify(data),
@@ -15,7 +15,7 @@ export async function savePayment(data: any) {
 
 export async function saveDashboardPayment(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/payments/dashboard`, {
+  const res = await fetch(`${appConfig.apiUrl}/payments/dashboard`, {
     method: "POST",
     headers,
     body: JSON.stringify(data),
@@ -25,7 +25,7 @@ export async function saveDashboardPayment(data: any) {
 
 export async function getPayments() {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/payments`, {
+  const res = await fetch(`${appConfig.apiUrl}/payments`, {
     method: "GET",
     headers,
   });
@@ -34,7 +34,7 @@ export async function getPayments() {
 
 export async function getPayment(data: { id: string }) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/payments/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/payments/${data.id}`, {
     method: "GET",
     headers,
   });
@@ -43,7 +43,7 @@ export async function getPayment(data: { id: string }) {
 
 export async function updatePayment(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/payments/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/payments/${data.id}`, {
     method: "PATCH",
     headers,
     body: JSON.stringify(data),
@@ -53,7 +53,7 @@ export async function updatePayment(data: any) {
 
 export async function deletePayment(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/payments/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/payments/${id}`, {
     method: "DELETE",
     headers,
   });

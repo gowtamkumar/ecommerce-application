@@ -11,7 +11,7 @@ export async function saveDistrict(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/districts`, {
+  const res = await fetch(`${appConfig.apiUrl}/districts`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export async function getDistricts(params: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/districts?${queryData.toString()}`, {
+  const res = await fetch(`${appConfig.apiUrl}/districts?${queryData.toString()}`, {
     headers: {
       Authorization: `Bearer ${session.user.accessToken}`,
     },
@@ -63,7 +63,7 @@ export async function getDistrict(data: any) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/districts/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/districts/${data.id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export async function getDistrict(data: any) {
 // export async function updateDistricts(data: any) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/districts/${data.id}`,
+//     `${appConfig.apiUrl}/districts/${data.id}`,
 //     {
 //       method: "PUT",
 //       cache: "no-cache",
@@ -98,7 +98,7 @@ export async function getDistrict(data: any) {
 // export async function deleteDistricts(id: string) {
 //   const session = await getServerSession(authOptions);
 //   const res = await fetch(
-//     `${appConfig.apiUrl}/api/v1/districts/${id}`,
+//     `${appConfig.apiUrl}/districts/${id}`,
 //     {
 //       method: "DELETE",
 //       cache: "no-cache",

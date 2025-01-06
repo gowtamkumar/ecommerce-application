@@ -15,7 +15,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
 }
 
 export async function saveWishlist(data: any) {
-  return await fetchWithAuth(`${appConfig.apiUrl}/api/v1/wishlists`, {
+  return await fetchWithAuth(`${appConfig.apiUrl}/wishlists`, {
     method: "POST",
     cache: "no-cache",
     body: JSON.stringify(data),
@@ -23,14 +23,14 @@ export async function saveWishlist(data: any) {
 }
 
 export async function getWishlists() {
-  return await fetchWithAuth(`${appConfig.apiUrl}/api/v1/wishlists`, {
+  return await fetchWithAuth(`${appConfig.apiUrl}/wishlists`, {
     cache: "no-cache",
   });
 }
 
 export async function getUserWishlists() {
   return await fetchWithAuth(
-    `${appConfig.apiUrl}/api/v1/wishlists/user-wishlist`,
+    `${appConfig.apiUrl}/wishlists/user-wishlist`,
     {
       cache: "no-cache",
     }
@@ -39,7 +39,7 @@ export async function getUserWishlists() {
 
 export async function updateWishlist(data: Wishlist) {
   return await fetchWithAuth(
-    `${appConfig.apiUrl}/api/v1/wishlists/${data.id}`,
+    `${appConfig.apiUrl}/wishlists/${data.id}`,
     {
       method: "PUT",
       cache: "no-cache",
@@ -49,7 +49,7 @@ export async function updateWishlist(data: Wishlist) {
 }
 
 export async function deleteWishlist(id: string) {
-  return await fetchWithAuth(`${appConfig.apiUrl}/api/v1/wishlists/${id}`, {
+  return await fetchWithAuth(`${appConfig.apiUrl}/wishlists/${id}`, {
     method: "DELETE",
     cache: "no-cache",
   });

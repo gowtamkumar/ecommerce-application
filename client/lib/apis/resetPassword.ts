@@ -6,7 +6,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 export async function resetPassword(data: any, token: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/auth/reset-password/${token}`,
+    `${appConfig.apiUrl}/auth/reset-password/${token}`,
     {
       method: "POST",
       headers,

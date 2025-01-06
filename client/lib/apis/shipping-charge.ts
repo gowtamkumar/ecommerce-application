@@ -23,7 +23,7 @@ export async function saveShippingCharge(
   data: ShippingCharge
 ): Promise<ApiResponse<ShippingCharge>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/shipping-charges`, {
+  const res = await fetch(`${appConfig.apiUrl}/shipping-charges`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -44,7 +44,7 @@ export async function getShippingCharges(params?: {
 
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/shipping-charges?${queryData}`,
+    `${appConfig.apiUrl}/shipping-charges?${queryData}`,
     {
       cache: "no-cache",
       headers,
@@ -58,7 +58,7 @@ export async function getShippingCharge(
   id: string
 ): Promise<ApiResponse<ShippingCharge>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/shipping-charges/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/shipping-charges/${id}`, {
     cache: "no-cache",
     headers,
   });
@@ -71,7 +71,7 @@ export async function updateShippingCharge(
 ): Promise<ApiResponse<ShippingCharge>> {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/api/v1/shipping-charges/${data.id}`,
+    `${appConfig.apiUrl}/shipping-charges/${data.id}`,
     {
       method: "PATCH",
       cache: "no-cache",
@@ -87,7 +87,7 @@ export async function deleteShippingCharge(
   id: string
 ): Promise<ApiResponse<null>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/shipping-charges/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/shipping-charges/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

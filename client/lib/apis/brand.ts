@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveBrand(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`, {
+  const res = await fetch(`${appConfig.apiUrl}/brands`, {
     method: "POST",
     cache: "no-cache",
     headers,
@@ -17,7 +17,7 @@ export async function saveBrand(data: any) {
 export async function getBrands() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands`, {
+  const res = await fetch(`${appConfig.apiUrl}/brands`, {
     cache: "no-cache",
     headers,
   });
@@ -28,7 +28,7 @@ export async function getBrands() {
 export async function updateBrand(data: any) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/brands/${data.id}`, {
     method: "PATCH",
     cache: "no-cache",
     headers,
@@ -41,7 +41,7 @@ export async function updateBrand(data: any) {
 export async function deleteBrand(id: string) {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/brands/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/brands/${id}`, {
     method: "DELETE",
     cache: "no-cache",
     headers,

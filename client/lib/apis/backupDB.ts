@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 export async function backupDB() {
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/settings/db-backup`, {
+  const res = await fetch(`${appConfig.apiUrl}/settings/db-backup`, {
     method: "POST",
     headers,
     body: JSON.stringify({ a: 1, b: "Textual content" }),

@@ -394,10 +394,10 @@ updated_at,
 
 # notification
 id,
-user_id,
-type,
-title,
-message,
-is_read,
+user_id: nmber,
+type: string,
+title: string,,
+message:stirng,
+is_read: boolean,
 created_at,
 updated_at

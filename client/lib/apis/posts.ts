@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function savePost(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/posts`, {
+  const res = await fetch(`${appConfig.apiUrl}/posts`, {
     method: "POST",
     headers,
     body: JSON.stringify(data),
@@ -13,7 +13,7 @@ export async function savePost(data: any) {
 }
 
 export async function getPosts() {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/posts`, {
+  const res = await fetch(`${appConfig.apiUrl}/posts`, {
     method: "GET",
     cache: "no-cache",
   });
@@ -21,7 +21,7 @@ export async function getPosts() {
 }
 
 export async function getPost(data: { id: string }) {
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/posts/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/posts/${data.id}`, {
     method: "GET",
     cache: "no-cache",
   });
@@ -30,7 +30,7 @@ export async function getPost(data: { id: string }) {
 
 export async function updatePost(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/posts/${data.id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/posts/${data.id}`, {
     method: "PUT",
     headers,
     body: JSON.stringify(data),
@@ -40,7 +40,7 @@ export async function updatePost(data: any) {
 
 export async function deletePost(id: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/api/v1/posts/${id}`, {
+  const res = await fetch(`${appConfig.apiUrl}/posts/${id}`, {
     method: "DELETE",
     headers,
   });
