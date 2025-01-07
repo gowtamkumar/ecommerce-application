@@ -60,6 +60,61 @@ export default function Card({ item }: { item: any }) {
       console.log("error", error);
     }
   }
+  //   <>
+  // <div className="relative group">
+  //   <Link href={`/product/${item.id}`}>
+  //     <Image
+  //       src={imageUrl}
+  //       alt={item.name}
+  //       width={800}
+  //       height={800}
+  //       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+  //     />
+  //   </Link>
+  //   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer  bg-fixed flex justify-end items-start">
+  //     <Link href={`/product/${item.id}`}>
+  //       <Image
+  //         src={hoverImgUrl}
+  //         alt={item.name}
+  //         width={800}
+  //         height={800}
+  //         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+  //         className="relative"
+  //       />
+  //     </Link>
+  //     <AddWishlist product_id={+item.id} />
+  //   </div>
+  // </div>
+
+  // <div className="grid grid-rows-[auto_1fr_auto] h-full">
+  //   <div className="py-4">
+  //     {+item.discount ? (
+  //       <>
+  //         <span className="text-red-600 font-bold me-2 text-lg">
+  //           ৳{(+item.unit_price - +item.discount).toFixed(2)}
+  //         </span>
+  //         <span className="text-gray-500 line-through text-lg">
+  //           ৳{(+item.unit_price).toFixed(2)}
+  //         </span>
+  //       </>
+  //     ) : (
+  //       <span className="text-gray-500  text-lg">
+  //         ৳{(+item.unit_price).toFixed(2)}
+  //       </span>
+  //     )}
+  //     <p className="text-bioxin-p font-semibold py-1">
+  //       <Link
+  //         href={`/product/${item.id}`}
+  //         className="text-black hover:underline"
+  //       >
+  //         {item.name}
+  //       </Link>
+  //     </p>
+  //     <Rate allowHalf value={+item.rating} />
+  //   </div>
+  //   <AddToCartButton product={item} />
+  // </div>
+  // </>
 
   return (
     <div className="border p-3">
