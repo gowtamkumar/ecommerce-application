@@ -15,91 +15,95 @@ import { CustomRequest } from "../../../../enums/custom-request-type";
 // @desc Create a Product
 // @route POST /api/v1/products
 // @access Public
-export const createProduct = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createProduct ${req.method} ${req.url}`);
+export const createProduct = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createProduct ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
-  const productRepository = connection.getRepository(ProductEntity);
+    const connection = await getDBConnection();
+    const productRepository = connection.getRepository(ProductEntity);
 
-  // Validate request body
-  const validation = productValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    // Validate request body
+    const validation = productValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const { productVariants, productCategories, productColors, ...restData } =
+      validation.data;
+    // Generate URL slug
+    const count = (await productRepository.count()) + 1;
+    const sku = `SKU-${count.toString().padStart(6, "0")}`;
+
+    // Create product entity
+    const product = productRepository.create({ ...restData, sku });
+
+    // Save product to database
+    const savedProduct = await productRepository.save(product);
+
+    // Prepare promises for saving product variants and categories
+    const promises = [];
+
+    if (productVariants) {
+      const productVariantRepository =
+        connection.getRepository(ProductVariantEntity);
+      const productVariantEntities = productVariants.map((variant) => ({
+        ...variant,
+        productId: savedProduct.id,
+      }));
+      promises.push(productVariantRepository.save(productVariantEntities));
+    }
+
+    if (productColors) {
+      const productColorRepository =
+        connection.getRepository(ProductColorEntity);
+      const productColorEntities = productColors.map((color, idx: number) => ({
+        colorId: +color,
+        default: idx === 0 ? true : false,
+        productId: savedProduct.id,
+      }));
+      promises.push(productColorRepository.save(productColorEntities));
+    }
+
+    if (productCategories) {
+      const productCategoryRepository = connection.getRepository(
+        ProductCategoryEntity
+      );
+      const productCategoryEntities = productCategories.map((item) => ({
+        categoryId: +item,
+        productId: savedProduct.id,
+      }));
+      promises.push(productCategoryRepository.save(productCategoryEntities));
+    }
+
+    // Execute all promises concurrently
+    await Promise.all(promises);
+
+    return res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      data: savedProduct,
     });
   }
-
-  const { productVariants, productCategories, productColors, ...restData } =
-    validation.data;
-  // Generate URL slug
-  const count = (await productRepository.count()) + 1;
-  const sku = `SKU-${count.toString().padStart(6, "0")}`;
-
-  // Create product entity
-  const product = productRepository.create({ ...restData, sku });
-
-  // Save product to database
-  const savedProduct = await productRepository.save(product);
-
-  // Prepare promises for saving product variants and categories
-  const promises = [];
-
-  if (productVariants) {
-    const productVariantRepository =
-      connection.getRepository(ProductVariantEntity);
-    const productVariantEntities = productVariants.map((variant) => ({
-      ...variant,
-      productId: savedProduct.id,
-    }));
-    promises.push(productVariantRepository.save(productVariantEntities));
-  }
-
-  if (productColors) {
-    const productColorRepository = connection.getRepository(ProductColorEntity);
-    const productColorEntities = productColors.map((color, idx: number) => ({
-      colorId: +color,
-      default: idx === 0 ? true : false,
-      productId: savedProduct.id,
-    }));
-    promises.push(productColorRepository.save(productColorEntities));
-  }
-
-  if (productCategories) {
-    const productCategoryRepository = connection.getRepository(
-      ProductCategoryEntity
-    );
-    const productCategoryEntities = productCategories.map((item) => ({
-      categoryId: +item,
-      productId: savedProduct.id,
-    }));
-    promises.push(productCategoryRepository.save(productCategoryEntities));
-  }
-
-  // Execute all promises concurrently
-  await Promise.all(promises);
-
-  return res.status(201).json({
-    success: true,
-    message: "Product created successfully",
-    data: savedProduct,
-  });
-});
+);
 
 // @desc Get all Products
 // @route GET /api/v1/products
 // @access Public
 export const getProducts = async (req: Request, res: Response) => {
   logger.info(`Service: getProducts ${req.method} ${req.url}`);
+
   const connection = await getDBConnection();
   const {
     search,
@@ -359,6 +363,121 @@ export const getProducts = async (req: Request, res: Response) => {
   //   });
   // }
 };
+
+// @desc Get all Products
+// @route GET /api/v1/products
+// @access Public
+export const getDashboardProducts = async (req: Request, res: Response) => {
+  logger.info(`Service: getDashboardProducts ${req.method} ${req.url}`);
+  const connection = await getDBConnection();
+  const productRepository = connection.getRepository(ProductEntity);
+  const {
+    search,
+    lowPrice,
+    highPrice,
+    brandId,
+    status,
+    categoryId,
+    minPrice,
+    maxPrice,
+    discount,
+  } = req.query;
+
+  try {
+    const qb = productRepository.createQueryBuilder("product");
+    qb.select([
+      "product",
+      "user.id",
+      "user.name",
+      "brand.id",
+      "brand.name",
+      "reviews.id",
+      "reviews.rating",
+      "reviews.comment",
+      "tax.name",
+      "tax.value",
+      "productVariants",
+      "productCategories",
+      "category.id",
+      "category.name",
+      "size.id",
+      "size.name",
+      "discount.discountType",
+      "discount.value",
+      "discount.type",
+    ]);
+    qb.leftJoin("product.user", "user");
+    qb.leftJoin("product.brand", "brand");
+    qb.leftJoin("product.reviews", "reviews");
+    qb.leftJoin("product.tax", "tax");
+    qb.leftJoin("product.discount", "discount");
+    qb.leftJoin("product.productVariants", "productVariants");
+    qb.leftJoin("product.productCategories", "productCategories");
+    qb.leftJoin("productCategories.category", "category");
+    qb.leftJoin("productVariants.size", "size");
+    qb.orderBy("productVariants.id", "DESC");
+    qb.addOrderBy("product.slug", "ASC");
+
+    if (status) qb.andWhere({ status });
+
+    if (categoryId)
+      qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
+        categoryIds: categoryId.toString().split(","),
+      });
+
+    if (brandId)
+      qb.andWhere("product.brandId IN (:...brandIds)", {
+        brandIds: brandId.toString().split(","),
+      });
+
+    if (minPrice && maxPrice)
+      qb.andWhere(
+        `productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
+      );
+
+    if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
+
+    // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
+
+    if (lowPrice) qb.orderBy("productVariants.unit_price", "ASC");
+    if (highPrice) qb.orderBy("productVariants.unit_price", "DESC");
+
+    if (search) {
+      qb.andWhere(
+        new Brackets((db) => {
+          db.orWhere("LOWER(product.name) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+          db.orWhere("LOWER(product.description) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+          db.orWhere("LOWER(product.shortDescription) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+          db.orWhere("LOWER(brand.name) ILIKE LOWER(:search)", {
+            search: `%${search}%`,
+          });
+        })
+      );
+    }
+
+    const results = await qb.getMany();
+
+    res.status(200).json({
+      success: true,
+      message: "Fetched all products successfully",
+      totalItem: results.length,
+      data: results,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching the products.",
+      error: error.message,
+    });
+  }
+};
+
 // @desc Get a single Product
 // @route GET /api/v1/products/:id
 // @access Public

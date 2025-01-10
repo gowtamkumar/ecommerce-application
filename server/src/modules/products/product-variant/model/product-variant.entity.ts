@@ -21,9 +21,8 @@ export class ProductVariantEntity {
     name: "unit_price",
     type: "numeric",
     precision: 15,
-    scale: 2,
-    nullable: true
-  }) //need to remove nullable
+    scale: 2
+  }) 
   unitPrice!: number;
 
   @Column({
@@ -56,6 +55,7 @@ export class ProductVariantEntity {
 
   @Column({ name: "stock_qty" })
   stockQty?: number;
+  
 
   @OneToMany((_type) => OrderItemEntity, (items) => items.productVariant)
   orderItems!: OrderItemEntity[];

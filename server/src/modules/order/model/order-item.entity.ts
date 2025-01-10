@@ -27,9 +27,8 @@ export class OrderItemEntity {
     name: "unit_price",
     type: "numeric",
     precision: 10,
-    scale: 2,
-    nullable: true,
-  }) //need to remove nullable ture
+    scale: 2
+  })
   unitPrice!: string;
 
   @Column({
@@ -37,7 +36,6 @@ export class OrderItemEntity {
     type: "numeric",
     precision: 10,
     scale: 2,
-    nullable: true,
   })
   purchasePrice!: string;
 
@@ -77,14 +75,6 @@ export class OrderItemEntity {
   // })
   // @JoinColumn({ name: "color_id" })
   // color!: ColorEntity;
-
-  @Column({ name: "size_id", nullable: true })
-  sizeId!: number;
-  // @ManyToOne((_type) => SizeEntity, (size) => size.orderItems, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "size_id" })
-  // size!: SizeEntity;
 
   @Column({ name: "product_variant_id" })
   productVariantId!: number;

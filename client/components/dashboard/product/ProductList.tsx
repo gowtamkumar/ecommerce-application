@@ -17,7 +17,7 @@ import {
   RestOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { deleteProduct, getProducts } from "@/lib/apis/product";
+import { deleteProduct, getProducts } from "@/lib/apis/admin/product";
 import { useRouter } from "next/navigation";
 import appConfig from "@/appConfig";
 import {
@@ -315,60 +315,18 @@ const ProductList: React.FC = () => {
         key: "purchasePrice",
       },
       { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
-
       {
         title: "Size",
         key: "size",
         dataIndex: "size",
         render: (v: any) => <span>{v?.name}</span>,
       },
-
-      {
-        title: "color",
-        key: "Color",
-        dataIndex: "color",
-        render: (v: any) => <span>{v?.name}</span>,
-      },
-
-      {
-        title: "Weight",
-        key: "weight",
-        dataIndex: "weight",
-      },
       { title: "Stock Qty", dataIndex: "stockQty", key: "stockQty" },
-
       {
-        title: "Tax",
-        render: (v: any) => {
-          const taxAmount = (+v.unitPrice * (+value?.tax?.value || 0)) / 100;
-          return <span>{taxAmount.toFixed(2)}</span>;
-        },
-      },
-      {
-        title: "Discount",
-        render: (v: any) => {
-          const discount = value.discount;
-          const taxAmount = (+v.unitPrice * (+value?.tax?.value || 0)) / 100;
-          const discountAmount =
-            discount?.discountType === "Percentage"
-              ? ((+v.unitPrice + taxAmount) * (discount.value || 0)) / 100
-              : +discount?.value || 0;
-          return <span>{discountAmount.toFixed(2)}</span>;
-        },
-      },
-      {
-        title: "Orginal Unit Price",
-        render: (v: any) => {
-          const discount = value.discount;
-          const taxAmount = (+v.unitPrice * (+value?.tax?.value || 0)) / 100;
-          const discountAmount =
-            discount?.discountType === "Percentage"
-              ? ((+v.unitPrice + taxAmount) * (discount.value || 0)) / 100
-              : +discount?.value || 0;
-          return (
-            <span>{(+v.unitPrice + taxAmount - +discountAmount).toFixed(2)}</span>
-          );
-        },
+        title: "Default",
+        dataIndex: "default",
+        key: "default",
+        render: (value: any) => <Tag>{value ? "Yes" : "No"}</Tag>,
       },
     ];
 
@@ -397,13 +355,13 @@ const ProductList: React.FC = () => {
                 }`}
             </h2>
             <h2>
-              <strong>Tax:</strong> {value.tax.value}%
+              <strong>Tax:</strong> {value?.tax?.value}%
             </h2>
             <h2>
               <strong>Limit Purchase Qty: </strong> {value.limitPurchaseQty}
             </h2>
             <h2>
-              <strong>Alert Qty:</strong> {value.alertQty}
+              <strong>Alert Qty:</strong> {value?.alertQty}
             </h2>
             <h2>
               <strong>Enable Review:</strong>{" "}
@@ -449,7 +407,9 @@ const ProductList: React.FC = () => {
                     key={item}
                     width={200}
                     alt={item}
-                    src={`${appConfig.baseApiUrl}/uploads/${item || "no-data.png"}`}
+                    src={`${appConfig.baseApiUrl}/uploads/${
+                      item || "no-data.png"
+                    }`}
                   />
                 );
               })}

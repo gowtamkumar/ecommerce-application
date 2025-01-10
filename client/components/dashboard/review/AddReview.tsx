@@ -9,7 +9,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveReview, updateReview } from "@/lib/apis/review";
-import { getProducts } from "@/lib/apis/product";
+import { getProducts } from "@/lib/apis/admin/product";
 import { errorNotification } from "@/lib/utils/notification";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 

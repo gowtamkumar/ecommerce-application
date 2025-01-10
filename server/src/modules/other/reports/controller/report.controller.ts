@@ -55,12 +55,12 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_sale_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_order_count,
           SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_count,
-          SUM(CASE WHEN status = 'Canceled' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_canceled_amount,
+          SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) + COALESCE(order_tax, 0) - COALESCE(discount_amount, 0)) ELSE 0 END) AS total_canceled_amount,
           SUM(CASE WHEN status = 'Returned' THEN 1 ELSE 0 END) AS total_sale_return_count,
-          SUM(CASE WHEN status = 'Returned' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_return_amount,
+          SUM(CASE WHEN status = 'Returned' THEN (COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) + COALESCE(order_tax, 0) - COALESCE(discount_amount, 0)) ELSE 0 END) AS total_sale_return_amount,
           SUM(CASE WHEN status = 'Returned' THEN  COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_return_shipping_amount,
-          SUM(CASE WHEN status = 'Pending' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_order_amount,
-          SUM(CASE WHEN status = 'Completed' THEN COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) ELSE 0 END) AS total_sale_amount
+          SUM(CASE WHEN status = 'Pending' THEN (COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) + COALESCE(order_tax, 0) - COALESCE(discount_amount, 0)) ELSE 0 END) AS total_order_amount,
+          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(net_amount, 0) + COALESCE(shipping_amount, 0) + COALESCE(order_tax, 0) - COALESCE(discount_amount, 0)) ELSE 0 END) AS total_sale_amount
       FROM orders where order_date BETWEEN '${fromDate}' AND '${toDate}'
   `);
 

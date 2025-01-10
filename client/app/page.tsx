@@ -1,5 +1,5 @@
 import Discount from "@/components/website/home/Discount";
-import { getHomeApi } from "@/lib/apis/public/home";
+import { getHomeApi } from "@/lib/apis/home";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 

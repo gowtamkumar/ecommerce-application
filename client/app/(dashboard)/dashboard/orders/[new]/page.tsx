@@ -27,7 +27,7 @@ import {
   MinusCircleOutlined
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts, saveProduct, updateProduct } from "@/lib/apis/product";
+import { getProducts, saveProduct, updateProduct } from "@/lib/apis/admin/product";
 import { getTaxs } from "@/lib/apis/tax";
 import { getCategories } from "@/lib/apis/categories";
 import { getSizes } from "@/lib/apis/size";

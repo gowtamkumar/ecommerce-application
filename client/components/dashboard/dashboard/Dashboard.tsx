@@ -94,7 +94,6 @@ const Dashboard = () => {
     return <Spin />;
   }
 
-  // const formatter = (value: any) => <CountUp end={value} separator="," />;
   return (
     <div className="container">
       <div className="grid pb-3">

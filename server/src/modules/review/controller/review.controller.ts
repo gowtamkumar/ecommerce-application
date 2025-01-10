@@ -61,40 +61,42 @@ export const getReview = asyncHandler(
 // @desc Create a single Review
 // @route POST /api/v1/Review
 // @access Public
-export const createReview = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createReview ${req.method} ${req.url}`);
+export const createReview = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createReview ${req.method} ${req.url}`);
 
-  const validation = reviewValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    const validation = reviewValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const connection = await getDBConnection();
+
+    const repository = connection.getRepository(ReviewEntity);
+
+    const newReview = repository.create(validation.data);
+
+    const save = await repository.save(newReview);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Review",
+      data: save,
     });
   }
-
-  const connection = await getDBConnection();
-
-  const repository = connection.getRepository(ReviewEntity);
-
-  const newReview = repository.create(validation.data);
-
-  const save = await repository.save(newReview);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Review",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single Review
 // @route PUT /api/v1/Review/:id

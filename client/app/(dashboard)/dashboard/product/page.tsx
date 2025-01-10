@@ -9,7 +9,7 @@ const ProductList = dynamic(() => import('@/components/dashboard/product/Product
 
 export default function Product() {
   const [tabKey, setTabKey] = useState("product_list");
-  const params = useRouter();
+  const route = useRouter();
 
   return (
     <div className="container bg-white p-3">
@@ -27,7 +27,7 @@ export default function Product() {
           <Button
             size="small"
             className="capitalize"
-            onClick={() => params.push("/dashboard/product/new")}
+            onClick={() => route.push("/dashboard/product/new")}
           >
             <PlusOutlined className="mx-1" /> New Product
           </Button>

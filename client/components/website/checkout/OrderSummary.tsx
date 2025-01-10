@@ -118,7 +118,24 @@ export default function OrderSummary() {
                 </div>
               </div>
               <div className="mx-2 text-base font-semibold text-green-600">
-                Price: ৳{(+item.unitPrice).toFixed(2)}
+                Price:
+                <p className="text-gray-500 mb-1 text-md">
+                  ৳
+                  {item?.discountAmount
+                    ? (+item.unitPrice - +item.discountAmount).toFixed(2)
+                    : item.unitPrice}
+                </p>
+                {item?.discountAmount && (
+                  <div className="text-xs">
+                    <span className="line-through text-gray-500">
+                      ৳ {(+item.unitPrice).toFixed(2)}
+                    </span>
+                    <span className="text-red-600">
+                      -{item.discountValue}
+                      {item?.discountType === "Percentage" ? "%" : "BDT"}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="mx-2 text-base font-semibold text-green-600">

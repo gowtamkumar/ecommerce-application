@@ -9,7 +9,7 @@ import ProductDescription from "./ProductDescription";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { errorNotification } from "@/lib/utils/notification";
-import { getProductBySlug } from "@/lib/apis/public/product";
+import { getProductBySlug } from "@/lib/apis/product";
 import ReviewTable from "./review-rating/ReviewTable";
 import ProductCard from "./ProductCard";
 import {

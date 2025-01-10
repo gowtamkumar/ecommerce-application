@@ -20,7 +20,6 @@ import { WishListEntity } from "../../../wishlist/model/wishlist.entity";
 import { OrderItemEntity } from "../../../order/model/order-item.entity";
 import { UnitEntity } from "../../../unit/model/unit.entity";
 import { DiscountEntity } from "../../../discount/model/discount.entity";
-import { ColorEntity } from "../../../color/model/color.entity";
 import { ProductColorEntity } from "../../product-color/model/product-color.entity";
 
 @Entity("products")

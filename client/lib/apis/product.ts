@@ -1,18 +1,6 @@
 "use server";
 import appConfig from "@/appConfig";
-import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
-
-export async function saveProduct(data: any) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/products`, {
-    method: "POST",
-    cache: "no-cache",
-    headers,
-    body: JSON.stringify(data),
-  });
-
-  return await handleResponse(res);
-}
+import { getAuthHeaders, handleResponse } from "@/lib/utils/commonFunctions";
 
 interface getParams {
   brandId?: any;
@@ -26,20 +14,6 @@ interface getParams {
   highPrice?: string;
   discount?: number;
   status?: boolean;
-}
-
-export async function getProducts() {
-  const headers = await getAuthHeaders();
-
-  const res = await fetch(`${appConfig.apiUrl}/products`, {
-    method: "GET",
-    headers,
-  });
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData?.message || "Failed to get products");
-  }
-  return res.json();
 }
 
 export async function getPublicProducts(params: getParams) {
@@ -107,36 +81,26 @@ export async function getPublicProducts(params: getParams) {
   return await handleResponse(res);
 }
 
-export async function getProduct(id: string) {
+export async function getPublicProduct(id: string) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/products/${id}`, {
     method: "GET",
     cache: "no-cache",
     headers,
   });
-
   return await handleResponse(res);
 }
 
-export async function updateProduct(data: any) {
+export async function getProductBySlug(slug: string) {
+  console.log("🚀 ~ slug:", slug)
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/products/${data.id}`, {
-    method: "PATCH",
-    cache: "no-cache",
-    headers,
-    body: JSON.stringify(data),
-  });
-
-  return await handleResponse(res);
-}
-
-export async function deleteProduct(id: string) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/products/${id}`, {
-    method: "DELETE",
-    cache: "no-cache",
-    headers,
-  });
-
+  const res = await fetch(
+    `${appConfig.apiUrl}/products/slug/${slug}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+      headers,
+    }
+  );
   return await handleResponse(res);
 }

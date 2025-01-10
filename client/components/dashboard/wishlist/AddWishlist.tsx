@@ -8,7 +8,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveWishlist, updateWishlist } from "@/lib/apis/wishlist";
-import { getProducts } from "@/lib/apis/product";
+import { getProducts } from "@/lib/apis/admin/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
 

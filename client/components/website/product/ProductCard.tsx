@@ -1,5 +1,4 @@
 "use client";
-import { getPublicProducts } from "@/lib/apis/product";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
   selectProduct,
@@ -10,7 +9,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
-import { getHomeApi } from "@/lib/apis/public/home";
+import { getHomeApi } from "@/lib/apis/home";
+import { getPublicProducts } from "@/lib/apis/product";
 
 const ITEMS_PER_PAGE = 12;
 

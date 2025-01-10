@@ -6,12 +6,14 @@ import {
   deleteProduct,
   getProduct,
   getProductByslug,
+  getDashboardProducts,
 } from "../controller/product.controller";
 import { AuthGuard } from "../../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
 router.route("/").get(getProducts).post(AuthGuard, createProduct);
+router.route("/dashboard").get(AuthGuard, getDashboardProducts);
 // router.route("/active").get(getActiveProducts);
 // router.route("/findbyname").get(getFindByName);
 // router.route("/queryhelper").get(getQueryHelper);

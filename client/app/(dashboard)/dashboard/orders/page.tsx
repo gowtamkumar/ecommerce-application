@@ -83,6 +83,7 @@ const Page: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getOrders();
+      
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),

@@ -19,7 +19,7 @@ import {
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getProduct, saveProduct, updateProduct } from "@/lib/apis/product";
+import { getProduct, saveProduct, updateProduct } from "@/lib/apis/admin/product";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
