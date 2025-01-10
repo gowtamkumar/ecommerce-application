@@ -5,6 +5,7 @@ import { ColorEntity } from "../model/color.entity";
 import { colorValidationSchema } from "../../../validation";
 import { updateColorValidationSchema } from "../../../validation/color/updateColorValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Color
 // @route GET /api/v1/Color
@@ -49,7 +50,7 @@ export const getColor = asyncHandler(
 // @desc Create a single Color
 // @route POST /api/v1/Color
 // @access Public
-export const createColor = asyncHandler(async (req: any, res: Response) => {
+export const createColor = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createColor ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = colorValidationSchema.safeParse({

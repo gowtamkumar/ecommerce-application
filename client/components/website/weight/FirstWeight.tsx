@@ -8,7 +8,7 @@ export default function FirstWeight({ data }: any) {
         <Image
           src={
             data?.image
-              ? `${appConfig.apiUrl}/uploads/${data?.image}`
+              ? `${appConfig.baseApiUrl}/uploads/${data?.image}`
               : "/pos_software.png"
           }
           alt={data?.image}

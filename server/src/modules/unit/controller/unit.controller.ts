@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { UnitEntity } from "../model/unit.entity";
 import { unitValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Unit
 // @route GET /api/v1/Unit
@@ -50,7 +51,7 @@ export const getUnit = asyncHandler(
 // @desc Create a single Unit
 // @route POST /api/v1/Unit
 // @access Public
-export const createUnit = asyncHandler(async (req: any, res: Response) => {
+export const createUnit = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createUnit ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();

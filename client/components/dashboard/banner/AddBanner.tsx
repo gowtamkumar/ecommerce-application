@@ -82,7 +82,7 @@ const AddBanner = () => {
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: filename,
-        url: `${appConfig.apiUrl}/uploads/${filename || "no-data.png"}`,
+        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
       };
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:

@@ -7,6 +7,7 @@ import { FileEntity } from "../../other/file/model/file.entity";
 import { join } from "path";
 import fs from "fs";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Categorys
 // @route GET /api/v1/categories/all
@@ -124,7 +125,7 @@ export const getCategory = asyncHandler(
 // @desc Create a single Category
 // @route POST /api/v1/categories
 // @access Public
-export const createCategory = asyncHandler(async (req: any, res: Response) => {
+export const createCategory = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createCategory ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   // Validate request body

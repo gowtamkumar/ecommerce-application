@@ -5,6 +5,7 @@ import { ShippingChargeEntity } from "../model/shipping-charge.entity";
 import { shippingChargeValidationSchema } from "../../../validation/shipping-charge/shippingChargeValidation";
 import { updateShippingChargeValidationSchema } from "../../../validation/shipping-charge/updateShippingChargeValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 // import { shippingChargeValidationSchema } from "../../../validation";
 
 // @desc Get all shippingCharge
@@ -66,7 +67,7 @@ export const getShippingCharge = asyncHandler(
 // @route POST /api/v1/shippingCharge
 // @access Public
 export const createShippingCharge = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createShippingCharge ${req.method} ${req.url}`);
 
     const validation = shippingChargeValidationSchema.safeParse({

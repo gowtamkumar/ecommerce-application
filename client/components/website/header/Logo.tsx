@@ -29,7 +29,7 @@ export default function HeaderLogo({ settingData }: any) {
         <Image
           src={
             logo?.image
-              ? `${appConfig.apiUrl}/uploads/${logo?.image}`
+              ? `${appConfig.baseApiUrl}/uploads/${logo?.image}`
               : "/pos_software.png"
           }
           alt={logo?.image}

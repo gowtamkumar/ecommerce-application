@@ -197,7 +197,7 @@ const CategoryList: React.FC = () => {
         <Image
           width={60}
           alt={value}
-          src={`${appConfig.apiUrl}/uploads/${value || "no-data.png"}`}
+          src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
         />
       ),
     },
@@ -242,7 +242,7 @@ const CategoryList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
                     }`,
                 };
                 newData.fileList = [file];

@@ -8,6 +8,7 @@ import { FileEntity } from "../../other/file/model/file.entity";
 import fs from "fs";
 import { updateBrandValidationSchema } from "../../../validation/brand/updateBrandValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Brands
 // @route GET /api/v1/Brands
@@ -52,7 +53,7 @@ export const getBrand = asyncHandler(
 // @desc Create a single Brand
 // @route POST /api/v1/Brands
 // @access Public
-export const createBrand = asyncHandler(async (req: any, res: Response) => {
+export const createBrand = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createBrand ${req.method} ${req.url}`);
   const connection = await getDBConnection();
 

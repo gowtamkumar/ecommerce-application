@@ -10,11 +10,12 @@ import { updateProductValidationSchema } from "../../../../validation/products/p
 import { logger } from "../../../../middlewares/logger";
 import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
 import { ProductColorEntity } from "../../product-color/model/product-color.entity";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Create a Product
 // @route POST /api/v1/products
 // @access Public
-export const createProduct = asyncHandler(async (req: any, res: Response) => {
+export const createProduct = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createProduct ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();

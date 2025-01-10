@@ -1,5 +1,6 @@
 import multer from "multer";
 import path, { extname, resolve } from "path";
+import { CustomRequest } from "./custom-request-type";
 
 // Set up storage for uploaded files
 const storage = multer.diskStorage({
@@ -8,7 +9,7 @@ const storage = multer.diskStorage({
     return callback(null, 'public/uploads');
   },
 
-  filename: (req: any, file, callback: any) => {
+  filename: (req: CustomRequest, file, callback: any) => {
     if (file) {
       const imagePattern = /(jpg|jpeg|png)/gi;
       const mathExt = extname(file.originalname).replace(".", "");

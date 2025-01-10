@@ -31,7 +31,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
                   loading="lazy"
                   src={
                     item
-                      ? `${appConfig.apiUrl}/uploads/${item}`
+                      ? `${appConfig.baseApiUrl}/uploads/${item}`
                       : "/pos_software.png"
                   }
                   alt={item}
@@ -66,7 +66,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
                   loading="lazy"
                   src={
                     item
-                      ? `${appConfig.apiUrl}/uploads/${item}`
+                      ? `${appConfig.baseApiUrl}/uploads/${item}`
                       : "/pos_software.png"
                   }
                   alt={item}

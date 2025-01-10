@@ -44,7 +44,7 @@ export default function ViewCart() {
                 <Image
                   src={
                     item.thumbnailImage
-                      ? `${appConfig.apiUrl}/uploads/${item.thumbnailImage}`
+                      ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
                       : "/pos_software.png"
                   }
                   alt={item.name}

@@ -77,7 +77,7 @@ export default function OrderSummary() {
               <Image
                 src={
                   item.thumbnailImage
-                    ? `${appConfig.apiUrl}/uploads/${item.thumbnailImage}`
+                    ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
                     : "/pos_software.png"
                 }
                 width={100}

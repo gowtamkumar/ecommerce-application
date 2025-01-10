@@ -4,11 +4,12 @@ import { getDBConnection } from "../../../config/db";
 import { CartEntity } from "../model/cart.entity";
 import { cartValidationSchema } from "../../../validation";
 import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
 // @access Public
-export const getCartByUser = asyncHandler(async (req: any, res: Response) => {
+export const getCartByUser = asyncHandler(async (req: CustomRequest, res: Response) => {
   const userId = req.id;
   const connection = await getDBConnection();
   const repository = connection.getRepository(CartEntity);
@@ -146,7 +147,7 @@ export const getCart = asyncHandler(
 // @desc Create a single Cart
 // @route POST /api/v1/Cart
 // @access Public
-export const createCart = asyncHandler(async (req: any, res: Response) => {
+export const createCart = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
 
   const validation = cartValidationSchema.safeParse({

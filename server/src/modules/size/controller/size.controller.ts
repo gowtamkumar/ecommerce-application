@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { SizeEntity } from "../model/size.entity";
 import { sizeValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Size
 // @route GET /api/v1/Size
@@ -50,7 +51,7 @@ export const getSize = asyncHandler(
 // @desc Create a single Size
 // @route POST /api/v1/Size
 // @access Public
-export const createSize = asyncHandler(async (req: any, res: Response) => {
+export const createSize = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createSize ${req.method} ${req.url}`);
 
   const validation = sizeValidationSchema.safeParse({

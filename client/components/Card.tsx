@@ -122,7 +122,7 @@ export default function Card({ item }: { item: any }) {
         <Image
           src={
             item.thumbnailImage
-              ? `${appConfig.apiUrl}/uploads/${item.thumbnailImage}`
+              ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
               : "/pos_software.png"
           }
           alt={item.name}
@@ -135,7 +135,7 @@ export default function Card({ item }: { item: any }) {
           <Image
             src={
               item.hoverImage
-                ? `${appConfig.apiUrl}/uploads/${item.hoverImage}`
+                ? `${appConfig.baseApiUrl}/uploads/${item.hoverImage}`
                 : "/pos_software.png"
             }
             alt={item.name}

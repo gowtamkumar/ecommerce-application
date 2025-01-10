@@ -1,15 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  clearAllNotifications,
-  getNotifications,
-  showNotifications,
-} from "@/lib/apis/notification";
+
 import { Button, Modal, Table } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import "./notification.css";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { clearAllNotifications, getNotifications, readNotification } from "@/lib/apis/admin/notification";
 
 const NotificationsUser = () => {
   const [notification, setNotification] = useState<any>({});
@@ -28,7 +25,7 @@ const NotificationsUser = () => {
   };
 
   const handleRowClick = async (value: any) => {
-    const notification = await showNotifications({ id: value.id });
+    const notification = await readNotification({ id: value.id });
     if (notification.success) {
       fetchData();
     }
@@ -44,7 +41,6 @@ const NotificationsUser = () => {
 
   const handleOk = () => {
     setNotification({});
-    // message.success("Order canceled successfully!");
   };
 
   const getTime = (date: any) => {

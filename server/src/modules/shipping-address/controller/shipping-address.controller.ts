@@ -5,6 +5,7 @@ import { shippingAddressValidationSchema } from "../../../validation";
 import { ShippingAddressEntity } from "../model/shipping-address.entity";
 import { updateShippingAddressValidationSchema } from "../../../validation/shipping-address/updateShippingAddressValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all ShippingAddress
 // @route GET /api/v1/shipping-address
@@ -56,7 +57,7 @@ export const getShippingAddress = asyncHandler(
 // @route POST /api/v1/shipping-address
 // @access Public
 export const createShippingAddress = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createShippingAddress ${req.method} ${req.url}`);
 
     const validation = shippingAddressValidationSchema.safeParse({
@@ -145,7 +146,7 @@ export const updateShippingAddress = asyncHandler(
 // @route PUT /api/v1/shipping-address/:id
 // @access Public
 export const activeShippingAddress = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: activeShippingAddress ${req.method} ${req.url}`);
 
     const { id } = req.params;

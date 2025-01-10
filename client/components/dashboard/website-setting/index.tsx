@@ -45,7 +45,7 @@ export default function Index() {
   //             name: `logo ${Math.random() * 10000 + ""}`,
   //             status: "done",
   //             fileName: newData.image,
-  //             url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+  //             url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
   //               }`,
   //           };
   //           newData.fileList = [newfile];
@@ -86,7 +86,7 @@ export default function Index() {
           name: `logo ${Math.random() * 10000 + ""}`,
           status: "done",
           fileName: newData.image,
-          url: `${appConfig.apiUrl}/uploads/${newData.image || "no-data.png"
+          url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
             }`,
         };
         newData.fileList = [newfile];

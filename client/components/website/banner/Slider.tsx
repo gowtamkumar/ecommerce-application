@@ -71,7 +71,7 @@ export default function Slider({ banners }: any) {
                       <Image
                         src={
                           image
-                            ? `${appConfig.apiUrl}/uploads/${image}`
+                            ? `${appConfig.baseApiUrl}/uploads/${image}`
                             : "/pos_software.png"
                         }
                         alt={image}

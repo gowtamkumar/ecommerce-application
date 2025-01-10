@@ -5,6 +5,7 @@ import { OrderTrackingEntity } from "../model/order-tracking.entity";
 import { orderTrackingValidationSchema } from "../../../validation";
 import { updateOrderTrackingValidationSchema } from "../../../validation/order-tracking/updateOrderTrackingValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all OrderTracking
 // @route GET /api/v1/OrderTracking
@@ -54,7 +55,7 @@ export const getOrderTracking = asyncHandler(
 // @route POST /api/v1/OrderTracking
 // @access Public
 export const createOrderTracking = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
       logger.info(`Service: createOrderTracking ${req.method} ${req.url}`);
 
     const validation = orderTrackingValidationSchema.safeParse({

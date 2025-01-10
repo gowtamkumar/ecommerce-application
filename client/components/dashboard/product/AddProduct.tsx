@@ -90,7 +90,7 @@ const AddProduct = ({
       name: `photo ${identifier}`,
       status: "done",
       fileName,
-      url: `${appConfig.apiUrl}/uploads/${fileName || "no-data.png"}`,
+      url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
     });
 
     try {
@@ -204,7 +204,7 @@ const AddProduct = ({
         name: `photo ${idx}`,
         status: "done",
         fileName: item,
-        url: `${appConfig.apiUrl}/uploads/${item || "no-data.png"}`,
+        url: `${appConfig.baseApiUrl}/uploads/${item || "no-data.png"}`,
       }));
       newData.fileList = file;
     }
@@ -215,7 +215,7 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.thumbnailImage,
-        url: `${appConfig.apiUrl}/uploads/${
+        url: `${appConfig.baseApiUrl}/uploads/${
           newData.thumbnailImage || "no-data.png"
         }`,
       };
@@ -228,7 +228,7 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.hoverImage,
-        url: `${appConfig.apiUrl}/uploads/${
+        url: `${appConfig.baseApiUrl}/uploads/${
           newData.hoverImage || "no-data.png"
         }`,
       };
@@ -268,7 +268,7 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: item.filename,
-        url: `${appConfig.apiUrl}/uploads/${item.filename}`,
+        url: `${appConfig.baseApiUrl}/uploads/${item.filename}`,
       }));
 
       const newFileName = res.data.length ? res.data[0].filename : null;

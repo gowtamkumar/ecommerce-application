@@ -87,7 +87,7 @@ export default function HeaderRight() {
             size={25}
             src={
               profileImage
-                ? `${appConfig.apiUrl}/uploads/${profileImage}`
+                ? `${appConfig.baseApiUrl}/uploads/${profileImage}`
                 : "/pos_software.png"
             }
           />

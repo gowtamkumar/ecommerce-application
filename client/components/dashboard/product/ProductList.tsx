@@ -449,7 +449,7 @@ const ProductList: React.FC = () => {
                     key={item}
                     width={200}
                     alt={item}
-                    src={`${appConfig.apiUrl}/uploads/${item || "no-data.png"}`}
+                    src={`${appConfig.baseApiUrl}/uploads/${item || "no-data.png"}`}
                   />
                 );
               })}

@@ -4,6 +4,7 @@ import { asyncHandler } from "../../../../middlewares/async.middleware";
 import { logger } from "../../../../middlewares/logger";
 import { getDBConnection } from "../../../../config/db";
 import { productVariantValidationSchema } from "../../../../validation";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all ProductVariants
 // @route GET /api/v1/ProductVariants
@@ -53,7 +54,7 @@ export const getProductVariant = asyncHandler(
 // @route POST /api/v1/ProductVariants
 // @access Public
 export const createProductVariant = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
      logger.info(`Service: createProductVariant ${req.method} ${req.url}`);
 
     const validation = productVariantValidationSchema.safeParse(req.body);

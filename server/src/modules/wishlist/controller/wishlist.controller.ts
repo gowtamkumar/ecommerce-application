@@ -4,11 +4,12 @@ import { getDBConnection } from "../../../config/db";
 import { wishListhValidationSchema } from "../../../validation";
 import { WishListEntity } from "../model/wishlist.entity";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Wishlists
 // @route GET /api/v1/Wishlists
 // @access Public
-export const getWishlists = asyncHandler(async (req: any, res: Response) => {
+export const getWishlists = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getWishlists ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
@@ -55,7 +56,7 @@ export const getWishlist = asyncHandler(
 // @route GET /api/v1/Wishlists/:id
 // @access Public
 export const getUserWishlist = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     logger.info(`Service: getUserWishlist ${req.method} ${req.url}`);
     const userId = req.id;
     const connection = await getDBConnection();
@@ -150,7 +151,7 @@ GROUP BY
 // @desc Create a single Wishlist
 // @route POST /api/v1/Wishlists
 // @access Public
-export const createWishlist = asyncHandler(async (req: any, res: Response) => {
+export const createWishlist = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createWishlist ${req.method} ${req.url}`);
 
   const validation = wishListhValidationSchema.safeParse({

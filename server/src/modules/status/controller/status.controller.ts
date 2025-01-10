@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { StatusEntity } from "../model/status.entity";
 import { statusValidationSchema } from "../../../validation/status/statusValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Status
 // @route GET /api/v1/Status
@@ -50,7 +51,7 @@ export const getStatus = asyncHandler(
 // @desc Create a single Status
 // @route POST /api/v1/Status
 // @access Public
-export const createStatus = asyncHandler(async (req: any, res: Response) => {
+export const createStatus = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createStatus ${req.method} ${req.url}`);
 
   const validation = statusValidationSchema.safeParse(req.body);

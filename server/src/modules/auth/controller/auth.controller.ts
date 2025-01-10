@@ -25,6 +25,7 @@ import { forgotPasswordValidationSchema } from "../../../validation/user/forgotP
 import { resetPasswordValidationSchema } from "../../../validation/user/resetPasswordValidation";
 import { updatePasswordValidationSchema } from "../../../validation/user/updatePasswordValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -322,7 +323,7 @@ export const login = asyncHandler(
 // // @route GET /api/v1/auth/logout
 // // @access Private
 export const logout = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     logger.info(`Service: logout ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
@@ -350,7 +351,7 @@ export const logout = asyncHandler(
 // // @route GET /api/v1/auth/me
 // // @access Private
 export const getMe = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     logger.info(`Service: getMe ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
@@ -603,7 +604,7 @@ export const resetPassword = asyncHandler(
 // // @route PUT /api/v1/auth/update-password
 // // @access Private
 export const updatePassword = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     logger.info(`Service: updatePassword ${req.method} ${req.url}`);
 
     const validation = updatePasswordValidationSchema.safeParse(req.body);

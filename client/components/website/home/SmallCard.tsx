@@ -64,7 +64,7 @@ export default function SmallCard({ categories }: any) {
                         alt={item.image}
                         src={
                           item.image
-                            ? `${appConfig.apiUrl}/uploads/${item.image}`
+                            ? `${appConfig.baseApiUrl}/uploads/${item.image}`
                             : "/pos_software.png"
                         }
                         loading="lazy"

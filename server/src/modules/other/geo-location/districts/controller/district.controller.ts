@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { DistrictEntity } from "../model/district.entity";
 import { asyncHandler } from "../../../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../../../config/db";
+import { CustomRequest } from "../../../../../enums/custom-request-type";
 
 // @desc Get all District
 // @route GET /api/v1/District
@@ -57,7 +58,7 @@ export const getDistrict = asyncHandler(
 // @desc Create a single District
 // @route POST /api/v1/District
 // @access Public
-export const createDistrict = asyncHandler(async (req: any, res: Response) => {
+export const createDistrict = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
  
   const file = fs.readFileSync(

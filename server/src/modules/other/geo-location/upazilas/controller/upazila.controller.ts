@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { UpazilaEntity } from "../model/upazila.entity";
 import { asyncHandler } from "../../../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../../../config/db";
+import { CustomRequest } from "../../../../../enums/custom-request-type";
 
 // @desc Get all Upazila
 // @route GET /api/v1/Upazila
@@ -55,7 +56,7 @@ export const getUpazila = asyncHandler(
 // @desc Create a single Upazila
 // @route POST /api/v1/Upazila
 // @access Public
-export const createUpazila = asyncHandler(async (req: any, res: Response) => {
+export const createUpazila = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
   // const validation = UpazilaValidationSchema.safeParse({
   //   ...req.body,

@@ -6,6 +6,7 @@ import { postValidationSchema } from "../../../validation";
 import { PostCategoryEntity } from "../model/post-category.entity";
 import { updatePostValidationSchema } from "../../../validation/post/updatePostValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Post
 // @route GET /api/v1/Post
@@ -80,7 +81,7 @@ export const getPost = asyncHandler(
 // @desc Create a single Post
 // @route POST /api/v1/Post
 // @access Public
-export const createPost = asyncHandler(async (req: any, res: Response) => {
+export const createPost = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createPost ${req.method} ${req.url}`);
 
   const validation = postValidationSchema.safeParse({

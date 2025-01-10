@@ -5,6 +5,7 @@ import { DiscountEntity } from "../model/discount.entity";
 import { discountValidationSchema } from "../../../validation";
 import { updateDiscountValidation } from "../../../validation/discount/updateDiscountValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Discounts
 // @route GET /api/v1/Discounts
@@ -53,7 +54,7 @@ export const getDiscount = asyncHandler(
 // @desc Create a single Discount
 // @route POST /api/v1/Discounts
 // @access Public
-export const createDiscount = asyncHandler(async (req: any, res: Response) => {
+export const createDiscount = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createDiscount ${req.method} ${req.url}`);
   const connection = await getDBConnection();
 

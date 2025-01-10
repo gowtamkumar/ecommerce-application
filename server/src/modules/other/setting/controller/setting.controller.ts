@@ -6,6 +6,7 @@ import { getDBConnection } from "../../../../config/db";
 import { settingValidationSchema } from "../../../../validation";
 import { SettingEntity } from "../model/setting.entity";
 import { logger } from "../../../../middlewares/logger";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all Setting
 // @route GET /api/v1/Setting
@@ -52,7 +53,7 @@ export const getSetting = asyncHandler(
 // @desc Create a single Setting
 // @route POST /api/v1/Setting
 // @access Public
-export const createSetting = asyncHandler(async (req: any, res: Response) => {
+export const createSetting = asyncHandler(async (req: CustomRequest, res: Response) => {
    logger.info(`Service: createSetting ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
@@ -85,7 +86,7 @@ export const createSetting = asyncHandler(async (req: any, res: Response) => {
 });
 
 export const createDashboardSetting = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
      logger.info(`Service: createDashboardSetting ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();

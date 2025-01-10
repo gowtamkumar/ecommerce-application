@@ -36,7 +36,7 @@ export default function HeaderDiscount({ discounts }: any) {
                   alt={item.type}
                   src={
                     item.image
-                      ? `${appConfig.apiUrl}/uploads/${item.image}`
+                      ? `${appConfig.baseApiUrl}/uploads/${item.image}`
                       : "/image-box-12.jpg"
                   }
                   loading="lazy"

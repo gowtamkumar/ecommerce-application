@@ -26,7 +26,7 @@ export default function Index({ posts }: any) {
               className="bg-white rounded-lg shadow-md overflow-hidden mb-10"
             >
               <img
-                src={`${appConfig.apiUrl}/uploads/${
+                src={`${appConfig.baseApiUrl}/uploads/${
                   post.image || "no-data.png"
                 }`}
                 alt="Post Image"

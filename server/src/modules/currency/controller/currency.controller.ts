@@ -5,6 +5,7 @@ import { CurrencyEntity } from "../model/currency.entity";
 import { currencyValidationSchema } from "../../../validation";
 import { updateCurrencyValidationSchema } from "../../../validation/currency/updateCurrencyValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Currency
 // @route GET /api/v1/Currency
@@ -51,7 +52,7 @@ export const getCurrency = asyncHandler(
 // @desc Create a single Currency
 // @route POST /api/v1/Currency
 // @access Public
-export const createCurrency = asyncHandler(async (req: any, res: Response) => {
+export const createCurrency = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createCurrency ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = currencyValidationSchema.safeParse({

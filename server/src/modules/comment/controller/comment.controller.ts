@@ -5,6 +5,7 @@ import { CommentEntity } from "../model/comment.entity";
 import { commentValidationSchema } from "../../../validation";
 import { updateCommentValidationSchema } from "../../../validation/comment/updateCommentValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Comment
 // @route GET /api/v1/Comment
@@ -58,7 +59,7 @@ export const getComment = asyncHandler(
 // @desc Create a single Comment
 // @route POST /api/v1/Comment
 // @access Public
-export const createComment = asyncHandler(async (req: any, res: Response) => {
+export const createComment = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createComment ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = commentValidationSchema.safeParse({

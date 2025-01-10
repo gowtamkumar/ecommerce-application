@@ -5,6 +5,7 @@ import { ReviewEntity } from "../model/review.entity";
 import { reviewValidationSchema } from "../../../validation";
 import { updateReviewValidationSchema } from "../../../validation/review/updateReviewValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Review
 // @route GET /api/v1/Review
@@ -60,7 +61,7 @@ export const getReview = asyncHandler(
 // @desc Create a single Review
 // @route POST /api/v1/Review
 // @access Public
-export const createReview = asyncHandler(async (req: any, res: Response) => {
+export const createReview = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createReview ${req.method} ${req.url}`);
 
   const validation = reviewValidationSchema.safeParse({

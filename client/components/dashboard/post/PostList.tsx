@@ -217,7 +217,7 @@ const PostList: React.FC = () => {
         <Image
           width={60}
           alt={value}
-          src={`${appConfig.apiUrl}/uploads/${value || "no-data.png"}`}
+          src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
         />
       ),
     },
@@ -255,7 +255,7 @@ const PostList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.apiUrl}/uploads/${
+                  url: `${appConfig.baseApiUrl}/uploads/${
                     newData.image || "no-data.png"
                   }`,
                 };

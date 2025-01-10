@@ -35,7 +35,7 @@ export default async function page({ params }: { params: { id: string } }) {
       <div
         className="bg-cover bg-center h-64"
         style={{
-          backgroundImage: `url('${appConfig.apiUrl}/uploads/${
+          backgroundImage: `url('${appConfig.baseApiUrl}/uploads/${
             post?.image || "no-data.png"
           }')`,
         }}

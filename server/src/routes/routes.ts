@@ -40,6 +40,7 @@ import { AuthGuard } from "../middlewares/auth.middleware";
 
 // Export the routes setup function
 export const setupRoutes = (app: any) => {
+  // auth route
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/files", fileRoute);
   app.use("/api/v1/products", productRoutes);
@@ -70,10 +71,10 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/upazilas", upazilaRoute);
   app.use("/api/v1/unions", unionsRoute);
   app.use("/api/v1/reports", reportRoute);
-  app.use("/api/v1/visitors", visitorRoute);
-  app.use("/api/v1/leads", leadRoute);
-  app.use("/api/v1/posts", postRoute);
   app.use("/api/v1/notifications", AuthGuard, notificationRoute);
   // public route
   app.use("/api/v1/home", homeRoute);
+  app.use("/api/v1/visitors", visitorRoute);
+  app.use("/api/v1/leads", leadRoute);
+  app.use("/api/v1/posts", postRoute);
 };

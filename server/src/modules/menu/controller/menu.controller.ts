@@ -9,6 +9,7 @@ import { MenuEntity } from "../model/menu.entity";
 import { menuValidationSchema } from "../../../validation/menu/menuValidation";
 import { updateMenuValidationSchema } from "../../../validation/menu/updateMenuValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all memus
 // @route GET /api/v1/memus
@@ -75,7 +76,7 @@ export const getMemu = asyncHandler(
 // @desc Create a single Memu
 // @route POST /api/v1/memus
 // @access Public
-export const createMemu = asyncHandler(async (req: any, res: Response) => {
+export const createMemu = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createMemu ${req.method} ${req.url}`);
 
   const validation = menuValidationSchema.safeParse({

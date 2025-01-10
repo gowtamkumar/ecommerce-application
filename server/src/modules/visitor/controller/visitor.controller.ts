@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { VisitorEntity } from "../model/visitor.entity";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Visitor
 // @route GET /api/v1/Visitor
@@ -49,7 +50,7 @@ export const getVisitor = asyncHandler(
 // @desc Create a single Visitor
 // @route POST /api/v1/Visitor
 // @access Public
-export const createVisitor = asyncHandler(async (req: any, res: Response) => {
+export const createVisitor = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createVisitor ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();

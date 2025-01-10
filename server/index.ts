@@ -21,6 +21,8 @@ if (process.env.NODE_ENV === "development") {
   app.use(express.static(path.join(__dirname, "public")));
 }
 
+
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "..", "public")));
 }

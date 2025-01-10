@@ -7,6 +7,7 @@ import { UpazilaEntity } from "../../upazilas/model/upazila.entity";
 import { UnionEntity } from "../../unions/model/union.entity";
 import { asyncHandler } from "../../../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../../../config/db";
+import { CustomRequest } from "../../../../../enums/custom-request-type";
 
 // @desc Get all Division
 // @route GET /api/v1/Division
@@ -76,7 +77,7 @@ export const getDivision = asyncHandler(
 // @route POST /api/v1/Division
 // @access Public
 export const syncGeoLocation = asyncHandler(
-  async (req: any, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     const dbconnection = await getDBConnection();
 
     const queryRunner = dbconnection.createQueryRunner();
@@ -189,7 +190,7 @@ export const syncGeoLocation = asyncHandler(
 // @desc Create a single Division
 // @route POST /api/v1/Division
 // @access Public
-// export const syncGeoLocation = asyncHandler(async (req: any, res: Response) => {
+// export const syncGeoLocation = asyncHandler(async (req: CustomRequest, res: Response) => {
 //   const dbconnection = await getDBConnection();
 
 //   const fileDivisions = fs.readFileSync(
@@ -284,7 +285,7 @@ export const syncGeoLocation = asyncHandler(
 // @desc Create a single Division
 // @route POST /api/v1/Division
 // @access Public
-export const createDivision = asyncHandler(async (req: any, res: Response) => {
+export const createDivision = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
 
   const file = fs.readFileSync(

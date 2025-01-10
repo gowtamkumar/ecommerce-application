@@ -4,18 +4,22 @@ import { getDBConnection } from "../../../config/db";
 import { NotificationEntity } from "../model/notification.entity";
 import { logger } from "../../../middlewares/logger";
 import { notificationValidationSchema } from "../../../validation";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Notification
 // @route GET /api/v1/Notification
 // @access Public
 export const getNotifications = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: getNotifications ${req.method} ${req.url}`);
+
+    console.log('req.id',req.id);
+    
 
     const connection = await getDBConnection();
     const repository = connection.getRepository(NotificationEntity);
 
-    const result = await repository.find();
+    const result = await repository.find({ where: { userId: req.id } });
 
     return res.status(200).json({
       success: true,
@@ -49,11 +53,37 @@ export const getNotification = asyncHandler(
   }
 );
 
+// @desc Read a single Notification
+// @route GET /api/v1/Notification/read:id
+// @access Public
+export const readNotification = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: readNotification ${req.method} ${req.url}`);
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(NotificationEntity);
+    const result = await repository.findOneBy({ id });
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    const readData = await repository.merge(result, { isRead: true });
+    await repository.save(readData);
+
+    return res.status(200).json({
+      success: true,
+      message: `Read a single Notification of id ${req.params.id}`,
+      data: readData,
+    });
+  }
+);
+
 // @desc Create a single Notification
 // @route POST /api/v1/Notification
 // @access Public
 export const createNotification = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createNotification ${req.method} ${req.url}`);
 
     const validation = notificationValidationSchema.safeParse({
@@ -133,6 +163,29 @@ export const deleteNotification = asyncHandler(
     return res.status(200).json({
       success: true,
       message: `Delete a single Notification of id ${req.params.id}`,
+      data: result,
+    });
+  }
+);
+
+// @desc clear all  Notification
+// @route DELETE /api/v1/Notification/clear
+// @access Public
+export const clearNotification = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: clearNotification ${req.method} ${req.url}`);
+
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(NotificationEntity);
+
+    const result = await repository.find({ where: { userId: req.id } });
+
+    await repository.remove(result);
+
+    return res.status(200).json({
+      success: true,
+      message: `Clear Notification`,
       data: result,
     });
   }

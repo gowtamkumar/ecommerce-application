@@ -7,7 +7,7 @@ export default function AuthorSection({ author }: any) {
     <div className="bg-white rounded-lg shadow-md p-6 mt-10 flex items-center">
       <Image
         alt="User Image"
-        src={`${appConfig.apiUrl}/uploads/${author?.image || "no-data.png"}`}
+        src={`${appConfig.baseApiUrl}/uploads/${author?.image || "no-data.png"}`}
         loading="lazy"
         // fill
         width={0}

@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { UnionEntity } from "../model/union.entity";
 import { asyncHandler } from "../../../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../../../config/db";
+import { CustomRequest } from "../../../../../enums/custom-request-type";
 
 // @desc Get all Union
 // @route GET /api/v1/Union
@@ -55,7 +56,7 @@ export const getUnion = asyncHandler(
 // @desc Create a single Union
 // @route POST /api/v1/Union
 // @access Public
-export const createUnion = asyncHandler(async (req: any, res: Response) => {
+export const createUnion = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
   // const validation = UnionValidationSchema.safeParse({
   //   ...req.body,

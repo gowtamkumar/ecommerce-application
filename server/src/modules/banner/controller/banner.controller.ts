@@ -5,6 +5,7 @@ import { BannerEntity } from "../model/banner.entity";
 import { bannerValidationSchema } from "../../../validation";
 import { updateBannerValidationSchema } from "../../../validation/banner/updateBannerValidation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Banner
 // @route GET /api/v1/Banner
@@ -55,7 +56,7 @@ export const getBanner = asyncHandler(
 // @desc Create a single Banner
 // @route POST /api/v1/Banner
 // @access Public
-export const createBanner = asyncHandler(async (req: any, res: Response) => {
+export const createBanner = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createBanner ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const validation = bannerValidationSchema.safeParse({

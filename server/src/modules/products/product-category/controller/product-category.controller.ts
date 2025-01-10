@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../../config/db";
 import { ProductCategoryEntity } from "../model/product-category.entity";
 import { productCategoryValidationSchema } from "../../../../validation";
 import { logger } from "../../../../middlewares/logger";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/ProductCategorys
@@ -53,7 +54,7 @@ export const getProductCategory = asyncHandler(
 // @route POST /api/v1/ProductCategorys
 // @access Public
 export const createProductCategory = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createProductCategory ${req.method} ${req.url}`);
 
     const validation = productCategoryValidationSchema.safeParse(req.body);

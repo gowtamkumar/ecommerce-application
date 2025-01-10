@@ -97,7 +97,7 @@ const Sidebar = () => {
           <Image
             src={
               setting?.logo
-                ? `${appConfig.apiUrl}/uploads/${setting.logo}`
+                ? `${appConfig.baseApiUrl}/uploads/${setting.logo}`
                 : "/pos_software.png"
             }
             alt={setting?.logo}

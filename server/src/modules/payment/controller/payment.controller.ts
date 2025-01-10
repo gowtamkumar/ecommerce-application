@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { PaymentEntity } from "../model/payment.entity";
 import { paymentValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Payment
 // @route GET /api/v1/Payment
@@ -61,7 +62,7 @@ export const getPayment = asyncHandler(
 // @desc Create a single Payment
 // @route POST /api/v1/Payment
 // @access Public
-export const createPayment = asyncHandler(async (req: any, res: Response) => {
+export const createPayment = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createPayment ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
@@ -93,7 +94,7 @@ export const createPayment = asyncHandler(async (req: any, res: Response) => {
 });
 
 export const createDashboardPayment = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createDashboardPayment ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();

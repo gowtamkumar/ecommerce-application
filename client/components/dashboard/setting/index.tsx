@@ -65,7 +65,7 @@ export default function Index() {
             name: `logo ${Math.random() * 10000 + ""}`,
             status: "done",
             fileName: data.image,
-            url: `${appConfig.apiUrl}/uploads/${data.image || "no-data.png"}`,
+            url: `${appConfig.baseApiUrl}/uploads/${data.image || "no-data.png"}`,
           };
           dispatch(setFormValues({ ...data, fileList: [newfile] }));
           setCurrencies(currency.data);

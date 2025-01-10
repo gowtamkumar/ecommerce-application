@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { TaxEntity } from "../model/tax.entity";
 import { taxValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Tax
 // @route GET /api/v1/Tax
@@ -50,7 +51,7 @@ export const getTax = asyncHandler(
 // @desc Create a single Tax
 // @route POST /api/v1/Tax
 // @access Public
-export const createTax = asyncHandler(async (req: any, res: Response) => {
+export const createTax = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createTax ${req.method} ${req.url}`);
 
   const validation = taxValidationSchema.safeParse({

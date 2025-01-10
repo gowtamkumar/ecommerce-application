@@ -61,7 +61,7 @@
 //         <Image
 //           src={
 //             image
-//               ? `${appConfig.apiUrl}/uploads/${image[0]}`
+//               ? `${appConfig.baseApiUrl}/uploads/${image[0]}`
 //               : "/pos_software.png"
 //           }
 //           alt={item.name}

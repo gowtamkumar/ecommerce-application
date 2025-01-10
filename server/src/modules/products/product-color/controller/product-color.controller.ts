@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../../config/db";
 import { ProductColorEntity } from "../model/product-color.entity";
 import { productColorValidationSchema } from "../../../../validation";
 import { logger } from "../../../../middlewares/logger";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all ProductColors
 // @route GET /api/v1/ProductColors
@@ -53,7 +54,7 @@ export const getProductColor = asyncHandler(
 // @route POST /api/v1/ProductColors
 // @access Public
 export const createProductColor = asyncHandler(
-  async (req: any, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createProductColor ${req.method} ${req.url}`);
 
     const validation = productColorValidationSchema.safeParse(req.body);

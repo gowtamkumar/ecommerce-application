@@ -17,12 +17,13 @@ import { OrderItemEntity } from "../model/order-item.entity";
 import { CartEntity } from "../../cart/model/cart.entity";
 import { logger } from "../../../middlewares/logger";
 import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
+import { CustomRequest } from "../../../enums/custom-request-type";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Create a single Order
 // @route POST /api/v1/Order
 // @access Public
-export const createOrder = asyncHandler(async (req: any, res: Response) => {
+export const createOrder = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
@@ -235,7 +236,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export const getUserOrders = asyncHandler(async (req: any, res: Response) => {
+export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
 
   const userId = req.id;
@@ -306,7 +307,7 @@ export const getOrder = asyncHandler(
 // @route GET /api/v1/Order/:id
 // @access Public
 // export const orderTracking = asyncHandler(
-//   async (req: any, res: Response, next: NextFunction) => {
+//   async (req: CustomRequest, res: Response, next: NextFunction) => {
 
 //     const { trackingNo } = req.query;
 //     const userId = req.id;

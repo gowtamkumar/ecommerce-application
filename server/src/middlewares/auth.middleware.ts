@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { CustomRequest } from "../enums/custom-request-type";
 
 // Define the type for the middleware function
 type MiddlewareFunction = (
@@ -18,7 +19,7 @@ interface TokenPayload {
 }
 
 // AuthGuard middleware
-const AuthGuard = (req: any, res: Response, next: NextFunction) => {
+const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
   const token = authorization?.split(" ")[1] || req.cookies?.accessToken;
 
@@ -61,7 +62,7 @@ const AuthGuard = (req: any, res: Response, next: NextFunction) => {
 };
 
 // isAuthorize middleware
-const isAuthorize: MiddlewareFunction = async (req: any, res, next) => {
+const isAuthorize: MiddlewareFunction = async (req: CustomRequest, res, next) => {
   const { authorization } = req.headers;
   let token = authorization?.split(" ")[1] || req.cookies.accessToken;
 

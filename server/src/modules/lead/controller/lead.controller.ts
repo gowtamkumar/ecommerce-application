@@ -4,6 +4,7 @@ import { getDBConnection } from "../../../config/db";
 import { LeadEntity } from "../model/lead.entity";
 import { leadValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
+import { CustomRequest } from "../../../enums/custom-request-type";
 
 // @desc Get all Lead
 // @route GET /api/v1/Lead
@@ -49,7 +50,7 @@ export const getLead = asyncHandler(
 // @desc Create a single Lead
 // @route POST /api/v1/Lead
 // @access Public
-export const createLead = asyncHandler(async (req: any, res: Response) => {
+export const createLead = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createLead ${req.method} ${req.url}`);
 
   const validation = leadValidationSchema.safeParse(req.body);

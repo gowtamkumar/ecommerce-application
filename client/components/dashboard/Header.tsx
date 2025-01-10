@@ -90,7 +90,7 @@ export default function DashboardHeader() {
           size={35}
           src={
             profileImage
-              ? `${appConfig.apiUrl}/uploads/${profileImage}`
+              ? `${appConfig.baseApiUrl}/uploads/${profileImage}`
               : "/pos_software.png"
           }
           alt="profile image"

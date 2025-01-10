@@ -7,6 +7,7 @@ import { join } from "path";
 import fs from "fs";
 import { asyncHandler } from "../../../../middlewares/async.middleware";
 import { logger } from "../../../../middlewares/logger";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all Files
 // @route GET /api/v1/Files
@@ -53,7 +54,7 @@ export const getFile = asyncHandler(
 // @desc Create a single File
 // @route POST /api/v1/Files
 // @access Public
-export const createFile = asyncHandler(async (req: any, res: Response) => {
+export const createFile = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createFile ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
@@ -85,7 +86,7 @@ export const createFile = asyncHandler(async (req: any, res: Response) => {
 // @desc Create a single File
 // @route POST /api/v1/Files
 // @access Public
-export const fileUpload = asyncHandler(async (req: any, res: Response) => {
+export const fileUpload = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: fileUpload ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
