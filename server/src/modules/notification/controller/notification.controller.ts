@@ -12,10 +12,7 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 export const getNotifications = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: getNotifications ${req.method} ${req.url}`);
-
-    console.log('req.id',req.id);
-    
-
+  
     const connection = await getDBConnection();
     const repository = connection.getRepository(NotificationEntity);
 

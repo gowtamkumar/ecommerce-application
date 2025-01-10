@@ -136,10 +136,30 @@ expiry_date
 min_order_amount,
 image
 max_user,
-usageCount,
-status:(Active/Inactive)
+usage_count,
+status:boolean
+user_id,
+createdAt
+updatedAt
+
+## couponCode:(not apply) note: when freeshipping true dont show discount type and value
+
+id,
+type:['order', 'product', 'category']
+coupon_code,
+discount_type:['Percentage', 'FixedAmount']
+value,
+free_shipping: boolean
+start_date,
+expiry_date
+min_order_amount,
+image
+max_user,
+usage_count,
+status:boolean
 user_id,
 products:[],(optoinal)
+categories:[],(optoinal)
 createdAt
 updatedAt
 
@@ -329,6 +349,7 @@ term_policy_page: jsonb,
 footer_option: jsonb,
 header_option: jsonb,
 help_Support: jsonb
+mobile_notification:boolean(this field defind for mobile sms to user)
 
 ## banner: ToDo
 
@@ -376,8 +397,6 @@ status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
 created_at,
 updated_at,
 
-
-
 ## menu (working)
 
 id,
@@ -390,9 +409,8 @@ footer_menu boolean,
 created_at,
 updated_at,
 
+# notification(done)
 
-
-# notification
 id,
 user_id: nmber,
 type: string,
