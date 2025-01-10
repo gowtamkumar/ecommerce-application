@@ -3,7 +3,7 @@
 import { Button, Modal, Table } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import "./notification.css";
+// import "./notification.css";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { clearAllNotifications, getNotifications, readNotification } from "@/lib/apis/admin/notification";
@@ -20,7 +20,7 @@ const NotificationsUser = () => {
 
   const fetchData = async () => {
     const notifications = await getNotifications();
-    setNotifications(notifications.data.data);
+    setNotifications(notifications.data);
     dispatch(setLoading({}));
   };
 
@@ -63,7 +63,7 @@ const NotificationsUser = () => {
     return result;
   };
 
-  const columns = [
+  const columns: any = [
     {
       key: "title",
       render: (item: any) => {
@@ -71,7 +71,7 @@ const NotificationsUser = () => {
           <div>
             <p>{item.title}</p>
             <p>{item.text}</p>
-            <p className="text-gray-400">{getTime(item.created_at)}</p>
+            <p className="text-gray-400">{getTime(item.createdAt)}</p>
           </div>
         );
       },
@@ -79,10 +79,9 @@ const NotificationsUser = () => {
 
     {
       key: "action",
-      className: "action-column",
-      render: (item: any) => {
-        const read = item.is_read !== "1";
-        return read && <p className="bg-green-500 w-2 h-2 rounded-full"></p>;
+      align: 'right',
+      render: ({ isRead }: { isRead: boolean }) => {
+        return !isRead && <p className="bg-green-500 w-2 h-2 rounded-full"></p>;
       },
     },
   ];
@@ -100,8 +99,9 @@ const NotificationsUser = () => {
           dataSource={notifications}
           showHeader={false}
           columns={columns}
+          loading={global.loading.notification}
           rowClassName={(record: any) =>
-            record.is_read !== "1" ? "highlighted-row" : "normal-row"
+            record.isRead ? "highlighted-row" : "normal-row"
           }
           onRow={(record) => {
             return {

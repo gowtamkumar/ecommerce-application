@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 // api
 import { getMe } from "@/lib/apis/user";
+import NotificationsUser from "./NotificationsUser";
 
 const ProfileDashboard = dynamic(() => import("./profileDashboard"), {
   ssr: false,
@@ -33,6 +34,7 @@ const MyWishlist = dynamic(
     ssr: false,
   }
 );
+
 const MyShippingAddress = dynamic(
   () => import("./shipping-address/ShippingAddressList"),
   {
@@ -110,6 +112,13 @@ export default function Profile() {
           label: `Track your Order`,
           key: "track_your_order",
           children: <OrderTracker orders={user?.orders} />,
+          icon: <AndroidOutlined />,
+        },
+
+        {
+          label: `Notifications`,
+          key: "notification",
+          children: <NotificationsUser />,
           icon: <AndroidOutlined />,
         },
         {
