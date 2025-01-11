@@ -13,6 +13,7 @@ import {
   Divider,
   Form,
   Input,
+  message,
   Radio,
   Select,
   Upload,
@@ -77,23 +78,20 @@ export default function MyAccount({ user }: any) {
       const result = await updateUser(newData);
 
       if (result.success) {
-        dispatch(
-          setResponse({
-            type: "success",
-            message: "Profile update successfully",
-          })
-        );
-        dispatch(setLoading({ saveProfile: false }));
-      } else {
-        dispatch(setResponse({ type: "error", message: result.message }));
-        dispatch(setLoading({ saveProfile: false }));
+        console.log("result.message", result);
+        message.success("Profile update successfully")
+      }
+
+      if (!result.success) {
+        message.success(result.message)
         dispatch(setLoading({ save: false }));
       }
+
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        dispatch(setResponse({}));
       }, 100);
     } catch (err: any) {
+      dispatch(setLoading({ save: false }));
       console.log(err);
     }
   };
@@ -207,13 +205,6 @@ export default function MyAccount({ user }: any) {
 
         </div>
       </div>
-      {global.response.type && (
-        <Alert
-          className="p-0 m-0"
-          message={`${global.response.message}`}
-          type={global.response.type}
-        />
-      )}
 
       <Form
         {...layout}
@@ -338,7 +329,7 @@ export default function MyAccount({ user }: any) {
         </div>
         <Form.Item {...tailLayout}>
           <Button
-          
+
             size="small"
             type="default"
             onClick={() => resetFormData(formValues)}
@@ -350,8 +341,8 @@ export default function MyAccount({ user }: any) {
             size="small"
             type="primary"
             htmlType="submit"
-
             loading={global.loading.save}
+            disabled={global.loading.save}
           >
             {global.action.payload?.id ? "Update" : "Save"}
           </Button>

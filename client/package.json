@@ -18,7 +18,7 @@
     "@faker-js/faker": "^9.3.0",
     "@reduxjs/toolkit": "^2.4.0",
     "@uiw/react-md-editor": "^4.0.4",
-    "antd": "^5.22.3",
+    "antd": "^5.23.0",
     "antd-img-crop": "^4.23.0",
     "chart.js": "^4.4.7",
     "dayjs": "^1.11.13",
@@ -44,6 +44,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@types/node": "^22.10.2",
     "@types/qs": "^6.9.17",
     "@types/react": "^18.0.33",
