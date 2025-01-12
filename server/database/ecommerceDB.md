@@ -47,12 +47,13 @@ status,
 ## shipping_charge :(done)
 
 id,
-division_id,
-shipping_amount,
+district_id,
+weight
+amount,
 note,
 status,
 
-## products :(done) note: need to change product varitant as like wordpress
+## products :(done)
 
 id,
 featured: boolean, this field for only show home page(need to add)
@@ -81,7 +82,7 @@ createdAt,
 updatedAt
 product_varient:array come from onther table
 product_category:array come from onther table
-colors:array come from onther table
+
 variant:boolean
 
 ## product variants:(done)
@@ -90,6 +91,8 @@ id,
 purchase_price:numeric,
 unit_price:numeric
 product_id
+size_id
+color_id
 stock_qty:number,
 default:boolean
 
@@ -98,14 +101,6 @@ default:boolean
 id,
 category_id,
 product_id
-
-## purchase
-
-id,
-product_id:numeric,
-variant_id:numeric,
-price:numeric,(optional)
-qty:number,
 
 ## size (done)
 
@@ -129,7 +124,7 @@ name,
 id,
 type:discount/couponCode
 coupon_code,
-discount_type:(Percentage, FixedAmount, FreeShipping).
+discount_type:(Percentage, Fixed, FreeShipping).
 value,
 start_date,
 expiry_date
@@ -145,23 +140,29 @@ updatedAt
 ## couponCode:(not apply) note: when freeshipping true dont show discount type and value
 
 id,
-type:['order', 'product', 'category']
-coupon_code,
-discount_type:['Percentage', 'FixedAmount']
+type:['order', 'product', 'category', "FreeShipping"]
+code,
+discount_type:['Percentage', 'Fixed']
 value,
-free_shipping: boolean
-start_date,
-expiry_date
-min_order_amount,
 image
-max_user,
-usage_count,
-status:boolean
+min_order_amount,
+minimum_cart_value,
+max_discount_value
+start_date,
+end_date
+usage_limit,
+usage_per_user
 user_id,
+usages,
+status:boolean
+free_shipping: boolean
 products:[],(optoinal)
 categories:[],(optoinal)
 createdAt
 updatedAt
+
+
+
 
 ## categories:(done)
 
@@ -174,6 +175,7 @@ user_id,
 description
 image;
 status:(Active/Inactive)
+tags:[""] (need to add)
 createdAt
 updatedAt
 
@@ -185,13 +187,14 @@ user_id,
 createdAt,
 updatedAt
 
-## carts:(optional)
+## carts:(need to implemnent)
 
 id,
 product_id,
-productVariantId,
+product_variant_id,
 user_id,
 qty,
+cart_status:[active, saved]
 createdAt,
 updatedAt
 

@@ -153,7 +153,7 @@ const AddDiscount = () => {
             optionFilterProp="children"
           >
             <Select.Option value="Percentage">Percentage</Select.Option>
-            <Select.Option value="FixedAmount">Fixed Amount</Select.Option>
+            <Select.Option value="Fixed">Fixed Amount</Select.Option>
             <Select.Option value="FreeShipping">Free Shipping</Select.Option>
           </Select>
         </Form.Item>

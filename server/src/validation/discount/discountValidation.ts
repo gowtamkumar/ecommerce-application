@@ -5,7 +5,7 @@ const conditionalSchema = z.object({
     required_error: "type is required",
   }),
   couponCode: z.string().nullable().optional(),
-  discountType: z.enum(["Percentage", "FixedAmount", "FreeShipping"], {
+  discountType: z.enum(["Percentage", "Fixed", "FreeShipping"], {
     required_error: "Discount Type is required",
   }),
 

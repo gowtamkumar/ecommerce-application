@@ -5,7 +5,7 @@ export const discountValidationSchema = z.object({
     required_error: "coupon Code is required",
   }),
 
-  type: z.enum(["Percentage", "FixedAmount", "FreeShipping"], {
+  type: z.enum(["Percentage", "Fixed", "FreeShipping"], {
     required_error: "type is required",
   }),
 
