@@ -279,7 +279,7 @@ updatedAt
 id,
 name
 value,
-status:acitve/inactive
+status:boolean
 
 ## reviews:(done)
 
