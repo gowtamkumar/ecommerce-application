@@ -23,179 +23,183 @@ const SSLCommerzPayment = require("sslcommerz-lts");
 // @desc Create a single Order
 // @route POST /api/v1/Order
 // @access Public
-export const createOrder = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createOrder ${req.method} ${req.url}`);
+export const createOrder = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
-  const queryRunner = connection.createQueryRunner();
+    const connection = await getDBConnection();
+    const queryRunner = connection.createQueryRunner();
 
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  const store_id = "ecomm6648b03fa5d37";
-  const store_passwd = "ecomm6648b03fa5d37@ssl";
-  const is_live = false; //true for live, false for sandbox
+    const store_id = "ecomm6648b03fa5d37";
+    const store_passwd = "ecomm6648b03fa5d37@ssl";
+    const is_live = false; //true for live, false for sandbox
 
-  try {
-    const validation = onlineCreateOrderValidationSchema.safeParse({
-      ...req.body,
-      userId: req.id,
-    });
-
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
-
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
+    try {
+      const validation = onlineCreateOrderValidationSchema.safeParse({
+        ...req.body,
+        userId: req.id,
       });
-    }
 
-    const {
-      shippingAmount,
-      orderTotalAmount,
-      orderDate,
-      paymentMethod,
-      orderItems,
-      ...orderData
-    }: any = validation.data;
+      if (!validation.success) {
+        const formattedErrors = validation.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        }));
 
-    const repository = queryRunner.manager.getRepository(OrderEntity);
-
-    // tracking no start
-    const count = (await repository.count()) + 1;
-    const trackingNo = `N${count.toString().padStart(10, "0")}`;
-    // tracking no end
-
-    const newOrder = repository.create({
-      shippingAmount,
-      orderTotalAmount,
-      orderDate,
-      paymentMethod,
-      paymentStatus:
-        paymentMethod === OrderPaymentMethod.Cash
-          ? PaymentStatus.NotPaid
-          : PaymentStatus.Paid,
-      ...orderData,
-      trackingNo,
-    });
-    const savedOrder = await repository.save(newOrder);
-
-    if (orderItems && savedOrder.id) {
-      // const repositoryCarts = queryRunner.manager.getRepository(CartEntity);
-      const repoOrderItems = queryRunner.manager.getRepository(OrderItemEntity);
-      const newOrderItems = repoOrderItems.create(
-        orderItems.map((item: any) => ({
-          ...item,
-          orderId: savedOrder.id,
-        }))
-      );
-      const resultOrderItems = await repoOrderItems.save(newOrderItems);
-      const productVariantRepo =
-        queryRunner.manager.getRepository(ProductVariantEntity);
-
-      for (const item of resultOrderItems) {
-        const findProductVariant = await productVariantRepo.findOne({
-          where: { id: item.productVariantId }, // find productvariant by id
+        return res.status(400).json({
+          success: false,
+          issues: formattedErrors,
         });
-
-        if (findProductVariant) {
-          let currentStock =
-            (+findProductVariant.stockQty || 0) - (+item.qty || 0); //##ToDo need to validate stockqty
-          await productVariantRepo.save({
-            id: findProductVariant.id,
-            stockQty: currentStock,
-          });
-        }
       }
 
-      const repositoryOrderTracking =
-        queryRunner.manager.getRepository(OrderTrackingEntity);
-      const newOrderTracking = repositoryOrderTracking.create({
+      const {
+        shippingAmount,
+        orderTotalAmount,
+        orderDate,
+        paymentMethod,
+        orderItems,
+        ...orderData
+      }: any = validation.data;
+
+      const repository = queryRunner.manager.getRepository(OrderEntity);
+
+      // tracking no start
+      const count = (await repository.count()) + 1;
+      const trackingNo = `N${count.toString().padStart(10, "0")}`;
+      // tracking no end
+
+      const newOrder = repository.create({
+        shippingAmount,
+        orderTotalAmount,
+        orderDate,
+        paymentMethod,
+        paymentStatus:
+          paymentMethod === OrderPaymentMethod.Cash
+            ? PaymentStatus.NotPaid
+            : PaymentStatus.Paid,
+        ...orderData,
+        trackingNo,
+      });
+      const savedOrder = await repository.save(newOrder);
+
+      if (orderItems && savedOrder.id) {
+        // const repositoryCarts = queryRunner.manager.getRepository(CartEntity);
+        const repoOrderItems =
+          queryRunner.manager.getRepository(OrderItemEntity);
+        const newOrderItems = repoOrderItems.create(
+          orderItems.map((item: any) => ({
+            ...item,
+            orderId: savedOrder.id,
+          }))
+        );
+        const resultOrderItems = await repoOrderItems.save(newOrderItems);
+        const productVariantRepo =
+          queryRunner.manager.getRepository(ProductVariantEntity);
+
+        for (const item of resultOrderItems) {
+          const findProductVariant = await productVariantRepo.findOne({
+            where: { id: item.productVariantId }, // find productvariant by id
+          });
+
+          if (findProductVariant) {
+            let currentStock =
+              (+findProductVariant.stockQty || 0) - (+item.qty || 0); //##ToDo need to validate stockqty
+            await productVariantRepo.save({
+              id: findProductVariant.id,
+              stockQty: currentStock,
+            });
+          }
+        }
+
+        const repositoryOrderTracking =
+          queryRunner.manager.getRepository(OrderTrackingEntity);
+        const newOrderTracking = repositoryOrderTracking.create({
+          orderId: savedOrder.id,
+          userId: req.id,
+          location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+        });
+        await repositoryOrderTracking.save(newOrderTracking);
+
+        // await repositoryCarts.remove(orderItems);
+      }
+
+      // payment
+      // const data = {
+      //   total_amount: 100,
+      //   currency: "BDT",
+      //   tran_id: "REF123", // use unique tran_id for each api call
+      //   success_url: "http://localhost:3030/success",
+      //   fail_url: "http://localhost:3030/fail",
+      //   cancel_url: "http://localhost:3030/cancel",
+      //   ipn_url: "http://localhost:3030/ipn",
+      //   shipping_method: "Courier",
+      //   product_name: "Computer.",
+      //   product_category: "Electronic",
+      //   product_profile: "general",
+      //   cus_name: "Customer Name",
+      //   cus_email: "customer@example.com",
+      //   cus_add1: "Dhaka",
+      //   cus_add2: "Dhaka",
+      //   cus_city: "Dhaka",
+      //   cus_state: "Dhaka",
+      //   cus_postcode: "1000",
+      //   cus_country: "Bangladesh",
+      //   cus_phone: "01711111111",
+      //   cus_fax: "01711111111",
+      //   ship_name: "Customer Name",
+      //   ship_add1: "Dhaka",
+      //   ship_add2: "Dhaka",
+      //   ship_city: "Dhaka",
+      //   ship_state: "Dhaka",
+      //   ship_postcode: 1000,
+      //   ship_country: "Bangladesh",
+      // };
+
+      // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+      // sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
+      // logger.info(`Service: getMemu ${req.method} ${req.url}`);
+
+      //   // Redirect the user to payment gateway
+      //   let GatewayPageURL = apiResponse.GatewayPageURL;
+      //   res.redirect(GatewayPageURL);
+      //   console.log("Redirecting to: ", GatewayPageURL);
+      // });
+
+      const repositoryPayment =
+        queryRunner.manager.getRepository(PaymentEntity);
+
+      const newPayment = repositoryPayment.create({
         orderId: savedOrder.id,
         userId: req.id,
-        location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+        paymentDate: dayjs(),
+        paymentMethod,
+        paymentType: PaymentType.Debit,
+        amount: +(+shippingAmount + +orderTotalAmount),
       });
-      await repositoryOrderTracking.save(newOrderTracking);
+      await repositoryPayment.save(newPayment);
 
-      // await repositoryCarts.remove(orderItems);
+      await queryRunner.commitTransaction();
+
+      return res.status(200).json({
+        success: true,
+        message: "Create a new Order",
+        data: savedOrder,
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.error("Transaction failed:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to create Order",
+      });
+    } finally {
+      await queryRunner.release();
     }
-
-    // payment
-    // const data = {
-    //   total_amount: 100,
-    //   currency: "BDT",
-    //   tran_id: "REF123", // use unique tran_id for each api call
-    //   success_url: "http://localhost:3030/success",
-    //   fail_url: "http://localhost:3030/fail",
-    //   cancel_url: "http://localhost:3030/cancel",
-    //   ipn_url: "http://localhost:3030/ipn",
-    //   shipping_method: "Courier",
-    //   product_name: "Computer.",
-    //   product_category: "Electronic",
-    //   product_profile: "general",
-    //   cus_name: "Customer Name",
-    //   cus_email: "customer@example.com",
-    //   cus_add1: "Dhaka",
-    //   cus_add2: "Dhaka",
-    //   cus_city: "Dhaka",
-    //   cus_state: "Dhaka",
-    //   cus_postcode: "1000",
-    //   cus_country: "Bangladesh",
-    //   cus_phone: "01711111111",
-    //   cus_fax: "01711111111",
-    //   ship_name: "Customer Name",
-    //   ship_add1: "Dhaka",
-    //   ship_add2: "Dhaka",
-    //   ship_city: "Dhaka",
-    //   ship_state: "Dhaka",
-    //   ship_postcode: 1000,
-    //   ship_country: "Bangladesh",
-    // };
-
-    // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-    // sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
-    // logger.info(`Service: getMemu ${req.method} ${req.url}`);
-
-    //   // Redirect the user to payment gateway
-    //   let GatewayPageURL = apiResponse.GatewayPageURL;
-    //   res.redirect(GatewayPageURL);
-    //   console.log("Redirecting to: ", GatewayPageURL);
-    // });
-
-    const repositoryPayment = queryRunner.manager.getRepository(PaymentEntity);
-
-    const newPayment = repositoryPayment.create({
-      orderId: savedOrder.id,
-      userId: req.id,
-      paymentDate: dayjs(),
-      paymentMethod,
-      paymentType: PaymentType.Debit,
-      amount: +(+shippingAmount + +orderTotalAmount),
-    });
-    await repositoryPayment.save(newPayment);
-
-    await queryRunner.commitTransaction();
-
-    return res.status(200).json({
-      success: true,
-      message: "Create a new Order",
-      data: savedOrder,
-    });
-  } catch (error) {
-    await queryRunner.rollbackTransaction();
-    console.error("Transaction failed:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to create Order",
-    });
-  } finally {
-    await queryRunner.release();
   }
-});
+);
 
 // @desc Get all Order
 // @route GET /api/v1/Order
@@ -236,41 +240,43 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
+export const getUserOrders = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
 
-  const userId = req.id;
-  const connection = await getDBConnection();
-  const orderRepository = connection.getRepository(OrderEntity);
+    const userId = req.id;
+    const connection = await getDBConnection();
+    const orderRepository = connection.getRepository(OrderEntity);
 
-  const qb = orderRepository.createQueryBuilder("order");
-  qb.select([
-    "order",
-    "orderItems",
-    "product",
-    "payments",
-    "orderTrackings",
-    "deliveryMan.name",
-    "user.name",
-    "shippingAddress",
-  ]);
+    const qb = orderRepository.createQueryBuilder("order");
+    qb.select([
+      "order",
+      "orderItems",
+      "product",
+      "payments",
+      "orderTrackings",
+      "deliveryMan.name",
+      "user.name",
+      "shippingAddress",
+    ]);
 
-  qb.leftJoin("order.orderItems", "orderItems");
-  qb.leftJoin("orderItems.product", "product");
-  qb.leftJoin("order.orderTrackings", "orderTrackings");
-  qb.leftJoin("order.deliveryMan", "deliveryMan");
-  qb.leftJoin("order.user", "user");
-  qb.leftJoin("order.payments", "payments");
-  qb.leftJoin("order.shippingAddress", "shippingAddress");
-  if (userId) qb.where({ userId });
-  const results = await qb.getMany();
+    qb.leftJoin("order.orderItems", "orderItems");
+    qb.leftJoin("orderItems.product", "product");
+    qb.leftJoin("order.orderTrackings", "orderTrackings");
+    qb.leftJoin("order.deliveryMan", "deliveryMan");
+    qb.leftJoin("order.user", "user");
+    qb.leftJoin("order.payments", "payments");
+    qb.leftJoin("order.shippingAddress", "shippingAddress");
+    if (userId) qb.where({ userId });
+    const results = await qb.getMany();
 
-  return res.status(200).json({
-    success: true,
-    message: "Get all Order",
-    data: results,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      message: "Get all Order",
+      data: results,
+    });
+  }
+);
 
 // @desc Get a single Order
 // @route GET /api/v1/Order/:id
@@ -514,7 +520,11 @@ export const orderStatusUpdate = asyncHandler(
     }
 
     try {
-      if (validation.data.status === OrderStatus.Returned) {
+      if (
+        validation.data.status === OrderStatus.Returned ||
+        validation.data.status ||
+        OrderStatus.Canceled
+      ) {
         const productVariantRepo =
           queryRunner.manager.getRepository(ProductVariantEntity);
         for (const item of result.orderItems) {
@@ -525,8 +535,7 @@ export const orderStatusUpdate = asyncHandler(
           if (findProductVariant) {
             let currentStock =
               (+findProductVariant.stockQty || 0) + (+item.qty || 0);
-
-            await productVariantRepo.save({
+            const returnVariatn = await productVariantRepo.save({
               id: findProductVariant.id,
               stockQty: currentStock,
             });
