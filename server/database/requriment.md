@@ -1,5 +1,5 @@
 <!-- important feature:  -->
-
+<!-- note: ai driven ecommerce systecm need to build by ai  -->
 note: delivery change depend for location
 
 1. user and auth management

@@ -115,6 +115,8 @@ export const getProducts = async (req: Request, res: Response) => {
     minPrice,
     maxPrice,
     discount,
+    page = 1,
+    limit = 10,
   } = req.query;
 
   // Helper function to parse filters
@@ -241,12 +243,14 @@ export const getProducts = async (req: Request, res: Response) => {
         `
             : ""
         }
+      
       GROUP BY 
         p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
         p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
         rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value
       ${lowPrice ? "ORDER BY p.unit_price ASC" : ""}
       ${highPrice ? "ORDER BY p.unit_price DESC" : ""}
+      OFFSET ${(+page - 1) * +limit} LIMIT ${limit};
     `
   );
 
