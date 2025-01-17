@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { setOpen } from "@/redux/features/layout/layoutSlice";
+import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
 
 const HeaderSearch = dynamic(() => import("./HeaderSearch"));
 
@@ -22,6 +22,7 @@ export default function HeaderRight() {
   // hook
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
+  const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const session = useSession();
 
@@ -34,7 +35,6 @@ export default function HeaderRight() {
   const showLoading = () => {
     setDrawarCart(true);
     dispatch(setLoading({ drawerLoading: true }));
-
     // Simple loading mock. You should add cleanup logic in real world.
     setTimeout(() => {
       dispatch(setLoading({}));
@@ -107,8 +107,8 @@ export default function HeaderRight() {
       )}
 
       <Modal
-        open={global.open}
-        onOk={() => dispatch(setOpen(false))}
+        open={layout.open}
+        // onOk={() => dispatch(setOpen(false))}
         onCancel={() => dispatch(setOpen(false))}
         width={1000}
         footer={null}

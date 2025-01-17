@@ -1,99 +1,81 @@
-"use client";
-import { useEffect, useState } from "react";
-import {
-  setProductFilter,
-  setProductView,
-} from "@/redux/features/global/globalSlice";
-import { Input } from "antd";
-import { useDispatch } from "react-redux";
-import { usePathname, useRouter } from "next/navigation";
+import appConfig from "@/appConfig";
+import { getPublicProducts } from "@/lib/apis/product";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { setOpen } from "@/redux/features/layout/layoutSlice";
+import { Button, Input, Space } from "antd";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function HeaderSearch() {
-  const [serach, setSearch] = useState({} as any);
-  // hook
+export default function SearchBar() {
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const [results, setResults] = useState([]);
   const dispatch = useDispatch();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const { Search } = Input;
+  const global = useSelector(selectGlobal);
+  const route = useRouter();
 
   useEffect(() => {
-    const ValidPath = ["products", "category"].includes(pathname.split("/")[1]);
-    if (!ValidPath) {
-      localStorage.removeItem("searchData");
-    }
-    dispatch(setProductFilter({}));
-    dispatch(setProductView(false)); // this state use for product grid
-  }, [pathname, dispatch]);
+    const timer = setTimeout(() => setDebouncedQuery(query), 500);
+    return () => clearTimeout(timer);
+  }, [query]);
 
-  const getData =
-    typeof localStorage !== "undefined"
-      ? JSON.parse(localStorage?.getItem("searchData") || "{}")
-      : {};
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (!debouncedQuery) {
+        setResults([])
+        return
+      };
+      dispatch(setLoading({ search: true }));
+      const res = await getPublicProducts({
+        search: debouncedQuery,
+      });
+      setResults(res.data);
+      dispatch(setLoading({ search: false }));
+    };
 
-  // const selectBefore = (
-  //   <Select
-  //     value={getData.categoryId}
-  //     onChange={(value) => {
-  //       if (getData) {
-  //         localStorage.setItem(
-  //           "searchData",
-  //           JSON.stringify({ ...getData, categoryId: value })
-  //         );
-  //       } else {
-  //         localStorage.setItem(
-  //           "searchData",
-  //           JSON.stringify({ categoryId: value })
-  //         );
-  //       }
-  //       setSearch({ ...serach, categoryId: value });
-  //     }}
-  //     allowClear
-  //   >
-  //     {(categories?.data || []).map((categoroy: any) => (
-  //       <Select.Option key={categoroy.id} value={categoroy.id}>
-  //         {categoroy.name}
-  //       </Select.Option>
-  //     ))}
-  //   </Select>
-  // );
+    fetchResults();
+  }, [debouncedQuery]);
+
+  const searchHandle = () => {
+    dispatch(setOpen(false))
+    route.push(`/products?page=1&limit=10&search=${query}`);
+  };
+
   return (
-    <div className="container mx-auto md:p-10 py-6">
-      <Search
-        // addonBefore={selectBefore}
-        width={100}
-        value={getData.search}
-        size="large"
-        onSearch={() => {
-          let queryRouter = "";
-          // if (getData.categoryId) {
-          //   queryRouter += `categoryId=${getData.categoryId}&`;
-          // }
-          if (getData.search) {
-            queryRouter += `search=${getData.search}&`;
-          }
-          router.push(`/products?${queryRouter}`);
-          dispatch(setOpen(false));
-          // dispatch(
-          //   setProductFilter({
-          //     ...global.productFilter,
-          //     categoryId: getData.categoryId,
-          //     search: getData.search,
-          //   })
-          // );
-        }}
-        onChange={({ target }) => {
-          const getData = JSON.parse(
-            localStorage.getItem("searchData") || "{}"
-          );
-          localStorage.setItem(
-            "searchData",
-            JSON.stringify({ ...getData, search: target.value })
-          );
-          setSearch({ ...serach, search: target.value });
-        }}
-      />
+    <div className="px-10">
+      <Space.Compact block>
+        <Input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search for products..."
+        />
+        <Button onClick={searchHandle}>Search</Button>
+      </Space.Compact>
+
+      <div>
+        {global.loading.search
+          ? "Loadding..."
+          : results.map((product: any) => (
+            <Link
+              key={product.id}
+              href={`/products/${product.slug}`}
+            >
+              <div className="flex gap-4 border-b p-3 items-center">
+                <Image
+                  src={`${appConfig.baseApiUrl}/uploads/${product?.thumbnailImage}`}
+                  height={50}
+                  width={50}
+                  alt={product.name}
+                />
+                <h2>{product.name}</h2>
+              </div>
+            </Link>
+          ))}
+      </div>
     </div>
   );
 }

@@ -238,7 +238,7 @@ export const getProducts = async (req: Request, res: Response) => {
           AND (
             LOWER(p.name) ILIKE LOWER('%${search}%') OR
             LOWER(p.description) ILIKE LOWER('%${search}%') OR
-            LOWER(p.shortDescription) ILIKE LOWER('%${search}%')
+            LOWER(p.short_description) ILIKE LOWER('%${search}%')
           )
         `
             : ""
@@ -250,13 +250,14 @@ export const getProducts = async (req: Request, res: Response) => {
         rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value
       ${lowPrice ? "ORDER BY p.unit_price ASC" : ""}
       ${highPrice ? "ORDER BY p.unit_price DESC" : ""}
-      OFFSET ${(+page - 1) * +limit} LIMIT ${limit};
+      ${page && limit ? `OFFSET ${(+page - 1) * +limit} LIMIT ${limit}` : ""}
     `
   );
 
   return res.status(200).json({
     success: true,
     message: "Get product filter data",
+    totalCount: products.length,
     data: products,
   });
 
