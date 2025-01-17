@@ -129,7 +129,6 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getCartList ${req.method} ${req.url}`);
   const connection = await getDBConnection();
-  const repository = connection.getRepository(CartEntity);
 
   const result = await connection.query(
     `select 
@@ -153,7 +152,7 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
     pv.stock_qty as "stockQty",
     s.name as "sizeName",
     (COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
-    (COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
+    (COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS "subTotal",
       CASE 
         WHEN 
           d.discount_type = 'Percentage'
@@ -174,6 +173,31 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
 `
   );
 
+  // Calculate cart summary
+  let totalQty = 0;
+  let subTotal = 0;
+  let totalDiscount = 0;
+  let totalTax = 0;
+  let grandTotal = 0;
+
+  result.forEach((item: any) => {
+    console.log("item", item);
+
+    const qty = +item.qty || 0;
+    const unitPrice = +item.unitPrice || 0;
+    const tax = +item.tax || 0;
+    const discountAmount = +item.discountAmount || 0;
+
+    const subtotal = +unitPrice + +tax;
+    const totalItemPrice = subtotal - discountAmount;
+
+    totalQty += +qty;
+    subTotal += +subtotal * qty;
+    totalDiscount += +discountAmount * qty;
+    totalTax += +tax * +qty;
+    grandTotal += +totalItemPrice * +qty;
+  });
+
   return res.status(200).json({
     success: true,
     message: "Get Cart list",
@@ -181,11 +205,11 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
     data: {
       cartList: result,
       cartSummary: {
-        totalQty: 10,
-        subTotal: 200,
-        totalDiscount: 400,
-        totalTax: 44,
-        grandTotal: 4000,
+        totalQty,
+        subTotal,
+        totalDiscount,
+        totalTax,
+        grandTotal,
       },
     },
   });
