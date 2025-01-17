@@ -21,8 +21,8 @@ export class ProductVariantEntity {
     name: "unit_price",
     type: "numeric",
     precision: 15,
-    scale: 2
-  }) 
+    scale: 2,
+  })
   unitPrice!: number;
 
   @Column({
@@ -49,13 +49,14 @@ export class ProductVariantEntity {
   @JoinColumn({ name: "size_id" })
   size!: SizeEntity;
 
- 
-  @Column({ type: "boolean", default: false }) 
+  @Column({ type: "boolean", default: false })
   default?: boolean;
 
   @Column({ name: "stock_qty" })
   stockQty?: number;
-  
+
+  @Column({ nullable: true })
+  weight!: number;
 
   @OneToMany((_type) => OrderItemEntity, (items) => items.productVariant)
   orderItems!: OrderItemEntity[];

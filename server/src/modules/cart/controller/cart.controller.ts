@@ -5,17 +5,18 @@ import { CartEntity } from "../model/cart.entity";
 import { cartValidationSchema } from "../../../validation";
 import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
 import { CustomRequest } from "../../../enums/custom-request-type";
+import { logger } from "../../../middlewares/logger";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
 // @access Public
-export const getCartByUser = asyncHandler(async (req: CustomRequest, res: Response) => {
-  const userId = req.id;
-  const connection = await getDBConnection();
-  const repository = connection.getRepository(CartEntity);
+export const getCartByUser = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    const userId = req.id;
+    const connection = await getDBConnection();
 
-  const results = await connection.query(
-    `select 
+    const results = await connection.query(
+      `select 
       carts.id,
       carts.qty,
       p.id as "productId",
@@ -31,22 +32,21 @@ export const getCartByUser = asyncHandler(async (req: CustomRequest, res: Respon
       d.value as "discountValue",
       brands.name as "brandName",
       pv.id as "productVariantId",
-      pv.unitPrice,
+      pv.unit_price as "unitPrice",
       pv.purchase_price as "purchasePrice",
       pv.stock_qty as "stockQty",
-      pv.weight,
       s.name as "sizeName",
-      (COALESCE(pv.unitPrice, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
-      (COALESCE(pv.unitPrice, 0) + COALESCE((COALESCE(pv.unitPrice, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
+      (COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
+      (COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
         CASE 
           WHEN 
             d.discount_type = 'Percentage'
           THEN 
-            ((COALESCE(pv.unitPrice, 0) + COALESCE((COALESCE(pv.unitPrice, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
+            ((COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
           ELSE
             COALESCE(d.value, 0)
         END
-      AS "discountA"
+      AS "discountAmount"
 
       from carts 
       LEFT JOIN products as p ON p.id = carts.product_id
@@ -56,55 +56,56 @@ export const getCartByUser = asyncHandler(async (req: CustomRequest, res: Respon
       LEFT JOIN discounts as d ON d.id = p.discount_id
       LEFT JOIN sizes as s ON s.id = pv.size_id
 `
-  );
+    );
 
-  // const qb = repository.createQueryBuilder("cart");
-  // qb.select([
-  //   "cart.id",
-  //   "cart.qty",
-  //   "product.name",
-  //   "product.slug",
-  //   "product.images",
-  //   "product.limitPurchaseQty",
-  //   "product.discountId",
-  //   "user.name",
-  //   "tax.name",
-  //   "tax.value",
-  //   "discount.discountType",
-  //   "discount.type",
-  //   "discount.value",
-  //   "brand.name",
-  //   "productVariant.id",
-  //   "productVariant.unitPrice",
-  //   "productVariant.purchasePrice",
-  //   "productVariant.stockQty",
-  //   "productVariant.weight",
-  //   "color.name",
-  //   "color.id",
-  //   "size.id",
-  //   "size.name",
-  // ]);
+    // const qb = repository.createQueryBuilder("cart");
+    // qb.select([
+    //   "cart.id",
+    //   "cart.qty",
+    //   "product.name",
+    //   "product.slug",
+    //   "product.images",
+    //   "product.limitPurchaseQty",
+    //   "product.discountId",
+    //   "user.name",
+    //   "tax.name",
+    //   "tax.value",
+    //   "discount.discountType",
+    //   "discount.type",
+    //   "discount.value",
+    //   "brand.name",
+    //   "productVariant.id",
+    //   "productVariant.unitPrice",
+    //   "productVariant.purchasePrice",
+    //   "productVariant.stockQty",
+    //   "productVariant.weight",
+    //   "color.name",
+    //   "color.id",
+    //   "size.id",
+    //   "size.name",
+    // ]);
 
-  // qb.leftJoin("cart.user", "user");
-  // qb.leftJoin("cart.product", "product");
-  // qb.leftJoin("product.tax", "tax");
-  // qb.leftJoin("product.discount", "discount");
-  // qb.leftJoin("product.brand", "brand");
-  // qb.leftJoin("cart.productVariant", "productVariant");
-  // qb.leftJoin("productVariant.color", "color");
-  // qb.leftJoin("productVariant.size", "size");
+    // qb.leftJoin("cart.user", "user");
+    // qb.leftJoin("cart.product", "product");
+    // qb.leftJoin("product.tax", "tax");
+    // qb.leftJoin("product.discount", "discount");
+    // qb.leftJoin("product.brand", "brand");
+    // qb.leftJoin("cart.productVariant", "productVariant");
+    // qb.leftJoin("productVariant.color", "color");
+    // qb.leftJoin("productVariant.size", "size");
 
-  // if (userId) qb.where({ userId });
-  // const results = await qb.getMany();
+    // if (userId) qb.where({ userId });
+    // const results = await qb.getMany();
 
-  // const result = await repository.find();
+    // const result = await repository.find();
 
-  return res.status(200).json({
-    success: true,
-    message: "Get cart by user",
-    data: results,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      message: "Get cart by user",
+      data: results,
+    });
+  }
+);
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -119,6 +120,74 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     message: "Get all Cart",
     data: result,
+  });
+});
+
+// @desc Get all Cart
+// @route GET /api/v1/Cart
+// @access Public
+export const getCartList = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getCartList ${req.method} ${req.url}`);
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(CartEntity);
+
+  const result = await connection.query(
+    `select 
+    carts.id,
+    carts.qty,
+    p.id as "productId",
+    p.name,
+    p.slug as "slug",
+    p.images,
+    p.limit_purchase_qty as "limitPurchaseQty",
+    p.discount_id as "discountId",
+    t.name as "taxName",
+    t.value as "taxValue",
+    d.discount_type as "discountType",
+    d.type,
+    d.value as "discountValue",
+    brands.name as "brandName",
+    pv.id as "productVariantId",
+    pv.unit_price as "unitPrice",
+    pv.purchase_price as "purchasePrice",
+    pv.stock_qty as "stockQty",
+    s.name as "sizeName",
+    (COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
+    (COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS sutotal,
+      CASE 
+        WHEN 
+          d.discount_type = 'Percentage'
+        THEN 
+          ((COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
+        ELSE
+          COALESCE(d.value, 0)
+      END
+    AS "discountAmount"
+
+    from carts 
+    LEFT JOIN products as p ON p.id = carts.product_id
+    LEFT JOIN brands ON brands.id = p.brand_id
+    LEFT JOIN taxs as t ON t.id = p.tax_id
+    LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
+    LEFT JOIN discounts as d ON d.id = p.discount_id
+    LEFT JOIN sizes as s ON s.id = pv.size_id
+`
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "Get Cart list",
+    totalCount: result.length,
+    data: {
+      cartList: result,
+      cartSummary: {
+        totalQty: 10,
+        subTotal: 200,
+        totalDiscount: 400,
+        totalTax: 44,
+        grandTotal: 4000,
+      },
+    },
   });
 });
 
@@ -147,54 +216,49 @@ export const getCart = asyncHandler(
 // @desc Create a single Cart
 // @route POST /api/v1/Cart
 // @access Public
-export const createCart = asyncHandler(async (req: CustomRequest, res: Response) => {
-  const connection = await getDBConnection();
+export const createCart = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    const connection = await getDBConnection();
 
-  const validation = cartValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
-
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+    const validation = cartValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
     });
-  }
-  const repository = connection.getRepository(CartEntity);
 
-  const findCart = await repository.findOneBy({
-    productId: validation.data.productId,
-    userId: req.id,
-  });
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-  if (findCart) {
-    const updateData = await repository.merge(findCart, {
-      qty: findCart.qty + validation.data.qty,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const repository = connection.getRepository(CartEntity);
+
+    const findCart = await repository.findOneBy({
+      productId: validation.data.productId,
+      userId: req.id,
     });
-    const save = await repository.save(updateData);
-    return res.status(200).json({
-      success: true,
-      message: "Cart increment",
-      data: save,
-    });
-    // await repository.save({ id: findCart.id, qty: findCart.qty++ });
-  } else {
+
+    if (findCart) {
+      throw new Error(`This product is already added please update Quantity`);
+    }
+
     const newCart = repository.create(validation.data);
 
-    const save = await repository.save(newCart);
+    const added = await repository.save(newCart);
 
     return res.status(200).json({
       success: true,
-      message: "Create a new Cart",
-      data: save,
+      message: "Add to Cart successfully",
+      data: added,
     });
   }
-});
+);
 
 // @desc Update a single Cart
 // @route PUT /api/v1/Cart/:id
