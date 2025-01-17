@@ -5,7 +5,8 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from "typeorm";
 import { ProductEntity } from "../../products/product/model/product.entity";
 import { UserEntity } from "../../auth/model/user.entity";
@@ -40,15 +41,7 @@ export class CartEntity {
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;
 
-  // @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
-  // updatedAt?: string;
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  updatedAt?: string;
 }
 
-
-// select 
-// * 
-// from carts 
-// LEFT JOIN products ON products.id = carts.product_id
-// LEFT JOIN product_variants ON product_variants.id = carts.product_variant_id
-// LEFT JOIN sizes ON sizes.id = product_variants.size_id
-// LEFT JOIN colors ON colors.id = product_variants.color_id

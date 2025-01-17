@@ -129,29 +129,22 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getCartList ${req.method} ${req.url}`);
   const connection = await getDBConnection();
-
+  // If your platform aims to prioritize customer satisfaction and compliance with typical tax laws, use
+  // (Unit Price - Discount) + Tax
+  // If maximizing revenue and tax collection is the primary goal
+  // (Unit Price + Tax) - Discount
   const result = await connection.query(
     `select 
     carts.id,
     carts.qty,
-    p.id as "productId",
     p.name,
-    p.slug as "slug",
     p.images,
-    p.limit_purchase_qty as "limitPurchaseQty",
-    p.discount_id as "discountId",
-    t.name as "taxName",
     t.value as "taxValue",
     d.discount_type as "discountType",
-    d.type,
     d.value as "discountValue",
-    brands.name as "brandName",
-    pv.id as "productVariantId",
     pv.unit_price as "unitPrice",
-    pv.purchase_price as "purchasePrice",
     pv.stock_qty as "stockQty",
-    s.name as "sizeName",
-    (COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100 AS "tax",
+    (COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100 AS "taxAmount",
     (COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS "subTotal",
       CASE 
         WHEN 
@@ -165,11 +158,9 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
 
     from carts 
     LEFT JOIN products as p ON p.id = carts.product_id
-    LEFT JOIN brands ON brands.id = p.brand_id
     LEFT JOIN taxs as t ON t.id = p.tax_id
     LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
     LEFT JOIN discounts as d ON d.id = p.discount_id
-    LEFT JOIN sizes as s ON s.id = pv.size_id
 `
   );
 
@@ -180,23 +171,26 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   let totalTax = 0;
   let grandTotal = 0;
 
-  result.forEach((item: any) => {
-    console.log("item", item);
+  result.forEach(
+    (item: {
+      qty: number;
+      taxAmount: string;
+      discountAmount: number;
+      subTotal: string;
+    }) => {
+      const qty = +item.qty || 0;
+      const taxAmount = +item.taxAmount || 0;
+      const discountAmount = +item.discountAmount || 0;
+      const subtotalAmount = +item.subTotal;
+      const totalItemPrice = subtotalAmount - discountAmount;
 
-    const qty = +item.qty || 0;
-    const unitPrice = +item.unitPrice || 0;
-    const tax = +item.tax || 0;
-    const discountAmount = +item.discountAmount || 0;
-
-    const subtotal = +unitPrice + +tax;
-    const totalItemPrice = subtotal - discountAmount;
-
-    totalQty += +qty;
-    subTotal += +subtotal * qty;
-    totalDiscount += +discountAmount * qty;
-    totalTax += +tax * +qty;
-    grandTotal += +totalItemPrice * +qty;
-  });
+      totalQty += +qty;
+      subTotal += +subtotalAmount * qty;
+      totalDiscount += +discountAmount * qty;
+      totalTax += +taxAmount * +qty;
+      grandTotal += +totalItemPrice * +qty;
+    }
+  );
 
   return res.status(200).json({
     success: true,
@@ -206,10 +200,10 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
       cartList: result,
       cartSummary: {
         totalQty,
-        subTotal,
-        totalDiscount,
-        totalTax,
-        grandTotal,
+        subTotal: subTotal.toFixed(2),
+        totalDiscount: totalDiscount.toFixed(2),
+        totalTax: totalTax.toFixed(2),
+        grandTotal: grandTotal.toFixed(2),
       },
     },
   });
