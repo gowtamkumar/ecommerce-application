@@ -6,6 +6,8 @@ import { cartValidationSchema } from "../../../validation";
 import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { logger } from "../../../middlewares/logger";
+import { cartIncrementDecrementValidationSchema } from "../../../validation/cart/cartIncrementDecrementValidationSchema";
+import { qtyIncrementDecrementType } from "../enums/qty-increment-decrement-type.enum";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -209,6 +211,66 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// @desc Update a single Cart
+// @route PUT /api/v1/Cart/:id
+// @access Public
+export const cartIncrementDecrement = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const connection = await getDBConnection();
+
+    const validation = cartIncrementDecrementValidationSchema.safeParse({
+      ...req.body,
+    });
+
+    console.log("req.body", req.body);
+    
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const repository = await connection.getRepository(CartEntity);
+
+    const result = await repository.findOneBy({ id });
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    if (validation.data.type === qtyIncrementDecrementType.Increment) {
+      result.qty + 1;
+      // await repository.save({ id: result.id, qty: +result.qty + 1 });
+    } else if (validation.data.type === qtyIncrementDecrementType.Decrement) {
+      if (result.qty === 1) {
+        throw new Error(
+          `Minimum 1 qty should be keep otherwise you can remove`
+        );
+      } else {
+        result.qty - 1;
+      }
+    }
+
+    // await repository.save({ id: result.id, qty: +result.qty - 1 });
+    const updateData = await repository.merge(result, validation.data);
+
+    const cartUpdate = await repository.save(updateData);
+
+    return res.status(200).json({
+      success: true,
+      message: `Update a single Cart of id ${req.params.id}`,
+      data: cartUpdate,
+    });
+  }
+);
+
 // @desc Get a single Cart
 // @route GET /api/v1/Cart/:id
 // @access Public
@@ -319,7 +381,7 @@ export const updateCart = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @desc Delete a single Cart
-// @route DELETE /api/v1/Cart/:id
+// @route DELETE /api/v1/cart/:id
 // @access Public
 export const deleteCart = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
