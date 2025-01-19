@@ -7,7 +7,7 @@ import { updateCartValidationSchema } from "../../../validation/cart/updateCartV
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { logger } from "../../../middlewares/logger";
 import { cartIncrementDecrementValidationSchema } from "../../../validation/cart/cartIncrementDecrementValidationSchema";
-import { qtyIncrementDecrementType } from "../enums/qty-increment-decrement-type.enum";
+import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -126,7 +126,7 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @desc Get all Cart
-// @route GET /api/v1/Cart
+// @route GET /api/v1/cart/list
 // @access Public
 export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getCartList ${req.method} ${req.url}`);
@@ -136,33 +136,34 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   // If maximizing revenue and tax collection is the primary goal
   // (Unit Price + Tax) - Discount
   const result = await connection.query(
-    `select 
-    carts.id,
-    carts.qty,
-    p.name,
-    p.images,
-    t.value as "taxValue",
-    d.discount_type as "discountType",
-    d.value as "discountValue",
-    pv.unit_price as "unitPrice",
-    pv.stock_qty as "stockQty",
-    (COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100 AS "taxAmount",
-    (COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100, 0)) AS "subTotal",
-      CASE 
-        WHEN 
-          d.discount_type = 'Percentage'
-        THEN 
-          ((COALESCE(pv.unit_price, 0) + COALESCE((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100,0)) * COALESCE(d.value, 0)) / 100 
-        ELSE
-          COALESCE(d.value, 0)
-      END
-    AS "discountAmount"
-
-    from carts 
-    LEFT JOIN products as p ON p.id = carts.product_id
-    LEFT JOIN taxs as t ON t.id = p.tax_id
-    LEFT JOIN product_variants as pv ON pv.id = carts.product_variant_id
-    LEFT JOIN discounts as d ON d.id = p.discount_id
+    `SELECT 
+      carts.id,
+      carts.qty,
+      p.name,
+      p.thumbnail_image AS "thumbnailImage" ,
+      t.value AS "taxValue",
+      d.discount_type AS "discountType",
+      d.value AS "discountValue",
+      pv.unit_price AS "unitPrice",
+      pv.stock_qty AS "stockQty",
+      -- Calculate tax amount and round to 2 decimal places
+      ROUND(((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100) * COALESCE(carts.qty, 1), 2) AS "taxAmount",
+      -- Calculate subtotal (unit price + tax) * quantity and round to 2 decimal places
+      ROUND(((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100)) * COALESCE(carts.qty, 1)), 2) AS "subTotal",
+      -- Calculate discount amount and round to 2 decimal places
+      ROUND(
+          CASE 
+              WHEN d.discount_type = 'Percentage' THEN 
+                  (((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100))) * COALESCE(d.value, 0) / 100) * COALESCE(carts.qty, 1)
+              ELSE
+                  COALESCE(d.value, 0) * COALESCE(carts.qty, 1)
+          END, 2
+      ) AS "discountAmount"
+    FROM carts 
+    LEFT JOIN products AS p ON p.id = carts.product_id
+    LEFT JOIN taxs AS t ON t.id = p.tax_id
+    LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
+    LEFT JOIN discounts AS d ON d.id = p.discount_id;
 `
   );
 
@@ -187,10 +188,10 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
       const totalItemPrice = subtotalAmount - discountAmount;
 
       totalQty += +qty;
-      subTotal += +subtotalAmount * qty;
-      totalDiscount += +discountAmount * qty;
-      totalTax += +taxAmount * +qty;
-      grandTotal += +totalItemPrice * +qty;
+      subTotal += +subtotalAmount;
+      totalDiscount += +discountAmount;
+      totalTax += +taxAmount;
+      grandTotal += +totalItemPrice;
     }
   );
 
@@ -223,9 +224,6 @@ export const cartIncrementDecrement = asyncHandler(
       ...req.body,
     });
 
-    console.log("req.body", req.body);
-    
-
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
         path: issue.path.join("."),
@@ -245,23 +243,20 @@ export const cartIncrementDecrement = asyncHandler(
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
-    if (validation.data.type === qtyIncrementDecrementType.Increment) {
-      result.qty + 1;
-      // await repository.save({ id: result.id, qty: +result.qty + 1 });
-    } else if (validation.data.type === qtyIncrementDecrementType.Decrement) {
+    let qty = 0;
+
+    if (validation.data.type === incrementDecrementType.Increment) {
+      qty = result.qty + 1;
+    } else if (validation.data.type === incrementDecrementType.Decrement) {
       if (result.qty === 1) {
         throw new Error(
           `Minimum 1 qty should be keep otherwise you can remove`
         );
       } else {
-        result.qty - 1;
+        qty = result.qty - 1;
       }
     }
-
-    // await repository.save({ id: result.id, qty: +result.qty - 1 });
-    const updateData = await repository.merge(result, validation.data);
-
-    const cartUpdate = await repository.save(updateData);
+    const cartUpdate = await repository.save({ id: result.id, qty });
 
     return res.status(200).json({
       success: true,

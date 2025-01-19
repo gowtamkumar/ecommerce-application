@@ -9,13 +9,15 @@ import {
   getCarts,
   updateCart,
 } from "../controller/cart.controller";
+import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
 router.route("/").get(getCarts).post(createCart);
 router.route("/user").get(getCartByUser);
 router.route("/list").get(getCartList);
-router.route("/qty-up-down/:id").patch(cartIncrementDecrement);
+
+router.route("/qty-up-down/:id").put(AuthGuard, cartIncrementDecrement);
 
 router.route("/:id").get(getCart).patch(updateCart).delete(deleteCart);
 

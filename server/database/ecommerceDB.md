@@ -151,7 +151,8 @@ max_discount_value
 start_date,
 end_date
 usage_limit,
-usage_per_user
+usage_per_user,
+used_count,
 user_id,
 usages,
 status:boolean
