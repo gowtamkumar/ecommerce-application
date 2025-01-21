@@ -70,7 +70,9 @@ brand_id,
 unit_id,
 limit_purchase_qty:number,
 tax_id: number,
-discount_id:number
+<!-- discount_id:number -->
+discount_type,
+discount_value
 alert_qty
 tags: ['ddd','aa']
 user_id,
@@ -119,51 +121,28 @@ color,
 id,
 name,
 
-## discounts:(done)
-
-id,
-type:discount/couponCode
-coupon_code,
-discount_type:(Percentage, Fixed, FreeShipping).
-value,
-start_date,
-expiry_date
-min_order_amount,
-image
-max_user,
-usage_count,
-status:boolean
-user_id,
-createdAt
-updatedAt
-
-## couponCode:(not apply) note: when freeshipping true dont show discount type and value
-
+## coupon
 id,
 type:['order', 'product', 'category', "FreeShipping"]
 code,
-discount_type:['Percentage', 'Fixed']
+discount_type:(Percentage, Fixed, FreeShipping).
 value,
 image
-min_order_amount,
-minimum_cart_value,
-max_discount_value
 start_date,
 end_date
+min_order_amount,
+minimum_cart_value
+max_discount_value
 usage_limit,
 usage_per_user,
-used_count,
-user_id,
-usages,
-status:boolean
-free_shipping: boolean
+max_user,
+usage_count,
 products:[],(optoinal)
 categories:[],(optoinal)
+user_id,
+status:boolean
 createdAt
 updatedAt
-
-
-
 
 ## categories:(done)
 
@@ -242,6 +221,7 @@ payment_transaction_id,
 status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned", "Canceled"],
 createdAt
 updatedAt
+coupon_id,
 
 ## orderItems:
 

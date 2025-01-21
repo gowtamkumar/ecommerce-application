@@ -21,6 +21,7 @@ import { OrderItemEntity } from "../../../order/model/order-item.entity";
 import { UnitEntity } from "../../../unit/model/unit.entity";
 import { DiscountEntity } from "../../../discount/model/discount.entity";
 import { ProductColorEntity } from "../../product-color/model/product-color.entity";
+import { DiscountType } from "../enums/discount-type.enum";
 
 @Entity("products")
 export class ProductEntity {
@@ -30,7 +31,7 @@ export class ProductEntity {
   @Column()
   name!: string;
 
-  @Column({ unique: true, nullable: true }) //need to change this nullable true
+  @Column({ unique: true }) //need to change this nullable true
   sku!: string;
 
   @Column()
@@ -68,6 +69,12 @@ export class ProductEntity {
 
   @Column({ name: "alert_qty" })
   alertQty!: number;
+
+  @Column({ name: "discount_type", type: "enum", enum: DiscountType })
+  discountType!: DiscountType;
+
+  @Column({ name: "discount_value" })
+  discountValue!: number;
 
   @Column({ type: "enum", enum: ProductStatus, default: ProductStatus.Active })
   status!: ProductStatus;
