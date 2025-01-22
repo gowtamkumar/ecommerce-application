@@ -5703,3 +5703,8 @@
 2025-01-19 22:10:24 [[32minfo[39m]: [Service: getWishlist GET /34]
 2025-01-19 22:10:42 [[32minfo[39m]: [Service: getWishlist GET /12]
 2025-01-19 22:28:08 [[32minfo[39m]: [Service: getCartList GET /list]
+2025-01-22 21:48:26 [[32minfo[39m]: [Service: login POST /login]
+2025-01-22 21:49:03 [[32minfo[39m]: [Service: register POST /register]
+2025-01-22 21:49:09 [[32minfo[39m]: [Service: login POST /login]
+2025-01-22 21:49:17 [[32minfo[39m]: [Service: createCoupon POST /]
+2025-01-22 21:50:34 [[32minfo[39m]: [Service: createCoupon POST /]

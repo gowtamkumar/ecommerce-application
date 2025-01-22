@@ -34,6 +34,7 @@ import leadRoute from "../modules/lead/route/lead.route";
 import postRoute from "../modules/post/route/post.route";
 import homeRoute from "../modules/other/pages/home/route/home.route";
 import notificationRoute from "../modules/notification/route/notification.route";
+import couponRoute from "../modules/coupon/route/coupon.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 
 // Define the type for the Express application
@@ -72,6 +73,7 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/unions", unionsRoute);
   app.use("/api/v1/reports", reportRoute);
   app.use("/api/v1/notifications", AuthGuard, notificationRoute);
+  app.use("/api/v1/coupons", couponRoute);
   // public route
   app.use("/api/v1/home", homeRoute);
   app.use("/api/v1/visitors", visitorRoute);

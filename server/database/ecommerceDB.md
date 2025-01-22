@@ -123,13 +123,13 @@ name,
 
 ## coupon
 id,
-type:['order', 'product', 'category', "FreeShipping"]
+type:['order', 'product', "FreeShipping"]
 code,
 discount_type:(Percentage, Fixed, FreeShipping).
 value,
 image
 start_date,
-end_date
+expiry_Date
 min_order_amount,
 minimum_cart_value
 max_discount_value
@@ -138,7 +138,6 @@ usage_per_user,
 max_user,
 usage_count,
 products:[],(optoinal)
-categories:[],(optoinal)
 user_id,
 status:boolean
 createdAt
