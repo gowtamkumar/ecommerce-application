@@ -212,6 +212,154 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+export const applyCouponCode = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: applyCouponCode ${req.method} ${req.url}`);
+    const { couponCode } = req.body;
+    const userId = req?.id; // Assuming you have user authentication in place
+
+    const connection = await getDBConnection();
+
+    // Step 1: Validate the coupon
+    const coupon = await connection.query(
+      `SELECT 
+      id,
+      type,
+      code,
+      discount_type AS "discountType",
+      value,
+      start_date AS "startDate",
+      expiry_date AS "expiryDate",
+      min_order_amount AS "minOrderAmount",
+      minimum_cart_value AS "minimumCartValue",
+      max_discount_value AS "maxDiscountValue",
+      usage_limit AS "usageLimit",
+      usage_per_user AS "usagePerUser",
+      max_user AS "maxUser",
+      usage_count AS "usageCount",
+      status
+    FROM coupons
+    WHERE code = $1 AND status = true AND NOW() BETWEEN start_date AND expiry_date`,
+      [couponCode]
+    );
+
+    if (!coupon.length) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid or expired coupon" });
+    }
+
+    const validCoupon = coupon[0];
+
+    // Step 2: Fetch the cart details
+    const cart = await connection.query(
+      `SELECT 
+      carts.id,
+      carts.qty,
+      p.name,
+      p.thumbnail_image AS "thumbnailImage",
+      t.value AS "taxValue",
+      d.discount_type AS "discountType",
+      d.value AS "discountValue",
+      pv.unit_price AS "unitPrice",
+      pv.stock_qty AS "stockQty",
+      ROUND(((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100) * COALESCE(carts.qty, 1), 2) AS "taxAmount",
+      ROUND(((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100)) * COALESCE(carts.qty, 1)), 2) AS "subTotal",
+      ROUND(
+          CASE 
+              WHEN d.discount_type = 'Percentage' THEN 
+                  (((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100))) * COALESCE(d.value, 0) / 100) * COALESCE(carts.qty, 1)
+              ELSE
+                  COALESCE(d.value, 0) * COALESCE(carts.qty, 1)
+          END, 2
+      ) AS "discountAmount"
+    FROM carts
+    LEFT JOIN products AS p ON p.id = carts.product_id
+    LEFT JOIN taxs AS t ON t.id = p.tax_id
+    LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
+    LEFT JOIN discounts AS d ON d.id = p.discount_id
+    WHERE carts.user_id = $1`,
+      [userId]
+    );
+
+    if (!cart.length) {
+      return res.status(400).json({ success: false, message: "Cart is empty" });
+    }
+
+    // Step 3: Calculate totals
+    let totalQty = 0;
+    let subTotal = 0;
+    let totalDiscount = 0;
+    let totalTax = 0;
+    let grandTotal = 0;
+
+    cart.forEach((item: any) => {
+      const qty = +item.qty || 0;
+      const taxAmount = +item.taxAmount || 0;
+      const discountAmount = +item.discountAmount || 0;
+      const subtotalAmount = +item.subTotal;
+      const totalItemPrice = subtotalAmount - discountAmount;
+
+      totalQty += +qty;
+      subTotal += +subtotalAmount;
+      totalDiscount += +discountAmount;
+      totalTax += +taxAmount;
+      grandTotal += +totalItemPrice;
+    });
+
+    // Step 4: Apply the coupon
+    if (grandTotal < validCoupon.minimumCartValue) {
+      return res.status(400).json({
+        success: false,
+        message: `Cart value must be at least ${validCoupon.minimumCartValue} to apply this coupon`,
+      });
+    }
+
+    let couponDiscount = 0;
+
+    if (validCoupon.type === "order") {
+      if (validCoupon.discountType === "Percentage") {
+        couponDiscount = (grandTotal * validCoupon.value) / 100;
+      } else if (validCoupon.discountType === "Fixed") {
+        couponDiscount = validCoupon.value;
+      }
+    } else if (validCoupon.type === "product") {
+      cart.forEach((item: any) => {
+        if (validCoupon.products.includes(item.product_id)) {
+          if (validCoupon.discountType === "Percentage") {
+            couponDiscount += (item.subTotal * validCoupon.value) / 100;
+          } else if (validCoupon.discountType === "Fixed") {
+            couponDiscount += validCoupon.value * item.qty;
+          }
+        }
+      });
+    }
+
+    couponDiscount = Math.min(
+      couponDiscount,
+      validCoupon.maxDiscountValue || couponDiscount
+    );
+
+    grandTotal -= couponDiscount;
+
+    return res.status(200).json({
+      success: true,
+      message: "Coupon applied successfully",
+      data: {
+        cartList: cart,
+        cartSummary: {
+          totalQty,
+          subTotal: subTotal.toFixed(2),
+          totalDiscount: (totalDiscount + couponDiscount).toFixed(2),
+          totalTax: totalTax.toFixed(2),
+          grandTotal: grandTotal.toFixed(2),
+          couponDiscount: couponDiscount.toFixed(2),
+        },
+      },
+    });
+  }
+);
+
 // @desc Update a single Cart
 // @route PUT /api/v1/Cart/:id
 // @access Public
