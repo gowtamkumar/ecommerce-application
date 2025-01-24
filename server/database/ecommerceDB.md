@@ -70,7 +70,9 @@ brand_id,
 unit_id,
 limit_purchase_qty:number,
 tax_id: number,
+
 <!-- discount_id:number -->
+
 discount_type,
 discount_value
 alert_qty
@@ -98,6 +100,15 @@ color_id
 stock_qty:number,
 default:boolean
 
+## variant_attributes(not implement)
+
+id,
+product_variant_id,
+attribute_name,
+attribute_value
+created_at,
+updated_at
+
 ## product_category:(done)
 
 id,
@@ -122,6 +133,7 @@ id,
 name,
 
 ## coupon
+
 id,
 type:['order', 'product', "FreeShipping"]
 code,
@@ -140,6 +152,14 @@ usage_count,
 products:[],(optoinal)
 user_id,
 status:boolean
+createdAt
+updatedAt
+
+## coupon_products
+
+id,
+product_id,
+coupon_id
 createdAt
 updatedAt
 

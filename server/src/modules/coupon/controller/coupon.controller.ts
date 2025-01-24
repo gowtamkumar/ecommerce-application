@@ -4,27 +4,26 @@ import { getDBConnection } from "../../../config/db";
 import { CouponEntity } from "../model/coupon.entity";
 import { logger } from "../../../middlewares/logger";
 import { CustomRequest } from "../../../enums/custom-request-type";
+import { CouponProductEntity } from "../model/coupon-product.entity";
 
 // @desc Get all Coupons
 // @route GET /api/v1/Coupons
 // @access Public
-export const getCoupons = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: getCoupons ${req.method} ${req.url}`);
+export const getCoupons = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getCoupons ${req.method} ${req.url}`);
 
-    const { type } = req.query;
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(CouponEntity);
-    const newQuery = {} as any;
-    if (type) newQuery.type = type;
-    const result = await repository.find({ where: newQuery });
-    return res.status(200).json({
-      success: true,
-      message: "Get all Coupons",
-      data: result,
-    });
-  }
-);
+  const { type } = req.query;
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(CouponEntity);
+  const newQuery = {} as any;
+  if (type) newQuery.type = type;
+  const result = await repository.find({ where: newQuery, relations: ['products'] });
+  return res.status(200).json({
+    success: true,
+    message: "Get all Coupons",
+    data: result,
+  });
+});
 
 // @desc Get a single Coupon
 // @route GET /api/v1/Coupons/:id
@@ -54,36 +53,38 @@ export const getCoupon = asyncHandler(
 // @access Public
 export const createCoupon = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createCoupon ${req.method} ${req.url}`);
+  
   const connection = await getDBConnection();
-
-  // const validation = couponValidationSchema.safeParse({
-  //   ...req.body,
-  //   userId: req.id,
-  // });
-
-  // if (!validation.success) {
-  //   const formattedErrors = validation.error.issues.map((issue) => ({
-  //     path: issue.path.join("."),
-  //     message: issue.message,
-  //   }));
-
-  //   return res.status(400).json({
-  //     success: false,
-  //     issues: formattedErrors,
-  //   });
-  // }
-
-  const repository = connection.getRepository(CouponEntity);
-  const newCoupon = repository.create({
-    ...req.body,
-    userId: req.id,
-  });
-  const save = await repository.save(newCoupon);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Coupon",
-    data: save,
+  
+  // Start a transaction
+  await connection.transaction(async (transactionManager: any) => {
+    const couponRepository = transactionManager.getRepository(CouponEntity);
+    const couponProductRepository = transactionManager.getRepository(CouponProductEntity);
+    
+    // Create and save the coupon
+    const newCoupon = couponRepository.create({
+      ...req.body,
+      userId: req.id,
+    });
+    const savedCoupon = await couponRepository.save(newCoupon);
+    
+    // Handle coupon-product associations
+    if (req.body.couponProducts && Array.isArray(req.body.couponProducts)) {
+      const couponProducts = req.body.couponProducts.map((productId: number) => ({
+        productId,
+        couponId: savedCoupon.id,
+      }));
+      
+      const newCouponProducts = couponProductRepository.create(couponProducts);
+      await couponProductRepository.save(newCouponProducts);
+    }
+    
+    // Final response
+    res.status(200).json({
+      success: true,
+      message: "Create a new Coupon",
+      data: savedCoupon,
+    });
   });
 });
 
@@ -137,7 +138,7 @@ export const updateCoupon = asyncHandler(
 export const deleteCoupon = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: deleteCoupon ${req.method} ${req.url}`);
-    
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(CouponEntity);

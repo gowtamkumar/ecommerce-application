@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { CouponType } from "../../../enums/coupon-type.enum";
 import { DiscountType } from "../../../enums/discount-type.enum";
+import { CouponProductEntity } from "./coupon-product.entity";
 
 @Entity("coupons")
 export class CouponEntity {
@@ -71,8 +72,6 @@ export class CouponEntity {
   })
   active!: boolean;
 
-  
-
   @Column({ name: "user_id" })
   userId?: number;
 
@@ -81,4 +80,7 @@ export class CouponEntity {
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
+
+  @OneToMany((_type) => CouponProductEntity, (items) => items.coupon)
+  products!: CouponProductEntity[];
 }

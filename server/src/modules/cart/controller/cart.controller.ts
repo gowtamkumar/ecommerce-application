@@ -10,6 +10,7 @@ import { cartIncrementDecrementValidationSchema } from "../../../validation/cart
 import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
 import { CouponType } from "../../../enums/coupon-type.enum";
 import { DiscountType } from "../../../enums/discount-type.enum";
+import { CouponEntity } from "../../coupon/model/coupon.entity";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -214,9 +215,9 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export const applyCouponCode = asyncHandler(
+export const cartListApplyCouponCode = asyncHandler(
   async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: applyCouponCode ${req.method} ${req.url}`);
+    logger.info(`Service: cartListApplyCouponCode ${req.method} ${req.url}`);
     const { couponCode, shippingCost } = req.query;
     const userId = req?.id;
 
@@ -229,35 +230,45 @@ export const applyCouponCode = asyncHandler(
 
     if (couponCode) {
       // Step 1: Validate the coupon
-      const coupon = await connection.query(
-        `SELECT 
-          id,
-          type,
-          code,
-          discount_type AS "discountType",
-          value,
-          start_date AS "startDate",
-          expiry_date AS "expiryDate",
-          min_order_amount AS "minOrderAmount",
-          minimum_cart_value AS "minimumCartValue",
-          max_discount_value AS "maxDiscountValue",
-          usage_limit AS "usageLimit",
-          usage_per_user AS "usagePerUser",
-          max_user AS "maxUser",
-          usage_count AS "usageCount",
-          status
-        FROM coupons
-        WHERE code = $1 AND status = true AND NOW() BETWEEN start_date AND expiry_date`,
-        [couponCode]
-      );
+      // const coupon = await connection.query(
+      //   `SELECT
+      //     id,
+      //     type,
+      //     code,
+      //     discount_type AS "discountType",
+      //     value,
+      //     start_date AS "startDate",
+      //     expiry_date AS "expiryDate",
+      //     min_order_amount AS "minOrderAmount",
+      //     min_cart_value AS "minCartValue",
+      //     max_discount_value AS "maxDiscountValue",
+      //     usage_limit AS "usageLimit",
+      //     usage_per_user AS "usagePerUser",
+      //     max_user AS "maxUser",
+      //     usage_count AS "usageCount",
+      //     active
+      //   FROM coupons
+      //   WHERE code = $1 AND active = true AND NOW() BETWEEN start_date AND expiry_date`,
+      //   [couponCode]
+      // );
 
-      if (!coupon.length) {
+      const coupon = await connection
+        .getRepository(CouponEntity)
+        .createQueryBuilder("coupon")
+        .select(["coupon", "products"])
+        .leftJoin("coupon.products", "products")
+        .where("coupon.code = :code", { code: couponCode })
+        .andWhere("coupon.active = true")
+        .andWhere("NOW() BETWEEN coupon.startDate AND coupon.expiryDate")
+        .getOne();
+
+      if (!coupon) {
         return res
           .status(400)
           .json({ success: false, message: "Invalid or expired coupon" });
       }
 
-      validCoupon = coupon[0];
+      validCoupon = coupon;
     }
 
     // Step 2: Fetch the cart details
@@ -266,6 +277,7 @@ export const applyCouponCode = asyncHandler(
         carts.id,
         carts.qty,
         p.name,
+        p.id AS "productId",
         p.thumbnail_image AS "thumbnailImage",
         t.value AS "taxValue",
         d.discount_type AS "discountType",
@@ -318,10 +330,10 @@ export const applyCouponCode = asyncHandler(
 
     // Step 4: Apply the coupon if provided
     if (validCoupon) {
-      if (grandTotal < validCoupon.minimumCartValue) {
+      if (grandTotal < validCoupon.minCartValue) {
         return res.status(400).json({
           success: false,
-          message: `Cart value must be at least ${validCoupon.minimumCartValue} to apply this coupon`,
+          message: `Cart value must be at least ${validCoupon.minCartValue} to apply this coupon`,
         });
       }
 
@@ -332,8 +344,11 @@ export const applyCouponCode = asyncHandler(
           couponDiscount = validCoupon.value;
         }
       } else if (validCoupon.type === CouponType.Product) {
+        const validProductIds = validCoupon.products.map(
+          (p: any) => p.productId
+        );
         cart.forEach((item: any) => {
-          if (validCoupon.products.includes(item.product_id)) {
+          if (validProductIds.includes(item.productId)) {
             if (validCoupon.discountType === DiscountType.Percentage) {
               couponDiscount += (item.subTotal * validCoupon.value) / 100;
             } else if (validCoupon.discountType === DiscountType.Fixed) {

@@ -21,6 +21,7 @@ import { UnitEntity } from "../../../unit/model/unit.entity";
 import { DiscountEntity } from "../../../discount/model/discount.entity";
 import { ProductColorEntity } from "../../product-color/model/product-color.entity";
 import { Status } from "../../../../enums/status.enum";
+import { CouponProductEntity } from "../../../coupon/model/coupon-product.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -135,6 +136,9 @@ export class ProductEntity {
 
   @OneToMany((_type) => OrderItemEntity, (items) => items.product)
   orderItems!: OrderItemEntity[];
+
+  @OneToMany((_type) => CouponProductEntity, (items) => items.product)
+  couponProducts!: CouponProductEntity[];
 
   @OneToMany((_type) => ProductColorEntity, (items) => items.product)
   productColors!: ProductColorEntity[];
