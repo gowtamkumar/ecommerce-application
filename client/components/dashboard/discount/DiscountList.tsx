@@ -27,16 +27,10 @@ import {
 
 interface DataType {
   key: string;
-  couponCode: string;
-  type: string;
+  name: string;
   discountType: string;
   value: number;
-  startDate: any;
-  expiryDate: any;
-  minOrderAmount: number;
-  usageCount: number;
-  maxUser: number;
-  active: boolean;
+  status: string;
 }
 
 type DataIndex = keyof DataType;
@@ -185,12 +179,11 @@ const DiscountList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("type"),
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      sorter: (a, b) => a.type.length - b.type.length,
-      render: (value) => <Tag color="cyan">{value}</Tag>,
+      ...getColumnSearchProps("name"),
+      title: "name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name?.length - b.name?.length,
     },
 
     {
@@ -200,13 +193,6 @@ const DiscountList: React.FC = () => {
       key: "discountType",
       sorter: (a, b) => a.discountType.length - b.discountType.length,
       render: (value) => <Tag color="cyan">{value}</Tag>,
-    },
-    {
-      ...getColumnSearchProps("couponCode"),
-      title: "Coupon",
-      dataIndex: "couponCode",
-      key: "couponCode",
-      sorter: (a, b) => a.couponCode?.length - b.couponCode?.length,
     },
 
     {
@@ -218,56 +204,14 @@ const DiscountList: React.FC = () => {
     },
 
     {
-      ...getColumnSearchProps("startDate"),
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
-      ),
-    },
-
-    {
-      ...getColumnSearchProps("expiryDate"),
-      title: "Expiry Date",
-      dataIndex: "expiryDate",
-      key: "expiryDate",
-      render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
-      ),
-      // sorter: (a, b) => a.expiryDate - b.expiryDate,
-    },
-    {
-      ...getColumnSearchProps("minOrderAmount"),
-      title: "Min Order Amount",
-      dataIndex: "minOrderAmount",
-      key: "minOrderAmount",
-      sorter: (a, b) => a.minOrderAmount - b.minOrderAmount,
-    },
-    {
-      title: "Max User",
-      dataIndex: "maxUser",
-      key: "maxUser",
-      sorter: (a, b) => a.maxUser - b.maxUser,
-      ...getColumnSearchProps("maxUser"),
-    },
-    {
-      title: "Usage Count",
-      dataIndex: "usageCount",
-      key: "usageCount",
-      sorter: (a, b) => a.usageCount - b.usageCount,
-      ...getColumnSearchProps("usageCount"),
-    },
-
-    {
       title: "Status",
-      key: "active",
-      ...getColumnSearchProps("active"),
+      key: "status",
+      ...getColumnSearchProps("status"),
       sortDirections: ["descend", "ascend"],
       // sorter: (a, b) => a.active.length - b.active.length,
       render: (value) => (
-        <Tag color={value.active ? "green" : "red"}>
-          {value.active ? "Active" : "Inactive"}
+        <Tag color={value.status === "Active" ? "green" : "red"}>
+          {value.status}
         </Tag>
       ),
     },

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  applyCouponCode,
   cartIncrementDecrement,
   createCart,
   deleteCart,
@@ -16,6 +17,9 @@ const router = express.Router();
 router.route("/").get(getCarts).post(createCart);
 router.route("/user").get(getCartByUser);
 router.route("/list").get(getCartList);
+router.route("/coupon-apply").get(applyCouponCode);
+
+
 
 router.route("/qty-up-down/:id").put(AuthGuard, cartIncrementDecrement);
 router.route("/:id").get(getCart).patch(updateCart).delete(deleteCart);

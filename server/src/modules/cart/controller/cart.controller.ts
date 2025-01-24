@@ -217,70 +217,77 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
 export const applyCouponCode = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: applyCouponCode ${req.method} ${req.url}`);
-    const { couponCode } = req.body;
-    const userId = req?.id; // Assuming you have user authentication in place
+    const { couponCode, shippingCost } = req.query;
+    const userId = req?.id;
 
     const connection = await getDBConnection();
 
-    // Step 1: Validate the coupon
-    const coupon = await connection.query(
-      `SELECT 
-      id,
-      type,
-      code,
-      discount_type AS "discountType",
-      value,
-      start_date AS "startDate",
-      expiry_date AS "expiryDate",
-      min_order_amount AS "minOrderAmount",
-      minimum_cart_value AS "minimumCartValue",
-      max_discount_value AS "maxDiscountValue",
-      usage_limit AS "usageLimit",
-      usage_per_user AS "usagePerUser",
-      max_user AS "maxUser",
-      usage_count AS "usageCount",
-      status
-    FROM coupons
-    WHERE code = $1 AND status = true AND NOW() BETWEEN start_date AND expiry_date`,
-      [couponCode]
-    );
+    // Initialize coupon-related variables
+    let validCoupon: any = null;
+    let couponDiscount = 0;
+    let shippingCharge = 0; // Example flat shipping charge
 
-    if (!coupon.length) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired coupon" });
+    if (couponCode) {
+      // Step 1: Validate the coupon
+      const coupon = await connection.query(
+        `SELECT 
+          id,
+          type,
+          code,
+          discount_type AS "discountType",
+          value,
+          start_date AS "startDate",
+          expiry_date AS "expiryDate",
+          min_order_amount AS "minOrderAmount",
+          minimum_cart_value AS "minimumCartValue",
+          max_discount_value AS "maxDiscountValue",
+          usage_limit AS "usageLimit",
+          usage_per_user AS "usagePerUser",
+          max_user AS "maxUser",
+          usage_count AS "usageCount",
+          status
+        FROM coupons
+        WHERE code = $1 AND status = true AND NOW() BETWEEN start_date AND expiry_date`,
+        [couponCode]
+      );
+
+      if (!coupon.length) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid or expired coupon" });
+      }
+
+      validCoupon = coupon[0];
     }
-
-    const validCoupon = coupon[0];
 
     // Step 2: Fetch the cart details
     const cart = await connection.query(
       `SELECT 
-      carts.id,
-      carts.qty,
-      p.name,
-      p.thumbnail_image AS "thumbnailImage",
-      t.value AS "taxValue",
-      d.discount_type AS "discountType",
-      d.value AS "discountValue",
-      pv.unit_price AS "unitPrice",
-      pv.stock_qty AS "stockQty",
-      ROUND(((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100) * COALESCE(carts.qty, 1), 2) AS "taxAmount",
-      ROUND(((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100)) * COALESCE(carts.qty, 1)), 2) AS "subTotal",
-      ROUND(
-          CASE 
-              WHEN d.discount_type = 'Percentage' THEN 
-                  (((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100))) * COALESCE(d.value, 0) / 100) * COALESCE(carts.qty, 1)
-              ELSE
-                  COALESCE(d.value, 0) * COALESCE(carts.qty, 1)
-          END, 2
-      ) AS "discountAmount"
-    FROM carts
-    LEFT JOIN products AS p ON p.id = carts.product_id
-    LEFT JOIN taxs AS t ON t.id = p.tax_id
-    LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
-    LEFT JOIN discounts AS d ON d.id = p.discount_id
-    WHERE carts.user_id = $1`,
+        carts.id,
+        carts.qty,
+        p.name,
+        p.thumbnail_image AS "thumbnailImage",
+        t.value AS "taxValue",
+        d.discount_type AS "discountType",
+        d.value AS "discountValue",
+        pv.unit_price AS "unitPrice",
+        pv.stock_qty AS "stockQty",
+        ROUND(((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100) * COALESCE(carts.qty, 1), 2) AS "taxAmount",
+        ROUND(((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100)) * COALESCE(carts.qty, 1)), 2) AS "subTotal",
+        ROUND(
+            CASE 
+                WHEN d.discount_type = 'Percentage' THEN 
+                    (((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100))) * COALESCE(d.value, 0) / 100) * COALESCE(carts.qty, 1)
+                ELSE
+                    COALESCE(d.value, 0) * COALESCE(carts.qty, 1)
+            END, 2
+        ) AS "discountAmount"
+      FROM carts
+      LEFT JOIN products AS p ON p.id = carts.product_id
+      LEFT JOIN taxs AS t ON t.id = p.tax_id
+      LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
+      LEFT JOIN discounts AS d ON d.id = p.discount_id
+      WHERE carts.user_id = $1`,
       [userId]
     );
 
@@ -309,50 +316,55 @@ export const applyCouponCode = asyncHandler(
       grandTotal += +totalItemPrice;
     });
 
-    // Step 4: Apply the coupon
-    if (grandTotal < validCoupon.minimumCartValue) {
-      return res.status(400).json({
-        success: false,
-        message: `Cart value must be at least ${validCoupon.minimumCartValue} to apply this coupon`,
-      });
-    }
-
-    let couponDiscount = 0;
-    let shippingCharge = 50; // Example flat shipping charge (modify as per your requirements)
-
-    if (validCoupon.type === CouponType.Order) {
-      if (validCoupon.discountType === DiscountType.Percentage) {
-        couponDiscount = (grandTotal * validCoupon.value) / 100;
-      } else if (validCoupon.discountType === DiscountType.Fixed) {
-        couponDiscount = validCoupon.value;
+    // Step 4: Apply the coupon if provided
+    if (validCoupon) {
+      if (grandTotal < validCoupon.minimumCartValue) {
+        return res.status(400).json({
+          success: false,
+          message: `Cart value must be at least ${validCoupon.minimumCartValue} to apply this coupon`,
+        });
       }
-    } else if (validCoupon.type === CouponType.Product) {
-      cart.forEach((item: any) => {
-        if (validCoupon.products.includes(item.product_id)) {
-          if (validCoupon.discountType === DiscountType.Percentage) {
-            couponDiscount += (item.subTotal * validCoupon.value) / 100;
-          } else if (validCoupon.discountType === DiscountType.Fixed) {
-            couponDiscount += validCoupon.value * item.qty;
-          }
+
+      if (validCoupon.type === CouponType.Order) {
+        if (validCoupon.discountType === DiscountType.Percentage) {
+          couponDiscount = (grandTotal * validCoupon.value) / 100;
+        } else if (validCoupon.discountType === DiscountType.Fixed) {
+          couponDiscount = validCoupon.value;
         }
-      });
+      } else if (validCoupon.type === CouponType.Product) {
+        cart.forEach((item: any) => {
+          if (validCoupon.products.includes(item.product_id)) {
+            if (validCoupon.discountType === DiscountType.Percentage) {
+              couponDiscount += (item.subTotal * validCoupon.value) / 100;
+            } else if (validCoupon.discountType === DiscountType.Fixed) {
+              couponDiscount += validCoupon.value * item.qty;
+            }
+          }
+        });
+      }
+
+      couponDiscount = Math.min(
+        couponDiscount,
+        validCoupon.maxDiscountValue || couponDiscount
+      );
+
+      // Check for FreeShipping
+      if (validCoupon.type === DiscountType.FreeShipping) {
+        shippingCharge = 0;
+      }
     }
 
-    couponDiscount = Math.min(
-      couponDiscount,
-      validCoupon.maxDiscountValue || couponDiscount
-    );
-
-    // Step 5: Check for FreeShipping
-    if (validCoupon.type === "FreeShipping") {
-      shippingCharge = 0; // Waive the shipping charge
+    if (shippingCost && validCoupon.type !== DiscountType.FreeShipping) {
+      shippingCharge = +shippingCost;
     }
 
     grandTotal = grandTotal - couponDiscount + shippingCharge;
 
     return res.status(200).json({
       success: true,
-      message: "Coupon applied successfully",
+      message: validCoupon
+        ? "Coupon applied successfully"
+        : "No coupon applied",
       data: {
         cartList: cart,
         cartSummary: {

@@ -1,14 +1,5 @@
 import React, { useEffect } from "react";
-import dayjs from "dayjs";
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-} from "antd";
+import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
@@ -55,16 +46,12 @@ const AddDiscount = () => {
 
   const setFormData = (v: any) => {
     const newData = { ...v };
-    if (newData.startDate) newData.startDate = dayjs(newData.startDate);
-    if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
     form.setFieldsValue(newData);
     dispatch(setFormValues(form.getFieldsValue()));
   };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
-    if (newData.startDate) newData.startDate = dayjs(newData.startDate);
-    if (newData.expiryDate) newData.expiryDate = dayjs(newData.expiryDate);
     if (newData?.id) {
       form.setFieldsValue(newData);
       dispatch(setFormValues(newData));
@@ -107,35 +94,17 @@ const AddDiscount = () => {
         </Form.Item>
 
         <Form.Item
-          name="type"
-          label="Type"
+          name="name"
+          label="Name"
           rules={[
             {
               required: true,
-              message: "Type is required",
+              message: "Name is required",
             },
           ]}
         >
-          <Select allowClear placeholder="Select">
-            <Select.Option value="Discount">Discount</Select.Option>
-            <Select.Option value="CouponCode">Coupon Code</Select.Option>
-          </Select>
+          <Input placeholder="Enter" />
         </Form.Item>
-
-        {global.formValues.type === "CouponCode" && (
-          <Form.Item
-            name="couponCode"
-            label="Coupon code"
-            rules={[
-              {
-                required: true,
-                message: "Name is required",
-              },
-            ]}
-          >
-            <Input placeholder="Enter coupon code" />
-          </Form.Item>
-        )}
 
         <Form.Item
           name="discountType"
@@ -147,14 +116,9 @@ const AddDiscount = () => {
             },
           ]}
         >
-          <Select
-            allowClear
-            placeholder="Select"
-            optionFilterProp="children"
-          >
+          <Select allowClear placeholder="Select" optionFilterProp="children">
             <Select.Option value="Percentage">Percentage</Select.Option>
             <Select.Option value="Fixed">Fixed Amount</Select.Option>
-            <Select.Option value="FreeShipping">Free Shipping</Select.Option>
           </Select>
         </Form.Item>
 
@@ -171,49 +135,13 @@ const AddDiscount = () => {
           <InputNumber placeholder="Enter Value" />
         </Form.Item>
 
-        {global.formValues.type === "CouponCode" && (
-          <>
-            <Form.Item
-              name="startDate"
-              label="Start Date"
-              rules={[
-                {
-                  required: true,
-                  message: "Start Date is required",
-                },
-              ]}
-            >
-              <DatePicker placeholder="Enter Start Date" />
-            </Form.Item>
-            <Form.Item
-              name="expiryDate"
-              label="Expiry Date"
-              rules={[
-                {
-                  required: true,
-                  message: "Expiry Date is required",
-                },
-              ]}
-            >
-              <DatePicker placeholder="Enter" />
-            </Form.Item>
-
-            <Form.Item name="minOrderAmount" label="Min Order Amount">
-              <InputNumber placeholder="Enter" />
-            </Form.Item>
-
-            <Form.Item name="maxUser" label="Max user">
-              <InputNumber placeholder="Enter" />
-            </Form.Item>
-          </>
-        )}
-
-        <Form.Item name="active" label="Status">
+        <Form.Item name="status" label="Status">
           <Select placeholder="Select">
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
+            <Select.Option value="Active">Active</Select.Option>
+            <Select.Option value="Inactive">Inactive</Select.Option>
           </Select>
         </Form.Item>
+        
         <Form.Item {...tailLayout}>
           <Button
             className="me-2"

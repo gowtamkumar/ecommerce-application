@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../config/db";
 import { DiscountEntity } from "../model/discount.entity";
-import { discountValidationSchema } from "../../../validation";
+import { discountValidation } from "../../../validation";
 import { updateDiscountValidation } from "../../../validation/discount/updateDiscountValidation";
 import { logger } from "../../../middlewares/logger";
 import { CustomRequest } from "../../../enums/custom-request-type";
@@ -54,37 +54,39 @@ export const getDiscount = asyncHandler(
 // @desc Create a single Discount
 // @route POST /api/v1/Discounts
 // @access Public
-export const createDiscount = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createDiscount ${req.method} ${req.url}`);
-  const connection = await getDBConnection();
+export const createDiscount = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createDiscount ${req.method} ${req.url}`);
+    const connection = await getDBConnection();
 
-  const validation = discountValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    const validation = discountValidation.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const repository = connection.getRepository(DiscountEntity);
+    const newDiscount = repository.create(validation.data);
+    const save = await repository.save(newDiscount);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Discount",
+      data: save,
     });
   }
-
-  const repository = connection.getRepository(DiscountEntity);
-  const newDiscount = repository.create(validation.data);
-  const save = await repository.save(newDiscount);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Discount",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single Discount
 // @route PUT /api/v1/Discounts/:id
@@ -136,7 +138,7 @@ export const updateDiscount = asyncHandler(
 export const deleteDiscount = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: deleteDiscount ${req.method} ${req.url}`);
-    
+
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
