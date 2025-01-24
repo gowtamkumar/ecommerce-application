@@ -20,9 +20,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
   if (type) {
     customQuery.type = type;
   }
-  console.log("🚀 ~ customQuery:", customQuery)
   const result = await repository.find({ where: customQuery });
-
   return res.status(200).json({
     success: true,
     message: "Get all Banner",

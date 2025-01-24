@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-
-import { CouponType, DiscountType } from "../enums";
+import { CouponType } from "../../../enums/coupon-type.enum";
+import { DiscountType } from "../../../enums/discount-type.enum";
 
 @Entity("coupons")
 export class CouponEntity {
@@ -70,6 +70,8 @@ export class CouponEntity {
     default: true,
   })
   active!: boolean;
+
+  
 
   @Column({ name: "user_id" })
   userId?: number;

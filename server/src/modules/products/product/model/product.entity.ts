@@ -11,7 +11,6 @@ import {
 } from "typeorm";
 import { UserEntity } from "../../../auth/model/user.entity";
 import { ReviewEntity } from "../../../review/model/review.entity";
-import { ProductStatus } from "../enums/product-status.enum";
 import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
 import { TaxEntity } from "../../../tax/model/tax.entity";
 import { BrandEntity } from "../../../brand/model/brand.entity";
@@ -21,7 +20,7 @@ import { OrderItemEntity } from "../../../order/model/order-item.entity";
 import { UnitEntity } from "../../../unit/model/unit.entity";
 import { DiscountEntity } from "../../../discount/model/discount.entity";
 import { ProductColorEntity } from "../../product-color/model/product-color.entity";
-import { DiscountType } from "../enums/discount-type.enum";
+import { Status } from "../../../../enums/status.enum";
 
 @Entity("products")
 export class ProductEntity {
@@ -70,14 +69,14 @@ export class ProductEntity {
   @Column({ name: "alert_qty" })
   alertQty!: number;
 
-  @Column({ name: "discount_type", type: "enum", enum: DiscountType })
-  discountType!: DiscountType;
+  // @Column({ name: "discount_type", type: "enum", enum: DiscountType })
+  // discountType!: DiscountType;
 
-  @Column({ name: "discount_value" })
-  discountValue!: number;
+  // @Column({ name: "discount_value" })
+  // discountValue!: number;
 
-  @Column({ type: "enum", enum: ProductStatus, default: ProductStatus.Active })
-  status!: ProductStatus;
+  @Column({ type: "enum", enum: Status, default: Status.Active })
+  status!: Status;
 
   @Column({ name: "brand_id", nullable: true })
   brandId?: number;

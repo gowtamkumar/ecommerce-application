@@ -52,7 +52,7 @@ export const getSize = asyncHandler(
 // @route POST /api/v1/Size
 // @access Public
 export const createSize = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createSize ${req.method} ${req.url}`);
+  logger.info(`Service: createSize ${req.method} ${req.url}`);  
 
   const validation = sizeValidationSchema.safeParse({
     ...req.body,
@@ -70,6 +70,7 @@ export const createSize = asyncHandler(async (req: CustomRequest, res: Response)
       issues: formattedErrors,
     });
   }
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(SizeEntity);
 

@@ -40,6 +40,9 @@ export const createProduct = asyncHandler(
       });
     }
 
+
+  
+
     const { productVariants, productCategories, productColors, ...restData } =
       validation.data;
     // Generate URL slug
@@ -51,7 +54,7 @@ export const createProduct = asyncHandler(
 
     // Save product to database
     const savedProduct = await productRepository.save(product);
-
+    console.log("validation.data", savedProduct);
     // Prepare promises for saving product variants and categories
     const promises = [];
 

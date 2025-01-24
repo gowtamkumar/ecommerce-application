@@ -8,6 +8,8 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 import { logger } from "../../../middlewares/logger";
 import { cartIncrementDecrementValidationSchema } from "../../../validation/cart/cartIncrementDecrementValidationSchema";
 import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
+import { CouponType } from "../../../enums/coupon-type.enum";
+import { DiscountType } from "../../../enums/discount-type.enum";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -316,19 +318,20 @@ export const applyCouponCode = asyncHandler(
     }
 
     let couponDiscount = 0;
+    let shippingCharge = 50; // Example flat shipping charge (modify as per your requirements)
 
-    if (validCoupon.type === "order") {
-      if (validCoupon.discountType === "Percentage") {
+    if (validCoupon.type === CouponType.Order) {
+      if (validCoupon.discountType === DiscountType.Percentage) {
         couponDiscount = (grandTotal * validCoupon.value) / 100;
-      } else if (validCoupon.discountType === "Fixed") {
+      } else if (validCoupon.discountType === DiscountType.Fixed) {
         couponDiscount = validCoupon.value;
       }
-    } else if (validCoupon.type === "product") {
+    } else if (validCoupon.type === CouponType.Product) {
       cart.forEach((item: any) => {
         if (validCoupon.products.includes(item.product_id)) {
-          if (validCoupon.discountType === "Percentage") {
+          if (validCoupon.discountType === DiscountType.Percentage) {
             couponDiscount += (item.subTotal * validCoupon.value) / 100;
-          } else if (validCoupon.discountType === "Fixed") {
+          } else if (validCoupon.discountType === DiscountType.Fixed) {
             couponDiscount += validCoupon.value * item.qty;
           }
         }
@@ -340,7 +343,12 @@ export const applyCouponCode = asyncHandler(
       validCoupon.maxDiscountValue || couponDiscount
     );
 
-    grandTotal -= couponDiscount;
+    // Step 5: Check for FreeShipping
+    if (validCoupon.type === "FreeShipping") {
+      shippingCharge = 0; // Waive the shipping charge
+    }
+
+    grandTotal = grandTotal - couponDiscount + shippingCharge;
 
     return res.status(200).json({
       success: true,
@@ -352,6 +360,7 @@ export const applyCouponCode = asyncHandler(
           subTotal: subTotal.toFixed(2),
           totalDiscount: (totalDiscount + couponDiscount).toFixed(2),
           totalTax: totalTax.toFixed(2),
+          shippingCharge: shippingCharge.toFixed(2),
           grandTotal: grandTotal.toFixed(2),
           couponDiscount: couponDiscount.toFixed(2),
         },

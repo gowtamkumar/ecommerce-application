@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { BrandStatus } from "../enums/brand-status.enum";
 import { ProductEntity } from "../../products/product/model/product.entity";
+import { Status } from "../../../enums/status.enum";
 
 @Entity("brands")
 export class BrandEntity {
@@ -23,10 +23,10 @@ export class BrandEntity {
 
   @Column({
     type: "enum",
-    enum: BrandStatus,
-    default: BrandStatus.Active,
+    enum: Status,
+    default: Status.Active,
   })
-  status!: BrandStatus;
+  status!: Status;
 
   @Column({ name: "user_id" })
   userId!: number;
