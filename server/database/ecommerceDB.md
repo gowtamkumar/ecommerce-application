@@ -58,7 +58,7 @@ status,
 id,
 featured: boolean, this field for only show home page(need to add)
 name:string,
-sku(unique),
+
 slug(unique),
 hover_image,
 thumbnail_image,
@@ -96,18 +96,13 @@ purchase_price:numeric,
 unit_price:numeric
 product_id
 size_id
+sku(unique),
 color_id
+material
+image: string,
 stock_qty:number,
 default:boolean
 
-## variant_attributes(not implement)
-
-id,
-product_variant_id,
-attribute_name,
-attribute_value
-created_at,
-updated_at
 
 ## product_category:(done)
 
@@ -167,8 +162,6 @@ updatedAt
 
 id,
 name,
-sku(unique)
-sku: string(unique)
 parent_id,
 user_id,
 description

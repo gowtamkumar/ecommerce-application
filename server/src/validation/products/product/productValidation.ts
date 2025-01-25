@@ -54,13 +54,14 @@ export const productValidationSchema = z.object({
         }),
         default: z.boolean().optional(),
         sizeId: z.number().optional(),
+        colorId: z.number().optional(),
+        material: z.string().optional(),
         stockQty: z.number({
           required_error: "Stock Qty is required",
         }),
       })
     )
     .nonempty({ message: "can't be empty!" }),
-  productColors: z.array(z.number()).nonempty({ message: "can't be empty!" }),
   productCategories: z
     .array(z.number())
     .nonempty({ message: "can't be empty!" }),

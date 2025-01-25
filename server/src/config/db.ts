@@ -38,7 +38,6 @@ import { PostCategoryEntity } from "../modules/post/model/post-category.entity";
 import { CartEntity } from "../modules/cart/model/cart.entity";
 import { CommentEntity } from "../modules/comment/model/comment.entity";
 import { MenuEntity } from "../modules/menu/model/menu.entity";
-import { ProductColorEntity } from "../modules/products/product-color/model/product-color.entity";
 import { NotificationEntity } from "../modules/notification/model/notification.entity";
 import { CouponEntity } from "../modules/coupon/model/coupon.entity";
 import { CouponProductEntity } from "../modules/coupon/model/coupon-product.entity";
@@ -82,7 +81,6 @@ const dbConnection = new DataSource({
     ProductEntity,
     ProductVariantEntity,
     ProductCategoryEntity,
-    ProductColorEntity,
     CouponEntity,
     CouponProductEntity,
     CartEntity,

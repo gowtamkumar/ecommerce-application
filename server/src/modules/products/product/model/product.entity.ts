@@ -19,7 +19,6 @@ import { WishListEntity } from "../../../wishlist/model/wishlist.entity";
 import { OrderItemEntity } from "../../../order/model/order-item.entity";
 import { UnitEntity } from "../../../unit/model/unit.entity";
 import { DiscountEntity } from "../../../discount/model/discount.entity";
-import { ProductColorEntity } from "../../product-color/model/product-color.entity";
 import { Status } from "../../../../enums/status.enum";
 import { CouponProductEntity } from "../../../coupon/model/coupon-product.entity";
 
@@ -31,8 +30,8 @@ export class ProductEntity {
   @Column()
   name!: string;
 
-  @Column({ unique: true }) //need to change this nullable true
-  sku!: string;
+  // @Column({ unique: true }) //need to change this nullable true
+  // sku!: string;
 
   @Column()
   slug!: string;
@@ -139,7 +138,4 @@ export class ProductEntity {
 
   @OneToMany((_type) => CouponProductEntity, (items) => items.product)
   couponProducts!: CouponProductEntity[];
-
-  @OneToMany((_type) => ProductColorEntity, (items) => items.product)
-  productColors!: ProductColorEntity[];
 }

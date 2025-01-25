@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ProductColorEntity } from "../../products/product-color/model/product-color.entity";
+import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 
 @Entity("colors")
 export class ColorEntity {
@@ -23,6 +23,6 @@ export class ColorEntity {
   @Column({ name: "user_id" })
   userId!: number;
 
-  @OneToMany((_type) => ProductColorEntity, (items) => items.color)
-  productColors!: ProductColorEntity[];
+  @OneToMany((_type) => ProductVariantEntity, (items) => items.color)
+  productVariants!: ProductVariantEntity[];
 }

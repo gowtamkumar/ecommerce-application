@@ -9,7 +9,6 @@ import { Brackets } from "typeorm";
 import { updateProductValidationSchema } from "../../../../validation/products/product/updateProductValidation";
 import { logger } from "../../../../middlewares/logger";
 import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
-import { ProductColorEntity } from "../../product-color/model/product-color.entity";
 import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Create a Product
@@ -40,21 +39,16 @@ export const createProduct = asyncHandler(
       });
     }
 
-
-  
-
-    const { productVariants, productCategories, productColors, ...restData } =
-      validation.data;
-    // Generate URL slug
-    const count = (await productRepository.count()) + 1;
-    const sku = `SKU-${count.toString().padStart(6, "0")}`;
+    const { productVariants, productCategories, ...restData } = validation.data;
+    // // Generate URL slug
+    // const count = (await productRepository.count()) + 1;
+    // const sku = `SKU-${count.toString().padStart(6, "0")}`;
 
     // Create product entity
-    const product = productRepository.create({ ...restData, sku });
+    const product = productRepository.create(restData);
 
     // Save product to database
     const savedProduct = await productRepository.save(product);
-    console.log("validation.data", savedProduct);
     // Prepare promises for saving product variants and categories
     const promises = [];
 
@@ -68,16 +62,16 @@ export const createProduct = asyncHandler(
       promises.push(productVariantRepository.save(productVariantEntities));
     }
 
-    if (productColors) {
-      const productColorRepository =
-        connection.getRepository(ProductColorEntity);
-      const productColorEntities = productColors.map((color, idx: number) => ({
-        colorId: +color,
-        default: idx === 0 ? true : false,
-        productId: savedProduct.id,
-      }));
-      promises.push(productColorRepository.save(productColorEntities));
-    }
+    // if (productColors) {
+    //   const productColorRepository =
+    //     connection.getRepository(ProductColorEntity);
+    //   const productColorEntities = productColors.map((color, idx: number) => ({
+    //     colorId: +color,
+    //     default: idx === 0 ? true : false,
+    //     productId: savedProduct.id,
+    //   }));
+    //   promises.push(productColorRepository.save(productColorEntities));
+    // }
 
     if (productCategories) {
       const productCategoryRepository = connection.getRepository(
@@ -210,15 +204,8 @@ export const getProducts = async (req: Request, res: Response) => {
       LEFT JOIN 
         product_categories pc ON pc.product_id = p.id
       LEFT JOIN 
-        product_colors pcolor ON pcolor.product_id = p.id
-      LEFT JOIN 
         brands b ON b.id = p.brand_id
       WHERE 1=1
-        ${
-          colorFilter.length
-            ? `AND pcolor.color_id IN (${colorFilter.join(",")})`
-            : ""
-        }
         ${
           categoryFilter.length
             ? `AND pc.category_id IN (${categoryFilter.join(",")})`
@@ -517,9 +504,8 @@ export const getProduct = asyncHandler(
       "size.name",
       "discount.discountType",
       "discount.value",
-      "discount.type",
       "productCategories",
-      "productColors",
+      "color.name"
     ]);
     qb.leftJoin("product.user", "user");
     qb.leftJoin("product.brand", "brand");
@@ -529,9 +515,9 @@ export const getProduct = asyncHandler(
     qb.leftJoin("product.discount", "discount");
     qb.leftJoin("product.productVariants", "productVariants");
     qb.leftJoin("product.productCategories", "productCategories");
-    qb.leftJoin("product.productColors", "productColors");
     qb.leftJoin("productCategories.category", "category");
     qb.leftJoin("productVariants.size", "size");
+    qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
     qb.where("product.id = :id", { id });
 
@@ -571,7 +557,6 @@ export const getProductByslug = asyncHandler(
       "product.images",
       "product.thumbnailImage",
       "product.limitPurchaseQty",
-      "product.sku",
       "product.slug",
       "product.tags",
       "product.taxId",
@@ -605,9 +590,6 @@ export const getProductByslug = asyncHandler(
 
       "discount.discountType",
       "discount.value",
-      "discount.type",
-
-      "productColors.colorId",
       "color.name",
     ]);
     qb.leftJoin("product.brand", "brand");
@@ -616,9 +598,8 @@ export const getProductByslug = asyncHandler(
     qb.leftJoin("product.tax", "tax");
     qb.leftJoin("product.discount", "discount");
     qb.leftJoin("product.productVariants", "productVariants");
-    qb.leftJoin("product.productColors", "productColors");
-    qb.leftJoin("productColors.color", "color");
     qb.leftJoin("productVariants.size", "size");
+    qb.leftJoin("productVariants.color", "color");
     qb.orderBy("productVariants.id", "DESC");
     qb.where({ slug });
 
@@ -661,7 +642,7 @@ export const updateProduct = asyncHandler(
       });
     }
 
-    const { productVariants, productCategories, productColors, ...restData } =
+    const { productVariants, productCategories, ...restData } =
       req.body;
     // Get DB connection
     const connection = await getDBConnection();
@@ -719,31 +700,30 @@ export const updateProduct = asyncHandler(
     }
 
     // Handle product color
-    let productColorPromise = Promise.resolve();
-    if (productColors) {
-      productColorPromise = (async () => {
-        const repoPCategory = connection.getRepository(ProductColorEntity);
+    // let productColorPromise = Promise.resolve();
+    // if (productColors) {
+    //   productColorPromise = (async () => {
+    //     const repoPCategory = connection.getRepository(ProductColorEntity);
 
-        const existingColors = await repoPCategory.find({
-          where: { productId: id },
-        });
+    //     const existingColors = await repoPCategory.find({
+    //       where: { productId: id },
+    //     });
 
-        await repoPCategory.remove(existingColors);
+    //     await repoPCategory.remove(existingColors);
 
-        const productCategoryItems = productColors.map((item: number) => ({
-          colorId: item,
-          productId: id,
-        }));
+    //     const productCategoryItems = productColors.map((item: number) => ({
+    //       colorId: item,
+    //       productId: id,
+    //     }));
 
-        await repoPCategory.save(productCategoryItems);
-      })();
-    }
+    //     await repoPCategory.save(productCategoryItems);
+    //   })();
+    // }
 
     // Wait for both operations to complete
     await Promise.all([
       productVariantPromise,
       productCategoryPromise,
-      productColorPromise,
     ]);
 
     // Merge and save the updated product data

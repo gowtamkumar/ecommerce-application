@@ -11,11 +11,15 @@ import { ProductEntity } from "../../product/model/product.entity";
 import { SizeEntity } from "../../../size/model/size.entity";
 import { OrderItemEntity } from "../../../order/model/order-item.entity";
 import { CartEntity } from "../../../cart/model/cart.entity";
+import { ColorEntity } from "../../../color/model/color.entity";
 
 @Entity("product_variants")
 export class ProductVariantEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column({  nullable: true }) //need to change this nullable true
+  sku!: string;
 
   @Column({
     name: "unit_price",
@@ -49,14 +53,25 @@ export class ProductVariantEntity {
   @JoinColumn({ name: "size_id" })
   size!: SizeEntity;
 
+  @Column({ name: "color_id", nullable: true })
+  colorId?: number;
+  @ManyToOne((_type) => ColorEntity, (color) => color.productVariants, {
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "color_id" })
+  color!: ColorEntity;
+
+  @Column({ nullable: true })
+  material!: string;
+
+  @Column({ nullable: true })
+  image!: string;
+
   @Column({ type: "boolean", default: false })
   default?: boolean;
 
   @Column({ name: "stock_qty" })
   stockQty?: number;
-
-  @Column({ nullable: true })
-  weight!: number;
 
   @OneToMany((_type) => OrderItemEntity, (items) => items.productVariant)
   orderItems!: OrderItemEntity[];

@@ -264,9 +264,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
           </span>
         </div>
         <Divider />
-        <div>
-          SKU: <span className="text-gray-500">{slug}</span>
-        </div>
+    
         <div className="flex gap-4 items-center">
           <div>Share:</div>
           <div className="flex gap-3">

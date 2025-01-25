@@ -43,8 +43,6 @@ export class CategoriesEntity {
   })
   active!: boolean;
 
-  
-
   @TreeChildren()
   children!: CategoriesEntity[];
 

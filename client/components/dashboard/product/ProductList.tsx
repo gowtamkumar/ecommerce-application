@@ -34,7 +34,6 @@ interface Discount {
 interface DataType {
   key: string;
   name: string;
-  sku: string;
   variant: boolean;
   enableReview: boolean;
   featured: boolean;
@@ -202,13 +201,6 @@ const ProductList: React.FC = () => {
       key: "name",
       sorter: (a, b) => a.name.length - b.name.length,
     },
-    {
-      ...getColumnSearchProps("sku"),
-      title: "SKU",
-      dataIndex: "sku",
-      key: "sku",
-      sorter: (a, b) => a.sku.length - b.sku.length,
-    },
 
     {
       ...getColumnSearchProps("variant"),
@@ -344,9 +336,7 @@ const ProductList: React.FC = () => {
             <h2>
               <strong>Slug:</strong> {value.slug}
             </h2>
-            <h2>
-              <strong>SKU:</strong> {value.sku}
-            </h2>
+           
             <h2>
               <strong>Discount:</strong>
               {value?.discount &&
