@@ -63,7 +63,7 @@ const Dashboard = () => {
         const results = await getDashboardReports({
           startDate: firstDateOfMonth.toISOString(),
           endDate: lastDateOfMonth.toISOString(),
-        });
+        });        
         setDashboardReports(results.data);
       } catch (err) {
         setLoading(false);

@@ -23,7 +23,10 @@ const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
   const home = await getHomeApi();
-  const { banners, discounts, categories, products, topSellingProduct } = home.data;
+  console.log("home", home);
+  
+  const { banners, discounts, categories, products, topSellingProduct } =
+    home.data || {};
   return (
     <>
       <header>
@@ -38,19 +41,20 @@ export default async function Home() {
 
       <main>
         {/* all category show */}
-        <CategoryCard categories={categories} />
+        {categories && <CategoryCard categories={categories} />}
 
         {/* Featured Products */}
-        <section className="md:w-8/12 mx-auto md:py-5 p-3">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <FeaturedProduct products={products} />
-        </section>
-
+        {products && (
+          <section className="md:w-8/12 mx-auto md:py-5 p-3">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
+              <Link href={"/products"} className="hover:underline">
+                View all
+              </Link>
+            </div>
+            <FeaturedProduct products={products} />
+          </section>
+        )}
 
         {/* Top Selling Product */}
         {/* <section className="md:w-8/12 mx-auto md:py-5 p-3">
@@ -63,27 +67,33 @@ export default async function Home() {
           <FeaturedProduct products={topSellingProduct} />
         </section> */}
         {/* product banner */}
-        <SellerAds
-          banners={(banners || []).filter(
-            (item: { type: string }) => item.type === "Middle"
-          )}
-        />
+        {banners && (
+          <SellerAds
+            banners={(banners || []).filter(
+              (item: { type: string }) => item.type === "Middle"
+            )}
+          />
+        )}
 
         {/* Featured Products */}
-        <section className="md:w-8/12 mx-auto md:py-5 p-3">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <FeaturedProduct products={products} />
-        </section>
+        {products && (
+          <section className="md:w-8/12 mx-auto md:py-5 p-3">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
+              <Link href={"/products"} className="hover:underline">
+                View all
+              </Link>
+            </div>
+            <FeaturedProduct products={products} />
+          </section>
+        )}
 
         {/* More discount */}
-        <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
-          <Discount discounts={discounts} />
-        </section>
+        {discounts && (
+          <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
+            <Discount discounts={discounts} />
+          </section>
+        )}
 
         {/* More Discover */}
         <MoreDiscover />

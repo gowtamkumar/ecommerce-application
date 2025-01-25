@@ -64,6 +64,8 @@ const ProductList: React.FC = () => {
         ...items,
         key: idx.toString(),
       }));
+      console.log("newProducts", newProducts);
+      
       setProducts(newProducts);
     } catch (err: any) {
       errorNotification({ message: err.message });
@@ -312,6 +314,17 @@ const ProductList: React.FC = () => {
         key: "size",
         dataIndex: "size",
         render: (v: any) => <span>{v?.name}</span>,
+      },
+      {
+        title: "Color",
+        key: "color",
+        dataIndex: "color",
+        render: (v: any) => <span>{v?.name}</span>,
+      },
+      {
+        title: "Metarial",
+        key: "metarial",
+        dataIndex: "metarial",
       },
       { title: "Stock Qty", dataIndex: "stockQty", key: "stockQty" },
       {

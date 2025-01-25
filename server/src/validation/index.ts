@@ -3,7 +3,6 @@ export * from "./user/updateUserValidaton";
 export * from "./checkout/checkoutValidation";
 export * from "./products/product-variants/productVariantValidation";
 export * from "./products/product-category/productCategoryValidation";
-export * from "./products/product-color/productColorValidation";
 export * from "./products/product/productValidation";
 export * from "./cart/cartValidation";
 export * from "./shipping-address/shippingAddressValidation";

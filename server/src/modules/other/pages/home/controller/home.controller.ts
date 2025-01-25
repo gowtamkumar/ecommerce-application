@@ -11,7 +11,6 @@ import { CategoriesEntity } from "../../../../categories/model/categories.entity
 // @access Public
 export const getHome = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getHome ${req.method} ${req.url}`);
-  const { type } = req.query;
   const connection = await getDBConnection();
 
   const bannerRepository = connection.getRepository(BannerEntity);
@@ -21,7 +20,6 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
     select: {
       id: true,
       title: true,
-      type: true,
       image: true,
       url: true,
       description: true,
@@ -110,22 +108,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const discountRepository = connection.getRepository(DiscountEntity);
-  const discounts = await discountRepository.find({
-    where: { active: true },
-    select: {
-      id: true,
-      discountType: true,
-      couponCode: true,
-      type: true,
-      value: true,
-      startDate: true,
-      expiryDate: true,
-      minOrderAmount: true,
-      maxUser: true,
-      usageCount: true,
-      active: true,
-    },
-  });
+  const discounts = await discountRepository.find();
 
   const categoriesRepository = connection.getRepository(CategoriesEntity);
   const categories = await categoriesRepository.find({

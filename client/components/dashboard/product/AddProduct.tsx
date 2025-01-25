@@ -19,7 +19,11 @@ import {
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { getProduct, saveProduct, updateProduct } from "@/lib/apis/admin/product";
+import {
+  getProduct,
+  saveProduct,
+  updateProduct,
+} from "@/lib/apis/admin/product";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
@@ -123,11 +127,6 @@ const AddProduct = ({
           (category: any) => category.categoryId
         );
 
-        // Map color
-        const productColors = productData.productColors?.map(
-          (color: any) => color.colorId
-        );
-
         // Handle images, thumbnails, and hover images
         productData.fileList =
           productData.images?.map((image: string, idx: number) =>
@@ -150,9 +149,8 @@ const AddProduct = ({
         form.setFieldsValue({
           ...productData,
           productCategories,
-          productColors,
         });
-        setProduct({ ...productData, productCategories, productColors });
+        setProduct({ ...productData, productCategories });
         setTags(productData.tags || []);
         setFormValues(productData);
       }
@@ -165,7 +163,7 @@ const AddProduct = ({
 
   const handleSubmit = async () => {
     const newData = await form.validateFields();
-  
+
     delete newData.fileList;
     delete newData.fileThumbnailList;
     delete newData.fileHoverList;
@@ -619,27 +617,6 @@ const AddProduct = ({
               </Select>
             </Form.Item>
 
-            <Form.Item name="productColors" label="Color" tooltip="First color will be default">
-              <Select
-                showSearch
-                allowClear
-                placeholder="Select"
-                mode="multiple"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as any)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {(colors || []).map((item: any) => (
-                  <Select.Option key={item.id} value={item.id}>
-                    <ColorPicker size="small" value={item.color} /> {item.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-
             <Form.Item
               name="unitId"
               label="Unit"
@@ -865,11 +842,13 @@ const AddProduct = ({
           </div>
         </div>
 
-        <ProductVariant formValues={formValues} form={form} sizes={sizes}    />
+        <ProductVariant
+          formValues={formValues}
+          form={form}
+          sizes={sizes}
+          colors={colors}
+        />
 
-
-
-        
         <div className="col-span-1 text-end">
           <Button
             className="mx-2 capitalize"

@@ -10,7 +10,12 @@ import {
 } from "antd";
 import React from "react";
 
-export default function ProductVariant({ formValues, form, sizes }: any) {
+export default function ProductVariant({
+  formValues,
+  form,
+  sizes,
+  colors,
+}: any) {
   return (
     <div>
       {formValues.variant && (
@@ -55,6 +60,9 @@ export default function ProductVariant({ formValues, form, sizes }: any) {
                         <label className="text-red-500">*</label>Purchase Price
                       </th>
                       <th className="text-start w-1/6">Size</th>
+                      <th className="text-start w-1/6">Color</th>
+                      <th className="text-start w-1/6">material</th>
+
                       <th className="text-start w-1/6">
                         <label className="text-red-500">*</label>Qty
                       </th>
@@ -102,6 +110,25 @@ export default function ProductVariant({ formValues, form, sizes }: any) {
                             </Select>
                           </Form.Item>
                         </td>
+
+                        <td>
+                          <Form.Item {...restField} name={[name, "colorId"]}>
+                            <Select allowClear showSearch placeholder="Select">
+                              {(colors || []).map((item: any) => (
+                                <Select.Option key={item.id} value={item.id}>
+                                  {`${item.id} ${item.name}`}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </td>
+
+                        <td>
+                          <Form.Item {...restField} name={[name, "material"]}>
+                            <Input placeholder="Enter" />
+                          </Form.Item>
+                        </td>
+
                         <td>
                           <Form.Item
                             {...restField}
@@ -153,7 +180,8 @@ export default function ProductVariant({ formValues, form, sizes }: any) {
   );
 }
 
-{/* {formValues.variant && (
+{
+  /* {formValues.variant && (
           <div>
             <Form.List name="productVariants">
               {(fields, { add, remove }) => (
@@ -298,5 +326,5 @@ export default function ProductVariant({ formValues, form, sizes }: any) {
               )}
             </Form.List>
           </div>
-        )} */}
-
+        )} */
+}
