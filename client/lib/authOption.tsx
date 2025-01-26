@@ -10,14 +10,11 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
 
       async authorize(credentials: any) {
-        const res = await fetch(
-          `${appConfig.apiUrl}/auth/login`,
-          {
-            method: "POST",
-            body: JSON.stringify(credentials),
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const res = await fetch(`${appConfig.apiUrl}/auth/login`, {
+          method: "POST",
+          body: JSON.stringify(credentials),
+          headers: { "Content-Type": "application/json" },
+        });
 
         const user = await res.json(); // Get response as text
         try {
@@ -38,21 +35,26 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      
+
       async profile(profile: any) {
+        // Check if profile.sub exists
+        if (!profile.sub) {
+          throw new Error(
+            "Profile id is missing in Google OAuth profile response"
+          );
+        }
         const newUser = {
           name: profile.name,
           email: profile.email,
-          username: profile.email
+          avatar: profile.picture,
+          provider_id: profile.sub,
         };
-        const res = await fetch(
-          `${appConfig.apiUrl}/auth/get-user-by-email`,
-          {
-            method: "POST",
-            body: JSON.stringify(newUser),
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        
+        const res = await fetch(`${appConfig.apiUrl}/auth/get-user-by-email`, {
+          method: "POST",
+          body: JSON.stringify(newUser),
+          headers: { "Content-Type": "application/json" },
+        });
         const user = await res.json();
         return user.data;
       },
@@ -66,18 +68,15 @@ export const authOptions: NextAuthOptions = {
           name: profile.name,
           email: profile.email,
         };
-        const res = await fetch(
-          `${appConfig.apiUrl}/auth/get-user-by-email`,
-          {
-            method: "POST",
-            body: JSON.stringify(newUser),
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        const res = await fetch(`${appConfig.apiUrl}/auth/get-user-by-email`, {
+          method: "POST",
+          body: JSON.stringify(newUser),
+          headers: { "Content-Type": "application/json" },
+        });
         const user = await res.json();
         return user.data;
       },
-    } as any)
+    } as any),
   ],
   pages: {
     signIn: "/login",
