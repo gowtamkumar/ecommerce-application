@@ -158,6 +158,14 @@ coupon_id
 createdAt
 updatedAt
 
+## applied_coupon(not applied)
+id,
+user_id,
+coupon_id,
+cart_id,
+discount_amount,
+applied_at:
+
 ## categories:(done)
 
 id,

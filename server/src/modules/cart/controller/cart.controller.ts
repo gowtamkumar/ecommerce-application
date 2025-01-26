@@ -142,12 +142,14 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
     `SELECT 
       carts.id,
       carts.qty,
+      carts.product_variant_id AS "productVariantId",
       p.name,
       p.thumbnail_image AS "thumbnailImage" ,
       t.value AS "taxValue",
       d.discount_type AS "discountType",
       d.value AS "discountValue",
       pv.unit_price AS "unitPrice",
+      pv.purchase_price AS "purchasePrice",
       pv.stock_qty AS "stockQty",
       -- Calculate tax amount and round to 2 decimal places
       ROUND(((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100) * COALESCE(carts.qty, 1), 2) AS "taxAmount",
@@ -229,29 +231,7 @@ export const cartListApplyCouponCode = asyncHandler(
     let shippingCharge = 0; // Example flat shipping charge
 
     if (couponCode) {
-      // Step 1: Validate the coupon
-      // const coupon = await connection.query(
-      //   `SELECT
-      //     id,
-      //     type,
-      //     code,
-      //     discount_type AS "discountType",
-      //     value,
-      //     start_date AS "startDate",
-      //     expiry_date AS "expiryDate",
-      //     min_order_amount AS "minOrderAmount",
-      //     min_cart_value AS "minCartValue",
-      //     max_discount_value AS "maxDiscountValue",
-      //     usage_limit AS "usageLimit",
-      //     usage_per_user AS "usagePerUser",
-      //     max_user AS "maxUser",
-      //     usage_count AS "usageCount",
-      //     active
-      //   FROM coupons
-      //   WHERE code = $1 AND active = true AND NOW() BETWEEN start_date AND expiry_date`,
-      //   [couponCode]
-      // );
-
+      
       const coupon = await connection
         .getRepository(CouponEntity)
         .createQueryBuilder("coupon")
@@ -276,6 +256,7 @@ export const cartListApplyCouponCode = asyncHandler(
       `SELECT 
         carts.id,
         carts.qty,
+        carts.product_variant_id AS "productVariantId",
         p.name,
         p.id AS "productId",
         p.thumbnail_image AS "thumbnailImage",
@@ -283,6 +264,7 @@ export const cartListApplyCouponCode = asyncHandler(
         d.discount_type AS "discountType",
         d.value AS "discountValue",
         pv.unit_price AS "unitPrice",
+        pv.purchase_price AS "purchasePrice",
         pv.stock_qty AS "stockQty",
         ROUND(((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100) * COALESCE(carts.qty, 1), 2) AS "taxAmount",
         ROUND(((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100)) * COALESCE(carts.qty, 1)), 2) AS "subTotal",
