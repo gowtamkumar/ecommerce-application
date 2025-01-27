@@ -113,8 +113,57 @@ export default function SingleProduct() {
     );
   }
 
+  // const productSchema = {
+  //   "@context": "https://schema.org",
+  //   "@type": "Product",
+  //   name: name || "Default Product Name",
+  //   image: imageUrls?.length ? imageUrls : ["/logo.png"],
+  //   description: meta_description || "Default product description",
+  //   category: category?.name || "Default Category",
+  //   color: colors || "Black",
+  //   brand: {
+  //     "@type": "Brand",
+  //     name: brand?.name || "Default Brand",
+  //     url: `${appConfig.url}/brand/${brand?.slug}` || "",
+  //   },
+  //   offers: {
+  //     "@type": "Offer",
+  //     priceCurrency: "USD",
+  //     price: unit_price || "0.00",
+  //     url: `${appConfig.url}/product/${slug}`,
+  //     availability: "https://schema.org/InStock",
+  //   },
+  //   aggregateRating: {
+  //     "@type": "AggregateRating",
+  //     ratingValue: rating || "0",
+  //     reviewCount: reviews?.length || "0",
+  //   },
+  //   review: reviewsSchema,
+  // };
+
+
   return (
     <div className="container mx-auto">
+       {/* <NextSeo
+        title={name}
+        description={meta_description}
+        openGraph={{
+          type: "product",
+          url: `${appConfig.url}/product/${slug}`,
+          images: imageUrls,
+        }}
+        additionalMetaTags={[
+          { property: "product:price:amount", content: unit_price || "0.00" },
+          { property: "product:price:currency", content: "BDT" },
+        ]}
+      />
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+      </Head> */}
+
       <ProductDetails
         productRating={productRating}
         checkStock={checkStock}
