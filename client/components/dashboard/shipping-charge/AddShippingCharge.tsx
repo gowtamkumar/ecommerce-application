@@ -45,7 +45,7 @@ const AddShippingCharge = () => {
   };
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values, shippingAmount: +values.shippingAmount };
+    let newData = { ...values, shippingCharge: +values.shippingCharge };
 
     const result = newData.id
       ? () => updateShippingCharge(newData)
@@ -128,7 +128,7 @@ const AddShippingCharge = () => {
         </Form.Item>
 
         <Form.Item
-          name="shippingAmount"
+          name="shippingCharge"
           className="mb-1"
           label="Shipping Amount"
         >

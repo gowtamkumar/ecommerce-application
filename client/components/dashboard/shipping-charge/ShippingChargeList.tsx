@@ -31,7 +31,7 @@ interface DataType {
   divsionId: any;
   key: string;
   divsion: any;
-  shippingAmount: number;
+  shippingCharge: number;
   note: string;
   status: boolean;
 }
@@ -190,10 +190,10 @@ const ShippingChargeList: React.FC = () => {
 
     {
       title: "Shipping Amount",
-      dataIndex: "shippingAmount",
-      key: "shippingAmount",
-      sorter: (a, b) => a.shippingAmount - b.shippingAmount,
-      ...getColumnSearchProps("shippingAmount"),
+      dataIndex: "shippingCharge",
+      key: "shippingCharge",
+      sorter: (a, b) => a.shippingCharge - b.shippingCharge,
+      ...getColumnSearchProps("shippingCharge"),
     },
     {
       title: "Note",

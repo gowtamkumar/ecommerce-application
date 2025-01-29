@@ -5,7 +5,7 @@ export const shippingChargeValidationSchema = z.object({
     required_error: "Division is required",
   }),
 
-  shippingAmount: z.number({
+  shippingCharge: z.number({
     required_error: "shipping Amount is required",
   }),
   userId: z.number({

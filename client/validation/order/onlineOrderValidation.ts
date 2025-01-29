@@ -1,19 +1,15 @@
 import { z } from "zod";
 
 export const onlineOrderValidationSchema = z.object({
-  orderDate: z.string({
-    required_error: "order Date is required",
-  }),
-  orderTotalAmount: z.number({
+  subTotal: z.number({
     required_error: "order total Amount is Required",
   }),
   shippingAddressId: z.number({
     required_error: "Shipping Address is Required",
   }),
   discountAmount: z.number().optional(),
-  netAmount: z.number().optional(),
-  orderTax: z.number().optional(),
-  shippingAmount: z.number().optional(),
+  totalTax: z.number().optional(),
+  shippingCharge: z.number().optional(),
   note: z.string().optional(),
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
     required_error: "Payment Method is Required",

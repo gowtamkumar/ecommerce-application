@@ -491,9 +491,11 @@ export const createCart = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     const connection = await getDBConnection();
 
+    const userId = req.id
+
     const validation = cartValidationSchema.safeParse({
       ...req.body,
-      userId: req.id,
+      userId,
     });
 
     if (!validation.success) {
@@ -512,7 +514,7 @@ export const createCart = asyncHandler(
 
     const findCart = await repository.findOneBy({
       productId: validation.data.productId,
-      userId: req.id,
+      userId,
     });
 
     if (findCart) {

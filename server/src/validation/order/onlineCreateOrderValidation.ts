@@ -1,53 +1,49 @@
 import { z } from "zod";
 
 export const onlineCreateOrderValidationSchema = z.object({
-  orderDate: z.string({
-    required_error: "order Date is required",
+  totalQty: z.number({
+    required_error: "total Qty is Required",
   }),
-  orderTotalAmount: z.number({
+  subTotal: z.number({
     required_error: "order total Amount is Required",
   }),
-  userId: z.number().optional(),
-  discountAmount: z.number().optional(),
-  netAmount: z.number().optional(),
-  orderTax: z.number().optional(),
-  shippingAmount: z.number().optional(),
-  note: z.string().optional(),
+
+  userId: z.number({
+    required_error: "User is Required",
+  }),
+  totalDiscount: z.number().optional(),
+  couponDiscount: z.number().optional(),
+  shippingCharge: z.number({
+    required_error: "Shipping Charge is Required",
+  }),
+  totalTax: z.number().optional(),
+  grandTotal: z.number({
+    required_error: "Grand Total is Required",
+  }),
   shippingAddressId: z.number({
     required_error: "Shipping Address is Required",
   }),
-
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
     required_error: "Payment Method is Required",
   }),
-  status: z
-    .enum([
-      "Processing",
-      "Approved",
-      "On Shipping",
-      "Shipped",
-      "Completed",
-      "Pending",
-      "Returned",
-      "Canceled",
-    ])
-    .optional(),
+  note: z.string().optional(),
   orderItems: z
     .array(
       z.object({
-        productId: z.number({ required_error: "Product is required" }),
-        colorId: z.number().optional().nullable(),
-        sizeId: z.number().optional().nullable(),
-        unitPrice: z.number({ required_error: "Unit Price is required" }),
+        qty: z.number({ required_error: "qty is required" }),
         productVariantId: z.number({
           required_error: "Product Variant is required",
         }),
-        discountAmount: z.number().optional(),
+        productId: z.number({ required_error: "Product is required" }),
+        unitPrice: z.number({ required_error: "Unit Price is required" }),
         purchasePrice: z.number({
           required_error: "Purchase Price is required",
         }),
         taxAmount: z.number({ required_error: "Tax Amount is required" }),
-        qty: z.number({ required_error: "qty is required" }),
+        discountAmount: z.number().optional(),
+        subTotal: z.number({
+          required_error: "SubTotal is required",
+        }),
       })
     )
     .nonempty({ message: "can't be empty!" }),

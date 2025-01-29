@@ -33,7 +33,7 @@ export const getDashboardReport = asyncHandler(
     qb.leftJoin("order.payments", "payments");
 
     if (status) qb.where({ status });
-    qb.andWhere(`order.orderDate BETWEEN '${fromDate}' AND '${toDate}'`);
+    qb.andWhere(`order.createdAt BETWEEN '${fromDate}' AND '${toDate}'`);
     qb.orderBy("order.trackingNo", "DESC");
     const orders = await qb.getMany();
     // user info

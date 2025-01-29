@@ -202,20 +202,7 @@ const AddOrder = () => {
         </Form.Item>
 
         <div className="grid grid-cols-2 gap-2">
-          <div className="col-span-1">
-            <Form.Item
-              name="orderDate"
-              label="Order Date"
-              rules={[
-                {
-                  required: true,
-                  message: "Order Date is required",
-                },
-              ]}
-            >
-              <DatePicker placeholder="Enter Order Date" />
-            </Form.Item>
-          </div>
+      
 
           <div className="col-span-1">
             <Form.Item

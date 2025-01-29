@@ -27,6 +27,8 @@ export const createOrder = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
+    const userId = req.id;
+
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
 
@@ -40,7 +42,7 @@ export const createOrder = asyncHandler(
     try {
       const validation = onlineCreateOrderValidationSchema.safeParse({
         ...req.body,
-        userId: req.id,
+        userId,
       });
 
       if (!validation.success) {
@@ -56,9 +58,8 @@ export const createOrder = asyncHandler(
       }
 
       const {
-        shippingAmount,
-        orderTotalAmount,
-        orderDate,
+        shippingCharge,
+        subTotal,
         paymentMethod,
         orderItems,
         ...orderData
@@ -72,14 +73,10 @@ export const createOrder = asyncHandler(
       // tracking no end
 
       const newOrder = repository.create({
-        shippingAmount,
-        orderTotalAmount,
-        orderDate,
+        shippingCharge,
+        subTotal,
         paymentMethod,
-        paymentStatus:
-          paymentMethod === OrderPaymentMethod.Cash
-            ? PaymentStatus.NotPaid
-            : PaymentStatus.Paid,
+        paymentStatus: PaymentStatus.NotPaid,
         ...orderData,
         trackingNo,
       });
@@ -118,7 +115,7 @@ export const createOrder = asyncHandler(
           queryRunner.manager.getRepository(OrderTrackingEntity);
         const newOrderTracking = repositoryOrderTracking.create({
           orderId: savedOrder.id,
-          userId: req.id,
+          userId,
           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
         });
         await repositoryOrderTracking.save(newOrderTracking);
@@ -173,11 +170,11 @@ export const createOrder = asyncHandler(
 
       const newPayment = repositoryPayment.create({
         orderId: savedOrder.id,
-        userId: req.id,
+        userId,
         paymentDate: dayjs(),
         paymentMethod,
         paymentType: PaymentType.Debit,
-        amount: +(+shippingAmount + +orderTotalAmount),
+        amount: +(+shippingCharge + +subTotal),
       });
       await repositoryPayment.save(newPayment);
 

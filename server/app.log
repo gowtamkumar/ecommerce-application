@@ -48,3 +48,7 @@
 2025-01-27 23:54:45 [[32minfo[39m]: [Service: cartListApplyCouponCode GET /coupon-apply-cartlist?couponCode=44444&shippingCost=500]
 2025-01-27 23:55:42 [[32minfo[39m]: [Service: cartListApplyCouponCode GET /coupon-apply-cartlist?couponCode=44444&shippingCost=500]
 2025-01-27 23:56:20 [[32minfo[39m]: [Service: cartListApplyCouponCode GET /coupon-apply-cartlist?couponCode=44444&shippingCost=500]
+2025-01-29 20:51:05 [[32minfo[39m]: [Service: login POST /login]
+2025-01-29 20:51:14 [[32minfo[39m]: [Service: cartListApplyCouponCode GET /coupon-apply-cartlist?couponCode=44444&shippingCost=500]
+2025-01-29 21:33:28 [[32minfo[39m]: [Service: cartListApplyCouponCode GET /coupon-apply-cartlist?couponCode=44444&shippingCost=500]
+2025-01-29 22:35:09 [[32minfo[39m]: [Service: createOrder POST /]
