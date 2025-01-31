@@ -343,7 +343,7 @@ export const cartListApplyCouponCode = asyncHandler(
         validCoupon = null;
       }
 
-      if (+validCoupon.maxUser === +validCoupon.usageLimit) {
+      if (+validCoupon.usageCount === +validCoupon.usageLimit) {
         message = `Coupon usage limit reached`;
         validCoupon = null;
       }
@@ -402,6 +402,7 @@ export const cartListApplyCouponCode = asyncHandler(
           shippingCharge: shippingCharge.toFixed(2),
           grandTotal: grandTotal.toFixed(2),
           couponDiscount: couponDiscount.toFixed(2),
+          couponId: validCoupon ? validCoupon.id : null,
         },
       },
     });
@@ -491,7 +492,7 @@ export const createCart = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     const connection = await getDBConnection();
 
-    const userId = req.id
+    const userId = req.id;
 
     const validation = cartValidationSchema.safeParse({
       ...req.body,

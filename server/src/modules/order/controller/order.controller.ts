@@ -18,6 +18,7 @@ import { CartEntity } from "../../cart/model/cart.entity";
 import { logger } from "../../../middlewares/logger";
 import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 import { CustomRequest } from "../../../enums/custom-request-type";
+import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Create a single Order
@@ -62,6 +63,7 @@ export const createOrder = asyncHandler(
         subTotal,
         paymentMethod,
         orderItems,
+
         ...orderData
       }: any = validation.data;
 
@@ -119,6 +121,21 @@ export const createOrder = asyncHandler(
           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
         });
         await repositoryOrderTracking.save(newOrderTracking);
+
+        console.log("orderItems", orderItems);
+
+        // if (validation.data.couponId) {
+        //   const couponRepository =
+        //     connection.getRepository(AppliedCouponEntity);
+
+        //   const newCouponApplied = couponRepository.create({
+        //     orderId: savedOrder.id,
+        //     userId,
+        //     discountAmount: validation.data.couponDiscount,
+        //     couponId: validation.data.couponId,
+        //   });
+        //   await couponRepository.save(newCouponApplied);
+        // }
 
         // await repositoryCarts.remove(orderItems);
       }

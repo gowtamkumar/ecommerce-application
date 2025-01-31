@@ -4,20 +4,21 @@ export const onlineCreateOrderValidationSchema = z.object({
   totalQty: z.number({
     required_error: "total Qty is Required",
   }),
-  subTotal: z.number({
+  subTotal: z.string({
     required_error: "order total Amount is Required",
   }),
 
   userId: z.number({
     required_error: "User is Required",
   }),
-  totalDiscount: z.number().optional(),
-  couponDiscount: z.number().optional(),
-  shippingCharge: z.number({
+  couponId: z.number().optional(),
+  totalDiscount: z.string().optional(),
+  couponDiscount: z.string().optional(),
+  shippingCharge: z.string({
     required_error: "Shipping Charge is Required",
   }),
-  totalTax: z.number().optional(),
-  grandTotal: z.number({
+  totalTax: z.string().optional(),
+  grandTotal: z.string({
     required_error: "Grand Total is Required",
   }),
   shippingAddressId: z.number({
@@ -35,13 +36,13 @@ export const onlineCreateOrderValidationSchema = z.object({
           required_error: "Product Variant is required",
         }),
         productId: z.number({ required_error: "Product is required" }),
-        unitPrice: z.number({ required_error: "Unit Price is required" }),
-        purchasePrice: z.number({
+        unitPrice: z.string({ required_error: "Unit Price is required" }),
+        purchasePrice: z.string({
           required_error: "Purchase Price is required",
         }),
-        taxAmount: z.number({ required_error: "Tax Amount is required" }),
-        discountAmount: z.number().optional(),
-        subTotal: z.number({
+        taxAmount: z.string({ required_error: "Tax Amount is required" }),
+        discountAmount: z.string().optional(),
+        subTotal: z.string({
           required_error: "SubTotal is required",
         }),
       })
