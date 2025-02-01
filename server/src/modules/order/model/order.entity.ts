@@ -16,6 +16,7 @@ import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { UserEntity } from "../../auth/model/user.entity";
 import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
+import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -28,12 +29,7 @@ export class OrderEntity {
   // @Column({ name: "is_paid", type: "boolean" })
   // isPaid!: boolean;
 
-  @Column({
-    name: "total_qty",
-    type: "numeric",
-    precision: 15,
-    scale: 2,
-  })
+  @Column({ name: "total_qty" })
   totalQty!: number;
 
   @Column({
@@ -158,6 +154,9 @@ export class OrderEntity {
   // orderItems!: OrderItemEntity[];
   @OneToMany((_type) => OrderItemEntity, (product) => product.order)
   orderItems!: OrderItemEntity[];
+
+  @OneToMany((_type) => AppliedCouponEntity, (item) => item.order)
+  appliedCouponItems!: AppliedCouponEntity[];
 
   @OneToMany((_type) => PaymentEntity, (payment) => payment.order)
   payments!: PaymentEntity[];

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { UserEntity } from "../../auth/model/user.entity";
+import { OrderEntity } from "../../order/model/order.entity";
 
 @Entity("applied_coupons")
 export class AppliedCouponEntity {
@@ -20,6 +21,11 @@ export class AppliedCouponEntity {
 
   @Column({ name: "order_id" })
   orderId!: number;
+  @ManyToOne((_type) => OrderEntity, (item) => item.appliedCouponItems, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "order_id" })
+  order!: OrderEntity;
 
   @Column({
     name: "discount_amount",

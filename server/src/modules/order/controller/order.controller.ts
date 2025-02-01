@@ -85,7 +85,6 @@ export const createOrder = asyncHandler(
       const savedOrder = await repository.save(newOrder);
 
       if (orderItems && savedOrder.id) {
-        // const repositoryCarts = queryRunner.manager.getRepository(CartEntity);
         const repoOrderItems =
           queryRunner.manager.getRepository(OrderItemEntity);
         const newOrderItems = repoOrderItems.create(
@@ -122,22 +121,24 @@ export const createOrder = asyncHandler(
         });
         await repositoryOrderTracking.save(newOrderTracking);
 
-        console.log("orderItems", orderItems);
+        if (validation.data.couponId) {
+          const couponRepository =
+            queryRunner.manager.getRepository(AppliedCouponEntity);
 
-        // if (validation.data.couponId) {
-        //   const couponRepository =
-        //     connection.getRepository(AppliedCouponEntity);
+          const newCouponApplied = couponRepository.create({
+            orderId: savedOrder.id,
+            userId,
+            discountAmount: validation.data.couponDiscount,
+            couponId: validation.data.couponId,
+          });
+          await couponRepository.save(newCouponApplied);
+        }
 
-        //   const newCouponApplied = couponRepository.create({
-        //     orderId: savedOrder.id,
-        //     userId,
-        //     discountAmount: validation.data.couponDiscount,
-        //     couponId: validation.data.couponId,
-        //   });
-        //   await couponRepository.save(newCouponApplied);
-        // }
+        const repositoryCarts = queryRunner.manager.getRepository(CartEntity);
 
-        // await repositoryCarts.remove(orderItems);
+        const cartsList = await repositoryCarts.find({ where: { userId } });
+
+        await repositoryCarts.remove(cartsList);
       }
 
       // payment
