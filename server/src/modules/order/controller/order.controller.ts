@@ -19,6 +19,8 @@ import { logger } from "../../../middlewares/logger";
 import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
+import { NotificationEntity } from "../../notification/model/notification.entity";
+import { NotificationType } from "../../../enums/notification-type.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 // @desc Create a single Order
@@ -71,7 +73,7 @@ export const createOrder = asyncHandler(
 
       // tracking no start
       const count = (await repository.count()) + 1;
-      const trackingNo = `N${count.toString().padStart(10, "0")}`;
+      const trackingNo = `TRK-${count.toString().padStart(10, "0")}`;
       // tracking no end
 
       const newOrder = repository.create({
@@ -139,6 +141,20 @@ export const createOrder = asyncHandler(
         const cartsList = await repositoryCarts.find({ where: { userId } });
 
         await repositoryCarts.remove(cartsList);
+
+        // notification
+        // const repositoryNotification =
+        //   connection.getRepository(NotificationEntity);
+
+        // const notification = {
+        //   type: NotificationType.Order,
+        //   title: "Order Place",
+        //   message: `Your order has been placed successfully. order Tracking No:- ${trackingNo}`,
+        // };
+
+        // const newNotification = repositoryNotification.create(notification);
+        // await repository.save(newNotification);
+        // notification end
       }
 
       // payment
