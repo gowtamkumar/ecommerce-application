@@ -23,6 +23,14 @@ import { NotificationEntity } from "../../notification/model/notification.entity
 import { NotificationType } from "../../../enums/notification-type.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
+interface Notification {
+  type: string;
+  title: string;
+  message: string;
+  userId: string | number;
+  orderId: string | number;
+}
+
 // @desc Create a single Order
 // @route POST /api/v1/Order
 // @access Public
@@ -30,17 +38,13 @@ export const createOrder = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
-    const userId = req.id;
+    const userId = req.id as number | string;
 
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
-    const store_id = "ecomm6648b03fa5d37";
-    const store_passwd = "ecomm6648b03fa5d37@ssl";
-    const is_live = false; //true for live, false for sandbox
 
     try {
       const validation = onlineCreateOrderValidationSchema.safeParse({
@@ -142,75 +146,16 @@ export const createOrder = asyncHandler(
 
         await repositoryCarts.remove(cartsList);
 
-        // notification
-        // const repositoryNotification =
-        //   connection.getRepository(NotificationEntity);
+        const notification: Notification = {
+          type: "Order",
+          title: "Order Placed",
+          message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
+          userId,
+          orderId: savedOrder.id,
+        };
 
-        // const notification = {
-        //   type: NotificationType.Order,
-        //   title: "Order Place",
-        //   message: `Your order has been placed successfully. order Tracking No:- ${trackingNo}`,
-        // };
-
-        // const newNotification = repositoryNotification.create(notification);
-        // await repository.save(newNotification);
-        // notification end
+        await sendOrderNotification(notification);
       }
-
-      // payment
-      // const data = {
-      //   total_amount: 100,
-      //   currency: "BDT",
-      //   tran_id: "REF123", // use unique tran_id for each api call
-      //   success_url: "http://localhost:3030/success",
-      //   fail_url: "http://localhost:3030/fail",
-      //   cancel_url: "http://localhost:3030/cancel",
-      //   ipn_url: "http://localhost:3030/ipn",
-      //   shipping_method: "Courier",
-      //   product_name: "Computer.",
-      //   product_category: "Electronic",
-      //   product_profile: "general",
-      //   cus_name: "Customer Name",
-      //   cus_email: "customer@example.com",
-      //   cus_add1: "Dhaka",
-      //   cus_add2: "Dhaka",
-      //   cus_city: "Dhaka",
-      //   cus_state: "Dhaka",
-      //   cus_postcode: "1000",
-      //   cus_country: "Bangladesh",
-      //   cus_phone: "01711111111",
-      //   cus_fax: "01711111111",
-      //   ship_name: "Customer Name",
-      //   ship_add1: "Dhaka",
-      //   ship_add2: "Dhaka",
-      //   ship_city: "Dhaka",
-      //   ship_state: "Dhaka",
-      //   ship_postcode: 1000,
-      //   ship_country: "Bangladesh",
-      // };
-
-      // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-      // sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
-      // logger.info(`Service: getMemu ${req.method} ${req.url}`);
-
-      //   // Redirect the user to payment gateway
-      //   let GatewayPageURL = apiResponse.GatewayPageURL;
-      //   res.redirect(GatewayPageURL);
-      //   console.log("Redirecting to: ", GatewayPageURL);
-      // });
-
-      const repositoryPayment =
-        queryRunner.manager.getRepository(PaymentEntity);
-
-      const newPayment = repositoryPayment.create({
-        orderId: savedOrder.id,
-        userId,
-        paymentDate: dayjs(),
-        paymentMethod,
-        paymentType: PaymentType.Debit,
-        amount: +(+shippingCharge + +subTotal),
-      });
-      await repositoryPayment.save(newPayment);
 
       await queryRunner.commitTransaction();
 
@@ -231,6 +176,91 @@ export const createOrder = asyncHandler(
     }
   }
 );
+
+export const sendOrderNotification = async (
+  notification: Notification
+): Promise<{ success: boolean; message: string }> => {
+  logger.info(`Service: sendOrderNotification`);
+  const connection = await getDBConnection(); // Consider reusing an existing connection
+  const repository = connection.getRepository(NotificationEntity);
+
+  try {
+    const newNotification = repository.create(notification);
+    await repository.save(newNotification);
+
+    return {
+      success: true,
+      message: "Notification sent successfully",
+    };
+  } catch (error) {
+    console.error("Failed to send notification:", error);
+    return {
+      success: false,
+      message: "Failed to send notification",
+    };
+  } finally {
+    // Optionally release the connection if it's not reused
+    // await connection.close(); // Only if you're not reusing the connection
+  }
+};
+
+export const onlinePayment = async () => {
+  const connection = await getDBConnection();
+  // const store_id = "ecomm6648b03fa5d37";
+  // const store_passwd = "ecomm6648b03fa5d37@ssl";
+  // const is_live = false; //true for live, false for sandbox
+  // payment
+  // const data = {
+  //   total_amount: 100,
+  //   currency: "BDT",
+  //   tran_id: "REF123", // use unique tran_id for each api call
+  //   success_url: "http://localhost:3030/success",
+  //   fail_url: "http://localhost:3030/fail",
+  //   cancel_url: "http://localhost:3030/cancel",
+  //   ipn_url: "http://localhost:3030/ipn",
+  //   shipping_method: "Courier",
+  //   product_name: "Computer.",
+  //   product_category: "Electronic",
+  //   product_profile: "general",
+  //   cus_name: "Customer Name",
+  //   cus_email: "customer@example.com",
+  //   cus_add1: "Dhaka",
+  //   cus_add2: "Dhaka",
+  //   cus_city: "Dhaka",
+  //   cus_state: "Dhaka",
+  //   cus_postcode: "1000",
+  //   cus_country: "Bangladesh",
+  //   cus_phone: "01711111111",
+  //   cus_fax: "01711111111",
+  //   ship_name: "Customer Name",
+  //   ship_add1: "Dhaka",
+  //   ship_add2: "Dhaka",
+  //   ship_city: "Dhaka",
+  //   ship_state: "Dhaka",
+  //   ship_postcode: 1000,
+  //   ship_country: "Bangladesh",
+  // };
+  // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+  // sslcz.init(data).then((apiResponse: { GatewayPageURL: any }) => {
+  // logger.info(`Service: getMemu ${req.method} ${req.url}`);
+  //   // Redirect the user to payment gateway
+  //   let GatewayPageURL = apiResponse.GatewayPageURL;
+  //   res.redirect(GatewayPageURL);
+  //   console.log("Redirecting to: ", GatewayPageURL);
+  // });
+
+  const repositoryPayment = connection.getRepository(PaymentEntity);
+
+  const newPayment = repositoryPayment.create({
+    orderId: 1,
+    userId: 1,
+    paymentDate: dayjs(),
+    paymentMethod: "Cash | SSLEcommerc",
+    paymentType: PaymentType.Debit,
+    amount: 4000,
+  });
+  await repositoryPayment.save(newPayment);
+};
 
 // @desc Get all Order
 // @route GET /api/v1/Order
@@ -514,8 +544,10 @@ export const assignDeliveryMan = asyncHandler(
 );
 
 export const orderStatusUpdate = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: orderStatusUpdate ${req.method} ${req.url}`);
+
+    const userId = req.id as string | number;
 
     const { id } = req.params;
 
@@ -583,6 +615,16 @@ export const orderStatusUpdate = asyncHandler(
         id: result.id,
         ...validation.data,
       });
+
+      const notification: Notification = {
+        type: "Order",
+        title: validation.data.status,
+        message: `Your order has been ${validation.data.status}. Order Tracking No: ${result.trackingNo}`,
+        userId,
+        orderId: result.id,
+      };
+
+      await sendOrderNotification(notification);
 
       await queryRunner.commitTransaction();
 

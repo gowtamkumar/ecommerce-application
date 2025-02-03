@@ -103,7 +103,6 @@ image: string,
 stock_qty:number,
 default:boolean
 
-
 ## product_category:(done)
 
 id,
@@ -159,6 +158,7 @@ createdAt
 updatedAt
 
 ## applied_coupon(not applied)
+
 id,
 user_id,
 coupon_id,
@@ -233,7 +233,6 @@ payment_transaction_id,
 status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned", "Canceled"],
 createdAt
 updatedAt
-
 
 ## orderItems:
 
@@ -409,6 +408,7 @@ updated_at,
 
 id,
 user_id: nmber,
+order_id: nmber,
 type: string,
 title: string,,
 message:stirng,
