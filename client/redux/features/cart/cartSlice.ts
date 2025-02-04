@@ -28,6 +28,10 @@ export const cartSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
+    replaceCart: (state, action: PayloadAction<any>): any => {
+      state.carts = action.payload;
+      localStorage.setItem("carts", JSON.stringify(state.carts));
+    },
     addCart: (state, action: PayloadAction<any>): any => {
       const { id } = action.payload;
 
@@ -90,6 +94,7 @@ export const {
   incrementCart,
   clearCart,
   setCartResult,
+  replaceCart
 } = cartSlice.actions;
 export const selectCart = (state: { cart: any; }) => state.cart;
 

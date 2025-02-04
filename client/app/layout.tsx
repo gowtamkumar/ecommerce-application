@@ -14,6 +14,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
+import CartSync from "@/components/CartSync";
 
 const poppinsFont = localFont({
   src: [
@@ -66,7 +67,10 @@ export default async function RootLayout({
       >
         <AuthProvider session={session}>
           <StoreProvider>
-            <AntdRegistry>{children}</AntdRegistry>
+            <AntdRegistry>
+              <CartSync />
+              {children}
+            </AntdRegistry>
           </StoreProvider>
         </AuthProvider>
       </body>
