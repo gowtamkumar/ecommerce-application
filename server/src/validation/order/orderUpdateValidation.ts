@@ -1,16 +1,12 @@
 import { z } from "zod";
 
 export const orderUpdateValidationSchema = z.object({
-  orderDate: z.string({
-    required_error: "order Date is required",
-  }),
-  orderTotalAmount: z.number({
+  subTotal: z.number({
     required_error: "order total Amount is Required",
   }),
   discountAmount: z.number().optional(),
-  shippingAmount: z.number().optional(),
+  shippingCharge: z.number().optional(),
   tax: z.number().optional(),
-  netAmount: z.number().optional(),
   note: z.string().optional(),
   phoneNo: z.string({
     required_error: "Phone no is Required",

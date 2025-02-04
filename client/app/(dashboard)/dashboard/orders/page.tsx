@@ -322,7 +322,7 @@ const Page: React.FC = () => {
               <div className="flex justify-between">
                 <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.netAmount).toFixed(2)}
+                  ${(+value.subTotal).toFixed(2)}
                 </h1>
               </div>
 
@@ -335,19 +335,19 @@ const Page: React.FC = () => {
 
               <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">${value.orderTax}</h1>
+                <h1 className="font-semibold">${value.totalTax}</h1>
               </div>
 
               <div className="flex justify-between">
                 <h1>Shipping:</h1>
                 <h1 className="font-semibold">
-                  + ${(+value.shippingAmount || 0).toFixed(2)}
+                  + ${(+value.shippingCharge || 0).toFixed(2)}
                 </h1>
               </div>
               {/* <div className="flex justify-between">
                 <h1>Total Order Tax</h1>
                 <h1 className="font-semibold">
-                  + ${(+value.orderTax || 0).toFixed(2)}
+                  + ${(+value.totalTax || 0).toFixed(2)}
                 </h1>
               </div>
 
@@ -363,9 +363,9 @@ const Page: React.FC = () => {
                 <h1 className="font-semibold">
                   ${" "}
                   {(
-                    +value.netAmount +
-                    +value.shippingAmount +
-                    +value.orderTax -
+                    +value.subTotal +
+                    +value.shippingCharge +
+                    +value.totalTax -
                     +value.discountAmount
                   ).toFixed(2)}
                 </h1>
@@ -441,7 +441,7 @@ const Page: React.FC = () => {
             title="Payment"
             className="me-1"
             onClick={() => {
-              const amount = +value.orderTotalAmount + +value.shippingAmount;
+              const amount = +value.subTotal + +value.shippingCharge;
               dispatch(
                 setAction({
                   payment: true,

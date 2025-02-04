@@ -254,7 +254,7 @@ const UserOrders = ({ orders }: any) => {
               <div className="flex justify-between">
                 <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.netAmount).toFixed(2)}
+                  ${(+value.subTotal).toFixed(2)}
                 </h1>
               </div>
 
@@ -267,19 +267,19 @@ const UserOrders = ({ orders }: any) => {
 
               <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">${value.orderTax}</h1>
+                <h1 className="font-semibold">${value.totalTax}</h1>
               </div>
 
               <div className="flex justify-between">
                 <h1>Shipping:</h1>
                 <h1 className="font-semibold">
-                  + ${(+value.shippingAmount || 0).toFixed(2)}
+                  + ${(+value.shippingCharge || 0).toFixed(2)}
                 </h1>
               </div>
               {/* <div className="flex justify-between">
                 <h1>Total Order Tax</h1>
                 <h1 className="font-semibold">
-                  + ${(+value.orderTax || 0).toFixed(2)}
+                  + ${(+value.totalTax || 0).toFixed(2)}
                 </h1>
               </div>
 
@@ -295,9 +295,9 @@ const UserOrders = ({ orders }: any) => {
                 <h1 className="font-semibold">
                   ${" "}
                   {(
-                    +value.netAmount +
-                    +value.shippingAmount +
-                    +value.orderTax -
+                    +value.subTotal +
+                    +value.shippingCharge +
+                    +value.totalTax -
                     +value.discountAmount
                   ).toFixed(2)}
                 </h1>

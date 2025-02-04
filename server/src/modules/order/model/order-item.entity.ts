@@ -60,6 +60,18 @@ export class OrderItemEntity {
   })
   discountAmount!: string;
 
+  @Column({
+    name: "sub_total",
+    type: "numeric",
+    precision: 10,
+    scale: 2
+  })
+  subTotal!: string; //need to remove nullable
+
+
+  
+
+
   @Column({ name: "product_id" })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.orderItems, {
@@ -68,13 +80,6 @@ export class OrderItemEntity {
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-  @Column({ name: "color_id", nullable: true })
-  colorId!: number;
-  // @ManyToOne((_type) => ColorEntity, (color) => color.orderItems, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "color_id" })
-  // color!: ColorEntity;
 
   @Column({ name: "product_variant_id" })
   productVariantId!: number;

@@ -1,6 +1,6 @@
 import multer from "multer";
 import path, { extname, resolve } from "path";
-import { CustomRequest } from "./custom-request-type";
+import { CustomRequest } from "../enums/custom-request-type";
 
 // Set up storage for uploaded files
 const storage = multer.diskStorage({

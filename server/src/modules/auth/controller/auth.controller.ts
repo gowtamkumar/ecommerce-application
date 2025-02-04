@@ -378,13 +378,11 @@ export const getMe = asyncHandler(
 
       "orders.id",
       "orders.discountAmount",
-      "orders.netAmount",
-      "orders.orderDate",
-      "orders.orderTax",
-      "orders.orderTotalAmount",
+      "orders.subTotal",
+      "orders.totalTax",
       "orders.paymentMethod",
       "orders.paymentStatus",
-      "orders.shippingAmount",
+      "orders.shippingCharge",
       "orders.status",
       "orders.trackingNo",
 

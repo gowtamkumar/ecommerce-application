@@ -26,7 +26,7 @@ export class ShippingChargeEntity {
   division!: DivisionEntity;
 
   @Column({ name: "shipping_amount", type: "numeric", precision: 15, scale: 2 })
-  shippingAmount!: number;
+  shippingCharge!: number;
 
   @Column({ nullable: true })
   note!: string;

@@ -41,6 +41,7 @@ import { MenuEntity } from "../modules/menu/model/menu.entity";
 import { NotificationEntity } from "../modules/notification/model/notification.entity";
 import { CouponEntity } from "../modules/coupon/model/coupon.entity";
 import { CouponProductEntity } from "../modules/coupon/model/coupon-product.entity";
+import { AppliedCouponEntity } from "../modules/coupon/model/applied-coupon.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -84,6 +85,7 @@ const dbConnection = new DataSource({
     CouponEntity,
     CouponProductEntity,
     CartEntity,
+    AppliedCouponEntity,
     ShippingAddressEntity,
     ShippingChargeEntity,
     BrandEntity,

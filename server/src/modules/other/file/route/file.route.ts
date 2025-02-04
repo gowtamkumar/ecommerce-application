@@ -9,7 +9,7 @@ import {
   deleteFileWithPhoto,
 } from "../controller/file.controller";
 import { AuthGuard } from "../../../../middlewares/auth.middleware";
-import { upload } from "../../../../enums/fileUpload";
+import { upload } from "../../../../middlewares/fileUpload";
 
 const router = express.Router();
 

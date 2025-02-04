@@ -16,6 +16,7 @@ import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { UserEntity } from "../../auth/model/user.entity";
 import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
+import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 
 @Entity("orders")
 export class OrderEntity {
@@ -25,49 +26,66 @@ export class OrderEntity {
   @Column({ name: "tracking_no" })
   trackingNo!: string;
 
-  @Column({ name: "order_date", type: "timestamp with time zone" })
-  orderDate!: string;
-
   // @Column({ name: "is_paid", type: "boolean" })
   // isPaid!: boolean;
 
+  @Column({ name: "total_qty" })
+  totalQty!: number;
+
   @Column({
-    name: "order_total_amount",
+    name: "sub_total",
     type: "numeric",
     precision: 15,
     scale: 2,
   })
-  orderTotalAmount!: number;
+  subTotal!: number;
 
   @Column({
-    name: "discount_amount",
+    name: "total_discount",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  totalDiscount!: number;
+
+  @Column({
+    name: "total_tax",
     type: "numeric",
     precision: 15,
     scale: 2,
     nullable: true,
   })
-  discountAmount!: number;
+  totalTax!: number;
 
   @Column({
-    name: "order_tax",
+    name: "shipping_charge",
     type: "numeric",
     precision: 15,
     scale: 2,
     nullable: true,
   })
-  orderTax!: number;
-
-  @Column({ name: "net_amount", type: "numeric", precision: 15, scale: 2 })
-  netAmount!: number;
+  shippingCharge?: number;
 
   @Column({
-    name: "shipping_amount",
+    name: "coupon_discount",
     type: "numeric",
-    precision: 15,
+    precision: 10,
     scale: 2,
     nullable: true,
   })
-  shippingAmount?: number;
+  couponDiscount!: number;
+
+  @Column({
+    name: "grand_total",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+  })
+  grandTotal!: number;
+
+  @Column({ name: "coupon_id", nullable: true })
+  couponId?: number;
 
   @Column({ name: "shipping_address_id" })
   shippingAddressId?: number;
@@ -136,6 +154,9 @@ export class OrderEntity {
   // orderItems!: OrderItemEntity[];
   @OneToMany((_type) => OrderItemEntity, (product) => product.order)
   orderItems!: OrderItemEntity[];
+
+  @OneToMany((_type) => AppliedCouponEntity, (item) => item.order)
+  appliedCouponItems!: AppliedCouponEntity[];
 
   @OneToMany((_type) => PaymentEntity, (payment) => payment.order)
   payments!: PaymentEntity[];

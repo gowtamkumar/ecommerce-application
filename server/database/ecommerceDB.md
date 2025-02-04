@@ -103,7 +103,6 @@ image: string,
 stock_qty:number,
 default:boolean
 
-
 ## product_category:(done)
 
 id,
@@ -159,10 +158,11 @@ createdAt
 updatedAt
 
 ## applied_coupon(not applied)
+
 id,
 user_id,
 coupon_id,
-cart_id,
+order_id,
 discount_amount,
 applied_at:
 
@@ -214,25 +214,17 @@ updatedAt
 id,
 user_id,
 order_date,
-deliveryId(assing addmin),
+delivery_id(assing addmin),
 tracking_no,
-shiping_amount,
-
-<!-- is_paid, -->
-
-order_total_amount
-orderTax,
-
-<!-- is_shipped, -->
-
-discount_amount,
-net_amount,
+shipping_charge,
+total_tax,
+total_discount,
+sub_total,
+coupon_discount
+grand_total,
 note,
-
-<!-- should be add delivery amount -->
-
-<!-- order_items: array -->
-
+cancel_resson
+coupon_id,
 shipping_address_id,
 payment_status(Paid/NotPaid/PertialPaid),
 payment_method(cash/ssecommer/strip)
@@ -241,7 +233,6 @@ payment_transaction_id,
 status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned", "Canceled"],
 createdAt
 updatedAt
-coupon_id,
 
 ## orderItems:
 
@@ -417,6 +408,7 @@ updated_at,
 
 id,
 user_id: nmber,
+order_id: nmber,
 type: string,
 title: string,,
 message:stirng,

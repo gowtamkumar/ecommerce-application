@@ -11,6 +11,7 @@ import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
 import { CouponType } from "../../../enums/coupon-type.enum";
 import { DiscountType } from "../../../enums/discount-type.enum";
 import { CouponEntity } from "../../coupon/model/coupon.entity";
+import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -223,15 +224,21 @@ export const cartListApplyCouponCode = asyncHandler(
     const { couponCode, shippingCost } = req.query;
     const userId = req?.id;
 
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not authenticated" });
+    }
+
     const connection = await getDBConnection();
 
     // Initialize coupon-related variables
     let validCoupon: any = null;
     let couponDiscount = 0;
     let shippingCharge = 0; // Example flat shipping charge
+    let message = "";
 
     if (couponCode) {
-      
       const coupon = await connection
         .getRepository(CouponEntity)
         .createQueryBuilder("coupon")
@@ -243,12 +250,30 @@ export const cartListApplyCouponCode = asyncHandler(
         .getOne();
 
       if (!coupon) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Invalid or expired coupon" });
+        message = "Invalid or expired coupon";
       }
 
-      validCoupon = coupon;
+      console.log("coupon", coupon);
+      
+
+      if (coupon) {
+        // Check usage_per_user limit
+        const totalUserUsage = await connection
+          .getRepository(AppliedCouponEntity)
+          .createQueryBuilder("appliedCoupon")
+          .where("appliedCoupon.userId = :userId", { userId })
+          .andWhere("appliedCoupon.couponId = :couponId", {
+            couponId: coupon.id,
+          })
+          .getCount();
+
+        if (totalUserUsage >= coupon.usagePerUser) {
+          message = `You already applied ${totalUserUsage} You can only use this coupon ${coupon.usagePerUser} time(s)`;
+        } else {
+          message = "Coupon applied successfully";
+          validCoupon = coupon;
+        }
+      }
     }
 
     // Step 2: Fetch the cart details
@@ -310,15 +335,25 @@ export const cartListApplyCouponCode = asyncHandler(
       grandTotal += +totalItemPrice;
     });
 
-    // Step 4: Apply the coupon if provided
     if (validCoupon) {
-      if (grandTotal < validCoupon.minCartValue) {
-        return res.status(400).json({
-          success: false,
-          message: `Cart value must be at least ${validCoupon.minCartValue} to apply this coupon`,
-        });
+      if (grandTotal < validCoupon.minOrderAmount) {
+        message = `Minmum order amount must be at least ${validCoupon.minOrderAmount} to apply this coupon`;
+        validCoupon = null;
       }
 
+      if (totalQty < +validCoupon.mincartValue) {
+        message = `Cart value must be at least ${validCoupon.mincartValue} to apply this coupon`;
+        validCoupon = null;
+      }
+
+      if (+validCoupon.usageCount === +validCoupon.usageLimit) {
+        message = `Coupon usage limit reached`;
+        validCoupon = null;
+      }
+    }
+
+    // Step 4: Apply the coupon if provided
+    if (validCoupon) {
       if (validCoupon.type === CouponType.Order) {
         if (validCoupon.discountType === DiscountType.Percentage) {
           couponDiscount = (grandTotal * validCoupon.value) / 100;
@@ -351,7 +386,7 @@ export const cartListApplyCouponCode = asyncHandler(
       }
     }
 
-    if (shippingCost && validCoupon.type !== DiscountType.FreeShipping) {
+    if (shippingCost && validCoupon?.type !== DiscountType.FreeShipping) {
       shippingCharge = +shippingCost;
     }
 
@@ -359,9 +394,7 @@ export const cartListApplyCouponCode = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: validCoupon
-        ? "Coupon applied successfully"
-        : "No coupon applied",
+      message: !couponCode ? "Get Cart list" : message,
       data: {
         cartList: cart,
         cartSummary: {
@@ -372,6 +405,7 @@ export const cartListApplyCouponCode = asyncHandler(
           shippingCharge: shippingCharge.toFixed(2),
           grandTotal: grandTotal.toFixed(2),
           couponDiscount: couponDiscount.toFixed(2),
+          couponId: validCoupon ? validCoupon.id : null,
         },
       },
     });
@@ -461,9 +495,11 @@ export const createCart = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     const connection = await getDBConnection();
 
+    const userId = req.id;
+
     const validation = cartValidationSchema.safeParse({
       ...req.body,
-      userId: req.id,
+      userId,
     });
 
     if (!validation.success) {
@@ -482,7 +518,7 @@ export const createCart = asyncHandler(
 
     const findCart = await repository.findOneBy({
       productId: validation.data.productId,
-      userId: req.id,
+      userId,
     });
 
     if (findCart) {

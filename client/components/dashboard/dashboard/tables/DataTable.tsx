@@ -12,8 +12,8 @@ const DataTable = ({ orderData }: any) => {
     },
     {
       title: "Order Date",
-      dataIndex: "orderDate",
-      key: "orderDate",
+      dataIndex: "created_at",
+      key: "created_at",
       render: (item: string) => (
         <div>{dayjs(item).format("DD-MM-YYYY h:mm A")}</div>
       ),
@@ -43,9 +43,9 @@ const DataTable = ({ orderData }: any) => {
         <h1 className="font-semibold">
           ${" "}
           {(
-            +value.netAmount +
-            +value.shippingAmount +
-            +value.orderTax -
+            +value.subTotal +
+            +value.shippingCharge +
+            +value.totalTax -
             +value.discountAmount
           ).toFixed(2)}
         </h1>
@@ -127,7 +127,7 @@ const DataTable = ({ orderData }: any) => {
             <div className="flex justify-between">
               <h1>Net Amount:</h1>
               <h1 className="font-semibold">
-                ${(+value.netAmount).toFixed(2)}
+                ${(+value.subTotal).toFixed(2)}
               </h1>
             </div>
 
@@ -140,19 +140,19 @@ const DataTable = ({ orderData }: any) => {
 
             <div className="flex justify-between">
               <h1>Tax Amount:</h1>
-              <h1 className="font-semibold">${value.orderTax}</h1>
+              <h1 className="font-semibold">${value.totalTax}</h1>
             </div>
 
             <div className="flex justify-between">
               <h1>Shipping:</h1>
               <h1 className="font-semibold">
-                + ${(+value.shippingAmount || 0).toFixed(2)}
+                + ${(+value.shippingCharge || 0).toFixed(2)}
               </h1>
             </div>
             {/* <div className="flex justify-between">
                 <h1>Total Order Tax</h1>
                 <h1 className="font-semibold">
-                  + ${(+value.orderTax || 0).toFixed(2)}
+                  + ${(+value.totalTax || 0).toFixed(2)}
                 </h1>
               </div>
 
@@ -168,9 +168,9 @@ const DataTable = ({ orderData }: any) => {
               <h1 className="font-semibold">
                 ${" "}
                 {(
-                  +value.netAmount +
-                  +value.shippingAmount +
-                  +value.orderTax -
+                  +value.subTotal +
+                  +value.shippingCharge +
+                  +value.totalTax -
                   +value.discountAmount
                 ).toFixed(2)}
               </h1>
@@ -182,18 +182,18 @@ const DataTable = ({ orderData }: any) => {
           <div className="grid gap-y-3 col-span-1">
             <div className="flex justify-between">
               <h1>
-                Net Amount: (+tax {value.orderTax}, - Discount{" "}
+                Net Amount: (+tax {value.totalTax}, - Discount{" "}
                 {value.discountAmount})
               </h1>
               <h1 className="font-semibold">
-                ${(+value.orderTotalAmount).toFixed(2)}
+                ${(+value.subTotal).toFixed(2)}
               </h1>
             </div>
 
             <div className="flex justify-between">
               <h1>Shipping:</h1>
               <h1 className="font-semibold">
-                + ${(+value.shippingAmount || 0).toFixed(2)}
+                + ${(+value.shippingCharge || 0).toFixed(2)}
               </h1>
             </div>
 
@@ -209,28 +209,6 @@ const DataTable = ({ orderData }: any) => {
     );
   };
 
-  // const data = [] as any;
-  // const newData = (orderData || []).forEach((item: any) =>
-  //   data.push({
-  //     key: item.id,
-  //     id: item.id,
-  //     trackingNo: item.trackingNo,
-  //     orderDate: item.orderDate,
-  //     // supplier: item.supplier,
-  //     orderTax: item.orderTax,
-  //     discountAmount: item.discountAmount,
-  //     customer: item.user,
-  //     shippingAmount: item.shippingAmount,
-  //     paymentMethod: item.paymentMethod,
-  //     totalPaid: 500,
-  //     totalAmount: (+item.orderTotalAmount || 0) + (+item.shippingAmount || 0),
-  //     orderTotalAmount: item.orderTotalAmount,
-  //     paymentStatus: item.paymentStatus,
-  //     status: item.status,
-  //     orderItems: item.orderItems,
-  //     responsive: ["sm", "md"],
-  //   })
-  // );
 
   const newOrders = orderData.map((item: any, idx: number) => ({
     ...item,

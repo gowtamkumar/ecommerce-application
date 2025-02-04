@@ -203,7 +203,7 @@ export default function OrderTracker({ orders }: any) {
                 <div className="flex justify-between">
                   <h1>Net Amount:</h1>
                   <h1 className="font-semibold">
-                    ${(+order.netAmount).toFixed(2)}
+                    ${(+order.subTotal).toFixed(2)}
                   </h1>
                 </div>
 
@@ -216,19 +216,19 @@ export default function OrderTracker({ orders }: any) {
 
                 <div className="flex justify-between">
                   <h1>Tax Amount:</h1>
-                  <h1 className="font-semibold">${order.orderTax}</h1>
+                  <h1 className="font-semibold">${order.totalTax}</h1>
                 </div>
 
                 <div className="flex justify-between">
                   <h1>Shipping:</h1>
                   <h1 className="font-semibold">
-                    + ${(+order.shippingAmount || 0).toFixed(2)}
+                    + ${(+order.shippingCharge || 0).toFixed(2)}
                   </h1>
                 </div>
                 {/* <div className="flex justify-between">
                 <h1>Total Order Tax</h1>
                 <h1 className="font-semibold">
-                  + ${(+order.orderTax || 0).toFixed(2)}
+                  + ${(+order.totalTax || 0).toFixed(2)}
                 </h1>
               </div>
 
@@ -244,9 +244,9 @@ export default function OrderTracker({ orders }: any) {
                   <h1 className="font-semibold">
                     ${" "}
                     {(
-                      +order.netAmount +
-                      +order.shippingAmount +
-                      +order.orderTax -
+                      +order.subTotal +
+                      +order.shippingCharge +
+                      +order.totalTax -
                       +order.discountAmount
                     ).toFixed(2)}
                   </h1>

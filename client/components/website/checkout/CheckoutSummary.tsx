@@ -53,11 +53,9 @@ export default function CheckoutSummary() {
       dispatch(setLoading({ save: true }));
       const validatedFields = onlineOrderValidationSchema.safeParse({
         orderItems: cart.carts,
-        orderDate: dayjs().toISOString(),
-        netAmount: +total,
-        orderTax: +totalTax,
-        orderTotalAmount: +total,
-        shippingAmount: +shippingCharge?.shippingAmount || 0,
+        subTotal: +total,
+        totalTax: +totalTax,
+        shippingCharge: +shippingCharge?.shippingCharge || 0,
         discountAmount: +totalDiscount,
         paymentMethod: checkoutFormData.paymentMethod,
         shippingAddressId: checkoutFormData?.shippingAddressId,
@@ -127,7 +125,7 @@ export default function CheckoutSummary() {
 
         <div className="flex justify-between">
           <span>Shipping Cost</span>
-          <span>{(+shippingCharge?.shippingAmount || 0).toFixed(2)}</span>
+          <span>{(+shippingCharge?.shippingCharge || 0).toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between">
@@ -138,7 +136,7 @@ export default function CheckoutSummary() {
         <div className="flex justify-between">
           <span className="font-bold">Total payable</span>
           <span className="font-bold text-2xl">
-            ৳{(+subTotal + (+shippingCharge?.shippingAmount || 0)).toFixed(2)}
+            ৳{(+subTotal + (+shippingCharge?.shippingCharge || 0)).toFixed(2)}
           </span>
         </div>
       </div>
@@ -152,7 +150,7 @@ export default function CheckoutSummary() {
         disabled={loading.save}
       >
         <span>Confirm Order</span>
-        {(+subTotal + (+shippingCharge?.shippingAmount || 0)).toFixed(2)}
+        {(+subTotal + (+shippingCharge?.shippingCharge || 0)).toFixed(2)}
         TK.
       </Button>
     </div>
