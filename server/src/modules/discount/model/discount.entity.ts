@@ -28,7 +28,7 @@ export class DiscountEntity {
   @Column({ nullable: true })
   image!: string;
 
-  @Column({ type: "enum", enum: Status, nullable: true })
+  @Column({ type: "enum", enum: Status, default: Status.Active })
   status!: Status;
 
   @Column({ name: "user_id" })

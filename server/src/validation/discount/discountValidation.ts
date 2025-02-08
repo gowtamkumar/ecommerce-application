@@ -16,5 +16,5 @@ export const discountValidation = z.object({
     required_error: "user is required",
   }),
 
-  status: z.enum(["Active", "Inactive"]),
+  status: z.enum(["Active", "Inactive"]).optional(),
 });

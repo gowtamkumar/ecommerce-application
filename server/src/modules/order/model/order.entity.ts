@@ -63,7 +63,6 @@ export class OrderEntity {
     type: "numeric",
     precision: 15,
     scale: 2,
-    nullable: true,
   })
   shippingCharge?: number;
 
