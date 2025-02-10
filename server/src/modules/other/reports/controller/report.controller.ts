@@ -156,14 +156,14 @@ export const getDashboardReport = asyncHandler(
     `
     );
 
-    const userActivityRepository = connection.getRepository(UserEntity);
-    const user_activity = await userActivityRepository
-      .createQueryBuilder("user")
-      .leftJoin("user.userActivities", "userActivities")
-      .where("userActivities.timestamp >= :timestamp", {
-        timestamp: new Date(Date.now() - 5 * 60 * 1000),
-      })
-      .getMany();
+    // const userActivityRepository = connection.getRepository(UserEntity);
+    // const user_activity = await userActivityRepository
+    //   .createQueryBuilder("user")
+    //   .leftJoin("user.userActivities", "userActivities")
+    //   .where("userActivities.timestamp >= :timestamp", {
+    //     timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    //   })
+    //   .getMany();
 
     return res.status(200).json({
       success: true,
@@ -176,7 +176,7 @@ export const getDashboardReport = asyncHandler(
         top_customers,
         product_alert_stock_report,
         loss_profit,
-        user_activity,
+        // user_activity,
       },
     });
   }
