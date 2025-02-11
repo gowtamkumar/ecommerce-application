@@ -44,6 +44,10 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
       FROM users`
     );
+    // SUM(CASE WHEN status = 'Completed' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_amount
+    // SUM(CASE WHEN status = 'Pending' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_order_amount,
+    // SUM(CASE WHEN status = 'Returned' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_return_amount,
+    // SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_canceled_amount,
 
     // order sale, count etc,
     const results = await connection.query(`
@@ -55,20 +59,23 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_sale_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_order_count,
           SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_count,
-          SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_canceled_amount,
           SUM(CASE WHEN status = 'Returned' THEN 1 ELSE 0 END) AS total_sale_return_count,
-          SUM(CASE WHEN status = 'Returned' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_return_amount,
           SUM(CASE WHEN status = 'Returned' THEN  COALESCE(shipping_charge, 0) ELSE 0 END) AS total_sale_return_shipping_charge,
-          SUM(CASE WHEN status = 'Pending' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_order_amount,
-          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_amount
+          SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_canceled_amount,
+          SUM(CASE WHEN status = 'Returned' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_sale_return_amount,
+          SUM(CASE WHEN status = 'Pending' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_order_amount,
+          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_sale_amount
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
+
+    // SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
 
     const top_selling_product = await connection.query(
       `with orderItems as (
           SELECT 
             oi.product_id AS product_id,
-            SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_amount
+            SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
+            SUM(COALESCE(oi.qty, 0)) AS sale_qty
           FROM 
             order_items oi
           LEFT JOIN 
@@ -77,15 +84,16 @@ export const getDashboardReport = asyncHandler(
             orders.status = 'Completed'
           GROUP BY 
             oi.product_id
-            order by total_amount DESC
+            order by total_sale_amount DESC
           )
       select
         oI.product_id,
-        oI.total_amount,
+        oI.total_sale_amount,
+        oI.sale_qty,
         products.name,
         products.alert_qty
       from orderItems oI
-      LEFT JOIN products ON products.id = oI.product_id LIMIT 20;
+      LEFT JOIN products ON products.id = oI.product_id;
     `
     );
 
@@ -131,12 +139,14 @@ export const getDashboardReport = asyncHandler(
     `
     );
 
+    // SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
+
     const loss_profit = await connection.query(
       `
       with orderItems as (
       SELECT 
             oi.product_id AS product_id,
-            SUM(((COALESCE(oi.unit_price, 0) + COALESCE(oi.tax_amount, 0)) * COALESCE(oi.qty, 0)) - COALESCE(oi.discount_amount, 0) * COALESCE(oi.qty, 0)) AS total_sale_amount,
+            SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
             SUM(COALESCE(oi.purchase_price, 0) * COALESCE(oi.qty, 0)) AS total_purchase_amount
         FROM 
             order_items oi
@@ -146,6 +156,7 @@ export const getDashboardReport = asyncHandler(
         GROUP BY 
             oi.product_id
       )
+            
       select
         oI.product_id,
         oI.total_sale_amount,

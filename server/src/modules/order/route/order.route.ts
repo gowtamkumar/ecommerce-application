@@ -21,6 +21,6 @@ router.route("/user-orders").get(getUserOrders);
 router.route("/:id").get(getOrder).patch(updateOrder).delete(deleteOrder);
 router.route("/order-status-update/:id").patch(orderStatusUpdate);
 router.route("/assign/:id").patch(assignDeliveryMan);
-router.route("/review/:id").patch(orderReview);
+router.route("/review/:id").patch(orderReview); //need to check is this api use?
 
 export default router;
