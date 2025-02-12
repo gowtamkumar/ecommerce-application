@@ -99,18 +99,30 @@ export const getDashboardReport = asyncHandler(
 
     const top_customers = await connection.query(
       `
-      with customerPayments as (
-        select 
-          user_id,
-          SUM(COALESCE(amount, 0)) AS total_paid_amount
-        from payments group by user_id 
-      )
-      select 
-        users.name,
-        total_paid_amount
-        from customerPayments as cp
-      LEFT JOIN  users ON users.id = cp.user_id
-      order by total_paid_amount DESC
+        WITH customerSales AS (
+          SELECT 
+              users.id AS customer_id,
+              users.name AS customer_name,
+              SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
+              SUM(COALESCE(oi.qty, 0)) AS total_qty
+          FROM 
+              order_items oi
+          LEFT JOIN 
+              orders ON orders.id = oi.order_id
+          LEFT JOIN 
+              users ON users.id = orders.user_id
+          WHERE 
+              orders.status = 'Completed'
+          GROUP BY 
+              users.id, users.name
+        )
+        SELECT 
+            cs.customer_id,
+            cs.customer_name,
+            cs.total_sale_amount,
+            cs.total_qty
+        FROM customerSales cs
+        ORDER BY cs.total_sale_amount DESC;
     `
     );
 
