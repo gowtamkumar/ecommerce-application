@@ -29,33 +29,6 @@ const DataTable = ({ orderData }: any) => {
         </>
       ),
     },
-
-    {
-      title: "Paid Amount",
-      dataIndex: "totalPaid",
-      key: "totalPaid",
-      render: (v: number) => <span>{v}</span>,
-    },
-    {
-      title: "Total Amount",
-      key: "totalAmount",
-      render: (value: any) => (
-        <h1 className="font-semibold">
-          ${" "}
-          {(
-            +value.subTotal +
-            +value.shippingCharge +
-            +value.totalTax -
-            +value.discountAmount
-          ).toFixed(2)}
-        </h1>
-      ),
-    },
-    {
-      title: "Payment Method",
-      dataIndex: "paymentMethod",
-      key: "paymentMethod",
-    },
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
@@ -66,6 +39,23 @@ const DataTable = ({ orderData }: any) => {
       dataIndex: "status",
       key: "status",
     },
+
+    {
+      title: "Paid Amount",
+      dataIndex: "totalPaid",
+      key: "totalPaid",
+      render: (v: number) => <span>{v}</span>,
+    },
+    {
+      title: "GrandTotal",
+      key: "grandTotal",
+      dataIndex: "grandTotal",
+    },
+    // {
+    //   title: "Payment Method",
+    //   dataIndex: "paymentMethod",
+    //   key: "paymentMethod",
+    // },
   ];
 
   const expandedRowRender = (value: any) => {
@@ -93,18 +83,13 @@ const DataTable = ({ orderData }: any) => {
         title: "Tax Amount",
         key: "taxAmount",
         dataIndex: "taxAmount",
-        // render: (v: {
-        //   taxAmount: number;
-        //   qty: number;
-        // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
       },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
-        title: "Total item Amount",
-        render: (v: { unitPrice: number; qty: number }) => (
-          <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
-        ),
+        title: "Sub Total",
+        key: "subTotal",
+        dataIndex: "subTotal",
       },
     ];
 
@@ -122,19 +107,29 @@ const DataTable = ({ orderData }: any) => {
           />
         </div>
         <div className="grid grid-cols-8 mt-5">
-          <div className="col-span-4">dasdf</div>
-          <div className="grid gap-y-3 col-span-4">
+          <div className="col-span-5">dasdf</div>
+          <div className="col-span-3">
+            <div className="flex justify-between">
+              <h1>Total Qty:</h1>
+              <h1 className="font-semibold">{value.totalQty}</h1>
+            </div>
+
             <div className="flex justify-between">
               <h1>Net Amount:</h1>
-              <h1 className="font-semibold">
-                ${(+value.subTotal).toFixed(2)}
-              </h1>
+              <h1 className="font-semibold">${(+value.subTotal).toFixed(2)}</h1>
             </div>
 
             <div className="flex justify-between">
               <h1>Discount Amount:</h1>
               <h1 className="font-semibold">
-                ${(+value.discountAmount).toFixed(2)}
+                ${(+value.totalDiscount).toFixed(2)}
+              </h1>
+            </div>
+
+            <div className="flex justify-between">
+              <h1>Coupon Discount:</h1>
+              <h1 className="font-semibold">
+                ${(+value.couponDiscount).toFixed(2)}
               </h1>
             </div>
 
@@ -145,35 +140,12 @@ const DataTable = ({ orderData }: any) => {
 
             <div className="flex justify-between">
               <h1>Shipping:</h1>
-              <h1 className="font-semibold">
-                + ${(+value.shippingCharge || 0).toFixed(2)}
-              </h1>
+              <h1 className="font-semibold">+${value.shippingCharge}</h1>
             </div>
-            {/* <div className="flex justify-between">
-                <h1>Total Order Tax</h1>
-                <h1 className="font-semibold">
-                  + ${(+value.totalTax || 0).toFixed(2)}
-                </h1>
-              </div>
-
-              <div className="flex justify-between">
-                <h1>Discount:</h1>
-                <h1 className="font-semibold">
-                  - ${(+value.discountAmountmount || 0).toFixed(2)}
-                </h1>
-              </div> */}
 
             <div className="flex justify-between border-t-2">
-              <h1>Total Amount:</h1>
-              <h1 className="font-semibold">
-                ${" "}
-                {(
-                  +value.subTotal +
-                  +value.shippingCharge +
-                  +value.totalTax -
-                  +value.discountAmount
-                ).toFixed(2)}
-              </h1>
+              <h1>Grand Total:</h1>
+              <h1 className="font-semibold">${value.grandTotal}</h1>
             </div>
           </div>
         </div>
@@ -208,7 +180,6 @@ const DataTable = ({ orderData }: any) => {
       </>
     );
   };
-
 
   const newOrders = orderData.map((item: any, idx: number) => ({
     ...item,

@@ -14,21 +14,16 @@ const TopSellingProduct = ({ topSellingProduct }: any) => {
       render: (item: any) => <span className="ms-2">{item?.name}</span>,
     },
     {
-      title: "Total Sale",
-      dataIndex: "total_amount",
-      key: "total_amount",
+      title: "Total Sale Amount",
+      dataIndex: "total_sale_amount",
+      key: "total_sale_amount",
       width: 150,
     },
-    // {
-    //   title: "Current Stock",
-    //   key: "current_stock",
-    //   dataIndex: "current_stock",
-    // },
-    // {
-    //   title: "Quantity Alert",
-    //   dataIndex: "alert_qty",
-    //   key: "alert_qty",
-    // },
+    {
+      title: "Total Qty",
+      dataIndex: "sale_qty",
+      key: "sale_qty",
+    },
   ];
 
   const onChange = (pageNumber: any) => {

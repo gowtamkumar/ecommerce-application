@@ -26,7 +26,7 @@ const AddTax = () => {
     };
   }, [global.action]);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: any) => {    
     const result = values.id ? () => updateTax(values) : () => saveTax(values);
 
     const messageData = values.id

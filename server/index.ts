@@ -18,13 +18,19 @@ const app = express();
 
 // access public folder for image
 if (process.env.NODE_ENV === "development") {
+  console.log("ddd", path.join(__dirname, "public"))
+  
   app.use(express.static(path.join(__dirname, "public")));
 }
 
-
-
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "..", "public")));
+  app.use(express.static(path.join(__dirname, "..", "public"), {
+    setHeaders: (res) => {
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
+    },
+  }));
 }
 
 // Connect to database
@@ -46,8 +52,12 @@ app.use(limiter);
 app.use(cookieParser()); // cookie parser when we needed the cookies value then we simply get and set
 app.use(express.json()); // you ensure that your express application can handle json data sent in the request body automatically
 app.use(express.urlencoded({ extended: true })); // it parses incoming request with url-encoded payloads and is based on a body parser.
-app.use(cors()); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false, // Allow cross-origin images
+  })
+);
+app.use(cors({ origin: "*" })); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
 
 // app.use((req, res, next) => {
 //   // console.log(`Static file request: ${req.url}`);

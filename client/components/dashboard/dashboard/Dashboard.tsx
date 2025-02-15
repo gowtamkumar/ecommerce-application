@@ -63,7 +63,7 @@ const Dashboard = () => {
         const results = await getDashboardReports({
           startDate: firstDateOfMonth.toISOString(),
           endDate: lastDateOfMonth.toISOString(),
-        });        
+        });
         setDashboardReports(results.data);
       } catch (err) {
         setLoading(false);
@@ -153,7 +153,7 @@ const Dashboard = () => {
               <Statistic
                 value={(
                   +saleAmount -
-                  (+purchaseAmount + +total_sale_return_shipping_amount)
+                  (+purchaseAmount + +(total_sale_return_shipping_amount || 0))
                 ).toFixed(2)}
                 // formatter={formatter}
                 prefix={
@@ -166,7 +166,7 @@ const Dashboard = () => {
                 valueStyle={{
                   color:
                     saleAmount >=
-                    purchaseAmount + +total_sale_return_shipping_amount
+                    purchaseAmount + (+total_sale_return_shipping_amount || 0)
                       ? "green"
                       : "red",
                 }}

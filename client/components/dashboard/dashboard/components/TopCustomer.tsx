@@ -21,23 +21,18 @@ const TopCustomer: React.FC<TopCustomerProps> = ({ topCustomers }) => {
   const columns: ColumnsType<Customer> = [
     {
       title: "Customer",
-      dataIndex: "name",
-      key: "name",
-      // Uncomment and type the render function if needed
-      // render: (text: string) => (
-      //   <div className="flex items-center">
-      //     {/* <Avatar /> */}
-      //     <div>
-      //       <div className="mx-2">{text}</div>
-      //       <small className="mx-2">{item.phone}</small>
-      //     </div>
-      //   </div>
-      // ),
+      dataIndex: "customer_name",
+      key: "customer_name"
     },
     {
-      title: "Total Paid Amount",
-      dataIndex: "total_paid_amount",
-      key: "total_paid_amount",
+      title: "Total Sale Amount",
+      dataIndex: "total_sale_amount",
+      key: "total_sale_amount",
+    },
+    {
+      title: "Total Qty",
+      dataIndex: "total_qty",
+      key: "total_qty",
     },
   ];
 

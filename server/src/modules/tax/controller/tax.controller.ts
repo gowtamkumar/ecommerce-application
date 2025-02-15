@@ -5,6 +5,7 @@ import { TaxEntity } from "../model/tax.entity";
 import { taxValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
 import { CustomRequest } from "../../../enums/custom-request-type";
+import { updateTaxValidationSchema } from "../../../validation/tax/updateTaxValidation";
 
 // @desc Get all Tax
 // @route GET /api/v1/Tax
@@ -89,7 +90,7 @@ export const updateTax = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: updateTax ${req.method} ${req.url}`);
 
   const { id } = req.params;
-  const validation = taxValidationSchema.safeParse(req.body);
+  const validation = updateTaxValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({

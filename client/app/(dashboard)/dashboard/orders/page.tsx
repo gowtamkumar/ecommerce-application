@@ -18,6 +18,7 @@ import {
   CheckOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
@@ -83,7 +84,7 @@ const Page: React.FC = () => {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const res = await getOrders();
-      
+
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
@@ -104,7 +105,6 @@ const Page: React.FC = () => {
       }, 500);
     } catch (error: any) {
       console.log("v", error);
-
       toast.error(error);
     }
   };
@@ -226,11 +226,22 @@ const Page: React.FC = () => {
       },
       {
         title: "Color",
-        render: (v: any) => <span>Need to Get in product variant</span>,
+        dataIndex: "productVariant",
+        render: (v: any) => {
+          return <span>{v?.color?.name}</span>;
+        },
       },
       {
         title: "Size",
-        render: (v: any) => <span>Need to Get in product variant</span>,
+        dataIndex: "productVariant",
+        render: (v: any) => {
+          return <span>{v?.size?.name}</span>;
+        },
+      },
+      {
+        title: "Material",
+        dataIndex: "material",
+        key: "material",
       },
       {
         title: "Purchase Price",
@@ -248,24 +259,19 @@ const Page: React.FC = () => {
         title: "Tax Amount",
         key: "taxAmount",
         dataIndex: "taxAmount",
-        // render: (v: {
-        //   taxAmount: number;
-        //   qty: number;
-        // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
       },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
-        title: "Total item Amount",
-        render: (v: { unitPrice: number; qty: number }) => (
-          <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
-        ),
+        title: "Sub Total",
+        key: "subTotal",
+        dataIndex: "subTotal",
       },
     ];
 
     return (
       <div className="grid grid-cols-4 p-2">
-        <div className="col-span-1 p-2">
+        <div className="col-span-4">
           {value.status === "Canceled" && (
             <h2 className="bg-red-500">
               <span className="font-bold">Order Resson: </span>
@@ -285,26 +291,6 @@ const Page: React.FC = () => {
             <code> {value.shippingAddress?.address}</code>
           </h1>
           <Divider dashed />
-          <Timeline
-            items={(value?.orderTrackings || []).map(
-              (timeline: any, idx: number) => ({
-                // dot: <ClockCircleOutlined className="timeline-clock-icon" />,
-                // color: "red",
-                children: (
-                  <div key={idx}>
-                    <div> {timeline.status}</div>
-                    <div>
-                      {" "}
-                      {dayjs(timeline.createdAt).format("MMMM D, YYYY h:mm A")}
-                    </div>
-                    <div> {timeline.location}</div>
-                  </div>
-                ),
-              })
-            )}
-          />
-        </div>
-        <div className="col-span-3">
           <div className="p-4 bg-white">
             <h1 className="font-semibold">Order Items</h1>
             <Table
@@ -317,8 +303,35 @@ const Page: React.FC = () => {
             />
           </div>
           <div className="grid grid-cols-8 mt-5">
-            <div className="col-span-4">dasdf</div>
-            <div className="grid gap-y-3 col-span-4">
+            <div className="col-span-5 p-2">
+              <Timeline
+                items={(value?.orderTrackings || []).map(
+                  (timeline: any, idx: number) => ({
+                    dot: <ClockCircleOutlined />,
+                    color: "red",
+                    children: (
+                      <div key={idx}>
+                        <div> {timeline.status}</div>
+                        <div>
+                          {" "}
+                          {dayjs(timeline.createdAt).format(
+                            "MMMM D, YYYY h:mm A"
+                          )}
+                        </div>
+                        <div> {timeline.location}</div>
+                      </div>
+                    ),
+                  })
+                )}
+              />
+            </div>
+
+            <div className="col-span-3">
+              <div className="flex justify-between">
+                <h1>Total Qty:</h1>
+                <h1 className="font-semibold">{value.totalQty}</h1>
+              </div>
+
               <div className="flex justify-between">
                 <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
@@ -329,7 +342,14 @@ const Page: React.FC = () => {
               <div className="flex justify-between">
                 <h1>Discount Amount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.discountAmount).toFixed(2)}
+                  ${(+value.totalDiscount).toFixed(2)}
+                </h1>
+              </div>
+
+              <div className="flex justify-between">
+                <h1>Coupon Discount:</h1>
+                <h1 className="font-semibold">
+                  ${(+value.couponDiscount).toFixed(2)}
                 </h1>
               </div>
 
@@ -340,35 +360,12 @@ const Page: React.FC = () => {
 
               <div className="flex justify-between">
                 <h1>Shipping:</h1>
-                <h1 className="font-semibold">
-                  + ${(+value.shippingCharge || 0).toFixed(2)}
-                </h1>
+                <h1 className="font-semibold">+${value.shippingCharge}</h1>
               </div>
-              {/* <div className="flex justify-between">
-                <h1>Total Order Tax</h1>
-                <h1 className="font-semibold">
-                  + ${(+value.totalTax || 0).toFixed(2)}
-                </h1>
-              </div>
-
-              <div className="flex justify-between">
-                <h1>Discount:</h1>
-                <h1 className="font-semibold">
-                  - ${(+value.discountAmountmount || 0).toFixed(2)}
-                </h1>
-              </div> */}
 
               <div className="flex justify-between border-t-2">
-                <h1>Total Amount:</h1>
-                <h1 className="font-semibold">
-                  ${" "}
-                  {(
-                    +value.subTotal +
-                    +value.shippingCharge +
-                    +value.totalTax -
-                    +value.discountAmount
-                  ).toFixed(2)}
-                </h1>
+                <h1>Grand Total:</h1>
+                <h1 className="font-semibold">${value.grandTotal}</h1>
               </div>
             </div>
           </div>
@@ -411,7 +408,7 @@ const Page: React.FC = () => {
       key: "paymentMethod",
       // render: (value) => <span>{value.address}</span>,
     },
-  
+
     {
       title: "Date",
       dataIndex: "createdAt",
