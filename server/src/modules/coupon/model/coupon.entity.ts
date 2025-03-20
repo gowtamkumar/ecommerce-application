@@ -84,3 +84,4 @@ export class CouponEntity {
   @OneToMany((_type) => CouponProductEntity, (items) => items.coupon)
   products!: CouponProductEntity[];
 }
+

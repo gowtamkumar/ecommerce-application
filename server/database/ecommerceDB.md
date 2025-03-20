@@ -129,7 +129,7 @@ name,
 ## coupon
 
 id,
-type:['order', 'product', "FreeShipping"]
+type:['order', 'product', "FreeShipping"]'free_gift', 'bogo', 'cashback',
 code,
 discount_type:(Percentage, Fixed, FreeShipping).
 value,
