@@ -51,38 +51,40 @@ export const getSize = asyncHandler(
 // @desc Create a single Size
 // @route POST /api/v1/Size
 // @access Public
-export const createSize = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createSize ${req.method} ${req.url}`);  
+export const createSize = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createSize ${req.method} ${req.url}`);
 
-  const validation = sizeValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    const validation = sizeValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(SizeEntity);
+
+    const newSize = repository.create(validation.data);
+    const save = await repository.save(newSize);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Size",
+      data: save,
     });
   }
-
-  const connection = await getDBConnection();
-  const repository = connection.getRepository(SizeEntity);
-
-  const newSize = repository.create(validation.data);
-  const save = await repository.save(newSize);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Size",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single Size
 // @route PUT /api/v1/Size/:id
@@ -92,19 +94,19 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
 
   const { id } = req.params;
 
-  const validation = sizeValidationSchema.safeParse(req.body);
+  // const validation = sizeValidationSchema.safeParse(req.body);
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+  // if (!validation.success) {
+  //   const formattedErrors = validation.error.issues.map((issue) => ({
+  //     path: issue.path.join("."),
+  //     message: issue.message,
+  //   }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
-    });
-  }
+  //   return res.status(400).json({
+  //     success: false,
+  //     issues: formattedErrors,
+  //   });
+  // }
 
   const connection = await getDBConnection();
   const repository = await connection.getRepository(SizeEntity);
@@ -114,7 +116,7 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  const updateData = await repository.merge(result, validation.data);
+  const updateData = await repository.merge(result, req.body);
   await repository.save(updateData);
 
   return res.status(200).json({

@@ -12,7 +12,7 @@ export const updateDiscountValidation = z.object({
     required_error: "value is required",
   }),
 
-  status: z.enum(["Active", "Inactive"]),
+  status: z.enum(["Active", "Inactive"]).optional(),
 });
 
 
