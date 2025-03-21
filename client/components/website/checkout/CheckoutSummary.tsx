@@ -37,6 +37,8 @@ export default function CheckoutSummary() {
     cart.cartResult || {};
   const { shippingCharge, checkoutFormData } = checkout || {};
   const { loading } = global || {};
+  console.log("checkout", checkout);
+  
 
   useEffect(() => {
     async function calculateCart() {
@@ -80,8 +82,9 @@ export default function CheckoutSummary() {
         return;
       }
 
-      if (res.status === 500) {
+      if (!res.success) {
         dispatch(setResponse({ type: "error", message: res.message }));
+        return;
       } else {
         dispatch(
           setResponse({ type: "success", message: "Order successfully" })
@@ -96,9 +99,9 @@ export default function CheckoutSummary() {
         dispatch(setCheckoutFormData({}));
         dispatch(setShippingAddress([]));
         dispatch(setShippingCharge({}));
-        route.push("/");
+        // route.push("/");
       }, 1000);
-    } catch (err: any) {}
+    } catch (err: any) { }
   };
 
   return (

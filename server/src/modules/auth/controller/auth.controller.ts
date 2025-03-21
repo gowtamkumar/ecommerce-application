@@ -375,9 +375,8 @@ export const getMe = asyncHandler(
       "user.lastLogin",
       "user.lastLogout",
       "user.lastLogout",
-
       "orders.id",
-      "orders.discountAmount",
+      "orders.totalDiscount",
       "orders.subTotal",
       "orders.totalTax",
       "orders.paymentMethod",
@@ -669,7 +668,7 @@ export const updateUser = asyncHandler(
         issues: formattedErrors,
       });
     }
-    
+
     const connection = await getDBConnection();
     const userRepository = await connection.getRepository(UserEntity);
 

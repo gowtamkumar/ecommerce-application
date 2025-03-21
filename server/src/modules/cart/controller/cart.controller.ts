@@ -253,9 +253,6 @@ export const cartListApplyCouponCode = asyncHandler(
         message = "Invalid or expired coupon";
       }
 
-      console.log("coupon", coupon);
-      
-
       if (coupon) {
         // Check usage_per_user limit
         const totalUserUsage = await connection
@@ -356,7 +353,7 @@ export const cartListApplyCouponCode = asyncHandler(
     if (validCoupon) {
       if (validCoupon.type === CouponType.Order) {
         if (validCoupon.discountType === DiscountType.Percentage) {
-          couponDiscount = (grandTotal * validCoupon.value) / 100;
+          couponDiscount = (+grandTotal * validCoupon.value) / 100;
         } else if (validCoupon.discountType === DiscountType.Fixed) {
           couponDiscount = validCoupon.value;
         }
@@ -367,7 +364,7 @@ export const cartListApplyCouponCode = asyncHandler(
         cart.forEach((item: any) => {
           if (validProductIds.includes(item.productId)) {
             if (validCoupon.discountType === DiscountType.Percentage) {
-              couponDiscount += (item.subTotal * validCoupon.value) / 100;
+              couponDiscount += (+item.subTotal * +validCoupon.value) / 100;
             } else if (validCoupon.discountType === DiscountType.Fixed) {
               couponDiscount += validCoupon.value * item.qty;
             }

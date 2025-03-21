@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "./style.css";
 import "antd/dist/reset.css";
+// import '@ant-design/v5-patch-for-resact-19';
 import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";

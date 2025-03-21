@@ -37,7 +37,7 @@ export default function CheckoutPage() {
   }, []);
 
   async function fetchData() {
-    const user = await getMe();
+    const user = await getMe();    
     const activeShippingAddress = user.data?.shippingAddress?.find(
       (item: { status: boolean }) => item.status
     );
@@ -50,7 +50,8 @@ export default function CheckoutPage() {
           getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
         )
       );
-    }
+    }    
+
     dispatch(setShippingAddress(user.data?.shippingAddress));
     dispatch(
       setCheckoutFormData({

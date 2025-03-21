@@ -23,6 +23,31 @@ export async function getCarts() {
   return await handleResponse(res);
 }
 
+export async function getCartLists(params: {
+  couponCode: number | string;
+  shippingCost: number | string;
+}) {
+  const { couponCode, shippingCost } = params;
+  let queryString = "";
+
+  if (couponCode) {
+    queryString += `couponCode=${couponCode}&`;
+  }
+
+  if (couponCode) {
+    queryString += `shippingCost=${shippingCost}`;
+  }
+
+  const res = await fetch(
+    `${appConfig.apiUrl}/carts/coupon-apply-cartlist?${queryString}`,
+    {
+      cache: "no-cache",
+    }
+  );
+
+  return await handleResponse(res);
+}
+
 export async function getCartByUser() {
   const headers = await getAuthHeaders();
 
