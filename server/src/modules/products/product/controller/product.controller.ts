@@ -10,6 +10,7 @@ import { updateProductValidationSchema } from "../../../../validation/products/p
 import { logger } from "../../../../middlewares/logger";
 import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
 import { CustomRequest } from "../../../../enums/custom-request-type";
+import { DiscountEntity } from "../../../discount/model/discount.entity";
 
 // @desc Create a Product
 // @route POST /api/v1/products
@@ -135,6 +136,181 @@ export const getProducts = async (req: Request, res: Response) => {
 
   const products = await connection.query(
     `
+WITH productTable AS (
+    SELECT 
+        p.id AS product_id,
+        p.name,
+        p.slug,
+        p.thumbnail_image AS "thumbnailImage",
+        p.hover_image AS "hoverImage",
+        p.variant,
+        p.discount_id AS "discountId",
+        p.featured,
+        pv.unit_price,
+        pv.purchase_price,
+        pv.id AS product_variant_id
+    FROM 
+        products p
+    JOIN LATERAL (
+        SELECT 
+            pv.unit_price, 
+            pv.purchase_price, 
+            pv.id
+        FROM 
+            product_variants pv
+        WHERE 
+            pv.product_id = p.id
+        ORDER BY 
+            pv.default DESC, pv.id
+        LIMIT 1
+    ) pv ON true
+),
+reviewsTable AS (
+    SELECT 
+        product_id,
+        COUNT(*) AS reviews_count,
+        COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+    FROM reviews
+    GROUP BY product_id
+),
+discountData AS (
+    SELECT 
+        dis.id AS discount_id,
+        dis.discount_strategy,
+        dis.value AS discount_value,
+        dis.scope,
+        dis.promotion_type,
+        dis.start_date,
+        dis.end_date
+    FROM discounts dis
+)
+SELECT 
+    dis.discount_id,
+    dis.discount_strategy AS "discountType",
+    dis.discount_value AS "discountValue",
+    dis.scope AS "scope",
+    dis.promotion_type AS "promotionType",
+    dis.start_date AS "startDate",
+    dis.end_date AS "endDate",
+    p.id AS "productId",
+    p.name AS "productName",
+    pv.unit_price AS "productUnitPrice",  -- Use unit_price from product_variants (pv)
+    pv.purchase_price AS "productPurchasePrice",  -- Use purchase_price from product_variants (pv)
+    p.slug,
+    p.thumbnail_image AS "thumbnailImage",
+    p.hover_image AS "hoverImage",
+    p.variant,
+    p.featured,
+    rt.reviews_count AS "reviewsCount",
+    rt.average_rating AS "averageRating",
+    ROUND(SUM((pv.unit_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
+    
+    -- Calculate Discounted Price
+    ROUND(
+        CASE 
+            WHEN dis.discount_strategy = 'Percentage' THEN 
+                pv.unit_price - (pv.unit_price * dis.discount_value / 100)
+            WHEN dis.discount_strategy = 'Fixed' THEN 
+                pv.unit_price - dis.discount_value
+            ELSE 
+                pv.unit_price  -- No discount applied
+        END, 
+        2
+    ) AS "discountedPrice"  -- This will show the discounted price
+FROM 
+    discountData dis
+LEFT JOIN 
+    products p ON 
+        (
+            -- If the discount is scoped to "Product", match product's discount_id
+            (dis.scope = 'Product' AND p.discount_id = dis.discount_id)
+            OR
+            -- If the discount is scoped to "Category", match the applicable category
+            (dis.scope = 'Category' AND EXISTS (
+                SELECT 1 
+                FROM product_categories pc 
+                WHERE pc.product_id = p.id AND pc.category_id IN 
+                    (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
+            ))
+            OR
+            -- If the discount is scoped to "Brand", match the applicable brand
+            (dis.scope = 'Brand' AND EXISTS (
+                SELECT 1 
+                FROM applicable_brands ab 
+                WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
+            ))
+            OR
+            -- If the discount is global, include all products
+            (dis.scope = 'Global')
+        )
+LEFT JOIN 
+    productTable pv ON pv.product_id = p.id  -- Use the lateral join table here for the product variant data
+LEFT JOIN 
+    reviewsTable rt ON rt.product_id = p.id
+LEFT JOIN 
+    taxs ON taxs.id = p.tax_id
+LEFT JOIN 
+    product_categories pc ON pc.product_id = p.id
+LEFT JOIN 
+    brands b ON b.id = p.brand_id
+WHERE 1=1
+GROUP BY 
+    dis.discount_id, dis.discount_strategy, dis.discount_value, dis.scope, dis.promotion_type, 
+    dis.start_date, dis.end_date, p.id, p.name, p.slug, p.thumbnail_image, p.hover_image, 
+    p.variant, p.featured, rt.reviews_count, rt.average_rating, taxs.value, pv.unit_price, pv.purchase_price
+
+
+    `
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "Get product filter data",
+    totalCount: products.length,
+    data: products,
+  });
+};
+
+// @desc Get all Products
+// @route GET /api/v1/products
+// @access Public
+export const getProductsOld = async (req: Request, res: Response) => {
+  logger.info(`Service: getProducts ${req.method} ${req.url}`);
+
+  const connection = await getDBConnection();
+  const {
+    search,
+    lowPrice,
+    highPrice,
+    brandId,
+    colorId,
+    categoryId,
+    minPrice,
+    maxPrice,
+    discount,
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+  // Helper function to parse filters
+  const parseFilter = (filter: any) => {
+    if (!filter) return [];
+    return [
+      ...new Set(
+        filter
+          .split(",")
+          .filter((id: any) => id.trim() !== "" && !isNaN(id)) // Ensure valid numbers
+          .map((id: any) => parseInt(id.trim()))
+      ),
+    ];
+  };
+
+  const categoryFilter = parseFilter(categoryId);
+  const brandFilter = parseFilter(brandId);
+  const colorFilter = parseFilter(colorId);
+
+  const products = await connection.query(
+    `
       WITH productTable AS (
         SELECT 
           p.*,
@@ -173,7 +349,7 @@ export const getProducts = async (req: Request, res: Response) => {
         p.hover_image AS "hoverImage",
         p.variant,
         p.discount_id AS "discountId",
-        dis.discount_type AS "discountType",
+        dis.discount_strategy AS "discountType",
         dis.value AS "discountValue",
         p.featured,
         p.unit_price AS "unitPrice", 
@@ -185,7 +361,7 @@ export const getProducts = async (req: Request, res: Response) => {
         ROUND(
           SUM(
             CASE 
-              WHEN dis.discount_type = 'Percentage' THEN 
+              WHEN dis.discount_strategy = 'Percentage' THEN 
                 (p.unit_price + (p.unit_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
               ELSE 
                 dis.value
@@ -237,7 +413,7 @@ export const getProducts = async (req: Request, res: Response) => {
       GROUP BY 
         p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
         p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
-        rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value
+        rt.reviews_count, rt.average_rating, taxs.value, dis.discount_strategy, dis.value
       ${lowPrice ? "ORDER BY p.unit_price ASC" : ""}
       ${highPrice ? "ORDER BY p.unit_price DESC" : ""}
       ${page && limit ? `OFFSET ${(+page - 1) * +limit} LIMIT ${limit}` : ""}
@@ -250,113 +426,6 @@ export const getProducts = async (req: Request, res: Response) => {
     totalCount: products.length,
     data: products,
   });
-
-  // try {
-  //   const connection = await getDBConnection();
-  //   const productRepository = connection.getRepository(ProductEntity);
-  //   const {
-  //     search,
-  //     lowPrice,
-  //     highPrice,
-  //     brandId,
-  //     status,
-  //     categoryId,
-  //     minPrice,
-  //     maxPrice,
-  //     discount,
-  //   } = req.query;
-  //   const qb = productRepository.createQueryBuilder("product");
-  //   qb.select([
-  //     "product",
-  //     "user.id",
-  //     "user.name",
-  //     "brand.id",
-  //     "brand.name",
-  //     "reviews.id",
-  //     "reviews.rating",
-  //     "reviews.comment",
-  //     "tax.name",
-  //     "tax.value",
-  //     "productVariants",
-  //     "productCategories",
-  //     "category.id",
-  //     "category.name",
-  //     "size.id",
-  //     "size.name",
-  //     "discount.discountType",
-  //     "discount.value",
-  //     "discount.type",
-  //   ]);
-  //   qb.leftJoin("product.user", "user");
-  //   qb.leftJoin("product.brand", "brand");
-  //   qb.leftJoin("product.reviews", "reviews");
-  //   qb.leftJoin("product.tax", "tax");
-  //   qb.leftJoin("product.discount", "discount");
-  //   qb.leftJoin("product.productVariants", "productVariants");
-  //   qb.leftJoin("product.productCategories", "productCategories");
-  //   qb.leftJoin("productCategories.category", "category");
-  //   qb.leftJoin("productVariants.size", "size");
-  //   qb.orderBy("productVariants.id", "DESC");
-  //   qb.addOrderBy("product.slug", "ASC");
-
-  //   if (status) qb.andWhere({ status });
-
-  //   if (categoryId)
-  //     qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
-  //       categoryIds: categoryId.toString().split(","),
-  //     });
-
-  //   if (brandId)
-  //     qb.andWhere("product.brandId IN (:...brandIds)", {
-  //       brandIds: brandId.toString().split(","),
-  //     });
-
-  //   if (minPrice && maxPrice)
-  //     qb.andWhere(
-  //       `productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
-  //     );
-
-  //   if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
-
-  //   // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
-
-  //   if (lowPrice) qb.orderBy("productVariants.unit_price", "ASC");
-  //   if (highPrice) qb.orderBy("productVariants.unit_price", "DESC");
-
-  //   if (search) {
-  //     qb.andWhere(
-  //       new Brackets((db) => {
-  //         db.orWhere("LOWER(product.name) ILIKE LOWER(:search)", {
-  //           search: `%${search}%`,
-  //         });
-  //         db.orWhere("LOWER(product.description) ILIKE LOWER(:search)", {
-  //           search: `%${search}%`,
-  //         });
-  //         db.orWhere("LOWER(product.shortDescription) ILIKE LOWER(:search)", {
-  //           search: `%${search}%`,
-  //         });
-  //         db.orWhere("LOWER(brand.name) ILIKE LOWER(:search)", {
-  //           search: `%${search}%`,
-  //         });
-  //       })
-  //     );
-  //   }
-
-  //   const results = await qb.getMany();
-
-  //   res.status(200).json({
-  //     success: true,
-  //     message: "Fetched all products successfully",
-  //     totalItem: results.length,
-  //     data: results,
-  //   });
-  // } catch (error: any) {
-  //   res.status(500).json({
-  //     success: false,
-  //     message: "An error occurred while fetching the products.",
-  //     error: error.message,
-  //   });
-  // }
 };
 
 // @desc Get all Products

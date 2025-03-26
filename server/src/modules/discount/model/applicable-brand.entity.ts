@@ -25,7 +25,7 @@ export class ApplicableBrandEntity {
   brand!: BrandEntity;
 
   @Column({ name: "discount_id" })
-  discountId?: number;
+  discountId!: number;
   @ManyToOne((_type) => DiscountEntity, (item) => item.applicableBrands, {
     onDelete: "CASCADE",
   })

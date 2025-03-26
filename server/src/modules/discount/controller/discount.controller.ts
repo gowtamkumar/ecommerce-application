@@ -23,7 +23,7 @@ export const getDiscounts = asyncHandler(
     const repository = connection.getRepository(DiscountEntity);
     const newQuery = {} as any;
     if (type) newQuery.type = type;
-    const result = await repository.find({ where: newQuery });
+    const result = await repository.find({ where: newQuery, relations: ["applicableProducts", "applicableBrands", "applicableCategories"] });
     return res.status(200).json({
       success: true,
       message: "Get all Discounts",
@@ -100,7 +100,7 @@ export const createDiscount = asyncHandler(
       const applicableProductEntities = applicableProducts.map(
         (item: number | string) => ({
           productId: item,
-          discountid: saveDiscount.id,
+          discountId: saveDiscount.id,
         })
       );
       const createApplicableProduct = applicationProductRepository.create(
@@ -117,7 +117,7 @@ export const createDiscount = asyncHandler(
       const applicableBrandEntities = applicableBrands.map(
         (item: number | string) => ({
           brandId: item,
-          discountid: saveDiscount.id,
+          discountId: saveDiscount.id,
         })
       );
 
@@ -135,7 +135,7 @@ export const createDiscount = asyncHandler(
       const abbplicableCategoryEntities = applicableCategories.map(
         (item: number | string) => ({
           categoryId: item,
-          discountid: saveDiscount.id,
+          discountId: saveDiscount.id,
         })
       );
 

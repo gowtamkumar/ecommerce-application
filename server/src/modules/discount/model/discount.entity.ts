@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -58,30 +59,6 @@ export class DiscountEntity {
   })
   endDate!: string;
 
-  // @Column({
-  //   name: "min_order_amount",
-  //   type: "numeric",
-  //   precision: 10,
-  //   scale: 2,
-  //   nullable: true,
-  // })
-  // minOrderAmount!: number;
-
-  // @Column({ name: "max_discount_value", nullable: true })
-  // maxDiscountValue!: number;
-
-  // @Column({ name: "usage_limit", nullable: true })
-  // usageLimit!: number;
-
-  // @Column({ name: "usage_per_user", nullable: true })
-  // usagePerUser!: number;
-
-  // @Column({ name: "max_users", nullable: true })
-  // maxUsers!: number;
-
-  // @Column({ name: "usage_count", nullable: true })
-  // usageCount!: number;
-
   @Column({ type: "int", default: 1 })
   priority!: number; // Higher number = Higher priority for applied first
 
@@ -114,6 +91,16 @@ export class DiscountEntity {
 
   @OneToMany((_type) => ApplicableProductEntity, (item) => item.discount)
   applicableProducts!: ApplicableProductEntity[];
+
+  @BeforeInsert()
+  generateCode() {
+    if (!this.code) {
+      this.code = `DISC-${Math.random()
+        .toString(36)
+        .substr(2, 9)
+        .toUpperCase()}`;
+    }
+  }
 }
 
 // id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
