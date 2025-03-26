@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { UserEntity } from "../../auth/model/user.entity";
+import { UserEntity } from "../../../auth/model/user.entity";
 
 @Entity("notifications")
 export class NotificationEntity {

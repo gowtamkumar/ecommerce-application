@@ -19,8 +19,7 @@ import { logger } from "../../../middlewares/logger";
 import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
-import { NotificationEntity } from "../../notification/model/notification.entity";
-import { NotificationType } from "../../../enums/notification-type.enum";
+import { NotificationEntity } from "../../other/notification/model/notification.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {

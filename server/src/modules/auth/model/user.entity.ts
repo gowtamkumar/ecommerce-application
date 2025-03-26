@@ -19,7 +19,7 @@ import { PaymentEntity } from "../../payment/model/payment.entity";
 import { UserActivityEntity } from "./user-activity.entity";
 import { PostEntity } from "../../blog/post/model/post.entity";
 import { CommentEntity } from "../../blog/comment/model/comment.entity";
-import { NotificationEntity } from "../../notification/model/notification.entity";
+import { NotificationEntity } from "../../other/notification/model/notification.entity";
 
 @Entity("users")
 export class UserEntity {

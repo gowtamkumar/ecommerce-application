@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
 import { NotificationEntity } from "../model/notification.entity";
-import { logger } from "../../../middlewares/logger";
-import { notificationValidationSchema } from "../../../validation";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { CustomRequest } from "../../../../enums/custom-request-type";
+import { getDBConnection } from "../../../../config/db";
+import { logger } from "../../../../middlewares/logger";
+import { notificationValidationSchema } from "../../../../validation";
+
 
 // @desc Get all Notification
 // @route GET /api/v1/Notification
@@ -12,7 +13,7 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 export const getNotifications = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: getNotifications ${req.method} ${req.url}`);
-  
+
     const connection = await getDBConnection();
     const repository = connection.getRepository(NotificationEntity);
 
