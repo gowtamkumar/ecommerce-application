@@ -1,4 +1,3 @@
-import { Express } from "express";
 import authRoutes from "../modules/auth/route/auth.route";
 import productRoutes from "../modules/products/product/route/product.route";
 import wishlistRoutes from "../modules/wishlist/route/wishlist.route";
@@ -10,7 +9,7 @@ import shippingChargeRoutes from "../modules/shipping-charge/route/shipping-char
 import brandRoutes from "../modules/brand/route/brand.route";
 import paymentRoute from "../modules/payment/route/payment.route";
 import reviewRoute from "../modules/review/route/review.route";
-import commentRoute from "../modules/comment/route/comment.route";
+import commentRoute from "../modules/blog/comment/route/comment.route";
 import taxRoute from "../modules/tax/route/tax.route";
 import sizeRoute from "../modules/size/route/size.route";
 import unitRoute from "../modules/unit/route/unit.route";
@@ -31,9 +30,9 @@ import unionsRoute from "../modules/other/geo-location/unions/route/union.route"
 import reportRoute from "../modules/other/reports/route/report.route";
 import visitorRoute from "../modules/visitor/route/visitor.route";
 import leadRoute from "../modules/lead/route/lead.route";
-import postRoute from "../modules/post/route/post.route";
+import postRoute from "../modules/blog/post/route/post.route";
 import homeRoute from "../modules/other/pages/home/route/home.route";
-import notificationRoute from "../modules/notification/route/notification.route";
+import notificationRoute from "../modules/other/notification/route/notification.route";
 import couponRoute from "../modules/coupon/route/coupon.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 

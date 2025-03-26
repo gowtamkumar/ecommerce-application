@@ -10,11 +10,20 @@ import {
 import { ProductEntity } from "../../products/product/model/product.entity";
 import { Status } from "../../../enums/status.enum";
 import { DiscountStrategyEnum, PromotionTypeEnum, ScopeEnum } from "../enum";
+import { ApplicableBrandEntity } from "./applicable-brand.entity";
+import { ApplicableCategoryEntity } from "./applicable-category.entity";
+import { ApplicableProductEntity } from "./applicable-products.entity";
 
 @Entity("discounts")
 export class DiscountEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column()
+  name!: string;
+
+  @Column({ length: 50, unique: true, nullable: true }) // should be auto generate
+  code!: string;
 
   @Column({ type: "enum", enum: ScopeEnum })
   scope!: ScopeEnum;
@@ -32,12 +41,6 @@ export class DiscountEntity {
   @Column({ name: "offer_details", type: "jsonb", nullable: true })
   offerDetails!: Record<string, any>;
 
-  @Column()
-  name!: string;
-
-  @Column({ length: 50, unique: true, nullable: true })
-  code!: string;
-
   @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
   value!: number;
 
@@ -49,35 +52,35 @@ export class DiscountEntity {
   startDate!: string;
 
   @Column({
-    name: "expiry_date",
+    name: "end_date",
     type: "timestamp with time zone",
     nullable: true,
   })
-  expiryDate!: string;
+  endDate!: string;
 
-  @Column({
-    name: "min_order_amount",
-    type: "numeric",
-    precision: 10,
-    scale: 2,
-    nullable: true,
-  })
-  minOrderAmount!: number;
+  // @Column({
+  //   name: "min_order_amount",
+  //   type: "numeric",
+  //   precision: 10,
+  //   scale: 2,
+  //   nullable: true,
+  // })
+  // minOrderAmount!: number;
 
-  @Column({ name: "max_discount_value", nullable: true })
-  maxDiscountValue!: number;
+  // @Column({ name: "max_discount_value", nullable: true })
+  // maxDiscountValue!: number;
 
-  @Column({ name: "usage_limit", nullable: true })
-  usageLimit!: number;
+  // @Column({ name: "usage_limit", nullable: true })
+  // usageLimit!: number;
 
-  @Column({ name: "usage_per_user", nullable: true })
-  usagePerUser!: number;
+  // @Column({ name: "usage_per_user", nullable: true })
+  // usagePerUser!: number;
 
-  @Column({ name: "max_users", nullable: true })
-  maxUsers!: number;
+  // @Column({ name: "max_users", nullable: true })
+  // maxUsers!: number;
 
-  @Column({ name: "usage_count", nullable: true })
-  usageCount!: number;
+  // @Column({ name: "usage_count", nullable: true })
+  // usageCount!: number;
 
   @Column({ type: "int", default: 1 })
   priority!: number; // Higher number = Higher priority for applied first
@@ -100,8 +103,17 @@ export class DiscountEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt?: string;
 
-  @OneToMany((_type) => ProductEntity, (product) => product.discount)
+  @OneToMany((_type) => ProductEntity, (item) => item.discount)
   products!: ProductEntity[];
+
+  @OneToMany((_type) => ApplicableBrandEntity, (item) => item.discount)
+  applicableBrands!: ApplicableBrandEntity[];
+
+  @OneToMany((_type) => ApplicableCategoryEntity, (item) => item.discount)
+  applicableCategories!: ApplicableCategoryEntity[];
+
+  @OneToMany((_type) => ApplicableProductEntity, (item) => item.discount)
+  applicableProducts!: ApplicableProductEntity[];
 }
 
 // id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

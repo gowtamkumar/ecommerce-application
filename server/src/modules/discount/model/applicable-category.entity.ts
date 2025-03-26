@@ -8,6 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { DiscountEntity } from "./discount.entity";
+import { CategoriesEntity } from "../../categories/model/categories.entity";
 
 @Entity("applicable_categories")
 export class ApplicableCategoryEntity {
@@ -16,19 +18,19 @@ export class ApplicableCategoryEntity {
 
   @Column({ name: "category_id" })
   categoryId!: number;
-  // @ManyToOne((_type) => ProductEntity, (product) => product.couponProducts, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "product_id" })
-  // product!: ProductEntity;
+  @ManyToOne((_type) => CategoriesEntity, (item) => item.applicableCategories, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "category_id" })
+  category!: CategoriesEntity;
 
   @Column({ name: "discount_id" })
   discountId?: number;
-  // @ManyToOne((_type) => CouponEntity, (coupon) => coupon.products, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "coupon_id" })
-  // coupon!: CouponEntity;
+  @ManyToOne((_type) => DiscountEntity, (item) => item.applicableCategories, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "discount_id" })
+  discount!: DiscountEntity;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;

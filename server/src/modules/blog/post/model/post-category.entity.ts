@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { PostEntity } from "./post.entity";
-import { CategoriesEntity } from "../../categories/model/categories.entity";
+import { CategoriesEntity } from "../../../categories/model/categories.entity";
 
 @Entity("post_categories")
 export class PostCategoryEntity {

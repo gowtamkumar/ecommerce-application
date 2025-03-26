@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { commentStatusEnum } from "../enums/comment.status.enum";
-import { UserEntity } from "../../auth/model/user.entity";
+import { UserEntity } from "../../../auth/model/user.entity";
 import { PostEntity } from "../../post/model/post.entity";
 
 @Entity("comments")

@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
 import { CommentEntity } from "../model/comment.entity";
-import { commentValidationSchema } from "../../../validation";
-import { updateCommentValidationSchema } from "../../../validation/comment/updateCommentValidation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { commentValidationSchema } from "../../../../validation";
+import { updateCommentValidationSchema } from "../../../../validation/comment/updateCommentValidation";
+import { logger } from "../../../../middlewares/logger";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all Comment
 // @route GET /api/v1/Comment

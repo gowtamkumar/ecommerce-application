@@ -6,7 +6,7 @@ import {
   getPosts,
   updatePost,
 } from "../controller/post.controller";
-import { AuthGuard } from "../../../middlewares/auth.middleware";
+import { AuthGuard } from "../../../../middlewares/auth.middleware";
 
 const router = express.Router();
 

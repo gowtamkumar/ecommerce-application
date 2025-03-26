@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { ProductEntity } from "../../products/product/model/product.entity";
 import { Status } from "../../../enums/status.enum";
+import { ApplicableBrandEntity } from "../../discount/model/applicable-brand.entity";
 
 @Entity("brands")
 export class BrandEntity {
@@ -39,4 +40,7 @@ export class BrandEntity {
 
   @OneToMany((_type) => ProductEntity, (product) => product.brand)
   products!: ProductEntity[];
+
+  @OneToMany((_type) => ApplicableBrandEntity, (product) => product.brand)
+  applicableBrands!: ApplicableBrandEntity[];
 }

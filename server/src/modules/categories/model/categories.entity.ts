@@ -11,7 +11,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ProductCategoryEntity } from "../../products/product-category/model/product-category.entity";
-import { PostCategoryEntity } from "../../post/model/post-category.entity";
+import { PostCategoryEntity } from "../../blog/post/model/post-category.entity";
+import { ApplicableCategoryEntity } from "../../discount/model/applicable-category.entity";
 
 @Entity("categories")
 @Tree("materialized-path")
@@ -69,4 +70,10 @@ export class CategoriesEntity {
     (productCategory) => productCategory.category
   )
   postCategories!: PostCategoryEntity[];
+
+  @OneToMany(
+    (_type) => ApplicableCategoryEntity,
+    (apCategory) => apCategory.category
+  )
+  applicableCategories!: ApplicableCategoryEntity[];
 }

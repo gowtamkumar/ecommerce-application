@@ -17,8 +17,8 @@ import { ReviewEntity } from "../../review/model/review.entity";
 import { WishListEntity } from "../../wishlist/model/wishlist.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { UserActivityEntity } from "./user-activity.entity";
-import { PostEntity } from "../../post/model/post.entity";
-import { CommentEntity } from "../../comment/model/comment.entity";
+import { PostEntity } from "../../blog/post/model/post.entity";
+import { CommentEntity } from "../../blog/comment/model/comment.entity";
 import { NotificationEntity } from "../../notification/model/notification.entity";
 
 @Entity("users")

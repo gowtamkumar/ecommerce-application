@@ -18,9 +18,6 @@ export const createProduct = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createProduct ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const productRepository = connection.getRepository(ProductEntity);
-
     // Validate request body
     const validation = productValidationSchema.safeParse({
       ...req.body,
@@ -38,6 +35,9 @@ export const createProduct = asyncHandler(
         issues: formattedErrors,
       });
     }
+
+    const connection = await getDBConnection();
+    const productRepository = connection.getRepository(ProductEntity);
 
     const { productVariants, productCategories, ...restData } = validation.data;
     // // Generate URL slug
@@ -398,7 +398,7 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
       "size.name",
       "color.name",
       "discount.discountType",
-      "discount.value"
+      "discount.value",
     ]);
     qb.leftJoin("product.user", "user");
     qb.leftJoin("product.brand", "brand");
@@ -505,7 +505,7 @@ export const getProduct = asyncHandler(
       "discount.discountType",
       "discount.value",
       "productCategories",
-      "color.name"
+      "color.name",
     ]);
     qb.leftJoin("product.user", "user");
     qb.leftJoin("product.brand", "brand");
@@ -642,8 +642,7 @@ export const updateProduct = asyncHandler(
       });
     }
 
-    const { productVariants, productCategories, ...restData } =
-      req.body;
+    const { productVariants, productCategories, ...restData } = req.body;
     // Get DB connection
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);
@@ -721,10 +720,7 @@ export const updateProduct = asyncHandler(
     // }
 
     // Wait for both operations to complete
-    await Promise.all([
-      productVariantPromise,
-      productCategoryPromise,
-    ]);
+    await Promise.all([productVariantPromise, productCategoryPromise]);
 
     // Merge and save the updated product data
     const updatedProduct = repository.merge(product, restData);

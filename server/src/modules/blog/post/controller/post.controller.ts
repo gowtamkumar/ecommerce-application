@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { getDBConnection } from "../../../../config/db";
 import { PostEntity } from "../model/post.entity";
-import { postValidationSchema } from "../../../validation";
+import { postValidationSchema } from "../../../../validation";
 import { PostCategoryEntity } from "../model/post-category.entity";
-import { updatePostValidationSchema } from "../../../validation/post/updatePostValidation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { updatePostValidationSchema } from "../../../../validation/post/updatePostValidation";
+import { logger } from "../../../../middlewares/logger";
+import { CustomRequest } from "../../../../enums/custom-request-type";
 
 // @desc Get all Post
 // @route GET /api/v1/Post

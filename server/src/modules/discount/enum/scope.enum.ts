@@ -3,5 +3,4 @@ export enum ScopeEnum {
   Product = "Product",
   Category = "Category",
   Brand = "Brand",
-  // Added
 }

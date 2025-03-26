@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { PostStatus } from "../enums";
-import { UserEntity } from "../../auth/model/user.entity";
+import { UserEntity } from "../../../auth/model/user.entity";
 import { PostCategoryEntity } from "./post-category.entity";
 import { CommentEntity } from "../../comment/model/comment.entity";
 
