@@ -9,32 +9,25 @@ import {
 } from "typeorm";
 import { ProductEntity } from "../../products/product/model/product.entity";
 import { Status } from "../../../enums/status.enum";
+import { DiscountStrategyEnum, PromotionTypeEnum, ScopeEnum } from "../enum";
 
 @Entity("discounts")
 export class DiscountEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ length: 20 })
-  scope!: "product" | "products" | "category" | "brand";
+  @Column({ type: "enum", enum: ScopeEnum })
+  scope!: ScopeEnum;
 
-  @Column({ name: "promotion_type", length: 20 })
-  promotionType!:
-    | "discount"
-    | "offer"
-    | "coupon"
-    | "flash_sale"
-    | "seasonal"
-    | "membership";
+  @Column({ name: "promotion_type", type: "enum", enum: PromotionTypeEnum })
+  promotionType!: PromotionTypeEnum;
 
-  @Column({ name: "discount_strategy", length: 20 })
-  discountStrategy!:
-    | "percentage"
-    | "fixed"
-    | "free_shipping"
-    | "bogo"
-    | "free_gift"
-    | "cashback";
+  @Column({
+    name: "discount_strategy",
+    type: "enum",
+    enum: DiscountStrategyEnum,
+  })
+  discountStrategy!: DiscountStrategyEnum;
 
   @Column({ name: "offer_details", type: "jsonb", nullable: true })
   offerDetails!: Record<string, any>;
@@ -86,11 +79,11 @@ export class DiscountEntity {
   @Column({ name: "usage_count", nullable: true })
   usageCount!: number;
 
-  // @Column({ type: "boolean", default: false })
-  // shipping_discount!: boolean;
+  @Column({ type: "int", default: 1 })
+  priority!: number; // Higher number = Higher priority for applied first
 
-  // @Column({ type: "boolean", default: false })
-  // free_gift!: boolean;
+  @Column({ type: "boolean", default: false })
+  stackable!: boolean; // If true, this discount can be combined with others
 
   @Column({ type: "enum", enum: Status, default: Status.Active })
   status!: Status;

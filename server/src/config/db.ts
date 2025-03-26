@@ -42,6 +42,9 @@ import { NotificationEntity } from "../modules/notification/model/notification.e
 import { CouponEntity } from "../modules/coupon/model/coupon.entity";
 import { CouponProductEntity } from "../modules/coupon/model/coupon-product.entity";
 import { AppliedCouponEntity } from "../modules/coupon/model/applied-coupon.entity";
+import { ApplicableCategoryEntity } from "../modules/discount/model/applicable-category.entity";
+import { ApplicableBrandEntity } from "../modules/discount/model/applicable-brand.entity";
+import { ApplicableProductEntity } from "../modules/discount/model/applicable-products.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -91,6 +94,9 @@ const dbConnection = new DataSource({
     BrandEntity,
     CategoriesEntity,
     DiscountEntity,
+    ApplicableBrandEntity,
+    ApplicableCategoryEntity,
+    ApplicableProductEntity,
     OrderEntity,
     OrderItemEntity,
     WishListEntity,
@@ -116,7 +122,7 @@ const dbConnection = new DataSource({
     PostCategoryEntity,
     CommentEntity,
     MenuEntity,
-    NotificationEntity
+    NotificationEntity,
   ],
   subscribers: [],
   migrations: [],
