@@ -141,8 +141,8 @@ WITH productTable AS (
         p.id AS product_id,
         p.name,
         p.slug,
-        p.thumbnail_image AS "thumbnailImage",
-        p.hover_image AS "hoverImage",
+        p.thumbnail_image ,
+        p.hover_image,
         p.variant,
         p.featured,
         p.tax_id,
@@ -189,16 +189,16 @@ validDiscount AS (
 ),
 selectedDiscount AS (
     SELECT DISTINCT ON (p.id) 
-        p.*,
+        p.id AS product_id,  
         dis.discount_id,
         dis.discount_strategy,
         dis.discount_value,
         dis.scope,
         dis.promotion_type
     FROM products p
-    LEFT JOIN validDiscount dis ON 
-        (
+    LEFT JOIN validDiscount dis ON (
             (dis.scope = 'Product' AND p.discount_id = dis.discount_id) OR
+             
             (dis.scope = 'Category' AND EXISTS (
                 SELECT 1 
                 FROM product_categories pc 
@@ -212,26 +212,27 @@ selectedDiscount AS (
                 WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
             )) OR
             (dis.scope = 'Global')
-        )
-    ORDER BY p.id, dis.priority DESC, dis.discount_value DESC -- Pick the highest priority discount
+        )   
+    ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
 )
 SELECT 
-    sd.discount_id,
-    sd.discount_strategy AS "discountType",
+    p.product_id AS "id",
+    sd.discount_id as "discountId",
+    sd.discount_strategy AS "discountStrategy",
     sd.discount_value AS "discountValue",
-    sd.scope AS "scope",
+    sd.scope,
     sd.promotion_type AS "promotionType",
-    p.id AS "productId",
-    p.name AS "productName",
-    p.unit_price AS "productUnitPrice",
-    p.purchase_price AS "productPurchasePrice",
+    p.name,
+    p.unit_price AS "unitPrice",
+    p.purchase_price AS "purchasePrice",
     p.slug,
-    p.thumbnailImage,
-    p.hoverImage,
+    p.product_variant_id as "productVariantId",
+    p.thumbnail_image as "thumbnailImage", -- ✅ Use the correct alias with double quotes
+    p.hover_image as  "hoverImage", -- ✅ Use the correct alias with double quotes
     p.variant,
     p.featured,
     rt.reviews_count AS "reviewsCount",
-    rt.average_rating AS "averageRating",
+    rt.average_rating AS "avgRating",
     ROUND(SUM((p.unit_price * COALESCE(t.value, 0)) / 100), 2) AS "taxAmount",
     
     -- Calculate Discounted Price
@@ -256,9 +257,8 @@ LEFT JOIN
     taxs t ON t.id = p.tax_id
 GROUP BY 
     sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
-    p.id, p.name, p.slug, p.thumbnailImage, p.hoverImage, 
+    p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id,
     p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price;
-
     `
   );
 
