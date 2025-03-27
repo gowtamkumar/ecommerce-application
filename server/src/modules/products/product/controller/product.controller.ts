@@ -144,8 +144,8 @@ WITH productTable AS (
         p.thumbnail_image AS "thumbnailImage",
         p.hover_image AS "hoverImage",
         p.variant,
-        p.discount_id AS "discountId",
         p.featured,
+        p.tax_id,
         pv.unit_price,
         pv.purchase_price,
         pv.id AS product_variant_id
@@ -173,7 +173,7 @@ reviewsTable AS (
     FROM reviews
     GROUP BY product_id
 ),
-discountData AS (
+validDiscount AS (
     SELECT 
         dis.id AS discount_id,
         dis.discount_strategy,
@@ -181,83 +181,85 @@ discountData AS (
         dis.scope,
         dis.promotion_type,
         dis.start_date,
-        dis.end_date
+        dis.end_date,
+        dis.priority
     FROM discounts dis
-)
-SELECT 
-    dis.discount_id,
-    dis.discount_strategy AS "discountType",
-    dis.discount_value AS "discountValue",
-    dis.scope AS "scope",
-    dis.promotion_type AS "promotionType",
-    dis.start_date AS "startDate",
-    dis.end_date AS "endDate",
-    p.id AS "productId",
-    p.name AS "productName",
-    pv.unit_price AS "productUnitPrice",  -- Use unit_price from product_variants (pv)
-    pv.purchase_price AS "productPurchasePrice",  -- Use purchase_price from product_variants (pv)
-    p.slug,
-    p.thumbnail_image AS "thumbnailImage",
-    p.hover_image AS "hoverImage",
-    p.variant,
-    p.featured,
-    rt.reviews_count AS "reviewsCount",
-    rt.average_rating AS "averageRating",
-    ROUND(SUM((pv.unit_price * COALESCE(taxs.value, 0)) / 100), 2) AS "taxAmount",
-    
-    -- Calculate Discounted Price
-    ROUND(
-        CASE 
-            WHEN dis.discount_strategy = 'Percentage' THEN 
-                pv.unit_price - (pv.unit_price * dis.discount_value / 100)
-            WHEN dis.discount_strategy = 'Fixed' THEN 
-                pv.unit_price - dis.discount_value
-            ELSE 
-                pv.unit_price  -- No discount applied
-        END, 
-        2
-    ) AS "discountedPrice"  -- This will show the discounted price
-FROM 
-    discountData dis
-LEFT JOIN 
-    products p ON 
+    WHERE 
+        dis.start_date <= dis.end_date -- Only valid discounts
+        ORDER BY dis.priority DESC
+    LIMIT 1
+),
+selectedDiscount AS (
+    SELECT DISTINCT ON (p.id) 
+        p.id AS product_id,
+        dis.discount_id,
+        dis.discount_strategy,
+        dis.discount_value,
+        dis.scope,
+        dis.promotion_type
+    FROM products p
+    LEFT JOIN validDiscount dis ON 
         (
-            -- If the discount is scoped to "Product", match product's discount_id
-            (dis.scope = 'Product' AND p.discount_id = dis.discount_id)
-            OR
-            -- If the discount is scoped to "Category", match the applicable category
+            (dis.scope = 'Product' AND p.discount_id = dis.discount_id) OR
             (dis.scope = 'Category' AND EXISTS (
                 SELECT 1 
                 FROM product_categories pc 
-                WHERE pc.product_id = p.id AND pc.category_id IN 
+                WHERE pc.product_id = p.id 
+                AND pc.category_id IN 
                     (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
-            ))
-            OR
-            -- If the discount is scoped to "Brand", match the applicable brand
+            )) OR
             (dis.scope = 'Brand' AND EXISTS (
                 SELECT 1 
                 FROM applicable_brands ab 
                 WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
-            ))
-            OR
-            -- If the discount is global, include all products
+            )) OR
             (dis.scope = 'Global')
         )
+    ORDER BY p.id, dis.priority DESC, dis.discount_value DESC -- Pick the highest priority discount
+)
+SELECT 
+    sd.discount_id,
+    sd.discount_strategy AS "discountType",
+    sd.discount_value AS "discountValue",
+    sd.scope AS "scope",
+    sd.promotion_type AS "promotionType",
+    p.id AS "productId",
+    p.name AS "productName",
+    p.unit_price AS "productUnitPrice",
+    p.purchase_price AS "productPurchasePrice",
+    p.slug,
+    p.thumbnailImage,
+    p.hoverImage,
+    p.variant,
+    p.featured,
+    rt.reviews_count AS "reviewsCount",
+    rt.average_rating AS "averageRating",
+    ROUND(SUM((p.unit_price * COALESCE(t.value, 0)) / 100), 2) AS "taxAmount",
+    
+    -- Calculate Discounted Price
+    ROUND(
+        CASE 
+            WHEN sd.discount_strategy = 'Percentage' THEN 
+                p.unit_price - (p.unit_price * sd.discount_value / 100)
+            WHEN sd.discount_strategy = 'Fixed' THEN 
+                p.unit_price - sd.discount_value
+            ELSE 
+                p.unit_price  -- No discount applied
+        END, 
+        2
+    ) AS "discountedPrice" 
+FROM 
+    productTable p
 LEFT JOIN 
-    productTable pv ON pv.product_id = p.id  -- Use the lateral join table here for the product variant data
+    selectedDiscount sd ON sd.product_id = p.product_id
 LEFT JOIN 
-    reviewsTable rt ON rt.product_id = p.id
+    reviewsTable rt ON rt.product_id = p.product_id
 LEFT JOIN 
-    taxs ON taxs.id = p.tax_id
-LEFT JOIN 
-    product_categories pc ON pc.product_id = p.id
-LEFT JOIN 
-    brands b ON b.id = p.brand_id
-WHERE 1=1
+    taxs t ON t.id = p.tax_id
 GROUP BY 
-    dis.discount_id, dis.discount_strategy, dis.discount_value, dis.scope, dis.promotion_type, 
-    dis.start_date, dis.end_date, p.id, p.name, p.slug, p.thumbnail_image, p.hover_image, 
-    p.variant, p.featured, rt.reviews_count, rt.average_rating, taxs.value, pv.unit_price, pv.purchase_price
+    sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
+    p.id, p.name, p.slug, p.thumbnailImage, p.hoverImage, 
+    p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price;
 
 
     `

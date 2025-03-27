@@ -1,0 +1,4667 @@
+{
+	"info": {
+		"_postman_id": "5837ff9d-001c-4d85-91d4-52e91838271e",
+		"name": "ecommerce-application-with-express",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18546794"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtamkumar\",\n    \"phone\": \"0171222233\",\n    \"email\": \"gowtampaul0@gmail.com\",\n    \"username\": \"gowtamkumar\",\n    \"password\": \"12345678\",\n    \"role\": \"Admin\",\n    \"type\": \"Admin\",\n    \"status\": \"Active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0YW1rdW1hciIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTcxNTA2OTEwNiwiZXhwIjoxNzE1MTU1NTA2fQ.-oDBogV87c-bpO9MDRHVSanjuTRvCrmM44asA70nQr8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam Kumar\",\n    \"phone\": \"+8801756716303\",\n    \"email\": \"gowtsama@gmail.com\",\n    \"username\": \"gowtamkumars\",\n    \"password\": \"1234567\",\n    \"role\": \"Admin\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam Kumar\",\n    \"phone\": \"+8801756716303\",\n    \"email\": \"gowtsama@gmail.com\",\n    \"username\": \"gowtamkumars\",\n    \"password\": \"1234567\",\n    \"role\": \"Admin\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/logout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsImlhdCI6MTcxNDEyNDc2MSwiZXhwIjoxNzE0NzI5NTYxfQ.G9JkgGQfI4sF-BBc5ql5kv9LgIG_R_g0Ou4s7DP7VHY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam Kumar\",\n    \"phone\": \"+8801756716303\",\n    \"email\": \"gowtsama@gmail.com\",\n    \"username\": \"gowtamkumars\",\n    \"password\": \"1234567\",\n    \"role\": \"Admin\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/users/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsImlhdCI6MTcxNDEyNDc2MSwiZXhwIjoxNzE0NzI5NTYxfQ.G9JkgGQfI4sF-BBc5ql5kv9LgIG_R_g0Ou4s7DP7VHY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam Kumar\",\n    \"phone\": \"+8801756716303\",\n    \"email\": \"gowtsama@gmail.com\",\n    \"username\": \"gowtamkumars\",\n    \"password\": \"1234567\",\n    \"role\": \"Admin\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/users/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam Kumar\",\n    \"phone\": \"+8801756716303\",\n    \"email\": \"gowtsama@gmail.com\",\n    \"username\": \"gowtamkumars\",\n    \"password\": \"1234567\",\n    \"role\": \"Admin\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/users/65ad3c920a2727203a4739c1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"users",
+								"65ad3c920a2727203a4739c1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get me",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam Kumar\",\n    \"phone\": \"+8801756716303\",\n    \"email\": \"gowtsama@gmail.com\",\n    \"username\": \"gowtamkumars\",\n    \"password\": \"1234567\",\n    \"role\": \"Admin\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"gowtamkumar\",\n    \"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fotgot password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtS3VtYXIiLCJ1c2VybmFtZSI6Imdvd3RtYWt1bWFyIiwicm9sZSI6IkFkbWluIiwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MTQxMDkyMjcsImV4cCI6MTcxNDcxNDAyN30.Mf_abqXLFX0XuPtfn3XaJVMp7V7NWaFbTUJFQc21lYw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"gowtamkumar2019@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/forgot-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0YW1rdW1hciIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTcyMTk2MzAwMSwiZXhwIjoxNzIyMDQ5NDAxfQ.POBWlIVBORSs9wzFPs1KxL3N1fixKqCrwN64QfxPYVA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"currentPassword\": \"arkopaul\",\n    \"newPassword\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/update-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtS3VtYXIiLCJ1c2VybmFtZSI6Imdvd3RtYWt1bWFyIiwicm9sZSI6IkFkbWluIiwic3RhdHVzIjp0cnVlLCJpYXQiOjE3MTQxMDk3ODQsImV4cCI6MTcxNDcxNDU4NH0.zqfTdXRYNGb3qbqJKkGg-MvTcHo89mwr5ol2fvyGmiw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Gowtam Kumar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/users/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsImlhdCI6MTcxNDcwNjkzOCwiZXhwIjoxNzE1MzExNzM4fQ.ACPlfcbA_aYhw3b6dL-GRKyw0IQX2V_Zct0yI9dloVs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"arkopaul\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ293dGFta3VtYXIyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTcxNzQ5MzY3NiwiZXhwIjoxNzE3NDk0Mjc2fQ.QTElbY_ff6F7mI6TTg9FLvRhmZVTGVkiYr56fyYSfuA",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"reset-password",
+								"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ293dGFta3VtYXIyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTcxNzQ5MzY3NiwiZXhwIjoxNzE3NDk0Mjc2fQ.QTElbY_ff6F7mI6TTg9FLvRhmZVTGVkiYr56fyYSfuA"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bootcamp",
+			"item": [
+				{
+					"name": "get all bootcapm",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/bootcamp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bootcamp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get bootcapm",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/bootcamp/65aa86cd11cdb77c6c3d8bbe",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bootcamp",
+								"65aa86cd11cdb77c6c3d8bbe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single  bootcapm",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam paul\",\n    \"website\": \"www.facebook.com\",\n    \"address\": \"Jashore\",\n    \"location\": \"ddd\",\n    \"slug\": \"ddd\",\n    \"description\": \"sadf\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/bootcamp/65aa86695186df139a64462e",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bootcamp",
+								"65aa86695186df139a64462e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single  bootcapm",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/bootcamp/65aa86695186df139a64462e",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bootcamp",
+								"65aa86695186df139a64462e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Bootcamp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"gowtam kumar\",\n    \"website\": \"www.facebook.com\",\n    \"address\": \"aaa\",\n    \"location\": \"ddd\",\n    \"slug\": \"ddd\",\n    \"description\": \"sadf\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/bootcamp",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bootcamp"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Discount",
+			"item": [
+				{
+					"name": "get all discount",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/discounts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"discounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get discount",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/discounts/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"discounts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single discount",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imdvd3RhbWt1bWFyIiwidXNlcm5hbWUiOiJnb3d0YW1rdW1hciIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk5ODE5NSwiZXhwIjoxNzQzMDg0NTk1fQ.tjZgTxYaxP9eHO3mW69m7dS8OPA9N61vW6IjljEux6Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Discount\",\n    \"scope\": \"Brand\",\n    \"promotionType\": \"Discount\",\n    \"discountStrategy\": \"Fixed\",\n    \"value\": 10,\n    \"applicableBrands\": [7]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/discounts/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"discounts",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single discount",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/discounts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"discounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new discount",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imdvd3RhbWt1bWFyIiwidXNlcm5hbWUiOiJnb3d0YW1rdW1hciIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTc0Mjk5ODE5NSwiZXhwIjoxNzQzMDg0NTk1fQ.tjZgTxYaxP9eHO3mW69m7dS8OPA9N61vW6IjljEux6Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Discount\",\n    \"scope\": \"Brand\",\n    \"promotionType\": \"Discount\",\n    \"discountStrategy\": \"Percentage\",\n    \"value\": 5,\n    \"applicableBrands\": [1]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/discounts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"discounts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "get all Notifications",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Notifications",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ikdvd3RhbSBLdW1hciIsInVzZXJuYW1lIjoiZ293dGFta3VtYXIiLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE3MzY0NzU1MzksImV4cCI6MTczNjU2MTkzOX0.fmCQR2j3oLHbfAApfFN36e81syQOtes2WMmb3fjAw08",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications/read/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"read",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Notifications",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ikdvd3RhbSBLdW1hciIsInVzZXJuYW1lIjoiZ293dGFta3VtYXIiLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE3MzY0NzU1MzksImV4cCI6MTczNjU2MTkzOX0.fmCQR2j3oLHbfAApfFN36e81syQOtes2WMmb3fjAw08",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications/clear",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"clear"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications/12",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single  Notifications",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"order placed\",\n    \"type\": \"Order\",\n    \"message\": \"this product is onlyllll\",\n    \"isRead\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single  Notifications",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Notifications",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"order placed\",\n    \"type\": \"Order\",\n    \"message\": \"this product is onlyllll\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/notifications",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "get Dashboard Report",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/reports/dashboard?startDate=01-02-2025&endDate=10-02-2025",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"reports",
+								"dashboard"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "01-02-2025"
+								},
+								{
+									"key": "endDate",
+									"value": "10-02-2025"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get top selling product",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/reports/top-selling-products",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reports",
+								"top-selling-products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "brand",
+			"item": [
+				{
+					"name": "get all brand",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/brands",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"brands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get brand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/brands/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"brands",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single brand",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"new brand 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/brands/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"brands",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single brand",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/brands/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"brands",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new brand",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Suzuki\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/brands",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"brands"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "address",
+			"item": [
+				{
+					"name": "get all address",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/shipping-address",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"shipping-address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/shipping-address/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"shipping-address",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single address",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"addressLine1\": \"jessroe\",\n    \"addressLine2\": \"khulna\",\n    \"state\": \"Uz\",\n    \"city\": \"kkk\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/shipping-address/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"shipping-address",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single address",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/shipping-address/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"shipping-address",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new address",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"Office\",\n    \"name\": \"Gowtam kumar\",\n    \"phoneNo\": \"01767164394\",\n    \"email\": \"gowtam@gmail.com\",\n    \"userId\": 1,\n    \"country\": \"Bangladesh\",\n    \"divisionId\": 1,\n    \"districtId\": 1,\n    \"upazilaId\": 1,\n    \"unionId\": 1,\n    \"address\": \"Kayem koala high school\",\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/shipping-address",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"shipping-address"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tax",
+			"item": [
+				{
+					"name": "get all tax",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/taxs",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"taxs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get tax",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single tax",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"10%\",\n    \"value\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single tax",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new tax",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"10%\",\n    \"value\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "color",
+			"item": [
+				{
+					"name": "Gets",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/colors",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"colors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/colors/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"colors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"White\",\n    \"color\": \"white\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/colors/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"colors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/colors/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"colors",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Green\",\n    \"color\": \"green\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/colors",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"colors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "unit",
+			"item": [
+				{
+					"name": "get all unit",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/units",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"units"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get unit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/units/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"units",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single unit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Pisce\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/units/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"units",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single unit",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/units/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"units",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new unit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Pisces\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/units",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"units"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "wishlists",
+			"item": [
+				{
+					"name": "get all wishlist",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/wishlists",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wishlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get wishlist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/wishlists/12",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wishlists",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single wishlist",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"7\",\n    \"productId\": \"5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/wishlists/10",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wishlists",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single wishlist",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/wishlists/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wishlists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Wishlist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 2,\n    \"productId\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/wishlists",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"wishlists"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "file",
+			"item": [
+				{
+					"name": "get all tax",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0YW1rdW1hciIsInJvbGUiOiJBZG1pbiIsImlhdCI6MTcxNzM4NTg1NSwiZXhwIjoxNzE3NDcyMjU1fQ.nLcw0829q_8o13F60uWQ-Dnvkf1WUOstEYaQheN8ENE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/uploads/file-1715318632752.png",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"uploads",
+								"file-1715318632752.png"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get image",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/public/gowtam.jpeg",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"public",
+								"gowtam.jpeg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get file",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single file",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"Fixed Amount\",\n    \"value\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single file",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/taxs/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"taxs",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new file",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/home/gowtamkumar/Pictures/Screenshots/Screenshot from 2025-02-10 21-54-33.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/files/uploads",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "categoris",
+			"item": [
+				{
+					"name": "get all category",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/categories/antd",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"categories",
+								"antd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/categories/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single category",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"cate jsu name change 31\",\n    \"urlSlug\": \"sdfasdfasdf4\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/categories/31",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"31"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/categories/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gets all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/categories/all",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"categories",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"cat-2\",\n    \"urlSlug\": \"cat-2\"\n \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/categories",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "size",
+			"item": [
+				{
+					"name": "get all size",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/sizes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"sizes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get size",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/sizes/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"sizes",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single size",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"lg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/sizes/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"sizes",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single size",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/sizes/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"sizes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new size",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"lg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/sizes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"sizes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "get all status",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/status",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/status/5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"status",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Order Ready to Ship\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/status/5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"status",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single status",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/status/9",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"status",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Pending\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/status",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payment",
+			"item": [
+				{
+					"name": "get all payment",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/payments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get payment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/payments/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single payment",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2024-04-11\",\n    \"orderId\": \"2\",\n    \"paymentMethod\": \"Online\",\n    \"amount\": 300\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/payments/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single payment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/payments/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new payment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2024-04-11\",\n    \"orderId\": 1,\n    \"paymentMethod\": \"Online\",\n    \"amount\": 300\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/payments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "get all review",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single review",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"5\",\n    \"rating\": 4.5,\n    \"date\": \"2024-02-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": 34,\n    \"rating\": 1,\n    \"date\": \"2024-02-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "get all review",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/posts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single review",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"5\",\n    \"rating\": 4.5,\n    \"date\": \"2024-02-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/posts/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"5\",\n    \"rating\": 4.5,\n    \"date\": \"2024-02-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "get all review",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single review",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"5\",\n    \"rating\": 4.5,\n    \"date\": \"2024-02-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"postId\": 1,\n    \"content\":\"fadgfsdfg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/comments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cart",
+			"item": [
+				{
+					"name": "get all Cart",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/carts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all user Cart",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/carts/list",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Cart list",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/carts/list",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "coupon apply with Cart list",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/carts/coupon-apply-cartlist?couponCode=4444",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"carts",
+								"coupon-apply-cartlist"
+							],
+							"query": [
+								{
+									"key": "couponCode",
+									"value": "4444"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cart increment and decrement",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"Increment\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/carts/qty-up-down/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts",
+								"qty-up-down",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/carts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single Cart",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"5\",\n    \"rating\": 4.5,\n    \"date\": \"2024-02-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/carts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/carts/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": 5,\n    \"productVariantId\": 1,\n    \"qty\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/carts",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Menu",
+			"item": [
+				{
+					"name": "get all menus",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/menus/dashboard",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"menus",
+								"dashboard"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/menus",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"menus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single Cart",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"main menu\",\n    \"items\": [{\n        \"name\": \"dfasdf\",\n        \"children\": [\n            {\n            \"label\": \"Home 1\",\n            \"url\": \"/\"\n            },\n            {\n            \"label\": \"About\",\n            \"url\": \"/about\"\n            }\n        ]\n    }],\n    \"userId\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/menus/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"menus",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/menus/6",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"menus",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Menu",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imdvd3RhbSIsInVzZXJuYW1lIjoiZ293dGFta3VtYXIiLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE3MzA2NDM1MTIsImV4cCI6MTczMDcyOTkxMn0.V2P8-_tkGSccYrf9tsKJ55TIw-En42aQYDUdc3qvJtE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"main menu\",\n    \"items\": [{\n        \"name\": \"dfasdf\",\n        \"children\": [{\n            \"label\": \"Home\",\n            \"url\": \"/\"\n        }]\n    }],\n    \"userId\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/menus",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"menus"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Coupon",
+			"item": [
+				{
+					"name": "get all Coupon",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/coupons",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"coupons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get Coupon",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/discounts/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"discounts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single Coupon",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"couponCode\": \"2\",\n    \"type\": \"FreeShipping\",\n    \"value\": 300,\n    \"startDate\": \"01-09-2024\",\n    \"expiryDate\": \"08-09-2024\",\n    \"endDate\": \"08-09-2024\",\n    \"minOrderAmount\": \"200\",\n    \"usageCount\": 200\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/discounts/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"discounts",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single Coupon",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/discounts/4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"discounts",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new Coupon",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"type\": \"Product\",\n        \"code\": \"4444\",\n        \"discountType\": \"Percentage\",\n        \"value\": 10,\n        \"startDate\": \"2025-01-17\",\n        \"expiryDate\": \"2025-01-26\",\n        \"minOrderAmount\": 1,\n        \"maxUser\": 10,\n        \"mincartValue\": 1,\n        \"maxDiscountValue\": 100,\n        \"usageLimit\": 10,\n        \"usagePerUser\": 2,\n        \"couponProducts\": [5],\n        \"active\": true\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/coupons",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"coupons"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "get all product",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/products",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsImlhdCI6MTcxNDU1ODI0MSwiZXhwIjoxNzE1MTYzMDQxfQ.Cnjs7IlnCGnXNERM3L26ttlRFSMurICg82dRacXpNVU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/products/4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single  product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"hp laptop\",\n   \"tags\": [\"hello new\", \"new product\", \"nice product\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/products/22",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"products",
+								"22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/products/665822bdc03e0ef89079e5f0",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"665822bdc03e0ef89079e5f0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Ryzen 5 3300g procceser with graphic\",\n  \"slug\": \"ryzen-5700g-procceser-with-graphic\",\n   \"taxId\": 1,\n  \"images\": [\n    \"images-1737685950245.jpg\"\n  ],\n  \"thumbnailImage\": \"thumbnailImage-1737685933644.png\",\n  \"hoverImage\": \"hoverImage-1737685940554.jpg\",\n  \"brandId\": 1,\n  \"unitId\": 1,\n  \"discountId\": 2,\n  \"limitPurchaseQty\": 33,\n  \"description\": \"ddd\",\n  \"shortDescription\": \"sss\",\n  \"enableReview\": true,\n  \"variant\": true,\n  \"alertQty\": 10,\n  \"status\": \"Active\",\n  \"productVariants\": [\n    {\n      \"unitPrice\": 2222,\n      \"purchasePrice\": 111,\n      \"default\": true,\n      \"sizeId\": 2,\n      \"colorId\": 1,\n      \"stockQty\": 20\n    }\n  ],\n  \"productCategories\": [2]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/products",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product variants",
+			"item": [
+				{
+					"name": "get all product Variant",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsImlhdCI6MTcxNDU1ODI0MSwiZXhwIjoxNzE1MTYzMDQxfQ.Cnjs7IlnCGnXNERM3L26ttlRFSMurICg82dRacXpNVU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/product-variants",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"product-variants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get product variant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/product-variants/4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"product-variants",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single  product variant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6Ikdvd3RhbUt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsImlhdCI6MTcxNDU1ODI0MSwiZXhwIjoxNzE1MTYzMDQxfQ.Cnjs7IlnCGnXNERM3L26ttlRFSMurICg82dRacXpNVU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"priduct variant\",\n    \"price\": 200,\n    \"stockQty\": 100,\n    \"productId\": \"5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/product-variants/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"product-variants",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single product Variant",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/product-variants/4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"product-variants",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new product Variant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTEwNTAxLCJleHAiOjE3MTQ3MTUzMDF9.akjaUofRebDqrMZPcwvMRFnBbABy1wjcmErl_n4tMmk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"nestjs\",\n    \"price\": 200,\n    \"stockQty\": 100,\n    \"productId\": \"5\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/product-variants",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"product-variants"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order",
+			"item": [
+				{
+					"name": "orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/orders",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"totalQty\": 3,\n    \"subTotal\": \"7332.60\",\n    \"totalDiscount\": \"733.26\",\n    \"totalTax\": \"666.60\",\n    \"shippingCharge\": \"50.00\",\n    \"grandTotal\": \"7099.34\",\n    \"couponDiscount\": \"100.00\",\n    \"shippingAddressId\": 2,\n    \"couponId\": 1,\n    \"paymentMethod\": \"Cash\",\n    \"orderItems\": [\n        {\n                \"qty\": 3,\n                \"productVariantId\": 1,\n                \"productId\": 4,\n                \"unitPrice\": \"2222.00\",\n                \"purchasePrice\": \"111.00\",\n                \"taxAmount\": \"666.60\",\n                \"subTotal\": \"7332.60\",\n                \"discountAmount\": \"733.26\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/orders",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "single order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/orders/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/orders/4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pudate order",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderDate\": \"2024-06-27\",\n    \"deliveryId\": 2,\n    \"isPaid\": true,\n    \"isShipped\": true,\n    \"orderTotalAmount\": 100.70,\n    \"netAmount\": 700.50,\n    \"shipingAmount\": 50,\n    \"phoneNo\": \"018938376533\",\n    \"note\": \"dfasdf\",\n    \"paymentStatus\": \"Paid\",\n    \"deliveryAddress\": \"jashore\",\n    \"orderItems\": [\n        {\n            \"totalAmount\": 200,\n            \"orderId\": 3,\n            \"productId\": 12,\n            \"price\": 50,\n            \"qty\": 11\n        },\n        {\n            \"totalAmount\": 300,\n            \"orderId\": 3,\n            \"productId\": 12,\n            \"price\": 70.50,\n            \"qty\": 10\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/orders/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "status change order",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"Completed\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/orders/order-status-update/3",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"order-status-update",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order-tracking",
+			"item": [
+				{
+					"name": "get all order-tracking",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/order-tracking",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"order-tracking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single a get order-tracking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/order-tracking/1",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"order-tracking",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  a single order-tracking",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n                    \"location\": \"asdfasdf\",\n                    \"status\": \"Order Placed\"\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/order-tracking/2",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"order-tracking",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete  a single order-tracking",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/order-tracking/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"order-tracking",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new order-tracking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderId\": 17,\n    \"location\": \"অর্ডারটি ডেলিভারি দেয়া হয়েছে\",\n    \"status\": \"Order Delivered\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/order-tracking",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"order-tracking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "geo-location",
+			"item": [
+				{
+					"name": "Districts",
+					"item": [
+						{
+							"name": "get all districts",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/v1/districts",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"districts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single a get districts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update  a single districts",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"couponCode\": \"2\",\n    \"type\": \"FreeShipping\",\n    \"value\": 300,\n    \"startDate\": \"01-09-2024\",\n    \"expiryDate\": \"08-09-2024\",\n    \"endDate\": \"08-09-2024\",\n    \"minOrderAmount\": \"200\",\n    \"usageCount\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete  a single districts",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/4",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a new districts",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n     \"couponCode\": \"xx\",\n     \"discountType\": \"Percentage\",\n     \"type\": \"Discount\",\n     \"value\": 10,\n     \"startDate\": \"2024-06-17T12:20:42.500Z\",\n     \"expiryDate\": \"2024-06-26T18:00:00.000Z\",\n     \"minOrderAmount\": 2000,\n     \"maxUser\": 10\n   }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/districts",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"districts"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Upazilas",
+					"item": [
+						{
+							"name": "get all upazilas",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/v1/upazilas",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upazilas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single a get upazilas",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/upazilas/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upazilas",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update  a single upazilas",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"couponCode\": \"2\",\n    \"type\": \"FreeShipping\",\n    \"value\": 300,\n    \"startDate\": \"01-09-2024\",\n    \"expiryDate\": \"08-09-2024\",\n    \"endDate\": \"08-09-2024\",\n    \"minOrderAmount\": \"200\",\n    \"usageCount\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/upazilas/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upazilas",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete  a single upazilas",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/upazilas/4",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upazilas",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a new upazilas",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n     \"couponCode\": \"xx\",\n     \"discountType\": \"Percentage\",\n     \"type\": \"Discount\",\n     \"value\": 10,\n     \"startDate\": \"2024-06-17T12:20:42.500Z\",\n     \"expiryDate\": \"2024-06-26T18:00:00.000Z\",\n     \"minOrderAmount\": 2000,\n     \"maxUser\": 10\n   }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/upazilas",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upazilas"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Division",
+					"item": [
+						{
+							"name": "get all division",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/v1/divisions/",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"divisions",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single a get division",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update  a single division",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"couponCode\": \"2\",\n    \"type\": \"FreeShipping\",\n    \"value\": 300,\n    \"startDate\": \"01-09-2024\",\n    \"expiryDate\": \"08-09-2024\",\n    \"endDate\": \"08-09-2024\",\n    \"minOrderAmount\": \"200\",\n    \"usageCount\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete  a single division",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/4",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a new division",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n     \"couponCode\": \"xx\",\n     \"discountType\": \"Percentage\",\n     \"type\": \"Discount\",\n     \"value\": 10,\n     \"startDate\": \"2024-06-17T12:20:42.500Z\",\n     \"expiryDate\": \"2024-06-26T18:00:00.000Z\",\n     \"minOrderAmount\": 2000,\n     \"maxUser\": 10\n   }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/divisions/sync-geo-locations",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"divisions",
+										"sync-geo-locations"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Unions",
+					"item": [
+						{
+							"name": "get all unions",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJiMzlmNzI5ZTg2OGM2ZjBkMDA3OGEiLCJuYW1lIjoiR293dGFtIGt1bWFyIiwidXNlcm5hbWUiOiJnb3d0bWFrdW1hciIsInJvbGUiOiJBZG1pbiIsInN0YXR1cyI6dHJ1ZSwiaWF0IjoxNzE0MTExMjY4LCJleHAiOjE3MTQ3MTYwNjh9.h02V153LCT_F6lQrMOF4TKw7btW3YrAFhKMM009hDBk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/api/v1/unions?upazilaId=175",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"unions"
+									],
+									"query": [
+										{
+											"key": "upazilaId",
+											"value": "175"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single a get unions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/discounts/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"discounts",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update  a single unions",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"couponCode\": \"2\",\n    \"type\": \"FreeShipping\",\n    \"value\": 300,\n    \"startDate\": \"01-09-2024\",\n    \"expiryDate\": \"08-09-2024\",\n    \"endDate\": \"08-09-2024\",\n    \"minOrderAmount\": \"200\",\n    \"usageCount\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/unions/3",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"unions",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete  a single unions",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/unions/4",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"unions",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a new unions",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n     \"couponCode\": \"xx\",\n     \"discountType\": \"Percentage\",\n     \"type\": \"Discount\",\n     \"value\": 10,\n     \"startDate\": \"2024-06-17T12:20:42.500Z\",\n     \"expiryDate\": \"2024-06-26T18:00:00.000Z\",\n     \"minOrderAmount\": 2000,\n     \"maxUser\": 10\n   }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/api/v1/unions",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"unions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "sync-geo-location",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"couponCode\": \"xx\",\n     \"discountType\": \"Percentage\",\n     \"type\": \"Discount\",\n     \"value\": 10,\n     \"startDate\": \"2024-06-17T12:20:42.500Z\",\n     \"expiryDate\": \"2024-06-26T18:00:00.000Z\",\n     \"minOrderAmount\": 2000,\n     \"maxUser\": 10\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/divisions/sync-geo-locations",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"divisions",
+								"sync-geo-locations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pages",
+			"item": [
+				{
+					"name": "Home",
+					"item": [
+						{
+							"name": "get home",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/api/v1/home",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"home"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
