@@ -182,16 +182,14 @@ validDiscount AS (
         dis.promotion_type,
         dis.start_date,
         dis.end_date,
-        dis.priority
+        dis.priority,
+        ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
     FROM discounts dis
-    WHERE 
-        dis.start_date <= dis.end_date -- Only valid discounts
-        ORDER BY dis.priority DESC
-    LIMIT 1
+    WHERE dis.start_date <= NOW() AND dis.end_date >= NOW()
 ),
 selectedDiscount AS (
     SELECT DISTINCT ON (p.id) 
-        p.id AS product_id,
+        p.*,
         dis.discount_id,
         dis.discount_strategy,
         dis.discount_value,
@@ -260,7 +258,6 @@ GROUP BY
     sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
     p.id, p.name, p.slug, p.thumbnailImage, p.hoverImage, 
     p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price;
-
 
     `
   );

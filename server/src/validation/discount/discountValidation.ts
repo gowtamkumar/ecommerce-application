@@ -4,7 +4,7 @@ export const discountValidation = z.object({
   name: z.string({
     required_error: "name is required",
   }),
-  scope: z.enum(["Global", "Product", "Category", "Brand"], {
+  scope: z.enum(["Global", "Product", "Products", "Category", "Brand"], {
     required_error: "Scope is required",
   }),
   promotionType: z.enum(["Discount", "Offer", "FlashSale", "Seasonal"], {
