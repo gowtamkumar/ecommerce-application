@@ -10,6 +10,7 @@ import { ApplicableProductEntity } from "../model/applicable-products.entity";
 import { ApplicableBrandEntity } from "../model/applicable-brand.entity";
 import { ApplicableCategoryEntity } from "../model/applicable-category.entity";
 import { Repository } from "typeorm";
+import { ScopeEnum } from "../enum";
 
 // @desc Get all Discounts
 // @route GET /api/v1/Discounts
@@ -23,7 +24,14 @@ export const getDiscounts = asyncHandler(
     const repository = connection.getRepository(DiscountEntity);
     const newQuery = {} as any;
     if (type) newQuery.type = type;
-    const result = await repository.find({ where: newQuery, relations: ["applicableProducts", "applicableBrands", "applicableCategories"] });
+    const result = await repository.find({
+      where: newQuery,
+      relations: [
+        "applicableProducts",
+        "applicableBrands",
+        "applicableCategories",
+      ],
+    });
     return res.status(200).json({
       success: true,
       message: "Get all Discounts",
@@ -93,7 +101,10 @@ export const createDiscount = asyncHandler(
 
     const promises = [];
 
-    if (applicableProducts?.length > 0) {
+    if (
+      applicableProducts?.length > 0 &&
+      validation.data.scope === ScopeEnum.Products
+    ) {
       const applicationProductRepository = connection.getRepository(
         ApplicableProductEntity
       );
@@ -110,7 +121,10 @@ export const createDiscount = asyncHandler(
       promises.push(applicationProductRepository.save(createApplicableProduct));
     }
 
-    if (applicableBrands?.length > 0) {
+    if (
+      applicableBrands?.length > 0 &&
+      validation.data.scope === ScopeEnum.Brand
+    ) {
       const applicableBrandRepository = connection.getRepository(
         ApplicableBrandEntity
       );
@@ -128,7 +142,10 @@ export const createDiscount = asyncHandler(
       promises.push(applicableBrandRepository.save(createApplicableBrand));
     }
 
-    if (applicableCategories?.length > 0) {
+    if (
+      applicableCategories?.length > 0 &&
+      validation.data.scope === ScopeEnum.Category
+    ) {
       const applicableCategoryRepository = connection.getRepository(
         ApplicableCategoryEntity
       );

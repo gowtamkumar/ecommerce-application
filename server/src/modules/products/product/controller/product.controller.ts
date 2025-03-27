@@ -174,7 +174,7 @@ reviewsTable AS (
     GROUP BY product_id
 ),
 validDiscount AS (
-    SELECT 
+     SELECT 
         dis.id AS discount_id,
         dis.discount_strategy,
         dis.value AS discount_value,
@@ -185,7 +185,11 @@ validDiscount AS (
         dis.priority,
         ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
     FROM discounts dis
-    WHERE dis.start_date <= NOW() AND dis.end_date >= NOW()
+    LEFT JOIN products p ON p.discount_id = dis.id
+    WHERE 
+        ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
+        AND dis.status = 'Active'
+    ORDER BY dis.value DESC
 ),
 selectedDiscount AS (
     SELECT DISTINCT ON (p.id) 
@@ -197,8 +201,11 @@ selectedDiscount AS (
         dis.promotion_type
     FROM products p
     LEFT JOIN validDiscount dis ON (
-            (dis.scope = 'Product' AND p.discount_id = dis.discount_id) OR
-             
+              (dis.scope = 'Products' AND EXISTS (
+                SELECT 1 
+                FROM applicable_products ap 
+                WHERE ap.product_id = p.id AND ap.discount_id = dis.discount_id
+            )) OR
             (dis.scope = 'Category' AND EXISTS (
                 SELECT 1 
                 FROM product_categories pc 
@@ -211,7 +218,8 @@ selectedDiscount AS (
                 FROM applicable_brands ab 
                 WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
             )) OR
-            (dis.scope = 'Global')
+            (dis.scope = 'Global') OR
+            (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
         )   
     ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
 )
