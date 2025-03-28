@@ -146,6 +146,7 @@ WITH productTable AS (
         p.variant,
         p.featured,
         p.tax_id,
+        p.brand_id,
         pv.unit_price,
         pv.purchase_price,
         pv.id AS product_variant_id
@@ -225,20 +226,20 @@ selectedDiscount AS (
 )
 SELECT 
     p.product_id AS "id",
+    p.name,
+    p.slug,
+    p.thumbnail_image as "thumbnailImage", -- ✅ Use the correct alias with double quotes
+    p.hover_image as  "hoverImage", -- ✅ Use the correct alias with double quotes
+    p.variant,
     sd.discount_id as "discountId",
     sd.discount_strategy AS "discountStrategy",
     sd.discount_value AS "discountValue",
     sd.scope,
     sd.promotion_type AS "promotionType",
-    p.name,
+    p.featured,
     p.unit_price AS "unitPrice",
     p.purchase_price AS "purchasePrice",
-    p.slug,
     p.product_variant_id as "productVariantId",
-    p.thumbnail_image as "thumbnailImage", -- ✅ Use the correct alias with double quotes
-    p.hover_image as  "hoverImage", -- ✅ Use the correct alias with double quotes
-    p.variant,
-    p.featured,
     rt.reviews_count AS "reviewsCount",
     rt.average_rating AS "avgRating",
     ROUND(SUM((p.unit_price * COALESCE(t.value, 0)) / 100), 2) AS "taxAmount",
@@ -255,24 +256,63 @@ SELECT
         END, 
         2
     ) AS "discountedPrice" 
-FROM 
-    productTable p
-LEFT JOIN 
-    selectedDiscount sd ON sd.product_id = p.product_id
-LEFT JOIN 
-    reviewsTable rt ON rt.product_id = p.product_id
-LEFT JOIN 
-    taxs t ON t.id = p.tax_id
-GROUP BY 
-    sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
-    p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id,
-    p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price;
+    FROM 
+        productTable p
+    LEFT JOIN 
+        selectedDiscount sd ON sd.product_id = p.product_id
+    LEFT JOIN 
+        reviewsTable rt ON rt.product_id = p.product_id
+    LEFT JOIN 
+        taxs t ON t.id = p.tax_id
+
+      LEFT JOIN 
+          product_categories pc ON pc.product_id = p.product_id
+      LEFT JOIN 
+          brands b ON b.id = p.brand_id   
+    WHERE 1=1
+        ${
+          categoryFilter.length
+            ? `AND pc.category_id IN (${categoryFilter.join(",")})`
+            : ""
+        }
+        ${
+          brandFilter.length
+            ? `AND p.brand_id IN (${brandFilter.join(",")})`
+            : ""
+        }
+        ${
+          minPrice && maxPrice
+            ? `AND p.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
+            : ""
+        }
+        ${discount ? `AND dis.value BETWEEN 0 AND ${discount}` : ""}
+        ${
+          search
+            ? `
+          AND (
+            LOWER(p.name) ILIKE LOWER('%${search}%') OR
+            LOWER(p.description) ILIKE LOWER('%${search}%') OR
+            LOWER(p.short_description) ILIKE LOWER('%${search}%')
+          )
+        `
+            : ""
+        }
+
+    GROUP BY 
+        sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
+        p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id,
+        p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price
+      ${lowPrice ? "ORDER BY p.unit_price ASC" : ""}
+      ${
+        highPrice && !lowPrice ? "ORDER BY p.unit_price DESC" : ""
+      } -- ✅ Avoids duplicate ORDER BY
+      LIMIT ${limit} OFFSET ${(+page - 1) * +limit} -- ✅ Better pagination
     `
   );
 
   return res.status(200).json({
     success: true,
-    message: "Get product filter data",
+    message: "Get product successfully",
     totalCount: products.length,
     data: products,
   });
@@ -558,6 +598,481 @@ export const getProduct = asyncHandler(
 
     const { id } = req.params;
     const connection = await getDBConnection();
+
+    const result = await connection.query(
+      `
+     WITH productTable AS (
+    SELECT 
+        p.*,
+        p.id AS product_id,
+        pv.*,
+        pv.id AS product_variant_id
+    FROM 
+        products p
+    JOIN LATERAL (
+        SELECT 
+            pv.unit_price, 
+            pv.purchase_price, 
+            pv.id
+        FROM 
+            product_variants pv
+        WHERE 
+            pv.product_id = p.id
+        ORDER BY 
+            pv.default DESC, pv.id
+        LIMIT 1
+    ) pv ON true
+    WHERE p.id = $1
+),
+reviewsTable AS (
+    SELECT 
+        product_id,
+        COUNT(*) AS reviews_count,
+        COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+    FROM reviews
+    WHERE product_id = $1
+    GROUP BY product_id
+),
+validDiscount AS (
+    SELECT 
+        dis.id AS discount_id,
+        dis.discount_strategy,
+        dis.value AS discount_value,
+        dis.scope,
+        dis.promotion_type,
+        dis.start_date,
+        dis.end_date,
+        dis.priority,
+        ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
+    FROM discounts dis
+    LEFT JOIN products p ON p.discount_id = dis.id
+    WHERE 
+        ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
+        AND dis.status = 'Active'
+),
+selectedDiscount AS (
+    SELECT DISTINCT ON (p.id) 
+        p.id AS product_id,  
+        dis.discount_id,
+        dis.discount_strategy,
+        dis.discount_value,
+        dis.scope,
+        dis.promotion_type
+    FROM products p
+    LEFT JOIN validDiscount dis ON (
+        (dis.scope = 'Products' AND EXISTS (
+            SELECT 1 
+            FROM applicable_products ap 
+            WHERE ap.product_id = p.id AND ap.discount_id = dis.discount_id
+        )) OR
+        (dis.scope = 'Category' AND EXISTS (
+            SELECT 1 
+            FROM product_categories pc 
+            WHERE pc.product_id = p.id 
+            AND pc.category_id IN 
+                (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
+        )) OR
+        (dis.scope = 'Brand' AND EXISTS (
+            SELECT 1 
+            FROM applicable_brands ab 
+            WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
+        )) OR
+        (dis.scope = 'Global') OR
+        (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
+    )   
+    WHERE p.id = $1
+    ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
+)
+SELECT 
+    p.product_id AS "id",
+    p.name,
+    p.slug,
+    p.thumbnail_image AS "thumbnailImage",
+    p.hover_image AS "hoverImage",
+    p.images,
+    p.variant,
+    p.featured,
+    p.unit_price AS "unitPrice",
+    p.purchase_price AS "purchasePrice",
+    p.product_variant_id AS "productVariantId",
+    p.description,
+    p.short_description as "shortDescription",
+    p.enable_review as "enableReview",
+    p.limit_purchase_qty as "limitPurchaseQty",
+    p.alert_qty as "alertQty",
+    p.tags,
+    sd.discount_id AS "discountId",
+    sd.discount_strategy AS "discountStrategy",
+    sd.discount_value AS "discountValue",
+    sd.scope,
+    sd.promotion_type AS "promotionType",
+    rt.reviews_count AS "reviewsCount",
+    rt.average_rating AS "avgRating",
+    b.name AS "brandName",
+    ROUND(SUM((p.unit_price * COALESCE(t.value, 0)) / 100), 2) AS "taxAmount",
+    ROUND(
+        CASE 
+            WHEN sd.discount_strategy = 'Percentage' THEN 
+                p.unit_price - (p.unit_price * sd.discount_value / 100)
+            WHEN sd.discount_strategy = 'Fixed' THEN 
+                p.unit_price - sd.discount_value
+            ELSE 
+                p.unit_price
+        END, 
+        2
+    ) AS "discountedPrice",
+  -- Fetch all product variants as JSON array
+    COALESCE(
+        JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', pv.id,
+                'sku', pv.sku,
+                'unitPrice', pv.unit_price,
+                'purchasePrice', pv.purchase_price,
+                'productId', pv.product_id,
+                'sizeId', pv.size_id,
+                'colorId', pv.color_id,
+                'material', pv.material,
+                'image', pv.image,
+                'default', pv.default,
+                'stockQty', pv.stock_qty,
+                 'size', JSON_BUILD_OBJECT(
+                    'id', s.id,
+                    'name', s.name
+                ),
+                'color', JSON_BUILD_OBJECT(
+                    'name', colors.name
+                )
+            )
+        ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
+    ) AS "productVariants",
+    -- Tax object
+    json_build_object(
+        'name', t.name,
+        'value', t.value
+    ) AS "tax",
+        -- brand object
+            json_build_object(
+                'id', b.id,
+                'name', b.name,
+                'image', b.image,
+                'status', b.status
+            ) AS "brand", 
+    -- Categories as JSON array
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'categoryId', pc.category_id,
+            'productId', pc.product_id,
+            'category', JSON_BUILD_OBJECT(
+                'id', c.id,
+                'name', c.name
+            )
+        )
+    ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
+    -- Reviews as JSON array (proper join to fetch reviews)
+    COALESCE(
+        JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', r.id,
+                'rating', r.rating,
+                'comment', r.comment
+            )
+        ) FILTER (WHERE r.product_id = p.product_id AND r.status = 'Approved'), '[]'
+    ) AS "reviews"
+FROM 
+    productTable p
+LEFT JOIN 
+    selectedDiscount sd ON sd.product_id = p.product_id
+LEFT JOIN 
+    reviews r ON r.product_id = p.product_id  -- Ensure proper join here
+LEFT JOIN 
+    reviewsTable rt ON rt.product_id = p.product_id
+
+LEFT JOIN 
+    taxs t ON t.id = p.tax_id
+LEFT JOIN 
+    product_categories pc ON pc.product_id = p.product_id
+LEFT JOIN 
+    categories c ON c.id = pc.category_id
+LEFT JOIN 
+    brands b ON b.id = p.brand_id   
+LEFT JOIN 
+    product_variants pv ON pv.product_id = p.product_id
+LEFT JOIN
+   sizes s ON s.id = pv.size_id
+LEFT JOIN
+   colors ON colors.id = pv.size_id
+GROUP BY 
+    sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
+    p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
+    p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
+    p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price, b.name,
+    p.images, t.name, t.value, b.id, b.image, b.status, b.name;
+      `,
+      [id]
+    );
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: `Resource not found with id #${id}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Fetched product with id #${id}`,
+      data: result,
+    });
+  }
+);
+
+// @desc Get a single Product
+// @route GET /api/v1/products/:id
+// @access Public
+// @desc Get a single Product by slug
+// @route GET /api/v1/products/:slug
+// @access Public
+export const getProductByslug = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getProduct ${req.method} ${req.url}`);
+
+    const { slug } = req.params;
+    const connection = await getDBConnection();
+
+    const result = await connection.query(
+      `
+     WITH productTable AS (
+    SELECT 
+        p.*,
+        p.id AS product_id,
+        pv.*,
+        pv.id AS product_variant_id
+    FROM 
+        products p
+    JOIN LATERAL (
+        SELECT 
+            pv.unit_price, 
+            pv.purchase_price, 
+            pv.id
+        FROM 
+            product_variants pv
+        WHERE 
+            pv.product_id = p.id
+        ORDER BY 
+            pv.default DESC, pv.id
+        LIMIT 1
+    ) pv ON true
+    WHERE p.slug = $1  -- Change this line to match the slug
+),
+reviewsTable AS (
+    SELECT 
+        product_id,
+        COUNT(*) AS reviews_count,
+        COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+    FROM reviews
+    WHERE product_id = $1
+    GROUP BY product_id
+),
+validDiscount AS (
+    SELECT 
+        dis.id AS discount_id,
+        dis.discount_strategy,
+        dis.value AS discount_value,
+        dis.scope,
+        dis.promotion_type,
+        dis.start_date,
+        dis.end_date,
+        dis.priority,
+        ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
+    FROM discounts dis
+    LEFT JOIN products p ON p.discount_id = dis.id
+    WHERE 
+        ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
+        AND dis.status = 'Active'
+),
+selectedDiscount AS (
+    SELECT DISTINCT ON (p.id) 
+        p.id AS product_id,  
+        dis.discount_id,
+        dis.discount_strategy,
+        dis.discount_value,
+        dis.scope,
+        dis.promotion_type
+    FROM products p
+    LEFT JOIN validDiscount dis ON (
+        (dis.scope = 'Products' AND EXISTS (
+            SELECT 1 
+            FROM applicable_products ap 
+            WHERE ap.product_id = p.id AND ap.discount_id = dis.discount_id
+        )) OR
+        (dis.scope = 'Category' AND EXISTS (
+            SELECT 1 
+            FROM product_categories pc 
+            WHERE pc.product_id = p.id 
+            AND pc.category_id IN 
+                (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
+        )) OR
+        (dis.scope = 'Brand' AND EXISTS (
+            SELECT 1 
+            FROM applicable_brands ab 
+            WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
+        )) OR
+        (dis.scope = 'Global') OR
+        (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
+    )   
+    WHERE p.slug = $1 -- Change this line to match the slug
+    ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
+)
+SELECT 
+    p.product_id AS "id",
+    p.name,
+    p.slug,
+    p.thumbnail_image AS "thumbnailImage",
+    p.hover_image AS "hoverImage",
+    p.images,
+    p.variant,
+    p.featured,
+    p.unit_price AS "unitPrice",
+    p.purchase_price AS "purchasePrice",
+    p.product_variant_id AS "productVariantId",
+    p.description,
+    p.short_description as "shortDescription",
+    p.enable_review as "enableReview",
+    p.limit_purchase_qty as "limitPurchaseQty",
+    p.alert_qty as "alertQty",
+    p.tags,
+    sd.discount_id AS "discountId",
+    sd.discount_strategy AS "discountStrategy",
+    sd.discount_value AS "discountValue",
+    sd.scope,
+    sd.promotion_type AS "promotionType",
+    rt.reviews_count AS "reviewsCount",
+    rt.average_rating AS "avgRating",
+    b.name AS "brandName",
+    ROUND(SUM((p.unit_price * COALESCE(t.value, 0)) / 100), 2) AS "taxAmount",
+    ROUND(
+        CASE 
+            WHEN sd.discount_strategy = 'Percentage' THEN 
+                p.unit_price - (p.unit_price * sd.discount_value / 100)
+            WHEN sd.discount_strategy = 'Fixed' THEN 
+                p.unit_price - sd.discount_value
+            ELSE 
+                p.unit_price
+        END, 
+        2
+    ) AS "discountedPrice",
+    -- Fetch all product variants as JSON array
+    COALESCE(
+        JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', pv.id,
+                'sku', pv.sku,
+                'unitPrice', pv.unit_price,
+                'purchasePrice', pv.purchase_price,
+                'productId', pv.product_id,
+                'sizeId', pv.size_id,
+                'colorId', pv.color_id,
+                'material', pv.material,
+                'image', pv.image,
+                'default', pv.default,
+                'stockQty', pv.stock_qty,
+                'size', JSON_BUILD_OBJECT(
+                    'id', s.id,
+                    'name', s.name
+                ),
+                'color', JSON_BUILD_OBJECT(
+                    'name', colors.name
+                )
+            )
+        ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
+    ) AS "productVariants",
+    -- Tax object
+    json_build_object(
+        'name', t.name,
+        'value', t.value
+    ) AS "tax",
+    -- brand object
+    json_build_object(
+        'id', b.id,
+        'name', b.name,
+        'image', b.image,
+        'status', b.status
+    ) AS "brand", 
+    -- Categories as JSON array
+    JSON_AGG(
+        JSON_BUILD_OBJECT(
+            'categoryId', pc.category_id,
+            'productId', pc.product_id,
+            'category', JSON_BUILD_OBJECT(
+                'id', c.id,
+                'name', c.name
+            )
+        )
+    ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
+    -- Reviews as JSON array (proper join to fetch reviews)
+    COALESCE(
+        JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'id', r.id,
+                'rating', r.rating,
+                'comment', r.comment
+            )
+        ) FILTER (WHERE r.product_id = p.product_id AND r.status = 'Approved'), '[]'
+    ) AS "reviews"
+FROM 
+    productTable p
+LEFT JOIN 
+    selectedDiscount sd ON sd.product_id = p.product_id
+LEFT JOIN 
+    reviews r ON r.product_id = p.product_id  -- Ensure proper join here
+LEFT JOIN 
+    reviewsTable rt ON rt.product_id = p.product_id
+LEFT JOIN 
+    taxs t ON t.id = p.tax_id
+LEFT JOIN 
+    product_categories pc ON pc.product_id = p.product_id
+LEFT JOIN 
+    categories c ON c.id = pc.category_id
+LEFT JOIN 
+    brands b ON b.id = p.brand_id   
+LEFT JOIN 
+    product_variants pv ON pv.product_id = p.product_id
+LEFT JOIN
+   sizes s ON s.id = pv.size_id
+LEFT JOIN
+   colors ON colors.id = pv.size_id
+GROUP BY 
+    sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
+    p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
+    p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
+    p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price, b.name,
+    p.images, t.name, t.value, b.id, b.image, b.status, b.name;
+      `,
+      [slug]
+    );
+
+    if (!result || result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `Resource not found with slug #${slug}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Fetched product with slug #${slug}`,
+      data: result.rows[0],  // Since result.rows will contain an array of results, get the first row
+    });
+  }
+);
+
+export const getProductOld = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getProduct ${req.method} ${req.url}`);
+
+    const { id } = req.params;
+    const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);
 
     const qb = repository.createQueryBuilder("product");
@@ -578,7 +1093,7 @@ export const getProduct = asyncHandler(
       "category.name",
       "size.id",
       "size.name",
-      "discount.discountType",
+      "discount.discountStrategy",
       "discount.value",
       "productCategories",
       "color.name",
@@ -617,9 +1132,9 @@ export const getProduct = asyncHandler(
 // @desc Get a single Product
 // @route GET /api/v1/products/:id
 // @access Public
-export const getProductByslug = asyncHandler(
+export const getProductByslugOld = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getProductByslug ${req.method} ${req.url}`);
+    logger.info(`Service: getProductByslugOld ${req.method} ${req.url}`);
 
     const { slug } = req.params;
     const connection = await getDBConnection();
