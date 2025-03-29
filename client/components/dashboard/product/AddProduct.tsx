@@ -465,7 +465,7 @@ const AddProduct = ({
                   >
                     {(discounts || []).map((item: any) => (
                       <Select.Option key={item.id} value={item.id}>
-                        {`${item.value} - ${item.discountType}`}
+                        {`${item.value} - ${item.discountStrategy}`}
                       </Select.Option>
                     ))}
                   </Select>

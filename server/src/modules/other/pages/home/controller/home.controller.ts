@@ -70,10 +70,9 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
             -- discount object
             json_build_object(
-                'discountType', d.discount_type,
+                'discountStrategy', d.discount_strategy,
                 'value', d.value
             ) AS "discount", 
-
             -- Aggregation for reviews
             json_agg(
                 json_build_object(
@@ -100,7 +99,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
         GROUP BY
             oI.product_id, oI.total_amount, products.name,
              products.images, products.hover_image,products.thumbnail_image, products.alert_qty, taxs.name,
-              taxs.value, d.value, d.discount_type,
+              taxs.value, d.value, d.discount_strategy,
               products.discount_id
         ORDER BY
             oI.total_amount DESC LIMIT 20;
@@ -165,7 +164,7 @@ SELECT
   p.hover_image as "hoverImage",
   p.variant,
   p.discount_id as "discountId",
-  dis.discount_type as "discountType",
+  dis.discount_strategy AS "discountStrategy",
   dis.value as "discountValue",
   p.featured,
   p.unit_price as "unitPrice", 
@@ -179,7 +178,7 @@ SELECT
   ROUND(
     SUM(
       CASE 
-        WHEN dis.discount_type = 'Percentage' THEN 
+        WHEN dis.discount_strategy = 'Percentage' THEN 
           (p.unit_price + (p.unit_price * COALESCE(taxs.value, 0) / 100)) * dis.value / 100
         ELSE 
           dis.value
@@ -201,7 +200,7 @@ LEFT JOIN
 GROUP BY 
   p.id, p.name, p.thumbnail_image, p.hover_image, p.variant, p.discount_id, p.featured, 
   p.unit_price, p.purchase_price, p.product_variant_id, p.slug,
-  rt.reviews_count, rt.average_rating, taxs.value, dis.discount_type, dis.value;
+  rt.reviews_count, rt.average_rating, taxs.value, dis.discount_strategy, dis.value;
  `
   );
 
@@ -230,7 +229,6 @@ GROUP BY
   //   "tax.name",
   //   "tax.value",
   //   "productVariants",
-  //   "discount.discountType",
   //   "discount.value",
   //   "discount.type",
   // ]);

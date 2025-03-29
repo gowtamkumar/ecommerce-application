@@ -158,7 +158,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
               </span>
               <span className="text-red-600 ml-2">
                 - {discount?.value}
-                {discount?.discountType === "Percentage" ? "%" : "BDT"}
+                {discount?.discountStrategy === "Percentage" ? "%" : "BDT"}
               </span>
             </>
           )}

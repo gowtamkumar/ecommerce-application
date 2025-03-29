@@ -401,7 +401,7 @@ export const getMe = asyncHandler(
       "product",
       // "productVariants.unitPrice",
 
-      "discount.discountType",
+      "discount.discountStrategy",
       "discount.value",
       "tax.value",
       "reviews",

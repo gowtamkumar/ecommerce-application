@@ -73,7 +73,7 @@ tax_id: number,
 
 <!-- discount_id:number -->
 
-discount_type,
+discountStrategy,
 discount_value
 alert_qty
 tags: ['ddd','aa']
@@ -131,7 +131,7 @@ name,
 id,
 type:['order', 'product', "FreeShipping"]'free_gift', 'bogo', 'cashback',
 code,
-discount_type:(Percentage, Fixed, FreeShipping).
+discountStrategy:(Percentage, Fixed, FreeShipping).
 value,
 image
 start_date,

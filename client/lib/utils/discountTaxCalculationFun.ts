@@ -6,7 +6,7 @@ export const discountTaxCalculationFun = async (
   let discount = value.discount; // The percentage you want to calculate
 
   let discountAmount =
-    discount?.discountType === "Percentage"
+    discount?.discountStrategy === "Percentage"
       ? (+value.unitPrice * (discount?.value || 0)) / 100
       : +discount?.value || 0;
 

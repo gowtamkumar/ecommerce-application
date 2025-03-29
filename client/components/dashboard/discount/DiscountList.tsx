@@ -28,7 +28,7 @@ import {
 interface DataType {
   key: string;
   name: string;
-  discountType: string;
+  discountStrategy: string;
   value: number;
   status: string;
 }
@@ -187,11 +187,11 @@ const DiscountList: React.FC = () => {
     },
 
     {
-      ...getColumnSearchProps("discountType"),
+      ...getColumnSearchProps("discountStrategy"),
       title: "Discount Type",
-      dataIndex: "discountType",
-      key: "discountType",
-      sorter: (a, b) => a.discountType.length - b.discountType.length,
+      dataIndex: "discountStrategy",
+      key: "discountStrategy",
+      sorter: (a, b) => a.discountStrategy.length - b.discountStrategy.length,
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
 

@@ -107,7 +107,7 @@ const AddDiscount = () => {
         </Form.Item>
 
         <Form.Item
-          name="discountType"
+          name="discountStrategy"
           label="Discount Type"
           rules={[
             {

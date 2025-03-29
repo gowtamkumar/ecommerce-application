@@ -12,7 +12,7 @@ import { CustomRequest } from "../../../../enums/custom-request-type";
 // @route GET /api/v1/Setting
 // @access Public
 export const getSettings = asyncHandler(async (req: Request, res: Response) => {
-   logger.info(`Service: getSettings ${req.method} ${req.url}`);
+  logger.info(`Service: getSettings ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
   const repository = connection.getRepository(SettingEntity);
@@ -31,7 +31,7 @@ export const getSettings = asyncHandler(async (req: Request, res: Response) => {
 // @access Public
 export const getSetting = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-     logger.info(`Service: getSetting ${req.method} ${req.url}`);
+    logger.info(`Service: getSetting ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
@@ -53,41 +53,43 @@ export const getSetting = asyncHandler(
 // @desc Create a single Setting
 // @route POST /api/v1/Setting
 // @access Public
-export const createSetting = asyncHandler(async (req: CustomRequest, res: Response) => {
-   logger.info(`Service: createSetting ${req.method} ${req.url}`);
+export const createSetting = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createSetting ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
-  const validation = settingValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    const connection = await getDBConnection();
+    const validation = settingValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const repository = connection.getRepository(SettingEntity);
+    const newSetting = repository.create(validation.data);
+    const save = await repository.save(newSetting);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Setting",
+      data: save,
     });
   }
-
-  const repository = connection.getRepository(SettingEntity);
-  const newSetting = repository.create(validation.data);
-  const save = await repository.save(newSetting);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Setting",
-    data: save,
-  });
-});
+);
 
 export const createDashboardSetting = asyncHandler(
   async (req: CustomRequest, res: Response) => {
-     logger.info(`Service: createDashboardSetting ${req.method} ${req.url}`);
+    logger.info(`Service: createDashboardSetting ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
     const validation = settingValidationSchema.safeParse(req.body);
@@ -97,7 +99,7 @@ export const createDashboardSetting = asyncHandler(
         path: issue.path.join("."),
         message: issue.message,
       }));
-  
+
       return res.status(400).json({
         success: false,
         issues: formattedErrors,
@@ -105,9 +107,7 @@ export const createDashboardSetting = asyncHandler(
     }
 
     const repository = connection.getRepository(SettingEntity);
-
     const newSetting = repository.create(validation.data);
-
     const save = await repository.save(newSetting);
 
     return res.status(200).json({
@@ -123,7 +123,7 @@ export const createDashboardSetting = asyncHandler(
 // @access Public
 export const updateSetting = asyncHandler(
   async (req: Request, res: Response) => {
-     logger.info(`Service: updateSetting ${req.method} ${req.url}`);
+    logger.info(`Service: updateSetting ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
@@ -144,7 +144,7 @@ export const updateSetting = asyncHandler(
 // @access Public
 export const deleteSetting = asyncHandler(
   async (req: Request, res: Response) => {
-     logger.info(`Service: deleteSetting ${req.method} ${req.url}`);
+    logger.info(`Service: deleteSetting ${req.method} ${req.url}`);
 
     const { id } = req.params;
     const connection = await getDBConnection();
@@ -169,7 +169,7 @@ export const deleteSetting = asyncHandler(
 // @route GET /api/v1/Address
 // @access Public
 export const dbBackup = asyncHandler(async (req: Request, res: Response) => {
-   logger.info(`Service: dbBackup ${req.method} ${req.url}`);
+  logger.info(`Service: dbBackup ${req.method} ${req.url}`);
 
   const date = new Date();
   const currentDate = `${date.getFullYear()}.${
@@ -198,12 +198,9 @@ export const dbBackup = asyncHandler(async (req: Request, res: Response) => {
       const fileStream = fs.createReadStream(backupFile);
       fileStream.pipe(res);
       fileStream.on("end", () => {
-
         console.log("Finished database backup download");
         // Delete the file after the response is finished
         fs.unlink(backupFile, (err) => {
-
-
           if (err) {
             console.error("Error deleting backup file:", err);
           } else {

@@ -5,7 +5,7 @@ export const discountValidationSchema = z.object({
     required_error: "name is required",
   }),
 
-  discountType: z.enum(["Percentage", "Fixed"], {
+  discountStrategy: z.enum(["Percentage", "Fixed"], {
     required_error: "Discount Type is required",
   }),
 

@@ -79,7 +79,7 @@ export default function MyWishlist() {
         let taxAmount = (+price * (+item?.product?.tax?.value || 0)) / 100;
 
         let discountAmount =
-          discount?.discountType === "Percentage"
+          discount?.discountStrategy === "Percentage"
             ? ((price + taxAmount) * (discount.value || 0)) / 100
             : +discount?.value;
 
@@ -110,7 +110,7 @@ export default function MyWishlist() {
                   </span>
                   <span className="text-green-600 ml-2">
                     -{item?.product.discount?.value}
-                    {item?.product.discount?.discountType === "Percentage"
+                    {item?.product.discount?.discountStrategy === "Percentage"
                       ? "%"
                       : "BDT"}
                   </span>

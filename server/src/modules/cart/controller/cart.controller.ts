@@ -147,7 +147,7 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
       p.name,
       p.thumbnail_image AS "thumbnailImage" ,
       t.value AS "taxValue",
-      d.discount_type AS "discountType",
+      d.discount_strategy AS "discountStrategy",
       d.value AS "discountValue",
       pv.unit_price AS "unitPrice",
       pv.purchase_price AS "purchasePrice",
@@ -159,7 +159,7 @@ export const getCartList = asyncHandler(async (req: Request, res: Response) => {
       -- Calculate discount amount and round to 2 decimal places
       ROUND(
           CASE 
-              WHEN d.discount_type = 'Percentage' THEN 
+              WHEN d.discount_strategy = 'Percentage' THEN 
                   (((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100))) * COALESCE(d.value, 0) / 100) * COALESCE(carts.qty, 1)
               ELSE
                   COALESCE(d.value, 0) * COALESCE(carts.qty, 1)
@@ -283,7 +283,7 @@ export const cartListApplyCouponCode = asyncHandler(
         p.id AS "productId",
         p.thumbnail_image AS "thumbnailImage",
         t.value AS "taxValue",
-        d.discount_type AS "discountType",
+        d.discount_strategy AS "discountStrategy",
         d.value AS "discountValue",
         pv.unit_price AS "unitPrice",
         pv.purchase_price AS "purchasePrice",
@@ -292,7 +292,7 @@ export const cartListApplyCouponCode = asyncHandler(
         ROUND(((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100)) * COALESCE(carts.qty, 1)), 2) AS "subTotal",
         ROUND(
             CASE 
-                WHEN d.discount_type = 'Percentage' THEN 
+                WHEN d.discount_strategy = 'Percentage' THEN 
                     (((COALESCE(pv.unit_price, 0) + ((COALESCE(pv.unit_price, 0) * COALESCE(t.value, 0)) / 100))) * COALESCE(d.value, 0) / 100) * COALESCE(carts.qty, 1)
                 ELSE
                     COALESCE(d.value, 0) * COALESCE(carts.qty, 1)

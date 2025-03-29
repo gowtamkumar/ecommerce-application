@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ProductEntity } from "../../products/product/model/product.entity";
-import { DiscountType } from "../../../enums/discount-type.enum";
+import { discountStrategy } from "../../../enums/discount-type.enum";
 import { Status } from "../../../enums/status.enum";
 
 @Entity("discounts")
@@ -19,8 +19,8 @@ export class DiscountEntity {
   @Column({ nullable: true })
   name!: string;
 
-  @Column({ name: "discount_type", type: "enum", enum: DiscountType })
-  discountType!: DiscountType;
+  @Column({ name: "discount_type", type: "enum", enum: discountStrategy })
+  discountStrategy!: discountStrategy;
 
   @Column()
   value!: number;

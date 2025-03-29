@@ -132,7 +132,7 @@ export default function OrderSummary() {
                     </span>
                     <span className="text-red-600">
                       -{item.discountValue}
-                      {item?.discountType === "Percentage" ? "%" : "BDT"}
+                      {item?.discountStrategy === "Percentage" ? "%" : "BDT"}
                     </span>
                   </div>
                 )}

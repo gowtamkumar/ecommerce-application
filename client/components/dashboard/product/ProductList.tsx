@@ -27,7 +27,7 @@ import {
 import MDEditor from "@uiw/react-md-editor";
 
 interface Discount {
-  discountType: string;
+  discountStrategy: string;
   value: number;
   type: string;
 }
@@ -227,7 +227,7 @@ const ProductList: React.FC = () => {
         <span>
           {value?.value &&
             `${value?.value}${
-              value?.discountType === "Percentage" ? "%" : "BDT"
+              value?.discountStrategy === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -354,7 +354,7 @@ const ProductList: React.FC = () => {
               <strong>Discount:</strong>
               {value?.discount &&
                 `${value?.discount.value}${
-                  value?.discount.discountType === "Percentage" ? "%" : "BDT"
+                  value?.discount.discountStrategy === "Percentage" ? "%" : "BDT"
                 }`}
             </h2>
             <h2>

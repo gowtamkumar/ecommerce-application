@@ -4,7 +4,7 @@ export function productDiscountCalculation(value: any) {
   let taxAmount = (+price * (+value?.tax?.value || 0)) / 100;
 
   let discountAmount =
-    discount?.discountType === "Percentage"
+    discount?.discountStrategy === "Percentage"
       ? ((+price + +taxAmount) * (+discount.value || 0)) / 100
       : +discount?.value;
   return discountAmount;

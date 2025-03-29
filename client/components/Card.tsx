@@ -20,7 +20,7 @@ interface CardItems {
   averageRating: string;
   reviewsCount: string;
   discountValue: string;
-  discountType: string;
+  discountStrategy: string;
   slug: string;
   color: any;
   defaultProduct?: {
@@ -131,7 +131,7 @@ export default function Card({ item }: { item: any }) {
             </span>
             <span className="text-red-600 ml-2">
               -{item.discountValue}
-              {item?.discountType === "Percentage" ? "%" : "BDT"}
+              {item?.discountStrategy === "Percentage" ? "%" : "BDT"}
             </span>
           </div>
         )}

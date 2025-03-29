@@ -40,7 +40,7 @@
 //   const taxAmount = (+price * (+item?.tax?.value || 0)) / 100;
 
 //   const discountAmount =
-//     discount?.discountType === "Percentage"
+//     discount?.discountStrategy === "Percentage"
 //       ? ((price + taxAmount) * (discount.value || 0)) / 100
 //       : +discount?.value || 0;
 
@@ -99,7 +99,7 @@
 //               </span>
 //               <span className="text-red-600 ml-2">
 //                 -{discount?.value}
-//                 {discount?.discountType === "Percentage" ? "%" : "BDT"}
+//                 {discount?.discountStrategy === "Percentage" ? "%" : "BDT"}
 //               </span>
 //             </div>
 //           )}

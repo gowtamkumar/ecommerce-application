@@ -1,5 +1,5 @@
 export interface DiscountTaxCalculationFun {
-  discount: {value: number, discountType: string};
+  discount: {value: number, discountStrategy: string};
   unitPrice: string;
   tax: string;
 }
@@ -7,7 +7,7 @@ export interface DiscountTaxCalculationFun {
 
 export interface CartCalculationFun {
   discount: string;
-  discount_type: string;
+  discountStrategy: string;
   price: string;
   tax: string;
 }

@@ -254,7 +254,7 @@ export const getTopSellingProduct = asyncHandler(
 
             -- discount object
             json_build_object(
-                'discountType', d.discount_type,
+                'discountStrategy', d.discount_type,
                 'value', d.value
             ) AS "discount", 
 
