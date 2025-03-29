@@ -50,7 +50,7 @@ export const getCartByUser = asyncHandler(
         )   
         WHERE 
             ((d.start_date <= NOW() AND d.end_date >= NOW()) OR d.id = p.discount_id)
-            AND d.status = 'Active'
+            OR d.status = 'Active'
         ORDER BY p.id, d.priority DESC, d.value DESC
     )
     SELECT 
@@ -147,12 +147,12 @@ export const getCartByUser = asyncHandler(
             END) * COALESCE(t.value, 0) / 100)) * carts.qty, 
         2) AS "subTotal"
 
-    FROM carts 
-    LEFT JOIN products AS p ON p.id = carts.product_id
-    LEFT JOIN taxs AS t ON t.id = p.tax_id
-    LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
-    LEFT JOIN selectedDiscounts sd ON sd.product_id = p.id
-    WHERE carts.user_id = $1`,
+      FROM carts 
+      LEFT JOIN products AS p ON p.id = carts.product_id
+      LEFT JOIN taxs AS t ON t.id = p.tax_id
+      LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
+      LEFT JOIN selectedDiscounts sd ON sd.product_id = p.id
+      WHERE carts.user_id = $1`,
       [userId]
     );
 

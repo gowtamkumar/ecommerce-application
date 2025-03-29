@@ -327,7 +327,6 @@ SELECT
   });
 };
 
-
 // @desc Get a single Product
 // @route GET /api/v1/products/:id
 // @access Public
@@ -422,141 +421,140 @@ selectedDiscount AS (
     )   
     WHERE p.id = $1
     ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
-)
-SELECT 
-    p.product_id AS "id",
-    p.name,
-    p.slug,
-    p.thumbnail_image AS "thumbnailImage",
-    p.hover_image AS "hoverImage",
-    p.images,
-    p.variant,
-    p.featured,
-    p.unit_price AS "unitPrice",
-    p.purchase_price AS "purchasePrice",
-    p.product_variant_id AS "productVariantId",
-    p.description,
-    p.short_description as "shortDescription",
-    p.enable_review as "enableReview",
-    p.limit_purchase_qty as "limitPurchaseQty",
-    p.alert_qty as "alertQty",
-    p.tags,
-    sd.discount_id AS "discountId",
-    sd.discount_strategy AS "discountStrategy",
-    sd.discount_value AS "discountValue",
-    sd.scope,
-    sd.promotion_type AS "promotionType",
-    rt.reviews_count AS "reviewsCount",
-    rt.average_rating AS "avgRating",
-        -- ✅ Calculate tax amount based on the discounted price
-    ROUND(
-        ((CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN 
-                pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN 
-                pv.unit_price - sd.discount_value
-            ELSE 
-                pv.unit_price
-        END) * COALESCE(t.value, 0) / 100), 
-    2) AS "taxAmount",
-    ROUND(
-        CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN 
-                p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN 
-                p.unit_price - sd.discount_value
-            ELSE 
-                p.unit_price
-        END, 
-        2
-    ) AS "discountedPrice",
-  -- Fetch all product variants as JSON array
-    COALESCE(
-        JSON_AGG(
-            JSON_BUILD_OBJECT(
-                'id', pv.id,
-                'sku', pv.sku,
-                'unitPrice', pv.unit_price,
-                'purchasePrice', pv.purchase_price,
-                'productId', pv.product_id,
-                'sizeId', pv.size_id,
-                'colorId', pv.color_id,
-                'material', pv.material,
-                'image', pv.image,
-                'default', pv.default,
-                'stockQty', pv.stock_qty,
-                 'size', JSON_BUILD_OBJECT(
-                    'id', s.id,
-                    'name', s.name
-                ),
-                'color', JSON_BUILD_OBJECT(
-                    'name', colors.name
-                )
-            )
-        ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
-    ) AS "productVariants",
-    -- Tax object
-    json_build_object(
-        'name', t.name,
-        'value', t.value
-    ) AS "tax",
-        -- brand object
-            json_build_object(
-                'id', b.id,
-                'name', b.name,
-                'image', b.image,
-                'status', b.status
-            ) AS "brand", 
-    -- Categories as JSON array
-    JSON_AGG(
-        JSON_BUILD_OBJECT(
-            'categoryId', pc.category_id,
-            'productId', pc.product_id,
-            'category', JSON_BUILD_OBJECT(
-                'id', c.id,
-                'name', c.name
-            )
-        )
-    ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
-    -- Reviews as JSON array (proper join to fetch reviews)
-    COALESCE(
-        JSON_AGG(
-            JSON_BUILD_OBJECT(
-                'id', r.id,
-                'rating', r.rating,
-                'comment', r.comment
-            )
-        ) FILTER (WHERE r.product_id = p.product_id AND r.status = 'Approved'), '[]'
-    ) AS "reviews"
-FROM 
-    productTable p
-LEFT JOIN 
-    selectedDiscount sd ON sd.product_id = p.product_id
-LEFT JOIN 
-    reviews r ON r.product_id = p.product_id  -- Ensure proper join here
-LEFT JOIN 
-    reviewsTable rt ON rt.product_id = p.product_id
+  )
+  SELECT 
+      p.name,
+      p.slug,
+      p.thumbnail_image AS "thumbnailImage",
+      p.hover_image AS "hoverImage",
+      p.images,
+      p.variant,
+      p.featured,
+      p.unit_price AS "unitPrice",
+      p.purchase_price AS "purchasePrice",
+      p.product_variant_id AS "productVariantId",
+      p.description,
+      p.short_description as "shortDescription",
+      p.enable_review as "enableReview",
+      p.limit_purchase_qty as "limitPurchaseQty",
+      p.alert_qty as "alertQty",
+      p.tags,
+      sd.discount_id AS "discountId",
+      sd.discount_strategy AS "discountStrategy",
+      sd.discount_value AS "discountValue",
+      sd.scope,
+      sd.promotion_type AS "promotionType",
+      rt.reviews_count AS "reviewsCount",
+      rt.average_rating AS "avgRating",
+          -- ✅ Calculate tax amount based on the discounted price
+      ROUND(
+          ((CASE 
+              WHEN sd.discount_strategy = 'Percentage' THEN 
+                  pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+              WHEN sd.discount_strategy = 'Fixed' THEN 
+                  pv.unit_price - sd.discount_value
+              ELSE 
+                  pv.unit_price
+          END) * COALESCE(t.value, 0) / 100), 
+      2) AS "taxAmount",
+      ROUND(
+          CASE 
+              WHEN sd.discount_strategy = 'Percentage' THEN 
+                  p.unit_price - (p.unit_price * sd.discount_value / 100)
+              WHEN sd.discount_strategy = 'Fixed' THEN 
+                  p.unit_price - sd.discount_value
+              ELSE 
+                  p.unit_price
+          END, 
+          2
+      ) AS "discountedPrice",
+    -- Fetch all product variants as JSON array
+      COALESCE(
+          JSON_AGG(
+              JSON_BUILD_OBJECT(
+                  'id', pv.id,
+                  'sku', pv.sku,
+                  'unitPrice', pv.unit_price,
+                  'purchasePrice', pv.purchase_price,
+                  'productId', pv.product_id,
+                  'sizeId', pv.size_id,
+                  'colorId', pv.color_id,
+                  'material', pv.material,
+                  'image', pv.image,
+                  'default', pv.default,
+                  'stockQty', pv.stock_qty,
+                  'size', JSON_BUILD_OBJECT(
+                      'id', s.id,
+                      'name', s.name
+                  ),
+                  'color', JSON_BUILD_OBJECT(
+                      'name', colors.name
+                  )
+              )
+          ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
+      ) AS "productVariants",
+      -- Tax object
+      json_build_object(
+          'name', t.name,
+          'value', t.value
+      ) AS "tax",
+          -- brand object
+              json_build_object(
+                  'id', b.id,
+                  'name', b.name,
+                  'image', b.image,
+                  'status', b.status
+              ) AS "brand", 
+      -- Categories as JSON array
+      JSON_AGG(
+          JSON_BUILD_OBJECT(
+              'categoryId', pc.category_id,
+              'productId', pc.product_id,
+              'category', JSON_BUILD_OBJECT(
+                  'id', c.id,
+                  'name', c.name
+              )
+          )
+      ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
+      -- Reviews as JSON array (proper join to fetch reviews)
+      COALESCE(
+          JSON_AGG(
+              JSON_BUILD_OBJECT(
+                  'id', r.id,
+                  'rating', r.rating,
+                  'comment', r.comment
+              )
+          ) FILTER (WHERE r.product_id = p.product_id AND r.status = 'Approved'), '[]'
+      ) AS "reviews"
+  FROM 
+      productTable p
+  LEFT JOIN 
+      selectedDiscount sd ON sd.product_id = p.product_id
+  LEFT JOIN 
+      reviews r ON r.product_id = p.product_id  -- Ensure proper join here
+  LEFT JOIN 
+      reviewsTable rt ON rt.product_id = p.product_id
 
-LEFT JOIN 
-    taxs t ON t.id = p.tax_id
-LEFT JOIN 
-    product_categories pc ON pc.product_id = p.product_id
-LEFT JOIN 
-    categories c ON c.id = pc.category_id
-LEFT JOIN 
-    brands b ON b.id = p.brand_id   
-LEFT JOIN 
-    product_variants pv ON pv.product_id = p.product_id
-LEFT JOIN
-   sizes s ON s.id = pv.size_id
-LEFT JOIN
-   colors ON colors.id = pv.size_id
-GROUP BY 
-    sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
-    p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
-    p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
-    p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price,
-    p.images, t.name, t.value, b.id, b.image, b.status, b.name;
+  LEFT JOIN 
+      taxs t ON t.id = p.tax_id
+  LEFT JOIN 
+      product_categories pc ON pc.product_id = p.product_id
+  LEFT JOIN 
+      categories c ON c.id = pc.category_id
+  LEFT JOIN 
+      brands b ON b.id = p.brand_id   
+  LEFT JOIN 
+      product_variants pv ON pv.product_id = p.product_id
+  LEFT JOIN
+    sizes s ON s.id = pv.size_id
+  LEFT JOIN
+    colors ON colors.id = pv.size_id
+  GROUP BY 
+      sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
+      p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
+      p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
+      p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price,
+      p.images, t.name, t.value, b.id, b.image, b.status, b.name;
       `,
       [id]
     );
@@ -584,7 +582,6 @@ export const getProductByslug = asyncHandler(
     logger.info(`Service: getProductByslug ${req.method} ${req.url}`);
 
     const { slug } = req.params;
-
     const connection = await getDBConnection();
 
     const result = await connection.query(
@@ -768,7 +765,7 @@ export const getProductByslug = asyncHandler(
   GROUP BY 
       sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
       p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
-      p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
+      p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,pv.unit_price,
       p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price,
       p.images, t.name, t.value, b.id, b.image, b.status, b.name;
       `,
@@ -778,13 +775,13 @@ export const getProductByslug = asyncHandler(
     if (!result) {
       return res.status(404).json({
         success: false,
-        message: `Resource not found with id #${slug}`,
+        message: `Resource not found with slug #${slug}`,
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: `Fetched product with id #${slug}`,
+      message: `Fetched product with slug #${slug}`,
       data: result,
     });
   }
@@ -1060,8 +1057,6 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
     });
   }
 };
-
-
 
 export const getProductOld = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

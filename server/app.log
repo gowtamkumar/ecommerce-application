@@ -400,3 +400,5 @@
 2025-03-29 13:07:06 [[32minfo[39m]: [Service: cartListApplyCouponCode GET /coupon-apply-cartlist?couponCode=4444]
 2025-03-29 13:09:24 [[32minfo[39m]: [Service: logout DELETE /logout]
 2025-03-29 14:11:10 [[32minfo[39m]: [Service: login POST /login]
+2025-03-29 15:16:39 [[32minfo[39m]: [Service: getProductByslug GET /slug/ryzen-5700g-procceser-with-graphic]
+2025-03-29 15:16:48 [[32minfo[39m]: [Service: getProducts GET /]
