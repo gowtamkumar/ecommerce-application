@@ -9,6 +9,7 @@ import {
   getCartList,
   getCarts,
   updateCart,
+  cartListApplyCouponCodeOld,
 } from "../controller/cart.controller";
 import { AuthGuard } from "../../../middlewares/auth.middleware";
 
