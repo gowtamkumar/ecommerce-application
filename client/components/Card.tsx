@@ -117,10 +117,7 @@ export default function Card({ item }: { item: any }) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-1 text-md">
-            ৳{" "}
-            {item?.discountId
-              ? (+item.unitPrice - +item.discountAmount).toFixed(2)
-              : item.unitPrice}
+            ৳ {item?.discountId ? item.discountedPrice : item.unitPrice}
           </p>
         </div>
 
@@ -130,7 +127,7 @@ export default function Card({ item }: { item: any }) {
               ৳ {(+item.unitPrice).toFixed(2)}
             </span>
             <span className="text-red-600 ml-2">
-              -{item.discountValue}
+              - {item.discountValue}
               {item?.discountStrategy === "Percentage" ? "%" : "BDT"}
             </span>
           </div>

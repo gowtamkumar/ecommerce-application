@@ -215,7 +215,7 @@ export const cartListApplyCoupon = asyncHandler(
         message = "Invalid or expired coupon";
       }
 
-      if (coupon) {
+      if (coupon && coupon.products.length > 0) {
         // Check usage_per_user limit
         const totalUserUsage = await connection
           .getRepository(AppliedCouponEntity)
