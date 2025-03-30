@@ -21,7 +21,7 @@ export default function HeaderLogo({ settingData }: any) {
   //  const settingData =  JSON.parse(localStorage.getItem("setting") || "")
 
   //   localStorage.setItem("setting", JSON.stringify(setting.data));
- 
+
 
   return (
     <div className="md:order-1 order-2">
@@ -32,11 +32,10 @@ export default function HeaderLogo({ settingData }: any) {
               ? `${appConfig.baseApiUrl}/uploads/${logo?.image}`
               : "/pos_software.png"
           }
-          alt={logo?.image}
+          alt="logo"
           loading="lazy"
           width={50}
           height={50}
-          // className="mx-auto h-10 w-auto"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </Link>

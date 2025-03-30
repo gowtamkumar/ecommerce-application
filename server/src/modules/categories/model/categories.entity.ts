@@ -65,11 +65,11 @@ export class CategoriesEntity {
   )
   productCategories!: ProductCategoryEntity[];
 
-  @OneToMany(
-    (_type) => PostCategoryEntity,
-    (productCategory) => productCategory.category
-  )
-  postCategories!: PostCategoryEntity[];
+  // @OneToMany(
+  //   (_type) => PostCategoryEntity,
+  //   (productCategory) => productCategory.category
+  // )
+  // postCategories!: PostCategoryEntity[];
 
   @OneToMany(
     (_type) => ApplicableCategoryEntity,

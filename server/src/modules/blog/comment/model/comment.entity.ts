@@ -43,9 +43,9 @@ export class CommentEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
-  @ManyToOne((_type) => UserEntity, (user) => user.comments)
-  @JoinColumn({ name: "user_id" })
-  user!: UserEntity;
+  // @ManyToOne((_type) => UserEntity, (user) => user.comments)
+  // @JoinColumn({ name: "user_id" })
+  // user!: UserEntity;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;

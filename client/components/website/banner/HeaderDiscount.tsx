@@ -33,7 +33,7 @@ export default function HeaderDiscount({ discounts }: any) {
             <SwiperSlide key={idx}>
               <div className="relative gap-3">
                 <Image
-                  alt={item.type}
+                  alt={item.type || "discount-image"}
                   src={
                     item.image
                       ? `${appConfig.baseApiUrl}/uploads/${item.image}`

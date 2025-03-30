@@ -24,10 +24,10 @@ export class PostCategoryEntity {
 
   @Column({ name: "category_id" })
   categoryId!: number;
-  @ManyToOne((_type) => CategoriesEntity, (category) => category.postCategories, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "category_id" })
-  category!: CategoriesEntity;
+  // @ManyToOne((_type) => CategoriesEntity, (category) => category.postCategories, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "category_id" })
+  // category!: CategoriesEntity;
 
 }

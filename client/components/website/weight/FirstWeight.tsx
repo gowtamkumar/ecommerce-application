@@ -11,7 +11,7 @@ export default function FirstWeight({ data }: any) {
               ? `${appConfig.baseApiUrl}/uploads/${data?.image}`
               : "/pos_software.png"
           }
-          alt={data?.image}
+          alt={data?.image || "weight-image"}
           loading="lazy"
           width="100"
           height="100"

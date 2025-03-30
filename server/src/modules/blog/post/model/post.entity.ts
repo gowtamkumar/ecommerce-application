@@ -36,11 +36,11 @@ export class PostEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
-  @ManyToOne((_type) => UserEntity, (user) => user.posts, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "user_id" })
-  user!: UserEntity;
+  // @ManyToOne((_type) => UserEntity, (user) => user.posts, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "user_id" })
+  // user!: UserEntity;
 
   @Column({
     type: "enum",

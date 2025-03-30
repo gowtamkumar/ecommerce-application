@@ -117,11 +117,11 @@ export class UserEntity {
   @OneToMany((_type) => UserActivityEntity, (userActivity) => userActivity.user)
   userActivities!: UserActivityEntity[];
 
-  @OneToMany((_type) => PostEntity, (post) => post.user)
-  posts!: PostEntity[];
+  // @OneToMany((_type) => PostEntity, (post) => post.user)
+  // posts!: PostEntity[];
 
-  @OneToMany((_type) => CommentEntity, (comment) => comment.user)
-  comments!: CommentEntity[];
+  // @OneToMany((_type) => CommentEntity, (comment) => comment.user)
+  // comments!: CommentEntity[];
 
   @OneToMany((_type) => NotificationEntity, (notification) => notification.user)
   notifications!: NotificationEntity[];

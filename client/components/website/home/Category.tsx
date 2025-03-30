@@ -66,7 +66,7 @@ export default function CategoryCard({ categories }: any) {
                     >
                       <div className="rounded-full border flex justify-center p-5 text-center">
                         <Image
-                          alt={item.image}
+                          alt={item.name || 'image'}
                           src={
                             item.image
                               ? `${appConfig.baseApiUrl}/uploads/${item.image}`
