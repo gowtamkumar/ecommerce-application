@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { OrderStatus } from "../enums/order-status.enum";
-import { OrderPaymentMethod, PaymentStatus } from "../enums";
+import { PaymentMethod, PaymentStatus } from "../enums";
 import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
@@ -41,13 +41,22 @@ export class OrderEntity {
   subTotal!: number;
 
   @Column({
-    name: "total_discount",
+    name: "total_items_discount",
     type: "numeric",
     precision: 10,
     scale: 2,
     nullable: true,
   })
-  totalDiscount!: number;
+  totalItemsDiscount!: number;
+
+  @Column({
+    name: "coupon_discount",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  couponDiscount!: number;
 
   @Column({
     name: "total_tax",
@@ -66,14 +75,7 @@ export class OrderEntity {
   })
   shippingCharge?: number;
 
-  @Column({
-    name: "coupon_discount",
-    type: "numeric",
-    precision: 10,
-    scale: 2,
-    nullable: true,
-  })
-  couponDiscount!: number;
+
 
   @Column({
     name: "grand_total",
@@ -82,9 +84,6 @@ export class OrderEntity {
     scale: 2,
   })
   grandTotal!: number;
-
-  @Column({ name: "coupon_id", nullable: true })
-  couponId?: number;
 
   @Column({ name: "shipping_address_id" })
   shippingAddressId?: number;
@@ -97,6 +96,10 @@ export class OrderEntity {
   )
   @JoinColumn({ name: "shipping_address_id" })
   shippingAddress!: ShippingAddressEntity;
+
+
+  @Column({ name: "coupon_id", nullable: true })
+  couponId?: number;
 
   @Column({ name: "cancel_resson", nullable: true })
   cancelResson!: string;
@@ -111,9 +114,9 @@ export class OrderEntity {
   @Column({
     name: "payment_method",
     type: "enum",
-    enum: OrderPaymentMethod,
+    enum: PaymentMethod,
   })
-  paymentMethod!: OrderPaymentMethod;
+  paymentMethod!: PaymentMethod;
 
   @Column({
     type: "enum",

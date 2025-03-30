@@ -11,7 +11,7 @@ import {
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import dayjs from "dayjs";
-import { OrderPaymentMethod, OrderStatus, PaymentStatus } from "../enums";
+import { OrderStatus, PaymentStatus } from "../enums";
 import { PaymentType } from "../../payment/enums/payment-type.enum";
 import { OrderItemEntity } from "../model/order-item.entity";
 import { CartEntity } from "../../cart/model/cart.entity";

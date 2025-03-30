@@ -394,13 +394,12 @@ export const cartListApplyCoupon = asyncHandler(
         const taxAmount = +item.taxAmount || 0;
         const discountAmount = +item.totalDiscountAmount || 0;
         const subtotalAmount = +item.subTotal;
-        const totalItemPrice = subtotalAmount - discountAmount;
 
         totalQty += +qty;
         subTotal += +subtotalAmount;
         totalDiscount += +discountAmount;
         totalTax += +taxAmount;
-        grandTotal += +totalItemPrice;
+        grandTotal += +subtotalAmount;
       }
     );
 
@@ -468,10 +467,10 @@ export const cartListApplyCoupon = asyncHandler(
         cartList: cart,
         cartSummary: {
           totalQty,
-          subTotal: subTotal.toFixed(2),
-          totalItemsDiscount: (+totalDiscount || 0).toFixed(2),
+          subTotal: subTotal.toFixed(2), //unit_price + tax - discount
+          totalItemsDiscount: (+totalDiscount || 0).toFixed(2), //item.totalDiscountAmount
           couponDiscount: couponDiscount.toFixed(2),
-          totalDiscount: (totalDiscount + couponDiscount).toFixed(2),
+          totalDiscount: (totalDiscount + couponDiscount).toFixed(2), //coupon + totalitemdiscount
           couponId: validCoupon ? validCoupon.id : null,
           totalTax: totalTax.toFixed(2),
           shippingCharge: shippingCharge.toFixed(2),

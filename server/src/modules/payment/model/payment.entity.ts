@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { OrderEntity } from "../../order/model/order.entity";
-import { OrderPaymentMethod } from "../../order/enums";
+import { PaymentMethod } from "../../order/enums";
 import { UserEntity } from "../../auth/model/user.entity";
 import { PaymentType } from "../enums/payment-type.enum";
 
@@ -39,9 +39,9 @@ export class PaymentEntity {
   @Column({
     name: "payment_method",
     type: "enum",
-    enum: OrderPaymentMethod,
+    enum: PaymentMethod,
   })
-  paymentMethod!: OrderPaymentMethod;
+  paymentMethod!: PaymentMethod;
 
   @Column({ type: "numeric", precision: 15, scale: 2 })
   amount!: number;

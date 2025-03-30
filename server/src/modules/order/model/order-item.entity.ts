@@ -52,13 +52,40 @@ export class OrderItemEntity {
   taxAmount!: string;
 
   @Column({
-    name: "discount_amount",
+    name: "discounted_unit_pice",
     type: "numeric",
     precision: 10,
     scale: 2,
     nullable: true,
   })
-  discountAmount!: string;
+  discountedUnitPrice!: string;
+
+  @Column({
+    name: "total_discounted_price",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  totalDiscountedPrice!: string;
+
+  @Column({
+    name: "discount_amount_per_unit",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  discountAmountPerUnit!: string;
+
+  @Column({
+    name: "total_discount_amount",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  totalDiscountAmount!: string;
 
   @Column({
     name: "sub_total",
@@ -68,8 +95,6 @@ export class OrderItemEntity {
   })
   subTotal!: string; //need to remove nullable
 
-
-  
 
 
   @Column({ name: "product_id" })

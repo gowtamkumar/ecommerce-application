@@ -2,17 +2,17 @@ import { z } from "zod";
 
 export const onlineCreateOrderValidationSchema = z.object({
   totalQty: z.number({
-    required_error: "total Qty is Required",
+    required_error: "Total Qty is Required",
   }),
   subTotal: z.string({
-    required_error: "order total Amount is Required",
+    required_error: "Subtotal is Required",
   }),
 
   userId: z.number({
     required_error: "User is Required",
   }),
   couponId: z.number().optional(),
-  totalDiscount: z.string().optional(),
+  totalItemsDiscount: z.string().optional(),
   couponDiscount: z.string().optional(),
   shippingCharge: z.string({
     required_error: "Shipping Charge is Required",
@@ -40,11 +40,15 @@ export const onlineCreateOrderValidationSchema = z.object({
         purchasePrice: z.string({
           required_error: "Purchase Price is required",
         }),
-        taxAmount: z.string({ required_error: "Tax Amount is required" }),
-        discountAmount: z.string().optional(),
+
+        discountedUnitPrice: z.string().optional(),
+        totalDiscountedPrice: z.string().optional(),
+        discountAmountPerUnit: z.string().optional(),
+        totalDiscountAmount: z.string().optional(),
         subTotal: z.string({
           required_error: "SubTotal is required",
         }),
+        taxAmount: z.string({ required_error: "Tax Amount is required" }),
       })
     )
     .nonempty({ message: "can't be empty!" }),
