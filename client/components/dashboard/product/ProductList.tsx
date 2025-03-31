@@ -63,9 +63,7 @@ const ProductList: React.FC = () => {
       const newProducts = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
-      }));
-      console.log("newProducts", newProducts);
-      
+      }));      
       setProducts(newProducts);
     } catch (err: any) {
       errorNotification({ message: err.message });

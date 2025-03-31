@@ -186,7 +186,11 @@ const AddProduct = ({
       ? "Successfully Updated"
       : "Successfully Added";
 
-    await handleAsyncAction(result, messageData, dispatch);
+    const funRes = await handleAsyncAction(result, messageData, dispatch);
+
+    if (!funRes.success) {
+      return;
+    }
 
     setTags([]);
     setFormValues({});
@@ -213,9 +217,8 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.thumbnailImage,
-        url: `${appConfig.baseApiUrl}/uploads/${
-          newData.thumbnailImage || "no-data.png"
-        }`,
+        url: `${appConfig.baseApiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
+          }`,
       };
       newData.fileThumbnailList = [newfileThumbnail];
     }
@@ -226,9 +229,8 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.hoverImage,
-        url: `${appConfig.baseApiUrl}/uploads/${
-          newData.hoverImage || "no-data.png"
-        }`,
+        url: `${appConfig.baseApiUrl}/uploads/${newData.hoverImage || "no-data.png"
+          }`,
       };
       newData.fileHoverList = [newfileHover];
     }
@@ -372,7 +374,11 @@ const AddProduct = ({
               <Input
                 placeholder="Enter"
                 onChange={(value) => {
-                  const slug = value.target.value.toLowerCase().trim().split(" ").join("-");
+                  const slug = value.target.value
+                    .toLowerCase()
+                    .trim()
+                    .split(" ")
+                    .join("-");
                   form.setFieldsValue({ slug });
                 }}
               />

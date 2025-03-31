@@ -24,10 +24,10 @@ export async function getDiscounts() {
   return await handleResponse(res);
 }
 
-export async function getFilterDiscounts(params?: { type: string }) {
+export async function getFilterDiscounts(params?: { scope: string }) {
   const headers = await getAuthHeaders();
   const res = await fetch(
-    `${appConfig.apiUrl}/discounts?type=${params?.type}`,
+    `${appConfig.apiUrl}/discounts?scope=${params?.scope}`,
     {
       headers,
     }

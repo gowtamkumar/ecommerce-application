@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getProducts,
+  getPublicProducts,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -12,7 +12,7 @@ import { AuthGuard } from "../../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getProducts).post(AuthGuard, createProduct);
+router.route("/").get(getPublicProducts).post(AuthGuard, createProduct);
 router.route("/dashboard").get(AuthGuard, getDashboardProducts);
 // router.route("/active").get(getActiveProducts);
 // router.route("/findbyname").get(getFindByName);

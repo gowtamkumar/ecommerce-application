@@ -104,7 +104,7 @@ export const createProduct = asyncHandler(
 // @desc Get all Products
 // @route GET /api/v1/products
 // @access Public
-export const getProducts = async (req: Request, res: Response) => {
+export const getPublicProducts = async (req: Request, res: Response) => {
   logger.info(`Service: getProducts ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
@@ -361,227 +361,43 @@ export const getProduct = asyncHandler(
     const { id } = req.params;
 
     const connection = await getDBConnection();
+    const productRepository = connection.getRepository(ProductEntity);
+    const qb = productRepository.createQueryBuilder("product");
+    qb.select([
+      "product",
+      "user.id",
+      "user.name",
+      "brand.id",
+      "brand.name",
+      "reviews.id",
+      "reviews.rating",
+      "reviews.comment",
+      "tax.name",
+      "tax.value",
+      "productVariants",
+      "productCategories",
+      "category.id",
+      "category.name",
+      "size.name",
+      "color.name",
+      "discount.discountStrategy",
+      "discount.value",
+    ]);
+    qb.leftJoin("product.user", "user");
+    qb.leftJoin("product.brand", "brand");
+    qb.leftJoin("product.reviews", "reviews");
+    qb.leftJoin("product.tax", "tax");
+    qb.leftJoin("product.discount", "discount");
+    qb.leftJoin("product.productVariants", "productVariants");
+    qb.leftJoin("product.productCategories", "productCategories");
+    qb.leftJoin("productCategories.category", "category");
+    qb.leftJoin("productVariants.size", "size");
+    qb.leftJoin("productVariants.color", "color");
+    qb.orderBy("productVariants.id", "DESC");
 
-    const result = await connection.query(
-      `
-     WITH productTable AS (
-    SELECT 
-        p.*,
-        p.id AS product_id,
-        pv.*,
-        pv.id AS product_variant_id
-    FROM 
-        products p
-    JOIN LATERAL (
-        SELECT 
-            pv.unit_price, 
-            pv.purchase_price, 
-            pv.id
-        FROM 
-            product_variants pv
-        WHERE 
-            pv.product_id = p.id
-        ORDER BY 
-            pv.default DESC, pv.id
-        LIMIT 1
-    ) pv ON true
-    WHERE p.id = $1
-),
-reviewsTable AS (
-    SELECT 
-        product_id,
-        COUNT(*) AS reviews_count,
-        COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
-    FROM reviews
-    WHERE product_id = $1
-    GROUP BY product_id
-),
-validDiscount AS (
-    SELECT 
-        dis.id AS discount_id,
-        dis.discount_strategy,
-        dis.value AS discount_value,
-        dis.scope,
-        dis.promotion_type,
-        dis.start_date,
-        dis.end_date,
-        dis.priority,
-        ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
-    FROM discounts dis
-    LEFT JOIN products p ON p.discount_id = dis.id
-    WHERE 
-        ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
-        AND dis.status = 'Active'
-),
-selectedDiscount AS (
-    SELECT DISTINCT ON (p.id) 
-        p.id AS product_id,  
-        dis.discount_id,
-        dis.discount_strategy,
-        dis.discount_value,
-        dis.scope,
-        dis.promotion_type
-    FROM products p
-    LEFT JOIN validDiscount dis ON (
-        (dis.scope = 'Products' AND EXISTS (
-            SELECT 1 
-            FROM applicable_products ap 
-            WHERE ap.product_id = p.id AND ap.discount_id = dis.discount_id
-        )) OR
-        (dis.scope = 'Category' AND EXISTS (
-            SELECT 1 
-            FROM product_categories pc 
-            WHERE pc.product_id = p.id 
-            AND pc.category_id IN 
-                (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
-        )) OR
-        (dis.scope = 'Brand' AND EXISTS (
-            SELECT 1 
-            FROM applicable_brands ab 
-            WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
-        )) OR
-        (dis.scope = 'Global') OR
-        (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
-    )   
-    WHERE p.id = $1
-    ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
-  )
-  SELECT 
-      p.name,
-      p.slug,
-      p.thumbnail_image AS "thumbnailImage",
-      p.hover_image AS "hoverImage",
-      p.images,
-      p.variant,
-      p.featured,
-      p.unit_price AS "unitPrice",
-      p.purchase_price AS "purchasePrice",
-      p.product_variant_id AS "productVariantId",
-      p.description,
-      p.short_description as "shortDescription",
-      p.enable_review as "enableReview",
-      p.limit_purchase_qty as "limitPurchaseQty",
-      p.alert_qty as "alertQty",
-      p.tags,
-      sd.discount_id AS "discountId",
-      sd.discount_strategy AS "discountStrategy",
-      sd.discount_value AS "discountValue",
-      sd.scope,
-      sd.promotion_type AS "promotionType",
-      rt.reviews_count AS "reviewsCount",
-      rt.average_rating AS "avgRating",
-          -- ✅ Calculate tax amount based on the discounted price
-      ROUND(
-          ((CASE 
-              WHEN sd.discount_strategy = 'Percentage' THEN 
-                  pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-              WHEN sd.discount_strategy = 'Fixed' THEN 
-                  pv.unit_price - sd.discount_value
-              ELSE 
-                  pv.unit_price
-          END) * COALESCE(t.value, 0) / 100), 
-      2) AS "taxAmount",
-      ROUND(
-          CASE 
-              WHEN sd.discount_strategy = 'Percentage' THEN 
-                  p.unit_price - (p.unit_price * sd.discount_value / 100)
-              WHEN sd.discount_strategy = 'Fixed' THEN 
-                  p.unit_price - sd.discount_value
-              ELSE 
-                  p.unit_price
-          END, 
-          2
-      ) AS "discountedPrice",
-    -- Fetch all product variants as JSON array
-      COALESCE(
-          JSON_AGG(
-              JSON_BUILD_OBJECT(
-                  'id', pv.id,
-                  'sku', pv.sku,
-                  'unitPrice', pv.unit_price,
-                  'purchasePrice', pv.purchase_price,
-                  'productId', pv.product_id,
-                  'sizeId', pv.size_id,
-                  'colorId', pv.color_id,
-                  'material', pv.material,
-                  'image', pv.image,
-                  'default', pv.default,
-                  'stockQty', pv.stock_qty,
-                  'size', JSON_BUILD_OBJECT(
-                      'id', s.id,
-                      'name', s.name
-                  ),
-                  'color', JSON_BUILD_OBJECT(
-                      'name', colors.name
-                  )
-              )
-          ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
-      ) AS "productVariants",
-      -- Tax object
-      json_build_object(
-          'name', t.name,
-          'value', t.value
-      ) AS "tax",
-          -- brand object
-              json_build_object(
-                  'id', b.id,
-                  'name', b.name,
-                  'image', b.image,
-                  'status', b.status
-              ) AS "brand", 
-      -- Categories as JSON array
-      JSON_AGG(
-          JSON_BUILD_OBJECT(
-              'categoryId', pc.category_id,
-              'productId', pc.product_id,
-              'category', JSON_BUILD_OBJECT(
-                  'id', c.id,
-                  'name', c.name
-              )
-          )
-      ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
-      -- Reviews as JSON array (proper join to fetch reviews)
-      COALESCE(
-          JSON_AGG(
-              JSON_BUILD_OBJECT(
-                  'id', r.id,
-                  'rating', r.rating,
-                  'comment', r.comment
-              )
-          ) FILTER (WHERE r.product_id = p.product_id AND r.status = 'Approved'), '[]'
-      ) AS "reviews"
-  FROM 
-      productTable p
-  LEFT JOIN 
-      selectedDiscount sd ON sd.product_id = p.product_id
-  LEFT JOIN 
-      reviews r ON r.product_id = p.product_id  -- Ensure proper join here
-  LEFT JOIN 
-      reviewsTable rt ON rt.product_id = p.product_id
+    qb.where({ id });
 
-  LEFT JOIN 
-      taxs t ON t.id = p.tax_id
-  LEFT JOIN 
-      product_categories pc ON pc.product_id = p.product_id
-  LEFT JOIN 
-      categories c ON c.id = pc.category_id
-  LEFT JOIN 
-      brands b ON b.id = p.brand_id   
-  LEFT JOIN 
-      product_variants pv ON pv.product_id = p.product_id
-  LEFT JOIN
-    sizes s ON s.id = pv.size_id
-  LEFT JOIN
-    colors ON colors.id = pv.size_id
-  GROUP BY 
-      sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
-      p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
-      p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
-      p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price,
-      p.images, t.name, t.value, b.id, b.image, b.status, b.name,pv.unit_price
-      `,
-      [id]
-    );
+    const result = await qb.getOne();
 
     if (!result) {
       return res.status(404).json({
@@ -947,7 +763,7 @@ export const updateProduct = asyncHandler(
       });
     }
 
-    const { productVariants, productCategories, ...restData } = req.body;
+    const { productVariants, productCategories, ...restData } = validation.data;
     // Get DB connection
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);
@@ -958,6 +774,7 @@ export const updateProduct = asyncHandler(
     if (!product) {
       throw new Error(`Product not found`);
     }
+
     // Handle product variants
     let productVariantPromise = Promise.resolve();
     if (productVariants.length) {
@@ -967,11 +784,17 @@ export const updateProduct = asyncHandler(
 
         const productVariantItems = productVariants.map(async (item: any) => {
           if (item.id) {
-            await repoProductVariant.save(item);
+            await repoProductVariant.save({
+              ...item,
+              purchasePrice: +item.purchasePrice,
+              unitPrice: +item.unitPrice,
+            });
           } else {
             const productVariantCreate = repoProductVariant.create({
-              ...item,
+              unitPrice: +item.unitPrice,
+              purchasePrice: +item.purchasePrice,
               productId: id,
+              ...item,
             });
             await repoProductVariant.save(productVariantCreate);
           }
@@ -1003,27 +826,6 @@ export const updateProduct = asyncHandler(
       })();
     }
 
-    // Handle product color
-    // let productColorPromise = Promise.resolve();
-    // if (productColors) {
-    //   productColorPromise = (async () => {
-    //     const repoPCategory = connection.getRepository(ProductColorEntity);
-
-    //     const existingColors = await repoPCategory.find({
-    //       where: { productId: id },
-    //     });
-
-    //     await repoPCategory.remove(existingColors);
-
-    //     const productCategoryItems = productColors.map((item: number) => ({
-    //       colorId: item,
-    //       productId: id,
-    //     }));
-
-    //     await repoPCategory.save(productCategoryItems);
-    //   })();
-    // }
-
     // Wait for both operations to complete
     await Promise.all([productVariantPromise, productCategoryPromise]);
 
@@ -1036,17 +838,6 @@ export const updateProduct = asyncHandler(
       message: `Updated product with id ${id}`,
       data: updatedProduct,
     });
-
-    // try {
-
-    // } catch (error: any) {
-    //   console.error("Error updating product:", error);
-    //   return res.status(500).json({
-    //     success: false,
-    //     message: "An error occurred while updating the product.",
-    //     error: error.message,
-    //   });
-    // }
   }
 );
 

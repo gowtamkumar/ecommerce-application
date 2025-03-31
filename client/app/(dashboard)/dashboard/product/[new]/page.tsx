@@ -25,11 +25,10 @@ export default async function Product() {
     getSizes(),
     getUnits(),
     getColors(),
-    getFilterDiscounts({ type: "Discount" }),
+    getFilterDiscounts({scope: "Product"}),
     getCategories(),
     getTaxs(),
   ]);
-
 
   return (
     <div className="container mx-auto p-2">

@@ -18,12 +18,12 @@ import { ScopeEnum } from "../enum";
 export const getDiscounts = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: getDiscounts ${req.method} ${req.url}`);
-
-    const { type } = req.query;
+    
+    const { scope } = req.query;
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
     const newQuery = {} as any;
-    if (type) newQuery.type = type;
+    if (scope) newQuery.scope = scope;
     const result = await repository.find({
       where: newQuery,
       relations: [
