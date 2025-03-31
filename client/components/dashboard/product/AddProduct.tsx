@@ -372,7 +372,7 @@ const AddProduct = ({
               <Input
                 placeholder="Enter"
                 onChange={(value) => {
-                  const slug = value.target.value.trim().split(" ").join("-");
+                  const slug = value.target.value.toLowerCase().trim().split(" ").join("-");
                   form.setFieldsValue({ slug });
                 }}
               />

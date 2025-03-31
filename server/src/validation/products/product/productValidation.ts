@@ -7,9 +7,7 @@ export const productValidationSchema = z.object({
   userId: z.number({
     required_error: "User is required",
   }),
-  slug: z.string({
-    required_error: "Slug is required",
-  }),
+  slug: z.string().optional(),
   taxId: z.number({
     required_error: "Tax is required",
   }),

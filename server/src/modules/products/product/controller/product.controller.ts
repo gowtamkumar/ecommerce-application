@@ -44,6 +44,12 @@ export const createProduct = asyncHandler(
     // const count = (await productRepository.count()) + 1;
     // const sku = `SKU-${count.toString().padStart(6, "0")}`;
 
+    restData.slug = (restData.slug ? restData.slug : restData.name)
+      .toLowerCase()
+      .trim()
+      .split(" ")
+      .join("-");
+
     // Create product entity
     const product = productRepository.create(restData);
 
@@ -114,6 +120,7 @@ export const getProducts = async (req: Request, res: Response) => {
     discount,
     page = 1,
     limit = 10,
+    discountId,
   } = req.query;
 
   // Helper function to parse filters
@@ -222,49 +229,50 @@ selectedDiscount AS (
             (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
         )   
     ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
-)
-SELECT 
-    p.product_id AS "id",
-    p.name,
-    p.slug,
-    p.thumbnail_image as "thumbnailImage", -- ✅ Use the correct alias with double quotes
-    p.hover_image as  "hoverImage", -- ✅ Use the correct alias with double quotes
-    p.variant,
-    sd.discount_id as "discountId",
-    sd.discount_strategy AS "discountStrategy",
-    sd.discount_value AS "discountValue",
-    sd.scope,
-    sd.promotion_type AS "promotionType",
-    p.featured,
-    p.unit_price AS "unitPrice",
-    p.purchase_price AS "purchasePrice",
-    p.product_variant_id as "productVariantId",
-    rt.reviews_count AS "reviewsCount",
-    rt.average_rating AS "avgRating",
-    -- ✅ Calculate tax amount based on the discounted price
-    ROUND(
-        ((CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN 
-                p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN 
-                p.unit_price - sd.discount_value
-            ELSE 
-                p.unit_price
-        END) * COALESCE(t.value, 0) / 100), 
-    2) AS "taxAmount",
-    
-    -- Calculate Discounted Price
-    ROUND(
-        CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN 
-                p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN 
-                p.unit_price - sd.discount_value
-            ELSE 
-                p.unit_price  -- No discount applied
-        END, 
-        2
-    ) AS "discountedPrice" 
+),
+filteredProducts AS (
+ SELECT 
+        p.product_id AS "id",
+        p.name,
+        p.slug,
+        p.thumbnail_image as "thumbnailImage",
+        p.hover_image as "hoverImage",
+        p.variant,
+        sd.discount_id as "discountId",
+        sd.discount_strategy AS "discountStrategy",
+        sd.discount_value AS "discountValue",
+        sd.scope,
+        sd.promotion_type AS "promotionType",
+        p.featured,
+        p.unit_price AS "unitPrice",
+        p.purchase_price AS "purchasePrice",
+        p.product_variant_id as "productVariantId",
+        rt.reviews_count AS "reviewsCount",
+        rt.average_rating AS "avgRating",
+        ROUND(
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) * COALESCE(t.value, 0) / 100), 
+        2) AS "taxAmount",
+        
+        -- ✅ Calculate Discounted Price
+        ROUND(
+            CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END, 
+            2
+        ) AS "discountedPrice"
+
     FROM 
         productTable p
     LEFT JOIN 
@@ -273,50 +281,58 @@ SELECT
         reviewsTable rt ON rt.product_id = p.product_id
     LEFT JOIN 
         taxs t ON t.id = p.tax_id
+    LEFT JOIN 
+        product_categories pc ON pc.product_id = p.product_id
+    LEFT JOIN 
+        brands b ON b.id = p.brand_id   
 
-      LEFT JOIN 
-          product_categories pc ON pc.product_id = p.product_id
-      LEFT JOIN 
-          brands b ON b.id = p.brand_id   
-    WHERE 1=1
-        ${
-          categoryFilter.length
-            ? `AND pc.category_id IN (${categoryFilter.join(",")})`
-            : ""
-        }
-        ${
-          brandFilter.length
-            ? `AND p.brand_id IN (${brandFilter.join(",")})`
-            : ""
-        }
-        ${
-          minPrice && maxPrice
-            ? `AND p.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
-            : ""
-        }
-        ${discount ? `AND dis.value BETWEEN 0 AND ${discount}` : ""}
-        ${
-          search
-            ? `
-          AND (
-            LOWER(p.name) ILIKE LOWER('%${search}%') OR
-            LOWER(p.description) ILIKE LOWER('%${search}%') OR
-            LOWER(p.short_description) ILIKE LOWER('%${search}%')
-          )
-        `
-            : ""
-        }
-
-    GROUP BY 
-        sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
-        p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id,
-        p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price
-      ${lowPrice ? "ORDER BY p.unit_price ASC" : ""}
-      ${
-        highPrice && !lowPrice ? "ORDER BY p.unit_price DESC" : ""
-      } -- ✅ Avoids duplicate ORDER BY
-      LIMIT ${limit} OFFSET ${(+page - 1) * +limit} -- ✅ Better pagination
+)
+SELECT * FROM filteredProducts WHERE 1=1
+    ${
+      categoryFilter.length
+        ? `AND filteredProducts."id" IN (
+            SELECT product_id FROM product_categories WHERE category_id IN (${categoryFilter.join(
+              ","
+            )})
+        )`
+        : ""
+    }
+    ${
+      brandFilter.length
+        ? `AND filteredProducts."id" IN (${brandFilter.join(",")})`
+        : ""
+    }
+    ${
+      minPrice && maxPrice
+        ? `AND filteredProducts."discountedPrice" BETWEEN ${minPrice} AND ${maxPrice}`
+        : ""
+    }
+    ${
+      discount
+        ? `AND filteredProducts."discountValue" BETWEEN 0 AND ${discount}`
+        : ""
+    }
+    ${
+      search
+        ? `
+      AND (
+        LOWER(filteredProducts."name") ILIKE LOWER('%${search}%') OR
+        LOWER(filteredProducts."slug") ILIKE LOWER('%${search}%')
+      )
     `
+        : ""
+    }
+    ${discountId ? `AND filteredProducts."discountId" = ${discountId}` : ""}
+
+ORDER BY 
+    ${
+      lowPrice && !highPrice
+        ? `filteredProducts."discountedPrice" ASC`
+        : `filteredProducts."discountedPrice" DESC`
+    }
+LIMIT ${limit} OFFSET ${(+page - 1) * +limit}
+
+`
   );
 
   return res.status(200).json({
@@ -554,7 +570,7 @@ selectedDiscount AS (
       p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, p.short_description,
       p.alert_qty, p.enable_review,p.limit_purchase_qty,p.tags,
       p.variant, p.featured, rt.reviews_count, rt.average_rating, t.value, p.unit_price, p.purchase_price,
-      p.images, t.name, t.value, b.id, b.image, b.status, b.name;
+      p.images, t.name, t.value, b.id, b.image, b.status, b.name,pv.unit_price
       `,
       [id]
     );

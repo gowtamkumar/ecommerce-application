@@ -92,6 +92,7 @@ export class DiscountEntity {
   @OneToMany((_type) => ApplicableProductEntity, (item) => item.discount)
   applicableProducts!: ApplicableProductEntity[];
 
+  
   @BeforeInsert()
   generateCode() {
     if (!this.code) {
