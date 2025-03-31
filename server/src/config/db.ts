@@ -113,7 +113,7 @@ const dbConnection = new DataSource({
     DistrictEntity,
     UpazilaEntity,
     UnionEntity,
-    VisitorEntity,
+    // VisitorEntity,
     // CurrencyEntity,
     BannerEntity,
     SettingEntity,

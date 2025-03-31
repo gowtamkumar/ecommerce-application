@@ -3,7 +3,6 @@ import { asyncHandler } from "../../../../middlewares/async.middleware";
 import { getDBConnection } from "../../../../config/db";
 import { OrderEntity } from "../../../order/model/order.entity";
 import dayjs from "dayjs";
-import { UserEntity } from "../../../auth/model/user.entity";
 import { logger } from "../../../../middlewares/logger";
 
 // @desc Get all ProductCategorys
@@ -174,15 +173,6 @@ export const getDashboardReport = asyncHandler(
       LEFT JOIN products ON products.id = oI.product_id 
     `
     );
-
-    // const userActivityRepository = connection.getRepository(UserEntity);
-    // const user_activity = await userActivityRepository
-    //   .createQueryBuilder("user")
-    //   .leftJoin("user.userActivities", "userActivities")
-    //   .where("userActivities.timestamp >= :timestamp", {
-    //     timestamp: new Date(Date.now() - 5 * 60 * 1000),
-    //   })
-    //   .getMany();
 
     return res.status(200).json({
       success: true,
@@ -390,96 +380,3 @@ LIMIT 20;
     });
   }
 );
-// export const getTopSellingProduct = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     logger.info(`Service: getTopSellingProduct ${req.method} ${req.url}`);
-
-//     const connection = await getDBConnection();
-
-//     const top_selling_product = await connection.query(
-//       `
-//          WITH orderItems AS (
-//           SELECT
-//               oi.product_id AS product_id,
-//               SUM(COALESCE(oi.sub_total, 0)) AS total_amount
-//           FROM
-//               order_items oi
-//           LEFT JOIN
-//               orders ON orders.id = oi.order_id
-//           WHERE
-//               orders.status = 'Completed'
-//           GROUP BY
-//               oi.product_id
-//         )
-//         SELECT
-//             oI.product_id AS id,
-//             oI.total_amount AS "totalAmount",
-//             products.name,
-//             products.images,
-//             products.discount_id as "discountId",
-//             products.alert_qty AS "alertQty",
-
-//             -- Aggregation for product variants
-//             json_agg(
-//                 json_build_object(
-//                     'price', pv.unit_price,
-//                     'purchasePrice', pv.purchase_price,
-//                     'stockQty', pv.stock_qty,
-//                     'size_id', pv.size_id,
-//                     'size', json_build_object('name', sizes.name)-- Direct join for sizes
-
-//                 )
-//             ) FILTER (WHERE pv.product_id IS NOT NULL) AS "productVariants",
-
-//             -- Tax object
-//             json_build_object(
-//                 'name', taxs.name,
-//                 'value', taxs.value
-//             ) AS "tax",
-
-//             -- discount object
-//             json_build_object(
-//                 'discountStrategy', d.discount_strategy,
-//                 'value', d.value
-//             ) AS "discount",
-
-//             -- Aggregation for reviews
-//             json_agg(
-//                 json_build_object(
-//                     'id', reviews.id,
-//                     'rating', reviews.rating,
-//                     'comment', reviews.comment
-//                 )
-//             ) FILTER (WHERE reviews.id IS NOT NULL) AS "reviews"
-
-//         FROM
-//             orderItems oI
-//         LEFT JOIN
-//             products ON products.id = oI.product_id
-//         LEFT JOIN
-//             product_variants pv ON pv.product_id = oI.product_id
-//         LEFT JOIN
-//             sizes ON sizes.id = pv.size_id
-//         LEFT JOIN
-//             taxs ON taxs.id = products.tax_id
-//         LEFT JOIN
-//             discounts d ON d.id = products.discount_id
-//         LEFT JOIN
-//             reviews ON reviews.product_id = products.id
-//         GROUP BY
-//             oI.product_id, oI.total_amount, products.name,
-//              products.images, products.alert_qty, taxs.name,
-//               taxs.value, d.value, d.discount_strategy,
-//               products.discount_id
-//         ORDER BY
-//             oI.total_amount DESC LIMIT 20;
-//     `
-//     );
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Get Top selling Products",
-//       data: top_selling_product,
-//     });
-//   }
-// );

@@ -91,15 +91,12 @@ export class DiscountEntity {
 
   @OneToMany((_type) => ApplicableProductEntity, (item) => item.discount)
   applicableProducts!: ApplicableProductEntity[];
-
   
   @BeforeInsert()
   generateCode() {
     if (!this.code) {
       this.code = `DISC-${Math.random()
-        .toString(36)
-        .substr(2, 9)
-        .toUpperCase()}`;
+        .toString(36).toUpperCase()}`;
     }
   }
 }

@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -83,5 +84,11 @@ export class CouponEntity {
 
   @OneToMany((_type) => CouponProductEntity, (items) => items.coupon)
   products!: CouponProductEntity[];
-}
 
+  @BeforeInsert()
+  generateCode() {
+    if (!this.code) {
+      this.code = `c-${Date.now().toString().slice(-6)}`;
+    }
+  }
+}
