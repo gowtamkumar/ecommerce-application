@@ -4,7 +4,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Define interfaces for user and API response
 interface User {
-  id?: string; // Optional for new users
+  name?: string; // Optional for new users
   username: string; // Required field for username
   email: string; // Required field for email
   password?: string; // Optional field for password
@@ -18,10 +18,14 @@ interface ApiResponse<T> {
 }
 
 // Function to save a new user
-export async function saveUser(data: User) {
+export async function saveUser(data: any) {
+  console.log("data", data);
+    const headers = await getAuthHeaders();
+  
   const res = await fetch(`${appConfig.apiUrl}/auth/register`, {
     method: "POST",
     cache: "no-cache",
+    headers,
     body: JSON.stringify(data),
   });
   return await handleResponse(res);

@@ -147,7 +147,7 @@ const CompanySetting = ({ currencies }: any) => {
           <Input placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item name="currencyId" label="Currency" className="mb-1">
+        {/* <Form.Item name="currencyId" label="Currency" className="mb-1">
           <Select
             showSearch
             allowClear
@@ -167,7 +167,7 @@ const CompanySetting = ({ currencies }: any) => {
               )
             )}
           </Select>
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           name="fileList"
@@ -218,7 +218,7 @@ const CompanySetting = ({ currencies }: any) => {
           />
         </Modal>
 
-        <Form.Item {...tailLayout}>
+        <Form.Item>
           <Button
             className="me-2"
             size="small"

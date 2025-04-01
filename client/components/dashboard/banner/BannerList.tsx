@@ -29,7 +29,7 @@ interface DataType {
   url: string;
   type: string;
   description: string;
-  status: string;
+  active: boolean;
 }
 
 type DataIndex = keyof DataType;
@@ -218,14 +218,14 @@ const BannerList: React.FC = () => {
     },
 
     {
-      title: "Status",
-      key: "status",
-      ...getColumnSearchProps("status"),
+      title: "Active",
+      key: "active",
+      ...getColumnSearchProps("active"),
       sortDirections: ["descend", "ascend"],
-      sorter: (a, b) => a.status.length - b.status.length,
+      // sorter: (a, b) => a.active.length - b.active.length,
       render: (value) => (
-        <Tag color={value.status ? "green" : "red"}>
-          {value.status ? "Active" : "Inactive"}
+        <Tag color={value.active ? "green" : "red"}>
+          {value.active ? "Active" : "Inactive"}
         </Tag>
       ),
     },

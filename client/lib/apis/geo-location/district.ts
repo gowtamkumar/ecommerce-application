@@ -28,7 +28,7 @@ export async function saveDistrict(data: any) {
   return res.json();
 }
 
-export async function getDistricts(params: any) {
+export async function getDistricts(params?: any) {
   const { divisionId } = params;
 
   // Build query parameters using URLSearchParams for flexibility

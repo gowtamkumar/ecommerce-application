@@ -154,7 +154,7 @@ export class OrderEntity {
   // relations
   // @OneToMany(() => OrderItemEntity, (orderitem) => orderitem.order)
   // orderItems!: OrderItemEntity[];
-  @OneToMany((_type) => OrderItemEntity, (product) => product.order)
+  @OneToMany((_type) => OrderItemEntity, (item) => item.order)
   orderItems!: OrderItemEntity[];
 
   @OneToMany((_type) => AppliedCouponEntity, (item) => item.order)

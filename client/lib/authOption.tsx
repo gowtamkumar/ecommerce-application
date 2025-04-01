@@ -17,13 +17,15 @@ export const authOptions: NextAuthOptions = {
         });
 
         const user = await res.json(); // Get response as text
+        console.log("user", user);
+        
         try {
           // const user = JSON.parse(text); // Attempt to parse as JSON
           if (res.ok && user.data) {
             const newuser = { ...user.data, accessToken: user.accessToken };
             return newuser;
           } else {
-            throw new Error(user.error || "Invalid Login Credentials");
+            throw new Error("Invalid Login Credentials");
           }
         } catch (error) {
           console.error("Failed to parse response as JSON:", error);

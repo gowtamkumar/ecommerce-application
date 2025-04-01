@@ -35,7 +35,7 @@ export const register = asyncHandler(
     logger.info(`Service: register ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
-
+    
     const validation = userValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -375,28 +375,19 @@ export const getMe = asyncHandler(
       "user.lastLogin",
       "user.lastLogout",
       "user.lastLogout",
-      "orders.id",
-      "orders.totalDiscount",
-      "orders.subTotal",
-      "orders.totalTax",
-      "orders.paymentMethod",
-      "orders.paymentStatus",
-      "orders.shippingCharge",
-      "orders.status",
-      "orders.trackingNo",
+      "orders",
 
-      "products.name",
-      // "products.type",
-      "products.createdAt",
-      "products.description",
-      "products.enableReview",
-      "products.images",
-      "products.limitPurchaseQty",
-      "products.alertQty",
-      "products.shortDescription",
-      "products.status",
-      "products.tags",
-      "products.slug",
+      // "products.name",
+      // "products.createdAt",
+      // "products.description",
+      // "products.enableReview",
+      // "products.images",
+      // "products.limitPurchaseQty",
+      // "products.alertQty",
+      // "products.shortDescription",
+      // "products.status",
+      // "products.tags",
+      // "products.slug",
 
       "product",
       // "productVariants.unitPrice",
@@ -427,17 +418,17 @@ export const getMe = asyncHandler(
       "shippingAddress.status",
       "shippingAddress.divisionId",
 
-      "orderDeliveries",
-      "wishlists",
+      // "orderDeliveries",
+      // "wishlists",
 
-      "orderItems.purchasePrice",
-      "orderItems.discountAmount",
-      "orderItems.unitPrice",
-      "orderItems.qty",
-      "orderItems.taxAmount",
-      "orderItems.productId",
+      // "orderItems.purchasePrice",
+      // "orderItems.discountAmount",
+      // "orderItems.unitPrice",
+      // "orderItems.qty",
+      // "orderItems.taxAmount",
+      // "orderItems.productId",
 
-      "orderProduct.name",
+      // "orderProduct.name",
       "orderTrackings.location",
       "orderTrackings.createdAt",
       "orderTrackings.status",
@@ -449,16 +440,16 @@ export const getMe = asyncHandler(
 
     qb.leftJoin("user.orders", "orders");
 
-    qb.leftJoin("orders.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "orderProduct");
+    // qb.leftJoin("orders.orderItems", "orderItems");
+    // qb.leftJoin("orderItems.product", "orderProduct");
     qb.leftJoin("orders.orderTrackings", "orderTrackings");
     qb.leftJoin("orders.deliveryMan", "deliveryMan");
     qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
 
-    qb.leftJoin("user.products", "products");
+    // qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");
-    qb.leftJoin("user.orderDeliveries", "orderDeliveries");
-    qb.leftJoin("user.wishlists", "wishlists");
+    // qb.leftJoin("user.orderDeliveries", "orderDeliveries");
+    // qb.leftJoin("user.wishlists", "wishlists");
     qb.leftJoin("wishlists.product", "product");
     qb.leftJoin("product.discount", "discount");
     qb.leftJoin("product.tax", "tax");

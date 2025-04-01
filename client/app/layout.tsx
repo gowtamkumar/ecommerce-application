@@ -14,6 +14,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
+import '@ant-design/v5-patch-for-react-19';
 import CartSync from "@/components/CartSync";
 
 const poppinsFont = localFont({

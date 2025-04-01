@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/appConfig";
+import SyncGeoLocation from "./SyncGeoLocation";
 
 const Size = dynamic(() => import("@/app/(dashboard)/dashboard/size/page"), {
   ssr: false,
@@ -36,13 +37,13 @@ const Review = dynamic(
   () => import("@/app/(dashboard)/dashboard/review/page"),
   { ssr: false }
 );
-const Status = dynamic(
-  () => import("@/app/(dashboard)/dashboard/status/page"),
-  { ssr: false }
-);
-const EmailSetting = dynamic(() => import("./EmailSetting"), { ssr: false });
+// const Status = dynamic(
+//   () => import("@/app/(dashboard)/dashboard/status/page"),
+//   { ssr: false }
+// );
+// const EmailSetting = dynamic(() => import("./EmailSetting"), { ssr: false });
 const Lead = dynamic(() => import("./lead/Lead"), { ssr: false });
-const Currency = dynamic(() => import("./currency/Currency"), { ssr: false });
+// const Currency = dynamic(() => import("./currency/Currency"), { ssr: false });
 const CompanySetting = dynamic(() => import("./CompanySetting"), {
   ssr: false,
 });
@@ -93,16 +94,16 @@ export default function Index() {
           key: "web_site_stting",
           children: <CompanySetting currencies={currencies} />,
         },
-        {
-          label: "Email Config",
-          key: "email_config",
-          children: <EmailSetting />,
-        },
-        {
-          label: "Currency Setting",
-          key: "currency_stting",
-          children: <Currency />,
-        },
+        // {
+        //   label: "Email Config",
+        //   key: "email_config",
+        //   children: <EmailSetting />,
+        // },
+        // {
+        //   label: "Currency Setting",
+        //   key: "currency_stting",
+        //   children: <Currency />,
+        // },
         {
           label: "Sizes",
           key: "size",
@@ -138,11 +139,11 @@ export default function Index() {
           key: "reviews",
           children: <Review />,
         },
-        {
-          label: "Status",
-          key: "status",
-          children: <Status />,
-        },
+        // {
+        //   label: "Status",
+        //   key: "status",
+        //   children: <Status />,
+        // },
         // {
         //   label: "Post",
         //   key: "post",
@@ -152,6 +153,11 @@ export default function Index() {
           label: "Leads",
           key: "lead",
           children: <Lead />,
+        },
+        {
+          label: "Sync Geo locaton",
+          key: "geo_location",
+          children: <SyncGeoLocation />,
         },
       ]}
     />

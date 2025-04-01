@@ -28,7 +28,8 @@ const Register = () => {
     try {
       // return console.log("newData:", newData);
       const result = await saveUser(values);
-
+      console.log("result:", result);
+      
       if (result?.success) {
         router.push("/login");
       }

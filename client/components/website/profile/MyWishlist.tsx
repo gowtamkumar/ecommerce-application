@@ -1,7 +1,5 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
-import { Button, Empty, Rate } from "antd";
+import { Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -11,8 +9,6 @@ import {
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { productDiscountCalculation } from "@/lib/utils";
 import { deleteWishlist, getUserWishlists } from "@/lib/apis/wishlist";
-import { RestOutlined } from "@ant-design/icons";
-import { FaShoppingCart } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Card from "@/components/Card";
 
@@ -25,13 +21,14 @@ export default function MyWishlist() {
     (async () => {
       dispatch(setLoading({ loading: true }));
       const wishlistRes = await getUserWishlists();
+      console.log("wishlistRes", wishlistRes);
+
       setWishlists(wishlistRes.data);
       dispatch(setLoading({ loading: false }));
     })();
   }, [dispatch, global.action]);
 
   async function addToCart(value: any) {
-
     console.log("value", value);
 
     const price = +value.selectProductVariant.unitPrice;
@@ -60,90 +57,15 @@ export default function MyWishlist() {
     }
   };
 
-  if (!wishlists?.length) {
-    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-    return;
-  }
-
   return (
     <div className="grid grid-cols-4 gap-4">
-      {
-        wishlists.map(item=> {
-          return <Card item={item}/>
+      {wishlists?.length ? (
+        wishlists.map((item) => {
+          return <Card item={item} />;
         })
-      }
-      {/* {(wishlists || []).map((item: any, idx: any) => {
-        let price = +22;
-        let discount = item.product?.discount;
-
-        let taxAmount = (+price * (+item?.product?.tax?.value || 0)) / 100;
-
-        let discountAmount =
-          discount?.discountStrategy === "Percentage"
-            ? ((price + taxAmount) * (discount.value || 0)) / 100
-            : +discount?.value;
-
-        return (
-          <div className="bg-white rounded-lg shadow-md p-4" key={item.id}>
-            <Link href={`/products/${item.id}`}>
-              <Image
-                width={150}
-                height={150}
-                src="/product-01.jpg"
-                alt="Category Image"
-                className="w-full h-40 object-cover mb-4"
-              />
-              <h3 className="text-sm font-semibold mb-2">
-                {item.product.name.slice(0, 70)}
-              </h3>
-              <p className="text-gray-500 mb-2">
-                ৳
-                {item?.product.discountId
-                  ? (price + taxAmount - (discountAmount || 0)).toFixed(2)
-                  : (price + taxAmount).toFixed(2)}
-              </p>
-
-              {item?.product?.discountId ? (
-                <>
-                  <span className="line-through text-gray-500">
-                    ৳ {(+price + +taxAmount || 0).toFixed(2)}
-                  </span>
-                  <span className="text-green-600 ml-2">
-                    -{item?.product.discount?.value}
-                    {item?.product.discount?.discountStrategy === "Percentage"
-                      ? "%"
-                      : "BDT"}
-                  </span>
-                </>
-              ) : null}
-              <span className="flex gap-1 items-center">
-                <Rate className="text-sm" disabled defaultValue={2.5} />(
-                {item.product?.reviews?.length})
-              </span>
-            </Link>
-            <div className="flex gap-2">
-              <Button
-                size="small"
-                onClick={() =>
-                  addToCart({
-                    ...item.product,
-                    selectProductVariant: item.product.productVariants[0],
-                  })
-                }
-                icon={<FaShoppingCart />}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              />
-              <Button
-                size="small"
-                onClick={() => handleDelete(item.id)}
-                danger
-                loading={global.loading?.delete}
-                icon={<RestOutlined />}
-              />
-            </div>
-          </div>
-        );
-      })} */}
+      ) : (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
     </div>
   );
 }

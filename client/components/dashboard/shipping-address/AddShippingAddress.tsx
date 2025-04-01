@@ -19,8 +19,6 @@ import { getUnions } from "@/lib/apis/geo-location/union";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
 
-//TODO need to work update oparation 
-
 const AddShippingAddress = () => {
   const [divisions, setDivision] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -33,23 +31,41 @@ const AddShippingAddress = () => {
   const { payload, type } = global.action;
 
   useEffect(() => {
-    fetchData();
-  }, [global.action]);
+    const fetchData = async () => {
+      dispatch(setLoading({ loading: true }));
 
-  const fetchData = async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const newData = { ...payload };
-      const disvision = await getDivisions();
-      setDivision(disvision.data);
-      setFormData(newData);
-      // setFormValues(newData);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
+      try {
+        setFormData(payload);
+
+        const division = await getDivisions();
+        setDivision(division.data);
+        if (type === ActionType.UPDATE) {
+          console.log("Fetching Districts, Upazilas, Unions...");
+          const districts = await getDistricts({
+            divisionId: payload.divisionId,
+          });
+          const upazilas = await getUpazilas({
+            districtId: payload.districtId,
+          });
+          const unions = await getUnions({ upazilaId: payload.upazilaId });
+
+          setDistricts(districts.data);
+          setUpazilas(upazilas.data);
+          setUnions(unions.data);
+        }
+      } catch (err: any) {
+        errorNotification({ message: err.message });
+      } finally {
+        dispatch(setLoading({ loading: false }));
+      }
+    };
+
+    if (type) {
+      fetchData();
+    } else {
+      console.log("No type detected, skipping fetch.");
     }
-  };
+  }, [type]); // Ensure payload is included if necessary
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
@@ -69,6 +85,11 @@ const AddShippingAddress = () => {
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
+    setDivision([]);
+    setDistricts([]);
+    setUpazilas([]);
+    setUnions([]);
+    form.resetFields();
   };
 
   const setFormData = (v: any) => {
@@ -129,12 +150,12 @@ const AddShippingAddress = () => {
         >
           <Select
             placeholder="Select"
-          // optionFilterProp="children"
-          // filterOption={(input, option) =>
-          //   (option?.children as any)
-          //     .toLowerCase()
-          //     .indexOf(input.toLowerCase()) >= 0
-          // }
+            // optionFilterProp="children"
+            // filterOption={(input, option) =>
+            //   (option?.children as any)
+            //     .toLowerCase()
+            //     .indexOf(input.toLowerCase()) >= 0
+            // }
           >
             <Select.Option value="Home">Home</Select.Option>
             <Select.Option value="Office">Office</Select.Option>
@@ -260,6 +281,8 @@ const AddShippingAddress = () => {
             onChange={async (value) => {
               if (value) {
                 const union = await getUnions({ upazilaId: value });
+                console.log("union", union);
+
                 setUnions(union.data);
               }
             }}
@@ -306,11 +329,7 @@ const AddShippingAddress = () => {
         </Form.Item>
 
         <Form.Item {...tailLayout}>
-          <Button
-            className="me-2"
-            size="small"
-            onClick={resetFormData}
-          >
+          <Button className="me-2" size="small" onClick={resetFormData}>
             Reset
           </Button>
           <Button

@@ -88,18 +88,3 @@ export async function getDivision(data: any) {
 //   return res.json();
 // }
 
-// export async function deleteDivision(id: string) {
-//   const session = await getServerSession(authOptions);
-//   const res = await fetch(
-//     `${appConfig.apiUrl}/divisions/${id}`,
-//     {
-//       method: "DELETE",
-//       cache: "no-cache",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${session?.user?.accessToken}`,
-//       },
-//     }
-//   );
-//   return res.json();
-// }

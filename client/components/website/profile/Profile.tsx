@@ -135,12 +135,12 @@ export default function Profile() {
           icon: <AndroidOutlined />,
         },
 
-        {
-          label: `My Point`,
-          children: `My Point`,
-          key: "point",
-          icon: <AndroidOutlined />,
-        },
+        // {
+        //   label: `My Point`,
+        //   children: `My Point`,
+        //   key: "point",
+        //   icon: <AndroidOutlined />,
+        // },
       ]}
     />
   );

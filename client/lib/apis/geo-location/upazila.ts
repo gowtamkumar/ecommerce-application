@@ -27,7 +27,7 @@ export async function saveUpazila(data: any) {
   return res.json();
 }
 
-export async function getUpazilas(params: any) {
+export async function getUpazilas(params?: any) {
   const { districtId } = params;
 
   const queryParams = new URLSearchParams();

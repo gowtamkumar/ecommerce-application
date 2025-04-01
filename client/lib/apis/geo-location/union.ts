@@ -27,7 +27,7 @@ export async function saveUnion(data: any) {
   return res.json();
 }
 
-export async function getUnions(params: { upazilaId: string }) {
+export async function getUnions(params?: any) {
   const { upazilaId } = params;
 
   const queryData = upazilaId ? `?upazilaId=${upazilaId}` : "";
@@ -37,7 +37,7 @@ export async function getUnions(params: { upazilaId: string }) {
     throw new Error("No access token found");
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/unions${queryData}`, {
+  const res = await fetch(`${appConfig.apiUrl}/unions?${queryData}`, {
     headers: {
       Authorization: `Bearer ${session.user.accessToken}`,
     },
