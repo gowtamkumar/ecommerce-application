@@ -108,9 +108,7 @@ export const getUserWishlist = asyncHandler(
           dis.priority,
           ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
       FROM discounts dis
-      WHERE 
-          dis.status = 'Active'
-          AND (dis.start_date <= NOW() AND dis.end_date >= NOW())
+      WHERE (dis.start_date <= NOW() AND dis.end_date >= NOW())
   ),
   selectedDiscount AS (
       SELECT DISTINCT ON (p.id) 
@@ -156,7 +154,7 @@ export const getUserWishlist = asyncHandler(
       p.purchase_price AS "purchasePrice",
       p.product_variant_id AS "productVariantId",
       rt.reviews_count AS "reviewsCount",
-      rt.average_rating AS "averageRating",
+      rt.average_rating AS "avgRating",
       -- ✅ Calculate tax amount based on the discounted price
       ROUND(
           ((CASE 

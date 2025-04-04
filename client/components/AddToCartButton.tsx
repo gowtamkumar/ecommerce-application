@@ -26,49 +26,58 @@ export default function AddToCartButton({ item }: { item: Product }) {
   const dispatch = useDispatch();
 
   async function addToCart(values: any) {
-    const value = { ...values };
+    // const value = { ...values };
 
-    if (value.defaultProduct) {
-      const { unitPrice, purchasePrice, size, id } = value.defaultProduct;
-      const defaultProduct = {
-        discount: value.discount,
-        unitPrice,
-        tax: value.tax?.value,
-      };
+    // console.log("value", value);
+    
 
-      const { discountAmount, taxAmount } = await discountTaxCalculationFun(
-        defaultProduct
-      );
+    // if (value.defaultProduct) {
+    //   const { unitPrice, purchasePrice, size, id } = value.defaultProduct;
+    //   const defaultProduct = {
+    //     discount: value.discount,
+    //     unitPrice,
+    //     tax: value.tax?.value,
+    //   };
 
-      Object.assign(value, {
-        discountAmount,
-        taxAmount,
-        productVariantId: id,
-        purchasePrice,
-        unitPrice,
-        size,
-      });
-    }
+    //   const { discountAmount, taxAmount } = await discountTaxCalculationFun(
+    //     defaultProduct
+    //   );
+
+    //   Object.assign(value, {
+    //     discountAmount,
+    //     taxAmount,
+    //     productVariantId: id,
+    //     purchasePrice,
+    //     unitPrice,
+    //     size,
+    //   });
+    // }
 
     const newData = {
-      productId: value.id,
-      id: value.id,
-      name: value.name,
-      productVariantId: value.productVariantId,
-      color: value?.color,
-      colorId: value?.colorId,
-      size: value?.size,
-      sizeId: value?.size?.id,
-      purchasePrice: Number(value.purchasePrice) || 0,
-      unitPrice: Number(value.unitPrice) || 0,
-      taxAmount: Number(value.taxAmount) || 0,
-      discountAmount: Number(value.discountAmount) || 0,
-      thumbnailImage: value.thumbnailImage,
+      productId: values.id,
+      ...values,
+      // id: value.id,
+      // name: value.name,
+      // productVariantId: value.productVariantId,
+      // color: value?.color,
+      // colorId: value?.colorId,
+      // size: value?.size,
+      // sizeId: value?.size?.id,
+      // purchasePrice: Number(value.purchasePrice) || 0,
+      // unitPrice: Number(value.unitPrice) || 0,
+      // taxAmount: Number(value.taxAmount) || 0,
+      // discountAmount: Number(value.discountAmount) || 0,
+      // thumbnailImage: value.thumbnailImage,
       qty: 1,
     };
 
+    console.log("newData", newData);
+    
+
+
+
     try {
-      dispatch(setLoading({ productId: value.id }));
+      dispatch(setLoading({ productId: newData.id }));
       dispatch(addCart(newData));
       setTimeout(() => {
         dispatch(setLoading({}));

@@ -489,9 +489,7 @@ export const cartIncrementDecrement = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const validation = cartIncrementDecrementValidationSchema.safeParse({
-      ...req.body,
-    });
+    const validation = cartIncrementDecrementValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({

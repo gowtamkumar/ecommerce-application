@@ -9,35 +9,27 @@ export interface CartResult {
   total: number;
   totalQty: number;
   totalTax: number;
-  totalDiscount: number;
-  subTotal: number
+  discountedPrice: number | string;
+  subTotal: number;
 }
 
-export const cartCalculationFun = async (
-  value: CartCalculationFun[]
-): Promise<CartResult> => {
+export const cartCalculationFun = async (value: any) => {
   const result = value.reduce(
-    (pre, curr) => {
+    (pre: any, curr: any) => {
       // Ensure all values are converted to numbers for calculations
-      const unitPrice = parseFloat(curr.unitPrice) || 0;
-      const discountAmount = parseFloat(curr.discountAmount as string) || 0;
-      const taxAmount = parseFloat(curr.taxAmount as string) || 0;
+      const unitPrice = +curr.discountedPrice * (curr.qty || 0);
+      const taxAmount = +curr.taxAmount + (curr.qty || 0);
 
       return {
-        total: pre.total + unitPrice * (curr.qty || 0),
+        total: pre.total + unitPrice,
         totalQty: pre.totalQty + (curr.qty || 0),
-        totalDiscount: pre.totalDiscount + discountAmount * +curr.qty,
-        totalTax: pre.totalTax + taxAmount * (curr.qty || 0),
-        subTotal:
-          pre.subTotal +
-          (unitPrice * +curr.qty + +taxAmount * +curr.qty) -
-          discountAmount * +curr.qty,
+        totalTax: pre.totalTax + taxAmount,
+        subTotal: pre.subTotal + unitPrice + +taxAmount,
       };
     },
     {
       total: 0,
       totalQty: 0,
-      totalDiscount: 0,
       totalTax: 0,
       subTotal: 0,
     }

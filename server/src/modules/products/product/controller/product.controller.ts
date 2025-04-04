@@ -10,6 +10,7 @@ import { updateProductValidationSchema } from "../../../../validation/products/p
 import { logger } from "../../../../middlewares/logger";
 import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
 import { CustomRequest } from "../../../../enums/custom-request-type";
+import { productsQuery } from "../../../../query";
 
 // @desc Create a Product
 // @route POST /api/v1/products
@@ -105,243 +106,20 @@ export const createProduct = asyncHandler(
 // @route GET /api/v1/products
 // @access Public
 export const getPublicProducts = async (req: Request, res: Response) => {
-  logger.info(`Service: getProducts ${req.method} ${req.url}`);
-
+  logger.info(`Service: getPublicProducts ${req.method} ${req.url}`);
   const connection = await getDBConnection();
-  const {
-    search,
-    lowPrice,
-    highPrice,
-    brandId,
-    colorId,
-    categoryId,
-    minPrice,
-    maxPrice,
-    discount,
-    page = 1,
-    perPage = 12,
-    discountId,
-  } = req.query;
+  const { page = 1, perPage = 12 } = req.query;
 
-  // Helper function to parse filters
-  const parseFilter = (filter: any) => {
-    if (!filter) return [];
-    return [
-      ...new Set(
-        filter
-          .split(",")
-          .filter((id: any) => id.trim() !== "" && !isNaN(id)) // Ensure valid numbers
-          .map((id: any) => parseInt(id.trim()))
-      ),
-    ];
-  };
-
-  const categoryFilter = parseFilter(categoryId);
-  const brandFilter = parseFilter(brandId);
-  const colorFilter = parseFilter(colorId);
-
-  const query = `
-  WITH productTable AS (
-      SELECT 
-          p.id AS product_id,
-          p.name,
-          p.slug,
-          p.thumbnail_image ,
-          p.hover_image,
-          p.variant,
-          p.featured,
-          p.tax_id,
-          p.brand_id,
-          pv.unit_price,
-          pv.purchase_price,
-          pv.id AS product_variant_id
-      FROM 
-          products p
-      JOIN LATERAL (
-          SELECT 
-              pv.unit_price, 
-              pv.purchase_price, 
-              pv.id
-          FROM 
-              product_variants pv
-          WHERE 
-              pv.product_id = p.id
-          ORDER BY 
-              pv.default DESC, pv.id
-          LIMIT 1
-      ) pv ON true
-  ),
-  reviewsTable AS (
-      SELECT 
-          product_id,
-          COUNT(*) AS reviews_count,
-          COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
-      FROM reviews
-      GROUP BY product_id
-  ),
-  validDiscount AS (
-      SELECT 
-          dis.id AS discount_id,
-          dis.discount_strategy,
-          dis.value AS discount_value,
-          dis.scope,
-          dis.promotion_type,
-          dis.start_date,
-          dis.end_date,
-          dis.priority,
-          ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
-      FROM discounts dis
-      LEFT JOIN products p ON p.discount_id = dis.id
-      WHERE 
-          ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
-          AND dis.status = 'Active'
-      ORDER BY dis.value DESC
-  ),
-  selectedDiscount AS (
-      SELECT DISTINCT ON (p.id) 
-          p.id AS product_id,  
-          dis.discount_id,
-          dis.discount_strategy,
-          dis.discount_value,
-          dis.scope,
-          dis.promotion_type
-      FROM products p
-      LEFT JOIN validDiscount dis ON (
-                (dis.scope = 'Products' AND EXISTS (
-                  SELECT 1 
-                  FROM applicable_products ap 
-                  WHERE ap.product_id = p.id AND ap.discount_id = dis.discount_id
-              )) OR
-              (dis.scope = 'Category' AND EXISTS (
-                  SELECT 1 
-                  FROM product_categories pc 
-                  WHERE pc.product_id = p.id 
-                  AND pc.category_id IN 
-                      (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
-              )) OR
-              (dis.scope = 'Brand' AND EXISTS (
-                  SELECT 1 
-                  FROM applicable_brands ab 
-                  WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
-              )) OR
-              (dis.scope = 'Global') OR
-              (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
-          )   
-      ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
-  ),
-  filteredProducts AS (
-  SELECT 
-          p.product_id AS "id",
-          p.name,
-          p.slug,
-          p.thumbnail_image as "thumbnailImage",
-          p.hover_image as "hoverImage",
-          p.variant,
-          sd.discount_id as "discountId",
-          sd.discount_strategy AS "discountStrategy",
-          sd.discount_value AS "discountValue",
-          sd.scope,
-          sd.promotion_type AS "promotionType",
-          p.featured,
-          p.unit_price AS "unitPrice",
-          p.purchase_price AS "purchasePrice",
-          p.product_variant_id as "productVariantId",
-          rt.reviews_count AS "reviewsCount",
-          rt.average_rating AS "avgRating",
-          ROUND(
-              ((CASE 
-                  WHEN sd.discount_strategy = 'Percentage' THEN 
-                      p.unit_price - (p.unit_price * sd.discount_value / 100)
-                  WHEN sd.discount_strategy = 'Fixed' THEN 
-                      p.unit_price - sd.discount_value
-                  ELSE 
-                      p.unit_price
-              END) * COALESCE(t.value, 0) / 100), 
-          2) AS "taxAmount",
-          
-          -- ✅ Calculate Discounted Price
-          ROUND(
-              CASE 
-                  WHEN sd.discount_strategy = 'Percentage' THEN 
-                      p.unit_price - (p.unit_price * sd.discount_value / 100)
-                  WHEN sd.discount_strategy = 'Fixed' THEN 
-                      p.unit_price - sd.discount_value
-                  ELSE 
-                      p.unit_price
-              END, 
-              2
-          ) AS "discountedPrice"
-      FROM 
-          productTable p
-      LEFT JOIN 
-          selectedDiscount sd ON sd.product_id = p.product_id
-      LEFT JOIN 
-          reviewsTable rt ON rt.product_id = p.product_id
-      LEFT JOIN 
-          taxs t ON t.id = p.tax_id
-      LEFT JOIN 
-          product_categories pc ON pc.product_id = p.product_id
-      LEFT JOIN 
-          brands b ON b.id = p.brand_id
-  )
-  SELECT
-  *,
-  COUNT(*) OVER() AS total  -- Add total count here
-  FROM filteredProducts WHERE 1=1
-      ${
-        categoryFilter.length
-          ? `AND filteredProducts."id" IN (
-              SELECT product_id FROM product_categories WHERE category_id IN (${categoryFilter.join(
-                ","
-              )})
-          )`
-          : ""
-      }
-      ${
-        brandFilter.length
-          ? `AND filteredProducts."id" IN (${brandFilter.join(",")})`
-          : ""
-      }
-      ${
-        minPrice && maxPrice
-          ? `AND filteredProducts."discountedPrice" BETWEEN ${minPrice} AND ${maxPrice}`
-          : ""
-      }
-      ${
-        discount
-          ? `AND filteredProducts."discountValue" BETWEEN 0 AND ${discount}`
-          : ""
-      }
-      ${
-        search
-          ? `
-        AND (
-          LOWER(filteredProducts."name") ILIKE LOWER('%${search}%') OR
-          LOWER(filteredProducts."slug") ILIKE LOWER('%${search}%')
-        )
-      `
-          : ""
-      }
-      ${discountId ? `AND filteredProducts."discountId" = ${discountId}` : ""}
-
-  ORDER BY 
-      ${
-        lowPrice && !highPrice
-          ? `filteredProducts."discountedPrice" ASC`
-          : `filteredProducts."discountedPrice" DESC`
-      }
-  LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
-`;
+  const query = await productsQuery(req.query);
 
   const products = await connection.query(query);
-
   // Calculate total and totalPages
   const total = products.length > 0 ? products[0].total : 0;
   const totalPages = Math.ceil(total / +perPage);
 
   return res.status(200).json({
     success: true,
-    message: "Get product successfully",
+    message: "Get products successfully",
     total,
     page,
     perPage,

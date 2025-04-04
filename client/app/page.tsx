@@ -22,11 +22,9 @@ const MoreDiscover = dynamic(
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
-  const home = await getHomeApi();
-  console.log("home", home);
-  
+  const home = await getHomeApi();  
   const { banners, discounts, categories, products, topSellingProduct } =
-    home.data || {};
+    home.data || {}
   return (
     <>
       <header>
@@ -44,7 +42,7 @@ export default async function Home() {
         {categories && <CategoryCard categories={categories} />}
 
         {/* Featured Products */}
-        {products && (
+        {/* {products.data && (
           <section className="md:w-8/12 mx-auto md:py-5 p-3">
             <div className="flex justify-between">
               <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
@@ -52,9 +50,9 @@ export default async function Home() {
                 View all
               </Link>
             </div>
-            <FeaturedProduct products={products} />
+            <FeaturedProduct products={products.data} />
           </section>
-        )}
+        )} */}
 
         {/* Top Selling Product */}
         {/* <section className="md:w-8/12 mx-auto md:py-5 p-3">
@@ -76,7 +74,7 @@ export default async function Home() {
         )}
 
         {/* Featured Products */}
-        {products && (
+        {products?.data && (
           <section className="md:w-8/12 mx-auto md:py-5 p-3">
             <div className="flex justify-between">
               <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
@@ -84,7 +82,7 @@ export default async function Home() {
                 View all
               </Link>
             </div>
-            <FeaturedProduct products={products} />
+            <FeaturedProduct products={products?.data} />
           </section>
         )}
 

@@ -27,7 +27,6 @@ export default function ViewCart() {
       const result = await cartCalculationFun(cart.carts);
       dispatch(setCartResult(result));
     }
-
     calculateCart();
   }, [cart.carts]);
 
@@ -42,11 +41,7 @@ export default function ViewCart() {
             >
               <div>
                 <Image
-                  src={
-                    item.thumbnailImage
-                      ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
-                      : "/pos_software.png"
-                  }
+                  src={`${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`}
                   alt={item.name}
                   width={100}
                   height={100}
@@ -58,11 +53,7 @@ export default function ViewCart() {
                 <div>
                   <p>{item.name.slice(0, 60)}</p>
                   <p>
-                    {item.qty} × ৳
-                    {(
-                      +item.unitPrice * +item.qty -
-                      +item.discountAmount * +item.qty
-                    ).toFixed(2)}
+                    {item.qty} × ৳ {item.discountedPrice}
                   </p>
                 </div>
                 <div className="px-5">
@@ -82,13 +73,10 @@ export default function ViewCart() {
         <div className="flex justify-between">
           <p>Subtotal:</p>
           <p className="font-bold text-2xl">
-            ৳{" "}
-            {(+cart.cartResult.total - +cart.cartResult.totalDiscount).toFixed(
-              2
-            )}
+            ৳ {(+cart.cartResult.subTotal).toFixed(2)}
           </p>
         </div>
-        <Button className="w-full" >
+        <Button className="w-full">
           <Link href="/checkout">Checkout</Link>
         </Button>
       </div>

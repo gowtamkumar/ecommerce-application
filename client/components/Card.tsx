@@ -117,14 +117,14 @@ export default function Card({ item }: { item: any }) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-1 text-md">
-            ৳ {item?.discountId ? item.discountedPrice : item.unitPrice}
+            ৳ {item.discountedPrice}
           </p>
         </div>
 
         {item?.discountId && (
           <div className="text-xs">
             <span className="line-through text-gray-500">
-              ৳ {(+item.unitPrice).toFixed(2)}
+              ৳ {item.unitPrice}
             </span>
             <span className="text-red-600 ml-2">
               - {item.discountValue}
