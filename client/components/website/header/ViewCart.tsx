@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import appConfig from "@/appConfig";
+import { deleteCart, getCartLists } from "@/lib/apis/cart";
 import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
 import {
   removeCart,
+  replaceCart,
   selectCart,
-  setCartResult,
 } from "@/redux/features/cart/cartSlice";
 import { Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
 import { TiDeleteOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,22 +18,27 @@ export default function ViewCart() {
   const cart = useSelector(selectCart);
   const dispatch = useDispatch();
 
-  const handleRemove = (item: any) => {
-    dispatch(removeCart(item));
+  const handleRemove = async (item: any) => {
+    const cartId = item.id;
+    const removeDartData = await deleteCart(cartId);
+    if (removeDartData.success) {
+      const getCartList = await getCartLists();
+      dispatch(replaceCart(getCartList.data));
+    }
   };
 
-  useEffect(() => {
-    async function calculateCart() {
-      const result = await cartCalculationFun(cart.carts);
-      dispatch(setCartResult(result));
-    }
-    calculateCart();
-  }, [cart.carts]);
+  // useEffect(() => {
+  //   async function calculateCart() {
+  //     const result = await cartCalculationFun(cart.carts);
+  //     dispatch(setCartResult(result));
+  //   }
+  //   calculateCart();
+  // }, [cart.carts]);
 
   return (
     <div className="flex flex-col h-full justify-between">
       <div className="flex flex-col flex-grow gap-6 overflow-y-auto">
-        {(cart.carts || []).map((item: any) => {
+        {(cart?.carts?.cartList || []).map((item: any) => {
           return (
             <div
               key={item.id}
@@ -51,9 +56,9 @@ export default function ViewCart() {
 
               <div className="flex justify-between">
                 <div>
-                  <p>{item.name.slice(0, 60)}</p>
+                  <p>{item?.name?.slice(0, 60)}</p>
                   <p>
-                    {item.qty} × ৳ {item.discountedPrice}
+                    {item.qty} × ৳ {item.subTotal}
                   </p>
                 </div>
                 <div className="px-5">
@@ -73,7 +78,7 @@ export default function ViewCart() {
         <div className="flex justify-between">
           <p>Subtotal:</p>
           <p className="font-bold text-2xl">
-            ৳ {(+cart.cartResult.subTotal).toFixed(2)}
+            ৳ {cart?.carts?.cartSummary?.subTotal}
           </p>
         </div>
         <Button className="w-full">

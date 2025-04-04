@@ -11,7 +11,7 @@ export const onlineCreateOrderValidationSchema = z.object({
   userId: z.number({
     required_error: "User is Required",
   }),
-  couponId: z.number().optional(),
+  couponId: z.union([z.number(), z.null()]).optional(),
   totalItemsDiscount: z.string().optional(),
   couponDiscount: z.string().optional(),
   shippingCharge: z.string({
@@ -40,7 +40,6 @@ export const onlineCreateOrderValidationSchema = z.object({
         purchasePrice: z.string({
           required_error: "Purchase Price is required",
         }),
-
         discountedUnitPrice: z.string().optional(),
         totalDiscountedPrice: z.string().optional(),
         discountAmountPerUnit: z.string().optional(),

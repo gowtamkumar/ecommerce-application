@@ -24,12 +24,8 @@ export const shippingAddressValidationSchema = z.object({
   districtId: z.number({
     required_error: "District is required",
   }),
-  upazilaId: z.number({
-    required_error: "Upazila is required",
-  }),
-  unionId: z.number({
-    required_error: "Upazila is required",
-  }),
+  upazilaId: z.number().optional(),
+  unionId: z.number().optional(),
   address: z.string({
     required_error: "Address is required",
   }),

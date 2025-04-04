@@ -1,9 +1,11 @@
 "use client";
 import appConfig from "@/appConfig";
+import { getCartLists, incrementDecrementCart } from "@/lib/apis/cart";
 import {
   decrementCart,
   incrementCart,
   removeCart,
+  replaceCart,
   selectCart,
 } from "@/redux/features/cart/cartSlice";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
@@ -30,12 +32,12 @@ export default function OrderSummary() {
     }
   }
 
-  function incrementCartHandle(value: any) {
-    dispatch(incrementCart(value));
-  }
-
-  function decrementCartHandle(value: any) {
-    dispatch(decrementCart(value));
+  async function cartIncrementDecrementHandle(value: any) {
+    const incrementCartRes = await incrementDecrementCart(value);
+    if (incrementCartRes.success) {
+      const getCartList = await getCartLists();
+      dispatch(replaceCart(getCartList.data));
+    }
   }
 
   function stockCheckingAndPurchaseLimit(value: any) {
@@ -56,7 +58,7 @@ export default function OrderSummary() {
         <h2 className="text-2xl font-semibold">Order summary</h2>
       </div>
       <div>
-        {cart.carts.map((item: any, idx: number) => {
+        {cart?.carts?.cartList?.map((item: any, idx: number) => {
           return (
             <div key={idx} className="p-3 flex border-b">
               <div>
@@ -97,7 +99,12 @@ export default function OrderSummary() {
                 <div className="flex">
                   <button
                     className="px-2 py-1 bg-gray-200"
-                    onClick={() => decrementCartHandle(item)}
+                    onClick={() =>
+                      cartIncrementDecrementHandle({
+                        type: "Decrement",
+                        id: item.id,
+                      })
+                    }
                     disabled={item?.qty <= 1}
                   >
                     -
@@ -110,7 +117,12 @@ export default function OrderSummary() {
                   />
                   <button
                     className="px-2 py-1 bg-gray-200"
-                    onClick={() => incrementCartHandle(item)}
+                    onClick={() =>
+                      cartIncrementDecrementHandle({
+                        type: "Increment",
+                        id: item.id,
+                      })
+                    }
                     disabled={stockCheckingAndPurchaseLimit(item)}
                   >
                     +
@@ -120,12 +132,9 @@ export default function OrderSummary() {
               <div className="mx-2 text-base font-semibold text-green-600">
                 Price:
                 <p className="text-gray-500 mb-1 text-md">
-                  ৳
-                  {item?.discountAmount
-                    ? (+item.unitPrice - +item.discountAmount).toFixed(2)
-                    : item.unitPrice}
+                  ৳{item.discountedUnitPrice}
                 </p>
-                {item?.discountAmount && (
+                {/* {item?.discountAmount && (
                   <div className="text-xs">
                     <span className="line-through text-gray-500">
                       ৳ {(+item.unitPrice).toFixed(2)}
@@ -135,18 +144,18 @@ export default function OrderSummary() {
                       {item?.discountStrategy === "Percentage" ? "%" : "BDT"}
                     </span>
                   </div>
-                )}
+                )} */}
               </div>
 
               <div className="mx-2 text-base font-semibold text-green-600">
-                tax ৳{(+item.taxAmount * +item.qty).toFixed(2)}
+                Tax ৳{item.taxAmount}
               </div>
               <div className="mx-2 text-base font-semibold text-green-600">
-                discountAmount: ৳{(+item.discountAmount * +item.qty).toFixed(2)}
+                Discount Amount: ৳{item.totalDiscountAmount}
               </div>
 
               <div>
-                <span>Subtotal: {+item.unitPrice * +item.qty}</span>
+                <span>Subtotal: {+item.subTotal}</span>
               </div>
             </div>
           );

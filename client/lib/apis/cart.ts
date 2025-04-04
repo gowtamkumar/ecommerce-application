@@ -23,11 +23,12 @@ export async function getCarts() {
   return await handleResponse(res);
 }
 
-export async function getCartLists(params: {
+export async function getCartLists(params?: {
   couponCode: number | string;
   shippingCost: number | string;
 }) {
-  const { couponCode, shippingCost } = params;
+  const headers = await getAuthHeaders();
+  const { couponCode, shippingCost }: any = params || {};
   let queryString = "";
 
   if (couponCode) {
@@ -42,6 +43,7 @@ export async function getCartLists(params: {
     `${appConfig.apiUrl}/carts/coupon-apply-cartlist?${queryString}`,
     {
       cache: "no-cache",
+      headers,
     }
   );
 
@@ -62,6 +64,19 @@ export async function updateCart(data: any) {
   const headers = await getAuthHeaders();
 
   const res = await fetch(`${appConfig.apiUrl}/carts/${data.id}`, {
+    method: "PUT",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  return await handleResponse(res);
+}
+
+export async function incrementDecrementCart(data: any) {
+  const headers = await getAuthHeaders();
+
+  const res = await fetch(`${appConfig.apiUrl}/carts/qty-up-down/${data.id}`, {
     method: "PUT",
     cache: "no-cache",
     headers,

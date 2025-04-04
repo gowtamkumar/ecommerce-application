@@ -28,9 +28,9 @@ export default function HeaderRight() {
 
   const profileImage = session.data?.user?.image;
 
-  useEffect(() => {
-    setClientCartCount(cart.carts.length || 0);
-  }, [cart.carts]);
+  // useEffect(() => {
+  //   setClientCartCount(cart.carts.length || 0);
+  // }, [cart.carts]);
 
   const showLoading = () => {
     setDrawarCart(true);
@@ -55,7 +55,7 @@ export default function HeaderRight() {
       <div className="relative group">
         <Badge
           size="default"
-          count={clientCartCount}
+          count={cart?.carts?.cartSummary?.totalQty}
           onClick={showLoading}
           className="px-4  font-semibold text-white rounded-md cursor-pointer"
         >

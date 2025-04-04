@@ -5,7 +5,7 @@ import { getDBConnection } from "../../../../../config/db";
 import { BannerEntity } from "../../../../banner/model/banner.entity";
 import { DiscountEntity } from "../../../../discount/model/discount.entity";
 import { CategoriesEntity } from "../../../../categories/model/categories.entity";
-import { productsQuery, topSellingProductQuery } from "../../../../../query";
+import { productsQuery, topSellingProductQuery } from "../../../../../sqlQuery";
 
 // @desc Get getHome data
 // @route GET /api/v1/home

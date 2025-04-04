@@ -3,82 +3,46 @@ import React from "react";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { addCart } from "@/redux/features/cart/cartSlice";
+import { addCart, replaceCart } from "@/redux/features/cart/cartSlice";
 import { discountTaxCalculationFun } from "@/lib/utils/discountTaxCalculationFun";
+import { getCartByUser, getCartLists, saveCart } from "@/lib/apis/cart";
 
 type Product = {
   id: number;
   name: string;
   color: any;
   thumbnailImage: string;
-  defaultProduct?: {
-    id: string;
-    unitPrice: number;
-    purchasePrice: number;
-    size: any;
-  };
+  // defaultProduct?: {
+  //   id: string;
+  //   unitPrice: number;
+  //   purchasePrice: number;
+  //   size: any;
+  // };
   discount?: number;
   tax?: { value: number };
 };
 
-export default function AddToCartButton({ item }: { item: Product }) {
+export default function AddToCartButton({ item }: { item: any }) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   async function addToCart(values: any) {
-    // const value = { ...values };
-
-    // console.log("value", value);
-    
-
-    // if (value.defaultProduct) {
-    //   const { unitPrice, purchasePrice, size, id } = value.defaultProduct;
-    //   const defaultProduct = {
-    //     discount: value.discount,
-    //     unitPrice,
-    //     tax: value.tax?.value,
-    //   };
-
-    //   const { discountAmount, taxAmount } = await discountTaxCalculationFun(
-    //     defaultProduct
-    //   );
-
-    //   Object.assign(value, {
-    //     discountAmount,
-    //     taxAmount,
-    //     productVariantId: id,
-    //     purchasePrice,
-    //     unitPrice,
-    //     size,
-    //   });
-    // }
-
     const newData = {
       productId: values.id,
       ...values,
-      // id: value.id,
-      // name: value.name,
-      // productVariantId: value.productVariantId,
-      // color: value?.color,
-      // colorId: value?.colorId,
-      // size: value?.size,
-      // sizeId: value?.size?.id,
-      // purchasePrice: Number(value.purchasePrice) || 0,
-      // unitPrice: Number(value.unitPrice) || 0,
-      // taxAmount: Number(value.taxAmount) || 0,
-      // discountAmount: Number(value.discountAmount) || 0,
-      // thumbnailImage: value.thumbnailImage,
       qty: 1,
     };
 
-    console.log("newData", newData);
-    
+    const cartResponse = await saveCart(newData);
+    // if(cartResponse)
+    const getCartList = await getCartLists();
 
-
+    console.log("getCartList", getCartList.data);
+    console.log("cartResponse", cartResponse);
 
     try {
       dispatch(setLoading({ productId: newData.id }));
-      dispatch(addCart(newData));
+      dispatch(replaceCart(getCartList.data));
       setTimeout(() => {
         dispatch(setLoading({}));
       }, 1000);

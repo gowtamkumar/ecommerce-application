@@ -4,7 +4,7 @@ import { getDBConnection } from "../../../../config/db";
 import { OrderEntity } from "../../../order/model/order.entity";
 import dayjs from "dayjs";
 import { logger } from "../../../../middlewares/logger";
-import { topSellingProductQuery } from "../../../../query";
+import { topSellingProductQuery } from "../../../../sqlQuery";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report

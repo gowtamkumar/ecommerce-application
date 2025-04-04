@@ -389,13 +389,13 @@ export const getMe = asyncHandler(
       // "products.tags",
       // "products.slug",
 
-      "product",
+      // "product",
       // "productVariants.unitPrice",
 
-      "discount.discountStrategy",
-      "discount.value",
-      "tax.value",
-      "reviews",
+      // "discount.discountStrategy",
+      // "discount.value",
+      // "tax.value",
+      // "reviews",
 
       "orderShippingAddress.name",
       "orderShippingAddress.type",
@@ -432,7 +432,7 @@ export const getMe = asyncHandler(
       "orderTrackings.location",
       "orderTrackings.createdAt",
       "orderTrackings.status",
-      "deliveryMan.name",
+      // "deliveryMan.name",
       // "payments",
       // "size.name",
       // "color.name",
@@ -443,17 +443,17 @@ export const getMe = asyncHandler(
     // qb.leftJoin("orders.orderItems", "orderItems");
     // qb.leftJoin("orderItems.product", "orderProduct");
     qb.leftJoin("orders.orderTrackings", "orderTrackings");
-    qb.leftJoin("orders.deliveryMan", "deliveryMan");
+    // qb.leftJoin("orders.deliveryMan", "deliveryMan");
     qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
 
     // qb.leftJoin("user.products", "products");
     qb.leftJoin("user.shippingAddress", "shippingAddress");
     // qb.leftJoin("user.orderDeliveries", "orderDeliveries");
     // qb.leftJoin("user.wishlists", "wishlists");
-    qb.leftJoin("wishlists.product", "product");
-    qb.leftJoin("product.discount", "discount");
-    qb.leftJoin("product.tax", "tax");
-    qb.leftJoin("product.reviews", "reviews");
+    // qb.leftJoin("wishlists.product", "product");
+    // qb.leftJoin("product.discount", "discount");
+    // qb.leftJoin("product.tax", "tax");
+    // qb.leftJoin("product.reviews", "reviews");
     qb.where({ id: req.id });
 
     const user = await qb.getOne();

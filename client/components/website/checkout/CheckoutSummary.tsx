@@ -2,11 +2,7 @@
 "use client";
 import { saveOrder } from "@/lib/apis/orders";
 import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
-import {
-  clearCart,
-  selectCart,
-  setCartResult,
-} from "@/redux/features/cart/cartSlice";
+import { clearCart, selectCart } from "@/redux/features/cart/cartSlice";
 import {
   selectCheckout,
   setCheckoutFormData,
@@ -33,35 +29,50 @@ export default function CheckoutSummary() {
   const checkout = useSelector(selectCheckout);
   const route = useRouter();
 
-  const { total, totalDiscount, totalQty, totalTax, subTotal } =
-    cart.cartResult || {};
-  const { shippingCharge, checkoutFormData } = checkout || {};
+  const {
+    shippingCharge,
+    totalItemsDiscount,
+    totalDiscount,
+    couponDiscount,
+    totalQty,
+    totalTax,
+    subTotal,
+    grandTotal,
+    couponId,
+  } = cart?.carts?.cartSummary || {};
+
+  const { checkoutFormData } = checkout || {};
   const { loading } = global || {};
-  console.log("checkout", checkout);
-  
 
-  useEffect(() => {
-    async function calculateCart() {
-      const result = await cartCalculationFun(cart.carts);
-      dispatch(setCartResult(result));
-    }
-
-    calculateCart();
-  }, [cart.carts]);
+  // useEffect(() => {
+  //   async function calculateCart() {
+  //     const result = await cartCalculationFun(cart.carts);
+  //     dispatch(setCartResult(result));
+  //   }
+  //   calculateCart();
+  // }, [cart.carts]);
 
   // State for form inputs
   const handleOrder = async () => {
     try {
       dispatch(setLoading({ save: true }));
       const validatedFields = onlineOrderValidationSchema.safeParse({
-        orderItems: cart.carts,
-        subTotal: +total,
-        totalTax: +totalTax,
-        shippingCharge: +shippingCharge?.shippingCharge || 0,
-        discountAmount: +totalDiscount,
-        paymentMethod: checkoutFormData.paymentMethod,
+        totalQty,
+        subTotal,
+        totalItemsDiscount,
+        totalTax,
+        shippingCharge,
+        couponDiscount,
+        grandTotal,
+        couponId,
         shippingAddressId: checkoutFormData?.shippingAddressId,
+        paymentMethod: checkoutFormData.paymentMethod,
+        note: checkoutFormData.note,
+        orderItems: cart?.carts?.cartList,
       });
+
+      console.log("validatedFields", validatedFields);
+      
 
       if (!validatedFields.success) {
         const formattedErrors = validatedFields.error.issues.map((issue) => ({
@@ -77,12 +88,16 @@ export default function CheckoutSummary() {
 
       const res = await saveOrder(validatedFields.data);
 
+      console.log("res", res);
+      
+
       if (res.message?.formErrors) {
         dispatch(setLoading({ save: false }));
         return;
       }
 
       if (!res.success) {
+        dispatch(setLoading({ save: false }));
         dispatch(setResponse({ type: "error", message: res.message }));
         return;
       } else {
@@ -101,7 +116,7 @@ export default function CheckoutSummary() {
         dispatch(setShippingCharge({}));
         // route.push("/");
       }, 1000);
-    } catch (err: any) { }
+    } catch (err: any) {}
   };
 
   return (
@@ -118,29 +133,27 @@ export default function CheckoutSummary() {
 
         <div className="flex justify-between">
           <span>Total Discount</span>
-          <span>{(+totalDiscount).toFixed(2)}</span>
+          <span>{totalDiscount}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Total Tax</span>
-          <span>{(+totalTax).toFixed(2)}</span>
+          <span>{totalTax}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Shipping Cost</span>
-          <span>{(+shippingCharge?.shippingCharge || 0).toFixed(2)}</span>
+          <span>{shippingCharge}</span>
         </div>
 
         <div className="flex justify-between">
           <span className="font-bold">Total</span>
-          <span className="font-bold text-2xl">৳{(+total).toFixed(2)}</span>
+          <span className="font-bold text-2xl">৳{(+subTotal).toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between">
           <span className="font-bold">Total payable</span>
-          <span className="font-bold text-2xl">
-            ৳{(+subTotal + (+shippingCharge?.shippingCharge || 0)).toFixed(2)}
-          </span>
+          <span className="font-bold text-2xl">৳{grandTotal}</span>
         </div>
       </div>
 

@@ -10,7 +10,7 @@ import { updateProductValidationSchema } from "../../../../validation/products/p
 import { logger } from "../../../../middlewares/logger";
 import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
 import { CustomRequest } from "../../../../enums/custom-request-type";
-import { productsQuery } from "../../../../query";
+import { productsQuery } from "../../../../sqlQuery";
 
 // @desc Create a Product
 // @route POST /api/v1/products
