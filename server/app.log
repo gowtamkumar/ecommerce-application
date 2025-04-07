@@ -1949,3 +1949,8 @@
 2025-04-04 17:25:21 [[32minfo[39m]: [Service: getDashbordReport GET /dashboard?startDate=2025-03-31T18%3A00%3A00.000Z&endDate=2025-04-30T17%3A59%3A59.999Z]
 2025-04-04 17:25:24 [[32minfo[39m]: [Service: getSettings GET /]
 2025-04-04 17:25:26 [[32minfo[39m]: [Service: getSettings GET /]
+2025-04-07 16:01:57 [[32minfo[39m]: [Service: getHome GET /?page=1&perPage=3]
+2025-04-07 16:02:18 [[32minfo[39m]: [Service: getUsers GET /users]
+2025-04-07 16:05:06 [[32minfo[39m]: [Service: register POST /register]
+2025-04-07 16:07:12 [[32minfo[39m]: [Service: getHome GET /?page=1&perPage=3]
+2025-04-07 16:10:22 [[32minfo[39m]: [Service: getHome GET /]
