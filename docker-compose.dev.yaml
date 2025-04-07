@@ -14,7 +14,7 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql/data
     networks:
-      - main-network
+      - main_network
 
   pgadmin:
     container_name: pgadmin
@@ -27,9 +27,9 @@ services:
     depends_on:
       - postgres
     networks:
-      - main-network
-  frontend:
-    container_name: frontend
+      - main_network
+  client:
+    container_name: client
     build:
       dockerfile: dockerfile
       context: ./client
@@ -42,9 +42,9 @@ services:
       - /client/app/node_modules
       - ./client:/app
     depends_on:
-      - backend
+      - server
     networks:
-      - main-network
+      - main_network
   redis:
     container_name: redis-server
     image: redis/redis-stack:latest
@@ -57,9 +57,9 @@ services:
     environment:
       - RADIS_ARGS=--save 900 1
     networks:
-      - main-network
-  backend:
-    container_name: backend
+      - main_network
+  server:
+    container_name: server
     build:
       dockerfile: dockerfile
       context: ./server
@@ -74,10 +74,10 @@ services:
       - postgres
       - redis
     networks:
-      - main-network
+      - main_network
 
 networks:
-  main-network:
+  main_network:
     driver: bridge
 
 volumes:

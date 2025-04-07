@@ -1954,3 +1954,8 @@
 2025-04-07 16:05:06 [[32minfo[39m]: [Service: register POST /register]
 2025-04-07 16:07:12 [[32minfo[39m]: [Service: getHome GET /?page=1&perPage=3]
 2025-04-07 16:10:22 [[32minfo[39m]: [Service: getHome GET /]
+2025-04-07 23:35:04 [[32minfo[39m]: [Service: getPublicProducts GET /]
+2025-04-07 23:35:16 [[32minfo[39m]: [Service: getHome GET /]
+2025-04-07 23:41:59 [[32minfo[39m]: [Service: getHome GET /]
+2025-04-07 23:42:00 [[32minfo[39m]: [Service: getHome GET /]
+2025-04-07 23:42:15 [[32minfo[39m]: [Service: getSettings GET /]

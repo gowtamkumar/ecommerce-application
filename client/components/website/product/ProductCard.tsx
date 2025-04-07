@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
-import { getHomeApi } from "@/lib/apis/home";
+// import { getHomeApi } from "@/lib/apis/home";
 import { getPublicProducts } from "@/lib/apis/product";
 
 const ITEMS_PER_PAGE = 12;
@@ -59,7 +59,7 @@ const ProductCard: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const homeapi = await getHomeApi()
+        // const homeapi = await getHomeApi()
         const products = await getPublicProducts({
           categoryId: customQuery,
           brandId,
@@ -72,8 +72,8 @@ const ProductCard: React.FC = () => {
           minPrice,
           discount,
         });
-        console.log("homeapi", homeapi?.data);
-        console.log("products?.data", products?.data);
+        // console.log("homeapi", homeapi?.data);
+        // console.log("products?.data", products?.data);
         
 
         dispatch(setProducts(products?.data));
