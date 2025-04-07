@@ -13,7 +13,21 @@ services:
       - "5431:5432"
     volumes:
       - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - main-network
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - main-network
   frontend:
     container_name: frontend
     build:
@@ -29,7 +43,21 @@ services:
       - ./client:/app
     depends_on:
       - backend
-
+    networks:
+      - main-network
+  redis:
+    container_name: redis-server
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/var/lib/redis-stack
+    environment:
+      - RADIS_ARGS=--save 900 1
+    networks:
+      - main-network
   backend:
     container_name: backend
     build:
@@ -44,6 +72,14 @@ services:
       - ./server/.env
     depends_on:
       - postgres
+      - redis
+    networks:
+      - main-network
+
+networks:
+  main-network:
+    driver: bridge
 
 volumes:
   postgresql_data:
+  redis_data:
