@@ -2,13 +2,12 @@
 import appConfig from "@/appConfig";
 import { getAuthHeaders, handleResponse } from "@/lib/utils/commonFunctions";
 
-
 export async function getHomeApi() {
-    const headers = await getAuthHeaders();
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/home`, {
     cache: "no-cache",
-    headers});
-  console.log("res", res);
-  
+    headers,
+  });
+
   return await handleResponse(res);
 }
