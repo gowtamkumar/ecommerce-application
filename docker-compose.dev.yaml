@@ -28,23 +28,7 @@ services:
       - postgres
     networks:
       - main_network
-  client:
-    container_name: client
-    build:
-      dockerfile: dockerfile
-      context: ./client
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./client/.env.local
-    restart: always
-    volumes:
-      - /client/app/node_modules
-      - ./client:/app
-    depends_on:
-      - server
-    networks:
-      - main_network
+  
   redis:
     container_name: redis-server
     image: redis/redis-stack:latest
@@ -73,6 +57,24 @@ services:
     depends_on:
       - postgres
       - redis
+    networks:
+      - main_network
+      
+  client:
+    container_name: client
+    build:
+      dockerfile: dockerfile
+      context: ./client
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env.local
+    restart: always
+    volumes:
+      - /client/app/node_modules
+      - ./client:/app
+    depends_on:
+      - server
     networks:
       - main_network
 
