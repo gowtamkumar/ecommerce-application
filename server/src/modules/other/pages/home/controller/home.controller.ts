@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../../../../middlewares/async.middleware";
 import { logger } from "../../../../../middlewares/logger";
 import { getDBConnection } from "../../../../../config/db";
-import { BannerEntity } from "../../../../banner/model/banner.entity";
 import { DiscountEntity } from "../../../../discount/model/discount.entity";
 import { CategoriesEntity } from "../../../../categories/model/categories.entity";
 import { productsQuery, topSellingProductQuery } from "../../../../../sqlQuery";
+import { BannerEntity } from "../../../../banner/model/banner.entity";
 
 // @desc Get getHome data
 // @route GET /api/v1/home
