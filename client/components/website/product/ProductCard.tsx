@@ -73,7 +73,7 @@ const ProductCard: React.FC = () => {
           discount,
         });
         // console.log("homeapi", homeapi?.data);
-        // console.log("products?.data", products?.data);
+        console.log("products?.data", products);
         
 
         dispatch(setProducts(products?.data));

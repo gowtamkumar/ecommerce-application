@@ -273,31 +273,31 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   const qb = orderRepository.createQueryBuilder("order");
   qb.select([
     "order",
-    "orderItems",
-    "productVariant.id",
-    "productVariant.material",
-    "productVariant.default",
-    "color.name",
-    "color.color",
-    "size.name",
-    "product",
-    "payments",
-    "orderTrackings",
-    "deliveryMan.name",
-    "user.name",
-    "shippingAddress",
+    // "orderItems",
+    // "productVariant.id",
+    // "productVariant.material",
+    // "productVariant.default",
+    // "color.name",
+    // "color.color",
+    // "size.name",
+    // "product",
+    // "payments",
+    // "orderTrackings",
+    // "deliveryMan.name",
+    // "user.name",
+    // "shippingAddress",
   ]);
 
-  qb.leftJoin("order.orderItems", "orderItems");
-  qb.leftJoin("orderItems.product", "product");
-  qb.leftJoin("orderItems.productVariant", "productVariant");
-  qb.leftJoin("productVariant.color", "color");
-  qb.leftJoin("productVariant.size", "size");
-  qb.leftJoin("order.orderTrackings", "orderTrackings");
-  qb.leftJoin("order.deliveryMan", "deliveryMan");
-  qb.leftJoin("order.user", "user");
-  qb.leftJoin("order.payments", "payments");
-  qb.leftJoin("order.shippingAddress", "shippingAddress");
+  // qb.leftJoin("order.orderItems", "orderItems");
+  // qb.leftJoin("orderItems.product", "product");
+  // qb.leftJoin("orderItems.productVariant", "productVariant");
+  // qb.leftJoin("productVariant.color", "color");
+  // qb.leftJoin("productVariant.size", "size");
+  // qb.leftJoin("order.orderTrackings", "orderTrackings");
+  // qb.leftJoin("order.deliveryMan", "deliveryMan");
+  // qb.leftJoin("order.user", "user");
+  // qb.leftJoin("order.payments", "payments");
+  // qb.leftJoin("order.shippingAddress", "shippingAddress");
   qb.addOrderBy("order.trackingNo", "DESC");
 
   const results = await qb.getMany();
@@ -356,26 +356,73 @@ export const getOrder = asyncHandler(
 
     const { id } = req.params;
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(OrderEntity);
-    const result = await repository.findOne({
-      where: { id },
-      relations: {
-        orderItems: true,
-        payments: true,
-        orderTrackings: true,
-      },
-    });
+  const orderRepository = connection.getRepository(OrderEntity);
 
-    if (!result) {
+  const qb = orderRepository.createQueryBuilder("order");
+  qb.select([
+    "order",
+    "orderItems",
+    "productVariant.id",
+    "productVariant.material",
+    "productVariant.default",
+    "color.name",
+    "color.color",
+    "size.name",
+    "product",
+    "payments",
+    "orderTrackings",
+    "deliveryMan.name",
+    "user.name",
+    "shippingAddress",
+  ]);
+  qb.where({id})
+  qb.leftJoin("order.orderItems", "orderItems");
+  qb.leftJoin("orderItems.product", "product");
+  qb.leftJoin("orderItems.productVariant", "productVariant");
+  qb.leftJoin("productVariant.color", "color");
+  qb.leftJoin("productVariant.size", "size");
+  qb.leftJoin("order.orderTrackings", "orderTrackings");
+  qb.leftJoin("order.deliveryMan", "deliveryMan");
+  qb.leftJoin("order.user", "user");
+  qb.leftJoin("order.payments", "payments");
+  qb.leftJoin("order.shippingAddress", "shippingAddress");
+  qb.addOrderBy("order.trackingNo", "DESC");
+
+
+  const result = await qb.getOne();
+
+
+     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Order of id ${req.params.id}`,
-      data: result,
-    });
-  }
+  return res.status(200).json({
+    success: true,
+    message: "Get Order",
+    data: result,
+  })}
+
+  //   const connection = await getDBConnection();
+  //   const repository = await connection.getRepository(OrderEntity);
+  //   const result = await repository.findOne({
+  //     where: { id },
+  //     relations: {
+  //       orderItems: true,
+  //       payments: true,
+  //       orderTrackings: true,
+  //     },
+  //   });
+
+  //   if (!result) {
+  //     throw new Error(`Resource not found of id #${req.params.id}`);
+  //   }
+
+  //   return res.status(200).json({
+  //     success: true,
+  //     message: `Get a single Order of id ${req.params.id}`,
+  //     data: result,
+  //   });
+  // }
 );
 
 // @desc Get a single Order

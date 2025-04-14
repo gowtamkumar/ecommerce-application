@@ -74,6 +74,7 @@ services:
     volumes:
       - /client/app/node_modules
       - ./client:/app
+      - /app/.next        # Prevent mounting .next from host
     depends_on:
       - server
     networks:

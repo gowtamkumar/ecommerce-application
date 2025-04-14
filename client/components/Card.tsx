@@ -37,9 +37,7 @@ export default function Card({ item }: { item: any }) {
 
   async function AddToWishlist(productId: number) {
     try {
-      const res = await saveWishlist({
-        productId: productId,
-      });
+      const res = await saveWishlist({ productId });
 
       if (res.success) {
         message.success(`${res.message}`);
@@ -111,7 +109,7 @@ export default function Card({ item }: { item: any }) {
           </Link>
         </h3>
         <span className="flex gap-1 items-center">
-          <Rate disabled value={+item.averageRating || 0} />
+          <Rate disabled value={+item.avgRating || 0} />
           {item.reviewsCount && item.reviewsCount}
         </span>
 
