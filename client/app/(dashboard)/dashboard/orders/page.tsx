@@ -137,7 +137,7 @@ const Page: React.FC = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           // ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Search {dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
             setSelectedKeys(e.target.value ? [e.target.value] : []);
@@ -217,6 +217,8 @@ const Page: React.FC = () => {
   });
 
   const expandedRowRender = (value: any) => {
+    console.log(value);
+
     const childColumns: any = [
       {
         title: "Product",
@@ -252,8 +254,8 @@ const Page: React.FC = () => {
 
       {
         title: "Discount Amount",
-        dataIndex: "discountAmount",
-        key: "discountAmount",
+        dataIndex: "totalDiscountAmount",
+        key: "totalDiscountAmount",
       },
       {
         title: "Tax Amount",
@@ -335,37 +337,41 @@ const Page: React.FC = () => {
               <div className="flex justify-between">
                 <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.subTotal).toFixed(2)}
+                  {(+value.subTotal).toFixed(2)}
                 </h1>
               </div>
 
-              <div className="flex justify-between">
-                <h1>Discount Amount:</h1>
-                <h1 className="font-semibold">
-                  ${(+value.totalDiscount).toFixed(2)}
-                </h1>
-              </div>
+              {+value.totalItemsDiscount > 0 && (
+                <div className="flex justify-between">
+                  <h1>Discount Amount:</h1>
+                  <h1 className="font-semibold">{value.totalItemsDiscount}</h1>
+                </div>
+              )}
 
-              <div className="flex justify-between">
-                <h1>Coupon Discount:</h1>
-                <h1 className="font-semibold">
-                  ${(+value.couponDiscount).toFixed(2)}
-                </h1>
-              </div>
+              {+value.couponDiscount > 0 && (
+                <div className="flex justify-between">
+                  <h1>Coupon Discount:</h1>
+                  <h1 className="font-semibold">{value.couponDiscount}</h1>
+                </div>
+              )}
 
               <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">${value.totalTax}</h1>
+                <h1 className="font-semibold">{value.totalTax}</h1>
               </div>
 
-              <div className="flex justify-between">
-                <h1>Shipping:</h1>
-                <h1 className="font-semibold">+${value.shippingCharge}</h1>
-              </div>
+              {
+                +value.shippingCharge > 0 && <div className="flex justify-between">
+                  <h1>Shipping:</h1>
+                  <h1 className="font-semibold">+{value.shippingCharge}</h1>
+                </div>
+              }
+
+
 
               <div className="flex justify-between border-t-2">
                 <h1>Grand Total:</h1>
-                <h1 className="font-semibold">${value.grandTotal}</h1>
+                <h1 className="font-semibold">{value.grandTotal}</h1>
               </div>
             </div>
           </div>

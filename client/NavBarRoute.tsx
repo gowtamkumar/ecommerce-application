@@ -139,24 +139,16 @@ const navbarRoute = [
     route: "true",
   },
   {
+    key: "order_manage",
+    label: "Order Manage",
+    disabled: "true",
+    route: "true",
+  },
+  {
     key: "order",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: "Order Manage",
-    route: "true",
-    children: [
-      {
-        key: "neworders",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: <Link href="/dashboard/orders/new">New Order</Link>,
-        route: "true",
-      },
-      {
-        key: "Order",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-        label: <Link href="/dashboard/orders">Orders</Link>,
-        route: "true",
-      },
-    ],
+    label: <Link href="/dashboard/orders">Orders</Link>,
+    route: "true"
   },
 
   // {

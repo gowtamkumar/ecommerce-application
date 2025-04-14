@@ -273,31 +273,31 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
   const qb = orderRepository.createQueryBuilder("order");
   qb.select([
     "order",
-    // "orderItems",
-    // "productVariant.id",
-    // "productVariant.material",
-    // "productVariant.default",
-    // "color.name",
-    // "color.color",
-    // "size.name",
-    // "product",
-    // "payments",
-    // "orderTrackings",
-    // "deliveryMan.name",
-    // "user.name",
-    // "shippingAddress",
+    "orderItems",
+    "productVariant.id",
+    "productVariant.material",
+    "productVariant.default",
+    "color.name",
+    "color.color",
+    "size.name",
+    "product",
+    "payments",
+    "orderTrackings",
+    "deliveryMan.name",
+    "user.name",
+    "shippingAddress",
   ]);
 
-  // qb.leftJoin("order.orderItems", "orderItems");
-  // qb.leftJoin("orderItems.product", "product");
-  // qb.leftJoin("orderItems.productVariant", "productVariant");
-  // qb.leftJoin("productVariant.color", "color");
-  // qb.leftJoin("productVariant.size", "size");
-  // qb.leftJoin("order.orderTrackings", "orderTrackings");
-  // qb.leftJoin("order.deliveryMan", "deliveryMan");
-  // qb.leftJoin("order.user", "user");
-  // qb.leftJoin("order.payments", "payments");
-  // qb.leftJoin("order.shippingAddress", "shippingAddress");
+  qb.leftJoin("order.orderItems", "orderItems");
+  qb.leftJoin("orderItems.product", "product");
+  qb.leftJoin("orderItems.productVariant", "productVariant");
+  qb.leftJoin("productVariant.color", "color");
+  qb.leftJoin("productVariant.size", "size");
+  qb.leftJoin("order.orderTrackings", "orderTrackings");
+  qb.leftJoin("order.deliveryMan", "deliveryMan");
+  qb.leftJoin("order.user", "user");
+  qb.leftJoin("order.payments", "payments");
+  qb.leftJoin("order.shippingAddress", "shippingAddress");
   qb.addOrderBy("order.trackingNo", "DESC");
 
   const results = await qb.getMany();
