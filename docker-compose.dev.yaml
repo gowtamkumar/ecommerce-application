@@ -29,19 +29,19 @@ services:
     networks:
       - main_network
 
-  # redis:
-  #   container_name: redis-server
-  #   image: redis/redis-stack:latest
-  #   restart: always
-  #   ports:
-  #     - "6379:6379"
-  #     - "8001:8001"
-  #   volumes:
-  #     - redis_data:/var/lib/redis-stack
-  #   environment:
-  #     - RADIS_ARGS=--save 900 1
-  #   networks:
-  #     - main_network
+  redis:
+    container_name: redis-server
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/var/lib/redis-stack
+    environment:
+      - RADIS_ARGS=--save 900 1
+    networks:
+      - main_network
 
   server:
     container_name: server
@@ -74,18 +74,6 @@ services:
       - /client/app/node_modules
       - ./client:/app
     depends_on:
-      - server
-    networks:
-      - main_network
-  nginx:
-    image: nginx:latest
-    container_name: ecommerce_nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - client
       - server
     networks:
       - main_network
