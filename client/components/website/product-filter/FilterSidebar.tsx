@@ -9,6 +9,7 @@ export default async function FilterSidebar() {
   const category = await getPublicCategories();
   const brands = await getBrands();
   const colors = await getColors();
+  
   return (
     <FilterSidebarDetails
       categories={category.data}

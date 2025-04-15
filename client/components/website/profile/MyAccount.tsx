@@ -77,6 +77,9 @@ export default function MyAccount({ user }: any) {
       dispatch(setLoading({ save: true }));
       const result = await updateUser(newData);
 
+      console.log("result", result);
+      
+
       if (result.success) {
         console.log("result.message", result);
         message.success("Profile update successfully")

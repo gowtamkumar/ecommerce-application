@@ -300,6 +300,7 @@ export const productsQuery = async (queryData: any) => {
           p.thumbnail_image as "thumbnailImage",
           p.hover_image as "hoverImage",
           p.variant,
+          p.brand_id,
           sd.discount_id as "discountId",
           sd.discount_strategy AS "discountStrategy",
           sd.discount_value AS "discountValue",
