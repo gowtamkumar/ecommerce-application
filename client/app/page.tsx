@@ -1,3 +1,4 @@
+import CategoryTab from "@/components/website/home/CategoryTab";
 import Discount from "@/components/website/home/Discount";
 import { getHomeApi } from "@/lib/apis/home";
 import dynamic from "next/dynamic";
@@ -5,7 +6,7 @@ import Link from "next/link";
 
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const CategoryCard = dynamic(
-  () => import("@/components/website/home/Category")
+  () => import("@/components/website/home/CategoryCard")
 );
 const SellerAds = dynamic(() => import("@/components/website/home/SellerAds"));
 const Slider = dynamic(() => import("@/components/website/banner/Slider"));
@@ -22,9 +23,9 @@ const MoreDiscover = dynamic(
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
-  const home = await getHomeApi();  
-  const { banners, discounts, categories, products, topSellingProduct } =
-    home.data || {}
+  const home = await getHomeApi();
+  const { banners, discounts, categories, products, topSellingProducts } =
+    home.data || {};
   return (
     <>
       <header>
@@ -42,38 +43,6 @@ export default async function Home() {
         {categories && <CategoryCard categories={categories} />}
 
         {/* Featured Products */}
-        {/* {products.data && (
-          <section className="md:w-8/12 mx-auto md:py-5 p-3">
-            <div className="flex justify-between">
-              <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
-              <Link href={"/products"} className="hover:underline">
-                View all
-              </Link>
-            </div>
-            <FeaturedProduct products={products.data} />
-          </section>
-        )} */}
-
-        {/* Top Selling Product */}
-        {/* <section className="md:w-8/12 mx-auto md:py-5 p-3">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Top Selling Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <FeaturedProduct products={topSellingProduct} />
-        </section> */}
-        {/* product banner */}
-        {banners && (
-          <SellerAds
-            banners={(banners || []).filter(
-              (item: { type: string }) => item.type === "Middle"
-            )}
-          />
-        )}
-
-        {/* Featured Products */}
         {products?.data && (
           <section className="md:w-8/12 mx-auto md:py-5 p-3">
             <div className="flex justify-between">
@@ -86,12 +55,42 @@ export default async function Home() {
           </section>
         )}
 
+        {/* Featured Products */}
+        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Category Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <CategoryTab />
+        </section>
+
+        {/* Top Selling Product */}
+        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold pb-8">Top Selling Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <FeaturedProduct products={topSellingProducts} />
+        </section>
+        {/* product banner */}
+        {banners && (
+          <SellerAds
+            banners={(banners || []).filter(
+              (item: { type: string }) => item.type === "Middle"
+            )}
+          />
+        )}
+
         {/* More discount */}
-        {discounts && (
+        {/* {discounts && (
           <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
             <Discount discounts={discounts} />
           </section>
-        )}
+        )} */}
 
         {/* More Discover */}
         <MoreDiscover />

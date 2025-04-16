@@ -5,7 +5,7 @@ export const updateUserValidationSchema = z.object({
     required_error: "Name is required",
     invalid_type_error: "Name must be a string",
   }),
-  image: z.string().optional().isNullable(),
+  image: z.string().optional(),
   phone: z.string().optional(),
   username: z
     .string()

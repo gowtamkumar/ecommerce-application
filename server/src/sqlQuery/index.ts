@@ -300,7 +300,7 @@ export const productsQuery = async (queryData: any) => {
           p.thumbnail_image as "thumbnailImage",
           p.hover_image as "hoverImage",
           p.variant,
-          p.brand_id,
+          p.brand_id as "brandId",
           sd.discount_id as "discountId",
           sd.discount_strategy AS "discountStrategy",
           sd.discount_value AS "discountValue",
@@ -353,24 +353,38 @@ export const productsQuery = async (queryData: any) => {
   COUNT(*) OVER() AS total
 FROM filteredProducts
 WHERE 1=1
-  ${categoryFilter.length ? `
+  ${
+    categoryFilter.length
+      ? `
     AND "id" IN (
       SELECT product_id 
       FROM product_categories 
       WHERE category_id IN (${categoryFilter.join(",")})
     )
-  ` : ""}
+  `
+      : ""
+  }
   ${brandFilter.length ? `AND brand_id IN (${brandFilter.join(",")})` : ""}
-  ${minPrice && maxPrice ? `AND "discountedPrice" BETWEEN ${minPrice} AND ${maxPrice}` : ""}
+  ${
+    minPrice && maxPrice
+      ? `AND "discountedPrice" BETWEEN ${minPrice} AND ${maxPrice}`
+      : ""
+  }
   ${discount ? `AND "discountValue" BETWEEN 0 AND ${discount}` : ""}
-  ${search ? `
+  ${
+    search
+      ? `
     AND (
       LOWER("name") ILIKE LOWER('%${search}%') OR
       LOWER("slug") ILIKE LOWER('%${search}%')
     )
-  ` : ""}
+  `
+      : ""
+  }
   ${discountId ? `AND "discountId" = ${discountId}` : ""}
-ORDER BY ${lowPrice && !highPrice ? `"discountedPrice" ASC` : `"discountedPrice" DESC`}
+ORDER BY ${
+    lowPrice && !highPrice ? `"discountedPrice" ASC` : `"discountedPrice" DESC`
+  }
 LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
 `;
   return query;
