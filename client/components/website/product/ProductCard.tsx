@@ -39,6 +39,9 @@ const ProductCard: React.FC = () => {
     search: newSearchs,
   } = global.productFilter;
 
+  console.log("global.productFilter", global.productFilter);
+  
+
   let customQuery = "";
   if (categoryIdParams) customQuery += categoryIdParams;
   if (categoryIds)

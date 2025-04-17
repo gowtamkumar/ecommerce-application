@@ -10,7 +10,7 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { getMe } from "@/lib/apis/user";
 import NotificationsUser from "./NotificationsUser";
 
-const ProfileDashboard = dynamic(() => import("./profileDashboard"), {
+const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
   ssr: false,
 });
 
@@ -85,11 +85,7 @@ export default function Profile() {
           label: `Orders`,
           key: "orders",
           children: (
-            <UserOrders
-              orders={(user?.orders || []).filter(
-                (item: { status: string }) => item.status !== "Returned"
-              )}
-            />
+            <UserOrders />
           ),
           icon: <AndroidOutlined />,
         },
@@ -126,10 +122,10 @@ export default function Profile() {
           key: "my_Returns_cancellations",
           children: (
             <UserOrders
-              orders={(user?.orders || []).filter(
-                (item: { status: string }) =>
-                  item.status === "Returned" || item.status === "Canceled"
-              )}
+              // orders={(user?.orders || []).filter(
+              //   (item: { status: string }) =>
+              //     item.status === "Returned" || item.status === "Canceled"
+              // )}
             />
           ),
           icon: <AndroidOutlined />,

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { TableColumnsType, TableColumnType } from "antd";
 import {
   Input,
@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
   setAction,
+  setLoading,
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
@@ -25,6 +26,7 @@ import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
 import { ActionType } from "@/constants/constants";
 import CancelOrder from "./CancelOrder";
+import { getUserOrders } from "@/lib/apis/orders";
 
 interface DataType {
   key: React.Key;
@@ -34,23 +36,26 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const UserOrders = ({ orders }: any) => {
+const UserOrders = () => {
+  const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     dispatch(setLoading({ loading: true }));
-  //     const res = await getUserOrders();
-  //     const newOrders = res.data?.map((items: any, idx: number) => ({
-  //       ...items,
-  //       key: idx.toString(),
-  //     }));
-  //     setOrders(newOrders);
-  //     dispatch(setLoading({ loading: false }));
-  //   })();
-  // }, [dispatch, global.action]);
+  useEffect(() => {
+    (async () => {
+      dispatch(setLoading({ loading: true }));
+      const res = await getUserOrders();
+      const newOrders = res.data?.map((items: any, idx: number) => ({
+        ...items,
+        key: idx.toString(),
+      }));
+      console.log("newOrders", newOrders);
+
+      setOrders(newOrders);
+      dispatch(setLoading({ loading: false }));
+    })();
+  }, [dispatch, global.action]);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -79,7 +84,7 @@ const UserOrders = ({ orders }: any) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Search {dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
             setSearchInput(e.target.value);
@@ -167,6 +172,11 @@ const UserOrders = ({ orders }: any) => {
         render: (v: { name: string }) => <span>{v.name}</span>,
       },
       {
+        title: "Material",
+        dataIndex: "material",
+        key: "material",
+      },
+      {
         title: "Color",
         render: (v: any) => <span>Need to Get in product variant</span>,
       },
@@ -179,8 +189,8 @@ const UserOrders = ({ orders }: any) => {
 
       {
         title: "Discount Amount",
-        dataIndex: "discountAmount",
-        key: "discountAmount",
+        dataIndex: "totalDiscountAmount",
+        key: "totalDiscountAmount",
       },
       {
         title: "Tax Amount",
@@ -193,11 +203,15 @@ const UserOrders = ({ orders }: any) => {
       },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
+      // {
+      //   title: "Total item Amount",
+      //   key: "totalDiscountedPrice",
+      //   dataIndex: "totalDiscountedPrice",
+      // },
       {
-        title: "Total item Amount",
-        render: (v: { unitPrice: number; qty: number }) => (
-          <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
-        ),
+        title: "Sub Total",
+        key: "subTotal",
+        dataIndex: "subTotal",
       },
     ];
 
@@ -250,57 +264,48 @@ const UserOrders = ({ orders }: any) => {
           </div>
           <div className="grid grid-cols-8 mt-5">
             <div className="col-span-4">dasdf</div>
-            <div className="grid gap-y-3 col-span-4">
+            <div className="col-span-3">
+              <div className="flex justify-between">
+                <h1>Total Qty:</h1>
+                <h1 className="font-semibold">{value.totalQty}</h1>
+              </div>
+
               <div className="flex justify-between">
                 <h1>Net Amount:</h1>
                 <h1 className="font-semibold">
-                  ${(+value.subTotal).toFixed(2)}
+                  {(+value.subTotal).toFixed(2)}
                 </h1>
               </div>
 
-              <div className="flex justify-between">
-                <h1>Discount Amount:</h1>
-                <h1 className="font-semibold">
-                  ${(+value.discountAmount).toFixed(2)}
-                </h1>
-              </div>
+              {+value.totalItemsDiscount > 0 && (
+                <div className="flex justify-between">
+                  <h1>Discount Amount:</h1>
+                  <h1 className="font-semibold">{value.totalItemsDiscount}</h1>
+                </div>
+              )}
+
+              {+value.couponDiscount > 0 && (
+                <div className="flex justify-between">
+                  <h1>Coupon Discount:</h1>
+                  <h1 className="font-semibold">{value.couponDiscount}</h1>
+                </div>
+              )}
 
               <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">${value.totalTax}</h1>
+                <h1 className="font-semibold">{value.totalTax}</h1>
               </div>
 
-              <div className="flex justify-between">
-                <h1>Shipping:</h1>
-                <h1 className="font-semibold">
-                  + ${(+value.shippingCharge || 0).toFixed(2)}
-                </h1>
-              </div>
-              {/* <div className="flex justify-between">
-                <h1>Total Order Tax</h1>
-                <h1 className="font-semibold">
-                  + ${(+value.totalTax || 0).toFixed(2)}
-                </h1>
-              </div>
-
-              <div className="flex justify-between">
-                <h1>Discount:</h1>
-                <h1 className="font-semibold">
-                  - ${(+value.discountAmountmount || 0).toFixed(2)}
-                </h1>
-              </div> */}
+              {+value.shippingCharge > 0 && (
+                <div className="flex justify-between">
+                  <h1>Shipping:</h1>
+                  <h1 className="font-semibold">+{value.shippingCharge}</h1>
+                </div>
+              )}
 
               <div className="flex justify-between border-t-2">
-                <h1>Total Amount:</h1>
-                <h1 className="font-semibold">
-                  ${" "}
-                  {(
-                    +value.subTotal +
-                    +value.shippingCharge +
-                    +value.totalTax -
-                    +value.discountAmount
-                  ).toFixed(2)}
-                </h1>
+                <h1>Grand Total:</h1>
+                <h1 className="font-semibold">{value.grandTotal}</h1>
               </div>
             </div>
           </div>
@@ -373,19 +378,17 @@ const UserOrders = ({ orders }: any) => {
             // icon={<Outlined />}
             title="Cancel Order"
             className="me-1"
-            onClick={() =>
-             {
+            onClick={() => {
               console.log("value", value);
-              
+
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
                   cancelOrder: true,
                   payload: { id: value.id, status: "Canceled" },
                 })
-              )
-             }
-            }
+              );
+            }}
             disabled={value.status === "Completed"}
           >
             Cancel Order

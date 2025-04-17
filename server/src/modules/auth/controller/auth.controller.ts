@@ -35,7 +35,7 @@ export const register = asyncHandler(
     logger.info(`Service: register ${req.method} ${req.url}`);
 
     const connection = await getDBConnection();
-    
+
     const validation = userValidationSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -669,7 +669,7 @@ export const updateUser = asyncHandler(
     }
     const updateData = await userRepository.merge(user, validation.data);
     await userRepository.save(updateData);
-
+    delete updateData.password;
     return res.status(200).json({
       success: true,
       message: `Update a User of id ${req.params.id}`,

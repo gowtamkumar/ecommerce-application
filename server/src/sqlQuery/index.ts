@@ -364,7 +364,7 @@ WHERE 1=1
   `
       : ""
   }
-  ${brandFilter.length ? `AND brand_id IN (${brandFilter.join(",")})` : ""}
+  ${brandFilter.length ? `AND "brandId" IN (${brandFilter.join(",")})` : ""}
   ${
     minPrice && maxPrice
       ? `AND "discountedPrice" BETWEEN ${minPrice} AND ${maxPrice}`
