@@ -6,22 +6,20 @@ import Image from "next/image";
 import "./heroSectionSlider.css";
 import appConfig from "@/appConfig";
 
-const ProductImageGallery = ({ images }: { images: string[] }) => {
+const ProductImageGallery = ({ images }: { images: string }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
-
-  // Ensure a minimum number of slides for the loop
-  const enhancedImages = images?.length < 3 ? [...images, ...images] : images;
+  const newimages = images?.split(",");
 
   return (
     <div>
       <div>
         <Swiper
-          loop={enhancedImages?.length >= 3}
+          loop={newimages?.length >= 3}
           spaceBetween={10}
           thumbs={{ swiper: thumbsSwiper }}
           modules={[FreeMode, Navigation, Thumbs]}
         >
-          {(enhancedImages || []).map((item: string, idx: number) => {
+          {(newimages || []).map((item: string, idx: number) => {
             return (
               <SwiperSlide key={idx}>
                 <Image
@@ -44,7 +42,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
       <div>
         <Swiper
           onSwiper={(swiper) => setThumbsSwiper(swiper)}
-          loop={enhancedImages?.length >= 3}
+          loop={newimages?.length >= 3}
           direction="horizontal"
           spaceBetween={10}
           slidesPerView={4}
@@ -57,7 +55,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
             prevEl: ".custom-prev",
           }}
         >
-          {(enhancedImages || []).map((item: string, idx: number) => {
+          {(newimages || []).map((item: string, idx: number) => {
             return (
               <SwiperSlide key={idx}>
                 <Image

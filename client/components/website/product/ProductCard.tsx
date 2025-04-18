@@ -37,10 +37,7 @@ const ProductCard: React.FC = () => {
     maxPrice,
     discount,
     search: newSearchs,
-  } = global.productFilter;
-
-  console.log("global.productFilter", global.productFilter);
-  
+  } = global.productFilter;  
 
   let customQuery = "";
   if (categoryIdParams) customQuery += categoryIdParams;
@@ -51,13 +48,6 @@ const ProductCard: React.FC = () => {
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
   if (newSearchs) newSearch += newSearchs;
-
-  // const filteredProducts = ( this code front-end pagination
-  //   products.products.slice(
-  //     (currentPage - 1) * ITEMS_PER_PAGE,
-  //     currentPage * ITEMS_PER_PAGE
-  //   ) || []
-  // )
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -75,10 +65,6 @@ const ProductCard: React.FC = () => {
           minPrice,
           discount,
         });
-        // console.log("homeapi", homeapi?.data);
-        console.log("products?.data", products);
-        
-
         dispatch(setProducts(products?.data));
       } catch (error) {
         console.error("Failed to fetch products:", error);

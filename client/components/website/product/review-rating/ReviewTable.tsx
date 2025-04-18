@@ -46,7 +46,7 @@ const ReviewTable = () => {
             <div className="flex justify-between">
               <div className="flex gap-2">
                 <Rate allowHalf value={+value.rating} disabled />
-                <p>{value.user.name && value.user.name}</p>
+                <p>{value.user?.name && value.user?.name}</p>
               </div>
               <div>{value.createdAt && dayjs(value.createdAt).fromNow()}</div>
             </div>

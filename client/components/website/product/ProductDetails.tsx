@@ -23,6 +23,7 @@ import {
   setProduct,
 } from "@/redux/features/products/productSlice";
 import { useRouter } from "next/navigation";
+import ProductShare from "./ProductShare";
 
 interface ProductColor {
   colorId: number;
@@ -58,16 +59,16 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
     reviews,
     brand,
     discountId,
-    discount,
+    discountValue,
+    discountStrategy,
     productColors,
     variant,
     productVariants,
-    qty,
-    slug,
     images,
-    thumbnailImage,
     shortDescription,
   } = products.product;
+
+  console.log("products.product", products.product);
 
   const unitPrice = +defaultProduct?.unitPrice;
   let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
@@ -75,7 +76,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
   async function AddToWishlist(productId: number) {
     try {
       const res = await saveWishlist({
-        productId: productId,
+        productId,
       });
 
       if (res.success) {
@@ -101,20 +102,20 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
     }
   }
 
-  function stockCheckingAndPurchaseLimit(
-    product: { limitPurchaseQty: number; qty: number },
-    checkStock: number
-  ): boolean {
-    if (product.limitPurchaseQty && product.limitPurchaseQty <= product.qty) {
-      return true;
-    }
-    if (checkStock <= product.qty) {
-      return true;
-    }
-    return false;
-  }
+  // function stockCheckingAndPurchaseLimit(
+  //   product: { limitPurchaseQty: number; qty: number },
+  //   checkStock: number
+  // ): boolean {
+  //   if (product.limitPurchaseQty && product.limitPurchaseQty <= product.qty) {
+  //     return true;
+  //   }
+  //   if (checkStock <= product.qty) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
-  const findProduct = cart.carts.find(
+  const findProduct = cart.carts.cartList?.find(
     ({ id }: { id: number }) => id === product.id
   );
 
@@ -142,23 +143,17 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
 
         <div>
           <p className="text-2xl font-semibold text-blue-600 mr-4">
-            {discountId
-              ? (
-                  unitPrice +
-                  +taxAmount -
-                  productDiscountCalculation(product)
-                ).toFixed(2)
-              : (unitPrice + +taxAmount || 0).toFixed(2)}
+            {product.discountedPrice}
           </p>
 
           {discountId && (
             <>
               <span className="line-through text-gray-500">
-                ৳ {(unitPrice + +taxAmount || 0).toFixed(2)}
+                ৳ {(+unitPrice || 0).toFixed(2)}
               </span>
               <span className="text-red-600 ml-2">
-                - {discount?.value}
-                {discount?.discountStrategy === "Percentage" ? "%" : "BDT"}
+                - {discountValue}
+                {discountStrategy === "Percentage" ? "%" : "BDT"}
               </span>
             </>
           )}
@@ -264,15 +259,16 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
           </span>
         </div>
         <Divider />
-    
+
         <div className="flex gap-4 items-center">
           <div>Share:</div>
-          <div className="flex gap-3">
+          <ProductShare />
+          {/* <div className="flex gap-3">
             <FaFacebook size={22} />
             <FaXTwitter size={22} />
             <FaPinterest size={22} />
             <FaLinkedin size={22} />
-          </div>
+          </div> */}
         </div>
         <ModalLogin unAuthorize={unAuthorize} setUnAuthorize={setUnAuthorize} />
       </div>

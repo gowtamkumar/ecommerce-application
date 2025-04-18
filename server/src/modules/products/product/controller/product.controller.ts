@@ -275,6 +275,7 @@ export const getProductByslug = asyncHandler(
       p.limit_purchase_qty AS "limitPurchaseQty",
       p.alert_qty AS "alertQty",
       p.tags,
+      sd.discount_id as "discountId",
       sd.discount_strategy AS "discountStrategy",
       sd.discount_value AS "discountValue",
       sd.scope,
@@ -354,6 +355,8 @@ export const getProductByslug = asyncHandler(
               JSONB_BUILD_OBJECT(
                   'id', r.id,
                   'rating', r.rating,
+                  'like', r.like,
+                  'disLike', r.dis_like,
                   'comment', r.comment
               )
           ) FILTER (WHERE r.product_id = p.product_id AND r.status = 'Approved'), '[]'
@@ -390,7 +393,7 @@ export const getProductByslug = asyncHandler(
       [slug]
     );
 
-    if (!result) {
+    if (!result[0]) {
       return res.status(404).json({
         success: false,
         message: `Resource not found with slug #${slug}`,
@@ -400,7 +403,7 @@ export const getProductByslug = asyncHandler(
     return res.status(200).json({
       success: true,
       message: `Fetched product with slug #${slug}`,
-      data: result,
+      data: result[0],
     });
   }
 );

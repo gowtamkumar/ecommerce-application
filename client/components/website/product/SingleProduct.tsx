@@ -36,6 +36,9 @@ export default function SingleProduct() {
       const newProduct = await getProductBySlug(slug?.toString() as any);
       const { productVariants, variant } = newProduct.data;
 
+      console.log("newProduct.data;", newProduct.data);
+      
+
       if (newProduct?.success) {
         const findVariantProduct = productVariants.find(
           (item: { default: boolean }) => item.default
@@ -141,10 +144,9 @@ export default function SingleProduct() {
   //   review: reviewsSchema,
   // };
 
-
   return (
     <div className="container mx-auto">
-       {/* <NextSeo
+      {/* <NextSeo
         title={name}
         description={meta_description}
         openGraph={{
