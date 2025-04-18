@@ -6,7 +6,7 @@ type NotificationProps = {
 
 type InfoNotificationProps = {
   message: string;
-  description: string;
+  description?: string;
 };
 
 export const successNotification = ({ message }: NotificationProps) => {
@@ -19,6 +19,8 @@ export const successNotification = ({ message }: NotificationProps) => {
 };
 
 export const errorNotification = ({ message }: NotificationProps) => {
+  console.log("message", message);
+  
   notification.error({
     message,
     duration: 3,

@@ -312,7 +312,7 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 export const getUserOrders = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
-
+    const { status } = req.query;
     const userId = req.id;
     const connection = await getDBConnection();
     const orderRepository = connection.getRepository(OrderEntity);
@@ -337,6 +337,7 @@ export const getUserOrders = asyncHandler(
     qb.leftJoin("order.payments", "payments");
     qb.leftJoin("order.shippingAddress", "shippingAddress");
     if (userId) qb.where({ userId });
+    if (status) qb.andWhere({ status });
     const results = await qb.getMany();
 
     return res.status(200).json({
@@ -356,51 +357,50 @@ export const getOrder = asyncHandler(
 
     const { id } = req.params;
     const connection = await getDBConnection();
-  const orderRepository = connection.getRepository(OrderEntity);
+    const orderRepository = connection.getRepository(OrderEntity);
 
-  const qb = orderRepository.createQueryBuilder("order");
-  qb.select([
-    "order",
-    "orderItems",
-    "productVariant.id",
-    "productVariant.material",
-    "productVariant.default",
-    "color.name",
-    "color.color",
-    "size.name",
-    "product",
-    "payments",
-    "orderTrackings",
-    "deliveryMan.name",
-    "user.name",
-    "shippingAddress",
-  ]);
-  qb.where({id})
-  qb.leftJoin("order.orderItems", "orderItems");
-  qb.leftJoin("orderItems.product", "product");
-  qb.leftJoin("orderItems.productVariant", "productVariant");
-  qb.leftJoin("productVariant.color", "color");
-  qb.leftJoin("productVariant.size", "size");
-  qb.leftJoin("order.orderTrackings", "orderTrackings");
-  qb.leftJoin("order.deliveryMan", "deliveryMan");
-  qb.leftJoin("order.user", "user");
-  qb.leftJoin("order.payments", "payments");
-  qb.leftJoin("order.shippingAddress", "shippingAddress");
-  qb.addOrderBy("order.trackingNo", "DESC");
+    const qb = orderRepository.createQueryBuilder("order");
+    qb.select([
+      "order",
+      "orderItems",
+      "productVariant.id",
+      "productVariant.material",
+      "productVariant.default",
+      "color.name",
+      "color.color",
+      "size.name",
+      "product",
+      "payments",
+      "orderTrackings",
+      "deliveryMan.name",
+      "user.name",
+      "shippingAddress",
+    ]);
+    qb.where({ id });
+    qb.leftJoin("order.orderItems", "orderItems");
+    qb.leftJoin("orderItems.product", "product");
+    qb.leftJoin("orderItems.productVariant", "productVariant");
+    qb.leftJoin("productVariant.color", "color");
+    qb.leftJoin("productVariant.size", "size");
+    qb.leftJoin("order.orderTrackings", "orderTrackings");
+    qb.leftJoin("order.deliveryMan", "deliveryMan");
+    qb.leftJoin("order.user", "user");
+    qb.leftJoin("order.payments", "payments");
+    qb.leftJoin("order.shippingAddress", "shippingAddress");
+    qb.addOrderBy("order.trackingNo", "DESC");
 
+    const result = await qb.getOne();
 
-  const result = await qb.getOne();
-
-
-     if (!result) {
+    if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
-  return res.status(200).json({
-    success: true,
-    message: "Get Order",
-    data: result,
-  })}
+    return res.status(200).json({
+      success: true,
+      message: "Get Order",
+      data: result,
+    });
+  }
 
   //   const connection = await getDBConnection();
   //   const repository = await connection.getRepository(OrderEntity);
@@ -425,6 +425,82 @@ export const getOrder = asyncHandler(
   // }
 );
 
+// @desc Get a single Order
+// @route GET /api/v1/Order/:id
+// @access Public
+export const getOrderTracking = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getOrderTracking ${req.method} ${req.url}`);
+
+    const { trackingNo } = req.query;
+    const connection = await getDBConnection();
+    const orderRepository = connection.getRepository(OrderEntity);
+
+    const qb = orderRepository.createQueryBuilder("order");
+    qb.select([
+      "order",
+      "orderItems",
+      "productVariant.id",
+      "productVariant.material",
+      "productVariant.default",
+      "color.name",
+      "color.color",
+      "size.name",
+      "product",
+      "payments",
+      "orderTrackings",
+      "deliveryMan.name",
+      "user.name",
+      "shippingAddress",
+    ]);
+    qb.where({ trackingNo });
+    qb.leftJoin("order.orderItems", "orderItems");
+    qb.leftJoin("orderItems.product", "product");
+    qb.leftJoin("orderItems.productVariant", "productVariant");
+    qb.leftJoin("productVariant.color", "color");
+    qb.leftJoin("productVariant.size", "size");
+    qb.leftJoin("order.orderTrackings", "orderTrackings");
+    qb.leftJoin("order.deliveryMan", "deliveryMan");
+    qb.leftJoin("order.user", "user");
+    qb.leftJoin("order.payments", "payments");
+    qb.leftJoin("order.shippingAddress", "shippingAddress");
+    qb.addOrderBy("order.trackingNo", "DESC");
+
+    const result = await qb.getOne();
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Get Order Details",
+      data: result,
+    });
+  }
+
+  //   const connection = await getDBConnection();
+  //   const repository = await connection.getRepository(OrderEntity);
+  //   const result = await repository.findOne({
+  //     where: { id },
+  //     relations: {
+  //       orderItems: true,
+  //       payments: true,
+  //       orderTrackings: true,
+  //     },
+  //   });
+
+  //   if (!result) {
+  //     throw new Error(`Resource not found of id #${req.params.id}`);
+  //   }
+
+  //   return res.status(200).json({
+  //     success: true,
+  //     message: `Get a single Order of id ${req.params.id}`,
+  //     data: result,
+  //   });
+  // }
+);
 // @desc Get a single Order
 // @route GET /api/v1/Order/:id
 // @access Public

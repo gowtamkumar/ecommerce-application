@@ -36,7 +36,7 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const UserOrders = () => {
+const UserOrders = ({ status }: { status: string }) => {
   const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
@@ -45,7 +45,7 @@ const UserOrders = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getUserOrders();
+      const res = await getUserOrders(status);
       const newOrders = res.data?.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),

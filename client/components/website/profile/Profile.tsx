@@ -84,9 +84,7 @@ export default function Profile() {
         {
           label: `Orders`,
           key: "orders",
-          children: (
-            <UserOrders />
-          ),
+          children: <UserOrders status="Pending" />,
           icon: <AndroidOutlined />,
         },
         {
@@ -107,7 +105,7 @@ export default function Profile() {
         {
           label: `Track your Order`,
           key: "track_your_order",
-          children: <OrderTracker orders={user?.orders} />,
+          children: <OrderTracker />,
           icon: <AndroidOutlined />,
         },
 
@@ -120,14 +118,7 @@ export default function Profile() {
         {
           label: `My Returns & Cancellations`,
           key: "my_Returns_cancellations",
-          children: (
-            <UserOrders
-              // orders={(user?.orders || []).filter(
-              //   (item: { status: string }) =>
-              //     item.status === "Returned" || item.status === "Canceled"
-              // )}
-            />
-          ),
+          children: <UserOrders status="Canceled" />,
           icon: <AndroidOutlined />,
         },
 

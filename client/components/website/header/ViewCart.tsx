@@ -2,9 +2,7 @@
 "use client";
 import appConfig from "@/appConfig";
 import { deleteCart, getCartLists } from "@/lib/apis/cart";
-import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
 import {
-  removeCart,
   replaceCart,
   selectCart,
 } from "@/redux/features/cart/cartSlice";

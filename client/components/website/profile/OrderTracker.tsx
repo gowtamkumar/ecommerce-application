@@ -17,12 +17,13 @@ import { useDispatch } from "react-redux";
 import { setProductRating } from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
 import dynamic from "next/dynamic";
+import { getOrderTracking } from "@/lib/apis/orders";
 
 const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
   ssr: false,
 });
 
-export default function OrderTracker({ orders }: any) {
+export default function OrderTracker() {
   const [order, setOrder] = useState({} as any);
   const [tracker, setTracker] = useState({} as { trackingNo: string });
   const [loading, setLoading] = useState(false);
@@ -31,13 +32,11 @@ export default function OrderTracker({ orders }: any) {
   const [form] = Form.useForm();
 
   async function handleOrderTracking() {
-    // const result = await getOrderTracking({ trackingNo: tracker.trackingNo });
     setLoading(true);
-    const getOrderTracker = (orders || []).find(
-      (item: { trackingNo: string }) => item.trackingNo === tracker.trackingNo
-    );
+    const result = await getOrderTracking({ trackingNo: tracker.trackingNo });
+
     setTimeout(() => {
-      setOrder(getOrderTracker || {});
+      setOrder(result.data);
       setLoading(false);
     }, 2000);
   }
@@ -67,25 +66,20 @@ export default function OrderTracker({ orders }: any) {
 
     {
       title: "Discount Amount",
-      dataIndex: "discountAmount",
-      key: "discountAmount",
+      dataIndex: "totalDiscountAmount",
+      key: "totalDiscountAmount",
     },
     {
       title: "Tax Amount",
       key: "taxAmount",
       dataIndex: "taxAmount",
-      // render: (v: {
-      //   taxAmount: number;
-      //   qty: number;
-      // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
     },
 
     { title: "Qty", dataIndex: "qty", key: "qty" },
     {
-      title: "Total item Amount",
-      render: (v: { unitPrice: number; qty: number }) => (
-        <span>{(+v.unitPrice * +v.qty).toFixed(2)}</span>
-      ),
+      title: "Sub Total",
+      key: "subTotal",
+      dataIndex: "subTotal",
     },
   ];
 
@@ -200,56 +194,51 @@ export default function OrderTracker({ orders }: any) {
                 />
               </div>
               <div className="grid gap-y-3 col-span-4">
-                <div className="flex justify-between">
-                  <h1>Net Amount:</h1>
-                  <h1 className="font-semibold">
-                    ${(+order.subTotal).toFixed(2)}
-                  </h1>
-                </div>
+                <div className="col-span-3">
+                  <div className="flex justify-between">
+                    <h1>Total Qty:</h1>
+                    <h1 className="font-semibold">{order.totalQty}</h1>
+                  </div>
 
-                <div className="flex justify-between">
-                  <h1>Discount Amount:</h1>
-                  <h1 className="font-semibold">
-                    ${(+order.discountAmount).toFixed(2)}
-                  </h1>
-                </div>
+                  <div className="flex justify-between">
+                    <h1>Net Amount:</h1>
+                    <h1 className="font-semibold">
+                      {order.subTotal}
+                    </h1>
+                  </div>
 
-                <div className="flex justify-between">
-                  <h1>Tax Amount:</h1>
-                  <h1 className="font-semibold">${order.totalTax}</h1>
-                </div>
+                  {+order.totalItemsDiscount > 0 && (
+                    <div className="flex justify-between">
+                      <h1>Discount Amount:</h1>
+                      <h1 className="font-semibold">
+                        {order.totalItemsDiscount}
+                      </h1>
+                    </div>
+                  )}
 
-                <div className="flex justify-between">
-                  <h1>Shipping:</h1>
-                  <h1 className="font-semibold">
-                    + ${(+order.shippingCharge || 0).toFixed(2)}
-                  </h1>
-                </div>
-                {/* <div className="flex justify-between">
-                <h1>Total Order Tax</h1>
-                <h1 className="font-semibold">
-                  + ${(+order.totalTax || 0).toFixed(2)}
-                </h1>
-              </div>
+                  {+order.couponDiscount > 0 && (
+                    <div className="flex justify-between">
+                      <h1>Coupon Discount:</h1>
+                      <h1 className="font-semibold">{order.couponDiscount}</h1>
+                    </div>
+                  )}
 
-              <div className="flex justify-between">
-                <h1>Discount:</h1>
-                <h1 className="font-semibold">
-                  - ${(+order.discountAmountmount || 0).toFixed(2)}
-                </h1>
-              </div> */}
+                  <div className="flex justify-between">
+                    <h1>Tax Amount:</h1>
+                    <h1 className="font-semibold">{order.totalTax}</h1>
+                  </div>
 
-                <div className="flex justify-between border-t-2">
-                  <h1>Total Amount:</h1>
-                  <h1 className="font-semibold">
-                    ${" "}
-                    {(
-                      +order.subTotal +
-                      +order.shippingCharge +
-                      +order.totalTax -
-                      +order.discountAmount
-                    ).toFixed(2)}
-                  </h1>
+                  {+order.shippingCharge > 0 && (
+                    <div className="flex justify-between">
+                      <h1>Shipping:</h1>
+                      <h1 className="font-semibold">+{order.shippingCharge}</h1>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between border-t-2">
+                    <h1>Grand Total:</h1>
+                    <h1 className="font-semibold">{order.grandTotal}</h1>
+                  </div>
                 </div>
               </div>
             </div>

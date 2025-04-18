@@ -24,6 +24,10 @@ import {
 } from "@/redux/features/products/productSlice";
 import { useRouter } from "next/navigation";
 import ProductShare from "./ProductShare";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface ProductColor {
   colorId: number;
@@ -68,8 +72,6 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
     shortDescription,
   } = products.product;
 
-  console.log("products.product", products.product);
-
   const unitPrice = +defaultProduct?.unitPrice;
   let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
 
@@ -79,21 +81,18 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
         productId,
       });
 
+      console.log("res", res);
+
       if (res.success) {
-        message.success(`${res.message}`);
+        successNotification({ message: "succes" });
+        // message.success(`${res.message}`);
       }
 
       if (!res.success) {
-        message.success(`${res.message}`);
+        message.info("This is a normal message");
+        // message.success(res.message);
       }
-
-      // if (res.status === 500) {
-      //   dispatch(setResponse({ type: "error", message: res.message }));
-      // } else {
-      //   dispatch(
-      //     setResponse({ type: "success", message: "successfully Added" })
-      //   );
-      // }
+      message.info("This is a normal message");
       setTimeout(() => {
         dispatch(setResponse({}));
       }, 2000);
@@ -263,12 +262,6 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
         <div className="flex gap-4 items-center">
           <div>Share:</div>
           <ProductShare />
-          {/* <div className="flex gap-3">
-            <FaFacebook size={22} />
-            <FaXTwitter size={22} />
-            <FaPinterest size={22} />
-            <FaLinkedin size={22} />
-          </div> */}
         </div>
         <ModalLogin unAuthorize={unAuthorize} setUnAuthorize={setUnAuthorize} />
       </div>

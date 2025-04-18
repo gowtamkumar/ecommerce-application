@@ -69,7 +69,8 @@ export const getUserWishlist = asyncHandler(
         p.*,
         pv.unit_price,
         pv.purchase_price,
-        pv.id AS product_variant_id
+        pv.id AS product_variant_id,
+        w.id AS wishlist_id
       FROM 
         products p
       JOIN LATERAL (
@@ -150,6 +151,7 @@ export const getUserWishlist = asyncHandler(
       sd.scope,
       sd.promotion_type AS "promotionType",
       p.featured,
+      p.wishlist_id as "wishlistId",
       p.unit_price AS "unitPrice",
       p.purchase_price AS "purchasePrice",
       p.product_variant_id AS "productVariantId",
@@ -192,7 +194,7 @@ export const getUserWishlist = asyncHandler(
       sd.discount_id, sd.discount_strategy, sd.discount_value, sd.scope, sd.promotion_type,
       p.id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id,
       p.variant, p.featured, rt.reviews_count, rt.average_rating, taxs.value, 
-      p.unit_price, p.purchase_price;
+      p.unit_price, p.purchase_price, p.wishlist_id;
    `,
       [userId]
     );
