@@ -1,0 +1,3 @@
+2025-04-19 21:01:58 [[32minfo[39m]: [Service: login POST /login]
+2025-04-19 21:02:06 [[32minfo[39m]: [Service: getDiscounts GET /]
+2025-04-19 21:02:13 [[32minfo[39m]: [Service: getDiscount GET /10]

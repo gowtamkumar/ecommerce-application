@@ -45,6 +45,98 @@ export const getDiscount = asyncHandler(
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
 
+    const query = repository.query(`
+  WITH productTable AS (
+      SELECT 
+          p.id AS product_id,
+          p.name,
+          p.slug,
+          p.thumbnail_image ,
+          p.hover_image,
+          p.variant,
+          p.featured,
+          p.tax_id,
+          p.brand_id,
+          pv.unit_price,
+          pv.purchase_price,
+          pv.id AS product_variant_id
+      FROM 
+          products p
+      JOIN LATERAL (
+          SELECT 
+              pv.unit_price, 
+              pv.purchase_price, 
+              pv.id
+          FROM 
+              product_variants pv
+          WHERE 
+              pv.product_id = p.id
+          ORDER BY 
+              pv.default DESC, pv.id
+          LIMIT 1
+      ) pv ON true
+  ),
+  discountProducts AS (
+	select * from discounts dis
+	left join applicable_products ap on ap.discount_id = dis.id
+  ),
+   reviewsTable AS (
+      SELECT 
+          product_id,
+          COUNT(*) AS reviews_count,
+          COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+      FROM reviews
+      GROUP BY product_id
+  )
+  -- select * from discountProducts;  
+  select 
+   p.product_id AS "id",
+          p.name,
+          p.slug,
+          p.thumbnail_image as "thumbnailImage",
+          p.hover_image as "hoverImage",
+          p.variant,
+          p.brand_id as "brandId",
+          dp.discount_id as "discountId",
+          dp.discount_strategy AS "discountStrategy",
+          dp.value AS "discountValue",
+          dp.scope,
+          p.featured,
+          p.unit_price AS "unitPrice",
+          p.purchase_price AS "purchasePrice",
+          p.product_variant_id as "productVariantId",
+		  rt.reviews_count AS "reviewsCount",
+          rt.average_rating AS "avgRating",
+		      ROUND(
+              ((CASE 
+                  WHEN dp.discount_strategy = 'Percentage' THEN 
+                      p.unit_price - (p.unit_price * dp.value / 100)
+                  WHEN dp.discount_strategy = 'Fixed' THEN 
+                      p.unit_price - dp.value
+                  ELSE 
+                      p.unit_price
+              END) * COALESCE(t.value, 0) / 100), 
+          2) AS "taxAmount",
+		    ROUND(
+              CASE 
+                  WHEN dp.discount_strategy = 'Percentage' THEN 
+                      p.unit_price - (p.unit_price * dp.value / 100)
+                  WHEN dp.discount_strategy = 'Fixed' THEN 
+                      p.unit_price - dp.value
+                  ELSE 
+                      p.unit_price
+              END, 
+              2
+          ) AS "discountedPrice"
+  from discountProducts dp
+  LEFT JOIN productTable p on p.product_id = dp.product_id
+  LEFT JOIN taxs t ON t.id = p.tax_id
+  LEFT JOIN  reviewsTable rt ON rt.product_id = p.product_id
+
+      `)
+
+    
+
     const result = await repository.findOne({
       where: { id },
       relations: [
