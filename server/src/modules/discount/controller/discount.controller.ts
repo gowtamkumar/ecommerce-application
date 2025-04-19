@@ -18,7 +18,7 @@ import { ScopeEnum } from "../enum";
 export const getDiscounts = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: getDiscounts ${req.method} ${req.url}`);
-    
+
     const { scope } = req.query;
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
@@ -26,11 +26,6 @@ export const getDiscounts = asyncHandler(
     if (scope) newQuery.scope = scope;
     const result = await repository.find({
       where: newQuery,
-      relations: [
-        "applicableProducts",
-        "applicableBrands",
-        "applicableCategories",
-      ],
     });
     return res.status(200).json({
       success: true,
@@ -49,7 +44,15 @@ export const getDiscount = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
-    const result = await repository.findOneBy({ id });
+
+    const result = await repository.findOne({
+      where: { id },
+      relations: [
+        "applicableProducts",
+        "applicableBrands",
+        "applicableCategories",
+      ],
+    });
 
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
