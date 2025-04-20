@@ -389,3 +389,109 @@ LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
 `;
   return query;
 };
+
+export const singleDiscountQuery = async (id: string) => {
+  const query = `
+          WITH product_variants_dedup AS (
+            SELECT DISTINCT ON (pv.product_id)
+                pv.product_id,
+                pv.unit_price,
+                pv.purchase_price,
+                pv.id AS product_variant_id
+            FROM product_variants pv
+            ORDER BY pv.product_id, pv.default DESC, pv.id
+          ),
+          productTable AS (
+            SELECT 
+              p.id AS product_id,
+              p.name,
+              p.slug,
+              p.thumbnail_image,
+              p.hover_image,
+              p.variant,
+              p.featured,
+              p.tax_id,
+              p.brand_id,
+              pc.category_id,
+              pv.unit_price,
+              pv.purchase_price,
+              pv.product_variant_id
+            FROM products p
+            LEFT JOIN product_variants_dedup pv ON pv.product_id = p.id
+            LEFT JOIN product_categories pc ON pc.product_id = p.id
+          ),
+          reviewsTable AS (
+            SELECT 
+              product_id,
+              COUNT(*) AS reviews_count,
+              COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+            FROM reviews
+            GROUP BY product_id
+          ),
+          discountInfo AS (
+            SELECT * FROM discounts WHERE id = ${id}
+          ),
+          targetProducts AS (
+            SELECT 
+              p.*
+            FROM discountInfo d
+            JOIN productTable p ON
+                (d.scope = 'Global')
+              OR (d.scope = 'Products' AND EXISTS (
+                SELECT 1 FROM applicable_products ap WHERE ap.discount_id = d.id AND ap.product_id = p.product_id
+              ))
+              OR (d.scope = 'Brand' AND EXISTS (
+                SELECT 1 FROM applicable_brands ab WHERE ab.discount_id = d.id AND ab.brand_id = p.brand_id
+              ))
+              OR (d.scope = 'Category' AND EXISTS (
+                SELECT 1 FROM applicable_categories ac WHERE ac.discount_id = d.id AND ac.category_id = p.category_id
+              ))
+          )
+          SELECT 
+            d.id AS "discountId",
+            d.discount_strategy AS "discountStrategy",
+            d.value AS "discountValue",
+            d.scope,
+            json_agg(
+              json_build_object(
+                'id', tp.product_id,
+                'name', tp.name,
+                'slug', tp.slug,
+                'thumbnailImage', tp.thumbnail_image,
+                'hoverImage', tp.hover_image,
+                'variant', tp.variant,
+                'featured', tp.featured,
+                'unitPrice', tp.unit_price,
+                'purchasePrice', tp.purchase_price,
+                'productVariantId', tp.product_variant_id,
+                'reviewsCount', rt.reviews_count,
+                'avgRating', rt.average_rating,
+                'taxAmount', ROUND((
+                  CASE 
+                    WHEN d.discount_strategy = 'Percentage' THEN 
+                      tp.unit_price - (tp.unit_price * d.value / 100)
+                    WHEN d.discount_strategy = 'Fixed' THEN 
+                      tp.unit_price - d.value
+                    ELSE tp.unit_price
+                  END
+                ) * COALESCE(t.value, 0) / 100, 2),
+                'discountedPrice', ROUND((
+                  CASE 
+                    WHEN d.discount_strategy = 'Percentage' THEN 
+                      tp.unit_price - (tp.unit_price * d.value / 100)
+                    WHEN d.discount_strategy = 'Fixed' THEN 
+                      tp.unit_price - d.value
+                    ELSE tp.unit_price
+                  END
+                ), 2)
+              )
+            ) AS products
+          FROM discountInfo d
+          LEFT JOIN targetProducts tp ON true
+          LEFT JOIN taxs t ON t.id = tp.tax_id
+          LEFT JOIN reviewsTable rt ON rt.product_id = tp.product_id
+          GROUP BY d.id, d.discount_strategy, d.value, d.scope;
+    
+          `;
+  return query[0];
+};
