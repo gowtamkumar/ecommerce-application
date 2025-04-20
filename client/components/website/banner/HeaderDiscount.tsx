@@ -43,7 +43,7 @@ export default function HeaderDiscount({ discounts }: any) {
                   // fill
                   width={0}
                   height={0}
-                  className="h-[60vh] w-full"
+                  className="md:h-[57vh] md:w-[60vw]"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute flex items-center justify-center bottom-0 left-0 top-0 w-full text-white">

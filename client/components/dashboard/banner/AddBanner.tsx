@@ -59,6 +59,9 @@ const AddBanner = () => {
       ? () => updateBanner(newData)
       : () => saveBanner(newData);
 
+      console.log("result", result);
+      
+
     const messageData = newData.id
       ? "Successfully Updated"
       : "Successfully Added";

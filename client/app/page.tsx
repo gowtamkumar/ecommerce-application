@@ -1,6 +1,8 @@
+import appConfig from "@/appConfig";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import Discount from "@/components/website/home/Discount";
 import { getHomeApi } from "@/lib/apis/home";
+import { Button } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -31,7 +33,7 @@ export default async function Home() {
       <header>
         <Header />
         <div className="container mx-auto">
-          <div className="grid md:grid-cols-12 grid-cols-1">
+          <div className="grid md:grid-cols-12 grid-cols-1 gap-2">
             <Slider banners={banners} />
             <HeaderDiscount discounts={discounts} />
           </div>
@@ -42,11 +44,27 @@ export default async function Home() {
         {/* all category show */}
         {categories && <CategoryCard categories={categories} />}
 
+        <section className="container mx-auto grid md:grid-cols-3 gap-8 py-3">
+          {(banners || []).map((item: any, index: number) => (
+            <div
+              key={index}
+              className="bg-cover bg-center h-56 flex flex-col justify-center items-start text-white p-4 text-start"
+              style={{
+                backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,
+              }}
+            >
+              <h3 className="text-xl font-bold text-black">{item.title}</h3>
+              <p className="text-sm mb-2 text-black">{item.description}</p>
+              <Button>Shop Now</Button>
+            </div>
+          ))}
+        </section>
+
         {/* Featured Products */}
         {products?.data && (
-          <section className="md:w-8/12 mx-auto md:py-5 p-3">
+          <section className="container mx-auto">
             <div className="flex justify-between">
-              <h2 className="text-xl font-semibold pb-8">Featured Products</h2>
+              <h2 className="text-xl font-semibold">Featured Products</h2>
               <Link href={"/products"} className="hover:underline">
                 View all
               </Link>
@@ -56,9 +74,9 @@ export default async function Home() {
         )}
 
         {/* Featured Products */}
-        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+        <section className="container not-last-of-type:mx-auto">
           <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Category Products</h2>
+            <h2 className="text-xl font-semibold">Category Products</h2>
             <Link href={"/products"} className="hover:underline">
               View all
             </Link>
@@ -67,9 +85,9 @@ export default async function Home() {
         </section>
 
         {/* Top Selling Product */}
-        <section className="md:w-8/12 mx-auto md:py-5 p-3">
+        <section className="container mx-auto">
           <div className="flex justify-between">
-            <h2 className="text-xl font-semibold pb-8">Top Selling Products</h2>
+            <h2 className="text-xl font-semibold">Top Selling Products</h2>
             <Link href={"/products"} className="hover:underline">
               View all
             </Link>

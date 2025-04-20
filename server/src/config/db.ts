@@ -114,7 +114,7 @@ const dbConnection = new DataSource({
     UpazilaEntity,
     UnionEntity,
     // VisitorEntity,
-    // CurrencyEntity,
+    CurrencyEntity,
     BannerEntity,
     SettingEntity,
     LeadEntity,

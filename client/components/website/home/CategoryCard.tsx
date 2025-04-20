@@ -18,9 +18,9 @@ export default function CategoryCard({ categories }: any) {
   const router = useRouter();
 
   return (
-    <section className="md:py-7 p-3 bg-[#F6F6F6] border-t-2">
+    <section>
       <div className="container mx-auto">
-        <h2 className="text-xl pb-8 text-center font-semibold ">
+        <h2 className="text-xl text-center font-semibold ">
           Shop by Category
         </h2>
         <div className="relative w-full">
@@ -33,7 +33,7 @@ export default function CategoryCard({ categories }: any) {
               A11y,
               EffectFade,
             ]}
-            spaceBetween={5}
+            spaceBetween={6}
             slidesPerView={1}
             pagination={{ clickable: true }}
             // autoplay={true}
@@ -58,27 +58,26 @@ export default function CategoryCard({ categories }: any) {
             {(categories || []).map((item: any, idx: number) => {
               return (
                 <SwiperSlide key={idx}>
-                  <div className="w-8/12 mx-auto flex text-center items-center justify-center cursor-pointer">
-                    <div
-                      onClick={() => {
-                        router.push(`/products?categoryId=${item.id}&`);
-                      }}
-                    >
-                      <div className="rounded-full border flex justify-center p-5 text-center">
-                        <Image
-                          alt={item.name || 'image'}
-                          src={
-                            item.image
-                              ? `${appConfig.baseApiUrl}/uploads/${item.image}`
-                              : "/pos_software.png"
-                          }
-                          loading="lazy"
-                          // fill
-                          width={70}
-                          height={70}
-                          // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
+                  <div
+                    className="flex mx-auto  text-center items-center justify-center cursor-pointer border"
+                    onClick={() => {
+                      router.push(`/products?categoryId=${item.id}&`);
+                    }}
+                  >
+                    <div>
+                      <Image
+                        alt={item.name || "image"}
+                        src={
+                          item.image
+                            ? `${appConfig.baseApiUrl}/uploads/${item.image}`
+                            : "/pos_software.png"
+                        }
+                        loading="lazy"
+                        width={70}
+                        height={70}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+
                       <p className="hover:underline mt-1">{item.name}</p>
                     </div>
                   </div>
@@ -92,7 +91,7 @@ export default function CategoryCard({ categories }: any) {
           </button>
           {/* Custom Next Button */}
           <button className="custom-next absolute z-40 top-1/2 -right-5 transform -translate-y-1/2">
-          <CiCircleChevRight size={30} />
+            <CiCircleChevRight size={30} />
           </button>
         </div>
       </div>

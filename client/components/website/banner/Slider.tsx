@@ -54,20 +54,25 @@ export default function Slider({ banners }: any) {
               url: string;
             }) => (
               <SwiperSlide key={image}>
-                <div className="md:h-[57vh] md:w-[60vw] mx-auto md:p-0 p-5 flex items-center">
+                <div
+                  className="bg-cover bg-center md:h-[57vh] flex flex-col justify-center items-start text-white p-4"
+                  style={{
+                    backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${image})`,
+                  }}
+                >
                   <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
                     <div className="md:order-1 order-2 text-center md:text-start">
-                      <h1 className="md:text-4xl text-2xl font-bold">
+                      <h1 className="md:text-4xl text-2xl font-bold text-black">
                         {title.slice(0, 50)}
                       </h1>
-                      <p className="my-3 font-medium">
+                      <p className="my-3 font-medium text-black">
                         {description?.slice(0, 100)}
                       </p>
                       <Button type="primary">
                         <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>
                       </Button>
                     </div>
-                    <div className="bg-slate-600 md:order-2 order-1">
+                    {/* <div className="bg-slate-600 md:order-2 order-1">
                       <Image
                         src={
                           image
@@ -81,7 +86,7 @@ export default function Slider({ banners }: any) {
                         sizes="100vw"
                         className="w-full md:h-[57vh] h-[30vh] "
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </SwiperSlide>

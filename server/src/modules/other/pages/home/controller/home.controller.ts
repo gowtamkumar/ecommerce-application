@@ -20,13 +20,13 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   const banners = await bannerRepository.find({
     where: { active: true },
-    select: {
-      id: true,
-      title: true,
-      image: true,
-      url: true,
-      description: true,
-    },
+    // select: {
+    //   id: true,
+    //   title: true,
+    //   image: true,
+    //   url: true,
+    //   description: true,
+    // },
   });
 
   const discountRepository = connection.getRepository(DiscountEntity);
