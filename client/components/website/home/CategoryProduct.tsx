@@ -14,6 +14,8 @@ export default function CategoryProduct({ id }: { id: string }) {
     try {
       const products = await getPublicProducts({
         categoryId: id.toString(),
+        perPage: 12,
+        page:1
       });
       setProducts(products?.data);
     } catch (error) {
