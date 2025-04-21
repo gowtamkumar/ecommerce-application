@@ -30,6 +30,9 @@ export async function getPublicProducts(params: getParams) {
     discount,
   }: getParams = params;
 
+  console.log("params", params);
+  
+
   let queryString = "status=Active&";
 
   if (brandId?.length > 0) {

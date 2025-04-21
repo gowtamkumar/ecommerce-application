@@ -46,28 +46,24 @@ export default function Card({ item }: { item: any }) {
       if (!res.success) {
         message.success(`${res.message}`);
       }
-
-      // if (res.status === 500) {
-      //   dispatch(setResponse({ type: "error", message: res.message }));
-      // } else {
-      //   dispatch(
-      //     setResponse({ type: "success", message: "successfully Added" })
-      //   );
-      // }
     } catch (error) {
       console.log("error", error);
     }
   }
 
+  const thumbnailImage = item.thumbnailImage
+    ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
+    : "/pos_software.png";
+
+  const hoverImage = item.hoverImage
+    ? `${appConfig.baseApiUrl}/uploads/${item.hoverImage}`
+    : "/pos_software.png";
+
   return (
     <div className="border p-3 flex flex-col h-full">
       <div className="relative group">
         <Image
-          src={
-            item.thumbnailImage
-              ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
-              : "/pos_software.png"
-          }
+          src={thumbnailImage}
           alt={item.name}
           width={800}
           height={800}
@@ -76,11 +72,7 @@ export default function Card({ item }: { item: any }) {
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
           <Image
-            src={
-              item.hoverImage
-                ? `${appConfig.baseApiUrl}/uploads/${item.hoverImage}`
-                : "/pos_software.png"
-            }
+            src={hoverImage}
             alt={item.name}
             width={800}
             height={800}
@@ -114,9 +106,7 @@ export default function Card({ item }: { item: any }) {
         </span>
 
         <div className="flex justify-between items-center">
-          <p className="text-gray-500 mb-1 text-md">
-            ৳ {item.discountedPrice}
-          </p>
+          <p className="text-gray-500 mb-1 text-md">৳ {item.discountedPrice}</p>
         </div>
 
         {item?.discountId && (
