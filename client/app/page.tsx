@@ -74,7 +74,7 @@ export default async function Home() {
         )}
 
         {/* Featured Products */}
-        <section className="container not-last-of-type:mx-auto">
+        <section className="container mx-auto">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold">Category Products</h2>
             <Link href={"/products"} className="hover:underline">

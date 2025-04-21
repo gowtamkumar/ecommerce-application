@@ -79,18 +79,22 @@ export default function Card({ item }: { item: any }) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="relative"
           />
-          <button
-            onClick={() => {
-              if (session.status === "unauthenticated") {
-                dispatch(setUnAuthorize(true));
-              } else {
-                AddToWishlist(item.id);
-              }
-            }}
-            className="mt-4 mr-3 p-4 absolute z-20 hover:border bg-white text-black rounded-full transform translate-x-10 group-hover:translate-x-0 transition duration-500"
-          >
-            <FaRegHeart size={22} />
-          </button>
+
+          {/* <div className="mt-4 mr-3 p-4 absolute z-20 bg-white text-black rounded-full transform translate-x-10 group-hover:translate-x-0 transition duration-500"> */}
+          <div className="p-4 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <button
+              className="cursor-pointer"
+              onClick={() => {
+                if (session.status === "unauthenticated") {
+                  dispatch(setUnAuthorize(true));
+                } else {
+                  AddToWishlist(item.id);
+                }
+              }}
+            >
+              <FaRegHeart size={22} />
+            </button>
+          </div>
         </div>
       </div>
 

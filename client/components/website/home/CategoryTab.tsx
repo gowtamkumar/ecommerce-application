@@ -23,10 +23,6 @@ const CategoryTab = () => {
       <Tabs
         defaultActiveKey="1"
         tabPosition="top"
-        style={{ height: 220 }}
-        onChange={(v) => {
-          console.log("ee", v);
-        }}
         items={categories.map((item: any) => {
           return {
             label: item.name,

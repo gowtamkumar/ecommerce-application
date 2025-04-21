@@ -2,10 +2,7 @@
 "use client";
 import appConfig from "@/appConfig";
 import { deleteCart, getCartLists } from "@/lib/apis/cart";
-import {
-  replaceCart,
-  selectCart,
-} from "@/redux/features/cart/cartSlice";
+import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +18,7 @@ export default function ViewCart() {
     const removeDartData = await deleteCart(cartId);
     if (removeDartData.success) {
       const getCartList = await getCartLists();
-      dispatch(replaceCart(getCartList.data));
+      dispatch(replaceCart(getCartList.data || []));
     }
   };
 

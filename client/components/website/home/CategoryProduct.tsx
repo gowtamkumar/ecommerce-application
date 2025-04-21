@@ -1,15 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getPublicProducts } from "@/lib/apis/product";
+import Card from "@/components/Card";
 
 export default function CategoryProduct({ id }: { id: string }) {
-  console.log("id", id);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     fetchProducts();
   }, [id]);
-
 
   const fetchProducts = async () => {
     try {
@@ -21,7 +20,14 @@ export default function CategoryProduct({ id }: { id: string }) {
       console.error("Failed to fetch products:", error);
     }
   };
-  console.log("products", products);
 
-  return <div>CategoryProduct</div>;
+  return (
+      <div className='grid gap-1 grid-cols-2 md:grid-cols-5'>
+        {products?.map((item: any) => (
+          <div key={item.id}>
+            <Card item={item} />
+          </div>
+        ))}
+      </div>
+  );
 }
