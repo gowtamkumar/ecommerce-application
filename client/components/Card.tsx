@@ -51,12 +51,12 @@ export default function Card({ item }: { item: any }) {
     }
   }
 
-  const thumbnailImage = item.thumbnailImage
-    ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
+  const thumbnailImage = item?.thumbnailImage
+    ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
     : "/pos_software.png";
 
-  const hoverImage = item.hoverImage
-    ? `${appConfig.baseApiUrl}/uploads/${item.hoverImage}`
+  const hoverImage = item?.hoverImage
+    ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
     : "/pos_software.png";
 
   return (
