@@ -111,6 +111,44 @@ ROUND(
             p.unit_price
     END) * COALESCE(taxs.value, 0) / 100), 
 2) AS "taxAmount",
+
+
+-- ✅ Calculate Sale Price
+ROUND(
+    ((p.unit_price) + 
+    ((CASE 
+        WHEN sd.discount_strategy = 'Percentage' THEN 
+            p.unit_price - (p.unit_price * sd.discount_value / 100)
+        WHEN sd.discount_strategy = 'Fixed' THEN 
+            p.unit_price - sd.discount_value
+        ELSE 
+            p.unit_price
+    END) * COALESCE(taxs.value, 0) / 100)), 
+2) AS "salePrice",
+
+
+  -- ✅ Calculate Final Price
+  -- This is the final price after applying the discount and tax
+  -- finalPrice = salePrice + tax
+ROUND(
+    ((CASE 
+        WHEN sd.discount_strategy = 'Percentage' THEN 
+            p.unit_price - (p.unit_price * sd.discount_value / 100)
+        WHEN sd.discount_strategy = 'Fixed' THEN 
+            p.unit_price - sd.discount_value
+        ELSE 
+            p.unit_price
+    END) + 
+    ((CASE 
+        WHEN sd.discount_strategy = 'Percentage' THEN 
+            p.unit_price - (p.unit_price * sd.discount_value / 100)
+        WHEN sd.discount_strategy = 'Fixed' THEN 
+            p.unit_price - sd.discount_value
+        ELSE 
+            p.unit_price
+    END) * COALESCE(taxs.value, 0) / 100)), 
+2) AS "finalPrice",
+
 -- ✅ Calculate Discounted Price
 ROUND(
     CASE 

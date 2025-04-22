@@ -179,7 +179,7 @@ export default function OrderTracker() {
               />
             </div>
             <div className="grid grid-cols-8 mt-5">
-              <div className="col-span-4">
+              <div className="col-span-6">
                 <h2 className="font-semibold">Order Trackings</h2>
                 <Timeline
                   items={(order?.orderTrackings || []).map(
@@ -200,7 +200,7 @@ export default function OrderTracker() {
                   )}
                 />
               </div>
-              <div className="grid gap-y-3 col-span-4">
+              <div className="grid gap-y-3 col-span-2">
                 <div className="col-span-3">
                   <div className="flex justify-between">
                     <h1>Total Qty:</h1>

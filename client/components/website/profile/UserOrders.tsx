@@ -263,7 +263,7 @@ const UserOrders = ({ status }: { status: string }) => {
             />
           </div>
           <div className="grid grid-cols-8 mt-5">
-            <div className="col-span-4">dasdf</div>
+            <div className="col-span-5">dasdf</div>
             <div className="col-span-3">
               <div className="flex justify-between">
                 <h1>Total Qty:</h1>
