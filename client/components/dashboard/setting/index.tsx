@@ -22,10 +22,6 @@ const Unit = dynamic(() => import("@/app/(dashboard)/dashboard/unit/page"), {
 const Tax = dynamic(() => import("@/app/(dashboard)/dashboard/taxs/page"), {
   ssr: false,
 });
-const Discount = dynamic(
-  () => import("@/app/(dashboard)/dashboard/discounts/page"),
-  { ssr: false }
-);
 const Color = dynamic(() => import("@/app/(dashboard)/dashboard/color/page"), {
   ssr: false,
 });
@@ -119,11 +115,7 @@ export default function Index() {
           key: "tax",
           children: <Tax />,
         },
-        {
-          label: "Discount",
-          key: "discount",
-          children: <Discount />,
-        },
+    
         {
           label: "Colors",
           key: "color",

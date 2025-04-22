@@ -90,12 +90,6 @@ const navbarRoute = [
   //   label: <Link href="/dashboard/color">Color</Link>,
   //   route: "true",
   // },
-  // {
-  //   key: "discount",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/discounts">Discount & Coupon</Link>,
-  //   route: "true",
-  // },
 
   {
     key: "category",
@@ -174,6 +168,27 @@ const navbarRoute = [
   //     },
   //   ],
   // },
+
+  {
+    key: "discount",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: "Discount Manage",
+    route: "true",
+    children: [
+      {
+        key: "new_discount",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/discounts/new">New discount</Link>,
+        route: "true",
+      },
+      {
+        key: "discounts",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/discounts">Discounts</Link>,
+        route: "true",
+      },
+    ],
+  },
 
   {
     key: "Shipping_managment",

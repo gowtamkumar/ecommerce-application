@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import dynamic from  "next/dynamic";
+import dynamic from "next/dynamic";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
@@ -8,16 +8,8 @@ import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 
 const DiscountList = dynamic(
-  () => import("@/components/dashboard/discount/DiscountList"),
-  { ssr: false }
+  () => import("@/components/dashboard/discount/DiscountList")
 );
-
-const AddDiscount = dynamic(
-  () => import("@/components/dashboard/discount/AddDiscount"),
-  { ssr: false }
-);
-
-
 
 export default function Discount() {
   const [tabKey, setTabKey] = useState("discount_list");
@@ -42,7 +34,7 @@ export default function Discount() {
             onClick={() =>
               dispatch(
                 setAction({
-                  discount:true,
+                  discount: true,
                   type: ActionType.CREATE,
                 })
               )
@@ -52,7 +44,6 @@ export default function Discount() {
           </Button>
         }
       />
-      <AddDiscount />
     </div>
   );
 }

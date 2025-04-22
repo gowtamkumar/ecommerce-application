@@ -69,6 +69,32 @@ export const getDiscount = asyncHandler(
   }
 );
 
+// @desc Get a single Discount
+// @route GET /api/v1/Discounts/:id
+// @access Public
+export const getDiscountBySlug = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getDiscountBySlug ${req.method} ${req.url}`);
+    const { slug } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(DiscountEntity);
+
+    const result = await repository.findOne({
+      where: { slug },
+    });
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Get a single Discount of id ${req.params.id}`,
+      data: result,
+    });
+  }
+);
+
 // @desc Create a single Discount
 // @route POST /api/v1/Discounts
 // @access Public
@@ -101,6 +127,8 @@ export const createDiscount = asyncHandler(
       applicableCategories,
       ...restData
     } = validation.data as any;
+
+    restData.slug = restData.name.toLowerCase().trim().split(" ").join("-");
 
     const newDiscount = repository.create(restData);
     const saveDiscount = await repository.save(newDiscount);

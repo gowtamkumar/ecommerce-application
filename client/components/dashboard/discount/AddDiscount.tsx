@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect } from "react";
 import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -71,16 +72,7 @@ const AddDiscount = () => {
   };
 
   return (
-    <Modal
-      title={type === ActionType.UPDATE ? "Update Discount" : "Create Discount"}
-      width={600}
-      zIndex={1050}
-      open={
-        discount && (type === ActionType.CREATE || type === ActionType.UPDATE)
-      }
-      onCancel={handleClose}
-      footer={null}
-    >
+  
       <Form
         {...layout}
         form={form}
@@ -161,7 +153,6 @@ const AddDiscount = () => {
           </Button>
         </Form.Item>
       </Form>
-    </Modal>
   );
 };
 

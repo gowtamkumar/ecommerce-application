@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
-// import { getHomeApi } from "@/lib/apis/home";
 import { getPublicProducts } from "@/lib/apis/product";
 import Link from "next/link";
 import Image from "next/image";
