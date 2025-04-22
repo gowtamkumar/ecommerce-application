@@ -119,7 +119,7 @@ export default function Profile() {
         },
         {
           label: `Track your Order`,
-          key: "track_your_order",
+          key: "track_order",
           children: <OrderTracker />,
           icon: <AndroidOutlined />,
         },

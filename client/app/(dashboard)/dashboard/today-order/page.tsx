@@ -37,6 +37,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
+import TodayOrderSummaryDashboard from "@/components/dashboard/order/TodayOrderSummary";
 
 const AddOrderTracking = dynamic(
   () => import("@/components/dashboard/order-tracking/AddOrderTracking"),
@@ -273,7 +274,6 @@ const Page: React.FC = () => {
 
     return (
       <div className="grid grid-cols-4 p-2">
-      
         <div className="col-span-4">
           {value.status === "Canceled" && (
             <h2 className="bg-red-500">
@@ -361,14 +361,12 @@ const Page: React.FC = () => {
                 <h1 className="font-semibold">{value.totalTax}</h1>
               </div>
 
-              {
-                +value.shippingCharge > 0 && <div className="flex justify-between">
+              {+value.shippingCharge > 0 && (
+                <div className="flex justify-between">
                   <h1>Shipping:</h1>
                   <h1 className="font-semibold">+{value.shippingCharge}</h1>
                 </div>
-              }
-
-
+              )}
 
               <div className="flex justify-between border-t-2">
                 <h1>Grand Total:</h1>
@@ -545,6 +543,7 @@ const Page: React.FC = () => {
 
   return (
     <div className="p-3">
+      <TodayOrderSummaryDashboard />
       <Table
         scroll={{ x: "auto" }}
         dataSource={orders}

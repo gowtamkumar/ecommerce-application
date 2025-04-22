@@ -142,6 +142,12 @@ const navbarRoute = [
     route: "true",
   },
   {
+    key: "today_order",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/today-order">Today Order</Link>,
+    route: "true",
+  },
+  {
     key: "order",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/orders">Orders</Link>,
@@ -278,11 +284,7 @@ const profileRoute: MenuProps["items"] = [
 const userProfileRoute: MenuProps["items"] = [
   {
     key: "my_account",
-    label: (
-      <Link href="/profile?tab=my_account" >
-        My Account
-      </Link >
-    ),
+    label: <Link href="/profile?tab=my_account">My Account</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
@@ -297,7 +299,7 @@ const userProfileRoute: MenuProps["items"] = [
   },
   {
     key: "order_track",
-    label: <Link href="/profile?tab=track_your_order">Order Track</Link>,
+    label: <Link href="/profile?tab=track_order">Order Track</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {

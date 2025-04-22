@@ -51,9 +51,6 @@ export default function Card({ item }: { item: any }) {
   //     console.log("error", error);
   //   }
   // }
-  
-
-  
 
   const thumbnailImage = item?.thumbnailImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
@@ -85,7 +82,7 @@ export default function Card({ item }: { item: any }) {
           />
 
           {/* <div className="mt-4 mr-3 p-4 absolute z-20 bg-white text-black rounded-full transform translate-x-10 group-hover:translate-x-0 transition duration-500"> */}
-          <div className="p-4 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="p-2 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <button
               className="cursor-pointer"
               onClick={() => {

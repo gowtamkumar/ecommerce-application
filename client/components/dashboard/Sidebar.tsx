@@ -1,5 +1,5 @@
 "use client";
-import { Drawer, Layout, Menu, Button, Image } from "antd";
+import { Drawer, Layout, Menu, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
@@ -11,6 +11,9 @@ import {
 import { navbarRoute } from "@/NavBarRoute";
 import { getSettings } from "@/lib/apis/setting";
 import appConfig from "@/appConfig";
+import Image from "next/image";
+import robots from "@/app/robots";
+import { useRouter } from "next/navigation";
 
 const { Sider } = Layout;
 
@@ -18,6 +21,7 @@ const Sidebar = () => {
   const [setting, setSetting] = useState<{ logo: string }>({ logo: "" });
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
+  const route = useRouter();
 
   useLayoutEffect(() => {
     function updateScreenWidth() {
@@ -93,7 +97,12 @@ const Sidebar = () => {
         onCollapse={(value) => dispatch(setCollapsed(value))}
         hidden={layout.screenWidth <= 820}
       >
-        <div className="bg-slate-300 flex justify-center items-center p-1">
+        <div
+          className="bg-slate-300 flex justify-center items-center p-1 cursor-pointer"
+          onClick={() => {
+            route.push("/");
+          }}
+        >
           <Image
             src={
               setting?.logo
@@ -105,7 +114,7 @@ const Sidebar = () => {
             width={50}
             height={50}
             // className="mx-auto h-5 w-auto"
-            // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
         <Menu theme="dark" mode="inline" items={filteredChildren} />

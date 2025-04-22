@@ -35,6 +35,11 @@ export default function OrderTracker() {
     setLoading(true);
     const result = await getOrderTracking({ trackingNo: tracker.trackingNo });
 
+    if (!result.success) {
+      setLoading(false);
+      return;
+    }
+
     setTimeout(() => {
       setOrder(result.data);
       setLoading(false);
@@ -106,7 +111,7 @@ export default function OrderTracker() {
           <Form.Item>
             <Button
               size="middle"
-              disabled={!tracker.trackingNo}
+              disabled={!tracker?.trackingNo}
               type="primary"
               loading={loading}
               htmlType="submit"
@@ -202,9 +207,7 @@ export default function OrderTracker() {
 
                   <div className="flex justify-between">
                     <h1>Net Amount:</h1>
-                    <h1 className="font-semibold">
-                      {order.subTotal}
-                    </h1>
+                    <h1 className="font-semibold">{order.subTotal}</h1>
                   </div>
 
                   {+order.totalItemsDiscount > 0 && (

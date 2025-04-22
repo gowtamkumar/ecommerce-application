@@ -17,7 +17,6 @@ import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
 const HeaderSearch = dynamic(() => import("./HeaderSearch"));
 
 export default function HeaderRight() {
-  const [clientCartCount, setClientCartCount] = useState(0);
   const [drawarCart, setDrawarCart] = useState(false);
   // hook
   const cart = useSelector(selectCart);
@@ -27,10 +26,6 @@ export default function HeaderRight() {
   const session = useSession();
 
   const profileImage = session.data?.user?.image;
-
-  // useEffect(() => {
-  //   setClientCartCount(cart.carts.length || 0);
-  // }, [cart.carts]);
 
   const showLoading = () => {
     setDrawarCart(true);
@@ -48,7 +43,7 @@ export default function HeaderRight() {
         className="font-medium cursor-pointer "
         onClick={() => dispatch(setOpen(true))}
       />
-      <Link href="/profile" className="cursor-pointer md:inline hidden">
+      <Link href="/profile?tab=wishlist" className="cursor-pointer md:inline hidden">
         <CiHeart size={22} className="font-medium" />
       </Link>
 
@@ -108,7 +103,6 @@ export default function HeaderRight() {
 
       <Modal
         open={layout.open}
-        // onOk={() => dispatch(setOpen(false))}
         onCancel={() => dispatch(setOpen(false))}
         width={1000}
         footer={null}
