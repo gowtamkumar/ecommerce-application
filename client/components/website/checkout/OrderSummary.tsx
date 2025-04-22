@@ -71,7 +71,7 @@ export default function OrderSummary() {
               <th className="p-3">Product</th>
               <th className="p-3">Qty</th>
               <th className="p-3">Unit Price</th>
-              <th className="p-3">Tax</th>
+              {/* <th className="p-3">Tax</th> */}
               <th className="p-3">Discount</th>
               <th className="p-3">Subtotal</th>
               <th className="p-3">Action</th>
@@ -137,9 +137,9 @@ export default function OrderSummary() {
                 </td>
 
                 <td className="p-3 text-green-600">
-                  ৳ {item.discountedUnitPrice}
+                  ৳ {item.salePrice}
                 </td>
-                <td className="p-3 text-green-600">৳ {item.taxAmount}</td>
+                {/* <td className="p-3 text-green-600">৳ {item.taxAmount}</td> */}
                 <td className="p-3 text-green-600">
                   ৳ {item.totalDiscountAmount}
                 </td>

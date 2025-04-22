@@ -180,11 +180,26 @@ const ProductCard: React.FC = () => {
                         </Link>
                       </p>
                       <div className="flex gap-3">
-                        <code>৳{item.discountedPrice}</code>
+                        <code>৳{item.finalPrice}</code>
                         <span className="flex gap-1 items-center">
                           <Rate disabled value={+item.avgRating || 0} />
                           {item.reviewsCount && item.reviewsCount}
                         </span>
+                      </div>
+                      <div>
+                        {item?.discountId && (
+                          <div className="text-xs">
+                            <span className="line-through text-gray-500">
+                              ৳ {item.salePrice}
+                            </span>
+                            <span className="text-red-600 ml-2">
+                              - {item.discountValue}
+                              {item?.discountStrategy === "Percentage"
+                                ? "%"
+                                : "BDT"}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <p

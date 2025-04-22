@@ -185,29 +185,29 @@ const UserOrders = ({ status }: { status: string }) => {
         render: (v: any) => <span>Need to Get in product variant</span>,
       },
 
-      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
+      {
+        title: "Unit Price",
+        // dataIndex: "unitPrice",
+        key: "unitPrice",
+        render: (v: any) => {
+          return (
+            <span>
+              {((+v.unitPrice + +v.taxAmount)).toFixed(
+                2
+              )}
+            </span>
+          );
+        },
+      },
 
       {
         title: "Discount Amount",
         dataIndex: "totalDiscountAmount",
         key: "totalDiscountAmount",
       },
-      {
-        title: "Tax Amount",
-        key: "taxAmount",
-        dataIndex: "taxAmount",
-        // render: (v: {
-        //   taxAmount: number;
-        //   qty: number;
-        // }) => <span>{(+v.taxAmount * +v.qty).toFixed(2)}</span>,
-      },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
-      // {
-      //   title: "Total item Amount",
-      //   key: "totalDiscountedPrice",
-      //   dataIndex: "totalDiscountedPrice",
-      // },
+
       {
         title: "Sub Total",
         key: "subTotal",
@@ -271,11 +271,9 @@ const UserOrders = ({ status }: { status: string }) => {
               </div>
 
               <div className="flex justify-between">
-                <h1>Net Amount:</h1>
-                <h1 className="font-semibold">
-                  {(+value.subTotal).toFixed(2)}
-                </h1>
-              </div>
+                    <h1>Net Amount:</h1>
+                    <h1 className="font-semibold">{(+value.subTotal + +value.totalItemsDiscount + +value.couponDiscount).toFixed(2)}</h1>
+                  </div>
 
               {+value.totalItemsDiscount > 0 && (
                 <div className="flex justify-between">
@@ -291,10 +289,10 @@ const UserOrders = ({ status }: { status: string }) => {
                 </div>
               )}
 
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
                 <h1 className="font-semibold">{value.totalTax}</h1>
-              </div>
+              </div> */}
 
               {+value.shippingCharge > 0 && (
                 <div className="flex justify-between">

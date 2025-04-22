@@ -252,16 +252,29 @@ const Page: React.FC = () => {
         key: "purchasePrice",
       },
       { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
-
+      {
+        title: "Tax Amount",
+        key: "taxAmount",
+        dataIndex: "taxAmount",
+      },
       {
         title: "Discount Amount",
         dataIndex: "totalDiscountAmount",
         key: "totalDiscountAmount",
       },
       {
-        title: "Tax Amount",
-        key: "taxAmount",
-        dataIndex: "taxAmount",
+        title: "Sale Price",
+        // dataIndex: "salePrice",
+        key: "salePrice",
+        render: (v: any) => {
+          return (
+            <span>
+              {(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(
+                2
+              )}
+            </span>
+          );
+        },
       },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },

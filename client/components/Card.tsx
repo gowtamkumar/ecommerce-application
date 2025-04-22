@@ -111,13 +111,13 @@ export default function Card({ item }: { item: any }) {
         </span>
 
         <div className="flex justify-between items-center">
-          <p className="text-gray-500 mb-1 text-md">৳ {item.discountedPrice}</p>
+          <p className="text-gray-500 mb-1 text-md">৳ {item.finalPrice}</p>
         </div>
 
         {item?.discountId && (
           <div className="text-xs">
             <span className="line-through text-gray-500">
-              ৳ {item.unitPrice}
+              ৳ {item.salePrice}
             </span>
             <span className="text-red-600 ml-2">
               - {item.discountValue}

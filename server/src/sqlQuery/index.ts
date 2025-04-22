@@ -170,6 +170,11 @@ ORDER BY
 oi.total_amount DESC 
 LIMIT 20;
 `;
+// this is currect calculation
+// discountAmount = 1000 * 0.10 = ৳100
+// salePrice = 1000 - 100 = ৳900
+// tax = 900 * 0.05 = ৳45
+// finalPrice = 900 + 45 = ৳945
 
 export const productsQuery = async (queryData: any) => {
   const {
@@ -312,6 +317,18 @@ export const productsQuery = async (queryData: any) => {
           p.product_variant_id as "productVariantId",
           rt.reviews_count AS "reviewsCount",
           rt.average_rating AS "avgRating",
+
+          -- ✅ Calculate amunt
+          ROUND(
+              (CASE 
+                  WHEN sd.discount_strategy = 'Percentage' THEN 
+                     (p.unit_price * sd.discount_value / 100)
+                  WHEN sd.discount_strategy = 'Fixed' THEN 
+                     sd.discount_value
+              END),
+          2) AS "discountAmount",
+
+          -- ✅ Calculate tax amount based on the discounted price 
           ROUND(
               ((CASE 
                   WHEN sd.discount_strategy = 'Percentage' THEN 
@@ -320,11 +337,48 @@ export const productsQuery = async (queryData: any) => {
                       p.unit_price - sd.discount_value
                   ELSE 
                       p.unit_price
-              END) * COALESCE(t.value, 0) / 100), 
+              END) * COALESCE(taxs.value, 0) / 100), 
           2) AS "taxAmount",
-          
-          -- ✅ Calculate Discounted Price
-          ROUND(
+
+
+          -- ✅ Calculate Sale Price
+        ROUND(
+            ((p.unit_price) + 
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) * COALESCE(taxs.value, 0) / 100)), 
+        2) AS "salePrice",
+
+    
+          -- ✅ Calculate Final Price
+          -- This is the final price after applying the discount and tax
+          -- finalPrice = salePrice + tax
+        ROUND(
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) + 
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) * COALESCE(taxs.value, 0) / 100)), 
+        2) AS "finalPrice",
+
+        -- ✅ Calculate Discounted Price
+        ROUND(
               CASE 
                   WHEN sd.discount_strategy = 'Percentage' THEN 
                       p.unit_price - (p.unit_price * sd.discount_value / 100)
@@ -335,6 +389,7 @@ export const productsQuery = async (queryData: any) => {
               END, 
               2
           ) AS "discountedPrice"
+
       FROM 
           productTable p
       LEFT JOIN 
@@ -342,7 +397,7 @@ export const productsQuery = async (queryData: any) => {
       LEFT JOIN 
           reviewsTable rt ON rt.product_id = p.product_id
       LEFT JOIN 
-          taxs t ON t.id = p.tax_id
+          taxs ON taxs.id = p.tax_id
       LEFT JOIN 
           product_categories pc ON pc.product_id = p.product_id
       LEFT JOIN 

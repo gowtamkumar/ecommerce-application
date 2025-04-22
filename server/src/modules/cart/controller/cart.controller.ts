@@ -281,6 +281,20 @@ export const cartListApplyCoupon = asyncHandler(
         pv.unit_price AS "unitPrice",
         pv.purchase_price AS "purchasePrice",
 
+
+            -- ✅ Calculate Sale Price
+        ROUND(
+            ((pv.unit_price) + 
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    pv.unit_price - sd.discount_value
+                ELSE 
+                    pv.unit_price
+            END) * COALESCE(t.value, 0) / 100)), 
+        2) AS "salePrice",
+
         -- ✅ Calculate Discounted Price per unit
         ROUND(
             CASE 
@@ -304,7 +318,6 @@ export const cartListApplyCoupon = asyncHandler(
                     pv.unit_price
             END) * carts.qty, 
         2) AS "totalDiscountedPrice",
-
 
         -- ✅ Calculate Discount Amount per unit
         ROUND(
@@ -489,7 +502,9 @@ export const cartIncrementDecrement = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const validation = cartIncrementDecrementValidationSchema.safeParse(req.body);
+    const validation = cartIncrementDecrementValidationSchema.safeParse(
+      req.body
+    );
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
