@@ -1,5 +1,8 @@
 "use client";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setUnAuthorize,
+} from "@/redux/features/global/globalSlice";
 import {
   selectProduct,
   setProducts,
@@ -11,20 +14,36 @@ import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
 // import { getHomeApi } from "@/lib/apis/home";
 import { getPublicProducts } from "@/lib/apis/product";
+import Link from "next/link";
+import Image from "next/image";
+import { FaRegHeart } from "react-icons/fa";
+import { Rate } from "antd";
+import AddToCartButton from "@/components/AddToCartButton";
+import appConfig from "@/appConfig";
+import { AddToWishlist } from "@/lib/utils/addToWishList";
+import { useSession } from "next-auth/react";
+import Pagination from "@/components/Pagination";
 
-const ITEMS_PER_PAGE = 12;
+interface PaginationProps {
+  currentPage: number;
+  page: number;
+  perPage: number;
+  total: string;
+  totalPages: number;
+}
 
 const ProductCard: React.FC = () => {
+  const [pagination, setPagination] = useState<PaginationProps>(
+    {} as PaginationProps
+  );
   const [currentPage, setCurrentPage] = useState(1);
-  // const { category } = useParams<{ category: string }>();
-  // console.log("🚀 ~ category:", category)
   const searchQuery = useSearchParams();
   const searchParams = searchQuery.get("search");
   const categoryIdParams = searchQuery.get("categoryId");
-
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
+  const session = useSession();
 
   const {
     categoryId: categoryIds,
@@ -37,39 +56,17 @@ const ProductCard: React.FC = () => {
     maxPrice,
     discount,
     search: newSearchs,
-  } = global.productFilter;  
+  } = global.productFilter;
 
   let customQuery = "";
   if (categoryIdParams) customQuery += categoryIdParams;
   if (categoryIds)
     customQuery += categoryIdParams ? `,${categoryIds}` : categoryIds;
-  // if (categoryIds) customQuery += categoryIds;
-
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
   if (newSearchs) newSearch += newSearchs;
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // const homeapi = await getHomeApi()
-        const products = await getPublicProducts({
-          categoryId: customQuery,
-          brandId,
-          search: newSearch,
-          lowPrice,
-          highPrice,
-          colorId,
-          rating,
-          maxPrice,
-          minPrice,
-          discount,
-        });
-        dispatch(setProducts(products?.data));
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
     fetchProducts();
   }, [
     customQuery,
@@ -83,26 +80,136 @@ const ProductCard: React.FC = () => {
     minPrice,
     discount,
     dispatch,
+    currentPage,
   ]);
+  const fetchProducts = async () => {
+    try {
+      const products = await getPublicProducts({
+        page: currentPage,
+        categoryId: customQuery,
+        brandId,
+        search: newSearch,
+        lowPrice,
+        highPrice,
+        colorId,
+        rating,
+        maxPrice,
+        minPrice,
+        discount,
+      });
+
+      setPagination({
+        currentPage: products?.currentPage,
+        page: products?.page,
+        perPage: products?.perPage,
+        total: products?.total,
+        totalPages: products?.totalPages,
+      });
+      dispatch(setProducts(products?.data));
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    }
+  };
 
   return (
-    <div
-      className={`grid gap-1 ${
-        global.productView ? "grid-cols-1" : "lg:grid-cols-5"
-      }`}
-    >
-      {products?.map((item: any) => (
-        <div key={item.id}>
-          <Card item={item} />
-        </div>
-        // <ProductItem key={item.id} item={item} />
-      ))}
-{/* 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={Math.ceil(products.products.length / ITEMS_PER_PAGE)}
-        onPageChange={setCurrentPage}
-      /> */}
+    <div className="container mx-auto px-4 py-8">
+      <div
+        className={`grid gap-1 ${
+          global.productView ? "grid-cols-1" : "lg:grid-cols-5"
+        }`}
+      >
+        {products?.map((item: any) => {
+          const url = `/product/${item.slug}`;
+          const thumbnailImage = item?.thumbnailImage
+            ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
+            : "/pos_software.png";
+
+          const hoverImage = item?.hoverImage
+            ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
+            : "/pos_software.png";
+          return (
+            <div key={item.id}>
+              {global.productView ? (
+                <div className="grid grid-cols-3 gap-2 border p-3 h-full">
+                  <div className="relative group text-center md:text-start h-[40vh] overflow-hidden col-span-1">
+                    {/* <Link href={url} className="block w-full h-full"> */}
+                    {/* Main Image */}
+                    <Image
+                      src={thumbnailImage}
+                      alt={item.name}
+                      loading="lazy"
+                      width={1000}
+                      height={1000}
+                      className="w-full h-full object-fill"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
+                      <Image
+                        src={hoverImage}
+                        alt={item.name}
+                        width={800}
+                        height={800}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="relative"
+                      />
+
+                      <div className="p-4 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <button
+                          className="cursor-pointer"
+                          onClick={() => {
+                            if (session.status === "unauthenticated") {
+                              dispatch(setUnAuthorize(true));
+                            } else {
+                              AddToWishlist(item.id);
+                            }
+                          }}
+                        >
+                          <FaRegHeart size={22} />
+                        </button>
+                      </div>
+                    </div>
+                    {/* </Link> */}
+                  </div>
+
+                  <div className="grid grid-rows-[auto_1fr_auto] h-full text-center md:text-start col-span-2">
+                    <div className="py-4 border-b">
+                      <p className="text-bioxin-p font-semibold">
+                        <Link href={url} className="text-black hover:underline">
+                          {item.name}
+                        </Link>
+                      </p>
+                      <div className="flex gap-3">
+                        <code>৳{item.discountedPrice}</code>
+                        <span className="flex gap-1 items-center">
+                          <Rate disabled value={+item.avgRating || 0} />
+                          {item.reviewsCount && item.reviewsCount}
+                        </span>
+                      </div>
+                    </div>
+                    <p
+                      className="text-bioxin-p text-gray-500 prose max-w-none"
+                      dangerouslySetInnerHTML={{ __html: item?.short_line }}
+                    />
+                    <div>
+                      <AddToCartButton item={item} />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Card item={item} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {+pagination.total > +pagination.perPage && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 };

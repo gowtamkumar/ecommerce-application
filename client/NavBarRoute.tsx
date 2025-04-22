@@ -17,16 +17,13 @@ const handleBackup = async (): Promise<void> => {
   try {
     // const response = await backupDB();
 
-    const response = await fetch(
-      `${appConfig.apiUrl}/settings/db-backup`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ a: 1, b: "Textual content" }),
-      }
-    );
+    const response = await fetch(`${appConfig.apiUrl}/settings/db-backup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ a: 1, b: "Textual content" }),
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -148,7 +145,7 @@ const navbarRoute = [
     key: "order",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/orders">Orders</Link>,
-    route: "true"
+    route: "true",
   },
 
   // {
@@ -282,30 +279,25 @@ const userProfileRoute: MenuProps["items"] = [
   {
     key: "my_account",
     label: (
-      <Link
-        href={{
-          pathname: "/profile",
-          query: { name: "test" },
-        }}
-      >
+      <Link href="/profile?tab=my_account" >
         My Account
-      </Link>
+      </Link >
     ),
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "orders",
-    label: <Link href="/profile">Orders</Link>,
+    label: <Link href="/profile?tab=orders">Orders</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "wishlist",
-    label: <Link href="/profile">Wishlist</Link>,
+    label: <Link href="/profile?tab=wishlist">Wishlist</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "order_track",
-    label: <Link href="/profile">Order Track</Link>,
+    label: <Link href="/profile?tab=track_your_order">Order Track</Link>,
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
   },
   {

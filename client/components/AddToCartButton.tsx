@@ -37,9 +37,6 @@ export default function AddToCartButton({ item }: { item: any }) {
     // if(cartResponse)
     const getCartList = await getCartLists();
 
-    console.log("getCartList", getCartList.data);
-    console.log("cartResponse", cartResponse);
-
     try {
       dispatch(setLoading({ productId: newData.id }));
       dispatch(replaceCart(getCartList.data));
