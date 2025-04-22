@@ -4,11 +4,12 @@ import dynamic from "next/dynamic";
 import { Tabs } from "antd";
 import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
 // redux
-import { useDispatch, useSelector } from "react-redux";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { useDispatch } from "react-redux";
+import { setLoading } from "@/redux/features/global/globalSlice";
 // api
 import { getMe } from "@/lib/apis/user";
 import NotificationsUser from "./NotificationsUser";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
   ssr: false,
@@ -49,23 +50,37 @@ export default function Profile() {
   const [user, setUser] = useState({} as any);
   const [tabKey, setTabKey] = useState("my_account");
   // hook
-  const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const searchQuery = useSearchParams();
+  const categoryIdParams = searchQuery.get("tab");
+  const route = useRouter();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
-      const res = await getMe();
-      console.log("🚀 ~ res:", res);
-      setUser(res.data);
-      dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    feathUser();
+  }, [dispatch]);
+
+  const feathUser = async () => {
+    const res = await getMe();
+    setUser(res.data);
+  };
+
+  useEffect(() => {
+    setTabKey(categoryIdParams ?? "my_account");
+  }, [categoryIdParams]);
 
   return (
     <Tabs
-      onChange={(key) => setTabKey(key)}
+      onChange={
+        (key) =>
+          route.replace(
+            `/profile?tab=${key}`,
+            { scroll: false }
+            // { shallow: true }
+          )
+        //  setTabKey(key)
+      }
       defaultValue={tabKey}
+      activeKey={tabKey}
       tabPosition="left"
       items={[
         {
@@ -104,7 +119,7 @@ export default function Profile() {
         },
         {
           label: `Track your Order`,
-          key: "track_your_order",
+          key: "track_order",
           children: <OrderTracker />,
           icon: <AndroidOutlined />,
         },

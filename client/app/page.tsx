@@ -1,4 +1,5 @@
 import appConfig from "@/appConfig";
+import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import Discount from "@/components/website/home/Discount";
 import { getHomeApi } from "@/lib/apis/home";
@@ -85,7 +86,7 @@ export default async function Home() {
         </section>
 
         {/* Top Selling Product */}
-        <section className="container mx-auto">
+        <section className="container mx-auto py-5">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold">Top Selling Products</h2>
             <Link href={"/products"} className="hover:underline">
@@ -95,7 +96,7 @@ export default async function Home() {
           <FeaturedProduct products={topSellingProducts} />
         </section>
         {/* product banner */}
-        {banners && (
+        {banners.length > 0 && (
           <SellerAds
             banners={(banners || []).filter(
               (item: { type: string }) => item.type === "Middle"
@@ -111,7 +112,23 @@ export default async function Home() {
         )} */}
 
         {/* More Discover */}
-        <MoreDiscover />
+        {/* <MoreDiscover /> */}
+        <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
+          {/* Overlay */}
+          <div className="absolute inset-0 z-0" />
+          {/* Content */}
+          <div className="relative z-10 max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Stay in the loop!
+            </h2>
+            <p className="text-base md:text-lg mb-8 text-gray-200">
+              Subscribe to our newsletter and never miss exclusive offers,
+              updates, and more.
+            </p>
+
+            <Subscribe />
+          </div>
+        </section>
       </main>
       <WebFooter />
     </>

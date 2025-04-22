@@ -251,16 +251,29 @@ const Page: React.FC = () => {
         key: "purchasePrice",
       },
       { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
-
+      {
+        title: "Tax Amount",
+        key: "taxAmount",
+        dataIndex: "taxAmount",
+      },
       {
         title: "Discount Amount",
         dataIndex: "totalDiscountAmount",
         key: "totalDiscountAmount",
       },
       {
-        title: "Tax Amount",
-        key: "taxAmount",
-        dataIndex: "taxAmount",
+        title: "Sale Price",
+        // dataIndex: "salePrice",
+        key: "salePrice",
+        render: (v: any) => {
+          return (
+            <span>
+              {(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(
+                2
+              )}
+            </span>
+          );
+        },
       },
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
@@ -360,14 +373,12 @@ const Page: React.FC = () => {
                 <h1 className="font-semibold">{value.totalTax}</h1>
               </div>
 
-              {
-                +value.shippingCharge > 0 && <div className="flex justify-between">
+              {+value.shippingCharge > 0 && (
+                <div className="flex justify-between">
                   <h1>Shipping:</h1>
                   <h1 className="font-semibold">+{value.shippingCharge}</h1>
                 </div>
-              }
-
-
+              )}
 
               <div className="flex justify-between border-t-2">
                 <h1>Grand Total:</h1>

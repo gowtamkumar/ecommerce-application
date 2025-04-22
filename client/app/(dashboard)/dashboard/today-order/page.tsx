@@ -6,12 +6,20 @@ import {
   Space,
   Table,
   Button,
+  Popconfirm,
   Tag,
   Timeline,
   Divider,
-  Popconfirm,
 } from "antd";
-import { CheckOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  UserAddOutlined,
+  RestOutlined,
+  CheckOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,41 +29,86 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
+import dynamic from "next/dynamic";
 import Highlighter from "react-highlight-words";
+import { ActionType } from "@/constants/constants";
+import { deleteOrder, getOrders } from "@/lib/apis/orders";
+import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
-import { ActionType } from "@/constants/constants";
-import CancelOrder from "./CancelOrder";
-import { getUserOrders } from "@/lib/apis/orders";
+import { FaAmazonPay } from "react-icons/fa";
+import TodayOrderSummaryDashboard from "@/components/dashboard/order/TodayOrderSummary";
+
+const AddOrderTracking = dynamic(
+  () => import("@/components/dashboard/order-tracking/AddOrderTracking"),
+  { ssr: false }
+);
+
+const OrderStatusChange = dynamic(
+  () => import("@/components/dashboard/order/OrderStatusUpdate"),
+  { ssr: false }
+);
+
+const AddPayment = dynamic(
+  () => import("@/components/dashboard/payment/AddPayment"),
+  { ssr: false }
+);
+
+const AssignDeliveryMan = dynamic(
+  () => import("@/components/dashboard/order/AssignDeliveryMan"),
+  { ssr: false }
+);
 
 interface DataType {
   key: React.Key;
   name: string;
+  phoneNo: string;
   trackingNo: string;
+}
+
+interface ExpandedDataType {
+  key: React.Key;
+  title: string;
+  dataIndex: string;
+  render?: undefined;
 }
 
 type DataIndex = keyof DataType;
 
-const UserOrders = ({ status }: { status: string }) => {
+const Page: React.FC = () => {
   const [orders, setOrders] = useState([]);
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState(null) as any;
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getUserOrders(status);
-      const newOrders = res.data?.map((items: any, idx: number) => ({
+      const res = await getOrders();
+
+      const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
       }));
-      console.log("newOrders", newOrders);
-
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
   }, [dispatch, global.action]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      dispatch(setLoading({ delete: true }));
+      await deleteOrder(id);
+      setTimeout(async () => {
+        dispatch(setLoading({ delete: false }));
+        toast.success("Discount deleted successfully");
+        dispatch(setAction({}));
+      }, 500);
+    } catch (error: any) {
+      console.log("v", error);
+      toast.error(error);
+    }
+  };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -84,11 +137,12 @@ const UserOrders = ({ status }: { status: string }) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
+          // ref={searchInput}
           placeholder={`Search {dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value);
             setSelectedKeys(e.target.value ? [e.target.value] : []);
+            setSearchInput(e.target.value);
           }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -147,7 +201,7 @@ const UserOrders = ({ status }: { status: string }) => {
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput, 100);
+        setTimeout(() => searchInput.current?.select(), 100);
       }
     },
     render: (text) =>
@@ -164,6 +218,8 @@ const UserOrders = ({ status }: { status: string }) => {
   });
 
   const expandedRowRender = (value: any) => {
+    console.log(value);
+
     const childColumns: any = [
       {
         title: "Product",
@@ -172,27 +228,48 @@ const UserOrders = ({ status }: { status: string }) => {
         render: (v: { name: string }) => <span>{v.name}</span>,
       },
       {
+        title: "Color",
+        dataIndex: "productVariant",
+        render: (v: any) => {
+          return <span>{v?.color?.name}</span>;
+        },
+      },
+      {
+        title: "Size",
+        dataIndex: "productVariant",
+        render: (v: any) => {
+          return <span>{v?.size?.name}</span>;
+        },
+      },
+      {
         title: "Material",
         dataIndex: "material",
         key: "material",
       },
       {
-        title: "Color",
-        render: (v: any) => <span>Need to Get in product variant</span>,
+        title: "Purchase Price",
+        dataIndex: "purchasePrice",
+        key: "purchasePrice",
+      },
+      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
+      {
+        title: "Tax Amount",
+        key: "taxAmount",
+        dataIndex: "taxAmount",
       },
       {
-        title: "Size",
-        render: (v: any) => <span>Need to Get in product variant</span>,
+        title: "Discount Amount",
+        dataIndex: "totalDiscountAmount",
+        key: "totalDiscountAmount",
       },
-
       {
-        title: "Unit Price",
-        // dataIndex: "unitPrice",
-        key: "unitPrice",
+        title: "Sale Price",
+        // dataIndex: "salePrice",
+        key: "salePrice",
         render: (v: any) => {
           return (
             <span>
-              {((+v.unitPrice + +v.taxAmount)).toFixed(
+              {(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(
                 2
               )}
             </span>
@@ -200,14 +277,7 @@ const UserOrders = ({ status }: { status: string }) => {
         },
       },
 
-      {
-        title: "Discount Amount",
-        dataIndex: "totalDiscountAmount",
-        key: "totalDiscountAmount",
-      },
-
       { title: "Qty", dataIndex: "qty", key: "qty" },
-
       {
         title: "Sub Total",
         key: "subTotal",
@@ -217,7 +287,13 @@ const UserOrders = ({ status }: { status: string }) => {
 
     return (
       <div className="grid grid-cols-4 p-2">
-        <div className="col-span-1 p-2">
+        <div className="col-span-4">
+          {value.status === "Canceled" && (
+            <h2 className="bg-red-500">
+              <span className="font-bold">Order Resson: </span>
+              <code>{value.cancelResson}</code>
+            </h2>
+          )}
           <h1>
             <span className="font-bold">Order No: </span>
             <code>{value.trackingNo}</code>
@@ -231,26 +307,6 @@ const UserOrders = ({ status }: { status: string }) => {
             <code> {value.shippingAddress?.address}</code>
           </h1>
           <Divider dashed />
-          <Timeline
-            items={(value?.orderTrackings || []).map(
-              (timeline: any, idx: number) => ({
-                // dot: <ClockCircleOutlined className="timeline-clock-icon" />,
-                // color: "red",
-                children: (
-                  <div key={idx}>
-                    <div> {timeline.status}</div>
-                    <div>
-                      {" "}
-                      {dayjs(timeline.createdAt).format("MMMM D, YYYY h:mm A")}
-                    </div>
-                    <div> {timeline.location}</div>
-                  </div>
-                ),
-              })
-            )}
-          />
-        </div>
-        <div className="col-span-3">
           <div className="p-4 bg-white">
             <h1 className="font-semibold">Order Items</h1>
             <Table
@@ -263,7 +319,29 @@ const UserOrders = ({ status }: { status: string }) => {
             />
           </div>
           <div className="grid grid-cols-8 mt-5">
-            <div className="col-span-5">dasdf</div>
+            <div className="col-span-5 p-2">
+              <Timeline
+                items={(value?.orderTrackings || []).map(
+                  (timeline: any, idx: number) => ({
+                    dot: <ClockCircleOutlined />,
+                    color: "red",
+                    children: (
+                      <div key={idx}>
+                        <div> {timeline.status}</div>
+                        <div>
+                          {" "}
+                          {dayjs(timeline.createdAt).format(
+                            "MMMM D, YYYY h:mm A"
+                          )}
+                        </div>
+                        <div> {timeline.location}</div>
+                      </div>
+                    ),
+                  })
+                )}
+              />
+            </div>
+
             <div className="col-span-3">
               <div className="flex justify-between">
                 <h1>Total Qty:</h1>
@@ -271,9 +349,11 @@ const UserOrders = ({ status }: { status: string }) => {
               </div>
 
               <div className="flex justify-between">
-                    <h1>Net Amount:</h1>
-                    <h1 className="font-semibold">{(+value.subTotal + +value.totalItemsDiscount + +value.couponDiscount).toFixed(2)}</h1>
-                  </div>
+                <h1>Net Amount:</h1>
+                <h1 className="font-semibold">
+                  {(+value.subTotal).toFixed(2)}
+                </h1>
+              </div>
 
               {+value.totalItemsDiscount > 0 && (
                 <div className="flex justify-between">
@@ -289,10 +369,10 @@ const UserOrders = ({ status }: { status: string }) => {
                 </div>
               )}
 
-              {/* <div className="flex justify-between">
+              <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
                 <h1 className="font-semibold">{value.totalTax}</h1>
-              </div> */}
+              </div>
 
               {+value.shippingCharge > 0 && (
                 <div className="flex justify-between">
@@ -321,26 +401,32 @@ const UserOrders = ({ status }: { status: string }) => {
       render: (value) => <span className="bg-green-200">{value}</span>,
     },
 
-    { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
+    {
+      title: "Phone No",
+      dataIndex: "phoneNo",
+      key: "phoneNo",
+      render: (value) => <span>{value?.phoneNo}</span>,
+    },
 
     {
-      title: "Shipping Address",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (value) => <span>{value?.address}</span>,
+      title: "Customer",
+      dataIndex: "user",
+      key: "user",
+      render: (customer) => <span>{customer?.name}</span>,
     },
     // {
-    //   title: "Payment Method",
-    //   dataIndex: "paymentMethod",
-    //   key: "paymentMethod",
-    //   // render: (value) => <span>{value.address}</span>,
+    //   title: "Shipping Address",
+    //   dataIndex: "shippingAddress",
+    //   key: "shippingAddress",
+    //   render: (value) => <span>{value.address}</span>,
     // },
-    // {
-    //   title: "Delivered Man",
-    //   dataIndex: "deliveryMan",
-    //   key: "deliveryMan",
-    //   render: (deliveryMan) => <span>{deliveryMan?.name}</span>,
-    // },
+    {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      // render: (value) => <span>{value.address}</span>,
+    },
+
     {
       title: "Date",
       dataIndex: "createdAt",
@@ -364,6 +450,59 @@ const UserOrders = ({ status }: { status: string }) => {
       key: "operation",
       render: (value) => (
         <div className="flex gap-2 justify-end">
+          <Button
+            size="small"
+            icon={<FaAmazonPay />}
+            title="Payment"
+            className="me-1"
+            onClick={() => {
+              const amount = +value.subTotal + +value.shippingCharge;
+              dispatch(
+                setAction({
+                  payment: true,
+                  type: ActionType.CREATE,
+                  payload: {
+                    orderId: value.id,
+                    amount,
+                    paymentType: "Debit",
+                    paymentMethod: value.paymentMethod,
+                    userId: value.userId,
+                  },
+                })
+              );
+            }}
+          />
+
+          <Button
+            size="small"
+            icon={<PlusOutlined />}
+            title="Add Order Tracking"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  type: ActionType.CREATE,
+                  addOrderTracking: true,
+                  payload: { orderId: value.id },
+                })
+              )
+            }
+          />
+
+          <Button
+            size="small"
+            icon={<UserAddOutlined />}
+            title="Assign Delivery man"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  assign: true,
+                  payload: { id: value.id },
+                })
+              )
+            }
+          />
           {/* <Button
             size="small"
             icon={<CheckOutlined />}
@@ -373,24 +512,43 @@ const UserOrders = ({ status }: { status: string }) => {
           /> */}
           <Button
             size="small"
-            // icon={<Outlined />}
-            title="Cancel Order"
+            icon={<CheckOutlined />}
+            title="Order Status Change"
             className="me-1"
-            onClick={() => {
-              console.log("value", value);
-
+            onClick={() =>
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  cancelOrder: true,
-                  payload: { id: value.id, status: "Canceled" },
+                  orderStatusUpdate: true,
+                  payload: { id: value.id },
                 })
-              );
-            }}
-            disabled={value.status === "Completed"}
+              )
+            }
+            disabled={
+              value.status === "Completed" || value.status === "Returned"
+            }
+          />
+          <Popconfirm
+            title={
+              <span>
+                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                this Order?
+              </span>
+            }
+            onConfirm={() => handleDelete(value.id)}
+            placement="left"
+            okText="Yes"
+            okType="danger"
+            cancelText="No"
+            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            Cancel Order
-          </Button>
+            <Button
+              size="small"
+              danger
+              loading={global.loading?.delete}
+              icon={<RestOutlined />}
+            />
+          </Popconfirm>
         </div>
       ),
     },
@@ -398,12 +556,10 @@ const UserOrders = ({ status }: { status: string }) => {
 
   return (
     <div className="p-3">
+      <TodayOrderSummaryDashboard />
       <Table
         scroll={{ x: "auto" }}
-        dataSource={orders.map((items: any, idx: number) => ({
-          ...items,
-          key: idx.toString(),
-        }))}
+        dataSource={orders}
         columns={columns}
         expandable={{ expandedRowRender }}
         loading={global.loading.loading}
@@ -411,9 +567,12 @@ const UserOrders = ({ status }: { status: string }) => {
         bordered
         size="large"
       />
-      <CancelOrder />
+      {global.action.orderStatusUpdate && <OrderStatusChange />}
+      {global.action.addOrderTracking && <AddOrderTracking />}
+      {global.action.payment && <AddPayment />}
+      {global.action.assign && <AssignDeliveryMan />}
     </div>
   );
 };
 
-export default UserOrders;
+export default Page;

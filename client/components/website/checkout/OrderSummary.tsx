@@ -1,13 +1,11 @@
 "use client";
 import appConfig from "@/appConfig";
-import { getCartLists, incrementDecrementCart } from "@/lib/apis/cart";
 import {
-  decrementCart,
-  incrementCart,
-  removeCart,
-  replaceCart,
-  selectCart,
-} from "@/redux/features/cart/cartSlice";
+  deleteCart,
+  getCartLists,
+  incrementDecrementCart,
+} from "@/lib/apis/cart";
+import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Popconfirm } from "antd";
 import Image from "next/image";
@@ -23,7 +21,13 @@ export default function OrderSummary() {
   async function removeItemCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
-      dispatch(removeCart({ id }));
+      const removeCartRes = await deleteCart(id);
+
+      if (removeCartRes.success) {
+        const getCartList = await getCartLists();
+        dispatch(replaceCart(getCartList.data));
+      }
+
       setTimeout(async () => {
         dispatch(setLoading({ remove: false }));
       }, 1000);
@@ -55,6 +59,114 @@ export default function OrderSummary() {
   return (
     <>
       <div className="p-4 border-b">
+        <h2 className="text-2xl font-semibold">Order summary</h2>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm text-left border border-gray-200">
+          <thead className="bg-gray-100 text-xs uppercase">
+            <tr>
+              <th className="p-3">#</th>
+              <th className="p-3">Image</th>
+              <th className="p-3">Product</th>
+              <th className="p-3">Qty</th>
+              <th className="p-3">Unit Price</th>
+              {/* <th className="p-3">Tax</th> */}
+              <th className="p-3">Discount</th>
+              <th className="p-3">Subtotal</th>
+              <th className="p-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cart?.carts?.cartList?.map((item: any, idx: number) => (
+              <tr key={idx} className="border-t">
+                <td className="p-3">{idx + 1}</td>
+
+                <td className="p-3">
+                  <Image
+                    src={
+                      item.thumbnailImage
+                        ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
+                        : "/pos_software.png"
+                    }
+                    width={50}
+                    height={50}
+                    alt={item.name}
+                    className="w-14 h-14 object-cover"
+                  />
+                </td>
+
+                <td className="p-3">
+                  <div className="font-semibold">{item?.name}</div>
+                  {item?.size?.name && (
+                    <div className="text-xs">Size: {item.size.name}</div>
+                  )}
+                  {item?.color?.name && (
+                    <div className="text-xs">Color: {item.color.name}</div>
+                  )}
+                </td>
+
+                <td className="p-3">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      className="px-2 py-1 bg-gray-200 rounded cursor-pointer"
+                      onClick={() =>
+                        cartIncrementDecrementHandle({
+                          type: "Decrement",
+                          id: item.id,
+                        })
+                      }
+                      disabled={item?.qty <= 1}
+                    >
+                      -
+                    </button>
+                    <span className="w-8 text-center">{item.qty}</span>
+                    <button
+                      className="px-2 py-1 bg-gray-200 rounded cursor-pointer"
+                      onClick={() =>
+                        cartIncrementDecrementHandle({
+                          type: "Increment",
+                          id: item.id,
+                        })
+                      }
+                      disabled={stockCheckingAndPurchaseLimit(item)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </td>
+
+                <td className="p-3 text-green-600">
+                  ৳ {item.salePrice}
+                </td>
+                {/* <td className="p-3 text-green-600">৳ {item.taxAmount}</td> */}
+                <td className="p-3 text-green-600">
+                  ৳ {item.totalDiscountAmount}
+                </td>
+                <td className="p-3 font-semibold">৳ {+item.subTotal}</td>
+
+                <td className="p-3">
+                  <Popconfirm
+                    title="Delete Order item"
+                    description="Are you sure to delete this Order item?"
+                    onConfirm={() => removeItemCart(item.id)}
+                    okText="Yes"
+                    cancelText="No"
+                    okButtonProps={{ loading: global.loading.remove }}
+                    placement="left"
+                  >
+                    <button className="text-red-600 hover:text-red-800 cursor-pointer">
+                      <MdDelete size={20} />
+                    </button>
+                  </Popconfirm>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* <div className="p-4 border-b">
         <h2 className="text-2xl font-semibold">Order summary</h2>
       </div>
       <div>
@@ -134,17 +246,6 @@ export default function OrderSummary() {
                 <p className="text-gray-500 mb-1 text-md">
                   ৳{item.discountedUnitPrice}
                 </p>
-                {/* {item?.discountAmount && (
-                  <div className="text-xs">
-                    <span className="line-through text-gray-500">
-                      ৳ {(+item.unitPrice).toFixed(2)}
-                    </span>
-                    <span className="text-red-600">
-                      -{item.discountValue}
-                      {item?.discountStrategy === "Percentage" ? "%" : "BDT"}
-                    </span>
-                  </div>
-                )} */}
               </div>
 
               <div className="mx-2 text-base font-semibold text-green-600">
@@ -160,7 +261,7 @@ export default function OrderSummary() {
             </div>
           );
         })}
-      </div>
+      </div> */}
     </>
   );
 }

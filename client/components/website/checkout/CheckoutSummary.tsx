@@ -17,9 +17,6 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { onlineOrderValidationSchema } from "@/validation/order/onlineOrderValidation";
 import { Button } from "antd";
-import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function CheckoutSummary() {
@@ -27,7 +24,6 @@ export default function CheckoutSummary() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const checkout = useSelector(selectCheckout);
-  const route = useRouter();
 
   const {
     shippingCharge,
@@ -72,7 +68,6 @@ export default function CheckoutSummary() {
       });
 
       console.log("validatedFields", validatedFields);
-      
 
       if (!validatedFields.success) {
         const formattedErrors = validatedFields.error.issues.map((issue) => ({
@@ -89,7 +84,6 @@ export default function CheckoutSummary() {
       const res = await saveOrder(validatedFields.data);
 
       console.log("res", res);
-      
 
       if (res.message?.formErrors) {
         dispatch(setLoading({ save: false }));
@@ -135,11 +129,11 @@ export default function CheckoutSummary() {
           <span>Total Discount</span>
           <span>{totalDiscount}</span>
         </div>
-
+        {/* 
         <div className="flex justify-between">
           <span>Total Tax</span>
           <span>{totalTax}</span>
-        </div>
+        </div> */}
 
         <div className="flex justify-between">
           <span>Shipping Cost</span>

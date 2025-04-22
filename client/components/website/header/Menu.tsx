@@ -1,316 +1,315 @@
 "use client";
-import { Badge } from "antd";
+
+import { Menu, Dropdown } from "antd";
 import Link from "next/link";
-import { useState } from "react";
-import { CiHeart } from "react-icons/ci";
-import { IoBagOutline } from "react-icons/io5";
-import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
+import { useEffect, useState } from "react";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import { getMenus } from "@/lib/apis/admin/menu";
+import { getAntdCategories } from "@/lib/apis/categories";
 
-
-const menuData = [
-  {
-    label: "Home",
-    key: "home",
-    url: "/",
-  },
-
-  {
-    label: "Watch",
-    key: "Watch",
-    megaMenu: true,
-    children: [
-      {
-        label: "Watch type",
-        key: "Watchtype",
-      },
-      {
-        label: "head type",
-        key: "headtype",
-      },
-      {
-        label: "mouse type",
-        key: "mouse1type",
-      },
-      {
-        label: "keyboard type",
-        key: "keyboa1rdtype",
-      },
-      {
-        label: "keyboard",
-        key: "keyboardtype1",
-      },
-      {
-        label: "motherboard type",
-        key: "keyboardtype2",
-        children: [
-          { label: "keyboardtype1", key: "keyboardtype12" },
-          { label: "keyboardtype2", key: "keyboardtype23" },
-          { label: "keyboardtype3", key: "keyboardtype35" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Electronics",
-    key: "electronics",
-    children: [
-      {
-        label: "Mobile Phones",
-        key: "mobiles",
-        megaMenu: true,
-        children: [
-          {
-            label: "Ear type",
-            key: "Eartype",
-            children: [
-              { label: "ear", key: "ear" },
-              { label: "ear1", key: "ear1" },
-              { label: "ear2", key: "ear3" },
-            ],
-          },
-          {
-            label: "head type",
-            key: "headtype",
-            children: [
-              { label: "head", key: "head" },
-              { label: "head1", key: "head1" },
-              { label: "head2", key: "head2" },
-            ],
-          },
-          {
-            label: "mouse type",
-            key: "mousetype",
-            children: [
-              { label: "mouse", key: "mouse" },
-              { label: "mouse1", key: "mouse1" },
-              { label: "mouse2", key: "mouse2" },
-            ],
-          },
-          {
-            label: "keyboard type",
-            key: "keyboardtype",
-            children: [
-              { label: "keyboardtype1", key: "keyboardtype1" },
-              { label: "keyboardtype2", key: "keyboardtype2" },
-              { label: "keyboardtype3", key: "keyboardtype3" },
-            ],
-          },
-          {
-            label: "keyboard type",
-            key: "keyboardtype1",
-            children: [
-              { label: "keyboardtype1", key: "keyboardtype12" },
-              { label: "keyboardtype2", key: "keyboardtype23" },
-              { label: "keyboardtype3", key: "keyboardtype34" },
-            ],
-          },
-          {
-            label: "keyboard type",
-            key: "keyboardtype2",
-            children: [
-              { label: "keyboardtype1", key: "keyboardtype12" },
-              { label: "keyboardtype2", key: "keyboardtype23" },
-              { label: "keyboardtype3", key: "keyboardtype35" },
-            ],
-          },
-        ],
-      },
-      {
-        label: "Laptops",
-        key: "laptops",
-        megaMenu: true,
-        children: [
-          {
-            label: "Game type",
-            key: "Gametype",
-            children: [
-              { label: "Game", key: "Game" },
-              { label: "Game1", key: "Game1" },
-              { label: "Game2", key: "Game3" },
-            ],
-          },
-          { label: "Ultrabooks", key: "ultrabooks", children: [] },
-          { label: "Ultrabooks", key: "ultrabookss", children: [] },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Clothing",
-    key: "clothing",
-    children: [
-      { label: "Men's Clothing", key: "mens-clothing" },
-      { label: "Women's Clothing", key: "womens-clothing" },
-      { label: "Women's Clothing", key: "womens-cslothing" },
-    ],
-  },
-];
-
-export default function MainMenu() {
-  const [hoveredKey, setHoveredKey] = useState(null);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const menus = await getMenus();
-
-  //     const convertToMenuItems = (menuItems: any) => {
-  //       return menuItems.map((item: any) => ({
-  //         key: item.id, // Each item should have a unique key
-  //         label: (
-  //           <a href={item.link} target="_blank" rel="noopener noreferrer">
-  //             {item.label}
-  //           </a>
-  //         ),
-  //         children:
-  //           item.child && item.child.length > 0
-  //             ? convertToMenuItems(item.child)
-  //             : null,
-  //       }));
-  //     };
-
-  //     const items = convertToMenuItems(menus.data);
-
-  //     setMenus(items);
-  //   })();
-  // }, []);
-
-  const MegaMenu = ({ menuData }: any) => {
-    return (
-      <nav className="bg-white py-4 text-md">
-        <div className="container mx-auto flex justify-between items-center">
-          {/* Top-level Navigation Links */}
-          <div className="hidden md:flex space-x-6 items-center">
-            {menuData.map((menuItem: any) => (
-              <MenuItem
-                key={menuItem.key}
-                item={menuItem}
-                hoveredKey={hoveredKey}
-                setHoveredKey={setHoveredKey}
-              />
-            ))}
-          </div>
-        </div>
-      </nav>
-    );
-  };
-
-  const MenuItem = ({ item, hoveredKey, setHoveredKey }: any) => {
-    return (
-      <div
-        className="relative group"
-        onMouseEnter={() => setHoveredKey({ root: item.key })}
-        onMouseLeave={() => setHoveredKey(null)}
-      >
-        {/* Top-level Link */}
-        <a
-          href={item.url || "#"}
-          className=" flex items-center"
-        >
-          <div className="flex items-center gap-1 font-semibold">
-            {item.label} {item.children && <MdKeyboardArrowDown />}
-          </div>
-        </a>
-
-        {/* Dropdown Menu */}
-        {item.children && !item.megaMenu && (
-          <div
-            className={`absolute top-full bg-white shadow-md rounded-sm z-10 w-48 ${
-              hoveredKey?.root === item.key ? "block" : "hidden"
-            }`}
-          >
-            {item.children.map((subItem: any) => (
-              <SubMenu
-                key={subItem.key}
-                item={subItem}
-                hoveredKey={hoveredKey}
-                setHoveredKey={setHoveredKey}
-              />
-            ))}
-          </div>
-        )}
-        {item.children && item.megaMenu && (
-          <div
-            className={`absolute top-15 bg-white shadow-md rounded-sm w-[90vh] p-4 z-10 ${
-              hoveredKey?.root === item.key ? "block" : "hidden"
-            }`}
-          >
-            <div className="grid grid-cols-5">
-              {item.children.map((nestedItem: any) => (
-                <div key={nestedItem.key}>
-                  <Link href="/about">
-                    <h3 className="mb-2">{nestedItem.label}</h3>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const SubMenu = ({ item, hoveredKey, setHoveredKey }: any) => (
-    <div
-      className="relative group"
-      onMouseEnter={() => setHoveredKey({ ...hoveredKey, mega: item.key })}
-      onMouseLeave={() => setHoveredKey(null)}
-    >
-      {/* Dropdown Item */}
-      <a href="#" className="block px-4 py-2 ">
-        <div className="flex items-center gap-1">
-          {item.label} {item.children && <MdKeyboardArrowRight />}
-        </div>
-      </a>
-
-      {/* Mega Menu for Specific Items */}
-      {item.megaMenu && item.children && (
-        <div
-          className={`absolute left-full top-5 bg-white shadow-md rounded-sm  w-[90vh] p-4 z-10 ${
-            hoveredKey?.mega === item.key ? "block" : "hidden"
-          }`}
-        >
-          <div className="grid grid-cols-5 gap-4">
-            {item.children.map((nestedItem: any) => (
-              <div key={nestedItem.key}>
-                <h3 className="font-semibold text-lg mb-2">
-                  {nestedItem.label}
-                </h3>
-                <ul className="space-y-1">
-                  {nestedItem.children.map((deepNestedItem: any) => (
-                    <li key={deepNestedItem.key}>
-                      <a
-                        href="#"
-                        className="text-gray-600 "
-                      >
-                        {deepNestedItem.label}
-                      </a>
-                    </li>
+const renderMenuItems = (items: any[]) => {
+  return (items || []).map((item) => {
+    const result = item.class?.split(" ");
+    const reNumber = result && result[0];
+    const resHeading = result && result[1];
+    if (item.children) {
+      if (item.class === "megaMenu" && item.children?.length > 0) {
+        return {
+          key: item.id, // Use link as key to match pathname
+          label: (
+            <Dropdown
+              className="relative flex justify-between"
+              trigger={["hover"]}
+              // overlayStyle={{
+              //   boxShadow: "none",
+              //   border: "none",
+              //   margin: "0px",
+              //   padding: "0px",
+              //   fontSize: "unset",
+              //   fontFamily: "unset",
+              // }}
+              dropdownRender={() => (
+                <div
+                  className={`absolute left-full top-0 bg-white border p-4 grid grid-cols-${item.children.length} gap-10 shadow-lg min-w-[60vw] max-w-[80vw] z-50`}
+                >
+                  {item.children.map((col: any) => (
+                    <div key={col.key}>
+                      <h4 className="font-bold text-yellow-500 ml-3">
+                        {col.label}
+                      </h4>
+                      <Menu
+                        items={renderMenuItems(col.child || [])}
+                        style={{
+                          boxShadow: "none",
+                          border: "none",
+                          margin: "0px",
+                          padding: "0px",
+                          fontSize: "unset",
+                          fontFamily: "unset",
+                        }}
+                      />
+                    </div>
                   ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+                </div>
+              )}
+            >
+              <Link
+                href={`/products?categoryId=${item.id}`}
+                className="flex items-center"
+              >
+                {item.label}{" "}
+                {item.children?.length > 0 && <FaAngleRight className="ml-5" />}
+              </Link>
+            </Dropdown>
+          ),
+        };
+      } else if (Number(reNumber) && !resHeading) {
+        const numberclass = +reNumber;
+
+        let gridColsClass = ""; // Initialize an empty string for the grid-cols class
+
+        // Conditionally apply grid-cols based on item.class value
+        if (numberclass === 1) {
+          gridColsClass = "grid-cols-1"; // 1 column
+        } else if (numberclass === 2) {
+          gridColsClass = "grid-cols-2"; // 2 columns
+        } else if (numberclass === 3) {
+          gridColsClass = "grid-cols-3"; // 3 columns
+        } else if (numberclass === 4) {
+          gridColsClass = "grid-cols-4"; // 4 columns
+        } else if (numberclass === 5) {
+          gridColsClass = "grid-cols-5"; // 5 columns
+        } else if (numberclass === 6) {
+          gridColsClass = "grid-cols-6";
+        } else if (numberclass === 7) {
+          gridColsClass = "grid-cols-7";
+        } else {
+          gridColsClass = "grid-cols-5";
+        }
+
+        return {
+          key: item.id,
+          label: (
+            <Dropdown
+              className="flex"
+              dropdownRender={() => (
+                <div
+                  className={`shadow-lg bg-white rounded-md p-2 border gap-x-2 gap-y-1 text-gray-700 grid ${gridColsClass} `}
+                >
+                  {item.children.map((col: any) => {
+                    return (
+                      <div key={col.key}>
+                        {resHeading ? (
+                          <h4 className="font-bold text-yellow-500 ml-3">
+                            {col.label}
+                          </h4>
+                        ) : (
+                          // <h5 className="font-bold text-gray-700 hover:bg-[#f0f0f0] px-2 py-1 rounded-md">
+                          <Link
+                            href={`/products?categoryId=${col.id}`}
+                            className="flex items-center text-sm text-gray-600 hover:text-gray-700  hover:bg-[#f0f0f0] px-2 py-1 rounded-md"
+                          >
+                            {col.label}
+                          </Link>
+                          // </h5>
+                        )}
+
+                        <Menu
+                          items={renderMenuItems(col.child || [])}
+                          style={{
+                            boxShadow: "none",
+                            border: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            fontSize: "unset",
+                            fontFamily: "unset",
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              trigger={["hover"]}
+              overlayStyle={{
+                // boxShadow: "none",
+                // border: "none",
+                // margin: "0px",
+                // padding: "0px",
+                fontSize: "unset",
+                fontFamily: "unset",
+              }}
+            >
+              <Link
+                href={`/products?categoryId=${item.id}`}
+                className="flex items-center"
+              >
+                {item.name}{" "}
+                {item.children?.length > 0 && <FaAngleDown className="ml-1" />}
+              </Link>
+            </Dropdown>
+          ),
+        };
+      } else if (Number(reNumber) && resHeading) {
+        const numberclass = +reNumber;
+
+        let gridColsClass = ""; // Initialize an empty string for the grid-cols class
+
+        // Conditionally apply grid-cols based on item.class value
+        if (numberclass === 1) {
+          gridColsClass = "grid-cols-1"; // 1 column
+        } else if (numberclass === 2) {
+          gridColsClass = "grid-cols-2"; // 2 columns
+        } else if (numberclass === 3) {
+          gridColsClass = "grid-cols-3"; // 3 columns
+        } else if (numberclass === 4) {
+          gridColsClass = "grid-cols-4"; // 4 columns
+        } else if (numberclass === 5) {
+          gridColsClass = "grid-cols-5"; // 5 columns
+        } else if (numberclass === 6) {
+          gridColsClass = "grid-cols-6";
+        } else if (numberclass === 7) {
+          gridColsClass = "grid-cols-7";
+        } else {
+          gridColsClass = "grid-cols-5";
+        }
+
+        return {
+          key: item.id,
+          label: (
+            <Dropdown
+              className="flex"
+              overlayStyle={{
+                // boxShadow: "none",
+                // border: "none",
+                // margin: "0px",
+                // padding: "0px",
+                fontSize: "unset",
+                fontFamily: "unset",
+              }}
+              dropdownRender={() => (
+                <div
+                  className={`shadow-lg bg-white rounded-md p-2 border  gap-y-1 font-bold text-gray-700 grid ${gridColsClass}`}
+                >
+                  {item.children.map((col: any) => {
+                    return (
+                      <div key={col.key}>
+                        {resHeading && (
+                          <h4 className="font-bold text-yellow-500 ml-3">
+                            {col.name}
+                          </h4>
+                        )}
+
+                        <Menu
+                          items={renderMenuItems(col.child || [])}
+                          className="text-5xl"
+                          style={{
+                            boxShadow: "none",
+                            border: "none",
+                            margin: "0px",
+                            padding: "0px",
+                            fontSize: "unset",
+                            fontFamily: "unset",
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              trigger={["hover"]}
+            >
+              <Link
+                href={`/products?categoryId=${item.id}`}
+                className="flex items-center"
+              >
+                {item.name}{" "}
+                {item.children?.length > 0 && <FaAngleDown className="ml-1" />}
+              </Link>
+            </Dropdown>
+          ),
+        };
+      } else {
+        return {
+          key: item.id,
+          label: (
+            <Dropdown
+              overlayStyle={{
+                fontSize: "unset",
+                fontFamily: "unset",
+              }}
+              dropdownRender={() => (
+                <Menu
+                  items={renderMenuItems(item.children)}
+                  className="border bg-slate-800"
+                  style={{
+                    boxShadow: "none",
+                    border: "none",
+                    margin: "0px",
+                    padding: "0px",
+                    fontSize: "unset",
+                    fontFamily: "unset",
+                  }}
+                />
+              )}
+              trigger={["hover"]}
+            >
+              <Link
+                href={`/products?categoryId=${item.id}`}
+                className="flex items-center"
+              >
+                {item.name} {/* main headding */}
+                {item.children?.length > 0 && <FaAngleDown className="ml-1" />}
+              </Link>
+            </Dropdown>
+          ),
+        };
+      }
+    }
+    return {
+      key: item.id, // Use link as key
+      label: <Link href={item.id || "#"}>{item.name}</Link>,
+    };
+  });
+};
+
+const MainMenu = () => {
+  const [categories, setCategories] = useState([]);
+  const pathname = usePathname(); // Get current route
+
+  useEffect(() => {
+    (async () => {
+      const response = await getAntdCategories();
+      console.log("response", response);
+
+      setCategories(response.data || []);
+    })();
+  }, []);
 
   return (
-    <>
-      <MegaMenu menuData={menuData} />
-      <div className="hidden md:block">
-        <Link href="/profile" className="cursor-pointer md:hidden inline ">
-          <Badge size="default">
-            <CiHeart className="font-medium lg:text-lg text-2xl" />
-          </Badge>
-        </Link>
-
-        <Link href="/checkout" className="mt-1 md:hidden inline">
-          <Badge size="default" count={30}>
-            <IoBagOutline className="font-medium lg:text-lg text-2xl" />
-          </Badge>
-        </Link>
-      </div>
-    </>
+    <Menu
+      mode="horizontal"
+      selectedKeys={[pathname]} // Highlight current menu item
+      className="bg-white p-2"
+      style={{
+        boxShadow: "none",
+        border: "none",
+        margin: "0px",
+        padding: "0px",
+        fontSize: "unset",
+        fontFamily: "unset",
+      }}
+    >
+      {renderMenuItems(categories).map((item, idx: number) => {
+        return (
+          <Menu.Item key={item.key === "#" ? item.key + idx : item.key}>
+            {item.label}
+          </Menu.Item>
+        );
+      })}
+    </Menu>
   );
-}
+};
+
+export default MainMenu;

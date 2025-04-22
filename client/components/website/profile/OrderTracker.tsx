@@ -35,6 +35,11 @@ export default function OrderTracker() {
     setLoading(true);
     const result = await getOrderTracking({ trackingNo: tracker.trackingNo });
 
+    if (!result.success) {
+      setLoading(false);
+      return;
+    }
+
     setTimeout(() => {
       setOrder(result.data);
       setLoading(false);
@@ -62,17 +67,19 @@ export default function OrderTracker() {
       render: (v: any) => <span>Need to Get in product variant</span>,
     },
 
-    { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
+    {
+      title: "Unit Price",
+      // dataIndex: "unitPrice",
+      key: "unitPrice",
+      render: (v: any) => {
+        return <span>{(+v.unitPrice + +v.taxAmount).toFixed(2)}</span>;
+      },
+    },
 
     {
       title: "Discount Amount",
       dataIndex: "totalDiscountAmount",
       key: "totalDiscountAmount",
-    },
-    {
-      title: "Tax Amount",
-      key: "taxAmount",
-      dataIndex: "taxAmount",
     },
 
     { title: "Qty", dataIndex: "qty", key: "qty" },
@@ -106,7 +113,7 @@ export default function OrderTracker() {
           <Form.Item>
             <Button
               size="middle"
-              disabled={!tracker.trackingNo}
+              disabled={!tracker?.trackingNo}
               type="primary"
               loading={loading}
               htmlType="submit"
@@ -172,7 +179,7 @@ export default function OrderTracker() {
               />
             </div>
             <div className="grid grid-cols-8 mt-5">
-              <div className="col-span-4">
+              <div className="col-span-6">
                 <h2 className="font-semibold">Order Trackings</h2>
                 <Timeline
                   items={(order?.orderTrackings || []).map(
@@ -193,7 +200,7 @@ export default function OrderTracker() {
                   )}
                 />
               </div>
-              <div className="grid gap-y-3 col-span-4">
+              <div className="grid gap-y-3 col-span-2">
                 <div className="col-span-3">
                   <div className="flex justify-between">
                     <h1>Total Qty:</h1>
@@ -202,9 +209,7 @@ export default function OrderTracker() {
 
                   <div className="flex justify-between">
                     <h1>Net Amount:</h1>
-                    <h1 className="font-semibold">
-                      {order.subTotal}
-                    </h1>
+                    <h1 className="font-semibold">{(+order.subTotal + +order.totalItemsDiscount + +order.couponDiscount).toFixed(2)}</h1>
                   </div>
 
                   {+order.totalItemsDiscount > 0 && (
@@ -222,11 +227,6 @@ export default function OrderTracker() {
                       <h1 className="font-semibold">{order.couponDiscount}</h1>
                     </div>
                   )}
-
-                  <div className="flex justify-between">
-                    <h1>Tax Amount:</h1>
-                    <h1 className="font-semibold">{order.totalTax}</h1>
-                  </div>
 
                   {+order.shippingCharge > 0 && (
                     <div className="flex justify-between">

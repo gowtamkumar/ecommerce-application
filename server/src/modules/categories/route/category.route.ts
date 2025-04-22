@@ -13,7 +13,7 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 const router = express.Router();
 
 router.route("/").get(AuthGuard, getCategories).post(AuthGuard, createCategory);
-router.route("/antd").get(AuthGuard, getAntdCategories);
+router.route("/antd").get(getAntdCategories);
 router.route("/all").get(getPublicCategories);// public api
 
 router

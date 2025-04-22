@@ -16,153 +16,152 @@ import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 // @desc Get all Cart
 // @route GET /api/v1/Cart
 // @access Public
-export const getCartByUser = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    const userId = req.id;
-    const connection = await getDBConnection();
+// export const getCartByUser = asyncHandler(
+//   async (req: CustomRequest, res: Response) => {
+//     const userId = req.id;
+//     const connection = await getDBConnection();
 
-    const cart = await connection.query(
-      `
-        WITH selectedDiscounts AS (
-        SELECT DISTINCT ON (p.id) 
-            p.id AS product_id,  
-            d.id AS discount_id,
-            d.discount_strategy,
-            d.value AS discount_value,
-            d.scope,
-            d.promotion_type
-        FROM products p
-        LEFT JOIN discounts d ON (
-            (d.scope = 'Products' AND EXISTS (
-                SELECT 1 FROM applicable_products ap WHERE ap.product_id = p.id AND ap.discount_id = d.id
-            )) OR
-            (d.scope = 'Category' AND EXISTS (
-                SELECT 1 FROM product_categories pc WHERE pc.product_id = p.id 
-                AND pc.category_id IN (
-                    SELECT category_id FROM applicable_categories WHERE discount_id = d.id
-                )
-            )) OR
-            (d.scope = 'Brand' AND EXISTS (
-                SELECT 1 FROM applicable_brands ab WHERE ab.brand_id = p.brand_id AND ab.discount_id = d.id
-            )) OR
-            (d.scope = 'Global') OR
-            (d.scope = 'Product' AND p.discount_id = d.id) 
-        )   
-        WHERE 
-            ((d.start_date <= NOW() AND d.end_date >= NOW()) OR d.id = p.discount_id)
-            OR d.status = 'Active'
-        ORDER BY p.id, d.priority DESC, d.value DESC
-    )
-    SELECT 
-        carts.id,
-        carts.qty,
-        carts.product_variant_id AS "productVariantId",
-        sd.product_id AS "productId",
-        p.name,
-        p.slug,
-        p.thumbnail_image AS "thumbnailImage",
-        sd.discount_strategy AS "discountStrategy",
-        sd.discount_value AS "discountValue",
-        pv.unit_price AS "unitPrice",
-        pv.purchase_price AS "purchasePrice",
+//     const cart = await connection.query(
+//       `
+//         WITH selectedDiscounts AS (
+//         SELECT DISTINCT ON (p.id)
+//             p.id AS product_id,
+//             d.id AS discount_id,
+//             d.discount_strategy,
+//             d.value AS discount_value,
+//             d.scope,
+//             d.promotion_type
+//         FROM products p
+//         LEFT JOIN discounts d ON (
+//             (d.scope = 'Products' AND EXISTS (
+//                 SELECT 1 FROM applicable_products ap WHERE ap.product_id = p.id AND ap.discount_id = d.id
+//             )) OR
+//             (d.scope = 'Category' AND EXISTS (
+//                 SELECT 1 FROM product_categories pc WHERE pc.product_id = p.id
+//                 AND pc.category_id IN (
+//                     SELECT category_id FROM applicable_categories WHERE discount_id = d.id
+//                 )
+//             )) OR
+//             (d.scope = 'Brand' AND EXISTS (
+//                 SELECT 1 FROM applicable_brands ab WHERE ab.brand_id = p.brand_id AND ab.discount_id = d.id
+//             )) OR
+//             (d.scope = 'Global') OR
+//             (d.scope = 'Product' AND p.discount_id = d.id)
+//         )
+//         WHERE
+//             ((d.start_date <= NOW() AND d.end_date >= NOW()) OR d.id = p.discount_id)
+//             OR d.status = 'Active'
+//         ORDER BY p.id, d.priority DESC, d.value DESC
+//     )
+//     SELECT
+//         carts.id,
+//         carts.qty,
+//         carts.product_variant_id AS "productVariantId",
+//         sd.product_id AS "productId",
+//         p.name,
+//         p.slug,
+//         p.thumbnail_image AS "thumbnailImage",
+//         sd.discount_strategy AS "discountStrategy",
+//         sd.discount_value AS "discountValue",
+//         pv.unit_price AS "unitPrice",
+//         pv.purchase_price AS "purchasePrice",
 
-        -- ✅ Calculate Discounted Price per unit
-        ROUND(
-            CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    pv.unit_price - sd.discount_value
-                ELSE 
-                    pv.unit_price
-            END, 
-        2) AS "discountedUnitPrice",
+//         -- ✅ Calculate Discounted Price per unit
+//         ROUND(
+//             CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     pv.unit_price - sd.discount_value
+//                 ELSE
+//                     pv.unit_price
+//             END,
+//         2) AS "discountedUnitPrice",
 
-        -- ✅ Calculate Total Discounted Price for all quantities
-        ROUND(
-            (CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    pv.unit_price - sd.discount_value
-                ELSE 
-                    pv.unit_price
-            END) * carts.qty, 
-        2) AS "totalDiscountedPrice",
+//         -- ✅ Calculate Total Discounted Price for all quantities
+//         ROUND(
+//             (CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     pv.unit_price - sd.discount_value
+//                 ELSE
+//                     pv.unit_price
+//             END) * carts.qty,
+//         2) AS "totalDiscountedPrice",
 
+//         -- ✅ Calculate Discount Amount per unit
+//         ROUND(
+//             CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     sd.discount_value
+//                 ELSE
+//                     0
+//             END,
+//         2) AS "discountAmountPerUnit",
 
-        -- ✅ Calculate Discount Amount per unit
-        ROUND(
-            CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    sd.discount_value
-                ELSE 
-                    0
-            END, 
-        2) AS "discountAmountPerUnit",
+//         -- ✅ Calculate Total Discount Amount for all quantities
+//         ROUND(
+//             (CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     sd.discount_value
+//                 ELSE
+//                     0
+//             END) * carts.qty,
+//         2) AS "totalDiscountAmount",
 
-        -- ✅ Calculate Total Discount Amount for all quantities
-        ROUND(
-            (CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    sd.discount_value
-                ELSE 
-                    0
-            END) * carts.qty, 
-        2) AS "totalDiscountAmount",
+//         -- ✅ Calculate tax amount based on the discounted price
+//         ROUND(
+//             ((CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     pv.unit_price - sd.discount_value
+//                 ELSE
+//                     pv.unit_price
+//             END) * COALESCE(t.value, 0) / 100) * carts.qty,
+//         2) AS "taxAmount",
 
-        -- ✅ Calculate tax amount based on the discounted price
-        ROUND(
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    pv.unit_price - sd.discount_value
-                ELSE 
-                    pv.unit_price
-            END) * COALESCE(t.value, 0) / 100) * carts.qty, 
-        2) AS "taxAmount",
+//         -- ✅ Calculate subtotal (discounted price + tax) * quantity
+//         ROUND(
+//             ((CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     pv.unit_price - sd.discount_value
+//                 ELSE
+//                     pv.unit_price
+//             END) +
+//             ((CASE
+//                 WHEN sd.discount_strategy = 'Percentage' THEN
+//                     pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+//                 WHEN sd.discount_strategy = 'Fixed' THEN
+//                     pv.unit_price - sd.discount_value
+//                 ELSE
+//                     pv.unit_price
+//             END) * COALESCE(t.value, 0) / 100)) * carts.qty,
+//         2) AS "subTotal"
 
-        -- ✅ Calculate subtotal (discounted price + tax) * quantity
-        ROUND(
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    pv.unit_price - sd.discount_value
-                ELSE 
-                    pv.unit_price
-            END) + 
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    pv.unit_price - sd.discount_value
-                ELSE 
-                    pv.unit_price
-            END) * COALESCE(t.value, 0) / 100)) * carts.qty, 
-        2) AS "subTotal"
+//       FROM carts
+//       LEFT JOIN products AS p ON p.id = carts.product_id
+//       LEFT JOIN taxs AS t ON t.id = p.tax_id
+//       LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
+//       LEFT JOIN selectedDiscounts sd ON sd.product_id = p.id
+//       WHERE carts.user_id = $1`,
+//       [userId]
+//     );
 
-      FROM carts 
-      LEFT JOIN products AS p ON p.id = carts.product_id
-      LEFT JOIN taxs AS t ON t.id = p.tax_id
-      LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
-      LEFT JOIN selectedDiscounts sd ON sd.product_id = p.id
-      WHERE carts.user_id = $1`,
-      [userId]
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: "Get cart by user",
-      data: cart,
-    });
-  }
-);
+//     return res.status(200).json({
+//       success: true,
+//       message: "Get cart by user",
+//       data: cart,
+//     });
+//   }
+// );
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -182,7 +181,7 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 
 export const cartListApplyCoupon = asyncHandler(
   async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: cartListApplyCouponCode ${req.method} ${req.url}`);
+    logger.info(`Service: cartListApplyCoupon ${req.method} ${req.url}`);
     const { couponCode, shippingCost } = req.query;
     const userId = req?.id;
 
@@ -281,6 +280,20 @@ export const cartListApplyCoupon = asyncHandler(
         pv.unit_price AS "unitPrice",
         pv.purchase_price AS "purchasePrice",
 
+
+            -- ✅ Calculate Sale Price
+        ROUND(
+            ((pv.unit_price) + 
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    pv.unit_price - sd.discount_value
+                ELSE 
+                    pv.unit_price
+            END) * COALESCE(t.value, 0) / 100)), 
+        2) AS "salePrice",
+
         -- ✅ Calculate Discounted Price per unit
         ROUND(
             CASE 
@@ -304,7 +317,6 @@ export const cartListApplyCoupon = asyncHandler(
                     pv.unit_price
             END) * carts.qty, 
         2) AS "totalDiscountedPrice",
-
 
         -- ✅ Calculate Discount Amount per unit
         ROUND(
@@ -361,7 +373,6 @@ export const cartListApplyCoupon = asyncHandler(
                     pv.unit_price
             END) * COALESCE(t.value, 0) / 100)) * carts.qty, 
         2) AS "subTotal"
-
     FROM carts 
     LEFT JOIN products AS p ON p.id = carts.product_id
     LEFT JOIN taxs AS t ON t.id = p.tax_id
@@ -489,7 +500,9 @@ export const cartIncrementDecrement = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
 
-    const validation = cartIncrementDecrementValidationSchema.safeParse(req.body);
+    const validation = cartIncrementDecrementValidationSchema.safeParse(
+      req.body
+    );
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({

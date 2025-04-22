@@ -6,12 +6,14 @@ import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { TiDeleteOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ViewCart() {
   const cart = useSelector(selectCart);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleRemove = async (item: any) => {
     const cartId = item.id;
@@ -76,8 +78,13 @@ export default function ViewCart() {
             ৳ {cart?.carts?.cartSummary?.subTotal}
           </p>
         </div>
-        <Button className="w-full">
-          <Link href="/checkout">Checkout</Link>
+        <Button className="w-full" onClick={() => {
+          // dispatch(setOpen(false));
+          // dispatch(setDrawarCart(false));
+          router.push("/checkout");
+
+        }}>
+          Continue Shopping
         </Button>
       </div>
     </div>
