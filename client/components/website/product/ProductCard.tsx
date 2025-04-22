@@ -11,10 +11,12 @@ import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
 // import { getHomeApi } from "@/lib/apis/home";
 import { getPublicProducts } from "@/lib/apis/product";
+import Pagination from "@/components/Pagination";
 
 const ITEMS_PER_PAGE = 12;
 
 const ProductCard: React.FC = () => {
+  const [pagination, setPagination] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   // const { category } = useParams<{ category: string }>();
   // console.log("🚀 ~ category:", category)
@@ -37,7 +39,7 @@ const ProductCard: React.FC = () => {
     maxPrice,
     discount,
     search: newSearchs,
-  } = global.productFilter;  
+  } = global.productFilter;
 
   let customQuery = "";
   if (categoryIdParams) customQuery += categoryIdParams;
@@ -50,26 +52,6 @@ const ProductCard: React.FC = () => {
   if (newSearchs) newSearch += newSearchs;
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // const homeapi = await getHomeApi()
-        const products = await getPublicProducts({
-          categoryId: customQuery,
-          brandId,
-          search: newSearch,
-          lowPrice,
-          highPrice,
-          colorId,
-          rating,
-          maxPrice,
-          minPrice,
-          discount,
-        });
-        dispatch(setProducts(products?.data));
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
     fetchProducts();
   }, [
     customQuery,
@@ -85,6 +67,36 @@ const ProductCard: React.FC = () => {
     dispatch,
   ]);
 
+  const fetchProducts = async () => {
+    try {
+      // const homeapi = await getHomeApi()
+      const products = await getPublicProducts({
+        categoryId: customQuery,
+        brandId,
+        search: newSearch,
+        lowPrice,
+        highPrice,
+        colorId,
+        rating,
+        maxPrice,
+        minPrice,
+        discount,
+      });
+      const paginate = {
+        currentPage: products.currentPage,
+        page: products.page,
+        perPage: products.perPage,
+        total: products.total,
+        totalPages: products.totalPages,
+      };
+
+      setPagination(paginate);
+      dispatch(setProducts(products?.data));
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    }
+  };
+
   return (
     <div
       className={`grid gap-1 ${
@@ -97,10 +109,10 @@ const ProductCard: React.FC = () => {
         </div>
         // <ProductItem key={item.id} item={item} />
       ))}
-{/* 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={Math.ceil(products.products.length / ITEMS_PER_PAGE)}
+
+      {/* <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
         onPageChange={setCurrentPage}
       /> */}
     </div>
