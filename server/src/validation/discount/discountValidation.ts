@@ -29,6 +29,7 @@ export const discountValidation = z.object({
     required_error: "user is required",
   }),
   status: z.enum(["Active", "Inactive"]).optional(),
+  description: z.string().optional(),
   applicableProducts: z.array(z.number()).optional(),
   applicableCategories: z.array(z.number()).optional(),
   applicableBrands: z.array(z.number()).optional(),

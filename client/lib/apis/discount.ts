@@ -36,6 +36,16 @@ export async function getFilterDiscounts(params?: { scope: string }) {
   return await handleResponse(res);
 }
 
+export async function getDiscount(id: string) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/discounts/${id}`, {
+    method: "GET",
+    cache: "no-cache",
+    headers,
+  });
+  return await handleResponse(res);
+}
+
 export async function updateDiscount(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/discounts/${data.id}`, {

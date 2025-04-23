@@ -24,7 +24,7 @@ export const updateDiscountValidation = z.object({
   endDate: z.string().datetime().nullable().optional(),
   priority: z.number().nullable().optional(),
   stackable: z.boolean().optional(),
-  image: z.string().optional(),
+  image: z.string().nullable().optional(),
   status: z.enum(["Active", "Inactive"]).optional(),
   applicableProducts: z.array(z.number()).optional(),
   applicableCategories: z.array(z.number()).optional(),

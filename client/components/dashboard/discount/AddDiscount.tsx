@@ -18,7 +18,6 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveDiscount, updateDiscount } from "@/lib/apis/discount";
 import {
   handleAsyncAction,
   handlePreview,
@@ -31,6 +30,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import { getProducts } from "@/lib/apis/admin/product";
 import { getCategories } from "@/lib/apis/categories";
 import { getBrands } from "@/lib/apis/brand";
+import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
+import { useParams } from "next/navigation";
+import dayjs from "dayjs";
 
 const uploadButton = (
   <div>
@@ -52,46 +54,146 @@ const AddDiscount = () => {
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-
+  const params = useParams<{ new: string }>();
   const global = useSelector(selectGlobal);
-  const { payload, type, discount } = global.action;
+  const { payload } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
+  const generateFile = (fileName: string, identifier: string | number) => ({
+    uid: `${Math.random() * 1000}`,
+    name: `photo ${identifier}`,
+    status: "done",
+    fileName,
+    url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
+  });
+
   useEffect(() => {
-    featch();
-    const newData = { ...payload };
-    setFormData(newData);
+    const initialize = async () => {
+      await fetchInitialData();
+
+      if (params.new === "new") {
+        form.resetFields();
+      } else {
+        if (params.new !== "new") {
+          const id = params.new.toString();
+          const res = await getDiscount(id);
+          const discountData = {
+            ...res.data,
+            startDate: res.data.startDate
+              ? dayjs(res.data.startDate)
+              : null,
+            endDate: res.data.endDate
+              ? dayjs(res.data.endDate)
+              : null,
+            createdAt: res.data.createdAt
+              ? dayjs(res.data.createdAt)
+              : null,
+            updatedAt: res.data.updatedAt
+              ? dayjs(res.data.updatedAt)
+              : null,
+          };
+
+
+          console.log("discountData", discountData);
+
+          // if (!discountData.variant && discountData.productVariants?.length) {
+          //   const [firstVariant] = discountData.productVariants;
+          //   Object.assign(discountData, {
+          //     purchasePrice: +firstVariant.purchasePrice,
+          //     unitPrice: +firstVariant.unitPrice,
+          //     stockQty: firstVariant.stockQty,
+          //     variantId: firstVariant.id,
+          //   });
+          // }
+
+          const applicableProducts = discountData.applicableProducts?.map(
+            (item: any) => item.productId
+          );
+
+          const applicableBrands = discountData.applicableBrands?.map(
+            (item: any) => item.brandId
+          );
+
+          const applicableCategories = discountData.applicableCategories?.map(
+            (item: any) => item.categoryId
+          );
+
+          console.log("applicableBrands", applicableBrands);
+
+          // Handle images, thumbnails, and hover images
+          discountData.fileList =
+            discountData.images?.map((image: string, idx: number) =>
+              generateFile(image, idx)
+            ) || [];
+
+          form.setFieldsValue({
+            ...discountData,
+            applicableProducts,
+            applicableBrands,
+            applicableCategories,
+          });
+
+          // setProduct({ ...discountData, productCategories });
+
+          setFormValues(discountData);
+        }
+
+        setFormData({ ...payload });
+      }
+    };
+
+    initialize();
+
     return () => {
-      dispatch(setFormValues({}));
-      form.resetFields();
+      if (params.new === "new") {
+        form.resetFields();
+        setFormValues({ fileList: [] });
+      }
     };
   }, [global.action]);
 
-  const featch = async () => {
-    const categories = await getCategories();
-    const brands = await getBrands();
-    const products = await getProducts();
-    setCategories(categories.data);
-    setBrands(brands.data);
-    setProducts(products.data);
+  const fetchInitialData = async () => {
+    try {
+      const [categories, brands, products] = await Promise.all([
+        getCategories(),
+        getBrands(),
+        getProducts(),
+      ]);
+
+      setCategories(categories.data);
+      setBrands(brands.data);
+      setProducts(products.data);
+    } catch (error) {
+      console.error("Failed to fetch initial data:", error);
+      // Optional: show notification or fallback
+    }
   };
 
   const handleSubmit = async (values: any) => {
+    const newData = { ...values };
+    newData.startDate = new Date(values.startDate).toISOString();
+    newData.endDate = new Date(values.endDate).toISOString();
+    newData.value = +values.value
 
-    console.log("values", values);
-    return
-    
-    const result = values.id
-      ? () => updateDiscount(values)
-      : () => saveDiscount(values);
+    const result = newData.id
+      ? () => updateDiscount(newData)
+      : () => saveDiscount(newData);
 
     const messageData = values.id
       ? "Successfully Updated"
       : "Successfully Added";
 
-    await handleAsyncAction(result, messageData, dispatch);
+    const res = await handleAsyncAction(result, messageData, dispatch);
+
+    console.log("res", res);
+
+
+    if (res.success) {
+      form.resetFields();
+      setFormValues({ fileList: [] });
+    }
   };
 
   const setFormData = (v: any) => {
@@ -104,7 +206,7 @@ const AddDiscount = () => {
     const newData = { ...value };
     if (newData?.id) {
       form.setFieldsValue(newData);
-      dispatch(setFormValues(newData));
+      setFormValues(newData);
     } else {
       form.resetFields();
       setFormValues(form.getFieldsValue());
@@ -113,11 +215,11 @@ const AddDiscount = () => {
 
   const layout = {
     labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
+    wrapperCol: { span: 12 },
   };
 
   const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
+    wrapperCol: { offset: 6, span: 12 },
   };
 
   const customUploadRequest = async (options: any) => {
@@ -418,16 +520,7 @@ const AddDiscount = () => {
         <Input />
       </Form.Item>
 
-      <Form.Item
-        name="description"
-        label="Description"
-        rules={[
-          {
-            required: true,
-            message: "Description is required",
-          },
-        ]}
-      >
+      <Form.Item name="description" label="Description">
         <Input.TextArea rows={2} placeholder="Enter Description" />
       </Form.Item>
 

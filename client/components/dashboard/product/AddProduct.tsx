@@ -17,7 +17,7 @@ import {
   Upload,
 } from "antd";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import {  PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProduct,

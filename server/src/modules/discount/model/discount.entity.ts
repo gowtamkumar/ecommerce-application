@@ -24,7 +24,7 @@ export class DiscountEntity {
   name!: string;
 
   @Column({ length: 50, unique: true, nullable: true }) // should be auto generate
-  code!: string;
+  key!: string;
 
   @Column({ type: "enum", enum: ScopeEnum })
   scope!: ScopeEnum;
@@ -71,6 +71,10 @@ export class DiscountEntity {
   @Column({ nullable: true })
   image!: string;
 
+  @Column({ nullable: true })
+  description!: string;
+
+
   @Column({ name: "user_id" })
   userId?: number;
 
@@ -94,8 +98,8 @@ export class DiscountEntity {
   
   @BeforeInsert()
   generateCode() {
-    if (!this.code) {
-      this.code = `DISC-${Math.random()
+    if (!this.key) {
+      this.key = `DISC-${Math.random()
         .toString(36).toUpperCase()}`;
     }
   }

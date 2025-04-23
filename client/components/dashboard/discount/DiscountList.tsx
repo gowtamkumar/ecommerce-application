@@ -24,6 +24,8 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { AiOutlineEye, AiOutlineLayout } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 interface DataType {
   key: string;
@@ -31,6 +33,10 @@ interface DataType {
   discountStrategy: string;
   value: number;
   status: string;
+  startDate: string;
+  endDate: string;
+  scope: string;
+  promotionType: string;
 }
 
 type DataIndex = keyof DataType;
@@ -40,6 +46,7 @@ const DiscountList: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const route = useRouter();
 
   useEffect(() => {
     fetchData();
@@ -49,6 +56,18 @@ const DiscountList: React.FC = () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getDiscounts();
+      // if (res?.data) {
+      //   res.data = res.data.map((item: any) => ({
+      //     ...item,
+      //     key: item.id,
+      //     startDate: item.startDate
+      //       ? dayjs(item.startDate).format("YYYY-MM-DD")
+      //       : null,
+      //     endDate: item.endDate
+      //       ? dayjs(item.endDate).format("YYYY-MM-DD")
+      //       : null,
+      //   }));
+      // }
       setDiscounts(res?.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
@@ -194,6 +213,22 @@ const DiscountList: React.FC = () => {
       sorter: (a, b) => a.discountStrategy.length - b.discountStrategy.length,
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
+    {
+      title: "Scope",
+      dataIndex: "scope",
+      key: "scope",
+      sorter: (a, b) => a.scope.length - b.scope.length,
+      render: (value) => (
+        <Tag color={value === "Product" ? "green" : "blue"}>{value}</Tag>
+      ),
+    },
+    {
+      title: "Promotion Type",
+      dataIndex: "promotionType",
+      key: "promotionType",
+      sorter: (a, b) => a.promotionType.length - b.promotionType.length,
+      render: (value) => <Tag color="cyan">{value}</Tag>,
+    },
 
     {
       title: "Value",
@@ -201,6 +236,47 @@ const DiscountList: React.FC = () => {
       key: "value",
       sorter: (a, b) => a.value - b.value,
       ...getColumnSearchProps("value"),
+    },
+
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      sorter: (a, b) => a.startDate.length - b.startDate.length,
+      render: (value) => (
+        <span color="green">
+          {value ? dayjs(value).format("YYYY-MM-DD") : "N/A"}
+        </span>
+      ),
+    },
+    {
+      title: "End Date",
+      dataIndex: "endDate",
+      key: "endDate",
+      sorter: (a, b) => a.endDate.length - b.endDate.length,
+      render: (value) => (
+        <span color="green">
+          {value ? dayjs(value).format("YYYY-MM-DD") : "N/A"}
+        </span>
+      ),
+    },
+
+    {
+      title: "Expiry",
+      // dataIndex: "endDate",
+      key: "Expiry",
+      // sorter: (a, b) => a.endDate.length - b.endDate.length,
+      render: (value) => {
+        return {
+          children: (
+            <Tag
+              color={dayjs(value.endDate).isBefore(dayjs()) ? "red" : "green"}
+            >
+              {dayjs(value.endDate).isBefore(dayjs()) ? "Expired" : "Active"}
+            </Tag>
+          ),
+        };
+      },
     },
 
     {
@@ -225,18 +301,35 @@ const DiscountList: React.FC = () => {
         <div className="gap-2">
           <Button
             size="small"
-            icon={<FormOutlined />}
-            title="Edit"
+            icon={<AiOutlineEye />}
+            title="View"
             className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
                   discount: true,
-                  type: ActionType.UPDATE,
+                  type: ActionType.VIEW,
                   payload: value,
                 })
               )
             }
+          />
+          <Button
+            size="small"
+            icon={<FormOutlined />}
+            title="Edit"
+            className="me-1"
+            onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
+            // onClick={() =>
+              
+            //   dispatch(
+            //     setAction({
+            //       discount: true,
+            //       type: ActionType.UPDATE,
+            //       payload: value,
+            //     })
+            //   )
+            // }
           />
           <Popconfirm
             title={

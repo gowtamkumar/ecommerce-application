@@ -46,15 +46,17 @@ export const getDiscount = asyncHandler(
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
 
-    // const query = await repository.query(singleDiscountQuery(id));
+    // const query = await singleDiscountQuery(id);
+
+    // const result = await connection.query(query);
 
     const result = await repository.findOne({
       where: { id },
-      // relations: [
-      //   "applicableProducts",
-      //   "applicableBrands",
-      //   "applicableCategories",
-      // ],
+      relations: [
+        "applicableProducts",
+        "applicableBrands",
+        "applicableCategories",
+      ],
     });
 
     if (!result) {
