@@ -61,7 +61,7 @@ export default function DiscountDetails() {
       onCancel={() => dispatch(setAction({}))}
     >
       {loading ? (
-        <Spin className="flex justify-center items-center h-screen" />
+        <Spin className="flex justify-center items-center" />
       ) : (
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -72,8 +72,9 @@ export default function DiscountDetails() {
                 className="rounded-lg"
                 style={{ objectFit: "cover" }}
                 alt={discount.name}
-                src={`${appConfig.baseApiUrl}/uploads/${discount.image || "no-data.png"
-                  }`}
+                src={`${appConfig.baseApiUrl}/uploads/${
+                  discount.image || "no-data.png"
+                }`}
               />
             </div>
             <div>

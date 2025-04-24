@@ -523,7 +523,8 @@ export const singleDiscountQuery = async (id: string) => {
           ),
           discountInfo AS (
             SELECT * FROM discounts WHERE id = ${id}
-          ),
+          )
+            ,
           targetProducts AS (
             SELECT 
               p.*
@@ -564,37 +565,13 @@ export const singleDiscountQuery = async (id: string) => {
                 'name', tp.name,
                 'slug', tp.slug,
                 'thumbnailImage', tp.thumbnail_image,
-                'hoverImage', tp.hover_image,
                 'variant', tp.variant,
-                'featured', tp.featured,
-                'unitPrice', tp.unit_price,
-                'purchasePrice', tp.purchase_price,
-                'productVariantId', tp.product_variant_id,
                 'reviewsCount', rt.reviews_count,
-                'avgRating', rt.average_rating,
-                'taxAmount', ROUND((
-                  CASE 
-                    WHEN d.discount_strategy = 'Percentage' THEN 
-                      tp.unit_price - (tp.unit_price * d.value / 100)
-                    WHEN d.discount_strategy = 'Fixed' THEN 
-                      tp.unit_price - d.value
-                    ELSE tp.unit_price
-                  END
-                ) * COALESCE(t.value, 0) / 100, 2),
-                'discountedPrice', ROUND((
-                  CASE 
-                    WHEN d.discount_strategy = 'Percentage' THEN 
-                      tp.unit_price - (tp.unit_price * d.value / 100)
-                    WHEN d.discount_strategy = 'Fixed' THEN 
-                      tp.unit_price - d.value
-                    ELSE tp.unit_price
-                  END
-                ), 2)
+                'avgRating', rt.average_rating
               )
             ) AS products
           FROM discountInfo d
           LEFT JOIN targetProducts tp ON true
-          LEFT JOIN taxs t ON t.id = tp.tax_id
           LEFT JOIN reviewsTable rt ON rt.product_id = tp.product_id
           GROUP BY d.id, d.name, d.slug, d.key, d.discount_strategy, d.value, d.scope, d.promotion_type,
            d.start_date, d.end_date, d.priority, d.stackable, d.image, d.status, d.offer_details, d.description,d.created_at 

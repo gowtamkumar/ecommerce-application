@@ -67,6 +67,8 @@ export default function CheckoutSummary() {
         orderItems: cart?.carts?.cartList,
       });
 
+      
+
       console.log("validatedFields", validatedFields);
 
       if (!validatedFields.success) {
