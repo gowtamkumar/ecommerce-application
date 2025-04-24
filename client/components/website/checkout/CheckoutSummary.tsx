@@ -67,8 +67,6 @@ export default function CheckoutSummary() {
         orderItems: cart?.carts?.cartList,
       });
 
-      
-
       console.log("validatedFields", validatedFields);
 
       if (!validatedFields.success) {
@@ -85,7 +83,9 @@ export default function CheckoutSummary() {
 
       const res = await saveOrder(validatedFields.data);
 
-      console.log("res", res);
+      if (res.data.paymentUrl) {
+        window.location.href = res.data.paymentUrl;
+      }
 
       if (res.message?.formErrors) {
         dispatch(setLoading({ save: false }));

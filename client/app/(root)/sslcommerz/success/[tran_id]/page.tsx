@@ -1,9 +1,8 @@
-'use client'
-
-import { useParams } from "next/navigation";
-
 export default function Success() {
-const params = useParams()
+// const params = useParams()
+
+// console.log("params", params);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
@@ -30,10 +29,10 @@ const params = useParams()
         <p className="text-gray-600 mt-2">
           Thank you for your purchase. Your transaction was successful.
         </p>
-        <p className="text-sm text-gray-500 mt-1">
+        {/* <p className="text-sm text-gray-500 mt-1">
             Transaction ID:{" "}
             <span className="font-medium text-gray-700">#{params.tran_id}</span>
-          </p>
+          </p> */}
 
         
       </div>

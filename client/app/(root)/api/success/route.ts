@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   const { searchParams } = new URL(request.url);
   const tran_id = searchParams.get("tran_id");
+  console.log("tran_id", tran_id);
+  console.log(" request.url",  request.url);
+  
   // const status = searchParams.get("status");
   // const val_id = searchParams.get("val_id");
 
