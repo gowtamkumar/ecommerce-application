@@ -25,7 +25,7 @@ import { getProducts } from "@/lib/apis/admin/product";
 import { getCategories } from "@/lib/apis/categories";
 import { getBrands } from "@/lib/apis/brand";
 import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
 const uploadButton = (
@@ -56,8 +56,10 @@ const AddDiscount = () => {
   const params = useParams<{ new: string }>();
   const global = useSelector(selectGlobal);
   const { payload } = global.action;
+  const route = useRouter();
 
   useEffect(() => {
+    setLoading(true);
     initialize();
 
     return () => {
@@ -66,7 +68,7 @@ const AddDiscount = () => {
         setFormValues({ fileList: [] });
       }
     };
-  }, [global.action]);
+  }, []);
 
   const generateFile = (fileName: string, identifier: string | number) => ({
     uid: `${Math.random() * 1000}`,
@@ -85,12 +87,12 @@ const AddDiscount = () => {
   });
 
   const initialize = async () => {
-    setLoading(true);
     try {
       await fetchInitialData();
 
       if (params.new === "new") {
         form.resetFields();
+        setLoading(false);
         return;
       }
 
@@ -126,7 +128,6 @@ const AddDiscount = () => {
         applicableBrands,
         applicableCategories,
       });
-      // setFormData({ ...payload });
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -156,7 +157,6 @@ const AddDiscount = () => {
     newData.endDate = new Date(values.endDate).toISOString();
     newData.value = +values.value;
 
-    // return
 
     const result = newData.id
       ? () => updateDiscount(newData)
@@ -168,9 +168,8 @@ const AddDiscount = () => {
 
     const res = await handleAsyncAction(result, messageData, dispatch);
 
-    console.log("res", res);
-
     if (res.success) {
+      route.push("/dashboard/discounts");
       form.resetFields();
       setFormValues({ fileList: [] });
     }
@@ -244,7 +243,7 @@ const AddDiscount = () => {
   if (loading) {
     return (
       <Spin
-        size="large"
+        // size="large"
         className="flex justify-center items-center h-screen"
       />
     );

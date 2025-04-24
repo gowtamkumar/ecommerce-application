@@ -50,24 +50,19 @@ const DiscountList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [global.action]);
+  }, [
+    global.action.type === ActionType.DELETE ||
+    global.action.type === ActionType.UPDATE,
+  ]);
 
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getDiscounts();
-      // if (res?.data) {
-      //   res.data = res.data.map((item: any) => ({
-      //     ...item,
-      //     key: item.id,
-      //     startDate: item.startDate
-      //       ? dayjs(item.startDate).format("YYYY-MM-DD")
-      //       : null,
-      //     endDate: item.endDate
-      //       ? dayjs(item.endDate).format("YYYY-MM-DD")
-      //       : null,
-      //   }));
-      // }
+      if (res.error) {
+        errorNotification({ message: res.error });
+        return;
+      }
       setDiscounts(res?.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
@@ -320,16 +315,16 @@ const DiscountList: React.FC = () => {
             title="Edit"
             className="me-1"
             onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
-            // onClick={() =>
-              
-            //   dispatch(
-            //     setAction({
-            //       discount: true,
-            //       type: ActionType.UPDATE,
-            //       payload: value,
-            //     })
-            //   )
-            // }
+          // onClick={() =>
+
+          //   dispatch(
+          //     setAction({
+          //       discount: true,
+          //       type: ActionType.UPDATE,
+          //       payload: value,
+          //     })
+          //   )
+          // }
           />
           <Popconfirm
             title={
