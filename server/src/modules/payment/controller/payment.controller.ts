@@ -5,6 +5,8 @@ import { PaymentEntity } from "../model/payment.entity";
 import { paymentValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
 import { CustomRequest } from "../../../enums/custom-request-type";
+import { OrderEntity } from "../../order/model/order.entity";
+import { PaymentStatus } from "../../order/enums";
 
 // @desc Get all Payment
 // @route GET /api/v1/Payment
@@ -59,39 +61,149 @@ export const getPayment = asyncHandler(
   }
 );
 
+// @desc Get a single Payment
+// @route GET /api/v1/Payment/sucess
+// @access Public
+export const sslcommerzSuccessHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { tran_id } = req.query;
+    const connection = await getDBConnection();
+
+    console.log("tran_id called", tran_id);
+    
+
+    if (!tran_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing transaction ID" });
+    }
+
+    try {
+      const orderRepo = connection.getRepository(OrderEntity);
+      const order = await orderRepo.findOne({ where: { tran_id } });
+
+      if (!order) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Order not found" });
+      }
+
+      order.paymentStatus = PaymentStatus.Paid;
+      await orderRepo.save(order);
+
+      return res.redirect(
+        `${process.env.FRONT_END_URL}/payment-success?orderId=${order.id}`
+      );
+    } catch (error) {
+      console.error("SSLCommerz Success Handler Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+);
+
+// @desc Get a single Payment
+// @route GET /api/v1/Payment/sucess
+// @access Public
+
+export const sslcommerzFailHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { tran_id } = req.query;
+
+    if (!tran_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing transaction ID" });
+    }
+
+    const connection = await getDBConnection();
+
+    try {
+      const orderRepo = connection.getRepository(OrderEntity);
+      const order = await orderRepo.findOne({ where: { tran_id } });
+
+      if (order) {
+        order.paymentStatus = PaymentStatus.Failed;
+        await orderRepo.save(order);
+      }
+
+      return res.redirect(`${process.env.FRONT_END_URL}/payment-failed`);
+    } catch (error) {
+      console.error("SSLCommerz Fail Handler Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+);
+
+export const sslcommerzCancelHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { tran_id } = req.query;
+
+    if (!tran_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing transaction ID" });
+    }
+
+    const connection = await getDBConnection();
+
+    try {
+      const orderRepo = connection.getRepository(OrderEntity);
+      const order = await orderRepo.findOne({ where: { tran_id } });
+
+      if (order) {
+        order.paymentStatus = PaymentStatus.Canceled;
+        await orderRepo.save(order);
+      }
+
+      return res.redirect(`${process.env.FRONT_END_URL}/payment-cancelled`);
+    } catch (error) {
+      console.error("SSLCommerz Cancel Handler Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+);
+
 // @desc Create a single Payment
 // @route POST /api/v1/Payment
 // @access Public
-export const createPayment = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createPayment ${req.method} ${req.url}`);
+export const createPayment = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createPayment ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
-  const validation = paymentValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    const connection = await getDBConnection();
+    const validation = paymentValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+    const repository = connection.getRepository(PaymentEntity);
+    const newPayment = repository.create(validation.data);
+    const save = await repository.save(newPayment);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Payment",
+      data: save,
     });
   }
-  const repository = connection.getRepository(PaymentEntity);
-  const newPayment = repository.create(validation.data);
-  const save = await repository.save(newPayment);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Payment",
-    data: save,
-  });
-});
+);
 
 export const createDashboardPayment = asyncHandler(
   async (req: CustomRequest, res: Response) => {

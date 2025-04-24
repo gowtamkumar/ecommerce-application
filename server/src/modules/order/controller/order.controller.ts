@@ -37,6 +37,8 @@ export const createOrder = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
+    const tran_id = Date.now();
+
     const userId = req.id as number | string;
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
@@ -81,12 +83,14 @@ export const createOrder = asyncHandler(
         paymentStatus: PaymentStatus.NotPaid,
         ...orderData,
         trackingNo,
+        tran_id,
       });
 
       const savedOrder = await repository.save(newOrder);
 
       if (orderItems?.length && savedOrder.id) {
-        const repoOrderItems = queryRunner.manager.getRepository(OrderItemEntity);
+        const repoOrderItems =
+          queryRunner.manager.getRepository(OrderItemEntity);
         const newOrderItems = repoOrderItems.create(
           orderItems.map((item: any) => ({
             ...item,
@@ -95,13 +99,15 @@ export const createOrder = asyncHandler(
         );
         const resultOrderItems = await repoOrderItems.save(newOrderItems);
 
-        const productVariantRepo = queryRunner.manager.getRepository(ProductVariantEntity);
+        const productVariantRepo =
+          queryRunner.manager.getRepository(ProductVariantEntity);
         for (const item of resultOrderItems) {
           const findProductVariant = await productVariantRepo.findOne({
             where: { id: item.productVariantId },
           });
           if (findProductVariant) {
-            let currentStock = (+findProductVariant.stockQty || 0) - (+item.qty || 0);
+            let currentStock =
+              (+findProductVariant.stockQty || 0) - (+item.qty || 0);
             await productVariantRepo.save({
               id: findProductVariant.id,
               stockQty: currentStock,
@@ -109,16 +115,25 @@ export const createOrder = asyncHandler(
           }
         }
 
-        const orderTrackingRepo = queryRunner.manager.getRepository(OrderTrackingEntity);
+        // clear cart
+        const cartRepo = queryRunner.manager.getRepository(CartEntity);
+        const cartsList = await cartRepo.find({ where: { userId } });
+        await cartRepo.remove(cartsList);
+
+        // order tracking
+
+        const orderTrackingRepo =
+          queryRunner.manager.getRepository(OrderTrackingEntity);
         const newOrderTracking = orderTrackingRepo.create({
           orderId: savedOrder.id,
           userId,
           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
         });
         await orderTrackingRepo.save(newOrderTracking);
-
+        // applied coupon
         if (validation.data.couponId) {
-          const couponRepo = queryRunner.manager.getRepository(AppliedCouponEntity);
+          const couponRepo =
+            queryRunner.manager.getRepository(AppliedCouponEntity);
           const newCouponApplied = couponRepo.create({
             orderId: savedOrder.id,
             userId,
@@ -127,11 +142,7 @@ export const createOrder = asyncHandler(
           });
           await couponRepo.save(newCouponApplied);
         }
-
-        const cartRepo = queryRunner.manager.getRepository(CartEntity);
-        const cartsList = await cartRepo.find({ where: { userId } });
-        await cartRepo.remove(cartsList);
-
+        // notification
         const notification: Notification = {
           type: "Order",
           title: "Order Placed",
@@ -146,9 +157,9 @@ export const createOrder = asyncHandler(
       const store_id = "ecomm6648b03fa5d37";
       const store_passwd = "ecomm6648b03fa5d37@ssl";
       const is_live = false;
-      const tran_id = Date.now();
 
       const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+
       const paymentPayload = {
         total_amount: +subTotal + +shippingCharge,
         currency: "BDT",

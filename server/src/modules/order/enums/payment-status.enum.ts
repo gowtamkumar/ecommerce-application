@@ -1,5 +1,7 @@
-export enum PaymentStatus{
-  Paid="Paid",
-  NotPaid="NotPaid",
-  PertialPaid="PertialPaid",
+export enum PaymentStatus {
+  Paid = "Paid",
+  NotPaid = "NotPaid",
+  Failed = "Failed",
+  Canceled = "Canceled",
+  PertialPaid = "PertialPaid",
 }

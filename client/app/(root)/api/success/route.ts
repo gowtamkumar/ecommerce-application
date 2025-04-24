@@ -10,6 +10,6 @@ export async function POST(request: Request) {
   // const val_id = searchParams.get("val_id");
 
   return NextResponse.redirect(
-    new URL(`/sslcommerz/success/${tran_id}`, request.url)
+    new URL(`http://localhost:3900/api/v1/payment/success?tran_id=${tran_id}`, request.url)
   );
 }

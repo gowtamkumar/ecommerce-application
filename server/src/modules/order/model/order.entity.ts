@@ -125,6 +125,9 @@ export class OrderEntity {
   })
   status!: OrderStatus;
 
+  @Column({ name: "tran_id", nullable: true })
+  tranId?: number;
+
   @Column({ name: "user_id" })
   userId?: number;
   @ManyToOne((_type) => UserEntity, (user) => user.orders, {
