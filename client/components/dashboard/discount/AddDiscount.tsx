@@ -6,17 +6,11 @@ import {
   Form,
   Input,
   InputNumber,
-  Modal,
   Select,
+  Spin,
   Upload,
 } from "antd";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setFormValues,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   handleAsyncAction,
@@ -48,102 +42,22 @@ const uploadButton = (
 );
 
 const AddDiscount = () => {
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-  const params = useParams<{ new: string }>();
-  const global = useSelector(selectGlobal);
-  const { payload } = global.action;
+
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-
-  const generateFile = (fileName: string, identifier: string | number) => ({
-    uid: `${Math.random() * 1000}`,
-    name: `photo ${identifier}`,
-    status: "done",
-    fileName,
-    url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
-  });
+  const params = useParams<{ new: string }>();
+  const global = useSelector(selectGlobal);
+  const { payload } = global.action;
 
   useEffect(() => {
-    const initialize = async () => {
-      await fetchInitialData();
-
-      if (params.new === "new") {
-        form.resetFields();
-      } else {
-        if (params.new !== "new") {
-          const id = params.new.toString();
-          const res = await getDiscount(id);
-          const discountData = {
-            ...res.data,
-            startDate: res.data.startDate
-              ? dayjs(res.data.startDate)
-              : null,
-            endDate: res.data.endDate
-              ? dayjs(res.data.endDate)
-              : null,
-            createdAt: res.data.createdAt
-              ? dayjs(res.data.createdAt)
-              : null,
-            updatedAt: res.data.updatedAt
-              ? dayjs(res.data.updatedAt)
-              : null,
-          };
-
-
-          console.log("discountData", discountData);
-
-          // if (!discountData.variant && discountData.productVariants?.length) {
-          //   const [firstVariant] = discountData.productVariants;
-          //   Object.assign(discountData, {
-          //     purchasePrice: +firstVariant.purchasePrice,
-          //     unitPrice: +firstVariant.unitPrice,
-          //     stockQty: firstVariant.stockQty,
-          //     variantId: firstVariant.id,
-          //   });
-          // }
-
-          const applicableProducts = discountData.applicableProducts?.map(
-            (item: any) => item.productId
-          );
-
-          const applicableBrands = discountData.applicableBrands?.map(
-            (item: any) => item.brandId
-          );
-
-          const applicableCategories = discountData.applicableCategories?.map(
-            (item: any) => item.categoryId
-          );
-
-          console.log("applicableBrands", applicableBrands);
-
-          // Handle images, thumbnails, and hover images
-          discountData.fileList =
-            discountData.images?.map((image: string, idx: number) =>
-              generateFile(image, idx)
-            ) || [];
-
-          form.setFieldsValue({
-            ...discountData,
-            applicableProducts,
-            applicableBrands,
-            applicableCategories,
-          });
-
-          // setProduct({ ...discountData, productCategories });
-
-          setFormValues(discountData);
-        }
-
-        setFormData({ ...payload });
-      }
-    };
-
     initialize();
 
     return () => {
@@ -153,6 +67,72 @@ const AddDiscount = () => {
       }
     };
   }, [global.action]);
+
+  const generateFile = (fileName: string, identifier: string | number) => ({
+    uid: `${Math.random() * 1000}`,
+    name: `photo`,
+    status: "done",
+    fileName,
+    url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
+  });
+
+  const parseDateFields = (data: any) => ({
+    ...data,
+    startDate: data.startDate ? dayjs(data.startDate) : null,
+    endDate: data.endDate ? dayjs(data.endDate) : null,
+    createdAt: data.createdAt ? dayjs(data.createdAt) : null,
+    updatedAt: data.updatedAt ? dayjs(data.updatedAt) : null,
+  });
+
+  const initialize = async () => {
+    setLoading(true);
+    try {
+      await fetchInitialData();
+
+      if (params.new === "new") {
+        form.resetFields();
+        return;
+      }
+
+      const id = params.new.toString();
+      const res = await getDiscount(id);
+      const discountData = parseDateFields(res.data);
+      const applicableProducts = discountData.applicableProducts?.map(
+        (item: any) => item.productId
+      );
+
+      const applicableBrands = discountData.applicableBrands?.map(
+        (item: any) => item.brandId
+      );
+
+      const applicableCategories = discountData.applicableCategories?.map(
+        (item: any) => item.categoryId
+      );
+
+      discountData.fileList = [
+        generateFile(discountData?.image, discountData?.key),
+      ];
+
+      form.setFieldsValue({
+        ...discountData,
+        applicableProducts,
+        applicableBrands,
+        applicableCategories,
+      });
+
+      setFormValues({
+        ...discountData,
+        applicableProducts,
+        applicableBrands,
+        applicableCategories,
+      });
+      // setFormData({ ...payload });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Initialization error:", error);
+    }
+  };
 
   const fetchInitialData = async () => {
     try {
@@ -167,7 +147,6 @@ const AddDiscount = () => {
       setProducts(products.data);
     } catch (error) {
       console.error("Failed to fetch initial data:", error);
-      // Optional: show notification or fallback
     }
   };
 
@@ -175,7 +154,9 @@ const AddDiscount = () => {
     const newData = { ...values };
     newData.startDate = new Date(values.startDate).toISOString();
     newData.endDate = new Date(values.endDate).toISOString();
-    newData.value = +values.value
+    newData.value = +values.value;
+
+    // return
 
     const result = newData.id
       ? () => updateDiscount(newData)
@@ -189,21 +170,22 @@ const AddDiscount = () => {
 
     console.log("res", res);
 
-
     if (res.success) {
       form.resetFields();
       setFormValues({ fileList: [] });
     }
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    setFormValues(form.getFieldsValue());
-  };
+  // const setFormData = (v: any) => {
+  //   const newData = { ...v };
+  //   form.setFieldsValue(newData);
+  //   setFormValues(form.getFieldsValue());
+  // };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
+    initialize();
+
     if (newData?.id) {
       form.setFieldsValue(newData);
       setFormValues(newData);
@@ -258,6 +240,15 @@ const AddDiscount = () => {
       onError({ err });
     }
   };
+
+  if (loading) {
+    return (
+      <Spin
+        size="large"
+        className="flex justify-center items-center h-screen"
+      />
+    );
+  }
 
   return (
     <Form

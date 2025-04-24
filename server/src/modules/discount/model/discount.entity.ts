@@ -29,6 +29,9 @@ export class DiscountEntity {
   @Column({ type: "enum", enum: ScopeEnum })
   scope!: ScopeEnum;
 
+  @Column({nullable: true})
+  slug!: string;
+
   @Column({ name: "promotion_type", type: "enum", enum: PromotionTypeEnum })
   promotionType!: PromotionTypeEnum;
 

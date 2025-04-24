@@ -46,10 +46,6 @@ export const getDiscount = asyncHandler(
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
 
-    // const query = await singleDiscountQuery(id);
-
-    // const result = await connection.query(query);
-
     const result = await repository.findOne({
       where: { id },
       relations: [
@@ -67,6 +63,28 @@ export const getDiscount = asyncHandler(
       success: true,
       message: `Get a single Discount of id ${req.params.id}`,
       data: result,
+    });
+  }
+);
+// @desc Get a single Discount
+// @route GET /api/v1/Discounts/details/:id
+// @access Public
+export const getDiscountDetails = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: getDiscountDetails ${req.method} ${req.url}`);
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const query = await singleDiscountQuery(id);
+    const result = await connection.query(query);
+
+    if (!result[0]) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Get a single Discount of id ${req.params.id}`,
+      data: result[0],
     });
   }
 );

@@ -541,10 +541,23 @@ export const singleDiscountQuery = async (id: string) => {
               ))
           )
           SELECT 
-            d.id AS "discountId",
-            d.discount_strategy AS "discountStrategy",
+            d.id AS "id",
+            d.name,
+            d.key,
+            d.slug,
             d.value AS "discountValue",
             d.scope,
+            d.promotion_type AS "promotionType",
+            d.start_date AS "startDate",
+            d.end_date AS "endDate",
+            d.priority,
+            d.stackable,
+            d.image,
+            d.status,
+            d.offer_details AS "offerDetails",
+            d.description,
+            d.discount_strategy AS "discountStrategy",
+            d.created_at AS "createdAt",
             json_agg(
               json_build_object(
                 'id', tp.product_id,
@@ -583,8 +596,8 @@ export const singleDiscountQuery = async (id: string) => {
           LEFT JOIN targetProducts tp ON true
           LEFT JOIN taxs t ON t.id = tp.tax_id
           LEFT JOIN reviewsTable rt ON rt.product_id = tp.product_id
-          GROUP BY d.id, d.discount_strategy, d.value, d.scope;
-    
+          GROUP BY d.id, d.name, d.slug, d.key, d.discount_strategy, d.value, d.scope, d.promotion_type,
+           d.start_date, d.end_date, d.priority, d.stackable, d.image, d.status, d.offer_details, d.description,d.created_at 
           `;
-  return query[0];
+  return query;
 };

@@ -45,6 +45,15 @@ export async function getDiscount(id: string) {
   });
   return await handleResponse(res);
 }
+export async function getDiscountDetails(id: string) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/discounts/details/${id}`, {
+    method: "GET",
+    cache: "no-cache",
+    headers,
+  });
+  return await handleResponse(res);
+}
 
 export async function updateDiscount(data: any) {
   const headers = await getAuthHeaders();
