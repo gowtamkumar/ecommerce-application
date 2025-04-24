@@ -72,7 +72,7 @@ export default function FilterSidebarDetails({
           <Button className="me-2" onClick={filterClear}>
             Clear
           </Button>
-          <Button>Filter</Button>
+          {/* <Button>Filter</Button> */}
         </div>
       </div>
 
@@ -85,13 +85,13 @@ export default function FilterSidebarDetails({
           placeholder="Min"
           value={price.minPrice}
           onChange={(value) => setPrice({ ...price, minPrice: value })}
-          // className="w-full"
+          className="w-full"
         />
         <InputNumber
           placeholder="Max"
           value={price.maxPrice}
           onChange={(value) => setPrice({ ...price, maxPrice: value })}
-          // className="w-full"
+          className="w-full"
         />
         <Button
           onClick={() => {

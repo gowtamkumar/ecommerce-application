@@ -1,21 +1,6 @@
+'use client';
 import React from "react";
 
-const SummaryCard = ({ title, data, color = "text-black" }: any) => (
-  <div className="bg-white rounded-2xl shadow p-4 w-full md:w-[23%]">
-    <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
-      {title}
-      <span>🛒</span>
-    </h2>
-    <div className="space-y-1 text-sm">
-      {data.map(({ label, value, valueColor }: any, i: number) => (
-        <div key={i} className="flex justify-between">
-          <span>{label}</span>
-          <span className={valueColor}>{value}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 const TodayOrderSummaryDashboard = () => {
   const cards = [
@@ -82,6 +67,24 @@ const TodayOrderSummaryDashboard = () => {
       ],
     },
   ];
+
+
+const SummaryCard = ({ title, data, color = "text-black" }: any) => (
+  <div className="bg-white rounded-2xl shadow p-4 w-full md:w-[23%]">
+    <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
+      {title}
+      <span>🛒</span>
+    </h2>
+    <div className="space-y-1 text-sm">
+      {data.map(({ label, value, valueColor }: any, i: number) => (
+        <div key={i} className="flex justify-between">
+          <span>{label}</span>
+          <span className={valueColor}>{value}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
   return (
     <div className="p-4">

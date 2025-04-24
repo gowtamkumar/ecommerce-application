@@ -37,6 +37,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
+import TodayOrderSummaryDashboard from "@/components/dashboard/order/TodayOrderSummary";
 
 const AddOrderTracking = dynamic(
   () => import("@/components/dashboard/order-tracking/AddOrderTracking"),

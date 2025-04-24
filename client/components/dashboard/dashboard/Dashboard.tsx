@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
 
 import dynamic from "next/dynamic";
+import TodayOrderSummaryDashboard from "../order/TodayOrderSummary";
 // import CountUp from "react-countup";
 const WidgetStats = dynamic(() => import("./components/WidgetStats"), {
   ssr: false,
@@ -53,8 +54,6 @@ const Dashboard = () => {
 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
-
-  console.log("🚀 ~ dashboardReports:", dashboardReports);
 
   useEffect(() => {
     (async () => {
@@ -166,7 +165,7 @@ const Dashboard = () => {
                 valueStyle={{
                   color:
                     saleAmount >=
-                    purchaseAmount + (+total_sale_return_shipping_amount || 0)
+                      purchaseAmount + (+total_sale_return_shipping_amount || 0)
                       ? "green"
                       : "red",
                 }}
