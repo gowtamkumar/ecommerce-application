@@ -5,7 +5,6 @@ import { getAuthHeaders, handleResponse } from "@/lib/utils/commonFunctions";
 // Retrieve all leads
 export async function getNotifications() {
   const headers = await getAuthHeaders();
-
   const res = await fetch(`${appConfig.apiUrl}/notifications`, {
     method: "GET",
     headers,

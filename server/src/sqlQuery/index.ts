@@ -460,7 +460,7 @@ WHERE 1=1
   ${brandFilter.length ? `AND "brandId" IN (${brandFilter.join(",")})` : ""}
   ${
     minPrice && maxPrice
-      ? `AND "discountedPrice" BETWEEN ${minPrice} AND ${maxPrice}`
+      ? `AND "finalPrice" BETWEEN ${minPrice} AND ${maxPrice}`
       : ""
   }
   ${discount ? `AND "discountValue" BETWEEN 0 AND ${discount}` : ""}
@@ -475,9 +475,7 @@ WHERE 1=1
       : ""
   }
   ${discountId ? `AND "discountId" = ${discountId}` : ""}
-ORDER BY ${
-    lowPrice && !highPrice ? `"discountedPrice" ASC` : `"discountedPrice" DESC`
-  }
+ORDER BY ${lowPrice && !highPrice ? `"finalPrice" ASC` : `"finalPrice" DESC`}
 LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
 `;
   return query;

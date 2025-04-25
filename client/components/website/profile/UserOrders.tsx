@@ -164,6 +164,18 @@ const UserOrders = ({ status }: { status: string }) => {
   });
 
   const expandedRowRender = (value: any) => {
+    const { dabitTotal, creditTotal } = value.payments.reduce(
+      (acc: any, element: any) => {
+        if (element.paymentType === "Credit")
+          acc.creditTotal += +element.amount;
+        if (element.paymentType === "Debit") acc.dabitTotal += +element.amount;
+        return acc;
+      },
+      { dabitTotal: 0, creditTotal: 0 } // Initial accumulator values
+    );
+
+    const paidAmount = dabitTotal - creditTotal;
+
     const childColumns: any = [
       {
         title: "Product",
@@ -190,13 +202,7 @@ const UserOrders = ({ status }: { status: string }) => {
         // dataIndex: "unitPrice",
         key: "unitPrice",
         render: (v: any) => {
-          return (
-            <span>
-              {((+v.unitPrice + +v.taxAmount)).toFixed(
-                2
-              )}
-            </span>
-          );
+          return <span>{(+v.unitPrice + +v.taxAmount).toFixed(2)}</span>;
         },
       },
 
@@ -271,9 +277,15 @@ const UserOrders = ({ status }: { status: string }) => {
               </div>
 
               <div className="flex justify-between">
-                    <h1>Net Amount:</h1>
-                    <h1 className="font-semibold">{(+value.subTotal + +value.totalItemsDiscount + +value.couponDiscount).toFixed(2)}</h1>
-                  </div>
+                <h1>Net Amount:</h1>
+                <h1 className="font-semibold">
+                  {(
+                    +value.subTotal +
+                    +value.totalItemsDiscount +
+                    +value.couponDiscount
+                  ).toFixed(2)}
+                </h1>
+              </div>
 
               {+value.totalItemsDiscount > 0 && (
                 <div className="flex justify-between">
@@ -289,10 +301,12 @@ const UserOrders = ({ status }: { status: string }) => {
                 </div>
               )}
 
-              {/* <div className="flex justify-between">
-                <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">{value.totalTax}</h1>
-              </div> */}
+              {paidAmount > 0 && (
+                <div className="flex justify-between">
+                  <h1>Paid Amount:</h1>
+                  <h1 className="font-semibold">{paidAmount}</h1>
+                </div>
+              )}
 
               {+value.shippingCharge > 0 && (
                 <div className="flex justify-between">
@@ -303,7 +317,9 @@ const UserOrders = ({ status }: { status: string }) => {
 
               <div className="flex justify-between border-t-2">
                 <h1>Grand Total:</h1>
-                <h1 className="font-semibold">{value.grandTotal}</h1>
+                <h1 className="font-semibold">
+                  {(+value.grandTotal - paidAmount).toFixed(2)}
+                </h1>
               </div>
             </div>
           </div>

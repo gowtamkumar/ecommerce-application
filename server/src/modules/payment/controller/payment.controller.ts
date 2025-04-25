@@ -211,9 +211,6 @@ export const sslcommerzSuccessHandler = asyncHandler(
       order.paymentStatus = PaymentStatus.Paid;
       await orderRepo.save(order);
 
-      console.log("roder", order);
-      
-
       const paymentRepo = connection.getRepository(PaymentEntity);
 
       const newPayment = paymentRepo.create({

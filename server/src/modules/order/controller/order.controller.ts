@@ -31,7 +31,7 @@ interface Notification {
 }
 
 // @desc Create a single Order
-// @route POST /api/v1/Order
+// @route POST /api/v1/orders
 // @access Public
 export const createOrder = asyncHandler(
   async (req: CustomRequest, res: Response) => {
@@ -161,19 +161,19 @@ export const createOrder = asyncHandler(
 
       let paymentUrl = "";
 
-      if (savedOrder.paymentMethod === PaymentMethod.Cash) {
-        const paymentRepo = queryRunner.manager.getRepository(PaymentEntity);
-        const newPayment = paymentRepo.create({
-          tranId,
-          orderId: savedOrder.id,
-          userId,
-          paymentDate: dayjs(),
-          paymentMethod: PaymentMethod.Cash,
-          paymentType: PaymentType.Debit,
-          amount: newOrder.grandTotal,
-        });
-        await paymentRepo.save(newPayment);
-      }
+      // if (savedOrder.paymentMethod === PaymentMethod.Cash) {
+      //   const paymentRepo = queryRunner.manager.getRepository(PaymentEntity);
+      //   const newPayment = paymentRepo.create({
+      //     tranId,
+      //     orderId: savedOrder.id,
+      //     userId,
+      //     paymentDate: dayjs(),
+      //     paymentMethod: PaymentMethod.Cash,
+      //     paymentType: PaymentType.Debit,
+      //     amount: newOrder.grandTotal,
+      //   });
+      //   await paymentRepo.save(newPayment);
+      // }
 
       if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
         // SSLCOMMERZ payment gateway
@@ -192,7 +192,6 @@ export const createOrder = asyncHandler(
           cancel_url: `http://localhost:3900/api/v1/payments/cancel/${tranId}`,
           ipn_url: `http://localhost:3900/api/v1/payment-ipn/${tranId}`,
 
-          
           shipping_method: "Courier",
           product_name: "Order",
           product_category: "General",
@@ -622,111 +621,87 @@ export const getUserOrders = asyncHandler(
 );
 
 // @desc Get a single Order
-// @route GET /api/v1/Order/:id
+// @route GET /api/v1/orders/:id
 // @access Public
-export const getOrder = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getOrder ${req.method} ${req.url}`);
+// export const getOrder = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     logger.info(`Service: getOrder ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const orderRepository = connection.getRepository(OrderEntity);
+//     const { id } = req.params;
+//     const connection = await getDBConnection();
+//     const orderRepository = connection.getRepository(OrderEntity);
 
-    const qb = orderRepository.createQueryBuilder("order");
-    qb.select([
-      "order",
-      "orderItems",
-      "productVariant.id",
-      "productVariant.material",
-      "productVariant.default",
-      "color.name",
-      "color.color",
-      "size.name",
-      "product",
-      "payments",
-      "orderTrackings",
-      "deliveryMan.name",
-      "user.name",
-      "shippingAddress",
-    ]);
-    qb.where({ id });
-    qb.leftJoin("order.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("orderItems.productVariant", "productVariant");
-    qb.leftJoin("productVariant.color", "color");
-    qb.leftJoin("productVariant.size", "size");
-    qb.leftJoin("order.orderTrackings", "orderTrackings");
-    qb.leftJoin("order.deliveryMan", "deliveryMan");
-    qb.leftJoin("order.user", "user");
-    qb.leftJoin("order.payments", "payments");
-    qb.leftJoin("order.shippingAddress", "shippingAddress");
-    qb.addOrderBy("order.trackingNo", "DESC");
+//     const qb = orderRepository.createQueryBuilder("order");
+//     qb.select([
+//       "order",
+//       "orderItems",
+//       "productVariant.id",
+//       "productVariant.material",
+//       "productVariant.default",
+//       "color.name",
+//       "color.color",
+//       "size.name",
+//       "product",
+//       "payments",
+//       "orderTrackings",
+//       "deliveryMan.name",
+//       "user.name",
+//       "shippingAddress",
+//     ]);
+//     qb.where({ id });
+//     qb.leftJoin("order.orderItems", "orderItems");
+//     qb.leftJoin("orderItems.product", "product");
+//     qb.leftJoin("orderItems.productVariant", "productVariant");
+//     qb.leftJoin("productVariant.color", "color");
+//     qb.leftJoin("productVariant.size", "size");
+//     qb.leftJoin("order.orderTrackings", "orderTrackings");
+//     qb.leftJoin("order.deliveryMan", "deliveryMan");
+//     qb.leftJoin("order.user", "user");
+//     qb.leftJoin("order.payments", "payments");
+//     qb.leftJoin("order.shippingAddress", "shippingAddress");
+//     qb.addOrderBy("order.trackingNo", "DESC");
 
-    const result = await qb.getOne();
+//     const result = await qb.getOne();
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
+//     if (!result) {
+//       throw new Error(`Resource not found of id #${req.params.id}`);
+//     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Get Order",
-      data: result,
-    });
-  }
-
-  //   const connection = await getDBConnection();
-  //   const repository = await connection.getRepository(OrderEntity);
-  //   const result = await repository.findOne({
-  //     where: { id },
-  //     relations: {
-  //       orderItems: true,
-  //       payments: true,
-  //       orderTrackings: true,
-  //     },
-  //   });
-
-  //   if (!result) {
-  //     throw new Error(`Resource not found of id #${req.params.id}`);
-  //   }
-
-  //   return res.status(200).json({
-  //     success: true,
-  //     message: `Get a single Order of id ${req.params.id}`,
-  //     data: result,
-  //   });
-  // }
-);
+//     return res.status(200).json({
+//       success: true,
+//       message: "Get Order",
+//       data: result,
+//     });
+//   }
+// );
 
 // @desc Get a single Order
-// @route GET /api/v1/Order/:id
+// @route GET /api/v1/orders/query?id=1
 // @access Public
-export const getOrderTracking = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getOrderTracking ${req.method} ${req.url}`);
+export const getOrderQuery = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id, trackingNo } = req.query; // Assuming the order ID will be passed in the URL as a parameter (e.g., /orders/:id)
+    logger.info(`Service: getOrderQuery ${req.method} ${req.url}`);
 
-    const { trackingNo } = req.query;
     const connection = await getDBConnection();
     const orderRepository = connection.getRepository(OrderEntity);
 
     const qb = orderRepository.createQueryBuilder("order");
+
     qb.select([
       "order",
       "orderItems",
-      "productVariant.id",
-      "productVariant.material",
-      "productVariant.default",
-      "color.name",
-      "color.color",
-      "size.name",
+      "productVariant",
+      "color",
+      "size",
       "product",
       "payments",
       "orderTrackings",
-      "deliveryMan.name",
-      "user.name",
+      "deliveryMan",
+      "user",
       "shippingAddress",
     ]);
-    qb.where({ trackingNo });
+
     qb.leftJoin("order.orderItems", "orderItems");
     qb.leftJoin("orderItems.product", "product");
     qb.leftJoin("orderItems.productVariant", "productVariant");
@@ -737,43 +712,60 @@ export const getOrderTracking = asyncHandler(
     qb.leftJoin("order.user", "user");
     qb.leftJoin("order.payments", "payments");
     qb.leftJoin("order.shippingAddress", "shippingAddress");
-    qb.addOrderBy("order.trackingNo", "DESC");
 
-    const result = await qb.getOne();
+    qb.addSelect(
+      (subQuery: any) =>
+        subQuery
+          .select("COALESCE(SUM(p.amount), 0)", "totalCredit")
+          .from("payments", "p")
+          .where("p.order_id = order.id")
+          .andWhere("p.payment_type = :credit", { credit: "Credit" }),
+      "order_totalCredit"
+    );
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+    qb.addSelect(
+      (subQuery: any) =>
+        subQuery
+          .select("COALESCE(SUM(p.amount), 0)", "totalDebit")
+          .from("payments", "p")
+          .where("p.order_id = order.id")
+          .andWhere("p.payment_type = :debit", { debit: "Debit" }),
+      "order_totalDebit"
+    );
+
+    // Filter to get a single order by ID
+    qb.where("order.id = :id", { id });
+    qb.orWhere("order.trackingNo = :trackingNo", { trackingNo });
+
+    const results = await qb.getRawAndEntities();
+
+    if (!results.entities.length) {
+      return res.status(404).json({
+        success: false,
+        message: `Order with ID ${id} not found.`,
+      });
     }
+
+    const raw = results.raw[0];
+    const order = results.entities[0];
+
+    const totalCredit = Number(raw.order_totalCredit) || 0;
+    const totalDebit = Number(raw.order_totalDebit) || 0;
 
     return res.status(200).json({
       success: true,
-      message: "Get Order Details",
-      data: result,
+      message: `Order with ID ${id} retrieved successfully`,
+      data: {
+        ...order,
+        totalCredit,
+        totalDebit,
+        paid: (totalDebit - totalCredit).toFixed(2),
+        due: (+order.grandTotal - totalDebit + totalCredit).toFixed(2),
+      },
     });
   }
-
-  //   const connection = await getDBConnection();
-  //   const repository = await connection.getRepository(OrderEntity);
-  //   const result = await repository.findOne({
-  //     where: { id },
-  //     relations: {
-  //       orderItems: true,
-  //       payments: true,
-  //       orderTrackings: true,
-  //     },
-  //   });
-
-  //   if (!result) {
-  //     throw new Error(`Resource not found of id #${req.params.id}`);
-  //   }
-
-  //   return res.status(200).json({
-  //     success: true,
-  //     message: `Get a single Order of id ${req.params.id}`,
-  //     data: result,
-  //   });
-  // }
 );
+
 // @desc Get a single Order
 // @route GET /api/v1/Order/:id
 // @access Public
@@ -881,7 +873,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @desc Update a single Order
-// @route PUT /api/v1/Order/:id
+// @route PUT /api/v1/orders/review:id
 // @access Public
 export const orderReview = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: orderReview ${req.method} ${req.url}`);
@@ -1048,9 +1040,8 @@ export const orderStatusUpdate = asyncHandler(
     }
   }
 );
-
 // @desc Delete a single Order
-// @route DELETE /api/v1/Order/:id
+// @route DELETE /api/v1/orders/:id
 // @access Public
 export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: deleteOrder ${req.method} ${req.url}`);

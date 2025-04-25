@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { setProductRating } from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
 import dynamic from "next/dynamic";
-import { getOrderTracking } from "@/lib/apis/orders";
+import { getOrderQuery } from "@/lib/apis/orders";
 
 const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
   ssr: false,
@@ -33,7 +33,7 @@ export default function OrderTracker() {
 
   async function handleOrderTracking() {
     setLoading(true);
-    const result = await getOrderTracking({ trackingNo: tracker.trackingNo });
+    const result = await getOrderQuery(tracker);
 
     if (!result.success) {
       setLoading(false);
@@ -209,7 +209,13 @@ export default function OrderTracker() {
 
                   <div className="flex justify-between">
                     <h1>Net Amount:</h1>
-                    <h1 className="font-semibold">{(+order.subTotal + +order.totalItemsDiscount + +order.couponDiscount).toFixed(2)}</h1>
+                    <h1 className="font-semibold">
+                      {(
+                        +order.subTotal +
+                        +order.totalItemsDiscount +
+                        +order.couponDiscount
+                      ).toFixed(2)}
+                    </h1>
                   </div>
 
                   {+order.totalItemsDiscount > 0 && (
@@ -235,9 +241,18 @@ export default function OrderTracker() {
                     </div>
                   )}
 
+                  {order.paid > 0 && (
+                    <div className="flex justify-between">
+                      <h1>Paid Amount:</h1>
+                      <h1 className="font-semibold">{order.paid}</h1>
+                    </div>
+                  )}
+
                   <div className="flex justify-between border-t-2">
                     <h1>Grand Total:</h1>
-                    <h1 className="font-semibold">{order.grandTotal}</h1>
+                    <h1 className="font-semibold">
+                      {order.due}
+                    </h1>
                   </div>
                 </div>
               </div>

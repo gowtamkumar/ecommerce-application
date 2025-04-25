@@ -19,19 +19,17 @@ const CategoryTab = () => {
   };
 
   return (
-    <section className="mb-8">
-      <Tabs
-        defaultActiveKey="1"
-        tabPosition="top"
-        items={categories.map((item: any) => {
-          return {
-            label: item.name,
-            key: item.id,
-            children: <CategoryProduct id={item.id} />,
-          };
-        })}
-      />
-    </section>
+    <Tabs
+      defaultActiveKey="1"
+      tabPosition="top"
+      items={categories.map((item: any) => {
+        return {
+          label: item.name,
+          key: item.id,
+          children: <CategoryProduct id={item.id} />,
+        };
+      })}
+    />
   );
 };
 

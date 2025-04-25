@@ -6,7 +6,11 @@ import React, { useEffect, useState } from "react";
 // import "./notification.css";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { clearAllNotifications, getNotifications, readNotification } from "@/lib/apis/admin/notification";
+import {
+  clearAllNotifications,
+  getNotifications,
+  readNotification,
+} from "@/lib/apis/admin/notification";
 
 const NotificationsUser = () => {
   const [notification, setNotification] = useState<any>({});
@@ -79,7 +83,7 @@ const NotificationsUser = () => {
 
     {
       key: "action",
-      align: 'right',
+      align: "right",
       render: ({ isRead }: { isRead: boolean }) => {
         return !isRead && <p className="bg-green-500 w-2 h-2 rounded-full"></p>;
       },

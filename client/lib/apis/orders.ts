@@ -24,11 +24,16 @@ export async function getOrders() {
   return await handleResponse(res);
 }
 
-export async function getOrderTracking(params: { trackingNo: string }) {
+export async function getOrderQuery(params: {
+  trackingNo?: string;
+  id?: string;
+}) {
   const headers = await getAuthHeaders();
-  const query = new URLSearchParams(params).toString();
+  const query = params.trackingNo
+    ? `trackingNo=${params.trackingNo}`
+    : `id=${params.id}`;
 
-  const res = await fetch(`${appConfig.apiUrl}/orders/tracking?${query}`, {
+  const res = await fetch(`${appConfig.apiUrl}/orders/query?${query}`, {
     cache: "no-cache",
     headers,
   });
@@ -55,6 +60,16 @@ export async function updateOrder(data: any) {
   });
   return await handleResponse(res);
 }
+
+// export async function getOrder(id: string) {
+//   const headers = await getAuthHeaders();
+//   const res = await fetch(`${appConfig.apiUrl}/orders/${id}`, {
+//     method: "GET",
+//     cache: "no-cache",
+//     headers,
+//   });
+//   return await handleResponse(res);
+// }
 
 export async function orderReview(data: any) {
   const headers = await getAuthHeaders();
