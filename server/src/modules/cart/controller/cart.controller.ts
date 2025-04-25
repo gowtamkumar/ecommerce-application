@@ -271,7 +271,7 @@ export const cartListApplyCoupon = asyncHandler(
         carts.id,
         carts.qty,
         carts.product_variant_id AS "productVariantId",
-        sd.product_id AS "productId",
+        carts.product_id AS "productId",
         p.name,
         p.slug,
         p.thumbnail_image AS "thumbnailImage",
@@ -279,7 +279,6 @@ export const cartListApplyCoupon = asyncHandler(
         sd.discount_value AS "discountValue",
         pv.unit_price AS "unitPrice",
         pv.purchase_price AS "purchasePrice",
-
 
             -- ✅ Calculate Sale Price
         ROUND(

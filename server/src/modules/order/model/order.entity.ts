@@ -75,8 +75,6 @@ export class OrderEntity {
   })
   shippingCharge?: number;
 
-
-
   @Column({
     name: "grand_total",
     type: "numeric",
@@ -96,7 +94,6 @@ export class OrderEntity {
   )
   @JoinColumn({ name: "shipping_address_id" })
   shippingAddress!: ShippingAddressEntity;
-
 
   @Column({ name: "coupon_id", nullable: true })
   couponId?: number;
@@ -126,7 +123,7 @@ export class OrderEntity {
   status!: OrderStatus;
 
   @Column({ name: "tran_id", nullable: true })
-  tranId?: number;
+  tranId?: string;
 
   @Column({ name: "user_id" })
   userId?: number;

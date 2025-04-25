@@ -11,7 +11,7 @@ import {
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import dayjs from "dayjs";
-import { OrderStatus, PaymentStatus } from "../enums";
+import { OrderStatus, PaymentMethod, PaymentStatus } from "../enums";
 import { PaymentType } from "../../payment/enums/payment-type.enum";
 import { OrderItemEntity } from "../model/order-item.entity";
 import { CartEntity } from "../../cart/model/cart.entity";
@@ -37,33 +37,34 @@ export const createOrder = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
-    const tran_id = Date.now();
-
+    const tranId = Date.now().toString();
     const userId = req.id as number | string;
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
 
     await queryRunner.connect();
-    await queryRunner.startTransaction();
+
+    // Validation should happen BEFORE transaction
+    const validation = onlineCreateOrderValidationSchema.safeParse({
+      ...req.body,
+      userId,
+    });
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    await queryRunner.startTransaction(); // Move here after validation
 
     try {
-      const validation = onlineCreateOrderValidationSchema.safeParse({
-        ...req.body,
-        userId,
-      });
-
-      if (!validation.success) {
-        const formattedErrors = validation.error.issues.map((issue) => ({
-          path: issue.path.join("."),
-          message: issue.message,
-        }));
-
-        return res.status(400).json({
-          success: false,
-          issues: formattedErrors,
-        });
-      }
-
       const {
         shippingCharge,
         subTotal,
@@ -83,7 +84,7 @@ export const createOrder = asyncHandler(
         paymentStatus: PaymentStatus.NotPaid,
         ...orderData,
         trackingNo,
-        tran_id,
+        tranId,
       });
 
       const savedOrder = await repository.save(newOrder);
@@ -121,7 +122,6 @@ export const createOrder = asyncHandler(
         await cartRepo.remove(cartsList);
 
         // order tracking
-
         const orderTrackingRepo =
           queryRunner.manager.getRepository(OrderTrackingEntity);
         const newOrderTracking = orderTrackingRepo.create({
@@ -130,6 +130,7 @@ export const createOrder = asyncHandler(
           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
         });
         await orderTrackingRepo.save(newOrderTracking);
+
         // applied coupon
         if (validation.data.couponId) {
           const couponRepo =
@@ -142,6 +143,7 @@ export const createOrder = asyncHandler(
           });
           await couponRepo.save(newCouponApplied);
         }
+
         // notification
         const notification: Notification = {
           type: "Order",
@@ -153,63 +155,82 @@ export const createOrder = asyncHandler(
         await sendOrderNotification(notification);
       }
 
-      // SSLCOMMERZ payment gateway
-      const store_id = "ecomm6648b03fa5d37";
-      const store_passwd = "ecomm6648b03fa5d37@ssl";
-      const is_live = false;
-
-      const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-
-      const paymentPayload = {
-        total_amount: +subTotal + +shippingCharge,
-        currency: "BDT",
-        tran_id: `TXN_${tran_id}`,
-        success_url: `http://localhost:3000/api/success?tran_id=${tran_id}`,
-        fail_url: `http://localhost:3000/api/fail?tran_id=${tran_id}`,
-        cancel_url: `http://localhost:3000/api/cancel?tran_id=${tran_id}`,
-        ipn_url: "http://localhost:3000/api/payment-ipn",
-        shipping_method: "Courier",
-        product_name: "Order",
-        product_category: "General",
-        product_profile: "general",
-        cus_name: "Customer Name",
-        cus_email: "customer@example.com",
-        cus_add1: "Dhaka",
-        cus_add2: "Dhaka",
-        cus_city: "Dhaka",
-        cus_state: "Dhaka",
-        cus_postcode: "1000",
-        cus_country: "Bangladesh",
-        cus_phone: "01711111111",
-        cus_fax: "01711111111",
-        ship_name: "Customer Name",
-        ship_add1: "Dhaka",
-        ship_add2: "Dhaka",
-        ship_city: "Dhaka",
-        ship_state: "Dhaka",
-        ship_postcode: 1000,
-        ship_country: "Bangladesh",
-      };
-
-      const apiResponse = await sslcz.init(paymentPayload);
-
-      if (!apiResponse?.GatewayPageURL) {
-        throw new Error("Failed to generate payment URL");
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.commitTransaction();
       }
 
-      await queryRunner.commitTransaction();
+      let paymentUrl = "";
+
+      if (savedOrder.paymentMethod === PaymentMethod.Cash) {
+        const paymentRepo = queryRunner.manager.getRepository(PaymentEntity);
+        const newPayment = paymentRepo.create({
+          tranId,
+          orderId: savedOrder.id,
+          userId,
+          paymentDate: dayjs(),
+          paymentMethod: PaymentMethod.Cash,
+          paymentType: PaymentType.Debit,
+          amount: newOrder.grandTotal,
+        });
+        await paymentRepo.save(newPayment);
+      }
+
+      if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
+        // SSLCOMMERZ payment gateway
+        const store_id = "ecomm6648b03fa5d37";
+        const store_passwd = "ecomm6648b03fa5d37@ssl";
+        const is_live = false;
+
+        const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+
+        const paymentPayload = {
+          total_amount: savedOrder.grandTotal,
+          currency: "BDT",
+          tran_id: tranId,
+          success_url: `http://localhost:3900/api/v1/payments/success/${tranId}`,
+          fail_url: `http://localhost:3900/api/v1/payments/fail/${tranId}`,
+          cancel_url: `http://localhost:3900/api/v1/payments/cancel/${tranId}`,
+          ipn_url: `http://localhost:3900/api/v1/payment-ipn/${tranId}`,
+
+          
+          shipping_method: "Courier",
+          product_name: "Order",
+          product_category: "General",
+          product_profile: "general",
+          cus_name: "Customer Name",
+          cus_email: "customer@example.com",
+          cus_add1: "Dhaka",
+          cus_add2: "Dhaka",
+          cus_city: "Dhaka",
+          cus_state: "Dhaka",
+          cus_postcode: "1000",
+          cus_country: "Bangladesh",
+          cus_phone: "01711111111",
+          cus_fax: "01711111111",
+          ship_name: "Customer Name",
+          ship_add1: "Dhaka",
+          ship_add2: "Dhaka",
+          ship_city: "Dhaka",
+          ship_state: "Dhaka",
+          ship_postcode: 1000,
+          ship_country: "Bangladesh",
+        };
+        const apiResponse = await sslcz.init(paymentPayload);
+        paymentUrl = apiResponse.GatewayPageURL;
+      }
 
       return res.status(200).json({
         success: true,
         message: "Order created, redirecting to payment gateway.",
         data: {
           orderId: savedOrder.id,
-          trackingNo,
-          paymentUrl: apiResponse.GatewayPageURL,
+          paymentUrl,
         },
       });
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
       console.error("Transaction failed:", error);
       return res.status(500).json({
         success: false,
@@ -450,9 +471,6 @@ export const sendOrderNotification = async (
       success: false,
       message: "Failed to send notification",
     };
-  } finally {
-    // Optionally release the connection if it's not reused
-    // await connection.close(); // Only if you're not reusing the connection
   }
 };
 

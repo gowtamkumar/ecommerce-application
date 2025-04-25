@@ -13,11 +13,11 @@ import { AuthGuard } from "../../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.route("/").get(getPayments).post(createPayment);
-router.route("/dashboard").post(createPayment);
-router.route("/success").get(sslcommerzSuccessHandler);
-router.route("/fail").get(sslcommerzFailHandler);
-router.route("/cancel").get(sslcommerzCancelHandler);
+router.route("/").get(getPayments).post(AuthGuard, createPayment);
+router.route("/dashboard").post(AuthGuard, createPayment);
+router.route("/success/:tranId").post(sslcommerzSuccessHandler);
+router.route("/fail/:tranId").post(sslcommerzFailHandler);
+router.route("/cancel/:tranId").post(sslcommerzCancelHandler);
 
 router
   .route("/:id")

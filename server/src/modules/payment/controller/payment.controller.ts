@@ -6,7 +6,8 @@ import { paymentValidationSchema } from "../../../validation";
 import { logger } from "../../../middlewares/logger";
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { OrderEntity } from "../../order/model/order.entity";
-import { PaymentStatus } from "../../order/enums";
+import { PaymentMethod, PaymentStatus } from "../../order/enums";
+import { PaymentType } from "../enums/payment-type.enum";
 
 // @desc Get all Payment
 // @route GET /api/v1/Payment
@@ -58,114 +59,6 @@ export const getPayment = asyncHandler(
       message: `Get a single Payment of id ${req.params.id}`,
       data: result,
     });
-  }
-);
-
-// @desc Get a single Payment
-// @route GET /api/v1/Payment/sucess
-// @access Public
-export const sslcommerzSuccessHandler = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { tran_id } = req.query;
-    const connection = await getDBConnection();
-
-    console.log("tran_id called", tran_id);
-    
-
-    if (!tran_id) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing transaction ID" });
-    }
-
-    try {
-      const orderRepo = connection.getRepository(OrderEntity);
-      const order = await orderRepo.findOne({ where: { tran_id } });
-
-      if (!order) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Order not found" });
-      }
-
-      order.paymentStatus = PaymentStatus.Paid;
-      await orderRepo.save(order);
-
-      return res.redirect(
-        `${process.env.FRONT_END_URL}/payment-success?orderId=${order.id}`
-      );
-    } catch (error) {
-      console.error("SSLCommerz Success Handler Error:", error);
-      return res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error" });
-    }
-  }
-);
-
-// @desc Get a single Payment
-// @route GET /api/v1/Payment/sucess
-// @access Public
-
-export const sslcommerzFailHandler = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { tran_id } = req.query;
-
-    if (!tran_id) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing transaction ID" });
-    }
-
-    const connection = await getDBConnection();
-
-    try {
-      const orderRepo = connection.getRepository(OrderEntity);
-      const order = await orderRepo.findOne({ where: { tran_id } });
-
-      if (order) {
-        order.paymentStatus = PaymentStatus.Failed;
-        await orderRepo.save(order);
-      }
-
-      return res.redirect(`${process.env.FRONT_END_URL}/payment-failed`);
-    } catch (error) {
-      console.error("SSLCommerz Fail Handler Error:", error);
-      return res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error" });
-    }
-  }
-);
-
-export const sslcommerzCancelHandler = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { tran_id } = req.query;
-
-    if (!tran_id) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing transaction ID" });
-    }
-
-    const connection = await getDBConnection();
-
-    try {
-      const orderRepo = connection.getRepository(OrderEntity);
-      const order = await orderRepo.findOne({ where: { tran_id } });
-
-      if (order) {
-        order.paymentStatus = PaymentStatus.Canceled;
-        await orderRepo.save(order);
-      }
-
-      return res.redirect(`${process.env.FRONT_END_URL}/payment-cancelled`);
-    } catch (error) {
-      console.error("SSLCommerz Cancel Handler Error:", error);
-      return res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error" });
-    }
   }
 );
 
@@ -286,5 +179,150 @@ export const deletePayment = asyncHandler(
       message: `Delete a single Payment of id ${req.params.id}`,
       data: result,
     });
+  }
+);
+
+// @desc Get a single Payment
+// @route GET /api/v1/Payment/sucess/trandId
+// @access Public
+export const sslcommerzSuccessHandler = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: sslcommerzSuccessHandler ${req.method} ${req.url}`);
+    const { tranId } = req.params;
+
+    const connection = await getDBConnection();
+    const orderRepo = connection.getRepository(OrderEntity);
+
+    if (!tranId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing transaction ID" });
+    }
+
+    try {
+      const order = await orderRepo.findOne({ where: { tranId } });
+
+      if (!order) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Order not found" });
+      }
+
+      order.paymentStatus = PaymentStatus.Paid;
+      await orderRepo.save(order);
+
+      console.log("roder", order);
+      
+
+      const paymentRepo = connection.getRepository(PaymentEntity);
+
+      const newPayment = paymentRepo.create({
+        tranId,
+        orderId: order.id,
+        userId: order.userId,
+        paymentDate: new Date().toISOString(),
+        paymentType: PaymentType.Debit,
+        paymentMethod: PaymentMethod.SSLCOMMERZ,
+        amount: order.grandTotal,
+      });
+
+      const save = await paymentRepo.save(newPayment);
+
+      if (save) {
+        return res.redirect(
+          `${process.env.FRONT_END_URL}/sslcommerz/success/${tranId}`
+        );
+      }
+
+      // return res.redirect(
+      //   `${process.env.FRONT_END_URL}/sslcommerz/success/${tranId}`
+      // );
+    } catch (error) {
+      console.error("SSLCommerz Success Handler Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+);
+
+// @desc Get a single Payment
+// @route GET /api/v1/Payment/fail:tranId
+// @access Public
+export const sslcommerzFailHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: sslcommerzFailHandler ${req.method} ${req.url}`);
+    const { tranId } = req.params;
+
+    const connection = await getDBConnection();
+    const orderRepo = connection.getRepository(OrderEntity);
+
+    if (!tranId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing transaction ID" });
+    }
+
+    try {
+      const order = await orderRepo.findOne({ where: { tranId } });
+
+      if (!order) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Order not found" });
+      }
+
+      order.paymentStatus = PaymentStatus.Failed;
+      await orderRepo.save(order);
+
+      return res.redirect(
+        `${process.env.FRONT_END_URL}/sslcommerz/fail/${tranId}`
+      );
+    } catch (error) {
+      console.error("SSLCommerz Success Handler Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+);
+
+// @desc Get a single Payment
+// @route GET /api/v1/Payment/cancel:tranId
+// @access Public
+export const sslcommerzCancelHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: sslcommerzCancelHandler ${req.method} ${req.url}`);
+    const { tranId } = req.params;
+
+    const connection = await getDBConnection();
+    const orderRepo = connection.getRepository(OrderEntity);
+
+    if (!tranId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing transaction ID" });
+    }
+
+    try {
+      const order = await orderRepo.findOne({ where: { tranId } });
+
+      if (!order) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Order not found" });
+      }
+
+      order.paymentStatus = PaymentStatus.Canceled;
+      await orderRepo.save(order);
+      return res.redirect(
+        `${process.env.FRONT_END_URL}/sslcommerz/cancel/${tranId}`
+      );
+    } catch (error) {
+      console.error("SSLCommerz Success Handler Error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
   }
 );

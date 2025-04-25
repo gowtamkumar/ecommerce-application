@@ -1,5 +1,5 @@
-'use client'
-
+"use client";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 export default function PaymentCancel() {
@@ -9,8 +9,9 @@ export default function PaymentCancel() {
     <div className="p-5 max-w-lg mx-auto text-center">
       <h2 className="text-2xl font-bold text-red-600">Payment Cancel!</h2>
       <p className="text-lg mt-3">
-        Transaction ID: <b>{params.tran_id}</b>
+        Transaction ID: <b>{params.tranId}</b>
       </p>
+      <Link href="/">Home</Link>
     </div>
   );
 }

@@ -54,11 +54,11 @@ export class PaymentEntity {
   @JoinColumn({ name: "user_id" })
   user!: UserEntity;
 
-  @Column({ name: "is_successfull", type: "boolean", default: true })
-  isSuccessfull!: boolean;
+  // @Column({ name: "is_successfull", type: "boolean", default: true })
+  // isSuccessfull!: boolean;
 
-  @Column({ name: "transaction_id", nullable: true })
-  transactionId!: string;
+  @Column({ name: "tran_id", nullable: true })
+  tranId!: string;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp with time zone" })
   createdAt?: string;

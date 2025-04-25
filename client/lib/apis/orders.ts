@@ -10,7 +10,9 @@ export async function saveOrder(data: any) {
     headers,
     body: JSON.stringify(data),
   });
-  return await handleResponse(res);
+  // console.log("res.json()", await res.json());
+
+  return await res.json();
 }
 
 export async function getOrders() {
