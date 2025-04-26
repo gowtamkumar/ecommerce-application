@@ -304,6 +304,9 @@ export const sslcommerzCancelHandler = asyncHandler(
     try {
       const order = await orderRepo.findOne({ where: { tranId } });
 
+      console.log("order", order);
+      
+
       if (!order) {
         return res
           .status(404)

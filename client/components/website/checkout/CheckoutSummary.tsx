@@ -2,6 +2,10 @@
 "use client";
 import { saveOrder } from "@/lib/apis/orders";
 import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import { clearCart, selectCart } from "@/redux/features/cart/cartSlice";
 import {
   selectCheckout,
@@ -68,10 +72,6 @@ export default function CheckoutSummary() {
         orderItems: cart?.carts?.cartList,
       });
 
-      console.log("cart?.carts?.cartList", cart?.carts?.cartList);
-      console.log("validatedFields", validatedFields);
-      
-
       if (!validatedFields.success) {
         const formattedErrors = validatedFields.error.issues.map((issue) => ({
           path: issue.path.join("."),
@@ -83,16 +83,13 @@ export default function CheckoutSummary() {
 
       const res = await saveOrder(validatedFields.data);
 
-      console.log("res", res);
-      
-
       if (res.message?.formErrors || !res.success) {
+        errorNotification({ message: res.message });
         dispatch(setLoading({ save: false }));
-        dispatch(setResponse({ type: "error", message: res.message }));
         return;
       }
 
-      dispatch(setResponse({ type: "success", message: "Order successfully" }));
+      successNotification({ message: res.message });
 
       setTimeout(() => {
         dispatch(setLoading({ save: false }));

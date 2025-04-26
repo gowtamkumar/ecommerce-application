@@ -429,7 +429,7 @@ export const onlinePayment = async (
 ) => {
   logger.info(`Service: onlinePayment ${req.method} ${req.url}`);
   const userId = req.id as number | string;
-  const tranId = Date.now().toString();
+  const tranId = savedOrder.tranId
   const connection = await getDBConnection();
   // SSLCOMMERZ payment gateway
   const store_id = process.env.STORE_ID;
@@ -441,7 +441,7 @@ export const onlinePayment = async (
   const customer = await userRepository.findOne({
     where: { id: userId },
   });
-
+  
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
 
   const paymentPayload = {

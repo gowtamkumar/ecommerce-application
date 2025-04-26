@@ -11,11 +11,11 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
-
 import dynamic from "next/dynamic";
-import TodayOrderSummaryDashboard from "../order/TodayOrderSummary";
 import { errorNotification } from "@/lib/utils/notification";
-// import CountUp from "react-countup";
+const LossProfit = dynamic(() => import("./LossProfit"), {
+  ssr: false,
+});
 const WidgetStats = dynamic(() => import("./components/WidgetStats"), {
   ssr: false,
 });
@@ -32,6 +32,10 @@ const StockAlert = dynamic(() => import("./components/StockAlert"), {
 
 const TopSellingProduct = dynamic(
   () => import("./components/TopSallingProduct"),
+  { ssr: false }
+);
+const TotalOrderSummaryDashboard = dynamic(
+  () => import("./TodayOrderSummary"),
   { ssr: false }
 );
 
@@ -121,6 +125,8 @@ const Dashboard = () => {
           />
         </div>
       </div>
+      <TotalOrderSummaryDashboard />
+
       <div className="grid grid-cols-4 gap-2">
         <WidgetStats
           title="TOTAL SALE"
@@ -150,38 +156,20 @@ const Dashboard = () => {
           color="primary"
         />
       </div>
+
       <div className="py-4">
         <StockReport recentHistory={dashboardReports} />
       </div>
 
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-3 mb-3">
-          <Card title="Ernings" size="small">
-            <div>
-              <h4> Profit & Loss ৳</h4>
-              <Statistic
-                value={(
-                  +saleAmount -
-                  (+purchaseAmount + +(total_sale_return_shipping_amount || 0))
-                ).toFixed(2)}
-                // formatter={formatter}
-                prefix={
-                  saleAmount >= purchaseAmount ? (
-                    <ArrowUpOutlined />
-                  ) : (
-                    <ArrowDownOutlined />
-                  )
-                }
-                valueStyle={{
-                  color:
-                    saleAmount >=
-                    purchaseAmount + (+total_sale_return_shipping_amount || 0)
-                      ? "green"
-                      : "red",
-                }}
-              />
-            </div>
-          </Card>
+          <LossProfit
+            value={{
+              saleAmount,
+              purchaseAmount,
+              total_sale_return_shipping_amount,
+            }}
+          />
         </div>
         <div className="col-span-4 mb-3">
           <TopCustomer topCustomers={top_customers} />

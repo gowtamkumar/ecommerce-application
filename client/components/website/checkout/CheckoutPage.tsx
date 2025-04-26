@@ -11,6 +11,7 @@ import {
   setShippingAddress,
   setShippingCharge,
 } from "@/redux/features/checkout/checkoutSlice";
+import ApplyCoupon from "./ApplyCoupon";
 
 const Breadcrumb = dynamic(() => import("@/components/Breadcrumb"), {
   ssr: false,
@@ -80,6 +81,7 @@ export default function CheckoutPage() {
 
           <div className="col-span-1 gap-2 rounded-md">
             <CheckoutShippingAddress />
+            <ApplyCoupon />
             <CheckoutSummary />
           </div>
           <div className="text-blue-500 hover:underline lg:text-start text-center">
