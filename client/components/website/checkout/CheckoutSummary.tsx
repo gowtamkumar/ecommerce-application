@@ -37,6 +37,7 @@ export default function CheckoutSummary() {
     totalQty,
     totalTax,
     subTotal,
+    totalSalePrice,
     grandTotal,
     couponId,
   } = cart?.carts?.cartSummary || {};
@@ -192,9 +193,22 @@ export default function CheckoutSummary() {
         </div>
 
         <div className="flex justify-between">
-          <span>Total Discount</span>
-          <span>{totalDiscount}</span>
+          <span className="font-bold">Total</span>
+          <span className="font-bold text-2xl">৳{totalSalePrice}</span>
         </div>
+
+        <div className="flex justify-between">
+          <span>Discount</span>
+          <span>{totalItemsDiscount}</span>
+        </div>
+
+        {+couponDiscount > 0 && (
+          <div className="flex justify-between">
+            <span>Coupon Discount</span>
+            <span>{couponDiscount}</span>
+          </div>
+        )}
+
         {/* 
         <div className="flex justify-between">
           <span>Total Tax</span>
@@ -204,11 +218,6 @@ export default function CheckoutSummary() {
         <div className="flex justify-between">
           <span>Shipping Cost</span>
           <span>{shippingCharge}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="font-bold">Total</span>
-          <span className="font-bold text-2xl">৳{(+subTotal).toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between">
@@ -226,8 +235,7 @@ export default function CheckoutSummary() {
         disabled={loading.save}
       >
         <span>Confirm Order</span>
-        {(+subTotal + (+shippingCharge?.shippingCharge || 0)).toFixed(2)}
-        TK.
+        {grandTotal} TK.
       </Button>
     </div>
   );

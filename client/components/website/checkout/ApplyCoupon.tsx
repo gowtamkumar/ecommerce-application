@@ -1,6 +1,9 @@
 "use client";
 import { getCartLists } from "@/lib/apis/cart";
-import { errorNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import { replaceCart } from "@/redux/features/cart/cartSlice";
 import { Button, Input, Space } from "antd";
 import React, { useState } from "react";
@@ -20,8 +23,8 @@ export default function ApplyCoupon() {
     
 
     if (coupon.success) {
-      const getCartList = await getCartLists();
-      dispatch(replaceCart(getCartList.data));
+      successNotification({ message: coupon.message });
+      dispatch(replaceCart(coupon.data));
     }
 
     if (!coupon.success) {

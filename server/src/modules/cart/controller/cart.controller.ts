@@ -388,9 +388,10 @@ export const cartListApplyCoupon = asyncHandler(
     // Step 3: Calculate totals
     let totalQty = 0;
     let subTotal = 0;
-    let totalDiscount = 0;
+    let totalItemsDiscount = 0;
     let totalTax = 0;
     let grandTotal = 0;
+    let totalSalePrice = 0;
 
     cart.forEach(
       (item: {
@@ -399,6 +400,7 @@ export const cartListApplyCoupon = asyncHandler(
         discountAmount: number;
         totalDiscountAmount: number | string;
         subTotal: string;
+        salePrice: string;
       }) => {
         const qty = +item.qty || 0;
         const taxAmount = +item.taxAmount || 0;
@@ -406,8 +408,9 @@ export const cartListApplyCoupon = asyncHandler(
         const subtotalAmount = +item.subTotal;
 
         totalQty += +qty;
+        totalSalePrice = +item.salePrice * +qty;
         subTotal += +subtotalAmount;
-        totalDiscount += +discountAmount;
+        totalItemsDiscount += +discountAmount;
         totalTax += +taxAmount;
         grandTotal += +subtotalAmount;
       }
@@ -468,7 +471,7 @@ export const cartListApplyCoupon = asyncHandler(
       shippingCharge = +shippingCost;
     }
 
-    grandTotal = grandTotal - couponDiscount + shippingCharge;
+    grandTotal = +grandTotal - +couponDiscount + +shippingCharge;
 
     return res.status(200).json({
       success: true,
@@ -478,13 +481,14 @@ export const cartListApplyCoupon = asyncHandler(
         cartSummary: {
           totalQty,
           subTotal: subTotal.toFixed(2), //unit_price + tax - discount
-          totalItemsDiscount: (+totalDiscount || 0).toFixed(2), //item.totalDiscountAmount
+          totalItemsDiscount: (+totalItemsDiscount || 0).toFixed(2), //item.totalDiscountAmount
           couponDiscount: couponDiscount.toFixed(2),
-          totalDiscount: (totalDiscount + couponDiscount).toFixed(2), //coupon + totalitemdiscount
+          totalDiscount: (totalItemsDiscount + couponDiscount).toFixed(2), //coupon + totalitemdiscount
           couponId: validCoupon ? validCoupon.id : null,
           totalTax: totalTax.toFixed(2),
           shippingCharge: shippingCharge.toFixed(2),
           grandTotal: grandTotal.toFixed(2),
+          totalSalePrice: totalSalePrice.toFixed(2),
         },
       },
     });
