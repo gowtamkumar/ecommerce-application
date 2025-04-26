@@ -14,6 +14,7 @@ import { getDashboardReports } from "@/lib/apis/reports";
 
 import dynamic from "next/dynamic";
 import TodayOrderSummaryDashboard from "../order/TodayOrderSummary";
+import { errorNotification } from "@/lib/utils/notification";
 // import CountUp from "react-countup";
 const WidgetStats = dynamic(() => import("./components/WidgetStats"), {
   ssr: false,
@@ -56,22 +57,31 @@ const Dashboard = () => {
   const lastDateOfMonth = dayjs().endOf("month");
 
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
         const results = await getDashboardReports({
           startDate: firstDateOfMonth.toISOString(),
           endDate: lastDateOfMonth.toISOString(),
         });
+
+        if (!results.success) {
+          errorNotification({ message: results.message });
+          setLoading(false);
+          return;
+        }
+
         setDashboardReports(results.data);
-      } catch (err) {
-        setLoading(false);
-        console.log(err);
+      } catch (err: any) {
+        console.error("Error fetching data:", err);
+        errorNotification({ message: err?.message || "An error occurred" });
       } finally {
         setLoading(false);
       }
-    })();
-  }, []);
+    };
+
+    fetchData(); // Call the function to fetch data
+  }, []); // Empty dependency array ensures this only runs once on mount
 
   const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
     (
@@ -165,7 +175,7 @@ const Dashboard = () => {
                 valueStyle={{
                   color:
                     saleAmount >=
-                      purchaseAmount + (+total_sale_return_shipping_amount || 0)
+                    purchaseAmount + (+total_sale_return_shipping_amount || 0)
                       ? "green"
                       : "red",
                 }}

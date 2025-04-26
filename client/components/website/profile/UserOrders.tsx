@@ -10,6 +10,8 @@ import {
   Timeline,
   Divider,
   Popconfirm,
+  notification,
+  message,
 } from "antd";
 import { CheckOutlined, SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
@@ -27,6 +29,7 @@ import { getStatus } from "@/lib/utils/getStatus";
 import { ActionType } from "@/constants/constants";
 import CancelOrder from "./CancelOrder";
 import { getUserOrders } from "@/lib/apis/orders";
+import { errorNotification } from "@/lib/utils/notification";
 
 interface DataType {
   key: React.Key;
@@ -43,19 +46,32 @@ const UserOrders = ({ status }: { status: string }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    (async () => {
-      dispatch(setLoading({ loading: true }));
+    fetchData(status);
+  }, [dispatch, global.action]);
+
+  const fetchData = async (status: string) => {
+    dispatch(setLoading({ loading: true }));
+    try {
       const res = await getUserOrders(status);
+
+      if (!res.success) {
+        console.log("Error fetching orders");
+        errorNotification({ message: res.message });
+        return;
+      }
+
       const newOrders = res.data?.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
       }));
-      console.log("newOrders", newOrders);
 
       setOrders(newOrders);
+    } catch (error: any) {
+      errorNotification({ message: error?.message });
+    } finally {
       dispatch(setLoading({ loading: false }));
-    })();
-  }, [dispatch, global.action]);
+    }
+  };
 
   const handleSearch = (
     selectedKeys: string[],

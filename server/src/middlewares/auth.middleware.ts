@@ -26,7 +26,10 @@ const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
   if (!token) {
     return res
       .status(401)
-      .json({ message: "Authentication Failed: Token is missing" });
+      .json({
+        success: false,
+        message: "Authentication Failed: Token is missing",
+      });
   }
 
   try {
@@ -43,26 +46,34 @@ const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
     console.error("Authentication Error:", error);
 
     if (error instanceof jwt.TokenExpiredError) {
-      return res
-        .status(401)
-        .json({ message: "Authentication Failed: Token has expired" });
+      
+      return res.status(401).json({
+        success: false,
+        message: "Authentication Failed: Token has expired",
+      });
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      return res
-        .status(401)
-        .json({ message: "Authentication Failed: Invalid token" });
+      return res.status(401).json({
+        success: false,
+        message: "Authentication Failed: Invalid token",
+      });
     }
 
     // General error fallback
-    res
-      .status(500)
-      .json({ message: "Authentication Failed: An unexpected error occurred" });
+    res.status(500).json({
+      success: false,
+      message: "Authentication Failed: An unexpected error occurred",
+    });
   }
 };
 
 // isAuthorize middleware
-const isAuthorize: MiddlewareFunction = async (req: CustomRequest, res, next) => {
+const isAuthorize: MiddlewareFunction = async (
+  req: CustomRequest,
+  res,
+  next
+) => {
   const { authorization } = req.headers;
   let token = authorization?.split(" ")[1] || req.cookies.accessToken;
 

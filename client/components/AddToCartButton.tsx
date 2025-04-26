@@ -6,6 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCart, replaceCart } from "@/redux/features/cart/cartSlice";
 import { discountTaxCalculationFun } from "@/lib/utils/discountTaxCalculationFun";
 import { getCartByUser, getCartLists, saveCart } from "@/lib/apis/cart";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 type Product = {
   id: number;
@@ -34,6 +38,15 @@ export default function AddToCartButton({ item }: { item: any }) {
     };
 
     const cartResponse = await saveCart(newData);
+    if (cartResponse.success) {
+      successNotification({ message: cartResponse.message });
+    }
+
+    if (!cartResponse.success) {
+      errorNotification({ message: cartResponse.message });
+    }
+    console.log("cartResponse", cartResponse);
+
     // if(cartResponse)
     const getCartList = await getCartLists();
 

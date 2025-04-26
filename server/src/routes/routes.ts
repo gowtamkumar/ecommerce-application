@@ -55,7 +55,7 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/shipping-address", AuthGuard, shippingAddressRoutes);
   app.use("/api/v1/shipping-charges", AuthGuard, shippingChargeRoutes);
   app.use("/api/v1/discounts", discountRoutes);
-  app.use("/api/v1/orders", orderRoutes);
+  app.use("/api/v1/orders", AuthGuard, orderRoutes);
   app.use("/api/v1/order-trackings", AuthGuard, orderTrackingRoutes);
   app.use("/api/v1/wishlists", AuthGuard, wishlistRoutes);
   app.use("/api/v1/payments", paymentRoute);
@@ -66,11 +66,7 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/units", AuthGuard, unitRoute);
   app.use("/api/v1/colors", colorRoute);
   app.use("/api/v1/status", AuthGuard, statusRoute);
-  app.use("/api/v1/divisions", divisionRoute);
-  app.use("/api/v1/districts", districtRoute);
-  app.use("/api/v1/upazilas", upazilaRoute);
-  app.use("/api/v1/unions", unionsRoute);
-  app.use("/api/v1/reports", reportRoute);
+  app.use("/api/v1/reports", AuthGuard, reportRoute);
   app.use("/api/v1/notifications", AuthGuard, notificationRoute);
   app.use("/api/v1/coupons", couponRoute);
   // public route
@@ -78,4 +74,8 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/visitors", visitorRoute);
   app.use("/api/v1/leads", leadRoute);
   app.use("/api/v1/posts", postRoute);
+  app.use("/api/v1/divisions", divisionRoute);
+  app.use("/api/v1/districts", districtRoute);
+  app.use("/api/v1/upazilas", upazilaRoute);
+  app.use("/api/v1/unions", unionsRoute);
 };

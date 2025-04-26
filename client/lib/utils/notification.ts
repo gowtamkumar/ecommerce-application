@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { toast } from "react-toastify";
 
 type NotificationProps = {
   message: string;
@@ -10,27 +10,29 @@ type InfoNotificationProps = {
 };
 
 export const successNotification = ({ message }: NotificationProps) => {
-  notification.success({
-    message,
-    duration: 3,
-    showProgress: true,
+  toast.success(message, {
+    position: "top-right",
+    autoClose: 3000,
     pauseOnHover: true,
+    hideProgressBar: false,
   });
 };
 
 export const errorNotification = ({ message }: NotificationProps) => {
-  console.log("message", message);
-  
-  notification.error({
-    message,
-    duration: 3,
+  toast.error(message, {
+    position: "top-right",
+    autoClose: 3000,
+    pauseOnHover: true,
+    hideProgressBar: false,
   });
 };
 
 export const warningNotification = ({ message }: NotificationProps) => {
-  notification.warning({
-    message,
-    duration: 3,
+  toast.warn(message, {
+    position: "top-right",
+    autoClose: 3000,
+    pauseOnHover: true,
+    hideProgressBar: false,
   });
 };
 
@@ -38,9 +40,10 @@ export const infoNotification = ({
   message,
   description,
 }: InfoNotificationProps) => {
-  notification.info({
-    message,
-    description,
-    duration: 3,
+  toast.info(`${message}${description ? `: ${description}` : ''}`, {
+    position: "top-right",
+    autoClose: 3000,
+    pauseOnHover: true,
+    hideProgressBar: false,
   });
 };

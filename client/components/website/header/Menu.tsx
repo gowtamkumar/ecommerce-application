@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import { getMenus } from "@/lib/apis/admin/menu";
 import { getAntdCategories } from "@/lib/apis/categories";
 
 const renderMenuItems = (items: any[]) => {
@@ -281,8 +280,6 @@ const MainMenu = () => {
   useEffect(() => {
     (async () => {
       const response = await getAntdCategories();
-      console.log("response", response);
-
       setCategories(response.data || []);
     })();
   }, []);

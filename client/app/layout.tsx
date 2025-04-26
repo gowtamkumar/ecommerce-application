@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./style.css";
-import "antd/dist/reset.css";
+import 'antd/dist/reset.css';
+import 'react-toastify/dist/ReactToastify.css';
 import '@ant-design/v5-patch-for-react-19';
 import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
@@ -17,6 +18,7 @@ import "swiper/css/autoplay";
 import CartSync from "@/components/CartSync";
 import ScrollToTop from "@/components/website/ScrollToTop";
 import CookieWebsite from "@/components/website/CookieBanner";
+import { ToastContainer } from "react-toastify";
 
 const poppinsFont = localFont({
   src: [
@@ -74,6 +76,7 @@ export default async function RootLayout({
               {children}
               <ScrollToTop />
               <CookieWebsite />
+              <ToastContainer />
             </AntdRegistry>
           </StoreProvider>
         </AuthProvider>
