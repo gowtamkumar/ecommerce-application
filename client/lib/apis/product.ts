@@ -34,8 +34,6 @@ export async function getPublicProducts(params: getParams) {
     page,
   }: getParams = params;
 
-  console.log("params", params);
-
   let queryString = "status=Active&";
 
   if (perPage && page) {

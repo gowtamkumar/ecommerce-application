@@ -11,7 +11,7 @@ type InfoNotificationProps = {
 
 export const successNotification = ({ message }: NotificationProps) => {
   toast.success(message, {
-    position: "top-right",
+    position: "bottom-right",
     autoClose: 3000,
     pauseOnHover: true,
     hideProgressBar: false,
@@ -20,7 +20,7 @@ export const successNotification = ({ message }: NotificationProps) => {
 
 export const errorNotification = ({ message }: NotificationProps) => {
   toast.error(message, {
-    position: "top-right",
+    position: "bottom-right",
     autoClose: 3000,
     pauseOnHover: true,
     hideProgressBar: false,
@@ -29,7 +29,7 @@ export const errorNotification = ({ message }: NotificationProps) => {
 
 export const warningNotification = ({ message }: NotificationProps) => {
   toast.warn(message, {
-    position: "top-right",
+    position: "bottom-right",
     autoClose: 3000,
     pauseOnHover: true,
     hideProgressBar: false,

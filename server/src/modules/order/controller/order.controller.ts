@@ -20,6 +20,7 @@ import { ProductVariantEntity } from "../../products/product-variant/model/produ
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 import { NotificationEntity } from "../../other/notification/model/notification.entity";
+import { UserEntity } from "../../auth/model/user.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {
@@ -159,63 +160,11 @@ export const createOrder = asyncHandler(
         await queryRunner.commitTransaction();
       }
 
+      // ssl ecommerce intregration
       let paymentUrl = "";
-
-      // if (savedOrder.paymentMethod === PaymentMethod.Cash) {
-      //   const paymentRepo = queryRunner.manager.getRepository(PaymentEntity);
-      //   const newPayment = paymentRepo.create({
-      //     tranId,
-      //     orderId: savedOrder.id,
-      //     userId,
-      //     paymentDate: dayjs(),
-      //     paymentMethod: PaymentMethod.Cash,
-      //     paymentType: PaymentType.Debit,
-      //     amount: newOrder.grandTotal,
-      //   });
-      //   await paymentRepo.save(newPayment);
-      // }
-
       if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
-        // SSLCOMMERZ payment gateway
-        const store_id = "ecomm6648b03fa5d37";
-        const store_passwd = "ecomm6648b03fa5d37@ssl";
-        const is_live = false;
-
-        const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-
-        const paymentPayload = {
-          total_amount: savedOrder.grandTotal,
-          currency: "BDT",
-          tran_id: tranId,
-          success_url: `http://localhost:3900/api/v1/payments/success/${tranId}`,
-          fail_url: `http://localhost:3900/api/v1/payments/fail/${tranId}`,
-          cancel_url: `http://localhost:3900/api/v1/payments/cancel/${tranId}`,
-          ipn_url: `http://localhost:3900/api/v1/payment-ipn/${tranId}`,
-
-          shipping_method: "Courier",
-          product_name: "Order",
-          product_category: "General",
-          product_profile: "general",
-          cus_name: "Customer Name",
-          cus_email: "customer@example.com",
-          cus_add1: "Dhaka",
-          cus_add2: "Dhaka",
-          cus_city: "Dhaka",
-          cus_state: "Dhaka",
-          cus_postcode: "1000",
-          cus_country: "Bangladesh",
-          cus_phone: "01711111111",
-          cus_fax: "01711111111",
-          ship_name: "Customer Name",
-          ship_add1: "Dhaka",
-          ship_add2: "Dhaka",
-          ship_city: "Dhaka",
-          ship_state: "Dhaka",
-          ship_postcode: 1000,
-          ship_country: "Bangladesh",
-        };
-        const apiResponse = await sslcz.init(paymentPayload);
-        paymentUrl = apiResponse.GatewayPageURL;
+        const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
+        paymentUrl = onlinePaymentRes;
       }
 
       return res.status(200).json({
@@ -473,65 +422,66 @@ export const sendOrderNotification = async (
   }
 };
 
-// export const onlinePayment = async (req: CustomRequest, res: Response) => {
-//   const store_id = "ecomm6648b03fa5d37";
-//   const store_passwd = "ecomm6648b03fa5d37@ssl";
-//   const is_live = false; //true for live, false for sandbox
-//   // payment
-//   const data = {
-//     total_amount: 100,
-//     currency: "BDT",
-//     tran_id: `TXN_${Date.now()}`, // use unique tran_id for each api call
-//     success_url: "http://localhost:3000/api/success",
-//     fail_url: "http://localhost:3000/api/fail",
-//     cancel_url: "http://localhost:3000/api/cancel",
-//     ipn_url: "http://localhost:3000/api/payment-ipn",
-//     shipping_method: "Courier",
-//     product_name: "Computer.",
-//     product_category: "Electronic",
-//     product_profile: "general",
-//     cus_name: "Customer Name",
-//     cus_email: "customer@example.com",
-//     cus_add1: "Dhaka",
-//     cus_add2: "Dhaka",
-//     cus_city: "Dhaka",
-//     cus_state: "Dhaka",
-//     cus_postcode: "1000",
-//     cus_country: "Bangladesh",
-//     cus_phone: "01711111111",
-//     cus_fax: "01711111111",
-//     ship_name: "Customer Name",
-//     ship_add1: "Dhaka",
-//     ship_add2: "Dhaka",
-//     ship_city: "Dhaka",
-//     ship_state: "Dhaka",
-//     ship_postcode: 1000,
-//     ship_country: "Bangladesh",
-//   };
-//   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+export const onlinePayment = async (
+  req: CustomRequest,
+  res: Response,
+  savedOrder: any
+) => {
+  logger.info(`Service: onlinePayment ${req.method} ${req.url}`);
+  const userId = req.id as number | string;
+  const tranId = Date.now().toString();
+  const connection = await getDBConnection();
+  // SSLCOMMERZ payment gateway
+  const store_id = process.env.STORE_ID;
+  const store_passwd = process.env.STORE_PASSWD;
+  const BACK_END_URL = process.env.BACK_END_URL;
+  const is_live = false;
 
-//   try {
-//     const apiResponse = await sslcz
-//       .init(data)
-//       .then((apiResponse: { GatewayPageURL: any }) => {
-//         logger.info(`Service: getMemu ${req.method} ${req.url}`);
-//         // Redirect the user to payment gateway
-//         let GatewayPageURL = apiResponse.GatewayPageURL;
-//         res.redirect(GatewayPageURL);
-//         console.log("Redirecting to: ", GatewayPageURL);
-//       });
-//     // return res.status(200).json({ url: apiResponse.GatewayPageURL });
-//     return res.status(200).json({
-//       success: true,
-//       message: "Online payment successfully",
-//       data: { data, url: apiResponse.GatewayPageURL },
-//     });
-//   } catch (err) {
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Payment initiation failed" });
-//   }
-// };
+  const userRepository = connection.getRepository(UserEntity);
+  const customer = await userRepository.findOne({
+    where: { id: userId },
+  });
+
+  const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+
+  const paymentPayload = {
+    total_amount: savedOrder.grandTotal,
+    currency: "BDT",
+    tran_id: tranId,
+    success_url: `${BACK_END_URL}/payments/success/${tranId}`,
+    fail_url: `${BACK_END_URL}/payments/fail/${tranId}`,
+    cancel_url: `${BACK_END_URL}/payments/cancel/${tranId}`,
+    ipn_url: `${BACK_END_URL}/payment-ipn/${tranId}`,
+
+    shipping_method: "Courier",
+    product_name: "productNames",
+    product_category: "General",
+    product_profile: "general",
+
+    cus_name: customer.name,
+    cus_email: customer.email,
+    cus_add1: customer.address || "Dhaka",
+    cus_city: customer.city || "Dhaka",
+    cus_postcode: customer.postcode || "1000",
+    cus_country: "Bangladesh",
+    cus_phone: customer.phone || "01711111111",
+
+    ship_name: customer.name,
+    ship_add1: customer.address || "Dhaka",
+    ship_city: customer.city || "Dhaka",
+    ship_postcode: customer.postcode || 1000,
+    ship_country: "Bangladesh",
+
+    // cus_add1: "Dhaka",
+    // cus_state: "Dhaka",
+    // cus_fax: "01711111111",
+    // ship_add2: "Dhaka",
+    // ship_state: "Dhaka",
+  };
+  const apiResponse = await sslcz.init(paymentPayload);
+
+  return apiResponse.GatewayPageURL;
+};
 
 // @desc Get all Order
 // @route GET /api/v1/Order
