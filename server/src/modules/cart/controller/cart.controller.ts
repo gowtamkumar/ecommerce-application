@@ -226,7 +226,7 @@ export const cartListApplyCoupon = asyncHandler(
           .getCount();
 
         if (totalUserUsage >= coupon.usagePerUser) {
-          message = `You already applied ${totalUserUsage} You can only use this coupon ${coupon.usagePerUser} time(s)`;
+          message = `You already applied ${totalUserUsage} time. You can only use this coupon ${coupon.usagePerUser} time(s)`;
         } else {
           message = "Coupon applied successfully";
           validCoupon = coupon;
@@ -484,7 +484,7 @@ export const cartListApplyCoupon = asyncHandler(
           totalItemsDiscount: (+totalItemsDiscount || 0).toFixed(2), //item.totalDiscountAmount
           couponDiscount: couponDiscount.toFixed(2),
           totalDiscount: (totalItemsDiscount + couponDiscount).toFixed(2), //coupon + totalitemdiscount
-          couponId: validCoupon ? validCoupon.id : null,
+          couponId: +couponDiscount > 0 && validCoupon ? validCoupon.id : null,
           totalTax: totalTax.toFixed(2),
           shippingCharge: shippingCharge.toFixed(2),
           grandTotal: grandTotal.toFixed(2),

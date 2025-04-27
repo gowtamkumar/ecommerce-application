@@ -55,7 +55,7 @@ export async function getUsers() {
 }
 
 // Function to update a user
-export async function updateUser(data: User) {
+export async function updateUser(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/auth/users/${data.id}`, {
     method: "PATCH",

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { updateUser } from "@/lib/apis/user";
+import { getMe, updateUser } from "@/lib/apis/user";
 import {
   selectGlobal,
   setLoading,
@@ -25,9 +25,14 @@ import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import appConfig from "@/appConfig";
 import dynamic from "next/dynamic";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
-const ChangePassword = dynamic(() => import("./PasswordChange"), { ssr: false })
-
+const ChangePassword = dynamic(() => import("./PasswordChange"), {
+  ssr: false,
+});
 
 const uploadButton = (
   <div>
@@ -42,7 +47,8 @@ const uploadButton = (
   </div>
 );
 
-export default function MyAccount({ user }: any) {
+export default function MyAccount() {
+  const [user, setUser] = useState({} as any);
   const [edit, setEdit] = useState(false);
   const [formValues, setFormValues] = useState({
     fileList: [],
@@ -53,22 +59,30 @@ export default function MyAccount({ user }: any) {
   const global = useSelector(selectGlobal);
 
   useEffect(() => {
-    const newData = { ...user };
+    feathUser();
+  }, []);
+
+  const feathUser = async () => {
+    const res = await getMe();
+    const newData = { ...res.data };
+
     if (newData.image) {
       const newfile = {
         uid: Math.random() * 1000 + "",
         name: `image ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.image,
-        url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"}`,
+        url: `${appConfig.baseApiUrl}/uploads/${
+          newData.image || "no-data.png"
+        }`,
       };
       newData.fileList = [newfile];
     }
     if (newData.dob) newData.dob = dayjs(newData.dob);
     form.setFieldsValue(newData);
-    setFormValues(newData);
-  }, [form, user]);
-
+    setFormValues(res);
+    setUser(newData);
+  };
 
   const handleSubmit = async (values: any) => {
     try {
@@ -77,16 +91,12 @@ export default function MyAccount({ user }: any) {
       dispatch(setLoading({ save: true }));
       const result = await updateUser(newData);
 
-      console.log("result", result);
-      
-
       if (result.success) {
-        console.log("result.message", result);
-        message.success("Profile update successfully")
+        successNotification({ message: result.message });
       }
 
       if (!result.success) {
-        message.success(result.message)
+        errorNotification({ message: result.message });
         dispatch(setLoading({ save: false }));
       }
 
@@ -99,7 +109,6 @@ export default function MyAccount({ user }: any) {
     }
   };
 
-
   const resetFormData = (value: any) => {
     const newData = { ...value };
     dispatch(setLoading({ save: false }));
@@ -108,7 +117,7 @@ export default function MyAccount({ user }: any) {
     if (newData.dob) newData.dob = dayjs(newData.dob);
     if (newData?.id) {
       form.setFieldsValue(newData);
-      setFormValues(newData)
+      setFormValues(newData);
     } else {
       form.resetFields();
       setFormValues(form.getFieldsValue());
@@ -192,7 +201,7 @@ export default function MyAccount({ user }: any) {
   return (
     <div className="py-10">
       <div className="flex justify-between items-center gap-2">
-        <div > Personal Information</div>
+        <div> Personal Information</div>
         <div hidden={edit}>
           <Button
             icon={<EditOutlined />}
@@ -205,7 +214,6 @@ export default function MyAccount({ user }: any) {
             }}
             size="small"
           />
-
         </div>
       </div>
 
@@ -267,6 +275,10 @@ export default function MyAccount({ user }: any) {
           ]}
         >
           <Input placeholder="Enter phone" disabled={!edit} />
+        </Form.Item>
+
+        <Form.Item name="address" label="Address">
+          <Input.TextArea placeholder="Enter " disabled={!edit} />
         </Form.Item>
 
         <Form.Item name="dob" label="Date of Brith">
@@ -332,7 +344,6 @@ export default function MyAccount({ user }: any) {
         </div>
         <Form.Item {...tailLayout}>
           <Button
-
             size="small"
             type="default"
             onClick={() => resetFormData(formValues)}

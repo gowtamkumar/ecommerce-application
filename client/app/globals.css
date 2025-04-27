@@ -18,41 +18,15 @@ body {
   min-height: 80vh;
 }
 
-/* Global section */
-/* .section-spacing {
-  @apply py-24;
-} */
+.highlighted-row {
+  background-color: #f0f9ff; /* Light blue for highlighted rows */
+  cursor: pointer;
+}
 
-/* page title */
-/* .page-title {
-  @apply text-global-size-h1 p-0 m-0 font-bold leading-[80px];
-} */
-
-
-/* @apply mobile-landscape:text-3xl; Mobile landscape 
-@apply md:text-4xl;  Tablet 
-@apply lg:text-5xl;  Laptop 
-@apply xl:text-6xl;  Desktop  */
-
-/* Global responsive heading */
-/* .section-heading {
-  @apply text-global-size-h3 p-0 m-0 font-semibold leading-[52px];
-} */
-
-/* Global styles */
-/* .global-btn-primary {
-  @apply bg-[#000000] text-white text-global-size-p font-semibold py-3 px-4 rounded hover:bg-global-primary;
-} */
-
-/* .antd-btn {
-  @apply hover:!bg-red !text-2xl !bg-black !text-white !border-none self-end !py-6 font-bold;
-} */
-
-/* .card-title {
-  @apply text-global-size-h5 p-0 m-0 font-semibold leading-[38px];
-} */
-
-
+.normal-row {
+  background-color: #ffffff; /* Default white background */
+  cursor: pointer;
+}
 
 
 

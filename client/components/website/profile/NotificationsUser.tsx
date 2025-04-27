@@ -120,7 +120,7 @@ const NotificationsUser = () => {
               row: (props: any) => (
                 <div
                   style={{
-                    margin: "10px 0", // Margin of 10px around rows
+                    // margin: "10px 0", // Margin of 10px around rows
                     width: "100%", // Full width
                     display: "table", // Table layout to ensure proper alignment
                   }}

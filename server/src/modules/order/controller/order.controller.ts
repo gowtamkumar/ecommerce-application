@@ -429,7 +429,7 @@ export const onlinePayment = async (
 ) => {
   logger.info(`Service: onlinePayment ${req.method} ${req.url}`);
   const userId = req.id as number | string;
-  const tranId = savedOrder.tranId
+  const tranId = savedOrder.tranId;
   const connection = await getDBConnection();
   // SSLCOMMERZ payment gateway
   const store_id = process.env.STORE_ID;
@@ -441,7 +441,7 @@ export const onlinePayment = async (
   const customer = await userRepository.findOne({
     where: { id: userId },
   });
-  
+
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
 
   const paymentPayload = {
@@ -486,50 +486,58 @@ export const onlinePayment = async (
 // @desc Get all Order
 // @route GET /api/v1/Order
 // @access Public
-export const getOrders = asyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Service: getOrders ${req.method} ${req.url}`);
+export const getOrders = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: getOrders ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
-  const orderRepository = connection.getRepository(OrderEntity);
+    const { status } = req.query;
 
-  const qb = orderRepository.createQueryBuilder("order");
-  qb.select([
-    "order",
-    "orderItems",
-    "productVariant.id",
-    "productVariant.material",
-    "productVariant.default",
-    "color.name",
-    "color.color",
-    "size.name",
-    "product",
-    "payments",
-    "orderTrackings",
-    "deliveryMan.name",
-    "user.name",
-    "shippingAddress",
-  ]);
+    const connection = await getDBConnection();
+    const orderRepository = connection.getRepository(OrderEntity);
 
-  qb.leftJoin("order.orderItems", "orderItems");
-  qb.leftJoin("orderItems.product", "product");
-  qb.leftJoin("orderItems.productVariant", "productVariant");
-  qb.leftJoin("productVariant.color", "color");
-  qb.leftJoin("productVariant.size", "size");
-  qb.leftJoin("order.orderTrackings", "orderTrackings");
-  qb.leftJoin("order.deliveryMan", "deliveryMan");
-  qb.leftJoin("order.user", "user");
-  qb.leftJoin("order.payments", "payments");
-  qb.leftJoin("order.shippingAddress", "shippingAddress");
-  qb.addOrderBy("order.trackingNo", "DESC");
+    const qb = orderRepository.createQueryBuilder("order");
+    qb.select([
+      "order",
+      "orderItems",
+      "productVariant.id",
+      "productVariant.material",
+      "productVariant.default",
+      "color.name",
+      "color.color",
+      "size.name",
+      "product",
+      "payments",
+      "orderTrackings",
+      "deliveryMan.name",
+      "user.name",
+      "shippingAddress",
+    ]);
 
-  const results = await qb.getMany();
+    qb.leftJoin("order.orderItems", "orderItems");
+    qb.leftJoin("orderItems.product", "product");
+    qb.leftJoin("orderItems.productVariant", "productVariant");
+    qb.leftJoin("productVariant.color", "color");
+    qb.leftJoin("productVariant.size", "size");
+    qb.leftJoin("order.orderTrackings", "orderTrackings");
+    qb.leftJoin("order.deliveryMan", "deliveryMan");
+    qb.leftJoin("order.user", "user");
+    qb.leftJoin("order.payments", "payments");
+    qb.leftJoin("order.shippingAddress", "shippingAddress");
+    qb.addOrderBy("order.trackingNo", "DESC");
+    if (status)
+      qb.andWhere("order.status IN (:...status)", {
+        status: status.toString().split(","),
+      });
 
-  return res.status(200).json({
-    success: true,
-    message: "Get all Order",
-    data: results,
-  });
-});
+    const results = await qb.getMany();
+
+    return res.status(200).json({
+      success: true,
+      message: "Get all Order",
+      data: results,
+    });
+  }
+);
 
 export const getUserOrders = asyncHandler(
   async (req: CustomRequest, res: Response) => {
@@ -549,17 +557,29 @@ export const getUserOrders = asyncHandler(
       "deliveryMan.name",
       "user.name",
       "shippingAddress",
+      "productVariant.id",
+      "productVariant.material",
+      "productVariant.default",
+      "color.name",
+      "color.color",
+      "size.name",
     ]);
 
     qb.leftJoin("order.orderItems", "orderItems");
     qb.leftJoin("orderItems.product", "product");
+    qb.leftJoin("orderItems.productVariant", "productVariant");
+    qb.leftJoin("productVariant.color", "color");
+    qb.leftJoin("productVariant.size", "size");
     qb.leftJoin("order.orderTrackings", "orderTrackings");
     qb.leftJoin("order.deliveryMan", "deliveryMan");
     qb.leftJoin("order.user", "user");
     qb.leftJoin("order.payments", "payments");
     qb.leftJoin("order.shippingAddress", "shippingAddress");
     if (userId) qb.where({ userId });
-    if (status) qb.andWhere({ status });
+    if (status)
+      qb.andWhere("order.status IN (:...status)", {
+        status: status.toString().split(","),
+      });
     const results = await qb.getMany();
 
     return res.status(200).json({

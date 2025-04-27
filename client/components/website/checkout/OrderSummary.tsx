@@ -23,6 +23,9 @@ export default function OrderSummary() {
       dispatch(setLoading({ remove: true }));
       const removeCartRes = await deleteCart(id);
 
+      console.log("removeCartRes", removeCartRes);
+      
+
       if (removeCartRes.success) {
         const getCartList = await getCartLists();
         dispatch(replaceCart(getCartList.data));

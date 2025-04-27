@@ -22,7 +22,6 @@ export default function DashboardLayout({
   } = theme.useToken();
 
   const session: any = useSession();
-  console.log("session", session);
   
   if (session.data.user.role !== "Admin") {
     redirect("/");

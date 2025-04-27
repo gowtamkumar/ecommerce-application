@@ -1,0 +1,20 @@
+/* ant desin table row color change for notification */
+.highlighted-row {
+  background-color: #f0f9ff; /* Light blue for highlighted rows */
+  cursor: pointer;
+}
+
+.normal-row {
+  background-color: #ffffff; /* Default white background */
+  cursor: pointer;
+}
+
+.action-column {
+  text-align: right; /* Aligns the content to the right */
+  vertical-align: middle; /* Centers the dot vertically */
+}
+
+
+.bg-green-500 {
+  margin-left: auto; /* Pushes the dot to the far right */
+}

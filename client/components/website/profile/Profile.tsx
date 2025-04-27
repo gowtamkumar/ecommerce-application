@@ -3,13 +3,10 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
 import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
-// redux
-import { useDispatch } from "react-redux";
-import { setLoading } from "@/redux/features/global/globalSlice";
 // api
-import { getMe } from "@/lib/apis/user";
 import NotificationsUser from "./NotificationsUser";
 import { useRouter, useSearchParams } from "next/navigation";
+import "./notification.css";
 
 const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
   ssr: false,
@@ -47,22 +44,12 @@ const OrderTracker = dynamic(() => import("./OrderTracker"), {
 });
 
 export default function Profile() {
-  const [user, setUser] = useState({} as any);
   const [tabKey, setTabKey] = useState("my_account");
   // hook
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const searchQuery = useSearchParams();
   const categoryIdParams = searchQuery.get("tab");
   const route = useRouter();
-
-  useEffect(() => {
-    feathUser();
-  }, [dispatch]);
-
-  const feathUser = async () => {
-    const res = await getMe();
-    setUser(res.data);
-  };
 
   useEffect(() => {
     setTabKey(categoryIdParams ?? "my_account");
@@ -70,14 +57,8 @@ export default function Profile() {
 
   return (
     <Tabs
-      onChange={
-        (key) =>
-          route.replace(
-            `/profile?tab=${key}`,
-            { scroll: false }
-            // { shallow: true }
-          )
-        //  setTabKey(key)
+      onChange={(key) =>
+        route.replace(`/profile?tab=${key}`, { scroll: false })
       }
       defaultValue={tabKey}
       activeKey={tabKey}
@@ -92,14 +73,14 @@ export default function Profile() {
         {
           label: `My Account`,
           key: "my_account",
-          children: <MyAccount user={user} />,
+          children: <MyAccount />,
           icon: <AppleOutlined />,
         },
 
         {
           label: `Orders`,
           key: "orders",
-          children: <UserOrders status="Pending" />,
+          children: <UserOrders />,
           icon: <AndroidOutlined />,
         },
         {
@@ -112,9 +93,7 @@ export default function Profile() {
         {
           label: `Shipping Address`,
           key: "shipping_address",
-          children: (
-            <MyShippingAddress shippingAddress={user?.shippingAddress} />
-          ),
+          children: <MyShippingAddress />,
           icon: <AndroidOutlined />,
         },
         {
@@ -130,12 +109,12 @@ export default function Profile() {
           children: <NotificationsUser />,
           icon: <AndroidOutlined />,
         },
-        {
-          label: `My Returns & Cancellations`,
-          key: "my_Returns_cancellations",
-          children: <UserOrders status="Canceled" />,
-          icon: <AndroidOutlined />,
-        },
+        // {
+        //   label: `My Returns & Cancellations`,
+        //   key: "my_Returns_cancellations",
+        //   children: <UserOrders status="Canceled" />,
+        //   icon: <AndroidOutlined />,
+        // },
 
         // {
         //   label: `My Point`,

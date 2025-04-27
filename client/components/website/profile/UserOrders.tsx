@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import type { TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
   Input,
   Space,
@@ -9,9 +9,7 @@ import {
   Tag,
   Timeline,
   Divider,
-  Popconfirm,
-  notification,
-  message,
+  Tabs,
 } from "antd";
 import { CheckOutlined, SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
@@ -39,27 +37,26 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const UserOrders = ({ status }: { status: string }) => {
+const UserOrders = () => {
+  const [tabKey, setTabKey] = useState("Pending");
   const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData(status);
-  }, [dispatch, global.action]);
+    fetchData(tabKey);
+  }, [dispatch, tabKey, global.action]);
 
   const fetchData = async (status: string) => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getUserOrders(status);
-
       if (!res.success) {
         console.log("Error fetching orders");
         errorNotification({ message: res.message });
         return;
       }
-
       const newOrders = res.data?.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
@@ -71,6 +68,10 @@ const UserOrders = ({ status }: { status: string }) => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
+  };
+
+  const onChange = (key: string) => {
+    setTabKey(key);
   };
 
   const handleSearch = (
@@ -206,11 +207,17 @@ const UserOrders = ({ status }: { status: string }) => {
       },
       {
         title: "Color",
-        render: (v: any) => <span>Need to Get in product variant</span>,
+        dataIndex: "productVariant",
+        render: (v: any) => {
+          return <span>{v?.color?.name}</span>;
+        },
       },
       {
         title: "Size",
-        render: (v: any) => <span>Need to Get in product variant</span>,
+        dataIndex: "productVariant",
+        render: (v: any) => {
+          return <span>{v?.size?.name}</span>;
+        },
       },
 
       {
@@ -346,27 +353,24 @@ const UserOrders = ({ status }: { status: string }) => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("trackingNo"),
       title: "Tracking No",
       dataIndex: "trackingNo",
       key: "trackingNo",
       render: (value) => <span className="bg-green-200">{value}</span>,
+      ...getColumnSearchProps("trackingNo"),
     },
-
     { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
-
     {
       title: "Shipping Address",
       dataIndex: "shippingAddress",
       key: "shippingAddress",
       render: (value) => <span>{value?.address}</span>,
     },
-    // {
-    //   title: "Payment Method",
-    //   dataIndex: "paymentMethod",
-    //   key: "paymentMethod",
-    //   // render: (value) => <span>{value.address}</span>,
-    // },
+    {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+    },
     // {
     //   title: "Delivered Man",
     //   dataIndex: "deliveryMan",
@@ -380,7 +384,7 @@ const UserOrders = ({ status }: { status: string }) => {
       render: (date) => date && dayjs(date).format("DD-MM-YYYY h:mm A"),
     },
     {
-      title: "P. Status",
+      title: "Payment",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
     },
@@ -393,24 +397,17 @@ const UserOrders = ({ status }: { status: string }) => {
     },
     {
       title: "Action",
-      key: "operation",
-      render: (value) => (
-        <div className="flex gap-2 justify-end">
-          {/* <Button
-            size="small"
-            icon={<CheckOutlined />}
-            title="Renew Order"
-            className="me-1"
-            disabled={value.status !== "Returned"}
-          /> */}
+      key: "action",
+      render: (value) => {
+        if (!["Pending", "Approved", "Processing"].includes(value.status))
+          return null;
+
+        return (
           <Button
             size="small"
-            // icon={<Outlined />}
             title="Cancel Order"
             className="me-1"
             onClick={() => {
-              console.log("value", value);
-
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
@@ -423,13 +420,53 @@ const UserOrders = ({ status }: { status: string }) => {
           >
             Cancel Order
           </Button>
-        </div>
-      ),
+        );
+      },
     },
+  ];
+  const items: TabsProps["items"] = [
+    {
+      key: "Pending",
+      label: "Pending",
+    },
+    {
+      key: "Approved",
+      label: "Approved",
+    },
+    {
+      key: "Processing",
+      label: "Processing",
+    },
+    {
+      key: "On Shipping",
+      label: "On Shipping",
+    },
+    {
+      key: "Shipped",
+      label: "Shipped",
+    },
+    {
+      key: "Canceled",
+      label: "Canceled",
+    },
+    {
+      key: "Completed",
+      label: "Completed",
+    },
+    // {
+    //   key: "Returned",
+    //   label: "Returned",
+    // },
   ];
 
   return (
     <div className="p-3">
+      <Tabs
+        defaultActiveKey="1"
+        activeKey={tabKey}
+        items={items}
+        onChange={onChange}
+      />
       <Table
         scroll={{ x: "auto" }}
         dataSource={orders.map((items: any, idx: number) => ({

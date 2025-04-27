@@ -47,6 +47,15 @@ export async function getShippingAddress(): Promise<
 
   return await handleResponse(res);
 }
+export async function getUserShippingAddresses(){
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/shipping-address/user`, {
+    cache: "no-cache",
+    headers,
+  });
+
+  return await handleResponse(res);
+}
 
 // Function to update a shipping address
 export async function updateShippingAddress(

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import type { TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
   Input,
   Space,
@@ -10,6 +10,7 @@ import {
   Tag,
   Timeline,
   Divider,
+  Tabs,
 } from "antd";
 import {
   PlusOutlined,
@@ -65,16 +66,10 @@ interface DataType {
   trackingNo: string;
 }
 
-interface ExpandedDataType {
-  key: React.Key;
-  title: string;
-  dataIndex: string;
-  render?: undefined;
-}
-
 type DataIndex = keyof DataType;
 
 const Page: React.FC = () => {
+  const [tabKey, setTabKey] = useState("Pending");
   const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState(null) as any;
   const global = useSelector(selectGlobal);
@@ -83,7 +78,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getOrders();
+      const res = await getOrders(tabKey);
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
@@ -91,7 +86,7 @@ const Page: React.FC = () => {
       setOrders(newOrders);
       dispatch(setLoading({ loading: false }));
     })();
-  }, [dispatch, global.action]);
+  }, [dispatch, tabKey, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -106,6 +101,10 @@ const Page: React.FC = () => {
       console.log("v", error);
       toast.error(error);
     }
+  };
+
+  const onChange = (key: string) => {
+    setTabKey(key);
   };
 
   const handleSearch = (
@@ -306,13 +305,19 @@ const Page: React.FC = () => {
             <span className="font-bold">Order No: </span>
             <code>{value.trackingNo}</code>
           </h1>
-          <h1>
-            <span className="font-bold">Delivery Man: </span>
-            <code>{value?.deliveryMan?.name}</code>
-          </h1>
+          {value.tranId && (
+            <h1>
+              <span className="font-bold">Transaction ID: </span>
+              <code>{value.tranId}</code>
+            </h1>
+          )}
           <h1>
             <span className="font-bold">Shipping Address: </span>
             <code> {value.shippingAddress?.address}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Delivery Man: </span>
+            <code>{value?.deliveryMan?.name}</code>
           </h1>
           <Divider dashed />
           <div className="p-4 bg-white">
@@ -398,7 +403,9 @@ const Page: React.FC = () => {
 
               <div className="flex justify-between border-t-2">
                 <h1>Grand Total:</h1>
-                <h1 className="font-semibold">{(+value.grandTotal - paidAmount).toFixed(2)}</h1>
+                <h1 className="font-semibold">
+                  {(+value.grandTotal - paidAmount).toFixed(2)}
+                </h1>
               </div>
             </div>
           </div>
@@ -569,8 +576,49 @@ const Page: React.FC = () => {
     },
   ];
 
+  const items: TabsProps["items"] = [
+    {
+      key: "Pending",
+      label: "Pending",
+    },
+    {
+      key: "Approved",
+      label: "Approved",
+    },
+    {
+      key: "Processing",
+      label: "Processing",
+    },
+    {
+      key: "On Shipping",
+      label: "On Shipping",
+    },
+    {
+      key: "Shipped",
+      label: "Shipped",
+    },
+    {
+      key: "Canceled",
+      label: "Canceled",
+    },
+    {
+      key: "Completed",
+      label: "Completed",
+    },
+    {
+      key: "Returned",
+      label: "Returned",
+    },
+  ];
+
   return (
     <div className="p-3">
+      <Tabs
+        defaultActiveKey="1"
+        activeKey={tabKey}
+        items={items}
+        onChange={onChange}
+      />
       <Table
         scroll={{ x: "auto" }}
         dataSource={orders}

@@ -371,52 +371,20 @@ export const getMe = asyncHandler(
       "user.image",
       "user.dob",
       "user.gender",
+      "user.address",
       "user.status",
       "user.lastLogin",
       "user.lastLogout",
       "user.lastLogout",
-      "orders",
 
-      // "products.name",
-      // "products.createdAt",
-      // "products.description",
-      // "products.enableReview",
-      // "products.images",
-      // "products.limitPurchaseQty",
-      // "products.alertQty",
-      // "products.shortDescription",
-      // "products.status",
-      // "products.tags",
-      // "products.slug",
-
-      // "product",
-      // "productVariants.unitPrice",
-
-      // "discount.discountStrategy",
-      // "discount.value",
-      // "tax.value",
-      // "reviews",
-
-      "orderShippingAddress.name",
-      "orderShippingAddress.type",
-      "orderShippingAddress.phoneNo",
-      "orderShippingAddress.email",
-      "orderShippingAddress.country",
-      "orderShippingAddress.alternativePhoneNo",
-      "orderShippingAddress.address",
-      "orderShippingAddress.phoneNo",
-
-      "shippingAddress.id",
-      "shippingAddress.name",
-      "shippingAddress.phoneNo",
-      "shippingAddress.email",
-      "shippingAddress.country",
-      "shippingAddress.alternativePhoneNo",
-      "shippingAddress.address",
-      "shippingAddress.phoneNo",
-      "shippingAddress.type",
-      "shippingAddress.status",
-      "shippingAddress.divisionId",
+      // "orderShippingAddress.name",
+      // "orderShippingAddress.type",
+      // "orderShippingAddress.phoneNo",
+      // "orderShippingAddress.email",
+      // "orderShippingAddress.country",
+      // "orderShippingAddress.alternativePhoneNo",
+      // "orderShippingAddress.address",
+      // "orderShippingAddress.phoneNo",
 
       // "orderDeliveries",
       // "wishlists",
@@ -429,25 +397,25 @@ export const getMe = asyncHandler(
       // "orderItems.productId",
 
       // "orderProduct.name",
-      "orderTrackings.location",
-      "orderTrackings.createdAt",
-      "orderTrackings.status",
+      // "orderTrackings.location",
+      // "orderTrackings.createdAt",
+      // "orderTrackings.status",
       // "deliveryMan.name",
       // "payments",
       // "size.name",
       // "color.name",
     ]);
 
-    qb.leftJoin("user.orders", "orders");
+    // qb.leftJoin("user.orders", "orders");
 
     // qb.leftJoin("orders.orderItems", "orderItems");
     // qb.leftJoin("orderItems.product", "orderProduct");
-    qb.leftJoin("orders.orderTrackings", "orderTrackings");
+    // qb.leftJoin("orders.orderTrackings", "orderTrackings");
     // qb.leftJoin("orders.deliveryMan", "deliveryMan");
-    qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
+    // qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
 
     // qb.leftJoin("user.products", "products");
-    qb.leftJoin("user.shippingAddress", "shippingAddress");
+    // qb.leftJoin("user.shippingAddress", "shippingAddress");
     // qb.leftJoin("user.orderDeliveries", "orderDeliveries");
     // qb.leftJoin("user.wishlists", "wishlists");
     // qb.leftJoin("wishlists.product", "product");

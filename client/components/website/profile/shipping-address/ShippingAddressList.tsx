@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -21,7 +21,7 @@ import {
 import { ActionType } from "@/constants/constants";
 import {
   deleteShippingAddress,
-  getShippingAddress,
+  getUserShippingAddresses,
 } from "@/lib/apis/shipping-address";
 import {
   errorNotification,
@@ -47,21 +47,40 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const ShippingAddressList = ({ shippingAddress }: any) => {
+const ShippingAddressList = () => {
+  const [loaading, setLoading] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState<DataType[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const handleDelete = async (id: string) => {
-    dispatch(setLoading({ save: true }));
+  useEffect(() => {
+    setLoading(true);
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
     try {
-      await deleteShippingAddress(id);
-      successNotification({ message: "Successfully deleted" });
-      // fetchData();
+      const getShippingAddress = await getUserShippingAddresses();
+      if (getShippingAddress.success) {
+        setShippingAddress(getShippingAddress.data);
+      }
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      dispatch(setLoading({ save: false }));
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      await deleteShippingAddress(id);
+      successNotification({ message: "Successfully deleted" });
+    } catch (error: any) {
+      errorNotification({ message: error.message });
+    } finally {
+      setLoading(false);
       dispatch(setAction({}));
     }
   };
@@ -93,7 +112,7 @@ const ShippingAddressList = ({ shippingAddress }: any) => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
+          ref={searchInput as any}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
@@ -324,7 +343,7 @@ const ShippingAddressList = ({ shippingAddress }: any) => {
 
       <Table
         scroll={{ x: "auto" }}
-        loading={global.loading.loading}
+        loading={loaading}
         columns={columns}
         dataSource={shippingAddress}
         pagination={{ pageSize: 10 }}

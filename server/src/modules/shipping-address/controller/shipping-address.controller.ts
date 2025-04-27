@@ -29,6 +29,29 @@ export const getShippingAddresses = asyncHandler(
   }
 );
 
+// @desc Get all ShippingAddress
+// @route GET /api/v1/shipping-address
+// @access Public
+export const getUserShippingAddresses = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: getUserShippingAddresses ${req.method} ${req.url}`);
+
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(ShippingAddressEntity);
+
+    const result = await repository.find({
+      where: { userId: req.id },
+      relations: ["division", "district", "upazila", "union", "user"],
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Get all ShippingAddress",
+      data: result,
+    });
+  }
+);
+
 // @desc Get a single ShippingAddress
 // @route GET /api/v1/shipping-address/:id
 // @access Public

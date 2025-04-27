@@ -15,9 +15,9 @@ export async function saveOrder(data: any) {
   return await res.json();
 }
 
-export async function getOrders() {
+export async function getOrders(status?: string) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/orders`, {
+  const res = await fetch(`${appConfig.apiUrl}/orders?status=${status}`, {
     cache: "no-cache",
     headers,
   });
