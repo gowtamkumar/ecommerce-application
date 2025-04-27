@@ -90,7 +90,7 @@ export const getDiscountDetails = asyncHandler(
 );
 
 // @desc Get a single Discount
-// @route GET /api/v1/Discounts/:id
+// @route GET /api/v1/discounts/slug/:slug
 // @access Public
 export const getDiscountBySlug = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -104,12 +104,12 @@ export const getDiscountBySlug = asyncHandler(
     });
 
     if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+      throw new Error(`Resource not found of slug #${slug}`);
     }
 
     return res.status(200).json({
       success: true,
-      message: `Get a single Discount of id ${req.params.id}`,
+      message: `Get a single Discount of slug ${slug}`,
       data: result,
     });
   }

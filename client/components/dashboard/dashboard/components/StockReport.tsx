@@ -3,10 +3,9 @@ import React, { useState } from "react";
 import { Card, Statistic, Tabs } from "antd";
 import dynamic from "next/dynamic";
 
-const StockDataTable = dynamic(
-  () => import("../tables/DataTable"), {ssr: false}
-);
-
+const StockDataTable = dynamic(() => import("../tables/DataTable"), {
+  ssr: false,
+});
 
 const StockReport = ({ recentHistory }: any) => {
   const [tabKey, setTabKey] = useState("Pending");
@@ -75,18 +74,7 @@ const StockReport = ({ recentHistory }: any) => {
                 />
               ),
             },
-            {
-              label: "Sale Returned",
-              key: "Returned",
-              children: (
-                <StockDataTable
-                  type={tabKey}
-                  orderData={orders.filter(
-                    (item: any) => item.status === tabKey
-                  )}
-                />
-              ),
-            },
+           
           ]}
         />
       </div>

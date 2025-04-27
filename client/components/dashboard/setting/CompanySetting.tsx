@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
+import { Button, Form, Image, Input, Modal, Upload } from "antd";
 import {
   selectGlobal,
   setFormValues,
@@ -218,7 +218,7 @@ const CompanySetting = ({ currencies }: any) => {
           />
         </Modal>
 
-        <Form.Item>
+        <Form.Item {...tailLayout}>
           <Button
             className="me-2"
             size="small"

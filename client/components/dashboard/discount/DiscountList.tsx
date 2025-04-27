@@ -32,6 +32,7 @@ interface DataType {
   name: string;
   discountStrategy: string;
   value: number;
+  slug: string;
   status: string;
   startDate: string;
   endDate: string;
@@ -52,7 +53,7 @@ const DiscountList: React.FC = () => {
     fetchData();
   }, [
     global.action.type === ActionType.DELETE ||
-    global.action.type === ActionType.UPDATE,
+      global.action.type === ActionType.UPDATE,
   ]);
 
   const fetchData = async () => {
@@ -199,15 +200,6 @@ const DiscountList: React.FC = () => {
       key: "name",
       sorter: (a, b) => a.name?.length - b.name?.length,
     },
-
-    {
-      ...getColumnSearchProps("discountStrategy"),
-      title: "Discount Type",
-      dataIndex: "discountStrategy",
-      key: "discountStrategy",
-      sorter: (a, b) => a.discountStrategy.length - b.discountStrategy.length,
-      render: (value) => <Tag color="cyan">{value}</Tag>,
-    },
     {
       title: "Scope",
       dataIndex: "scope",
@@ -218,12 +210,27 @@ const DiscountList: React.FC = () => {
       ),
     },
     {
-      title: "Promotion Type",
-      dataIndex: "promotionType",
-      key: "promotionType",
-      sorter: (a, b) => a.promotionType.length - b.promotionType.length,
+      ...getColumnSearchProps("discountStrategy"),
+      title: "Discount Type",
+      dataIndex: "discountStrategy",
+      key: "discountStrategy",
+      sorter: (a, b) => a.discountStrategy.length - b.discountStrategy.length,
       render: (value) => <Tag color="cyan">{value}</Tag>,
     },
+
+    {
+      title: "Slug",
+      dataIndex: "slug",
+      key: "slug",
+    },
+
+    // {
+    //   title: "Promotion Type",
+    //   dataIndex: "promotionType",
+    //   key: "promotionType",
+    //   sorter: (a, b) => a.promotionType.length - b.promotionType.length,
+    //   render: (value) => <Tag color="cyan">{value}</Tag>,
+    // },
 
     {
       title: "Value",
@@ -315,16 +322,16 @@ const DiscountList: React.FC = () => {
             title="Edit"
             className="me-1"
             onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
-          // onClick={() =>
+            // onClick={() =>
 
-          //   dispatch(
-          //     setAction({
-          //       discount: true,
-          //       type: ActionType.UPDATE,
-          //       payload: value,
-          //     })
-          //   )
-          // }
+            //   dispatch(
+            //     setAction({
+            //       discount: true,
+            //       type: ActionType.UPDATE,
+            //       payload: value,
+            //     })
+            //   )
+            // }
           />
           <Popconfirm
             title={

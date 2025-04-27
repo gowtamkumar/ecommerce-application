@@ -13,24 +13,24 @@ import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/appConfig";
 import SyncGeoLocation from "./SyncGeoLocation";
 
-const Size = dynamic(() => import("@/app/(dashboard)/dashboard/size/page"), {
+const Size = dynamic(() => import("@/app/dashboard/size/page"), {
   ssr: false,
 });
-const Unit = dynamic(() => import("@/app/(dashboard)/dashboard/unit/page"), {
+const Unit = dynamic(() => import("@/app/dashboard/unit/page"), {
   ssr: false,
 });
-const Tax = dynamic(() => import("@/app/(dashboard)/dashboard/taxs/page"), {
+const Tax = dynamic(() => import("@/app/dashboard/taxs/page"), {
   ssr: false,
 });
-const Color = dynamic(() => import("@/app/(dashboard)/dashboard/color/page"), {
+const Color = dynamic(() => import("@/app/dashboard/color/page"), {
   ssr: false,
 });
 const Banner = dynamic(
-  () => import("@/app/(dashboard)/dashboard/banner/page"),
+  () => import("@/app/dashboard/banner/page"),
   { ssr: false }
 );
 const Review = dynamic(
-  () => import("@/app/(dashboard)/dashboard/review/page"),
+  () => import("@/app/dashboard/review/page"),
   { ssr: false }
 );
 // const Status = dynamic(

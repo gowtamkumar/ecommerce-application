@@ -2,7 +2,6 @@ import appConfig from "@/appConfig";
 import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import { getHomeApi } from "@/lib/apis/home";
-import { Button } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
@@ -18,15 +17,14 @@ const HeaderDiscount = dynamic(
   () => import("@/components/website/banner/HeaderDiscount")
 );
 
-const MoreDiscover = dynamic(
-  () => import("@/components/website/home/MoreDiscover")
-);
+// const MoreDiscover = dynamic(
+//   () => import("@/components/website/home/MoreDiscover")
+// );
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
   const home = await getHomeApi();
-  const { banners, discounts, categories, products, topSellingProducts } =
-    home.data || {};
+  const { banners, categories, products, topSellingProducts } = home.data || {};
 
   return (
     <>
@@ -34,8 +32,16 @@ export default async function Home() {
         <Header />
         <div className="container mx-auto">
           <div className="grid md:grid-cols-12 grid-cols-1 gap-2">
-            <Slider banners={banners} />
-            <HeaderDiscount discounts={discounts} />
+            <Slider
+              banners={banners?.filter(
+                (item: { type: string }) => item.type === "Slider"
+              )}
+            />
+            <HeaderDiscount
+              discounts={banners?.filter(
+                (item: { type: string }) => item.type === "Slider Right"
+              )}
+            />
           </div>
         </div>
       </header>
@@ -43,22 +49,25 @@ export default async function Home() {
       <main>
         {/* all category show */}
         {categories && <CategoryCard categories={categories} />}
-
-        <section className="container mx-auto grid md:grid-cols-3 gap-8 py-3">
-          {(banners || []).map((item: any, index: number) => (
-            <div
-              key={index}
-              className="bg-cover bg-center h-56 flex flex-col justify-center items-start text-white p-4 text-start"
-              style={{
-                backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,
-              }}
-            >
-              <h3 className="text-xl font-bold text-black">{item.title}</h3>
-              <p className="text-sm mb-2 text-black">{item.description}</p>
-              <Button>Shop Now</Button>
-            </div>
-          ))}
-        </section>
+        {banners.length > 0 && (
+          <section className="container mx-auto grid md:grid-cols-3 gap-8 py-3">
+            {banners
+              ?.filter((item: { type: string }) => item.type === "Banner")
+              .map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="bg-cover bg-center h-56 flex flex-col justify-center items-start text-white p-4 text-start"
+                  style={{
+                    backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,
+                  }}
+                >
+                  <h3 className="text-xl font-bold text-black">{item.title}</h3>
+                  <p className="text-sm mb-2 text-black">{item.description}</p>
+                  <Link href={`/offer/${item.url}`}>Shop Now</Link>
+                </div>
+              ))}
+          </section>
+        )}
 
         {/* Featured Products */}
         {products?.data && (
@@ -85,20 +94,22 @@ export default async function Home() {
         </section>
 
         {/* Top Selling Product */}
-        <section className="container mx-auto py-5">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">Top Selling Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <FeaturedProduct products={topSellingProducts} />
-        </section>
+        {topSellingProducts?.length > 0 && (
+          <section className="container mx-auto py-5">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold">Top Selling Products</h2>
+              <Link href={"/products"} className="hover:underline">
+                View all
+              </Link>
+            </div>
+            <FeaturedProduct products={topSellingProducts} />
+          </section>
+        )}
         {/* product banner */}
         {banners.length > 0 && (
           <SellerAds
             banners={(banners || []).filter(
-              (item: { type: string }) => item.type === "Middle"
+              (item: { type: string }) => item.type === "Footer"
             )}
           />
         )}

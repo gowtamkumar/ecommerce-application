@@ -218,11 +218,10 @@ const BannerList: React.FC = () => {
     },
 
     {
+      ...getColumnSearchProps("active"),
       title: "Active",
       key: "active",
-      ...getColumnSearchProps("active"),
       sortDirections: ["descend", "ascend"],
-      // sorter: (a, b) => a.active.length - b.active.length,
       render: (value) => (
         <Tag color={value.active ? "green" : "red"}>
           {value.active ? "Active" : "Inactive"}

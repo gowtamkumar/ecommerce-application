@@ -19,7 +19,6 @@ import {
   normFile,
 } from "@/lib/utils/commonFunctions";
 
-
 const uploadButton = (
   <div>
     <PlusOutlined />
@@ -50,7 +49,7 @@ const AddBanner = () => {
       setFormValues({});
       form.resetFields();
     };
-  }, [payload]);
+  }, [global.action]);
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
@@ -58,9 +57,6 @@ const AddBanner = () => {
     const result = newData.id
       ? () => updateBanner(newData)
       : () => saveBanner(newData);
-
-      console.log("result", result);
-      
 
     const messageData = newData.id
       ? "Successfully Updated"
@@ -181,7 +177,7 @@ const AddBanner = () => {
                 .indexOf(input.toLowerCase()) >= 0
             }
           >
-            {["Slider", "Middle", "Left", "Right", "Footer"].map(
+            {["Slider", "Banner", "Slider Right", "Footer"].map(
               (item: string) => (
                 <Select.Option key={item} value={item}>
                   {item}

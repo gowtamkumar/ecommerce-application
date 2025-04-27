@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const bannerValidationSchema = z.object({
-  type: z.enum(["Slider", "Middle", "Left", "Right", "Footer"], {
+  type: z.enum(["Slider", "Banner", "Slider Right","Footer"], {
     required_error: "type is required",
   }),
   title: z.string({

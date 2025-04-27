@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../../../../middlewares/async.middleware";
 import { logger } from "../../../../../middlewares/logger";
 import { getDBConnection } from "../../../../../config/db";
-import { DiscountEntity } from "../../../../discount/model/discount.entity";
 import { CategoriesEntity } from "../../../../categories/model/categories.entity";
 import { productsQuery, topSellingProductQuery } from "../../../../../sqlQuery";
 import { BannerEntity } from "../../../../banner/model/banner.entity";
@@ -28,9 +27,6 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
     //   description: true,
     // },
   });
-
-  const discountRepository = connection.getRepository(DiscountEntity);
-  const discounts = await discountRepository.find();
 
   const categoriesRepository = connection.getRepository(CategoriesEntity);
   const categories = await categoriesRepository.find({
@@ -68,7 +64,6 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
       },
       topSellingProducts,
       banners,
-      discounts,
       categories,
     },
   });

@@ -13,31 +13,17 @@ import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
 import { errorNotification } from "@/lib/utils/notification";
-const LossProfit = dynamic(() => import("./LossProfit"), {
-  ssr: false,
-});
-const WidgetStats = dynamic(() => import("./components/WidgetStats"), {
-  ssr: false,
-});
+const LossProfit = dynamic(() => import("./LossProfit"));
+const WidgetStats = dynamic(() => import("./components/WidgetStats"));
 
-const StockReport = dynamic(() => import("./components/StockReport"), {
-  ssr: false,
-});
-const TopCustomer = dynamic(() => import("./components/TopCustomer"), {
-  ssr: false,
-});
-const StockAlert = dynamic(() => import("./components/StockAlert"), {
-  ssr: false,
-});
+const StockReport = dynamic(() => import("./components/StockReport"));
+const TopCustomer = dynamic(() => import("./components/TopCustomer"));
+const StockAlert = dynamic(() => import("./components/StockAlert"));
 
 const TopSellingProduct = dynamic(
-  () => import("./components/TopSallingProduct"),
-  { ssr: false }
+  () => import("./components/TopSallingProduct")
 );
-const TotalOrderSummaryDashboard = dynamic(
-  () => import("./TodayOrderSummary"),
-  { ssr: false }
-);
+// const TotalOrderSummaryDashboard = dynamic(() => import("./TodayOrderSummary"));
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
@@ -61,31 +47,33 @@ const Dashboard = () => {
   const lastDateOfMonth = dayjs().endOf("month");
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const results = await getDashboardReports({
-          startDate: firstDateOfMonth.toISOString(),
-          endDate: lastDateOfMonth.toISOString(),
-        });
-
-        if (!results.success) {
-          errorNotification({ message: results.message });
-          setLoading(false);
-          return;
-        }
-
-        setDashboardReports(results.data);
-      } catch (err: any) {
-        console.error("Error fetching data:", err);
-        errorNotification({ message: err?.message || "An error occurred" });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData(); // Call the function to fetch data
   }, []); // Empty dependency array ensures this only runs once on mount
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const results = await getDashboardReports({
+        startDate: firstDateOfMonth.toISOString(),
+        endDate: lastDateOfMonth.toISOString(),
+      });
+
+      console.log("results", results);
+
+      if (!results.success) {
+        errorNotification({ message: results.message });
+        setLoading(false);
+        return;
+      }
+
+      setDashboardReports(results.data);
+    } catch (err: any) {
+      console.error("Error fetching data:", err);
+      errorNotification({ message: err?.message || "An error occurred" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
     (
@@ -125,7 +113,7 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <TotalOrderSummaryDashboard />
+      {/* <TotalOrderSummaryDashboard /> */}
 
       <div className="grid grid-cols-4 gap-2">
         <WidgetStats
@@ -157,9 +145,8 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="py-4">
         <StockReport recentHistory={dashboardReports} />
-      </div>
+    
 
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-3 mb-3">

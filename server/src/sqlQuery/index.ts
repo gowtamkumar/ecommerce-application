@@ -223,10 +223,11 @@ export const productsQuery = async (queryData: any) => {
     categoryId,
     minPrice,
     maxPrice,
-    discount,
     page = 1,
     perPage = 12,
+    discount,
     discountId,
+    discountSlug,
     featured,
   } = queryData;
 
@@ -290,6 +291,7 @@ export const productsQuery = async (queryData: any) => {
           dis.id AS discount_id,
           dis.discount_strategy,
           dis.value AS discount_value,
+          dis.slug AS discount_slug,
           dis.scope,
           dis.promotion_type,
           dis.start_date,
@@ -309,6 +311,7 @@ export const productsQuery = async (queryData: any) => {
           dis.discount_id,
           dis.discount_strategy,
           dis.discount_value,
+          dis.discount_slug,
           dis.scope,
           dis.promotion_type
       FROM products p
@@ -347,6 +350,7 @@ export const productsQuery = async (queryData: any) => {
           sd.discount_id as "discountId",
           sd.discount_strategy AS "discountStrategy",
           sd.discount_value AS "discountValue",
+          sd.discount_slug AS "discountSlug",
           sd.scope,
           sd.promotion_type AS "promotionType",
           p.featured,
@@ -474,7 +478,14 @@ WHERE 1=1
   `
       : ""
   }
-  ${discountId ? `AND "discountId" = ${discountId}` : ""}
+      
+ ${
+   discountId
+     ? `AND "discountId" = ${discountId}`
+     : discountSlug
+     ? `AND "discountSlug" = '${discountSlug}'`
+     : ""
+ }
 ORDER BY ${lowPrice && !highPrice ? `"finalPrice" ASC` : `"finalPrice" DESC`}
 LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
 `;

@@ -1,7 +1,6 @@
 export enum BannerType {
   Slider = "Slider",
-  Middle = "Middle",
-  Left = "Left",
-  Right = "Right",
+  Banner = "Banner",
+  SliderRight = "Slider Right",
   Footer = "Footer",
 }

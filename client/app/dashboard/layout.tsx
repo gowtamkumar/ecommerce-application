@@ -6,11 +6,19 @@ import React, { Suspense } from "react";
 import { useSession } from "next-auth/react";
 const { Content } = Layout;
 
-const FooterOption = dynamic(() => import("@/components/dashboard/Footer"), {ssr: false});
-const BreadCrumb = dynamic(() => import("@/components/dashboard/BreadCrumb"), {ssr: false});
-const Loading = dynamic(() => import("./dashboard/loading"), {ssr: false});
-const DashboardHeader = dynamic(() => import("@/components/dashboard/Header"), {ssr: false});
-const Sidebar = dynamic(() => import("@/components/dashboard/Sidebar"), {ssr: false});
+const FooterOption = dynamic(() => import("@/components/dashboard/Footer"), {
+  ssr: false,
+});
+const BreadCrumb = dynamic(() => import("@/components/dashboard/BreadCrumb"), {
+  ssr: false,
+});
+const Loading = dynamic(() => import("./loading"), { ssr: false });
+const DashboardHeader = dynamic(() => import("@/components/dashboard/Header"), {
+  ssr: false,
+});
+const Sidebar = dynamic(() => import("@/components/dashboard/Sidebar"), {
+  ssr: false,
+});
 
 export default function DashboardLayout({
   children,
@@ -22,7 +30,7 @@ export default function DashboardLayout({
   } = theme.useToken();
 
   const session: any = useSession();
-  
+
   if (session.data.user.role !== "Admin") {
     redirect("/");
   }

@@ -1,3 +1,4 @@
+"use client";
 import appConfig from "@/appConfig";
 import { message, Rate } from "antd";
 import Image from "next/image";
@@ -62,6 +63,9 @@ export default function Card({ item }: { item: any }) {
 
   return (
     <div className="border p-3 flex flex-col h-full">
+      <p className="text-sm  bg-blue-500 rounded p-[2px] text-white">
+        save:৳ {item.discountAmount}
+      </p>
       <div className="relative group">
         <Image
           src={thumbnailImage}
@@ -70,6 +74,7 @@ export default function Card({ item }: { item: any }) {
           height={800}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
           <Image

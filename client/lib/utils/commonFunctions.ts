@@ -17,22 +17,22 @@ export const handleAsyncAction = async (
   try {
     dispatch(setLoading({ save: true }));
     const res = await asyncFn();
-    // console.log("🚀 ~ Response:", res);
+    console.log("🚀 ~ Response:", res);
 
-    // if (!res.success) {
-    //   throw new Error(res?.message || "Operation failed");
-    // }
+    if (!res.success) {
+      errorNotification({ message: res.message });
+    }
 
     dispatch(setAction({}));
     console.log("call back function");
-    
-    // successNotification({ message: successMessage });
+
+    successNotification({ message: successMessage });
     return res; // Return the successful response
   } catch (error: any) {
     // console.log("🚀 ~ Error:", error?.message);
-
-    // const errorMessage = error?.message || "An unexpected error occurred";
-    // errorNotification({ message: errorMessage });
+    //
+    const errorMessage = error?.message || "An unexpected error occurred";
+    errorNotification({ message: errorMessage });
 
     // Return the error object or reject as a Promise
     return Promise.reject(error); // Ensures error propagation

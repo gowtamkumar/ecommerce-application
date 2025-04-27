@@ -13,9 +13,11 @@ interface getParams {
   lowPrice?: string;
   highPrice?: string;
   discount?: number;
+  discountId?: number;
   status?: boolean;
   perPage?: number;
   page?: number;
+  discountSlug?: string;
 }
 
 export async function getPublicProducts(params: getParams) {
@@ -30,6 +32,8 @@ export async function getPublicProducts(params: getParams) {
     categoryId,
     rating,
     discount,
+    discountId,
+    discountSlug,
     perPage,
     page,
   }: getParams = params;
@@ -52,10 +56,15 @@ export async function getPublicProducts(params: getParams) {
     queryString += `categoryId=${categoryId}&`;
   }
 
-
-
   if (colorId?.length > 0) {
     queryString += `colorId=${colorId}&`;
+  }
+
+  if (discountId) {
+    queryString += `discountId=${discountId}&`;
+  }
+  if (discountSlug) {
+    queryString += `discountSlug=${discountSlug}&`;
   }
 
   if (maxPrice) {
