@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/appConfig";
 import SyncGeoLocation from "./SyncGeoLocation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Size = dynamic(() => import("@/app/dashboard/size/page"), {
   ssr: false,
@@ -25,14 +26,12 @@ const Tax = dynamic(() => import("@/app/dashboard/taxs/page"), {
 const Color = dynamic(() => import("@/app/dashboard/color/page"), {
   ssr: false,
 });
-const Banner = dynamic(
-  () => import("@/app/dashboard/banner/page"),
-  { ssr: false }
-);
-const Review = dynamic(
-  () => import("@/app/dashboard/review/page"),
-  { ssr: false }
-);
+const Banner = dynamic(() => import("@/app/dashboard/banner/page"), {
+  ssr: false,
+});
+const Review = dynamic(() => import("@/app/dashboard/review/page"), {
+  ssr: false,
+});
 // const Status = dynamic(
 //   () => import("@/app/(dashboard)/dashboard/status/page"),
 //   { ssr: false }
@@ -45,12 +44,17 @@ const CompanySetting = dynamic(() => import("./CompanySetting"), {
 });
 
 export default function Index() {
+  const [tabKey, setTabKey] = useState<any>("company_setting");
   const [currencies, setCurrencies] = useState([] as any);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const route = useRouter();
+  const params = useSearchParams();
+  const tab = params.get("tab");
 
   useEffect(() => {
     let isMounted = true;
+    setTabKey(tab);
     const fetchSettings = async () => {
       try {
         const setting = await getSettings();
@@ -62,7 +66,9 @@ export default function Index() {
             name: `logo ${Math.random() * 10000 + ""}`,
             status: "done",
             fileName: data.image,
-            url: `${appConfig.baseApiUrl}/uploads/${data.image || "no-data.png"}`,
+            url: `${appConfig.baseApiUrl}/uploads/${
+              data.image || "no-data.png"
+            }`,
           };
           dispatch(setFormValues({ ...data, fileList: [newfile] }));
           setCurrencies(currency.data);
@@ -71,7 +77,6 @@ export default function Index() {
         console.error("Failed to fetch settings:", error);
       }
     };
-
     fetchSettings();
     return () => {
       isMounted = false;
@@ -82,12 +87,17 @@ export default function Index() {
   return (
     <Tabs
       tabPosition="left"
-      defaultValue={"company_stting"}
+      defaultValue={tabKey}
+      activeKey={tabKey}
+      onChange={(key) => {
+        setTabKey(key);
+        route.push(`/dashboard/setting?tab=${key}`);
+      }}
       type="card"
       items={[
         {
           label: "Company Setting",
-          key: "web_site_stting",
+          key: "company_setting",
           children: <CompanySetting currencies={currencies} />,
         },
         // {
@@ -102,28 +112,28 @@ export default function Index() {
         // },
         {
           label: "Sizes",
-          key: "size",
+          key: "sizes",
           children: <Size />,
         },
         {
           label: "Units",
-          key: "unit",
+          key: "units",
           children: <Unit />,
         },
         {
           label: "Taxs",
-          key: "tax",
+          key: "taxs",
           children: <Tax />,
         },
-    
+
         {
           label: "Colors",
-          key: "color",
+          key: "colors",
           children: <Color />,
         },
         {
           label: "Banner",
-          key: "banner",
+          key: "banners",
           children: <Banner />,
         },
         {
@@ -143,12 +153,12 @@ export default function Index() {
         // },
         {
           label: "Leads",
-          key: "lead",
+          key: "leads",
           children: <Lead />,
         },
         {
           label: "Sync Geo locaton",
-          key: "geo_location",
+          key: "geo_locations",
           children: <SyncGeoLocation />,
         },
       ]}

@@ -17,7 +17,10 @@ export const getNotifications = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(NotificationEntity);
 
-    const result = await repository.find({ where: { userId: req.id }, sort: { createdAt: "DESC" } });
+    const result = await repository.find({
+      where: { userId: req.id },
+      order: { createdAt: "DESC" },
+    });
 
     return res.status(200).json({
       success: true,

@@ -9,7 +9,7 @@
 /coverage
 opp.js
 jest.config.js
-app.log
+app.log*
 # production
 
 # misc

@@ -246,7 +246,7 @@ const navbarRoute = [
   {
     key: "setting_manage",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/setting">Setting</Link>,
+    label: <Link href="/dashboard/setting?tab=company_setting">Setting</Link>,
     route: "true",
   },
   {

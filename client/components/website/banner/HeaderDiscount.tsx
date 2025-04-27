@@ -20,7 +20,7 @@ export default function HeaderDiscount({ discounts }: any) {
   const router = useRouter();
 
   return (
-    <div className="md:col-span-3 border">
+    <div className="md:col-span-3 ">
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, Autoplay]}
         slidesPerView={1}
@@ -33,7 +33,7 @@ export default function HeaderDiscount({ discounts }: any) {
             <SwiperSlide key={idx}>
               <div className="relative gap-3">
                 <Image
-                  alt={item.type || "discount-image"}
+                  alt={item.type}
                   src={
                     item.image
                       ? `${appConfig.baseApiUrl}/uploads/${item.image}`
@@ -43,7 +43,7 @@ export default function HeaderDiscount({ discounts }: any) {
                   // fill
                   width={0}
                   height={0}
-                  className="md:h-[57vh] md:w-[60vw]"
+                  className="md:h-[57vh] md:w-[60vw] rounded-lg"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute flex items-center justify-center bottom-0 left-0 top-0 w-full text-white">

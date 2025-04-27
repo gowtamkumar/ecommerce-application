@@ -20,9 +20,7 @@ export default function CategoryCard({ categories }: any) {
   return (
     <section>
       <div className="container mx-auto">
-        <h2 className="text-xl text-center font-semibold ">
-          Shop by Category
-        </h2>
+        <h2 className="text-xl text-center font-semibold ">Shop by Category</h2>
         <div className="relative w-full">
           <Swiper
             modules={[
@@ -38,10 +36,10 @@ export default function CategoryCard({ categories }: any) {
             pagination={{ clickable: true }}
             // autoplay={true}
             // speed={1000}
-            navigation={{
-              nextEl: ".custom-next",
-              prevEl: ".custom-prev",
-            }}
+            // navigation={{
+            //   nextEl: ".custom-next",
+            //   prevEl: ".custom-prev",
+            // }}
             breakpoints={{
               // when window width is >= 640px
               640: {
@@ -59,40 +57,37 @@ export default function CategoryCard({ categories }: any) {
               return (
                 <SwiperSlide key={idx}>
                   <div
-                    className="flex mx-auto  text-center items-center justify-center cursor-pointer border"
+                    className="flex flex-col py-5 gap-2 items-center justify-center mx-auto bg-gray-100  text-center cursor-pointer rounded-lg"
                     onClick={() => {
                       router.push(`/products?categoryId=${item.id}&`);
                     }}
                   >
-                    <div>
-                      <Image
-                        alt={item.name || "image"}
-                        src={
-                          item.image
-                            ? `${appConfig.baseApiUrl}/uploads/${item.image}`
-                            : "/pos_software.png"
-                        }
-                        loading="lazy"
-                        width={70}
-                        height={70}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
+                    <Image
+                      alt={item.name || "image"}
+                      src={
+                        item.image
+                          ? `${appConfig.baseApiUrl}/uploads/${item.image}`
+                          : "/pos_software.png"
+                      }
+                      loading="lazy"
+                      width={70}
+                      height={70}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
 
-                      <p className="hover:underline mt-1">{item.name}</p>
-                    </div>
+                    <p className="hover:underline mt-1">{item.name}</p>
                   </div>
                 </SwiperSlide>
               );
             })}
           </Swiper>
           {/* Custom Previous Button */}
-          <button className="custom-prev absolute z-40 top-1/2 -left-6 transform -translate-y-1/2">
+          {/* <button className="custom-prev absolute z-40 top-1/2 -left-6 transform -translate-y-1/2">
             <CiCircleChevLeft size={30} />
           </button>
-          {/* Custom Next Button */}
           <button className="custom-next absolute z-40 top-1/2 -right-5 transform -translate-y-1/2">
             <CiCircleChevRight size={30} />
-          </button>
+          </button> */}
         </div>
       </div>
     </section>

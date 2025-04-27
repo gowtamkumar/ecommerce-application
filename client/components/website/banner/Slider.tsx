@@ -23,7 +23,7 @@ export default function Slider({ banners }: any) {
       <div className="relative w-full">
         <Swiper
           modules={[
-            Navigation,
+            // Navigation,
             Pagination,
             Scrollbar,
             A11y,
@@ -36,10 +36,10 @@ export default function Slider({ banners }: any) {
           autoplay={true}
           loop
           speed={1000}
-          navigation={{
-            nextEl: ".hero-next",
-            prevEl: ".hero-prev",
-          }}
+          // navigation={{
+          //   nextEl: ".hero-next",
+          //   prevEl: ".hero-prev",
+          // }}
         >
           {banners?.map(
             ({
@@ -55,7 +55,7 @@ export default function Slider({ banners }: any) {
             }) => (
               <SwiperSlide key={image}>
                 <div
-                  className="bg-cover bg-center md:h-[57vh] flex flex-col justify-center items-start text-white p-4"
+                  className="bg-cover rounded-lg bg-center md:h-[57vh] flex flex-col justify-center items-start text-white p-4"
                   style={{
                     backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${image})`,
                   }}
@@ -94,14 +94,13 @@ export default function Slider({ banners }: any) {
           )}
         </Swiper>
 
-        <button className="hero-prev absolute z-[5] top-1/2 -left-0 transform -translate-y-1/2">
+        {/* <button className="hero-prev absolute z-[5] top-1/2 -left-0 transform -translate-y-1/2">
           <CiCircleChevLeft size={30} />
         </button>
 
-        {/* Custom Next Button */}
         <button className="hero-next absolute z-[5] top-1/2 -right-0 transform -translate-y-1/2">
           <CiCircleChevRight size={30} />
-        </button>
+        </button> */}
       </div>
     </div>
   );

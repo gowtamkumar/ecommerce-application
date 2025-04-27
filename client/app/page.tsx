@@ -2,6 +2,7 @@ import appConfig from "@/appConfig";
 import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import { getHomeApi } from "@/lib/apis/home";
+import { Button } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
@@ -30,7 +31,7 @@ export default async function Home() {
     <>
       <header>
         <Header />
-        <div className="container mx-auto">
+        <div className="container mx-auto py-4">
           <div className="grid md:grid-cols-12 grid-cols-1 gap-2">
             <Slider
               banners={banners?.filter(
@@ -56,14 +57,16 @@ export default async function Home() {
               .map((item: any, index: number) => (
                 <div
                   key={index}
-                  className="bg-cover bg-center h-56 flex flex-col justify-center items-start text-white p-4 text-start"
+                  className="bg-cover bg-center rounded-lg h-56 flex flex-col justify-center items-start text-white p-4 text-start"
                   style={{
                     backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,
                   }}
                 >
                   <h3 className="text-xl font-bold text-black">{item.title}</h3>
                   <p className="text-sm mb-2 text-black">{item.description}</p>
-                  <Link href={`/offer/${item.url}`}>Shop Now</Link>
+                  <Link className="bottom-auto" href={`/offer${item.url}`}>
+                    <Button type="primary">Shop Now</Button>
+                  </Link>
                 </div>
               ))}
           </section>

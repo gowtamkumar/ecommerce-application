@@ -62,10 +62,7 @@ export default function Card({ item }: { item: any }) {
     : "/pos_software.png";
 
   return (
-    <div className="border p-3 flex flex-col h-full">
-      <p className="text-sm  bg-blue-500 rounded p-[2px] text-white">
-        save:৳ {item.discountAmount}
-      </p>
+    <div className="rounded-lg bg-gray-100 p-3 flex flex-col h-full">
       <div className="relative group">
         <Image
           src={thumbnailImage}
@@ -117,6 +114,11 @@ export default function Card({ item }: { item: any }) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-1 text-md">৳ {item.finalPrice}</p>
+          {+item.discountAmount > 0 && (
+            <p className="text-sm   bg-blue-500 rounded p-[2px] text-white">
+              Save:৳ {item.discountAmount}
+            </p>
+          )}
         </div>
 
         {item?.discountId && (

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./style.css";
-import 'antd/dist/reset.css';
-import 'react-toastify/dist/ReactToastify.css';
-import '@ant-design/v5-patch-for-react-19';
+import "antd/dist/reset.css";
+import "react-toastify/dist/ReactToastify.css";
+import "@ant-design/v5-patch-for-react-19";
 import StoreProvider from "@/redux/storeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/authOption";
@@ -15,10 +15,18 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
-import CartSync from "@/components/CartSync";
-import ScrollToTop from "@/components/website/ScrollToTop";
-import CookieWebsite from "@/components/website/CookieBanner";
+// import CartSync from "@/components/CartSync";
+// import CookieWebsite from "@/components/website/CookieBanner";
 import { ToastContainer } from "react-toastify";
+// import ScrollToCart from "@/components/website/ScrollToCart";
+import dynamic from "next/dynamic";
+
+const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
+const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
+const CookieWebsite = dynamic(
+  () => import("@/components/website/CookieBanner")
+);
+const CartSync = dynamic(() => import("@/components/CartSync"));
 
 const poppinsFont = localFont({
   src: [
@@ -75,6 +83,7 @@ export default async function RootLayout({
               <CartSync />
               {children}
               <ScrollToTop />
+              <ScrollToCart />
               <CookieWebsite />
               <ToastContainer />
             </AntdRegistry>
