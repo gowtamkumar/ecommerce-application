@@ -1,11 +1,13 @@
 "use client";
 
-import { Menu, Dropdown } from "antd";
+import { Menu, Dropdown, Space, MenuProps } from "antd";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { getAntdCategories } from "@/lib/apis/categories";
+import { DownOutlined } from "@ant-design/icons";
+import { CiMenuFries } from "react-icons/ci";
 
 const renderMenuItems = (items: any[]) => {
   return (items || []).map((item) => {
@@ -280,32 +282,67 @@ const MainMenu = () => {
   useEffect(() => {
     (async () => {
       const response = await getAntdCategories();
-      setCategories(response.data || []);
+      console.log("categories", response);
+
+      const newData = response.data.map((item: any) => {
+        return {
+          ...item,
+          key: item.key.toString(),
+          label: (
+            <Link
+              href={`/products?categoryId=${item.key}`}
+              // target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item.label}
+            </Link>
+          ),
+        };
+      });
+
+      console.log("newData", newData);
+
+      setCategories(newData);
     })();
   }, []);
 
+
   return (
-    <Menu
-      mode="horizontal"
-      selectedKeys={[pathname]} // Highlight current menu item
-      className="bg-white p-2"
-      style={{
-        boxShadow: "none",
-        border: "none",
-        margin: "0px",
-        padding: "0px",
-        fontSize: "unset",
-        fontFamily: "unset",
-      }}
-    >
-      {renderMenuItems(categories).map((item, idx: number) => {
-        return (
-          <Menu.Item key={item.key === "#" ? item.key + idx : item.key}>
-            {item.label}
-          </Menu.Item>
-        );
-      })}
-    </Menu>
+    <div className="flex items-center">
+      <Dropdown
+        menu={{
+          items: categories,
+        }}
+        trigger={["click"]}
+      >
+        <Space className="cursor-pointer">
+          <CiMenuFries />
+          Categories
+        </Space>
+      </Dropdown>
+
+      {/* <Menu
+        mode="horizontal"
+        selectedKeys={[pathname]} // Highlight current menu item
+        className="bg-white p-2"
+        style={{
+          boxShadow: "none",
+          border: "none",
+          margin: "0px",
+          padding: "0px",
+          fontSize: "unset",
+          fontFamily: "unset",
+        }}
+      >
+        {renderMenuItems(categories).map((item, idx: number) => {
+          return (
+            <Menu.Item key={item.key === "#" ? item.key + idx : item.key}>
+              {item.label}
+            </Menu.Item>
+          );
+        })}
+      </Menu> */}
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function SearchBar() {
+export default function SearchEngine() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [results, setResults] = useState([]);
@@ -25,9 +25,9 @@ export default function SearchBar() {
   useEffect(() => {
     const fetchResults = async () => {
       if (!debouncedQuery) {
-        setResults([])
-        return
-      };
+        setResults([]);
+        return;
+      }
       dispatch(setLoading({ search: true }));
       const res = await getPublicProducts({
         search: debouncedQuery,
@@ -40,41 +40,49 @@ export default function SearchBar() {
   }, [debouncedQuery]);
 
   const searchHandle = () => {
-    dispatch(setOpen(false))
+    dispatch(setOpen(false));
     route.push(`/products?page=1&limit=10&search=${query}`);
   };
 
   return (
-    <div className="px-10">
-      <Space.Compact block>
-        <Input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for products..."
-        />
-        <Button onClick={searchHandle}>Search</Button>
-      </Space.Compact>
-
-      <div>
+    <div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          searchHandle();
+        }}
+      >
+        <Space.Compact block>
+          <Input
+            type="text"
+            size="large"
+            allowClear
+            draggable
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for products..."
+          />
+          <Button size="large" htmlType="submit">
+            Search
+          </Button>
+        </Space.Compact>
+      </form>
+      <div className="absolute z-10 bg-white">
         {global.loading.search
           ? "Loadding..."
           : results.map((product: any) => (
-            <Link
-              key={product.id}
-              href={`/products/${product.slug}`}
-            >
-              <div className="flex gap-4 border-b p-3 items-center">
-                <Image
-                  src={`${appConfig.baseApiUrl}/uploads/${product?.thumbnailImage}`}
-                  height={50}
-                  width={50}
-                  alt={product.name}
-                />
-                <h2>{product.name}</h2>
-              </div>
-            </Link>
-          ))}
+              <Link key={product.id} href={`/products/${product.slug}`}>
+                <div className="flex justify-center gap-10 my-1 rounded-lg bg-gray-100 p-3 items-center">
+                  <Image
+                    src={`${appConfig.baseApiUrl}/uploads/${product?.thumbnailImage}`}
+                    height={100}
+                    width={100}
+                    alt={product.name}
+                  />
+                  <h2>{product.name}</h2>
+                </div>
+              </Link>
+            ))}
       </div>
     </div>
   );

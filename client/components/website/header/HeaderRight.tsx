@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
 
-const HeaderSearch = dynamic(() => import("./HeaderSearch"));
+const HeaderSearch = dynamic(() => import("./Search"));
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
@@ -44,12 +44,7 @@ export default function HeaderRight() {
   };
 
   return (
-    <div className="flex md:gap-4 gap-1 justify-between items-center order-3 px-2">
-      <CiSearch
-        size={22}
-        className="font-medium cursor-pointer "
-        onClick={() => dispatch(setOpen(true))}
-      />
+    <div className="flex md:gap-4 gap-1 justify-end items-center order-3 px-2">
       <Link
         href="/profile?tab=wishlist"
         className="cursor-pointer md:inline hidden"

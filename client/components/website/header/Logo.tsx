@@ -7,7 +7,6 @@ export default function HeaderLogo({ settingData }: any) {
   const logo = settingData ? settingData[0] : {};
 
   return (
-    <div className="md:order-1 order-2">
       <Link href="/">
         <Image
           src={
@@ -22,6 +21,5 @@ export default function HeaderLogo({ settingData }: any) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </Link>
-    </div>
   );
 }

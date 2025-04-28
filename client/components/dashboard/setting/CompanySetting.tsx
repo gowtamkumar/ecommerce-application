@@ -15,7 +15,6 @@ import {
   handleAsyncAction,
   handlePreview,
   handlePreviewCancel,
-  normFile,
 } from "@/lib/utils/commonFunctions";
 
 const uploadButton = (
@@ -107,6 +106,14 @@ const CompanySetting = ({ currencies }: any) => {
 
   const tailLayout = {
     wrapperCol: { offset: 3, span: 12 },
+  };
+
+
+   const normFile = (e: { fileList: string }) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
   };
 
   return (

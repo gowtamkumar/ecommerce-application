@@ -23,10 +23,10 @@ const ScrollToCart: React.FC = () => {
       <div className="flex flex-col gap-1 rounded-sm items-center justify-center text-black bg-gray-200 ">
         <FaBagShopping color="black" size={20} className="mt-1" />
         <span className="text-sm">
-          {cart?.carts?.cartSummary?.totalQty} Items
+          {cart?.carts?.cartSummary?.totalQty || 0} Items
         </span>
         <span className="text-sm bg-blue-500 rounded-sm p-2 text-white">
-          ৳ {cart?.carts?.cartSummary?.subTotal}
+          ৳ {cart?.carts?.cartSummary?.subTotal || "0.00"}
         </span>
       </div>
     </button>

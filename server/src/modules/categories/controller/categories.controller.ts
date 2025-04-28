@@ -223,7 +223,6 @@ export const updateCategory = asyncHandler(
     const connection = await getDBConnection();
     const { id } = req.params;
     const { parentId, name, image, slug, description, active } = req.body;
-    console.log("🚀 ~ req.body:", req.body);
 
     const categoriesRepository = connection.getRepository(CategoriesEntity);
 
@@ -314,10 +313,13 @@ export const deleteCategory = asyncHandler(
 
 function formatCategoryTree(node: any): any {
   return {
-    ...node,
-    key: node.id,
-    value: node.id,
+    // ...node,
+    key: node.id.toString(),
+    // value: node.id.toString(),
+    slug: node.slug,
+    label: node.name,
     title: node.name,
-    children: node.children?.map(formatCategoryTree),
+    children:
+      node.children?.length > 0 ? node.children?.map(formatCategoryTree) : null,
   };
 }

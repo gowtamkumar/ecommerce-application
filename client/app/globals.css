@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+
+
+/* View Transition Animations (keep this outside Tailwind) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: fade 0.4s ease both;
+}
+
+/* Define fade animation */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /*global font*/
 body {
   /* font-family: var(--font-urbanist); */
@@ -92,3 +110,6 @@ body {
     margin-top: -3% !important;
   }
 }
+
+
+
