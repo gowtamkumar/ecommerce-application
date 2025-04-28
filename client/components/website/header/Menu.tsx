@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation";
 import { getAntdCategories } from "@/lib/apis/categories";
 import { DownOutlined } from "@ant-design/icons";
 import { CiMenuFries } from "react-icons/ci";
+import { useSelector } from "react-redux";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 
 const renderMenuItems = (items: any[]) => {
   return (items || []).map((item) => {
@@ -276,42 +278,16 @@ const renderMenuItems = (items: any[]) => {
 };
 
 const MainMenu = () => {
-  const [categories, setCategories] = useState([]);
-  const pathname = usePathname(); // Get current route
+  // const pathname = usePathname(); // Get current route
+  const categories = useSelector(selectGlobal);
 
-  useEffect(() => {
-    (async () => {
-      const response = await getAntdCategories();
-      console.log("categories", response);
-
-      const newData = response.data.map((item: any) => {
-        return {
-          ...item,
-          key: item.key.toString(),
-          label: (
-            <Link
-              href={`/products?categoryId=${item.key}`}
-              // target="_blank"
-              rel="noopener noreferrer"
-            >
-              {item.label}
-            </Link>
-          ),
-        };
-      });
-
-      console.log("newData", newData);
-
-      setCategories(newData);
-    })();
-  }, []);
-
+  console.log("categories", categories);
 
   return (
     <div className="flex items-center">
       <Dropdown
         menu={{
-          items: categories,
+          items: categories.categories,
         }}
         trigger={["click"]}
       >

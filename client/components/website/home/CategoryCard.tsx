@@ -41,11 +41,22 @@ export default function CategoryCard({ categories }: any) {
             //   prevEl: ".custom-prev",
             // }}
             breakpoints={{
+              // when window width is >= 320px
+              320: {
+                slidesPerView: 2,
+                spaceBetween: 5,
+              },
+              // when window width is >= 480px
+              480: {
+                slidesPerView: 3,
+                spaceBetween: 5,
+              },
               // when window width is >= 640px
               640: {
-                // width: 640,
-                slidesPerView: 2,
+                slidesPerView: 4,
+                spaceBetween: 5,
               },
+
               // when window width is >= 768px
               768: {
                 // width: 768,

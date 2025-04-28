@@ -114,7 +114,7 @@ const ProductCard: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div
         className={`grid gap-1 ${
-          global.productView ? "grid-cols-1" : "lg:grid-cols-5"
+          global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
         }`}
       >
         {products?.map((item: any) => {
@@ -131,7 +131,6 @@ const ProductCard: React.FC = () => {
               {global.productView ? (
                 <div className="grid grid-cols-3 gap-2 border p-3 h-full">
                   <div className="relative group text-center md:text-start h-[40vh] overflow-hidden col-span-1">
-                    {/* <Link href={url} className="block w-full h-full"> */}
                     {/* Main Image */}
                     <Image
                       src={thumbnailImage}

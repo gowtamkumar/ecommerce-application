@@ -29,11 +29,15 @@ export default function CategoryProduct({ id }: { id: string }) {
   };
 
   if (loading) {
-    return <Spin />;
+    return (
+      <div className="flex justify-center">
+        <Spin />;
+      </div>
+    );
   }
 
   return (
-    <div className="grid gap-1 grid-cols-2 md:grid-cols-5">
+    <div className="grid gap-1 justify-center items-center grid-cols-2 md:grid-cols-5">
       {products.length > 0 ? (
         products?.map((item: any) => (
           <div key={item.id}>
@@ -41,7 +45,7 @@ export default function CategoryProduct({ id }: { id: string }) {
           </div>
         ))
       ) : (
-        <Empty />
+        <Empty/>
       )}
     </div>
   );

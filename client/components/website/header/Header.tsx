@@ -5,6 +5,10 @@ import SearchSection from "./SearchSection";
 import HeaderLogo from "./Logo";
 import { Avatar } from "antd";
 import HeaderRight from "./HeaderRight";
+import { useDispatch, useSelector } from "react-redux";
+import { selectGlobal, setCategories, setMobile } from "@/redux/features/global/globalSlice";
+import { getAntdCategories } from "@/lib/apis/categories";
+import Link from "next/link";
 
 const TopBar = dynamic(() => import("./TopBar"));
 const MainMenu = dynamic(() => import("./Menu"));
@@ -12,23 +16,37 @@ const MobileMenu = dynamic(() => import("./MobileMenu"));
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobile, setMobile] = useState(false);
-  // const setting = await getSettings();
+  const global = useSelector(selectGlobal);
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const setting = await getSettings();
-  //     // localStorage.setItem("header", JSON.stringify(headerData.data));
-  //     setSetting(setting.data);
-  //   })();
-  // }, []);
+  const fetchCategory = async () => {
+    const response = await getAntdCategories();
+    const newData = response.data?.map((item: any) => {
+      return {
+        ...item,
+        key: item.key.toString(),
+        label: (
+          <Link
+            href={`/products?categoryId=${item.key}`}
+            // target="_blank"
+            rel="noopener noreferrer"
+          >
+            {item.label}
+          </Link>
+        ),
+      };
+    });
+
+    dispatch(setCategories(newData));
+  };
 
   useEffect(() => {
+    fetchCategory();
     const updateBackground = () => {
       if (window?.innerWidth < 840) {
-        setMobile(true);
+        dispatch(setMobile(true));
       } else {
-        setMobile(false);
+        dispatch(setMobile(false));
       }
     };
 
@@ -49,7 +67,7 @@ export default function Header() {
 
   return (
     <div className="w-full">
-      {!mobile && (
+      {!global.mobile && (
         <div>
           <TopBar />
         </div>
@@ -63,7 +81,7 @@ export default function Header() {
         }`}
       >
         <SearchSection />
-        {!mobile && (
+        {!global.mobile && (
           <div className="border-b-2 ">
             <div className="container mx-auto items-center py-4">
               <div className="flex justify-between items-center">
@@ -73,17 +91,12 @@ export default function Header() {
           </div>
         )}
       </header>
-      {mobile && (
+      {global.mobile && (
         <div className="fixed z-50 bottom-0 left-0 bg-white w-full">
           <div className="container mx-auto items-center py-4">
             <div className="flex justify-between items-center">
               <MobileMenu />
               <HeaderRight />
-              <Avatar
-                className="cursor-pointer h-10 w-10 rounded-full bg-slate-500"
-                size={25}
-                src={"/pos_software.png"}
-              />
             </div>
           </div>
         </div>

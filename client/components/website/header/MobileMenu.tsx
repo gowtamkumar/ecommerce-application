@@ -4,6 +4,8 @@ import { Badge, Drawer } from "antd";
 import { IoMdMenu } from "react-icons/io";
 import Link from "next/link";
 import { IoBagHandleOutline } from "react-icons/io5";
+import { useSelector } from "react-redux";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 
 const menuData = [
   {
@@ -138,6 +140,8 @@ const menuData = [
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
 
+  const global = useSelector(selectGlobal);
+
   const AccordionItem = ({ item }: any) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -150,8 +154,9 @@ export default function MobileMenu() {
           <span>{item.label}</span>
           {item.children && (
             <svg
-              className={`w-5 h-5 transform transition-transform duration-100 ${isOpen ? "rotate-180" : ""
-                }`}
+              className={`w-5 h-5 transform transition-transform duration-100 ${
+                isOpen ? "rotate-180" : ""
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -197,13 +202,7 @@ export default function MobileMenu() {
       />
       <Drawer
         title={
-          <div className="flex justify-end items-center gap-2 px-3">
-            <Link href="/checkout" className="mt-1 md:hidden inline">
-              <Badge size="default" count={30}>
-                <IoBagHandleOutline className="font-medium lg:text-lg text-2xl" />
-              </Badge>
-            </Link>
-          </div>
+          <div className="flex justify-end items-center gap-2 px-3">Menu</div>
         }
         open={open}
         placement="left"
@@ -225,7 +224,7 @@ export default function MobileMenu() {
           </div>
         }
       >
-        <Accordion data={menuData} />
+        <Accordion data={global.categories} />
       </Drawer>
     </div>
   );

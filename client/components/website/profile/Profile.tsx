@@ -7,6 +7,8 @@ import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
 import NotificationsUser from "./NotificationsUser";
 import { useRouter, useSearchParams } from "next/navigation";
 import "./notification.css";
+import { useSelector } from "react-redux";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 
 const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
   ssr: false,
@@ -45,6 +47,7 @@ const OrderTracker = dynamic(() => import("./OrderTracker"), {
 
 export default function Profile() {
   const [tabKey, setTabKey] = useState("my_account");
+  const global = useSelector(selectGlobal);
   // hook
   // const dispatch = useDispatch();
   const searchQuery = useSearchParams();
@@ -62,7 +65,7 @@ export default function Profile() {
       }
       defaultValue={tabKey}
       activeKey={tabKey}
-      tabPosition="left"
+      tabPosition={global.mobile ? "top" : "left"}
       items={[
         {
           label: `Dashboard`,

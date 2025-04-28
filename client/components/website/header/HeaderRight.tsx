@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
 
-const HeaderSearch = dynamic(() => import("./Search"));
+// const HeaderSearch = dynamic(() => import("./Search"));
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
@@ -22,7 +22,7 @@ export default function HeaderRight() {
   // hook
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
-  const layout = useSelector(selectLayout);
+  // const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const session = useSession();
 
@@ -44,7 +44,7 @@ export default function HeaderRight() {
   };
 
   return (
-    <div className="flex md:gap-4 gap-1 justify-end items-center order-3 px-2">
+    <>
       <Link
         href="/profile?tab=wishlist"
         className="cursor-pointer md:inline hidden"
@@ -106,14 +106,14 @@ export default function HeaderRight() {
         </div>
       )}
 
-      <Modal
+      {/* <Modal
         open={layout.open}
         onCancel={() => dispatch(setOpen(false))}
         width={1000}
         footer={null}
       >
         <HeaderSearch />
-      </Modal>
-    </div>
+      </Modal> */}
+    </>
   );
 }

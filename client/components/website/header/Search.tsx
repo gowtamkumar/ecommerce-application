@@ -67,7 +67,7 @@ export default function SearchEngine() {
           </Button>
         </Space.Compact>
       </form>
-      <div className="absolute z-10 bg-white">
+      <div className="absolute z-40 bg-white">
         {global.loading.search
           ? "Loadding..."
           : results.map((product: any) => (
