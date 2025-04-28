@@ -167,7 +167,6 @@ const ProductCard: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                    {/* </Link> */}
                   </div>
 
                   <div className="grid grid-rows-[auto_1fr_auto] h-full text-center md:text-start col-span-2">

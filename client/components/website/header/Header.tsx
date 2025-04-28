@@ -21,23 +21,9 @@ export default function Header() {
 
   const fetchCategory = async () => {
     const response = await getAntdCategories();
-    const newData = response.data?.map((item: any) => {
-      return {
-        ...item,
-        key: item.key.toString(),
-        label: (
-          <Link
-            href={`/products?categoryId=${item.key}`}
-            // target="_blank"
-            rel="noopener noreferrer"
-          >
-            {item.label}
-          </Link>
-        ),
-      };
-    });
+    console.log(response);
 
-    dispatch(setCategories(newData));
+    dispatch(setCategories(response.data));
   };
 
   useEffect(() => {
@@ -74,13 +60,13 @@ export default function Header() {
       )}
 
       <header
-        className={`${
-          isScrolled ? "fixed z-50 top-0 left-0" : ""
-        }  w-full bg-white  transition-transform duration-300 ${
-          isScrolled ? "translate-y-0" : "mt-0"
-        }`}
+        className={`${isScrolled ? "fixed z-50 top-0 left-0" : ""
+          }  w-full bg-white  transition-transform duration-300 ${isScrolled ? "translate-y-0" : "mt-0"
+          }`}
       >
-        <SearchSection />
+        <div className="bg-gray-100">
+          <SearchSection />
+        </div>
         {!global.mobile && (
           <div className="border-b-2 ">
             <div className="container mx-auto items-center py-4">

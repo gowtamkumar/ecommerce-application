@@ -5,12 +5,15 @@ import {
   setProductView,
 } from "@/redux/features/global/globalSlice";
 import { selectProduct } from "@/redux/features/products/productSlice";
-import { Button, Select } from "antd";
+import { Button, Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { CiFilter } from "react-icons/ci";
+import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
+
 
 export default function FilterHeader() {
   const global = useSelector(selectGlobal);
+  const layout = useSelector(selectLayout);
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch();
 
@@ -56,7 +59,10 @@ export default function FilterHeader() {
             </Select>
           </div>
           {global.mobile ? (
-            <div className="rounded-lg p-3 bg-gray-100">
+            <div
+              className="rounded-lg p-3 bg-gray-100"
+              onClick={() => dispatch(setOpen(true))}
+            >
               <CiFilter />
             </div>
           ) : (
@@ -104,6 +110,15 @@ export default function FilterHeader() {
           )}
         </div>
       </div>
+
+      <Modal
+        open={layout.open}
+        onCancel={() => dispatch(setOpen(false))}
+        // width={600}
+        footer={null}
+      >
+        <div className="p-2">Modal</div>
+      </Modal>
     </div>
   );
 }

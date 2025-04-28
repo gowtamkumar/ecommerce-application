@@ -1,20 +1,17 @@
 "use client";
 import { userProfileRoute } from "@/NavBarRoute";
-import { Avatar, Badge, Drawer, Dropdown, Modal } from "antd";
+import { Avatar, Badge, Drawer, Dropdown } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { CiSearch, CiHeart } from "react-icons/ci";
+import {  CiHeart } from "react-icons/ci";
 import appConfig from "@/appConfig";
 import ViewCart from "./ViewCart";
 import { FiShoppingBag } from "react-icons/fi";
-import dynamic from "next/dynamic";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
 
-// const HeaderSearch = dynamic(() => import("./Search"));
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
@@ -106,14 +103,7 @@ export default function HeaderRight() {
         </div>
       )}
 
-      {/* <Modal
-        open={layout.open}
-        onCancel={() => dispatch(setOpen(false))}
-        width={1000}
-        footer={null}
-      >
-        <HeaderSearch />
-      </Modal> */}
+    
     </>
   );
 }

@@ -41,17 +41,20 @@ export default function FilterSidebarDetails({
   brands: [Brands];
   colors: [Colors];
 }) {
-  const [price, setPrice] = useState({} as any);
-  const global = useSelector(selectGlobal);
+  const [filterData, setFilter] = useState<any>({});
   const dispatch = useDispatch();
 
-  const handleFilter = (value: any, name: string) => {
-    dispatch(setProductFilter({ ...global.productFilter, [name]: value }));
+  const handleFilter = () => {
+    dispatch(setProductFilter(filterData));
+  };
+
+  const handelChange = (value: any, name: string) => {
+    setFilter({ ...filterData, [name]: value });
   };
 
   const filterClear = () => {
     dispatch(setProductFilter({}));
-    setPrice({});
+    setFilter({});
   };
 
   interface Option {
@@ -65,41 +68,32 @@ export default function FilterSidebarDetails({
   };
 
   return (
-    <aside className="shadow-sm px-1 text-center">
+    <aside className="rounded-lg bg-gray-100 p-3 text-center">
       <div className="flex justify-between">
         <h2 className="text-lg font-bold md:mb-2">Filters</h2>
         <div>
           <Button className="me-2" onClick={filterClear}>
             Clear
           </Button>
-          {/* <Button>Filter</Button> */}
+          <Button onClick={handleFilter}>Filter</Button>
         </div>
       </div>
 
       <Divider orientation="left" className="font-semibold">
-        <p className="font-semibold">Price </p>
+        <p className="font-semibold">Price</p>
       </Divider>
 
-      <Space.Compact className="w-full">
+      <Space.Compact block>
         <InputNumber
           placeholder="Min"
-          value={price.minPrice}
-          onChange={(value) => setPrice({ ...price, minPrice: value })}
-          className="w-full"
+          value={filterData.minPrice}
+          onChange={(value) => handelChange(value, "minPrice")}
         />
         <InputNumber
           placeholder="Max"
-          value={price.maxPrice}
-          onChange={(value) => setPrice({ ...price, maxPrice: value })}
-          className="w-full"
+          value={filterData.maxPrice}
+          onChange={(value) => handelChange(value, "maxPrice")}
         />
-        <Button
-          onClick={() => {
-            dispatch(setProductFilter({ ...global.productFilter, ...price }));
-          }}
-        >
-          Apply
-        </Button>
       </Space.Compact>
 
       <Divider orientation="left" className="font-semibold">
@@ -108,8 +102,9 @@ export default function FilterSidebarDetails({
       <div className="px-3">
         <Slider
           marks={marks}
-          value={global.productFilter.discount}
-          onChange={(value) => handleFilter(value, "discount")}
+          value={filterData.discount}
+          // onChange={(value) => handleFilter(value, "discount")}
+          onChange={(value) => handelChange(value, "discount")}
         />
       </div>
 
@@ -122,15 +117,15 @@ export default function FilterSidebarDetails({
             <Checkbox.Group
               name="categoryId"
               value={
-                global.productFilter?.categoryId?.length
-                  ? global.productFilter?.categoryId
-                  : global.productFilter?.categoryId?.toString()
+                filterData?.categoryId?.length
+                  ? filterData?.categoryId
+                  : filterData?.categoryId?.toString()
               }
               options={(categories || []).map((item): any => ({
                 label: item.name,
                 value: item.id.toString(),
               }))}
-              onChange={(value) => handleFilter(value, "categoryId")}
+              onChange={(value) => handelChange(value, "categoryId")}
             />
           </label>
         </li>
@@ -144,14 +139,14 @@ export default function FilterSidebarDetails({
           <label className="flex items-center">
             <Checkbox.Group
               name="brandId"
-              value={global.productFilter.brandId}
+              value={filterData.brandId}
               options={(brands || []).map(
                 (item): Option => ({
                   label: item.name,
                   value: item.id.toString(),
                 })
               )}
-              onChange={(value) => handleFilter(value, "brandId")}
+              onChange={(value) => handelChange(value, "brandId")}
             />
           </label>
         </li>
@@ -165,14 +160,14 @@ export default function FilterSidebarDetails({
           <label className="flex items-center">
             <Checkbox.Group
               name="colorId"
-              value={global.productFilter.colorId}
+              value={filterData.colorId}
               options={(colors || []).map(
                 (item): Option => ({
                   label: item.name,
                   value: item.id.toString(),
                 })
               )}
-              onChange={(value) => handleFilter(value, "colorId")}
+              onChange={(value) => handelChange(value, "colorId")}
             />
           </label>
         </li>

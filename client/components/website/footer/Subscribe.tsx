@@ -44,7 +44,7 @@ export default function Subscribe() {
             },
           ]}
         >
-          <Input placeholder="Enter your email" size="large" />
+          <Input placeholder="Enter your email" />
         </Form.Item>
 
         <Button type="primary" size="large" htmlType="submit" loading={loading}>

@@ -5,7 +5,6 @@ import { deleteCart, getCartLists } from "@/lib/apis/cart";
 import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { Button } from "antd";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TiDeleteOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,14 +22,6 @@ export default function ViewCart() {
       dispatch(replaceCart(getCartList.data || []));
     }
   };
-
-  // useEffect(() => {
-  //   async function calculateCart() {
-  //     const result = await cartCalculationFun(cart.carts);
-  //     dispatch(setCartResult(result));
-  //   }
-  //   calculateCart();
-  // }, [cart.carts]);
 
   return (
     <div className="flex flex-col h-full justify-between">
@@ -78,12 +69,14 @@ export default function ViewCart() {
             ৳ {cart?.carts?.cartSummary?.subTotal}
           </p>
         </div>
-        <Button className="w-full" onClick={() => {
-          // dispatch(setOpen(false));
-          // dispatch(setDrawarCart(false));
-          router.push("/checkout");
-
-        }}>
+        <Button
+          className="w-full"
+          onClick={() => {
+            // dispatch(setOpen(false));
+            // dispatch(setDrawarCart(false));
+            router.push("/checkout");
+          }}
+        >
           Continue Shopping
         </Button>
       </div>

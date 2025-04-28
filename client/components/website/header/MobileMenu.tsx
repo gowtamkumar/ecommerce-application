@@ -1,162 +1,40 @@
 "use client";
-import { useState } from "react";
-import { Badge, Drawer } from "antd";
+import { Drawer } from "antd";
+import { useEffect, useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 import Link from "next/link";
-import { IoBagHandleOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 
-const menuData = [
-  {
-    label: "Home",
-    key: "home",
-    url: "/",
-  },
-  {
-    label: "Watch Phones",
-    key: "Watch",
-    megaMenu: true,
-    children: [
-      {
-        label: "Watch type",
-        key: "Watchtype",
-      },
-      {
-        label: "head type",
-        key: "headtype",
-      },
-      {
-        label: "mouse type",
-        key: "mouse1type",
-      },
-      {
-        label: "keyboard s type",
-        key: "keyboa1rdtype",
-      },
-      {
-        label: "keyboard sss type",
-        key: "keyboardtype1",
-      },
-      {
-        label: "keyboard type",
-        key: "keyboardtype2",
-        children: [
-          { label: "keyboardtype1", key: "keyboardtype12" },
-          { label: "keyboardtype2", key: "keyboardtype23" },
-          { label: "keyboardtype3", key: "keyboardtype35" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Electronics",
-    key: "electronics",
-    children: [
-      {
-        label: "Mobile Phones",
-        key: "mobiles",
-        megaMenu: true,
-        children: [
-          {
-            label: "Ear type",
-            key: "Eartype",
-            children: [
-              { label: "ear", key: "ear" },
-              { label: "ear1", key: "ear1" },
-              { label: "ear2", key: "ear3" },
-            ],
-          },
-          {
-            label: "head type",
-            key: "headtype",
-            children: [
-              { label: "head", key: "head" },
-              { label: "head1", key: "head1" },
-              { label: "head2", key: "head2" },
-            ],
-          },
-          {
-            label: "mouse type",
-            key: "mousetype",
-            children: [
-              { label: "mouse", key: "mouse" },
-              { label: "mouse1", key: "mouse1" },
-              { label: "mouse2", key: "mouse2" },
-            ],
-          },
-          {
-            label: "keyboard type",
-            key: "keyboardtype",
-            children: [
-              { label: "keyboardtype1", key: "keyboardtype1" },
-              { label: "keyboardtype2", key: "keyboardtype2" },
-              { label: "keyboardtype3", key: "keyboardtype3" },
-            ],
-          },
-          {
-            label: "keyboard type",
-            key: "keyboardtype1",
-            children: [
-              { label: "keyboardtype1", key: "keyboardtype12" },
-              { label: "keyboardtype2", key: "keyboardtype23" },
-              { label: "keyboardtype3", key: "keyboardtype34" },
-            ],
-          },
-          {
-            label: "keyboard type",
-            key: "keyboardtype2",
-            children: [
-              { label: "keyboardtype1", key: "keyboardtype12" },
-              { label: "keyboardtype2", key: "keyboardtype23" },
-              { label: "keyboardtype3", key: "keyboardtype35" },
-            ],
-          },
-        ],
-      },
-      {
-        label: "Laptops",
-        key: "laptops",
-        megaMenu: true,
-        children: [
-          { label: "Gaming Laptops", key: "gaming-laptops" },
-          { label: "Ultrabooks", key: "ultrabooks" },
-          { label: "Ultrabooks", key: "ultrabookss" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Clothing",
-    key: "clothing",
-    children: [
-      { label: "Men's Clothing", key: "mens-clothing" },
-      { label: "Women's Clothing", key: "womens-clothing" },
-      { label: "Women's Clothing", key: "womens-cslothing" },
-    ],
-  },
-];
-
 export default function MobileMenu() {
+  const [menu, setMenu] = useState([]);
   const [open, setOpen] = useState(false);
 
   const global = useSelector(selectGlobal);
 
-  const AccordionItem = ({ item }: any) => {
+  useEffect(() => {
+    setMenu(global.categories);
+  }, []);
+
+  const AccordionItem = ({ item, onClose }: any) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
       <div className="border-b">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex justify-between items-center py-3 hover:bg-gray-200 text-left"
-        >
-          <span>{item.label}</span>
-          {item.children && (
+        <button className="w-full flex justify-between items-center py-3 hover:bg-gray-200 text-left px-2 ">
+          <Link
+            href={`/products?categoryId=${item.key}`}
+            onClick={onClose}
+            className="text-gray-500 w-full"
+            rel="noopener noreferrer"
+          >
+            {item.label}
+          </Link>
+          {item.children?.length > 0 && (
             <svg
-              className={`w-5 h-5 transform transition-transform duration-100 ${
-                isOpen ? "rotate-180" : ""
-              }`}
+              onClick={() => setIsOpen(!isOpen)}
+              className={`w-5 h-5 transform transition-transform duration-100 ${isOpen ? "rotate-180" : ""
+                }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -171,10 +49,10 @@ export default function MobileMenu() {
             </svg>
           )}
         </button>
-        {isOpen && item.children && (
+        {isOpen && item?.children && (
           <div className="ml-4">
             {item.children.map((child: any) => (
-              <AccordionItem key={child.key} item={child} />
+              <AccordionItem key={child.id} item={child} onClose={onClose} />
             ))}
           </div>
         )}
@@ -183,11 +61,11 @@ export default function MobileMenu() {
   };
 
   // Main Accordion component
-  const Accordion = ({ data }: any) => {
+  const Accordion = ({ data, onClose }: any) => {
     return (
-      <div className="w-full max-w-md mx-auto bg-white  overflow-hidden">
-        {data.map((item: any) => (
-          <AccordionItem key={item.key} item={item} />
+      <div className="w-full max-w-md mx-auto bg-white overflow-hidden">
+        {(data || []).map((item: any) => (
+          <AccordionItem key={item?.id} item={item} onClose={onClose} />
         ))}
       </div>
     );
@@ -196,14 +74,12 @@ export default function MobileMenu() {
   return (
     <div className="text-center px-2">
       <IoMdMenu
-        size={22}
+        size={36}
         className="font-medium cursor-pointer"
         onClick={() => setOpen(true)}
       />
       <Drawer
-        title={
-          <div className="flex justify-end items-center gap-2 px-3">Menu</div>
-        }
+        title={null}
         open={open}
         placement="left"
         closable={true}
@@ -211,20 +87,26 @@ export default function MobileMenu() {
         onClose={() => setOpen(false)}
         footer={
           <div className="flex gap-4 justify-center text-center">
-            <button className="btn-primary-bioxin">
+            <button
+              className="btn-primary-bioxin"
+              onClick={() => setOpen(false)}
+            >
               <Link href={"/login"} className="text-white">
                 Login
               </Link>
             </button>
-            <button className="btn-primary-bioxin">
-              <Link href={"/register"} className="text-white">
+            <button
+              className="btn-primary-bioxin"
+              onClick={() => setOpen(false)}
+            >
+              <Link href={"/signup"} className="text-white">
                 Register
               </Link>
             </button>
           </div>
         }
       >
-        <Accordion data={global.categories} />
+        <Accordion data={menu} onClose={() => setOpen(false)} />
       </Drawer>
     </div>
   );

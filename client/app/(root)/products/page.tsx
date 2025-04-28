@@ -1,4 +1,3 @@
-import ScrollToCart from "@/components/website/ScrollToCart";
 import dynamic from "next/dynamic";
 
 const CategoryHeader = dynamic(
@@ -6,12 +5,13 @@ const CategoryHeader = dynamic(
 );
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const Header = dynamic(() => import("@/components/website/header/Header"));
-const FilterSidebar = dynamic(
-  () => import("@/components/website/product-filter/FilterSidebar")
-);
 const ProductCard = dynamic(
   () => import("@/components/website/product/ProductCard")
 );
+const FilterSidebar = dynamic(
+  () => import("@/components/website/product-filter/FilterSidebar")
+);
+const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
 
 export default function Products() {
   return (

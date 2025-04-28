@@ -13,6 +13,7 @@ export default function SearchEngine() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [results, setResults] = useState([]);
+  // hook
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const route = useRouter();
@@ -41,7 +42,7 @@ export default function SearchEngine() {
 
   const searchHandle = () => {
     dispatch(setOpen(false));
-    route.push(`/products?page=1&limit=10&search=${query}`);
+    route.push(`/products?search=${query}`);
   };
 
   return (
