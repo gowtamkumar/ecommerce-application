@@ -18,6 +18,7 @@ const HeaderSearch = dynamic(() => import("./HeaderSearch"));
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
+  const [mounted, setMounted] = useState(false);
   // hook
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
@@ -26,6 +27,12 @@ export default function HeaderRight() {
   const session = useSession();
 
   const profileImage = session.data?.user?.image;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null; // 👈 important! don't render until mounted
 
   const showLoading = () => {
     setDrawarCart(true);
@@ -43,7 +50,10 @@ export default function HeaderRight() {
         className="font-medium cursor-pointer "
         onClick={() => dispatch(setOpen(true))}
       />
-      <Link href="/profile?tab=wishlist" className="cursor-pointer md:inline hidden">
+      <Link
+        href="/profile?tab=wishlist"
+        className="cursor-pointer md:inline hidden"
+      >
         <CiHeart size={22} className="font-medium" />
       </Link>
 

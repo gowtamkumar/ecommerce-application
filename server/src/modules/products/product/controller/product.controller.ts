@@ -545,6 +545,7 @@ export const updateProduct = asyncHandler(
     }
 
     const { productVariants, productCategories, ...restData } = validation.data;
+    
     // Get DB connection
     const connection = await getDBConnection();
     const repository = connection.getRepository(ProductEntity);

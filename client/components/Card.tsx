@@ -62,7 +62,7 @@ export default function Card({ item }: { item: any }) {
     : "/pos_software.png";
 
   return (
-    <div className="rounded-lg bg-gray-100 p-3 flex flex-col h-full">
+    <div className="rounded-lg bg-gray-100 flex flex-col h-full">
       <div className="relative group">
         <Image
           src={thumbnailImage}
@@ -71,7 +71,11 @@ export default function Card({ item }: { item: any }) {
           height={800}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-
+        {+item.discountAmount > 0 && (
+          <p className="text-xs absolute   bg-blue-500 rounded-r-lg  p-1 text-white z-10 top-2">
+            Save:৳ {item.discountAmount}
+          </p>
+        )}
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
           <Image
@@ -84,7 +88,7 @@ export default function Card({ item }: { item: any }) {
           />
 
           {/* <div className="mt-4 mr-3 p-4 absolute z-20 bg-white text-black rounded-full transform translate-x-10 group-hover:translate-x-0 transition duration-500"> */}
-          <div className="p-2 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="p-1 absolute z-20 bg-white text-black rounded-lg transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <button
               className="cursor-pointer"
               onClick={() => {
@@ -101,7 +105,7 @@ export default function Card({ item }: { item: any }) {
         </div>
       </div>
 
-      <div className="grid grid-rows-[auto_1fr_auto] flex-grow">
+      <div className="grid grid-rows-[auto_1fr_auto] flex-grow p-2">
         <h3 className="font-semibold text-sm mb-2">
           <Link href={`/products/${item.slug}`} className="hover:underline">
             {item.name.slice(0, 50)}
@@ -114,11 +118,6 @@ export default function Card({ item }: { item: any }) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-500 mb-1 text-md">৳ {item.finalPrice}</p>
-          {+item.discountAmount > 0 && (
-            <p className="text-sm   bg-blue-500 rounded p-[2px] text-white">
-              Save:৳ {item.discountAmount}
-            </p>
-          )}
         </div>
 
         {item?.discountId && (

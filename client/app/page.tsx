@@ -1,6 +1,7 @@
 import appConfig from "@/appConfig";
 import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
+import ScrollToCart from "@/components/website/ScrollToCart";
 import { getHomeApi } from "@/lib/apis/home";
 import { Button } from "antd";
 import dynamic from "next/dynamic";
@@ -143,6 +144,7 @@ export default async function Home() {
           </div>
         </section>
       </main>
+      <ScrollToCart />
       <WebFooter />
     </>
   );

@@ -1,3 +1,4 @@
+import ScrollToCart from "@/components/website/ScrollToCart";
 import { Divider } from "antd";
 import dynamic from "next/dynamic";
 
@@ -29,6 +30,7 @@ export default function SingleCategory() {
           </div>
         </div>
       </section>
+      <ScrollToCart />
       <WebFooter />
     </>
   );

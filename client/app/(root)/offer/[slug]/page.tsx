@@ -1,6 +1,7 @@
 import Card from "@/components/Card";
 import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
+import ScrollToCart from "@/components/website/ScrollToCart";
 import { getDiscountBySlug } from "@/lib/apis/discount";
 import { getPublicProducts } from "@/lib/apis/product";
 import { Empty } from "antd";
@@ -40,6 +41,7 @@ export default async function Offer({ params }: { params: { slug: string } }) {
           <Empty description="This offer has expired." />
         )}
       </section>
+      <ScrollToCart />
       <WebFooter />
     </>
   );

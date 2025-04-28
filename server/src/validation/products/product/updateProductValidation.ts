@@ -7,6 +7,12 @@ export const updateProductValidationSchema = z.object({
   taxId: z.number({
     required_error: "Tax is required",
   }),
+  thumbnailImage: z.string({
+    required_error: "Thumbnail Image is required",
+  }),
+  hoverImage: z.string({
+    required_error: "Hover Image is required",
+  }),
   images: z.array(
     z.string({
       required_error: "Images is required",

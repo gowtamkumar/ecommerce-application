@@ -83,7 +83,6 @@ export default async function RootLayout({
               <CartSync />
               {children}
               <ScrollToTop />
-              <ScrollToCart />
               <CookieWebsite />
               <ToastContainer />
             </AntdRegistry>

@@ -1,3 +1,4 @@
+import ScrollToCart from "@/components/website/ScrollToCart";
 import { authOptions } from "@/lib/authOption";
 import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
@@ -27,6 +28,7 @@ export default async function CheckOut() {
       <div className="bg-gray-100">
         <CheckoutPage />
       </div>
+      <ScrollToCart />
       <WebFooter />
     </>
   );
