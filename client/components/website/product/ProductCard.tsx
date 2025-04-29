@@ -152,7 +152,8 @@ const ProductCard: React.FC = () => {
                         className="relative"
                       />
 
-                      <div className="p-4 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                      {/* <div className="p-4 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"> */}
+                      <div className="p-1 absolute z-20 bg-white text-black rounded-lg transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                         <button
                           className="cursor-pointer"
                           onClick={() => {
@@ -201,7 +202,9 @@ const ProductCard: React.FC = () => {
                     </div>
                     <p
                       className="text-bioxin-p text-gray-500 prose max-w-none"
-                      dangerouslySetInnerHTML={{ __html: item?.short_line }}
+                      dangerouslySetInnerHTML={{
+                        __html: item?.shortDescription,
+                      }}
                     />
                     <div>
                       <AddToCartButton item={item} />

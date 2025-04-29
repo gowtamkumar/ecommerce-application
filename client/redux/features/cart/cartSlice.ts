@@ -7,11 +7,23 @@ export interface CartState {
   carts: any;
 }
 
+// typeof window !== "undefined"
+// ? JSON.parse(localStorage.getItem("carts") || "[]")
+// : {},
+
 // Define the initial state using that type
 const initialState: CartState = {
   carts:
     typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("carts") || "[]")
+      ? (() => {
+          const stored = localStorage.getItem("carts");
+          try {
+            const parsed = JSON.parse(stored ?? "[]");
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        })()
       : {},
 };
 
@@ -86,8 +98,8 @@ export const {
   incrementCart,
   clearCart,
   // setCartResult,
-  replaceCart
+  replaceCart,
 } = cartSlice.actions;
-export const selectCart = (state: { cart: any; }) => state.cart;
+export const selectCart = (state: { cart: any }) => state.cart;
 
 export default cartSlice.reducer;

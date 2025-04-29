@@ -4,14 +4,13 @@ import { Avatar, Badge, Drawer, Dropdown } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import {  CiHeart } from "react-icons/ci";
+import { CiHeart } from "react-icons/ci";
 import appConfig from "@/appConfig";
 import ViewCart from "./ViewCart";
 import { FiShoppingBag } from "react-icons/fi";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
@@ -73,7 +72,7 @@ export default function HeaderRight() {
         </Drawer>
       </div>
 
-      {session.status === "authenticated" ? (
+      {session.status === "authenticated" && (
         <Dropdown
           menu={{ items: userProfileRoute as any }}
           placement="bottomLeft"
@@ -89,7 +88,8 @@ export default function HeaderRight() {
             }
           />
         </Dropdown>
-      ) : (
+      )}
+      {/* : (
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center justify-between">
             <Link className="mx-2" href="/login">
@@ -101,9 +101,7 @@ export default function HeaderRight() {
             </Link>
           </div>
         </div>
-      )}
-
-    
+      ) */}
     </>
   );
 }

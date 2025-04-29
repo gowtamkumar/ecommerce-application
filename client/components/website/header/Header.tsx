@@ -2,13 +2,10 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import SearchSection from "./SearchSection";
-import HeaderLogo from "./Logo";
-import { Avatar } from "antd";
 import HeaderRight from "./HeaderRight";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setCategories, setMobile } from "@/redux/features/global/globalSlice";
 import { getAntdCategories } from "@/lib/apis/categories";
-import Link from "next/link";
 
 const TopBar = dynamic(() => import("./TopBar"));
 const MainMenu = dynamic(() => import("./Menu"));
@@ -21,8 +18,6 @@ export default function Header() {
 
   const fetchCategory = async () => {
     const response = await getAntdCategories();
-    console.log(response);
-
     dispatch(setCategories(response.data));
   };
 
@@ -72,6 +67,7 @@ export default function Header() {
             <div className="container mx-auto items-center py-4">
               <div className="flex justify-between items-center">
                 <MainMenu />
+                <h2>Customer Menu</h2>
               </div>
             </div>
           </div>

@@ -68,12 +68,12 @@ export default function SearchEngine() {
           </Button>
         </Space.Compact>
       </form>
-      <div className="absolute z-40 bg-white">
+      <div className="absolute z-40 bg-white w-[55vw]">
         {global.loading.search
           ? "Loadding..."
           : results.map((product: any) => (
-              <Link key={product.id} href={`/products/${product.slug}`}>
-                <div className="flex justify-center gap-10 my-1 rounded-lg bg-gray-100 p-3 items-center">
+              <Link key={product.id} href={`/products/${product.slug}`} >
+                <div className="flex justify-between gap-10 my-1 rounded-lg bg-gray-100 p-3 items-center">
                   <Image
                     src={`${appConfig.baseApiUrl}/uploads/${product?.thumbnailImage}`}
                     height={100}

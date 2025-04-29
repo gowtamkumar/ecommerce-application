@@ -244,9 +244,7 @@ export const productsQuery = async (queryData: any) => {
     ];
   };
 
-  const categoryFilter = parseFilter(categoryId);
-  console.log("categoryFilter", categoryFilter);
-  
+  const categoryFilter = parseFilter(categoryId);  
   const brandFilter = parseFilter(brandId);
 
   const query = `
@@ -261,6 +259,7 @@ export const productsQuery = async (queryData: any) => {
           p.featured,
           p.tax_id,
           p.brand_id,
+          p.short_description,
           pv.unit_price,
           pv.purchase_price,
           pv.id AS product_variant_id
@@ -361,6 +360,7 @@ export const productsQuery = async (queryData: any) => {
           p.product_variant_id as "productVariantId",
           rt.reviews_count AS "reviewsCount",
           rt.average_rating AS "avgRating",
+          p.short_description as "shortDescription",
 
           -- ✅ Calculate amunt
           ROUND(

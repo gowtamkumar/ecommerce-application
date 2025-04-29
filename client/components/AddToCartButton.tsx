@@ -45,9 +45,7 @@ export default function AddToCartButton({ item }: { item: any }) {
     if (!cartResponse.success) {
       errorNotification({ message: cartResponse.message });
     }
-    console.log("cartResponse", cartResponse);
 
-    // if(cartResponse)
     const getCartList = await getCartLists();
 
     try {
