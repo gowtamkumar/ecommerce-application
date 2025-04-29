@@ -1,0 +1,13 @@
+name: first workflow
+
+on: [push]
+
+jobs:
+  first-workflow:
+    runs-on: ubontu-latest
+
+    step:
+      - name: First step
+        run: |
+          echo "learn git action"
+          echo "hello world"
