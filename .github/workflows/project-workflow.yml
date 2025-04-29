@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   first-workflow:
-    runs-on: ubontu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: First step
