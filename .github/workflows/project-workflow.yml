@@ -6,7 +6,7 @@ jobs:
   first-workflow:
     runs-on: ubontu-latest
 
-    step:
+    steps:
       - name: First step
         run: |
           echo "learn git action"
