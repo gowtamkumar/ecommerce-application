@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: first step
-        run: eche "this is multiple workflow"
+        run: echo "this is multiple workflow"
   
   second-job-workflow:
     runs-on: ubuntu-latest
