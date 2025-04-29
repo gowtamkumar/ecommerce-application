@@ -8,6 +8,4 @@ jobs:
 
     steps:
       - name: First step
-        run: |
-          echo "learn git action"
-          echo "hello world"
+        run: echo "learn git action"
