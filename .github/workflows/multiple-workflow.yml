@@ -1,0 +1,20 @@
+name: multipul job workflow
+
+on: 
+  push: 
+    branches:
+      - main
+jobs:
+  first-job-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: first step
+        run: eche "this is multiple workflow"
+  
+  second-job-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: second step
+        run: echo "this is second multuple workflow"
