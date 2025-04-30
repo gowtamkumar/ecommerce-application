@@ -1,0 +1,15 @@
+name: conditional workflow
+
+on:
+  push:
+    paths:
+      - "server/**"
+
+jobs:
+  conditional-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: first conditional job
+        run: |
+          echo "learn conditinal job"
