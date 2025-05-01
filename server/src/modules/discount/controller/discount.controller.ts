@@ -9,7 +9,7 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 import { ApplicableProductEntity } from "../model/applicable-products.entity";
 import { ApplicableBrandEntity } from "../model/applicable-brand.entity";
 import { ApplicableCategoryEntity } from "../model/applicable-category.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { ScopeEnum } from "../enum";
 import { singleDiscountQuery } from "../../../sqlQuery";
 
@@ -20,14 +20,23 @@ export const getDiscounts = asyncHandler(
   async (req: Request, res: Response) => {
     logger.info(`Service: getDiscounts ${req.method} ${req.url}`);
 
-    const { scope } = req.query;
+    const { scope } = req.query as any;
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
-    const newQuery = {} as any;
-    if (scope) newQuery.scope = scope;
-    const result = await repository.find({
-      where: newQuery,
-    });
+
+    console.log("scope", scope);
+    
+
+    // Validate allowed scopes
+
+    const whereClause: any = {};
+
+    if (scope) {
+      const scopesArray = scope.split(",").map((s: string) => s.trim());
+      whereClause.scope = In(scopesArray);
+    }
+    const result = await repository.find({ where: whereClause });
+
     return res.status(200).json({
       success: true,
       message: "Get all Discounts",

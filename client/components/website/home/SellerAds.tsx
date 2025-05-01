@@ -2,17 +2,13 @@
 import { Button } from "antd";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Navigation,
-  Pagination,
-  Autoplay,
-} from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
 import appConfig from "@/appConfig";
 
 const SellerAds = ({ banners }: any) => {
   return (
-    <section className="py-10 text-center bg-[#F6F6F6]">
+    <section className="py-10 mt-10 text-center bg-[#F6F6F6]">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         slidesPerView={1}
@@ -58,7 +54,6 @@ const SellerAds = ({ banners }: any) => {
         })}
       </Swiper>
     </section>
-
   );
 };
 

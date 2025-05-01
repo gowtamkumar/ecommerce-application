@@ -65,7 +65,7 @@ export default async function Home() {
                 >
                   <h3 className="text-xl font-bold text-black">{item.title}</h3>
                   <p className="text-sm mb-2 text-black">{item.description}</p>
-                  <Link className="bottom-auto" href={`/offer${item.url}`}>
+                  <Link className="bottom-auto" href={`/offers${item.url}`}>
                     <Button type="primary">Shop Now</Button>
                   </Link>
                 </div>
@@ -127,10 +127,8 @@ export default async function Home() {
 
         {/* More Discover */}
         {/* <MoreDiscover /> */}
-        <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
-          {/* Overlay */}
+        {/* <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
           <div className="absolute inset-0 z-0" />
-          {/* Content */}
           <div className="relative z-10 max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Stay in the loop!
@@ -142,7 +140,7 @@ export default async function Home() {
 
             <Subscribe />
           </div>
-        </section>
+        </section> */}
       </main>
       <ScrollToCart />
       <WebFooter />

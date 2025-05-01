@@ -18,7 +18,6 @@ export default function HeaderRight() {
   // hook
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
-  // const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const session = useSession();
 

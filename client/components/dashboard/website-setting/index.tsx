@@ -12,82 +12,41 @@ import { useDispatch, useSelector } from "react-redux";
 import appConfig from "@/appConfig";
 import { errorNotification } from "@/lib/utils/notification";
 
-
-const Menu = dynamic(() => import("./Menu"), { ssr: false })
-const HomePage = dynamic(() => import("./HomePage"), { ssr: false })
-const AboutPage = dynamic(() => import("./AboutPage"), { ssr: false })
-const ContactPage = dynamic(() => import("./ContactPage"), { ssr: false })
-const TermPolicyPage = dynamic(() => import("./TermPolicyPage"), { ssr: false })
-const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false })
-const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false })
-const SocialLink = dynamic(() => import("./SocialLink"), { ssr: false })
-const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false })
+const Menu = dynamic(() => import("./Menu"), { ssr: false });
+const HomePage = dynamic(() => import("./HomePage"), { ssr: false });
+const AboutPage = dynamic(() => import("./AboutPage"), { ssr: false });
+const ContactPage = dynamic(() => import("./ContactPage"), { ssr: false });
+const TermPolicyPage = dynamic(() => import("./TermPolicyPage"), {
+  ssr: false,
+});
+const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
+const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
+const SocialLink = dynamic(() => import("./SocialLink"), { ssr: false });
+const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false });
 
 export default function Index() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-
-
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   const fetchSettings = async () => {
-
-  //     try {
-  //       setLoading(true)
-  //       const setting = await getSettings();
-
-  //       if (isMounted) {
-  //         const newData = setting.data?.length ? setting.data[0] : {};
-  //         if (newData.image) {
-  //           const newfile = {
-  //             uid: Math.random() * 1000 + "",
-  //             name: `logo ${Math.random() * 10000 + ""}`,
-  //             status: "done",
-  //             fileName: newData.image,
-  //             url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-  //               }`,
-  //           };
-  //           newData.fileList = [newfile];
-  //         }
-
-  //         dispatch(setFormValues(newData));
-  //       }
-
-  //       setLoading(false)
-  //     } catch (error) {
-  //       setLoading(false)
-  //       console.error("Failed to fetch settings:", error);
-  //     }
-  //   };
-
-  //   fetchSettings();
-  //   return () => {
-  //     isMounted = false;
-  //     dispatch(setFormValues({}));
-  //   };
-  // }, [dispatch, global.action]);
-
   useEffect(() => {
     fetchData();
   }, [global.action]);
-
 
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const setting = await getSettings();
-      
 
-      const newData = setting.data?.length ? setting.data[0] : {};
+      const newData = setting.data;
       if (newData?.image) {
         const newfile = {
           uid: Math.random() * 1000 + "",
           name: `logo ${Math.random() * 10000 + ""}`,
           status: "done",
           fileName: newData.image,
-          url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-            }`,
+          url: `${appConfig.baseApiUrl}/uploads/${
+            newData.image || "no-data.png"
+          }`,
         };
         newData.fileList = [newfile];
       }
@@ -135,7 +94,7 @@ export default function Index() {
         {
           label: "Help Support",
           key: "help_Support",
-          children: <HelpSupport />
+          children: <HelpSupport />,
         },
 
         {
@@ -153,7 +112,6 @@ export default function Index() {
           key: "footer_option",
           children: <FooterOption />,
         },
-
       ]}
     />
   );

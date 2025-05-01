@@ -55,7 +55,11 @@ export default function Card({ item }: { item: any }) {
 
   const thumbnailImage = item?.thumbnailImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
-    : "/pos_software.png";
+    : "/default-placeholder.png";
+
+  //  const thumbnailImage = product.thumbnailImage
+  //               ? `${appConfig.baseApiUrl}/uploads/${product.thumbnailImage}`
+  //               : "/product-default.png";
 
   const hoverImage = item?.hoverImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
@@ -67,8 +71,8 @@ export default function Card({ item }: { item: any }) {
         <Image
           src={thumbnailImage}
           alt={item.name}
-          width={800}
-          height={800}
+          width={1000}
+          height={1000}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         {+item.discountAmount > 0 && (
@@ -81,8 +85,8 @@ export default function Card({ item }: { item: any }) {
           <Image
             src={hoverImage}
             alt={item.name}
-            width={800}
-            height={800}
+            width={1000}
+            height={1000}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="relative"
           />

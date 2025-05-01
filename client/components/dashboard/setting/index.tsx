@@ -58,9 +58,11 @@ export default function Index() {
     const fetchSettings = async () => {
       try {
         const setting = await getSettings();
+        console.log("setting", setting);
+
         const currency = await getCurrencies();
         if (isMounted) {
-          const data = setting?.data?.length ? setting?.data[0] : {};
+          const data = setting?.data;
           const newfile = {
             uid: Math.random() * 1000 + "",
             name: `logo ${Math.random() * 10000 + ""}`,
@@ -98,7 +100,7 @@ export default function Index() {
         {
           label: "Company Setting",
           key: "company_setting",
-          children: <CompanySetting currencies={currencies} />,
+          children: <CompanySetting />,
         },
         // {
         //   label: "Email Config",

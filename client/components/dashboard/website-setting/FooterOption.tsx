@@ -5,7 +5,6 @@ import {
   selectGlobal,
   setAction,
   setFormValues,
-  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
@@ -16,6 +15,7 @@ const FooterOption = () => {
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+
   const footerOption = {
     id: global.formValues.id,
     ...global.formValues.footerOption,
@@ -26,18 +26,18 @@ const FooterOption = () => {
   const handleSubmit = async (values: any) => {
     const copyRight = values.copyRight;
     try {
-      // let newData = { ...values };
       let newData = {
         id: values.id,
         footerOption: { copyRight },
       };
+
       // return console.log("newData:", newData);
-      setLoading(true)
+      setLoading(true);
       const result = newData.id
         ? await updateSetting(newData)
         : await saveSetting(newData);
       setTimeout(async () => {
-        setLoading(false)
+        setLoading(false);
         dispatch(setFormValues({}));
         dispatch(setAction({}));
       }, 100);
@@ -54,7 +54,7 @@ const FooterOption = () => {
       form.resetFields();
       dispatch(setFormValues(form.getFieldsValue()));
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const layout = {

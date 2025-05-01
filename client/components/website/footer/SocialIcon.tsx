@@ -1,50 +1,74 @@
-import Link from 'next/link'
-import React from 'react'
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTwitter } from 'react-icons/fa'
+"use client";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedinIn,
+  FaTwitter,
+} from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
-export default function SocialIcon({settingData}: any) {
+export default function SocialIcon() {
+  const global = useSelector(selectGlobal);
+  const settingData = global.setting;
+
   return (
-    <div className="flex-row border-t-2 px-4 text-center py-6 md:flex md:items-center md:justify-between ">
-    <span className="text-sm  sm:text-center">
-      © {new Date().getFullYear()} {settingData?.footerOption?.copyRight}
-    </span>
-    <div className="flex justify-center mt-4 md:justify-center md:mt-0 space-x-5 rtl:space-x-reverse text-center">
-      {settingData?.socialLink?.linkedinUrl && (
-        <Link
-          href={settingData?.socialLink?.facebookUrl}
-          className="text-gray-400 hover:text-white dark:hover:text-white"
-        >
-          <FaFacebookF />
-        </Link>
-      )}
+    <div className="container mx-auto flex-row text-center py-6 md:flex md:items-center md:justify-between">
+      <span className="text-sm  sm:text-center text-black">
+        © {new Date().getFullYear()} {settingData?.footerOption?.copyRight}
+      </span>
+      <div className="bg-black">
+        <div className="w-full max-w-[900px] mx-auto">
+          <Image
+            src="/banglargonji-payment-methods.png.webp"
+            alt="Payment Gateway"
+            width={1000}
+            height={1000}
+            className="w-full h-auto object-contain"
+          />
+        </div>
+      </div>
+      <div className="flex justify-center mt-4 md:justify-center md:mt-0 space-x-5 rtl:space-x-reverse text-center text-black">
+        {settingData?.socialLink?.linkedinUrl && (
+          <Link
+            href={settingData?.socialLink?.facebookUrl}
+            className=" hover:text-blue-500"
+          >
+            <FaFacebookF />
+          </Link>
+        )}
 
-      {settingData?.socialLink?.linkedinUrl && (
-        <Link
-          href={settingData?.socialLink?.linkedinUrl}
-          className="text-gray-400 hover:text-white dark:hover:text-white"
-        >
-          <FaLinkedinIn />
-        </Link>
-      )}
+        {settingData?.socialLink?.linkedinUrl && (
+          <Link
+            href={settingData?.socialLink?.linkedinUrl}
+            className=" hover:text-blue-500"
+          >
+            <FaLinkedinIn />
+          </Link>
+        )}
 
-      {settingData?.socialLink?.twitterUrl && (
-        <Link
-          href={settingData?.socialLink?.instagramUrl}
-          className="text-gray-400 hover:text-white dark:hover:text-white"
-        >
-          <FaInstagram />
-        </Link>
-      )}
+        {settingData?.socialLink?.twitterUrl && (
+          <Link
+            href={settingData?.socialLink?.instagramUrl}
+            className=" hover:text-red-500"
+          >
+            <FaInstagram />
+          </Link>
+        )}
 
-      {settingData?.socialLink?.twitterUrl && (
-        <Link
-          href={settingData?.socialLink?.twitterUrl}
-          className="text-gray-400 hover:text-white dark:hover:text-white"
-        >
-          <FaTwitter />
-        </Link>
-      )}
+        {settingData?.socialLink?.twitterUrl && (
+          <Link
+            href={settingData?.socialLink?.twitterUrl}
+            className=" hover:text-blue-500"
+          >
+            <FaX />
+          </Link>
+        )}
+      </div>
     </div>
-  </div>
-  )
+  );
 }

@@ -75,11 +75,7 @@ export default function CategoryCard({ categories }: any) {
                   >
                     <Image
                       alt={item.name || "image"}
-                      src={
-                        item.image
-                          ? `${appConfig.baseApiUrl}/uploads/${item.image}`
-                          : "/pos_software.png"
-                      }
+                      src={`${appConfig.baseApiUrl}/uploads/${item.image}`}
                       loading="lazy"
                       width={70}
                       height={70}

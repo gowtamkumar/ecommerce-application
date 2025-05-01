@@ -108,8 +108,7 @@ const CompanySetting = ({ currencies }: any) => {
     wrapperCol: { offset: 3, span: 12 },
   };
 
-
-   const normFile = (e: { fileList: string }) => {
+  const normFile = (e: { fileList: string }) => {
     if (Array.isArray(e)) {
       return e;
     }
@@ -188,9 +187,10 @@ const CompanySetting = ({ currencies }: any) => {
               listType="picture-card"
               fileList={global.formValues?.fileList || []}
               onRemove={async (v) => {
+                form.setFieldsValue({ image: null, fileList: [] });
+                dispatch(setFormValues({ image: null, fileList: [] }));
+
                 if (v.fileName) {
-                  form.setFieldsValue({ image: null, fileList: [] });
-                  dispatch(setFormValues({ image: null, fileList: [] }));
                   const params = { filename: v.fileName };
                   await fileDeleteWithPhoto(params);
                 }

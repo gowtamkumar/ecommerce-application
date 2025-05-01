@@ -2,6 +2,10 @@
 import React, { useState } from "react";
 import { saveLead } from "@/lib/apis/leads";
 import { Button, Form, Input, message, Space } from "antd";
+import {
+  successNotification,
+  warningNotification,
+} from "@/lib/utils/notification";
 
 export default function Subscribe() {
   const [loading, setLoading] = useState(false);
@@ -11,13 +15,13 @@ export default function Subscribe() {
     setLoading(true);
     const lead = await saveLead(value);
     if (!lead.success) {
-      message.error(lead.message);
+      warningNotification({ message: lead.message });
       setLoading(false);
       return;
     }
 
     if (lead.success && lead.data) {
-      message.success(lead.data.message);
+      successNotification({ message: lead.message });
     }
 
     setTimeout(() => {
@@ -44,7 +48,7 @@ export default function Subscribe() {
             },
           ]}
         >
-          <Input placeholder="Enter your email" />
+          <Input size="large" placeholder="Enter your email" />
         </Form.Item>
 
         <Button type="primary" size="large" htmlType="submit" loading={loading}>

@@ -129,7 +129,7 @@ const ProductCard: React.FC = () => {
           return (
             <div key={item.id}>
               {global.productView ? (
-                <div className="grid grid-cols-3 gap-2 border p-3 h-full">
+                <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-100 p-3 h-full">
                   <div className="relative group text-center md:text-start h-[40vh] overflow-hidden col-span-1">
                     {/* Main Image */}
                     <Image

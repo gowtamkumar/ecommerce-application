@@ -5,8 +5,8 @@ import { BiUser } from "react-icons/bi";
 export default function TopBar() {
   return (
     <div className="container flex justify-between items-center mx-auto">
-      <div className="text-sm flex gap-1">
-        <p> We are available 24/7, Need help?</p>
+      <div className="text-sm flex gap-1 items-center p-2">
+        <span> We are available 24/7, Need help?</span>
         <a href="tel:+01767-163576" className="text-blue-500">
           +01767-163576
         </a>

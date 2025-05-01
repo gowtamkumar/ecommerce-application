@@ -83,7 +83,7 @@ export default function FilterSidebarDetails({
         <p className="font-semibold">Price</p>
       </Divider>
 
-      <Space.Compact block>
+      <Space.Compact block >
         <InputNumber
           placeholder="Min"
           value={filterData.minPrice}

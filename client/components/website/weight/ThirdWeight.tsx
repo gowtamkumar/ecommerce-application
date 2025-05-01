@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function ThirdWeight() {
   return (
-    <div>
+    <div className="text-gray-300">
       <h2 className="mb-6 text-lg font-semibold uppercase">Compnay</h2>
       <ul className="font-medium">
         <li className="mb-4">
