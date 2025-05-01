@@ -415,3 +415,10 @@ message:stirng,
 is_read: boolean,
 created_at,
 updated_at
+
+
+## stock adjustment
+type:[add, subtract]
+productId,
+variantId,
+qty
