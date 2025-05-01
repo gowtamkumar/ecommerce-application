@@ -21,6 +21,7 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 import { NotificationEntity } from "../../other/notification/model/notification.entity";
 import { UserEntity } from "../../auth/model/user.entity";
+import { Repository } from "typeorm";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {
@@ -101,21 +102,21 @@ export const createOrder = asyncHandler(
         );
         const resultOrderItems = await repoOrderItems.save(newOrderItems);
 
-        const productVariantRepo =
-          queryRunner.manager.getRepository(ProductVariantEntity);
-        for (const item of resultOrderItems) {
-          const findProductVariant = await productVariantRepo.findOne({
-            where: { id: item.productVariantId },
-          });
-          if (findProductVariant) {
-            let currentStock =
-              (+findProductVariant.stockQty || 0) - (+item.qty || 0);
-            await productVariantRepo.save({
-              id: findProductVariant.id,
-              stockQty: currentStock,
-            });
-          }
-        }
+        // const productVariantRepo =
+        //   queryRunner.manager.getRepository(ProductVariantEntity);
+        // for (const item of resultOrderItems) {
+        //   const findProductVariant = await productVariantRepo.findOne({
+        //     where: { id: item.productVariantId },
+        //   });
+        //   if (findProductVariant) {
+        //     let currentStock =
+        //       (+findProductVariant.stockQty || 0) - (+item.qty || 0);
+        //     await productVariantRepo.save({
+        //       id: findProductVariant.id,
+        //       stockQty: currentStock,
+        //     });
+        //   }
+        // }
 
         // clear cart
         const cartRepo = queryRunner.manager.getRepository(CartEntity);
@@ -189,214 +190,6 @@ export const createOrder = asyncHandler(
     }
   }
 );
-
-// // @desc Create a single Order
-// // @route POST /api/v1/Order
-// // @access Public
-// export const createOrder = asyncHandler(
-//   async (req: CustomRequest, res: Response) => {
-//     logger.info(`Service: createOrder ${req.method} ${req.url}`);
-
-//     const userId = req.id as number | string;
-
-//     const connection = await getDBConnection();
-//     const queryRunner = connection.createQueryRunner();
-
-//     await queryRunner.connect();
-//     await queryRunner.startTransaction();
-
-//     try {
-//       const validation = onlineCreateOrderValidationSchema.safeParse({
-//         ...req.body,
-//         userId,
-//       });
-
-//       if (!validation.success) {
-//         const formattedErrors = validation.error.issues.map((issue) => ({
-//           path: issue.path.join("."),
-//           message: issue.message,
-//         }));
-
-//         return res.status(400).json({
-//           success: false,
-//           issues: formattedErrors,
-//         });
-//       }
-
-//       const {
-//         shippingCharge,
-//         subTotal,
-//         paymentMethod,
-//         orderItems,
-
-//         ...orderData
-//       }: any = validation.data;
-
-//       const repository = queryRunner.manager.getRepository(OrderEntity);
-
-//       // tracking no start
-//       const count = (await repository.count()) + 1;
-//       const trackingNo = `TRK-${count.toString().padStart(10, "0")}`;
-//       // tracking no end
-
-//       const newOrder = repository.create({
-//         shippingCharge,
-//         subTotal,
-//         paymentMethod,
-//         paymentStatus: PaymentStatus.NotPaid,
-//         ...orderData,
-//         trackingNo,
-//       });
-//       const savedOrder = await repository.save(newOrder);
-
-//       if (orderItems && savedOrder.id) {
-//         const repoOrderItems =
-//           queryRunner.manager.getRepository(OrderItemEntity);
-//         const newOrderItems = repoOrderItems.create(
-//           orderItems.map((item: any) => ({
-//             ...item,
-//             orderId: savedOrder.id,
-//           }))
-//         );
-//         const resultOrderItems = await repoOrderItems.save(newOrderItems);
-//         const productVariantRepo =
-//           queryRunner.manager.getRepository(ProductVariantEntity);
-
-//         for (const item of resultOrderItems) {
-//           const findProductVariant = await productVariantRepo.findOne({
-//             where: { id: item.productVariantId }, // find productvariant by id
-//           });
-
-//           if (findProductVariant) {
-//             let currentStock =
-//               (+findProductVariant.stockQty || 0) - (+item.qty || 0); //##ToDo need to validate stockqty
-//             await productVariantRepo.save({
-//               id: findProductVariant.id,
-//               stockQty: currentStock,
-//             });
-//           }
-//         }
-
-//         const repositoryOrderTracking =
-//           queryRunner.manager.getRepository(OrderTrackingEntity);
-//         const newOrderTracking = repositoryOrderTracking.create({
-//           orderId: savedOrder.id,
-//           userId,
-//           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-//         });
-//         await repositoryOrderTracking.save(newOrderTracking);
-
-//         if (validation.data.couponId) {
-//           const couponRepository =
-//             queryRunner.manager.getRepository(AppliedCouponEntity);
-
-//           const newCouponApplied = couponRepository.create({
-//             orderId: savedOrder.id,
-//             userId,
-//             discountAmount: validation.data.couponDiscount,
-//             couponId: validation.data.couponId,
-//           });
-//           await couponRepository.save(newCouponApplied);
-//         }
-
-//         const repositoryCarts = queryRunner.manager.getRepository(CartEntity);
-
-//         const cartsList = await repositoryCarts.find({ where: { userId } });
-
-//         await repositoryCarts.remove(cartsList);
-
-//         const notification: Notification = {
-//           type: "Order",
-//           title: "Order Placed",
-//           message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
-//           userId,
-//           orderId: savedOrder.id,
-//         };
-
-//         await sendOrderNotification(notification);
-//       }
-
-//       // payment and sslcommerz
-//       const store_id = "ecomm6648b03fa5d37";
-//       const store_passwd = "ecomm6648b03fa5d37@ssl";
-//       const is_live = false; //true for live, false for sandbox
-//       // payment
-//       const data = {
-//         total_amount: 100,
-//         currency: "BDT",
-//         tran_id: `TXN_${Date.now()}`, // use unique tran_id for each api call
-//         success_url: "http://localhost:3000/api/success",
-//         fail_url: "http://localhost:3000/api/fail",
-//         cancel_url: "http://localhost:3000/api/cancel",
-//         ipn_url: "http://localhost:3000/api/payment-ipn",
-//         shipping_method: "Courier",
-//         product_name: "Computer.",
-//         product_category: "Electronic",
-//         product_profile: "general",
-//         cus_name: "Customer Name",
-//         cus_email: "customer@example.com",
-//         cus_add1: "Dhaka",
-//         cus_add2: "Dhaka",
-//         cus_city: "Dhaka",
-//         cus_state: "Dhaka",
-//         cus_postcode: "1000",
-//         cus_country: "Bangladesh",
-//         cus_phone: "01711111111",
-//         cus_fax: "01711111111",
-//         ship_name: "Customer Name",
-//         ship_add1: "Dhaka",
-//         ship_add2: "Dhaka",
-//         ship_city: "Dhaka",
-//         ship_state: "Dhaka",
-//         ship_postcode: 1000,
-//         ship_country: "Bangladesh",
-//       };
-//       const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-
-//       const apiResponse = await sslcz
-//         .init(data)
-//         .then((apiResponse: { GatewayPageURL: any }) => {
-//           logger.info(`Service: getMemu ${req.method} ${req.url}`);
-//           let GatewayPageURL = apiResponse.GatewayPageURL;
-//           res.redirect(GatewayPageURL);
-//           console.log("Redirecting to: ", GatewayPageURL);
-//         });
-
-//       console.log("apiResponse", apiResponse);
-
-//       // const repositoryPayment = connection.getRepository(PaymentEntity);
-
-//       // const newPayment = repositoryPayment.create({
-//       //   orderId: 1,
-//       //   userId: 1,
-//       //   paymentDate: dayjs(),
-//       //   paymentMethod: "Cash | SSLEcommerc",
-//       //   paymentType: PaymentType.Debit,
-//       //   amount: 4000,
-//       // });
-//       // await repositoryPayment.save(newPayment);
-
-//       // payment end
-
-//       await queryRunner.commitTransaction();
-
-//       return res.status(200).json({
-//         success: true,
-//         message: "Create a new Order",
-//         data: savedOrder,
-//       });
-//     } catch (error) {
-//       await queryRunner.rollbackTransaction();
-//       console.error("Transaction failed:", error);
-//       return res.status(500).json({
-//         success: false,
-//         message: "Failed to create Order",
-//       });
-//     } finally {
-//       await queryRunner.release();
-//     }
-//   }
-// );
 
 export const sendOrderNotification = async (
   notification: Notification
@@ -914,7 +707,6 @@ export const orderStatusUpdate = asyncHandler(
     logger.info(`Service: orderStatusUpdate ${req.method} ${req.url}`);
 
     const userId = req.id as string | number;
-
     const { id } = req.params;
 
     const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
@@ -931,14 +723,15 @@ export const orderStatusUpdate = asyncHandler(
       });
     }
 
+    const status = validation.data.status;
+
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const repository = await queryRunner.manager.getRepository(OrderEntity);
-
+    const repository = queryRunner.manager.getRepository(OrderEntity);
     const result = await repository.findOne({
       where: { id },
       relations: ["orderItems"],
@@ -950,32 +743,29 @@ export const orderStatusUpdate = asyncHandler(
 
     try {
       if (
-        validation.data.status === OrderStatus.Returned ||
-        validation.data.status ||
-        OrderStatus.Canceled
+        [
+          OrderStatus.Returned,
+          OrderStatus.Canceled,
+          OrderStatus.Approved,
+          OrderStatus.Completed,
+          OrderStatus.OnShipping,
+          OrderStatus.Shipped,
+        ].includes(status as OrderStatus)
       ) {
         const productVariantRepo =
           queryRunner.manager.getRepository(ProductVariantEntity);
-        for (const item of result.orderItems) {
-          const findProductVariant = await productVariantRepo.findOne({
-            where: { id: item.productVariantId },
-          });
 
-          if (findProductVariant) {
-            let currentStock =
-              (+findProductVariant.stockQty || 0) + (+item.qty || 0);
-            const returnVariatn = await productVariantRepo.save({
-              id: findProductVariant.id,
-              stockQty: currentStock,
-            });
-          }
-        }
+        const isStockIncrease = [
+          OrderStatus.Returned,
+          OrderStatus.Canceled,
+        ].includes(status as OrderStatus);
+
+        await adjustStock(
+          result.orderItems,
+          isStockIncrease,
+          productVariantRepo
+        );
       }
-
-      // const updateData = await repository.merge({
-      //   id: result.id,
-      //   status: validation.data.status,
-      // });
 
       const save = await repository.save({
         id: result.id,
@@ -984,8 +774,8 @@ export const orderStatusUpdate = asyncHandler(
 
       const notification: Notification = {
         type: "Order",
-        title: validation.data.status,
-        message: `Your order has been ${validation.data.status}. Order Tracking No: ${result.trackingNo}`,
+        title: status,
+        message: `Your order has been ${status}. Order Tracking No: ${result.trackingNo}`,
         userId,
         orderId: result.id,
       };
@@ -1003,13 +793,50 @@ export const orderStatusUpdate = asyncHandler(
       await queryRunner.rollbackTransaction();
       return res.status(500).json({
         success: false,
-        message: "Failed to create Order",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to update order status",
       });
     } finally {
       await queryRunner.release();
     }
   }
 );
+
+async function adjustStock(
+  orderItems: OrderItemEntity[],
+  isStockIncrease: boolean,
+  productVariantRepo: Repository<ProductVariantEntity>
+) {
+  for (const item of orderItems) {
+    const findProductVariant: any = await productVariantRepo.findOne({
+      where: { id: item.productVariantId },
+    });
+
+    if (!findProductVariant) continue;
+
+    const currentStock = +findProductVariant.stockQty || 0;
+    const itemQty = +item.qty || 0;
+
+    // ❗Check if stock is enough before reducing
+    if (!isStockIncrease && currentStock < itemQty) {
+      throw new Error(
+        `Insufficient stock for product variant ID ${item.productVariantId}. Required: ${itemQty}, Available: ${currentStock}`
+      );
+    }
+
+    const newStockQty = isStockIncrease
+      ? currentStock + itemQty
+      : currentStock - itemQty;
+
+    await productVariantRepo.save({
+      id: findProductVariant.id,
+      stockQty: newStockQty,
+    });
+  }
+}
+
 // @desc Delete a single Order
 // @route DELETE /api/v1/orders/:id
 // @access Public
@@ -1033,3 +860,211 @@ export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+// // @desc Create a single Order
+// // @route POST /api/v1/Order
+// // @access Public
+// export const createOrder = asyncHandler(
+//   async (req: CustomRequest, res: Response) => {
+//     logger.info(`Service: createOrder ${req.method} ${req.url}`);
+
+//     const userId = req.id as number | string;
+
+//     const connection = await getDBConnection();
+//     const queryRunner = connection.createQueryRunner();
+
+//     await queryRunner.connect();
+//     await queryRunner.startTransaction();
+
+//     try {
+//       const validation = onlineCreateOrderValidationSchema.safeParse({
+//         ...req.body,
+//         userId,
+//       });
+
+//       if (!validation.success) {
+//         const formattedErrors = validation.error.issues.map((issue) => ({
+//           path: issue.path.join("."),
+//           message: issue.message,
+//         }));
+
+//         return res.status(400).json({
+//           success: false,
+//           issues: formattedErrors,
+//         });
+//       }
+
+//       const {
+//         shippingCharge,
+//         subTotal,
+//         paymentMethod,
+//         orderItems,
+
+//         ...orderData
+//       }: any = validation.data;
+
+//       const repository = queryRunner.manager.getRepository(OrderEntity);
+
+//       // tracking no start
+//       const count = (await repository.count()) + 1;
+//       const trackingNo = `TRK-${count.toString().padStart(10, "0")}`;
+//       // tracking no end
+
+//       const newOrder = repository.create({
+//         shippingCharge,
+//         subTotal,
+//         paymentMethod,
+//         paymentStatus: PaymentStatus.NotPaid,
+//         ...orderData,
+//         trackingNo,
+//       });
+//       const savedOrder = await repository.save(newOrder);
+
+//       if (orderItems && savedOrder.id) {
+//         const repoOrderItems =
+//           queryRunner.manager.getRepository(OrderItemEntity);
+//         const newOrderItems = repoOrderItems.create(
+//           orderItems.map((item: any) => ({
+//             ...item,
+//             orderId: savedOrder.id,
+//           }))
+//         );
+//         const resultOrderItems = await repoOrderItems.save(newOrderItems);
+//         const productVariantRepo =
+//           queryRunner.manager.getRepository(ProductVariantEntity);
+
+//         for (const item of resultOrderItems) {
+//           const findProductVariant = await productVariantRepo.findOne({
+//             where: { id: item.productVariantId }, // find productvariant by id
+//           });
+
+//           if (findProductVariant) {
+//             let currentStock =
+//               (+findProductVariant.stockQty || 0) - (+item.qty || 0); //##ToDo need to validate stockqty
+//             await productVariantRepo.save({
+//               id: findProductVariant.id,
+//               stockQty: currentStock,
+//             });
+//           }
+//         }
+
+//         const repositoryOrderTracking =
+//           queryRunner.manager.getRepository(OrderTrackingEntity);
+//         const newOrderTracking = repositoryOrderTracking.create({
+//           orderId: savedOrder.id,
+//           userId,
+//           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+//         });
+//         await repositoryOrderTracking.save(newOrderTracking);
+
+//         if (validation.data.couponId) {
+//           const couponRepository =
+//             queryRunner.manager.getRepository(AppliedCouponEntity);
+
+//           const newCouponApplied = couponRepository.create({
+//             orderId: savedOrder.id,
+//             userId,
+//             discountAmount: validation.data.couponDiscount,
+//             couponId: validation.data.couponId,
+//           });
+//           await couponRepository.save(newCouponApplied);
+//         }
+
+//         const repositoryCarts = queryRunner.manager.getRepository(CartEntity);
+
+//         const cartsList = await repositoryCarts.find({ where: { userId } });
+
+//         await repositoryCarts.remove(cartsList);
+
+//         const notification: Notification = {
+//           type: "Order",
+//           title: "Order Placed",
+//           message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
+//           userId,
+//           orderId: savedOrder.id,
+//         };
+
+//         await sendOrderNotification(notification);
+//       }
+
+//       // payment and sslcommerz
+//       const store_id = "ecomm6648b03fa5d37";
+//       const store_passwd = "ecomm6648b03fa5d37@ssl";
+//       const is_live = false; //true for live, false for sandbox
+//       // payment
+//       const data = {
+//         total_amount: 100,
+//         currency: "BDT",
+//         tran_id: `TXN_${Date.now()}`, // use unique tran_id for each api call
+//         success_url: "http://localhost:3000/api/success",
+//         fail_url: "http://localhost:3000/api/fail",
+//         cancel_url: "http://localhost:3000/api/cancel",
+//         ipn_url: "http://localhost:3000/api/payment-ipn",
+//         shipping_method: "Courier",
+//         product_name: "Computer.",
+//         product_category: "Electronic",
+//         product_profile: "general",
+//         cus_name: "Customer Name",
+//         cus_email: "customer@example.com",
+//         cus_add1: "Dhaka",
+//         cus_add2: "Dhaka",
+//         cus_city: "Dhaka",
+//         cus_state: "Dhaka",
+//         cus_postcode: "1000",
+//         cus_country: "Bangladesh",
+//         cus_phone: "01711111111",
+//         cus_fax: "01711111111",
+//         ship_name: "Customer Name",
+//         ship_add1: "Dhaka",
+//         ship_add2: "Dhaka",
+//         ship_city: "Dhaka",
+//         ship_state: "Dhaka",
+//         ship_postcode: 1000,
+//         ship_country: "Bangladesh",
+//       };
+//       const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+
+//       const apiResponse = await sslcz
+//         .init(data)
+//         .then((apiResponse: { GatewayPageURL: any }) => {
+//           logger.info(`Service: getMemu ${req.method} ${req.url}`);
+//           let GatewayPageURL = apiResponse.GatewayPageURL;
+//           res.redirect(GatewayPageURL);
+//           console.log("Redirecting to: ", GatewayPageURL);
+//         });
+
+//       console.log("apiResponse", apiResponse);
+
+//       // const repositoryPayment = connection.getRepository(PaymentEntity);
+
+//       // const newPayment = repositoryPayment.create({
+//       //   orderId: 1,
+//       //   userId: 1,
+//       //   paymentDate: dayjs(),
+//       //   paymentMethod: "Cash | SSLEcommerc",
+//       //   paymentType: PaymentType.Debit,
+//       //   amount: 4000,
+//       // });
+//       // await repositoryPayment.save(newPayment);
+
+//       // payment end
+
+//       await queryRunner.commitTransaction();
+
+//       return res.status(200).json({
+//         success: true,
+//         message: "Create a new Order",
+//         data: savedOrder,
+//       });
+//     } catch (error) {
+//       await queryRunner.rollbackTransaction();
+//       console.error("Transaction failed:", error);
+//       return res.status(500).json({
+//         success: false,
+//         message: "Failed to create Order",
+//       });
+//     } finally {
+//       await queryRunner.release();
+//     }
+//   }
+// );
