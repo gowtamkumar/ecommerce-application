@@ -81,8 +81,6 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
         productId,
       });
 
-      console.log("res", res);
-
       if (res.success) {
         successNotification({ message: "succes" });
         // message.success(`${res.message}`);

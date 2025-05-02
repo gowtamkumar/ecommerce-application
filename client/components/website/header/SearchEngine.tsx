@@ -77,7 +77,7 @@ export default function SearchEngine() {
         </div>
        
       </form>
-      <div className="absolute z-40 bg-white w-[40vw]">
+      <div className="absolute z-40 bg-white md:w-[40vw]">
         {global.loading.search
           ? "Loadding..."
           : results.map((product: any) => {

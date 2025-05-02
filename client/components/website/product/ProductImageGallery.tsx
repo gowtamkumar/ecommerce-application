@@ -8,38 +8,39 @@ import appConfig from "@/appConfig";
 
 const ProductImageGallery = ({ images }: { images: string }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
-  const newimages = images?.split(",");
+  const newimages = images?.split(",");  
 
   return (
-    <div>
-      <div>
-        <Swiper
-          loop={newimages?.length >= 3}
-          spaceBetween={10}
-          thumbs={{ swiper: thumbsSwiper }}
-          modules={[FreeMode, Navigation, Thumbs]}
-        >
-          {(newimages || []).map((item: string, idx: number) => {
-            return (
-              <SwiperSlide key={idx}>
+    <div className="w-full">
+      <Swiper
+        loop={newimages?.length >= 3}
+        spaceBetween={10}
+        className="h-[50vh] w-full"
+        thumbs={{ swiper: thumbsSwiper }}
+        modules={[FreeMode, Navigation, Thumbs]}
+      >
+        {(newimages || []).map((item: string, idx: number) => {
+          return (
+            <SwiperSlide key={idx}>
+              <div className="relative w-full h-[50vh]">
                 <Image
-                  height={400}
-                  width={400}
-                  className="object-cover"
-                  loading="lazy"
                   src={
                     item
                       ? `${appConfig.baseApiUrl}/uploads/${item}`
                       : "/pos_software.png"
                   }
                   alt={item}
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                  {...(idx === 0 ? { priority: true } : { loading: "lazy" })}
                 />
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      </div>
-      <div>
+              </div>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
+      <div className="relative">
         <Swiper
           onSwiper={(swiper) => setThumbsSwiper(swiper)}
           loop={newimages?.length >= 3}
@@ -49,7 +50,7 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           freeMode={true}
           watchSlidesProgress={true}
           modules={[FreeMode, Navigation, Thumbs]}
-          className="h-[10vh]"
+          className="h-[10vh] w-full"
           navigation={{
             nextEl: ".custom-next",
             prevEl: ".custom-prev",
@@ -58,29 +59,32 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           {(newimages || []).map((item: string, idx: number) => {
             return (
               <SwiperSlide key={idx}>
-                <Image
-                  height={200}
-                  width={200}
-                  loading="lazy"
-                  src={
-                    item
-                      ? `${appConfig.baseApiUrl}/uploads/${item}`
-                      : "/pos_software.png"
-                  }
-                  alt={item}
-                />
+                <div className="relative w-full h-[10vh] cursor-pointer">
+                  <Image
+                    alt={item}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                    {...(idx === 0 ? { priority: true } : { loading: "lazy" })}
+                    src={
+                      item
+                        ? `${appConfig.baseApiUrl}/uploads/${item}`
+                        : "/default-placeholder.png"
+                    }
+                  />
+                </div>
               </SwiperSlide>
             );
           })}
         </Swiper>
-        {/* Custom Previous and Next Buttons */}
-        <button className="custom-prev">
-          <CiSquareChevRight size={40} />
-        </button>
-        <button className="custom-next">
-          <CiSquareChevLeft size={40} />
-        </button>
       </div>
+      {/* Custom Previous and Next Buttons */}
+      <button className="custom-prev">
+        <CiSquareChevRight size={40} />
+      </button>
+      <button className="custom-next">
+        <CiSquareChevLeft size={40} />
+      </button>
     </div>
   );
 };

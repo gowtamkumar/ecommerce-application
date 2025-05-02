@@ -9,6 +9,7 @@ import { Button, Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { CiFilter } from "react-icons/ci";
 import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
+import FilterSidebar from "./FilterSidebar";
 
 
 export default function FilterHeader() {
@@ -114,10 +115,9 @@ export default function FilterHeader() {
       <Modal
         open={layout.open}
         onCancel={() => dispatch(setOpen(false))}
-        // width={600}
         footer={null}
       >
-        <div className="p-2">Modal</div>
+        <FilterSidebar />
       </Modal>
     </div>
   );

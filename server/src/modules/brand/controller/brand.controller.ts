@@ -53,37 +53,41 @@ export const getBrand = asyncHandler(
 // @desc Create a single Brand
 // @route POST /api/v1/Brands
 // @access Public
-export const createBrand = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createBrand ${req.method} ${req.url}`);
-  const connection = await getDBConnection();
+export const createBrand = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createBrand ${req.method} ${req.url}`);
+    const connection = await getDBConnection();
 
-  const validation = brandValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+    const validation = brandValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+    const repository = connection.getRepository(BrandEntity);
+
+    const slug = validation.data.name.toLowerCase().trim().split(" ").join("-");
+
+    const newBrand = repository.create({ ...validation.data, slug });
+    const save = await repository.save(newBrand);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Brand",
+      data: save,
     });
   }
-  const repository = connection.getRepository(BrandEntity);
-
-  const newBrand = repository.create(validation.data);
-  const save = await repository.save(newBrand);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Brand",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single Brand
 // @route PUT /api/v1/Brands/:id

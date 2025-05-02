@@ -1,4 +1,4 @@
-import FilterSidebar from "@/components/website/product-filter/FilterSidebar";
+import FilterSidebar from "@/components/website/Sidebar-filter/FilterSidebar";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { Divider } from "antd";
 import dynamic from "next/dynamic";
@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 const CategoryHeader = dynamic(
-  () => import("@/components/website/product-filter/FilterHeader")
+  () => import("@/components/website/Sidebar-filter/FilterHeader")
 );
 const ProductCard = dynamic(
   () => import("@/components/website/product/ProductCard")

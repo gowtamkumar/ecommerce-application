@@ -19,6 +19,9 @@ export class BrandEntity {
   @Column({ unique: true })
   name!: string;
 
+  @Column({ nullable: true }) // need to remove this
+  slug!: string;
+
   @Column({ nullable: true })
   image!: string;
 

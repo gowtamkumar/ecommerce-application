@@ -33,11 +33,8 @@ export default function SingleProduct() {
     dispatch(setLoading({ loading: true }));
 
     try {
-      const newProduct = await getProductBySlug(slug?.toString() as any);
+      const newProduct = await getProductBySlug({ slug: slug?.toString() });
       const { productVariants, variant } = newProduct.data;
-
-      console.log("newProduct.data;", newProduct.data);
-      
 
       if (newProduct?.success) {
         const findVariantProduct = productVariants.find(
