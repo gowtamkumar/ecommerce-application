@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useDispatch } from "react-redux";
@@ -12,9 +11,10 @@ const CartSync = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (session?.user?.access_token) {
-      fetchCartData(session.user.access_token).then((cartItems: any) => {
-        dispatch(replaceCart(cartItems)); // ✅ Sync cart with Redux
+    console.log("cart Sync");
+    if (session?.user?.accessToken) {
+      fetchCartData().then((cart: any) => {
+        dispatch(replaceCart(cart)); // ✅ Sync cart with Redux
       });
     }
   }, [session]);

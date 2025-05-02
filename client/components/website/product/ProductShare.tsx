@@ -27,14 +27,14 @@ const ProductShare = () => {
   const productUrl = `${appConfig.publicUrl}/product/${slug}`;
 
   return (
-    <div className="flex items-center space-x-4 mt-6">
+    <div className="flex items-center space-x-4">
       {/* Facebook Share */}
       <FacebookShareButton
         url={productUrl}
         title={`Check out this amazing product: ${name}`}
         hashtag="#Ecommerce"
       >
-        <FaFacebook size={40} />
+        <FaFacebook size={30} />
       </FacebookShareButton>
 
       {/* Twitter Share */}
@@ -42,7 +42,7 @@ const ProductShare = () => {
         url={productUrl}
         title={`Check out this amazing product: ${name}`}
       >
-        <FaXTwitter size={40} />
+        <FaXTwitter size={30} />
       </TwitterShareButton>
 
       {/* WhatsApp Share */}
@@ -50,7 +50,7 @@ const ProductShare = () => {
         url={productUrl}
         title={`Check out this amazing product: ${name}`}
       >
-        <WhatsappIcon size={40} round />
+        <WhatsappIcon size={30} round />
       </WhatsappShareButton>
 
       {/* Email Share */}
@@ -59,7 +59,7 @@ const ProductShare = () => {
         subject={`Amazing Product: ${name}`}
         body={`Check out this product: ${productUrl}`}
       >
-        <EmailIcon size={40} round />
+        <EmailIcon size={30} round />
       </EmailShareButton>
     </div>
   );

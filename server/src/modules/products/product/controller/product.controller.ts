@@ -214,6 +214,7 @@ export const getProductByslug = asyncHandler(
           p.thumbnail_image,
           p.hover_image,
           p.images,
+          p.variant,
           p.description,
           p.short_description,
           p.enable_review,
@@ -278,6 +279,7 @@ export const getProductByslug = asyncHandler(
         p.product_id AS "id",
         p.name,
         p.slug,
+        p.variant,
         p.thumbnail_image AS "thumbnailImage",
         p.hover_image AS "hoverImage",
         p.images,
@@ -359,7 +361,7 @@ export const getProductByslug = asyncHandler(
       LEFT JOIN colors ON colors.id = pv.color_id
       LEFT JOIN reviews r ON r.product_id = p.product_id
       GROUP BY 
-        sd.discount_strategy, sd.discount_value,
+        sd.discount_strategy, sd.discount_value,p.variant,
         p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, 
         p.short_description, p.enable_review, p.limit_purchase_qty, p.tags, rt.reviews_count, 
         rt.average_rating, t.name, t.value, b.id, b.image, b.status, b.name, p.unit_price, p.images;

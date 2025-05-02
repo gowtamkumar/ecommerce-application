@@ -124,7 +124,7 @@ export default function Card({ item }: { item: any }) {
           <p className="text-gray-500 mb-1 text-md">৳ {item.finalPrice}</p>
         </div>
 
-        {item?.discountId && (
+        {+item?.discountValue > 0 && (
           <div className="text-xs">
             <span className="line-through text-gray-500">
               ৳ {item.salePrice}

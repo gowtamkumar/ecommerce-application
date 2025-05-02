@@ -30,6 +30,8 @@ export default function AddToCartButton({ item }: { item: any }) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
+  
+
   async function addToCart(values: any) {
     const newData = {
       productId: values.id,

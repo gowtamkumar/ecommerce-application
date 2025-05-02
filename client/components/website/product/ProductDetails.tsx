@@ -59,21 +59,19 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
     id,
     name,
     defaultProduct,
-    tax,
     reviews,
+    reviewsCount,
     brand,
-    discountId,
+    salePrice,
     discountValue,
     discountStrategy,
-    productColors,
     variant,
     productVariants,
     images,
     shortDescription,
   } = products.product;
 
-  const unitPrice = +defaultProduct?.unitPrice;
-  let taxAmount = (+unitPrice * (+tax?.value || 0)) / 100;
+  console.log("defaultProduct", defaultProduct);
 
   async function AddToWishlist(productId: number) {
     try {
@@ -113,7 +111,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
   // }
 
   const findProduct = cart.carts.cartList?.find(
-    ({ id }: { id: number }) => id === product.id
+    ({ productId }: { productId: number }) => productId === product.id
   );
 
   return (
@@ -124,7 +122,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
       <div className="col-span-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="md:text-2xl md:font-bold mb-2 font-semibold text-lg">
+            <h1 className="md:text-xl md:font-bold mb-2 font-semibold text-lg">
               {name}
             </h1>
             <Rate
@@ -133,26 +131,24 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
                 +((productRating?.totalReview || 0) / (reviews?.length || 0))
               }
             />
-            <span className="mx-2">Reviews ({reviews?.length || 0})</span>
+            <span className="mx-2">Reviews ({+reviewsCount || 0})</span>
           </div>
           <div>{brand?.name && <h2>Brand: {brand.name}</h2>}</div>
         </div>
 
         <div>
           <p className="text-2xl font-semibold text-blue-600 mr-4">
-            {product.discountedPrice}
+            {product.finalPrice}
           </p>
 
-          {discountId && (
-            <>
-              <span className="line-through text-gray-500">
-                ৳ {(+unitPrice || 0).toFixed(2)}
-              </span>
+          {+discountValue > 0 && (
+            <div className="text-xs">
+              <span className="line-through text-gray-500">৳ {salePrice}</span>
               <span className="text-red-600 ml-2">
                 - {discountValue}
                 {discountStrategy === "Percentage" ? "%" : "BDT"}
               </span>
-            </>
+            </div>
           )}
         </div>
 
@@ -163,59 +159,32 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
           }}
         />
 
-        {productColors && (
-          <div className="mb-4">
-            <span className="text-gray-600">Color: </span>
-            {(productColors || []).map((item: ProductColor) => (
-              <Button
-                key={item.colorId}
-                onClick={() => {
-                  dispatch(
-                    setProduct({
-                      ...product,
-                      color: item?.color,
-                      colorId: item?.colorId,
-                    })
-                  );
-                }}
-                className={`mr-2 px-2 py-1 focus:outline-none  ${
-                  product.colorId === item.colorId ? "!bg-gray-200" : ""
-                }`}
-              >
-                {item?.color?.name}
-              </Button>
-            ))}
-          </div>
-        )}
-
         {variant && (
           <div className="mb-4">
             <span>Size: </span>
-            {(productVariants || []).map(
-              (item: ProductVariant, idx: number) => (
-                <Button
-                  key={idx}
-                  onClick={async () => {
+            {(productVariants || []).map((item: any, idx: number) => (
+              <Button
+                key={idx}
+                onClick={async () => {
+                  dispatch(
                     setProduct({
                       ...product,
                       defaultProduct: item,
-                    });
-                    setCheckStock(item.stockQty);
-                  }}
-                  className={`mr-2 px-2 py-1 focus:outline-none  ${
-                    defaultProduct.id === item.id ? "!bg-gray-200" : ""
+                    })
+                  );
+                  setCheckStock(item.stockQty);
+                }}
+                className={`mr-2 px-2 py-1 focus:outline-none  ${defaultProduct.id === item.id ? "!bg-gray-200" : ""
                   }`}
-                >
-                  {item?.size?.name}
-                </Button>
-              )
-            )}
+              >
+                {item?.size?.name} {item?.color?.name}
+              </Button>
+            ))}
           </div>
         )}
         <p>In stock {checkStock} Items</p>
 
         {/* product Action section */}
-
         <div className="flex items-center gap-2 mb-4">
           {findProduct ? (
             <div>
@@ -229,12 +198,11 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
             </div>
           ) : (
             <div>
-              <AddToCartButton item={product} />
+              <AddToCartButton
+                item={{ ...product, productVariantId: defaultProduct?.id }}
+              />
             </div>
           )}
-        </div>
-
-        <div className="flex items-center gap-4">
           <span
             className="cursor-pointer flex items-center gap-1"
             onClick={() => {
@@ -245,18 +213,10 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
               }
             }}
           >
-            <CiHeart /> Add to Wishlist
-          </span>
-          <span
-            onClick={() => console.log("dsasfd")}
-            className="flex items-center gap-1"
-          >
-            <TfiPencil />
-            Size Guide
+            <CiHeart /> Add Wishlist
           </span>
         </div>
         <Divider />
-
         <div className="flex gap-4 items-center">
           <div>Share:</div>
           <ProductShare />

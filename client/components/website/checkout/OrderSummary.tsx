@@ -21,10 +21,7 @@ export default function OrderSummary() {
   async function removeItemCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
-      const removeCartRes = await deleteCart(id);
-
-      console.log("removeCartRes", removeCartRes);
-      
+      const removeCartRes = await deleteCart(id);      
 
       if (removeCartRes.success) {
         const getCartList = await getCartLists();

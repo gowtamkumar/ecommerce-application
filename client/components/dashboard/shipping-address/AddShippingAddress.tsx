@@ -95,16 +95,13 @@ const AddShippingAddress = () => {
   const setFormData = (v: any) => {
     const newData = { ...v };
     form.setFieldsValue(newData);
-    // dispatch(setFormValues(form.getFieldsValue()));
   };
 
   const resetFormData = () => {
     if (payload?.id) {
       form.setFieldsValue(payload);
-      // dispatch(setFormValues(payload));
     } else {
       form.resetFields();
-      // dispatch(setFormValues(form.getFieldsValue()));
     }
   };
 
@@ -148,15 +145,7 @@ const AddShippingAddress = () => {
             },
           ]}
         >
-          <Select
-            placeholder="Select"
-            // optionFilterProp="children"
-            // filterOption={(input, option) =>
-            //   (option?.children as any)
-            //     .toLowerCase()
-            //     .indexOf(input.toLowerCase()) >= 0
-            // }
-          >
+          <Select placeholder="Select">
             <Select.Option value="Home">Home</Select.Option>
             <Select.Option value="Office">Office</Select.Option>
           </Select>

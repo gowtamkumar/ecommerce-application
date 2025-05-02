@@ -36,6 +36,9 @@ export default function SingleProduct() {
       const newProduct = await getProductBySlug({ slug: slug?.toString() });
       const { productVariants, variant } = newProduct.data;
 
+      console.log('newProduct.data', newProduct.data);
+      
+
       if (newProduct?.success) {
         const findVariantProduct = productVariants.find(
           (item: { default: boolean }) => item.default
@@ -64,7 +67,6 @@ export default function SingleProduct() {
         // const categoryIds = newProduct.data.productCategories
         //   .map((item: { categoryId: number }) => item.categoryId)
         //   .join(",");
-
         // dispatch(setProductFilter({ categoryId: categoryIds }));
       }
     } catch (error: any) {

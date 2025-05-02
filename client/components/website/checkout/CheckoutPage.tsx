@@ -12,6 +12,7 @@ import {
   setShippingCharge,
 } from "@/redux/features/checkout/checkoutSlice";
 import ApplyCoupon from "./ApplyCoupon";
+import { getUserShippingAddresses } from "@/lib/apis/shipping-address";
 
 const Breadcrumb = dynamic(() => import("@/components/Breadcrumb"), {
   ssr: false,
@@ -38,22 +39,26 @@ export default function CheckoutPage() {
   }, []);
 
   async function fetchData() {
-    const user = await getMe();    
-    const activeShippingAddress = user.data?.shippingAddress?.find(
+    const shippingAddress = await getUserShippingAddresses();
+
+    const activeShippingAddress = shippingAddress.data?.find(
       (item: { status: boolean }) => item.status
     );
+
     if (activeShippingAddress?.divisionId) {
       const getShippingCharge = await getShippingCharges({
         divisionId: activeShippingAddress.divisionId,
       });
+      console.log("getShippingCharge",getShippingCharge);
+
       dispatch(
         setShippingCharge(
           getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
         )
       );
-    }    
+    }
 
-    dispatch(setShippingAddress(user.data?.shippingAddress));
+    dispatch(setShippingAddress(shippingAddress.data));
     dispatch(
       setCheckoutFormData({
         paymentMethod: "Cash",

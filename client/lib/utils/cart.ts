@@ -1,31 +1,24 @@
 import appConfig from "@/appConfig";
+import { getCartLists } from "../apis/cart";
 
-
-export const fetchCartData = async (accessToken: string) => {
+export const fetchCartData = async () => {
   try {
-    const res = await fetch(`${appConfig.apiUrl}/carts/list`, {
-      method: "GET",
-      cache: "no-cache",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        headerapisecret: process.env.NEXT_PUBLIC_USER_API_SECRET_KEY!,
-      },
-    });
+    const cartData = await getCartLists();
+    console.log("cartData", cartData);
 
-    const cartData = await res.json();
-    const cartItems = cartData.data?.cartList[0]?.cart_items || [];
+    const cartItems = cartData.data?.cartList || [];
 
     // Fetch local cart data
     const localData = JSON.parse(window.localStorage.getItem("carts") || "[]");
+    console.log("localData", localData);
+    
 
     // Find items in window.localStorage that are not in the server cart
-    const resUP = localData.filter(
-      (obj1: { product_id: string; id: string }) =>
+    const resUP = localData?.cartList?.filter(
+      (obj1: { productId: string; id: string }) =>
         !cartItems.some(
-          (obj2: { product_id: string }) =>
-            (obj1.product_id ? obj1.product_id : obj1.id) === obj2.product_id
+          (obj2: { productId: string }) =>
+            (obj1.productId ? obj1.productId : obj1.id) === obj2.productId
         )
     );
 
@@ -44,9 +37,9 @@ export const fetchCartData = async (accessToken: string) => {
     }
 
     // Update local storage with the latest cart data
-    window.localStorage.setItem("carts", JSON.stringify(cartItems));
+    window.localStorage.setItem("carts", JSON.stringify(cartData.data));
 
-    return cartItems; // Return for Redux update
+    return cartData.data; // Return for Redux update
   } catch (error) {
     console.error("Error syncing cart data:", error);
     return [];

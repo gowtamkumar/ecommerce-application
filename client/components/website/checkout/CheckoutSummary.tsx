@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { saveOrder } from "@/lib/apis/orders";
-import { cartCalculationFun } from "@/lib/utils/cartCalculationFun";
 import {
   errorNotification,
   successNotification,
@@ -17,7 +16,6 @@ import {
   selectGlobal,
   setAction,
   setLoading,
-  setResponse,
 } from "@/redux/features/global/globalSlice";
 import { onlineOrderValidationSchema } from "@/validation/order/onlineOrderValidation";
 import { Button } from "antd";
@@ -32,7 +30,6 @@ export default function CheckoutSummary() {
   const {
     shippingCharge,
     totalItemsDiscount,
-    totalDiscount,
     couponDiscount,
     totalQty,
     totalTax,
@@ -41,17 +38,10 @@ export default function CheckoutSummary() {
     grandTotal,
     couponId,
   } = cart?.carts?.cartSummary || {};
+  
 
   const { checkoutFormData } = checkout || {};
   const { loading } = global || {};
-
-  // useEffect(() => {
-  //   async function calculateCart() {
-  //     const result = await cartCalculationFun(cart.carts);
-  //     dispatch(setCartResult(result));
-  //   }
-  //   calculateCart();
-  // }, [cart.carts]);
 
   // State for form inputs
   const handleOrder = async () => {
@@ -74,10 +64,14 @@ export default function CheckoutSummary() {
       });
 
       if (!validatedFields.success) {
-        const formattedErrors = validatedFields.error.issues.map((issue) => ({
-          path: issue.path.join("."),
-          message: issue.message,
-        }));
+        const formattedErrors = validatedFields.error.issues.map((issue) => {
+          errorNotification({ message: issue.message });
+          return {
+            path: issue.path.join("."),
+            message: issue.message,
+          };
+        });
+
         dispatch(setLoading({ save: false }));
         return { errors: formattedErrors };
       }
@@ -95,7 +89,6 @@ export default function CheckoutSummary() {
       setTimeout(() => {
         dispatch(setLoading({ save: false }));
         dispatch(setAction({}));
-        dispatch(setResponse({}));
         dispatch(clearCart());
         dispatch(setCheckoutFormData({}));
         dispatch(setShippingAddress([]));
@@ -108,9 +101,7 @@ export default function CheckoutSummary() {
     } catch (err: any) {
       console.error("Order error:", err);
       dispatch(setLoading({ save: false }));
-      dispatch(
-        setResponse({ type: "error", message: "Failed to process order" })
-      );
+      errorNotification({ message: "Failed to process order" });
     }
   };
 
@@ -189,7 +180,7 @@ export default function CheckoutSummary() {
       <div className="p-4 rounded">
         <div className="flex justify-between">
           <span>Total Quantity</span>
-          <span>{+totalQty}</span>
+          <span>{+totalQty || 0}</span>
         </div>
 
         <div className="flex justify-between">

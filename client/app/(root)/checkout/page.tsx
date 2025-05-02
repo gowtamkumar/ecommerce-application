@@ -28,7 +28,7 @@ export default async function CheckOut() {
       <div className="bg-gray-100">
         <CheckoutPage />
       </div>
-      <ScrollToCart />
+      {/* <ScrollToCart /> */}
       <WebFooter />
     </>
   );
