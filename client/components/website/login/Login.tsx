@@ -9,6 +9,8 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getSession, signIn } from "next-auth/react";
+import { fetchCartData } from "@/lib/utils/cart";
+import { replaceCart } from "@/redux/features/cart/cartSlice";
 
 const Login = () => {
   const global = useSelector(selectGlobal);
@@ -26,7 +28,6 @@ const Login = () => {
     })();
   }, [dispatch, router]);
 
-
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));
     try {
@@ -35,51 +36,49 @@ const Login = () => {
         ...newData,
         redirect: false,
       });
+
       const getSesson: any = await getSession();
 
-      if (result.status === 401) {
-        dispatch(setResponse({ type: "error", message: result.error }));
-      }
-      if (getSesson?.user?.role === "Admin" && result?.status === 200) {
-        router.push("/dashboard");
-        return;
-      }
-
-      if (getSesson?.user?.role === "User" && result?.status === 200) {
-        router.push("/");
-        return;
-      }
+      fetchCartData().then((cart: any) => {
+        dispatch(replaceCart(cart)); // ✅ Sync cart with Redux
+      });
 
       setTimeout(async () => {
-        dispatch(setLoading({ save: false }));
-      }, 1000);
+        if (result.status === 401) {
+          dispatch(setResponse({ type: "error", message: result.error }));
+        }
+        if (getSesson?.user?.role === "Admin" && result?.status === 200) {
+          router.push("/dashboard");
+          return;
+        }
 
+        if (getSesson?.user?.role === "User" && result?.status === 200) {
+          router.push("/");
+          return;
+        }
+
+        dispatch(setLoading({ save: false }));
+      }, 5000);
     } catch (err: any) {
       console.log(err);
     }
   };
 
   const handleGoolgeLogin = async () => {
-
     const result = await signIn("google", {
-      callbackUrl: `${window.location.origin}`
+      callbackUrl: `${window.location.origin}`,
     });
     // const getSesson: any = await getSession();
     // console.log("🚀 ~ getSesson:", getSesson)
-
-  }
+  };
 
   const handleFacebookLogin = async () => {
-
     const result = await signIn("facebook");
 
-    console.log("🚀 ~ result:", result)
+    console.log("🚀 ~ result:", result);
     // const getSesson: any = await getSession();
     // console.log("🚀 ~ getSesson:", getSesson)
-
-  }
-
-
+  };
 
   return (
     <div className="text-cetner">
@@ -145,8 +144,12 @@ const Login = () => {
               Login
             </Button>
           </Form>
-          <Button className="w-full my-2" onClick={handleGoolgeLogin}>Google</Button>
-          <Button className="w-full" onClick={handleFacebookLogin}>Facebook</Button>
+          <Button className="w-full my-2" onClick={handleGoolgeLogin}>
+            Google
+          </Button>
+          <Button className="w-full" onClick={handleFacebookLogin}>
+            Facebook
+          </Button>
         </div>
       </div>
     </div>

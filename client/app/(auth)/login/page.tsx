@@ -10,6 +10,7 @@ export default function page() {
       <Header />
       <Login />
       <WebFooter />
+     
     </>
   );
 }

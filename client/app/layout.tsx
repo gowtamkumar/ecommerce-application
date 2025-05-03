@@ -15,8 +15,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
-// import CartSync from "@/components/CartSync";
-// import CookieWebsite from "@/components/website/CookieBanner";
 import { ToastContainer } from "react-toastify";
 // import ScrollToCart from "@/components/website/ScrollToCart";
 import dynamic from "next/dynamic";
@@ -26,7 +24,6 @@ const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
 const CookieWebsite = dynamic(
   () => import("@/components/website/CookieBanner")
 );
-const CartSync = dynamic(() => import("@/components/CartSync"));
 
 const poppinsFont = localFont({
   src: [
@@ -80,7 +77,7 @@ export default async function RootLayout({
         <AuthProvider session={session}>
           <StoreProvider>
             <AntdRegistry>
-              <CartSync />
+              {/* <CartSync /> */}
               {children}
               <ScrollToTop />
               <CookieWebsite />

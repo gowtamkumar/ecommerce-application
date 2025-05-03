@@ -8,6 +8,8 @@ import { Alert, Button, Form, Input, Modal } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "next-auth/react";
+import { fetchCartData } from "@/lib/utils/cart";
+import { replaceCart } from "@/redux/features/cart/cartSlice";
 
 export default function ModalLogin() {
   const global = useSelector(selectGlobal);
@@ -34,18 +36,9 @@ export default function ModalLogin() {
         return;
       }
 
-      // const getSesson: any = await getSession();
-      // console.log("🚀 ~ result:", result);
-
-      // if (getSesson?.user?.role === "Admin" && result?.status === 200) {
-      //   router.push("/dashboard");
-      //   return;
-      // }
-
-      // if (getSesson?.user?.role === "User" && result?.status === 200) {
-      //   router.push("/");
-      //   return;
-      // }
+      fetchCartData().then((cart: any) => {
+        dispatch(replaceCart(cart)); // ✅ Sync cart with Redux
+      });
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
@@ -57,15 +50,14 @@ export default function ModalLogin() {
   };
 
   return (
-    <div>
-      <Modal
-        title={null}
-        width={500}
-        // zIndex={1050}
-        open={global.unAuthorize}
-        onCancel={handleClose}
-        footer={null}
-      >
+    <Modal
+      title={null}
+      width={500}
+      open={global.unAuthorize}
+      onCancel={handleClose}
+      footer={null}
+    >
+      <div className="p-16">
         <Form
           layout="vertical"
           form={form}
@@ -109,17 +101,15 @@ export default function ModalLogin() {
             </div>
           )}
           <Button
-            // size="small"
             className="w-full"
             type="primary"
             htmlType="submit"
-            // className="capitalize"
             loading={global.loading.save}
           >
             Login
           </Button>
         </Form>
-      </Modal>
-    </div>
+      </div>
+    </Modal>
   );
 }

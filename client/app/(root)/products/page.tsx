@@ -1,3 +1,4 @@
+import ModalLogin from "@/components/website/login/ModalLogin";
 import dynamic from "next/dynamic";
 
 const CategoryHeader = dynamic(
@@ -30,6 +31,7 @@ export default function Products() {
         </div>
       </section>
       <ScrollToCart />
+    
       <WebFooter />
     </>
   );

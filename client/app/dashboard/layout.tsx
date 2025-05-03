@@ -37,26 +37,26 @@ export default function DashboardLayout({
 
   return (
     <Suspense fallback={<Loading />}>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Sidebar />
-        <Layout>
-          <DashboardHeader />
-          <Content style={{ margin: "0 15px" }}>
-            <BreadCrumb />
-            <div
-              style={{
-                padding: 10,
-                minHeight: "80vh",
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
+      <div
+        style={{
+          padding: 10,
+          minHeight: "80vh",
+          background: colorBgContainer,
+          borderRadius: borderRadiusLG,
+        }}
+      >
+        <Layout style={{ minHeight: "100vh" }}>
+          <Sidebar />
+          <Layout>
+            <DashboardHeader />
+            <Content style={{ margin: "0 15px" }}>
+              <BreadCrumb />
               {children}
-            </div>
-          </Content>
-          <FooterOption />
+            </Content>
+            <FooterOption />
+          </Layout>
         </Layout>
-      </Layout>
+      </div>
     </Suspense>
   );
 }

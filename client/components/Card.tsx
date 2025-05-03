@@ -6,13 +6,17 @@ import Link from "next/link";
 import { FaRegHeart } from "react-icons/fa";
 import AddToCartButton from "./AddToCartButton";
 import { saveWishlist } from "@/lib/apis/wishlist";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
-import { setUnAuthorize } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setUnAuthorize,
+} from "@/redux/features/global/globalSlice";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import ModalLogin from "./website/login/ModalLogin";
 interface CardItems {
   id: number;
   name: string;
@@ -37,6 +41,7 @@ interface CardItems {
 }
 
 export default function Card({ item }: { item: any }) {
+  const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const session = useSession();
 
@@ -61,10 +66,6 @@ export default function Card({ item }: { item: any }) {
   const thumbnailImage = item?.thumbnailImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
     : "/default-placeholder.png";
-
-  //  const thumbnailImage = product.thumbnailImage
-  //               ? `${appConfig.baseApiUrl}/uploads/${product.thumbnailImage}`
-  //               : "/product-default.png";
 
   const hoverImage = item?.hoverImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
@@ -102,6 +103,8 @@ export default function Card({ item }: { item: any }) {
               className="cursor-pointer"
               onClick={() => {
                 if (session.status === "unauthenticated") {
+                  console.log("eeeeeee");
+
                   dispatch(setUnAuthorize(true));
                 } else {
                   AddToWishlist(item.id);
@@ -146,6 +149,7 @@ export default function Card({ item }: { item: any }) {
       <div className="mt-auto">
         <AddToCartButton item={{ ...item, qty: 1 }} />
       </div>
+      {global.unAuthorize && <ModalLogin />}
     </div>
   );
 }

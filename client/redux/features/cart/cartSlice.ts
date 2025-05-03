@@ -18,10 +18,10 @@ const initialState: CartState = {
       ? (() => {
           const stored = localStorage.getItem("carts");
           try {
-            const parsed = JSON.parse(stored ?? "[]");
-            return Array.isArray(parsed) ? parsed : [];
+            const parsed = JSON.parse(stored ?? "{}");
+            return parsed;
           } catch {
-            return [];
+            return {};
           }
         })()
       : {},
