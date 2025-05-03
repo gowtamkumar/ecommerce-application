@@ -8,6 +8,7 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 import { OrderEntity } from "../../order/model/order.entity";
 import { PaymentMethod, PaymentStatus } from "../../order/enums";
 import { PaymentType } from "../enums/payment-type.enum";
+import { dashboardPaymentValidationSchema } from "../../../validation/payment/dashboardPaymentValidation";
 
 // @desc Get all Payment
 // @route GET /api/v1/Payment
@@ -86,6 +87,7 @@ export const createPayment = asyncHandler(
         issues: formattedErrors,
       });
     }
+
     const repository = connection.getRepository(PaymentEntity);
     const newPayment = repository.create(validation.data);
     const save = await repository.save(newPayment);
@@ -102,29 +104,74 @@ export const createDashboardPayment = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createDashboardPayment ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const validation = paymentValidationSchema.safeParse(req.body);
+    try {
+      const connection = await getDBConnection();
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+      const validation = dashboardPaymentValidationSchema.safeParse(req.body);
 
-      return res.status(400).json({
+      if (!validation.success) {
+        const formattedErrors = validation.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        }));
+
+        return res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          issues: formattedErrors,
+        });
+      }
+
+      const { due, amount, orderId, paymentMethod } = validation.data;
+
+      // Check for overpayment
+      if (amount <= 0 || amount > due) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid payment amount: ${amount}. It must be between 0 and ${(
+            +due || 0
+          ).toFixed(2)}.`,
+        });
+      }
+
+      const orderRepository = connection.getRepository(OrderEntity);
+      const order = await orderRepository.findOne({ where: { id: orderId } });
+
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: `Order with ID ${orderId} not found.`,
+        });
+      }
+
+      // Update payment status based on amount
+      const updateOrder = {
+        id: order.id,
+        paymentStatus:
+          amount < due ? PaymentStatus.PertialPaid : PaymentStatus.Paid,
+        paymentMethod,
+      };
+
+      await orderRepository.save(updateOrder);
+
+      // Save the new payment
+      const paymentRepository = connection.getRepository(PaymentEntity);
+      const newPayment = paymentRepository.create(validation.data);
+      const savedPayment = await paymentRepository.save(newPayment);
+
+      return res.status(200).json({
+        success: true,
+        message: "New payment created via dashboard.",
+        data: savedPayment,
+      });
+    } catch (error: any) {
+      logger.error("Error creating dashboard payment:", error);
+      return res.status(500).json({
         success: false,
-        issues: formattedErrors,
+        message: "Internal server error",
+        error: error.message || "Something went wrong",
       });
     }
-    const repository = connection.getRepository(PaymentEntity);
-    const newPayment = repository.create(validation.data);
-    const save = await repository.save(newPayment);
-
-    return res.status(200).json({
-      success: true,
-      message: "Create a new Payment by dashboard",
-      data: save,
-    });
   }
 );
 
@@ -305,7 +352,6 @@ export const sslcommerzCancelHandler = asyncHandler(
       const order = await orderRepo.findOne({ where: { tranId } });
 
       console.log("order", order);
-      
 
       if (!order) {
         return res

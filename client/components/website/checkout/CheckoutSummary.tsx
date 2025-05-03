@@ -92,6 +92,8 @@ export default function CheckoutSummary() {
         dispatch(setCheckoutFormData({}));
         dispatch(setShippingAddress([]));
         dispatch(setShippingCharge({}));
+        console.log("res.data.", res.data);
+        
 
         if (res.data.paymentUrl) {
           window.location.href = res.data.paymentUrl;

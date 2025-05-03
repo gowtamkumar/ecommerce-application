@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const paymentValidationSchema = z.object({
+export const dashboardPaymentValidationSchema = z.object({
   paymentDate: z.string({
     required_error: "Date is required",
   }),
@@ -15,4 +15,5 @@ export const paymentValidationSchema = z.object({
     required_error: "Payment method is required",
   }),
   amount: z.number({ required_error: "Amount is Required" }),
+  due: z.number({ required_error: "Due is Required" }),
 });

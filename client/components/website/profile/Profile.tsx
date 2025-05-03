@@ -10,9 +10,9 @@ import "./notification.css";
 import { useSelector } from "react-redux";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 
-const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
-  ssr: false,
-});
+// const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
+//   ssr: false,
+// });
 
 const UserOrders = dynamic(
   () => import("@/components/website/profile/UserOrders"),
@@ -67,12 +67,12 @@ export default function Profile() {
       activeKey={tabKey}
       tabPosition={global.mobile ? "top" : "left"}
       items={[
-        {
-          label: `Dashboard`,
-          key: "dashboard",
-          children: <ProfileDashboard />,
-          icon: <AppleOutlined />,
-        },
+        // {
+        //   label: `Dashboard`,
+        //   key: "dashboard",
+        //   children: <ProfileDashboard />,
+        //   icon: <AppleOutlined />,
+        // },
         {
           label: `My Account`,
           key: "my_account",

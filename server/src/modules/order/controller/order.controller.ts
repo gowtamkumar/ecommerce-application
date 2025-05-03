@@ -272,6 +272,8 @@ export const onlinePayment = async (
     // ship_state: "Dhaka",
   };
   const apiResponse = await sslcz.init(paymentPayload);
+  console.log("apiResponse", apiResponse);
+  
 
   return apiResponse.GatewayPageURL;
 };

@@ -44,6 +44,27 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
       FROM users`
     );
+
+    // const payments = await connection.query(
+    //   `SELECT
+    //            SUM(CASE WHEN payment_method = 'SSLCOMMERZ' and payment_type = 'Debit' THEN  COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount
+    //            SUM(CASE WHEN payment_method = 'Cash' and payment_type = 'Debit' THEN  COALESCE(amount, 0) ELSE 0 END) AS cash_debit_amount,
+    //            SUM(CASE WHEN payment_method = 'SSLCOMMERZ' and payment_type = 'Credit' THEN  COALESCE(amount, 0) ELSE 0 END) AS ssl_credit_amount,
+    //            SUM(CASE WHEN payment_method = 'Cash' and payment_type = 'Credit' THEN  COALESCE(amount, 0) ELSE 0 END) AS cash_credit_amount
+
+    //   FROM payments  where created_at BETWEEN '${fromDate}' AND '${toDate}'`
+    // );
+
+    const payments = await connection.query(
+      `SELECT
+        SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount,
+        SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_debit_amount,
+        SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_credit_amount,
+        SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_credit_amount
+      FROM payments
+      WHERE created_at BETWEEN '${fromDate}' AND '${toDate}'`
+    );
+
     // SUM(CASE WHEN status = 'Completed' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_amount
     // SUM(CASE WHEN status = 'Pending' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_order_amount,
     // SUM(CASE WHEN status = 'Returned' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_return_amount,
@@ -186,6 +207,7 @@ export const getDashboardReport = asyncHandler(
         top_customers,
         product_alert_stock_report,
         loss_profit,
+        payments: payments[0],
         // user_activity,
       },
     });
@@ -199,7 +221,6 @@ export const getTopSellingProduct = asyncHandler(
     const connection = await getDBConnection();
 
     const topSellingProducts = await connection.query(topSellingProductQuery);
-
 
     return res.status(200).json({
       success: true,

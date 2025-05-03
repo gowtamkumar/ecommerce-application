@@ -130,6 +130,12 @@ const navbarRoute = [
     route: "true",
   },
   {
+    key: "new_payment",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/payments/new">New payment</Link>,
+    route: "true",
+  },
+  {
     key: "order_manage",
     label: "Order Manage",
     disabled: "true",

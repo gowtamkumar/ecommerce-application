@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
 import { errorNotification } from "@/lib/utils/notification";
+import TotalOrderSummaryDashboard from "./TodayOrderSummary";
 const LossProfit = dynamic(() => import("./LossProfit"));
 const WidgetStats = dynamic(() => import("./components/WidgetStats"));
 
@@ -107,14 +108,15 @@ const Dashboard = () => {
               if (value) newDate.startDate = dayjs(value[0]).toISOString();
               if (value) newDate.endDate = dayjs(value[1]).toISOString();
               const results = await getDashboardReports(newDate);
+              console.log("results", results);
+              
               setDashboardReports(results.data);
             }}
             className="mx-2 w-100"
           />
         </div>
       </div>
-      {/* <TotalOrderSummaryDashboard /> */}
-
+      <TotalOrderSummaryDashboard dashboardReports={dashboardReports}  />
       <div className="grid grid-cols-4 gap-2">
         <WidgetStats
           title="TOTAL SALE"
@@ -145,8 +147,7 @@ const Dashboard = () => {
         />
       </div>
 
-        <StockReport recentHistory={dashboardReports} />
-    
+      <StockReport recentHistory={dashboardReports} />
 
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-3 mb-3">
