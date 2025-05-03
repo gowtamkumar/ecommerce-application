@@ -207,7 +207,7 @@ const ProductCard: React.FC = () => {
                       }}
                     />
                     <div>
-                      <AddToCartButton item={item} />
+                      <AddToCartButton item={{ ...item, qty: 1 }} />
                     </div>
                   </div>
                 </div>

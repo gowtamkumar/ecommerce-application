@@ -3,20 +3,17 @@ import { Button, Divider, message, Rate } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { productDiscountCalculation } from "@/lib/utils";
-import { setResponse } from "@/redux/features/global/globalSlice";
+import {
+  setResponse,
+  setUnAuthorize,
+} from "@/redux/features/global/globalSlice";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { useSession } from "next-auth/react";
 import ModalLogin from "../login/ModalLogin";
 import AddToCartButton from "@/components/AddToCartButton";
-import {
-  decrementCart,
-  incrementCart,
-  selectCart,
-} from "@/redux/features/cart/cartSlice";
-import { FaFacebook, FaLinkedin, FaPinterest } from "react-icons/fa";
+import { selectCart } from "@/redux/features/cart/cartSlice";
 import { CiHeart } from "react-icons/ci";
-import { TfiPencil } from "react-icons/tfi";
-import { FaXTwitter } from "react-icons/fa6";
+import { HiOutlineMinus } from "react-icons/hi";
 import ProductImageGallery from "./ProductImageGallery";
 import {
   selectProduct,
@@ -28,6 +25,7 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { AiOutlinePlus } from "react-icons/ai";
 
 interface ProductColor {
   colorId: number;
@@ -44,8 +42,13 @@ export interface ProductVariant {
   default: boolean;
 }
 
-const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
-  const [unAuthorize, setUnAuthorize] = useState(false);
+const ProductDetails = ({
+  setSelectVariant,
+  productRating,
+  checkStock,
+  setCheckStock,
+}: any) => {
+  const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const session = useSession();
   const route = useRouter();
@@ -71,8 +74,6 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
     shortDescription,
   } = products.product;
 
-  console.log("defaultProduct", defaultProduct);
-
   async function AddToWishlist(productId: number) {
     try {
       const res = await saveWishlist({
@@ -80,15 +81,13 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
       });
 
       if (res.success) {
-        successNotification({ message: "succes" });
-        // message.success(`${res.message}`);
+        successNotification({ message: res.message });
       }
 
       if (!res.success) {
-        message.info("This is a normal message");
-        // message.success(res.message);
+        errorNotification({ message: res.message });
       }
-      message.info("This is a normal message");
+
       setTimeout(() => {
         dispatch(setResponse({}));
       }, 2000);
@@ -110,7 +109,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
   //   return false;
   // }
 
-  const findProduct = cart.carts.cartList?.find(
+  const findProduct = cart.carts?.cartList?.find(
     ({ productId }: { productId: number }) => productId === product.id
   );
 
@@ -166,6 +165,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
               <Button
                 key={idx}
                 onClick={async () => {
+                  setSelectVariant({ productVariantId: item.id });
                   dispatch(
                     setProduct({
                       ...product,
@@ -174,8 +174,9 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
                   );
                   setCheckStock(item.stockQty);
                 }}
-                className={`mr-2 px-2 py-1 focus:outline-none  ${defaultProduct.id === item.id ? "!bg-gray-200" : ""
-                  }`}
+                className={`mr-2 px-2 py-1 focus:outline-none  ${
+                  defaultProduct?.id === item.id ? "!bg-gray-200" : ""
+                }`}
               >
                 {item?.size?.name} {item?.color?.name}
               </Button>
@@ -183,6 +184,26 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
           </div>
         )}
         <p>In stock {checkStock} Items</p>
+
+        <div className="flex items-center justify-between px-3 py-1 rounded-lg bg-gray-200 font-bold w-40">
+          <Button
+            type="default"
+            size="small"
+            disabled={qty === 1}
+            onClick={() => setQty((pre) => pre - 1)}
+          >
+            <HiOutlineMinus />
+          </Button>
+          <span className="mx-1">{qty}</span>
+          <Button
+            type="default"
+            onClick={() => setQty((pre) => pre + 1)} // Increment function
+            disabled={qty >= checkStock}
+            size="small"
+          >
+            <AiOutlinePlus />
+          </Button>
+        </div>
 
         {/* product Action section */}
         <div className="flex items-center gap-2 mb-4">
@@ -199,7 +220,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
           ) : (
             <div>
               <AddToCartButton
-                item={{ ...product, productVariantId: defaultProduct?.id }}
+                item={{ ...product, productVariantId: defaultProduct?.id, qty }}
               />
             </div>
           )}
@@ -207,7 +228,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
             className="cursor-pointer flex items-center gap-1"
             onClick={() => {
               if (session.status === "unauthenticated") {
-                setUnAuthorize(true);
+                dispatch(setUnAuthorize(true));
               } else {
                 AddToWishlist(id);
               }
@@ -221,7 +242,7 @@ const ProductDetails = ({ productRating, checkStock, setCheckStock }: any) => {
           <div>Share:</div>
           <ProductShare />
         </div>
-        <ModalLogin unAuthorize={unAuthorize} setUnAuthorize={setUnAuthorize} />
+        <ModalLogin />
       </div>
     </div>
   );

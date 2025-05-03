@@ -38,7 +38,6 @@ export default function CheckoutSummary() {
     grandTotal,
     couponId,
   } = cart?.carts?.cartSummary || {};
-  
 
   const { checkoutFormData } = checkout || {};
   const { loading } = global || {};

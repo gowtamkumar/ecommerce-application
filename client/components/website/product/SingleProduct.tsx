@@ -18,26 +18,27 @@ import {
 } from "@/redux/features/products/productSlice";
 
 export default function SingleProduct() {
+  const [selectVariant, setSelectVariant] = useState<any>({});
   const { slug } = useParams();
   const [checkStock, setCheckStock] = useState(0);
   const dispatch = useDispatch();
-  const global = useSelector(selectGlobal);
+  // const global = useSelector(selectGlobal);
   const products = useSelector(selectProduct);
   const { product } = products;
 
   useEffect(() => {
     fetchProductData();
-  }, [dispatch, slug]);
+  }, [dispatch, selectVariant?.productVariantId]);
 
   const fetchProductData = async () => {
     dispatch(setLoading({ loading: true }));
 
     try {
-      const newProduct = await getProductBySlug({ slug: slug?.toString() });
+      const newProduct = await getProductBySlug({
+        slug: slug?.toString(),
+        productVariantId: selectVariant.productVariantId,
+      });
       const { productVariants, variant } = newProduct.data;
-
-      console.log('newProduct.data', newProduct.data);
-      
 
       if (newProduct?.success) {
         const findVariantProduct = productVariants.find(
@@ -56,18 +57,7 @@ export default function SingleProduct() {
           })
         );
 
-        setCheckStock(defaultProduct.stockQty);
-
-        // if (findVariantProduct.id) {
-        //   const productVariant = await getProductVariant({
-        //     id: findVariantProduct.id,
-        //   });
-        //   setCheckStock(productVariant.data.stockQty);
-        // }
-        // const categoryIds = newProduct.data.productCategories
-        //   .map((item: { categoryId: number }) => item.categoryId)
-        //   .join(",");
-        // dispatch(setProductFilter({ categoryId: categoryIds }));
+        setCheckStock(defaultProduct?.stockQty || 0);
       }
     } catch (error: any) {
       errorNotification({ message: error.message });
@@ -107,13 +97,13 @@ export default function SingleProduct() {
     }
   );
 
-  if (global.loading.loading) {
-    return (
-      <div className="text-center">
-        <Spin />
-      </div>
-    );
-  }
+  // if (global.loading.loading) {
+  //   return (
+  //     <div className="text-center">
+  //       <Spin />
+  //     </div>
+  //   );
+  // }
 
   // const productSchema = {
   //   "@context": "https://schema.org",
@@ -166,6 +156,7 @@ export default function SingleProduct() {
       </Head> */}
 
       <ProductDetails
+        setSelectVariant={setSelectVariant}
         productRating={productRating}
         checkStock={checkStock}
         setCheckStock={setCheckStock}

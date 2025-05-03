@@ -9,7 +9,10 @@ import { saveWishlist } from "@/lib/apis/wishlist";
 import { useDispatch } from "react-redux";
 import { useSession } from "next-auth/react";
 import { setUnAuthorize } from "@/redux/features/global/globalSlice";
-import { AddToWishlist } from "@/lib/utils/addToWishList";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 interface CardItems {
   id: number;
   name: string;
@@ -37,21 +40,23 @@ export default function Card({ item }: { item: any }) {
   const dispatch = useDispatch();
   const session = useSession();
 
-  // async function AddToWishlist(productId: number) {
-  //   try {
-  //     const res = await saveWishlist({ productId });
+  async function AddToWishlist(productId: number) {
+    try {
+      const res = await saveWishlist({
+        productId,
+      });
 
-  //     if (res.success) {
-  //       message.success(`${res.message}`);
-  //     }
+      if (res.success) {
+        successNotification({ message: res.message });
+      }
 
-  //     if (!res.success) {
-  //       message.success(`${res.message}`);
-  //     }
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // }
+      if (!res.success) {
+        errorNotification({ message: res.message });
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
 
   const thumbnailImage = item?.thumbnailImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
@@ -139,7 +144,7 @@ export default function Card({ item }: { item: any }) {
 
       {/* AddToCartButton at the bottom */}
       <div className="mt-auto">
-        <AddToCartButton item={item} />
+        <AddToCartButton item={{ ...item, qty: 1 }} />
       </div>
     </div>
   );

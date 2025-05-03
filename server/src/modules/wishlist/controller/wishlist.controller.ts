@@ -282,7 +282,7 @@ export const createWishlist = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "Create a new Wishlist",
+      message: "Add a new Wishlist",
       data: save,
     });
   }

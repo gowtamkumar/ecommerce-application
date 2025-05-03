@@ -382,7 +382,25 @@ export const cartListApplyCoupon = asyncHandler(
     );
 
     if (!cart.length) {
-      return res.status(400).json({ success: false, message: "Cart is empty" });
+      // return res.status(400).json({ success: false, message: "Cart is empty" });
+      return res.status(200).json({
+        success: false,
+        message: "Cart is empty",
+        data: {
+          cartList: cart,
+          cartSummary: {
+            totalQty: 0,
+            subTotal: "0.00", //unit_price + tax - discount
+            totalItemsDiscount: "0.00", //item.totalDiscountAmount
+            couponDiscount: "0.00",
+            totalDiscount: "0.00", //coupon + totalitemdiscount
+            totalTax: "0.00",
+            shippingCharge: "0.00",
+            grandTotal: "0.00",
+            totalSalePrice: "0.00",
+          },
+        },
+      });
     }
 
     // Step 3: Calculate totals

@@ -114,11 +114,12 @@ export async function getProductBySlug(params: any) {
   const { slug, productVariantId } = params;
   let queryString = "";
 
+  console.log("params", params);
+  
+
   if (productVariantId) {
     queryString += `productVariantId=${productVariantId}`;
   }
-
-  console.log("🚀 ~ slug:", slug);
   const headers = await getAuthHeaders();
   const res = await fetch(
     `${appConfig.apiUrl}/products/slug/${slug}?${queryString}`,

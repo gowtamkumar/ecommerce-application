@@ -1,19 +1,17 @@
-import { message } from "antd";
 import { saveWishlist } from "../apis/wishlist";
+import { errorNotification, successNotification } from "./notification";
 
 export async function AddToWishlist(productId: number) {
-  console.log("productId", productId);
-
   try {
     const res = await saveWishlist({ productId });
     console.log("res", res);
 
     if (res.success) {
-      message.success(`${res.message}`);
+      successNotification({ message: res.message });
     }
 
     if (!res.success) {
-      message.success(`${res.message}`);
+      errorNotification({ message: res.message });
     }
   } catch (error) {
     console.log("error", error);

@@ -2,8 +2,7 @@
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setLoading } from "@/redux/features/global/globalSlice";
-import { useEffect, useState } from "react";
-import { getMe } from "@/lib/apis/user";
+import { useEffect } from "react";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
 import dynamic from "next/dynamic";
 import {
@@ -49,7 +48,6 @@ export default function CheckoutPage() {
       const getShippingCharge = await getShippingCharges({
         divisionId: activeShippingAddress.divisionId,
       });
-      console.log("getShippingCharge",getShippingCharge);
 
       dispatch(
         setShippingCharge(

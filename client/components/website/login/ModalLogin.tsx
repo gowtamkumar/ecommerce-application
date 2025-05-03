@@ -2,40 +2,27 @@ import {
   selectGlobal,
   setLoading,
   setResponse,
+  setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
 import { Alert, Button, Form, Input, Modal } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
-export default function ModalLogin({ unAuthorize, setUnAuthorize }: any) {
+export default function ModalLogin() {
   const global = useSelector(selectGlobal);
   // hook
-  // hook
   const [form] = Form.useForm();
-  const router = useRouter();
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const session: any = await getSession();
-  //     if (session?.status === "authenticated") {
-  //       router.replace("/");
-  //     }
-  //   })();
-  // }, [dispatch, router]);
-
   const handleClose = () => {
-    setUnAuthorize(false);
+    dispatch(setUnAuthorize(false));
   };
 
   const handleSubmit = async (values: any) => {
     try {
       dispatch(setLoading({ save: true }));
       let newData = { ...values };
-
-      // return console.log("newData:", newData);
       const result = await signIn("credentials", {
         ...newData,
         redirect: false,
@@ -46,10 +33,6 @@ export default function ModalLogin({ unAuthorize, setUnAuthorize }: any) {
         dispatch(setLoading({ save: false }));
         return;
       }
-
-      console.log("dre", result);
-
-      // dispatch()
 
       // const getSesson: any = await getSession();
       // console.log("🚀 ~ result:", result);
@@ -66,7 +49,7 @@ export default function ModalLogin({ unAuthorize, setUnAuthorize }: any) {
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        setUnAuthorize(false);
+        dispatch(setUnAuthorize(false));
       }, 100);
     } catch (err: any) {
       console.log(err);
@@ -79,7 +62,7 @@ export default function ModalLogin({ unAuthorize, setUnAuthorize }: any) {
         title={null}
         width={500}
         // zIndex={1050}
-        open={unAuthorize}
+        open={global.unAuthorize}
         onCancel={handleClose}
         footer={null}
       >

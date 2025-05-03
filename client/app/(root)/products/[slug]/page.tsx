@@ -1,6 +1,5 @@
-import ScrollToCart from "@/components/website/ScrollToCart";
 import dynamic from "next/dynamic";
-
+const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
 const Header = dynamic(() => import("@/components/website/header/Header"));
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const SingleProduct = dynamic(
