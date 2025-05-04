@@ -742,6 +742,21 @@ export const orderStatusUpdate = asyncHandler(
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
+    if (
+      status === OrderStatus.Canceled &&
+      ![
+        OrderStatus.Pending,
+        OrderStatus.Approved,
+        OrderStatus.Processing,
+      ].includes(result.status as OrderStatus)
+    ) {
+      throw new Error(
+        `Sorry, you can't cancel this order because it's already '${result.status}'.`
+      );
+    }
+
+  
+
     try {
       if (
         [
