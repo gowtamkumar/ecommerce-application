@@ -3,23 +3,29 @@ import React from "react";
 
 const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
   const {
-    total_order_amount,
-    total_sale_amount,
-    total_sale_return_amount,
-    total_active_user,
-    top_selling_product,
-    top_customers,
-    product_alert_stock_report,
-    loss_profit,
-    user_activity,
-    total_sale_return_shipping_amount,
-    total_canceled_amount,
-    total_order_count,
-    total_canceled_count,
-    total_approved_count,
-    total_shipped_count,
-    total_on_shipping_count,
-    total_processing_count,
+    total_completed_product_count,
+    total_shipped_product_count,
+    total_on_shipping_product_count,
+    total_processing_product_count,
+    total_approved_product_count,
+    total_canceled_product_count,
+    total_pending_product_count,
+
+    total_completed_order_amount,
+    total_shipped_order_amount,
+    total_on_shipping_order_amount,
+    total_processing_order_amount,
+    total_approved_order_amount,
+    total_canceled_order_amount,
+    total_pending_order_amount,
+
+    total_pending_order_count,
+    total_canceled_order_count,
+    total_approved_order_count,
+    total_shipped_order_count,
+    total_on_shipping_order_count,
+    total_processing_order_count,
+    total_completed_order_count,
     payments,
   }: any = dashboardReports || {};
 
@@ -33,28 +39,32 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
           </h2>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Total Orders</span>
-              <span>{total_order_count}</span>
+              <span>Pending</span>
+              <span>{total_pending_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cancelled Orders:</span>
-              <span>{total_canceled_count}</span>
+              <span>Cancelled:</span>
+              <span>{total_canceled_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Approved Orders:</span>
-              <span>{total_approved_count}</span>
+              <span>Approved:</span>
+              <span>{total_approved_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Processing Orders:</span>
-              <span>{total_processing_count}</span>
+              <span>Processing:</span>
+              <span>{total_processing_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>On Shipping Orders:</span>
-              <span>{total_on_shipping_count}</span>
+              <span>On Shipping:</span>
+              <span>{total_on_shipping_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shipped Orders:</span>
-              <span>{total_shipped_count}</span>
+              <span>Shipped:</span>
+              <span>{total_shipped_order_count}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Completed:</span>
+              <span>{total_completed_order_count}</span>
             </div>
           </div>
         </div>
@@ -66,33 +76,69 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
           </h2>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Total Products:</span>
-              <span>222</span>
+              <span>Pending</span>
+              <span>{total_pending_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cancelled Products:</span>
-              <span>11</span>
+              <span>Cancelled:</span>
+              <span>{total_canceled_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Actual Products:</span>
-              <span>10:</span>
+              <span>Approved:</span>
+              <span>{total_approved_product_count}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Processing:</span>
+              <span>{total_processing_product_count}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>On Shipping:</span>
+              <span>{total_on_shipping_product_count}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Shipped:</span>
+              <span>{total_shipped_product_count}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Orders Completed:</span>
+              <span>{total_completed_product_count}</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-2xl shadow p-4 w-full">
           <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
-            Total Amount Summary
+            Total Order Amount
             <span>🛒</span>
           </h2>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Total Amount:</span>
-              <span>{total_order_amount}</span>
+              <span>Pending</span>
+              <span>{total_pending_order_amount}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cancelled Amount:</span>
-              <span>{total_canceled_amount}</span>
+              <span>Cancelled:</span>
+              <span>{total_canceled_order_amount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Approved:</span>
+              <span>{total_approved_order_amount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Processing:</span>
+              <span>{total_processing_order_amount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>On Shipping:</span>
+              <span>{total_on_shipping_order_amount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Shipped:</span>
+              <span>{total_shipped_order_amount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Orders Completed:</span>
+              <span>{total_completed_order_amount}</span>
             </div>
           </div>
         </div>

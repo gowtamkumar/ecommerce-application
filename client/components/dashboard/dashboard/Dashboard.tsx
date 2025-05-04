@@ -30,15 +30,11 @@ const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
   const {
-    total_order_amount,
-    total_sale_amount,
     total_sale_return_amount,
-    total_active_user,
     top_selling_product,
     top_customers,
     product_alert_stock_report,
     loss_profit,
-    user_activity,
     total_sale_return_shipping_amount,
     total_canceled_amount,
   }: any = dashboardReports || {};
@@ -109,28 +105,28 @@ const Dashboard = () => {
               if (value) newDate.endDate = dayjs(value[1]).toISOString();
               const results = await getDashboardReports(newDate);
               console.log("results", results);
-              
+
               setDashboardReports(results.data);
             }}
             className="mx-2 w-100"
           />
         </div>
       </div>
-      <TotalOrderSummaryDashboard dashboardReports={dashboardReports}  />
+      <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
       <div className="grid grid-cols-4 gap-2">
-        <WidgetStats
+        {/* <WidgetStats
           title="TOTAL SALE"
           value={total_sale_amount || "0.00"}
           icon={<ShoppingOutlined />}
           color="primary"
-        />
+        /> */}
 
-        <WidgetStats
+        {/* <WidgetStats
           title="TOTAL ORDER"
           value={total_order_amount || "0.00"}
           icon={<LineChartOutlined />}
           color="primary"
-        />
+        /> */}
 
         <WidgetStats
           title="ORDER RETURN"

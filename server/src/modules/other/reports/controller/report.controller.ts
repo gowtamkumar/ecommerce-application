@@ -73,19 +73,37 @@ export const getDashboardReport = asyncHandler(
     // order sale, count etc,
     const results = await connection.query(`
       SELECT
-          SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_count,
-          SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_count,
-          SUM(CASE WHEN status = 'On Shipping' THEN 1 ELSE 0 END) AS total_on_shipping_count,
-          SUM(CASE WHEN status = 'Approved' THEN 1 ELSE 0 END) AS total_approved_count,
-          SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_sale_count,
-          SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_order_count,
-          SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_count,
+          SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_order_count,
+          SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_order_count,
+          SUM(CASE WHEN status = 'On Shipping' THEN 1 ELSE 0 END) AS total_on_shipping_order_count,
+          SUM(CASE WHEN status = 'Approved' THEN 1 ELSE 0 END) AS total_approved_order_count,
+          SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_completed_order_count,
+          SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_pending_order_count,
+          SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_order_count,
           SUM(CASE WHEN status = 'Returned' THEN 1 ELSE 0 END) AS total_sale_return_count,
+
           SUM(CASE WHEN status = 'Returned' THEN  COALESCE(shipping_charge, 0) ELSE 0 END) AS total_sale_return_shipping_charge,
           SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_canceled_amount,
           SUM(CASE WHEN status = 'Returned' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_sale_return_amount,
           SUM(CASE WHEN status = 'Pending' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_order_amount,
-          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_sale_amount
+          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_sale_amount,
+          
+          SUM(CASE WHEN status = 'Pending' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_pending_product_count,
+          SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_canceled_product_count,
+          SUM(CASE WHEN status = 'Approved' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_approved_product_count,
+          SUM(CASE WHEN status = 'Processing' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_processing_product_count,
+          SUM(CASE WHEN status = 'On Shipping' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_on_shipping_product_count,
+          SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_shipped_product_count,
+          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_completed_product_count,
+
+
+          SUM(CASE WHEN status = 'Pending' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_pending_order_amount,
+          SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_canceled_order_amount,
+          SUM(CASE WHEN status = 'Approved' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_approved_order_amount,
+          SUM(CASE WHEN status = 'Processing' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_processing_order_amount,
+          SUM(CASE WHEN status = 'On Shipping' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_on_shipping_order_amount,
+          SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_shipped_order_amount,
+          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_completed_order_amount
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
 

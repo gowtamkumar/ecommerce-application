@@ -228,7 +228,7 @@ export const onlinePayment = async (
   const store_id = process.env.STORE_ID;
   const store_passwd = process.env.STORE_PASSWD;
   const BACK_END_URL = process.env.BACK_END_URL;
-  const is_live = false;
+  const is_live = process.env.IS_LIVE;
 
   const userRepository = connection.getRepository(UserEntity);
   const customer = await userRepository.findOne({
@@ -273,7 +273,6 @@ export const onlinePayment = async (
   };
   const apiResponse = await sslcz.init(paymentPayload);
   console.log("apiResponse", apiResponse);
-  
 
   return apiResponse.GatewayPageURL;
 };
