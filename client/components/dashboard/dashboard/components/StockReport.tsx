@@ -13,7 +13,7 @@ const StockReport = ({ recentHistory }: any) => {
     orders = [],
     total_order_pending_count,
     total_active_user,
-    total_sale_return_count,
+    total_returned_order_count,
     total_canceled_count,
   } = recentHistory;
 
@@ -31,7 +31,7 @@ const StockReport = ({ recentHistory }: any) => {
           </div> */}
           <div>
             Total Sales Return Items
-            <Statistic value={total_sale_return_count || "0"} />
+            <Statistic value={total_returned_order_count || "0"} />
           </div>
           <div>
             Total Order Canceled Items

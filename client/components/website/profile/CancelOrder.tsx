@@ -18,7 +18,7 @@ const CancelOrder = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  useEffect(() => {    
+  useEffect(() => {
     form.setFieldsValue(payload);
     return () => {
       form.resetFields();
@@ -26,8 +26,7 @@ const CancelOrder = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    
-    const result =  () => values.id && orderStatusUpdateApi(values);
+    const result = () => values.id && orderStatusUpdateApi(values);
 
     const messageData = values.id
       ? "Successfully Updated"
@@ -40,8 +39,6 @@ const CancelOrder = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
   };
-
-
 
   const resetFormData = () => {
     if (payload?.id) {
@@ -75,7 +72,16 @@ const CancelOrder = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item name="cancelResson" label="Reason">
+        <Form.Item
+          name="cancelResson"
+          label="Reason"
+          rules={[
+            {
+              required: true,
+              message: "Cancel Resson is required",
+            },
+          ]}
+        >
           <Input.TextArea role="alert" placeholder="Enter Reason" />
         </Form.Item>
 

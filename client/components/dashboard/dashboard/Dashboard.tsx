@@ -13,30 +13,28 @@ import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
 import { errorNotification } from "@/lib/utils/notification";
-import TotalOrderSummaryDashboard from "./TodayOrderSummary";
 const LossProfit = dynamic(() => import("./LossProfit"));
 const WidgetStats = dynamic(() => import("./components/WidgetStats"));
 
 const StockReport = dynamic(() => import("./components/StockReport"));
 const TopCustomer = dynamic(() => import("./components/TopCustomer"));
 const StockAlert = dynamic(() => import("./components/StockAlert"));
+const TotalOrderSummaryDashboard = dynamic(() => import("./TodayOrderSummary"));
 
 const TopSellingProduct = dynamic(
   () => import("./components/TopSallingProduct")
 );
-// const TotalOrderSummaryDashboard = dynamic(() => import("./TodayOrderSummary"));
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
   const {
-    total_sale_return_amount,
+    total_returned_order_amount,
     top_selling_product,
     top_customers,
     product_alert_stock_report,
     loss_profit,
     total_sale_return_shipping_amount,
-    total_canceled_amount,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
@@ -130,17 +128,12 @@ const Dashboard = () => {
 
         <WidgetStats
           title="ORDER RETURN"
-          value={total_sale_return_amount || "0.00"}
+          value={total_returned_order_amount || "0.00"}
           icon={<RollbackOutlined />}
           color="primary"
         />
 
-        <WidgetStats
-          title="TOTAL ORDER CANCELED AMOUNT"
-          value={total_canceled_amount || "0.00"}
-          icon={<SendOutlined />}
-          color="primary"
-        />
+
       </div>
 
       <StockReport recentHistory={dashboardReports} />
