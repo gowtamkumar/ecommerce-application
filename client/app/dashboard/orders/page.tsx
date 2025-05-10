@@ -38,19 +38,10 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
-
-const AddOrderTracking = dynamic(
-  () => import("@/components/dashboard/order-tracking/AddOrderTracking"),
-  { ssr: false }
-);
+import { useRouter } from "next/navigation";
 
 const OrderStatusChange = dynamic(
   () => import("@/components/dashboard/order/OrderStatusUpdate"),
-  { ssr: false }
-);
-
-const AddPayment = dynamic(
-  () => import("@/components/dashboard/payment/AddPayment"),
   { ssr: false }
 );
 
@@ -74,6 +65,7 @@ const Page: React.FC = () => {
   const [searchInput, setSearchInput] = useState(null) as any;
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const route = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -478,37 +470,23 @@ const Page: React.FC = () => {
             title="Payment"
             className="me-1"
             onClick={() => {
-              const amount = +value.subTotal + +value.shippingCharge;
-              dispatch(
-                setAction({
-                  payment: true,
-                  type: ActionType.CREATE,
-                  payload: {
-                    orderId: value.id,
-                    amount,
-                    paymentType: "Debit",
-                    paymentMethod: value.paymentMethod,
-                    userId: value.userId,
-                  },
-                })
-              );
-            }}
-          />
+              route.push("/dashboard/payments/new");
 
-          <Button
-            size="small"
-            icon={<PlusOutlined />}
-            title="Add Order Tracking"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                  addOrderTracking: true,
-                  payload: { orderId: value.id },
-                })
-              )
-            }
+              // const amount = +value.subTotal + +value.shippingCharge;
+              // dispatch(
+              //   setAction({
+              //     payment: true,
+              //     type: ActionType.CREATE,
+              //     payload: {
+              //       orderId: value.id,
+              //       amount,
+              //       paymentType: "Debit",
+              //       paymentMethod: value.paymentMethod,
+              //       userId: value.userId,
+              //     },
+              //   })
+              // );
+            }}
           />
 
           <Button
@@ -630,8 +608,7 @@ const Page: React.FC = () => {
         size="large"
       />
       {global.action.orderStatusUpdate && <OrderStatusChange />}
-      {global.action.addOrderTracking && <AddOrderTracking />}
-      {global.action.payment && <AddPayment />}
+      {/* {global.action.payment && <AddPayment />} */}
       {global.action.assign && <AssignDeliveryMan />}
     </div>
   );

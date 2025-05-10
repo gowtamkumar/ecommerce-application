@@ -22,8 +22,6 @@ import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 import { NotificationEntity } from "../../other/notification/model/notification.entity";
 import { UserEntity } from "../../auth/model/user.entity";
 import { Repository } from "typeorm";
-import { createOrderTracking } from "../../order-tracking/controller/order-tracking.controller";
-import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {
@@ -32,6 +30,13 @@ interface Notification {
   message: string;
   userId: string | number;
   orderId: string | number;
+}
+
+interface OrderTracking {
+  orderId: number;
+  userId: number;
+  location: string;
+  status: OrderStatus;
 }
 
 // @desc Create a single Order
@@ -93,32 +98,18 @@ export const createOrder = asyncHandler(
 
       const savedOrder = await repository.save(newOrder);
 
-      if (orderItems?.length && savedOrder.id) {
+      const orderId = savedOrder.id;
+
+      if (orderItems?.length && orderId) {
         const repoOrderItems =
           queryRunner.manager.getRepository(OrderItemEntity);
         const newOrderItems = repoOrderItems.create(
           orderItems.map((item: any) => ({
             ...item,
-            orderId: savedOrder.id,
+            orderId,
           }))
         );
-        const resultOrderItems = await repoOrderItems.save(newOrderItems);
-
-        // const productVariantRepo =
-        //   queryRunner.manager.getRepository(ProductVariantEntity);
-        // for (const item of resultOrderItems) {
-        //   const findProductVariant = await productVariantRepo.findOne({
-        //     where: { id: item.productVariantId },
-        //   });
-        //   if (findProductVariant) {
-        //     let currentStock =
-        //       (+findProductVariant.stockQty || 0) - (+item.qty || 0);
-        //     await productVariantRepo.save({
-        //       id: findProductVariant.id,
-        //       stockQty: currentStock,
-        //     });
-        //   }
-        // }
+        await repoOrderItems.save(newOrderItems);
 
         // clear cart
         const cartRepo = queryRunner.manager.getRepository(CartEntity);
@@ -126,16 +117,22 @@ export const createOrder = asyncHandler(
         await cartRepo.remove(cartsList);
 
         // order tracking
-        const orderTrackingRepo =
-          queryRunner.manager.getRepository(OrderTrackingEntity);
-        const newOrderTracking = orderTrackingRepo.create({
-          orderId: savedOrder.id,
+        const newOrderTracking = {
+          status: savedOrder.status,
+          orderId,
           userId,
           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-        });
-        await orderTrackingRepo.save(newOrderTracking);
+        } as OrderTracking;
 
-        
+        await orderTracking(newOrderTracking);
+        // const orderTrackingRepo =
+        //   queryRunner.manager.getRepository(OrderTrackingEntity);
+        // const newOrderTracking = orderTrackingRepo.create({
+        //   orderId,
+        //   userId,
+        //   location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+        // });
+        // await orderTrackingRepo.save(newOrderTracking);
 
         // applied coupon
         if (validation.data.couponId) {
@@ -195,22 +192,40 @@ export const createOrder = asyncHandler(
   }
 );
 
-// "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-
-export const orderTracking = async (
-  orderId: number,
-  userId: number,
-  location: string,
-  status: OrderTrackingStatusEnum
-) => {
+export const orderTracking = async ({
+  orderId,
+  userId,
+  location,
+  status,
+}: OrderTracking) => {
   const connection = await getDBConnection();
-  // order tracking
+
+  let trackingStatus = {};
+
+  if (status === OrderStatus.Pending) {
+    trackingStatus = "Order Placed";
+  } else if (status === OrderStatus.Processing) {
+    trackingStatus = "Order is Being Processed";
+  } else if (status === OrderStatus.Approved) {
+    trackingStatus = "Order Approved";
+  } else if (status === OrderStatus.OnShipping) {
+    trackingStatus = "Order Ready to Ship";
+  } else if (status === OrderStatus.Shipped) {
+    trackingStatus = "Order Shipped";
+  } else if (status === OrderStatus.Completed) {
+    trackingStatus = "Order Delivered";
+  } else if (status === OrderStatus.Returned) {
+    trackingStatus = "Order Returned";
+  } else if (status === OrderStatus.Canceled) {
+    trackingStatus = "Order Canceled";
+  }
+
   const orderTrackingRepo = connection.getRepository(OrderTrackingEntity);
   const newOrderTracking = orderTrackingRepo.create({
     orderId,
     userId,
     location,
-    status,
+    status: trackingStatus,
   });
   await orderTrackingRepo.save(newOrderTracking);
 };
@@ -499,61 +514,6 @@ export const getOrderQuery = asyncHandler(
   }
 );
 
-// @desc Get a single Order
-// @route GET /api/v1/orders/:id
-// @access Public
-// export const getOrder = asyncHandler(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     logger.info(`Service: getOrder ${req.method} ${req.url}`);
-
-//     const { id } = req.params;
-//     const connection = await getDBConnection();
-//     const orderRepository = connection.getRepository(OrderEntity);
-
-//     const qb = orderRepository.createQueryBuilder("order");
-//     qb.select([
-//       "order",
-//       "orderItems",
-//       "productVariant.id",
-//       "productVariant.material",
-//       "productVariant.default",
-//       "color.name",
-//       "color.color",
-//       "size.name",
-//       "product",
-//       "payments",
-//       "orderTrackings",
-//       "deliveryMan.name",
-//       "user.name",
-//       "shippingAddress",
-//     ]);
-//     qb.where({ id });
-//     qb.leftJoin("order.orderItems", "orderItems");
-//     qb.leftJoin("orderItems.product", "product");
-//     qb.leftJoin("orderItems.productVariant", "productVariant");
-//     qb.leftJoin("productVariant.color", "color");
-//     qb.leftJoin("productVariant.size", "size");
-//     qb.leftJoin("order.orderTrackings", "orderTrackings");
-//     qb.leftJoin("order.deliveryMan", "deliveryMan");
-//     qb.leftJoin("order.user", "user");
-//     qb.leftJoin("order.payments", "payments");
-//     qb.leftJoin("order.shippingAddress", "shippingAddress");
-//     qb.addOrderBy("order.trackingNo", "DESC");
-
-//     const result = await qb.getOne();
-
-//     if (!result) {
-//       throw new Error(`Resource not found of id #${req.params.id}`);
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Get Order",
-//       data: result,
-//     });
-//   }
-// );
-
 // @desc Update a single Order
 // @route PUT /api/v1/Order/:id
 // @access Public
@@ -705,6 +665,7 @@ export const orderStatusUpdate = asyncHandler(
     }
 
     const status = validation.data.status;
+    const location = validation.data.location;
 
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
@@ -773,6 +734,15 @@ export const orderStatusUpdate = asyncHandler(
         userId,
         orderId: result.id,
       };
+
+      const newOrderTracking = {
+        status: status,
+        orderId: result.id,
+        userId,
+        location,
+      } as OrderTracking;
+
+      await orderTracking(newOrderTracking);
 
       await sendOrderNotification(notification);
 
@@ -1060,5 +1030,60 @@ export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
 //     } finally {
 //       await queryRunner.release();
 //     }
+//   }
+// );
+
+// @desc Get a single Order
+// @route GET /api/v1/orders/:id
+// @access Public
+// export const getOrder = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     logger.info(`Service: getOrder ${req.method} ${req.url}`);
+
+//     const { id } = req.params;
+//     const connection = await getDBConnection();
+//     const orderRepository = connection.getRepository(OrderEntity);
+
+//     const qb = orderRepository.createQueryBuilder("order");
+//     qb.select([
+//       "order",
+//       "orderItems",
+//       "productVariant.id",
+//       "productVariant.material",
+//       "productVariant.default",
+//       "color.name",
+//       "color.color",
+//       "size.name",
+//       "product",
+//       "payments",
+//       "orderTrackings",
+//       "deliveryMan.name",
+//       "user.name",
+//       "shippingAddress",
+//     ]);
+//     qb.where({ id });
+//     qb.leftJoin("order.orderItems", "orderItems");
+//     qb.leftJoin("orderItems.product", "product");
+//     qb.leftJoin("orderItems.productVariant", "productVariant");
+//     qb.leftJoin("productVariant.color", "color");
+//     qb.leftJoin("productVariant.size", "size");
+//     qb.leftJoin("order.orderTrackings", "orderTrackings");
+//     qb.leftJoin("order.deliveryMan", "deliveryMan");
+//     qb.leftJoin("order.user", "user");
+//     qb.leftJoin("order.payments", "payments");
+//     qb.leftJoin("order.shippingAddress", "shippingAddress");
+//     qb.addOrderBy("order.trackingNo", "DESC");
+
+//     const result = await qb.getOne();
+
+//     if (!result) {
+//       throw new Error(`Resource not found of id #${req.params.id}`);
+//     }
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Get Order",
+//       data: result,
+//     });
 //   }
 // );

@@ -74,7 +74,7 @@ const NotificationsUser = () => {
         return (
           <div>
             <p>{item.title}</p>
-            <p>{item.text}</p>
+            <p>{item.message}</p>
             <p className="text-gray-400">{getTime(item.createdAt)}</p>
           </div>
         );
@@ -141,11 +141,12 @@ const NotificationsUser = () => {
         onCancel={handleOk}
         footer={null}
         loading={global.loading.notification}
+        width={600}
       >
         <div>
-          <p>Type: {notification.item_type}</p>
           <p>Title: {notification.title}</p>
-          <p>Text: {notification.text}</p>
+          <p>Type: {notification.type}</p>
+          <p>Message: {notification.message}</p>
           <p>Date: {dayjs(notification.created_at).format("DD-MMM-YYYY")}</p>
         </div>
       </Modal>

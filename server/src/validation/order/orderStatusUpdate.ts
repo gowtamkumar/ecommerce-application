@@ -14,5 +14,6 @@ export const orderStatusUpdateValidationSchema = z.object({
     ],
     { required_error: "Order Status is Required" }
   ),
-  cancelResson: z.string({ required_error: "Cancel Resson is Required" }),
+  location: z.string().optional().nullable(),
+  cancelResson: z.string().optional().nullable(),
 });

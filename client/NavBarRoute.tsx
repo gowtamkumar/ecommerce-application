@@ -124,15 +124,15 @@ const navbarRoute = [
   // },
 
   {
-    key: "Payment",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/payments">Payments</Link>,
-    route: "true",
-  },
-  {
     key: "new_payment",
     icon: <FaBeer className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/payments/new">New payment</Link>,
+    route: "true",
+  },
+  {
+    key: "Payment",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/payments">Payments</Link>,
     route: "true",
   },
   {

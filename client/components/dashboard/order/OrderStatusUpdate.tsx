@@ -30,14 +30,15 @@ const OrderStatusUpdate = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    console.log("🚀 ~ values:", values);
     const result = () => orderStatusUpdateApi(values);
 
     const messageData = values.id
       ? "Successfully Updated"
       : "Successfully Added";
 
-    await handleAsyncAction(result, messageData, dispatch);
+  const res =  await handleAsyncAction(result, messageData, dispatch);
+  console.log("res", res);
+  
   };
 
   const handleClose = () => {
@@ -106,6 +107,20 @@ const OrderStatusUpdate = () => {
               </Select.Option>
             ))}
           </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="location"
+          className="mb-1"
+          label="Tracking Message"
+          rules={[
+            {
+              required: true,
+              message: "location is required",
+            },
+          ]}
+        >
+          <Input.TextArea placeholder="Enter location" />
         </Form.Item>
 
         <div className="text-end">

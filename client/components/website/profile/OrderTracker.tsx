@@ -97,9 +97,8 @@ export default function OrderTracker() {
         onFinish={handleOrderTracking}
         scrollToFirstError={true}
       >
-        <label htmlFor="trackingNo">Tracking No</label>
         <Space.Compact block size="small">
-          <Form.Item name="name" label="Name">
+          <Form.Item name="name" label="Tracking No">
             <Input
               id="trackingNo"
               size="middle"
@@ -250,9 +249,7 @@ export default function OrderTracker() {
 
                   <div className="flex justify-between border-t-2">
                     <h1>Grand Total:</h1>
-                    <h1 className="font-semibold">
-                      {order.due}
-                    </h1>
+                    <h1 className="font-semibold">{order.due}</h1>
                   </div>
                 </div>
               </div>

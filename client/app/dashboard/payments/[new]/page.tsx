@@ -101,7 +101,7 @@ export default function OrderTracker() {
   ];
 
   return (
-    <>
+    <div className="p-5">
       <Form form={form} onFinish={handlePayment} scrollToFirstError={true}>
         <Space.Compact block size="small">
           <Form.Item name="name" label="Invoice No">
@@ -279,6 +279,6 @@ export default function OrderTracker() {
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         )}
       </Form>
-    </>
+    </div>
   );
 }

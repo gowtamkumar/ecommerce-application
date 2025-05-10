@@ -7,10 +7,6 @@ import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 
-const AddPayment = dynamic(
-  () => import("@/components/dashboard/payment/AddPayment"),
-  { ssr: false }
-);
 const PaymentList = dynamic(
   () => import("@/components/dashboard/payment/PaymentList"),
   { ssr: false },
@@ -50,7 +46,7 @@ export default function Payment() {
           </Button>
         }
       />
-      <AddPayment />
+      {/* <AddPayment /> */}
     </div>
   );
 }

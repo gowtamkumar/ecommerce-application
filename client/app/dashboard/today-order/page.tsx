@@ -39,11 +39,6 @@ import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
 import TodayOrderSummaryDashboard from "@/components/dashboard/dashboard/TodayOrderSummary";
 
-const AddOrderTracking = dynamic(
-  () => import("@/components/dashboard/order-tracking/AddOrderTracking"),
-  { ssr: false }
-);
-
 const OrderStatusChange = dynamic(
   () => import("@/components/dashboard/order/OrderStatusUpdate"),
   { ssr: false }
@@ -473,21 +468,6 @@ const Page: React.FC = () => {
             }}
           />
 
-          <Button
-            size="small"
-            icon={<PlusOutlined />}
-            title="Add Order Tracking"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                  addOrderTracking: true,
-                  payload: { orderId: value.id },
-                })
-              )
-            }
-          />
 
           <Button
             size="small"
@@ -568,7 +548,6 @@ const Page: React.FC = () => {
         size="large"
       />
       {global.action.orderStatusUpdate && <OrderStatusChange />}
-      {global.action.addOrderTracking && <AddOrderTracking />}
       {global.action.payment && <AddPayment />}
       {global.action.assign && <AssignDeliveryMan />}
     </div>
