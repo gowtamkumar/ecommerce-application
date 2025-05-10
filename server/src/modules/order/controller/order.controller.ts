@@ -22,6 +22,8 @@ import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 import { NotificationEntity } from "../../other/notification/model/notification.entity";
 import { UserEntity } from "../../auth/model/user.entity";
 import { Repository } from "typeorm";
+import { createOrderTracking } from "../../order-tracking/controller/order-tracking.controller";
+import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {
@@ -133,6 +135,8 @@ export const createOrder = asyncHandler(
         });
         await orderTrackingRepo.save(newOrderTracking);
 
+        
+
         // applied coupon
         if (validation.data.couponId) {
           const couponRepo =
@@ -190,6 +194,26 @@ export const createOrder = asyncHandler(
     }
   }
 );
+
+// "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+
+export const orderTracking = async (
+  orderId: number,
+  userId: number,
+  location: string,
+  status: OrderTrackingStatusEnum
+) => {
+  const connection = await getDBConnection();
+  // order tracking
+  const orderTrackingRepo = connection.getRepository(OrderTrackingEntity);
+  const newOrderTracking = orderTrackingRepo.create({
+    orderId,
+    userId,
+    location,
+    status,
+  });
+  await orderTrackingRepo.save(newOrderTracking);
+};
 
 export const sendOrderNotification = async (
   notification: Notification
@@ -385,61 +409,6 @@ export const getUserOrders = asyncHandler(
 );
 
 // @desc Get a single Order
-// @route GET /api/v1/orders/:id
-// @access Public
-// export const getOrder = asyncHandler(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     logger.info(`Service: getOrder ${req.method} ${req.url}`);
-
-//     const { id } = req.params;
-//     const connection = await getDBConnection();
-//     const orderRepository = connection.getRepository(OrderEntity);
-
-//     const qb = orderRepository.createQueryBuilder("order");
-//     qb.select([
-//       "order",
-//       "orderItems",
-//       "productVariant.id",
-//       "productVariant.material",
-//       "productVariant.default",
-//       "color.name",
-//       "color.color",
-//       "size.name",
-//       "product",
-//       "payments",
-//       "orderTrackings",
-//       "deliveryMan.name",
-//       "user.name",
-//       "shippingAddress",
-//     ]);
-//     qb.where({ id });
-//     qb.leftJoin("order.orderItems", "orderItems");
-//     qb.leftJoin("orderItems.product", "product");
-//     qb.leftJoin("orderItems.productVariant", "productVariant");
-//     qb.leftJoin("productVariant.color", "color");
-//     qb.leftJoin("productVariant.size", "size");
-//     qb.leftJoin("order.orderTrackings", "orderTrackings");
-//     qb.leftJoin("order.deliveryMan", "deliveryMan");
-//     qb.leftJoin("order.user", "user");
-//     qb.leftJoin("order.payments", "payments");
-//     qb.leftJoin("order.shippingAddress", "shippingAddress");
-//     qb.addOrderBy("order.trackingNo", "DESC");
-
-//     const result = await qb.getOne();
-
-//     if (!result) {
-//       throw new Error(`Resource not found of id #${req.params.id}`);
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Get Order",
-//       data: result,
-//     });
-//   }
-// );
-
-// @desc Get a single Order
 // @route GET /api/v1/orders/query?id=1
 // @access Public
 export const getOrderQuery = asyncHandler(
@@ -531,44 +500,55 @@ export const getOrderQuery = asyncHandler(
 );
 
 // @desc Get a single Order
-// @route GET /api/v1/Order/:id
+// @route GET /api/v1/orders/:id
 // @access Public
-// export const orderTracking = asyncHandler(
-//   async (req: CustomRequest, res: Response, next: NextFunction) => {
+// export const getOrder = asyncHandler(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     logger.info(`Service: getOrder ${req.method} ${req.url}`);
 
-//     const { trackingNo } = req.query;
-//     const userId = req.id;
+//     const { id } = req.params;
 //     const connection = await getDBConnection();
-//     const repository = await connection.getRepository(OrderEntity);
-//     const qb = repository.createQueryBuilder("order");
+//     const orderRepository = connection.getRepository(OrderEntity);
+
+//     const qb = orderRepository.createQueryBuilder("order");
 //     qb.select([
 //       "order",
 //       "orderItems",
+//       "productVariant.id",
+//       "productVariant.material",
+//       "productVariant.default",
+//       "color.name",
+//       "color.color",
+//       "size.name",
 //       "product",
 //       "payments",
 //       "orderTrackings",
 //       "deliveryMan.name",
+//       "user.name",
 //       "shippingAddress",
 //     ]);
-
+//     qb.where({ id });
 //     qb.leftJoin("order.orderItems", "orderItems");
 //     qb.leftJoin("orderItems.product", "product");
+//     qb.leftJoin("orderItems.productVariant", "productVariant");
+//     qb.leftJoin("productVariant.color", "color");
+//     qb.leftJoin("productVariant.size", "size");
 //     qb.leftJoin("order.orderTrackings", "orderTrackings");
 //     qb.leftJoin("order.deliveryMan", "deliveryMan");
 //     qb.leftJoin("order.user", "user");
 //     qb.leftJoin("order.payments", "payments");
 //     qb.leftJoin("order.shippingAddress", "shippingAddress");
-//     if (userId) qb.where({ userId });
-//     if (trackingNo) qb.andWhere({ trackingNo });
+//     qb.addOrderBy("order.trackingNo", "DESC");
+
 //     const result = await qb.getOne();
 
 //     if (!result) {
-//       throw new Error(`Resource not found of #${trackingNo}`);
+//       throw new Error(`Resource not found of id #${req.params.id}`);
 //     }
 
 //     return res.status(200).json({
 //       success: true,
-//       message: `Get a single Tracking No of ${trackingNo}`,
+//       message: "Get Order",
 //       data: result,
 //     });
 //   }
@@ -754,8 +734,6 @@ export const orderStatusUpdate = asyncHandler(
         `Sorry, you can't cancel this order because it's already '${result.status}'.`
       );
     }
-
-  
 
     try {
       if (

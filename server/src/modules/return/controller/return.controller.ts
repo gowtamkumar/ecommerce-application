@@ -5,6 +5,8 @@ import { ReturnEntity } from "../model/return.entity";
 import { logger } from "../../../middlewares/logger";
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { returnValidationSchema } from "../../../validation/return/returnValidation";
+import { ReturnStatus } from "../enums/return-status.enum";
+import { OrderItemEntity } from "../../order/model/order-item.entity";
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -89,63 +91,76 @@ export const createReturn = asyncHandler(
 // @desc Update a single Return
 // @route PUT /api/v1/Return/:id
 // @access Public
-export const updateReturn = asyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Service: updateReturn ${req.method} ${req.url}`);
+export const updateReturn = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: updateReturn ${req.method} ${req.url}`);
 
-  const { id } = req.params;
+    const { id } = req.params;
 
-  // const validation = ReturnValidationSchema.safeParse(req.body);
+    const { status } = req.body;
 
-  // if (!validation.success) {
-  //   const formattedErrors = validation.error.issues.map((issue) => ({
-  //     path: issue.path.join("."),
-  //     message: issue.message,
-  //   }));
+    // const validation = ReturnValidationSchema.safeParse(req.body);
 
-  //   return res.status(400).json({
-  //     success: false,
-  //     issues: formattedErrors,
-  //   });
-  // }
+    // if (!validation.success) {
+    //   const formattedErrors = validation.error.issues.map((issue) => ({
+    //     path: issue.path.join("."),
+    //     message: issue.message,
+    //   }));
 
-  const connection = await getDBConnection();
-  const repository = await connection.getRepository(ReturnEntity);
-  const result = await repository.findOneBy({ id });
+    //   return res.status(400).json({
+    //     success: false,
+    //     issues: formattedErrors,
+    //   });
+    // }
 
-  if (!result) {
-    throw new Error(`Resource not found of id #${req.params.id}`);
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(ReturnEntity);
+    const result = await repository.findOneBy({ id });
+
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    // if(status === ReturnStatus.Approved){
+    //   const repositoryOrderItem = await connection.getRepository(OrderItemEntity);
+
+    //   const findOrderItems = repositoryOrderItem.find()
+
+    // }
+
+    const updateData = await repository.merge(result, req.body);
+    await repository.save(updateData);
+
+    return res.status(200).json({
+      success: true,
+      message: `Update a single Return of id ${req.params.id}`,
+      data: updateData,
+    });
   }
-
-  const updateData = await repository.merge(result, req.body);
-  await repository.save(updateData);
-
-  return res.status(200).json({
-    success: true,
-    message: `Update a single Return of id ${req.params.id}`,
-    data: updateData,
-  });
-});
+);
 
 // @desc Delete a single Return
 // @route DELETE /api/v1/Return/:id
 // @access Public
-export const deleteReturn = asyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Service: deleteReturn ${req.method} ${req.url}`);
+export const deleteReturn = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: deleteReturn ${req.method} ${req.url}`);
 
-  const { id } = req.params;
-  const connection = await getDBConnection();
-  const repository = await connection.getRepository(ReturnEntity);
+    const { id } = req.params;
+    const connection = await getDBConnection();
+    const repository = await connection.getRepository(ReturnEntity);
 
-  const result = await repository.findOneBy({ id });
-  if (!result) {
-    throw new Error(`Resource not found of id #${req.params.id}`);
+    const result = await repository.findOneBy({ id });
+    if (!result) {
+      throw new Error(`Resource not found of id #${req.params.id}`);
+    }
+
+    await repository.delete({ id });
+
+    return res.status(200).json({
+      success: true,
+      message: `Delete a single Return of id ${req.params.id}`,
+      data: result,
+    });
   }
-
-  await repository.delete({ id });
-
-  return res.status(200).json({
-    success: true,
-    message: `Delete a single Return of id ${req.params.id}`,
-    data: result,
-  });
-});
+);

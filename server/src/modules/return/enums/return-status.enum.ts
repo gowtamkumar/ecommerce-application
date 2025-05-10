@@ -2,6 +2,6 @@ export enum ReturnStatus {
   Requested = "Requested",
   Approved = "Approved",
   Rejected = "Rejected",
-  Received = "Received",
+  // Received = "Received",
   Refunded = "Refunded",
 }

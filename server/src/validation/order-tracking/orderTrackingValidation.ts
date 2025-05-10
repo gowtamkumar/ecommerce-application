@@ -14,5 +14,7 @@ export const orderTrackingValidationSchema = z.object({
     "Order Ready to Ship",
     "Order Handover to Courier",
     "Order Delivered",
-  ]),
+  ], {
+    required_error: "Order is required",
+  }),
 });
