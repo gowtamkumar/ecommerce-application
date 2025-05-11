@@ -7,6 +7,7 @@ import { CustomRequest } from "../../../enums/custom-request-type";
 import { returnValidationSchema } from "../../../validation/return/returnValidation";
 import { ReturnStatus } from "../enums/return-status.enum";
 import { OrderItemEntity } from "../../order/model/order-item.entity";
+import { OrderEntity } from "../../order/model/order.entity";
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -57,9 +58,11 @@ export const createReturn = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createReturn ${req.method} ${req.url}`);
 
+    const userId = req.id;
+
     const validation = returnValidationSchema.safeParse({
       ...req.body,
-      userId: req.id,
+      userId,
     });
 
     if (!validation.success) {
@@ -73,12 +76,42 @@ export const createReturn = asyncHandler(
         issues: formattedErrors,
       });
     }
+    const orderItemId = validation.data.orderItemId;
+    const returnQty = validation.data.returnQty;
 
     const connection = await getDBConnection();
     const repository = connection.getRepository(ReturnEntity);
+    const repositoryOrder = connection.getRepository(OrderEntity);
+
+    const order = await repositoryOrder.findOne({
+      where: { id: validation.data.orderId, userId },
+      relations: ["orderItems"],
+    });
+
+    if (!order) {
+      throw new Error(`Order not found or does not belong to user`);
+    }
+
+    const item = order.orderItems.find(
+      (i: { id: number }) => i.id === orderItemId
+    );
+
+    if (!item) {
+      throw new Error("Product not found in this order");
+    }
+
+    if (returnQty > item.qty) {
+      throw new Error(`You can only return up to ${item.qty} units`);
+    }
 
     const newReturn = repository.create(validation.data);
     const save = await repository.save(newReturn);
+
+    if (save.orderItemId) {
+      const repositoryOrder = connection.getRepository(OrderItemEntity);
+      const findOrderItem = repositoryOrder.findOneBy(save.orderItemId);
+      // if(findOrderItem)
+    }
 
     return res.status(200).json({
       success: true,

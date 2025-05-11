@@ -33,10 +33,7 @@ import { CurrencyEntity } from "../modules/currency/model/currency.entity";
 import { BannerEntity } from "../modules/banner/model/banner.entity";
 import { SettingEntity } from "../modules/other/setting/model/setting.entity";
 import { LeadEntity } from "../modules/lead/model/lead.entity";
-import { PostEntity } from "../modules/blog/post/model/post.entity";
-import { PostCategoryEntity } from "../modules/blog/post/model/post-category.entity";
 import { CartEntity } from "../modules/cart/model/cart.entity";
-import { CommentEntity } from "../modules/blog/comment/model/comment.entity";
 import { MenuEntity } from "../modules/menu/model/menu.entity";
 import { NotificationEntity } from "../modules/other/notification/model/notification.entity";
 import { CouponEntity } from "../modules/coupon/model/coupon.entity";
@@ -45,6 +42,7 @@ import { AppliedCouponEntity } from "../modules/coupon/model/applied-coupon.enti
 import { ApplicableCategoryEntity } from "../modules/discount/model/applicable-category.entity";
 import { ApplicableBrandEntity } from "../modules/discount/model/applicable-brand.entity";
 import { ApplicableProductEntity } from "../modules/discount/model/applicable-products.entity";
+import { ReturnEntity } from "../modules/return/model/return.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -121,6 +119,7 @@ const dbConnection = new DataSource({
     // PostEntity,
     // PostCategoryEntity,
     // CommentEntity,
+    ReturnEntity,
     MenuEntity,
     NotificationEntity,
   ],

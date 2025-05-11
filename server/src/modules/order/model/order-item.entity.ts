@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { OrderEntity } from "./order.entity";
 import { ProductEntity } from "../../products/product/model/product.entity";
 import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
+import { ReturnEntity } from "../../return/model/return.entity";
 
 @Entity("order_items")
 export class OrderItemEntity {
@@ -27,7 +29,7 @@ export class OrderItemEntity {
     name: "unit_price",
     type: "numeric",
     precision: 10,
-    scale: 2
+    scale: 2,
   })
   unitPrice!: string;
 
@@ -91,11 +93,9 @@ export class OrderItemEntity {
     name: "sub_total",
     type: "numeric",
     precision: 10,
-    scale: 2
+    scale: 2,
   })
   subTotal!: string; //need to remove nullable
-
-
 
   @Column({ name: "product_id" })
   productId!: number;
@@ -105,7 +105,6 @@ export class OrderItemEntity {
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 
-
   @Column({ name: "product_variant_id" })
   productVariantId!: number;
   @ManyToOne((_type) => ProductVariantEntity, (product) => product.orderItems, {
@@ -113,4 +112,7 @@ export class OrderItemEntity {
   })
   @JoinColumn({ name: "product_variant_id" })
   productVariant!: ProductVariantEntity;
+
+  @OneToMany((_type) => ReturnEntity, (item) => item.orderItem)
+  returns!: ReturnEntity[];
 }

@@ -214,8 +214,6 @@ export const orderTracking = async ({
     trackingStatus = "Order Shipped";
   } else if (status === OrderStatus.Completed) {
     trackingStatus = "Order Delivered";
-  } else if (status === OrderStatus.Returned) {
-    trackingStatus = "Order Returned";
   } else if (status === OrderStatus.Canceled) {
     trackingStatus = "Order Canceled";
   }
@@ -699,7 +697,6 @@ export const orderStatusUpdate = asyncHandler(
     try {
       if (
         [
-          OrderStatus.Returned,
           OrderStatus.Canceled,
           OrderStatus.Approved,
           OrderStatus.Completed,
@@ -710,10 +707,9 @@ export const orderStatusUpdate = asyncHandler(
         const productVariantRepo =
           queryRunner.manager.getRepository(ProductVariantEntity);
 
-        const isStockIncrease = [
-          OrderStatus.Returned,
-          OrderStatus.Canceled,
-        ].includes(status as OrderStatus);
+        const isStockIncrease = [OrderStatus.Canceled].includes(
+          status as OrderStatus
+        );
 
         await adjustStock(
           result.orderItems,
