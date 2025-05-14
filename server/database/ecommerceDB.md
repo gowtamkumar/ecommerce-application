@@ -86,7 +86,7 @@ createdAt,
 updatedAt
 product_varient:array come from onther table
 product_category:array come from onther table
-
+isReturnable:boolean
 variant:boolean
 
 ## product variants:(done)

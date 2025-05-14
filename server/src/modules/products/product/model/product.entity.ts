@@ -40,6 +40,9 @@ export class ProductEntity {
   @Column({ type: "boolean", default: false })
   variant?: boolean;
 
+  @Column({ type: "boolean", default: true })
+  isReturnable?: boolean;
+
   @Column({ type: "boolean", default: false })
   featured?: boolean;
 

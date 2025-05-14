@@ -117,22 +117,22 @@ export const createOrder = asyncHandler(
         await cartRepo.remove(cartsList);
 
         // order tracking
-        const newOrderTracking = {
-          status: savedOrder.status,
-          orderId,
-          userId,
-          location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-        } as OrderTracking;
-
-        await orderTracking(newOrderTracking);
-        // const orderTrackingRepo =
-        //   queryRunner.manager.getRepository(OrderTrackingEntity);
-        // const newOrderTracking = orderTrackingRepo.create({
+        // const newOrderTracking = {
+        //   status: savedOrder.status,
         //   orderId,
         //   userId,
         //   location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-        // });
-        // await orderTrackingRepo.save(newOrderTracking);
+        // } as OrderTracking;
+
+        // await orderTracking(newOrderTracking);
+        const orderTrackingRepo =
+          queryRunner.manager.getRepository(OrderTrackingEntity);
+        const newOrderTracking = orderTrackingRepo.create({
+          orderId,
+          userId,
+          location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
+        });
+        await orderTrackingRepo.save(newOrderTracking);
 
         // applied coupon
         if (validation.data.couponId) {
@@ -199,6 +199,8 @@ export const orderTracking = async ({
   status,
 }: OrderTracking) => {
   const connection = await getDBConnection();
+
+  console.log("tracking", orderId, userId, location, status);
 
   let trackingStatus = {};
 

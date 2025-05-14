@@ -16,13 +16,14 @@ export const returnValidationSchema = z.object({
     required_error: "Phone is required",
   }),
 
-  returnQty: z.number({
-    required_error: "Return Qty is required",
+  returnedQty: z.number({
+    required_error: "returned Qty is required",
   }),
 
   userId: z.number({
     required_error: "User is required",
   }),
+
   image: z.number().optional().nullable(),
 
   status: z.enum(

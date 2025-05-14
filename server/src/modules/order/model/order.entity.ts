@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { OrderStatus } from "../enums/order-status.enum";
-import { PaymentMethod, PaymentStatus } from "../enums";
+import { PaymentMethod, PaymentStatus, RefundStatus } from "../enums";
 import { OrderItemEntity } from "./order-item.entity";
 import { PaymentEntity } from "../../payment/model/payment.entity";
 import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
@@ -57,6 +57,38 @@ export class OrderEntity {
     nullable: true,
   })
   couponDiscount!: number;
+
+  // return
+  @Column({ name: "returned_qty", nullable: true })
+  returnedQty!: number;
+
+  @Column({
+    name: "total_returned",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  totalReturned!: number;
+
+  // refunded
+  @Column({
+    name: "total_refuned",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  totalRefuned!: number;
+
+  @Column({
+    name: "refund_status",
+    type: "enum",
+    enum: RefundStatus,
+    nullable: true,
+  })
+  refundStatus!: RefundStatus;
+  // refunded end
 
   @Column({
     name: "total_tax",

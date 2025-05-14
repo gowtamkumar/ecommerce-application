@@ -8,6 +8,9 @@ import { returnValidationSchema } from "../../../validation/return/returnValidat
 import { ReturnStatus } from "../enums/return-status.enum";
 import { OrderItemEntity } from "../../order/model/order-item.entity";
 import { OrderEntity } from "../../order/model/order.entity";
+import { OrderStatus, RefundStatus } from "../../order/enums";
+import dayjs from "dayjs";
+import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -54,6 +57,7 @@ export const getReturn = asyncHandler(
 // @desc Create a single Return
 // @route POST /api/v1/Return
 // @access Public
+
 export const createReturn = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createReturn ${req.method} ${req.url}`);
@@ -76,20 +80,37 @@ export const createReturn = asyncHandler(
         issues: formattedErrors,
       });
     }
-    const orderItemId = validation.data.orderItemId;
-    const returnQty = validation.data.returnQty;
+
+    const { orderItemId, orderId, returnedQty } = validation.data;
 
     const connection = await getDBConnection();
-    const repository = connection.getRepository(ReturnEntity);
+    const repositoryReturn = connection.getRepository(ReturnEntity);
     const repositoryOrder = connection.getRepository(OrderEntity);
 
-    const order = await repositoryOrder.findOne({
-      where: { id: validation.data.orderId, userId },
-      relations: ["orderItems"],
-    });
+    const order = await repositoryOrder
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.orderItems", "orderItem")
+      .leftJoinAndSelect("orderItem.product", "product")
+      .where("order.id = :orderId", { orderId })
+      .andWhere("order.userId = :userId", { userId })
+      .select([
+        "order.id",
+        "order.status",
+        "order.updatedAt",
+        "orderItem.id",
+        "orderItem.qty",
+        "product.id",
+        "product.name",
+        "product.isReturnable",
+      ])
+      .getOne();
 
     if (!order) {
       throw new Error(`Order not found or does not belong to user`);
+    }
+
+    if (order.status !== OrderStatus.Completed) {
+      throw new Error("Return is allowed only after delivery");
     }
 
     const item = order.orderItems.find(
@@ -100,75 +121,449 @@ export const createReturn = asyncHandler(
       throw new Error("Product not found in this order");
     }
 
-    if (returnQty > item.qty) {
-      throw new Error(`You can only return up to ${item.qty} units`);
+    if (!item.product.isReturnable) {
+      throw new Error("This product is not eligible for return");
     }
 
-    const newReturn = repository.create(validation.data);
-    const save = await repository.save(newReturn);
+    // ✅ Check return window (7 days from delivery)
+    const deliveredAt = order.updatedAt; // Assuming updatedAt = deliveredAt
+    const now = new Date();
 
-    if (save.orderItemId) {
-      const repositoryOrder = connection.getRepository(OrderItemEntity);
-      const findOrderItem = repositoryOrder.findOneBy(save.orderItemId);
-      // if(findOrderItem)
+    const sevenDaysLater = dayjs(deliveredAt).add(7, "day"); //here need to dynamic day from setting
+    if (dayjs(now).isAfter(sevenDaysLater)) {
+      throw new Error("Return window expired");
     }
+
+    // ✅ Total returned quantity logic
+    const existingReturns = await repositoryReturn.find({
+      where: { orderItemId },
+    });
+
+    const alreadyReturnedQty = existingReturns.reduce(
+      (sum: any, r: any) => sum + r.returnQty,
+      0
+    );
+
+    const remainingQty = item.qty - alreadyReturnedQty;
+
+    if (returnedQty > remainingQty) {
+      throw new Error(`You can only return up to ${remainingQty} units`);
+    }
+
+    // ✅ Create and save the return request
+    const newReturn = repositoryReturn.create(validation.data);
+    const save = await repositoryReturn.save(newReturn);
 
     return res.status(200).json({
       success: true,
-      message: "Create a new Return",
+      message: "Return request created successfully",
       data: save,
     });
   }
 );
 
+// // @desc Create a single Return
+// // @route POST /api/v1/Return
+// // @access Public
+// export const createReturn = asyncHandler(
+//   async (req: CustomRequest, res: Response) => {
+//     logger.info(`Service: createReturn ${req.method} ${req.url}`);
+
+//     const userId = req.id;
+
+//     const validation = returnValidationSchema.safeParse({
+//       ...req.body,
+//       userId,
+//     });
+
+//     if (!validation.success) {
+//       const formattedErrors = validation.error.issues.map((issue) => ({
+//         path: issue.path.join("."),
+//         message: issue.message,
+//       }));
+
+//       return res.status(400).json({
+//         success: false,
+//         issues: formattedErrors,
+//       });
+//     }
+
+//     const orderItemId = validation.data.orderItemId;
+//     const returnQty = validation.data.returnQty;
+
+//     const connection = await getDBConnection();
+//     const repositoryReturn = connection.getRepository(ReturnEntity);
+//     const repositoryOrder = connection.getRepository(OrderEntity);
+
+//     const order = await repositoryOrder.findOne({
+//       where: { id: validation.data.orderId, userId },
+//       relations: ["orderItems"],
+//     });
+
+//     if (!order) {
+//       throw new Error(`Order not found or does not belong to user`);
+//     }
+
+//     const item = order.orderItems.find(
+//       (i: { id: number }) => i.id === orderItemId
+//     );
+
+//     if (!item) {
+//       throw new Error("Product not found in this order");
+//     }
+
+//     if (returnQty > item.qty) {
+//       throw new Error(`You can only return up to ${item.qty} units`);
+//     }
+
+//     const newReturn = repositoryReturn.create(validation.data);
+//     const save = await repositoryReturn.save(newReturn);
+
+//     if (save.orderItemId) {
+//       const repositoryOrderItems = connection.getRepository(OrderItemEntity);
+//       const findOrderItem = repositoryOrder.findOneBy(save.orderItemId);
+//       // if(findOrderItem)
+//     }
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Create a new Return",
+//       data: save,
+//     });
+//   }
+// );
+
 // @desc Update a single Return
 // @route PUT /api/v1/Return/:id
 // @access Public
+
 export const updateReturn = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: CustomRequest, res: Response) => {
     logger.info(`Service: updateReturn ${req.method} ${req.url}`);
-
+    const userId = req.id;
     const { id } = req.params;
-
     const { status } = req.body;
 
-    // const validation = ReturnValidationSchema.safeParse(req.body);
+    const connection = await getDBConnection();
+    const queryRunner = connection.createQueryRunner();
 
-    // if (!validation.success) {
-    //   const formattedErrors = validation.error.issues.map((issue) => ({
-    //     path: issue.path.join("."),
-    //     message: issue.message,
-    //   }));
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    //   return res.status(400).json({
-    //     success: false,
-    //     issues: formattedErrors,
-    //   });
-    // }
+    try {
+      const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+      const result = await returnRepository.findOneBy({ id });
+
+      if (!result) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({
+          success: false,
+          message: `Return resource not found for ID #${id}`,
+        });
+      }
+
+      if (result.status === ReturnStatus.Completed) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: `Return has already been completed.`,
+        });
+      }
+
+      if (status === ReturnStatus.Completed) {
+        const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+        const order = await orderRepository
+          .createQueryBuilder("order")
+          .leftJoinAndSelect("order.orderItems", "orderItem")
+          .leftJoinAndSelect("orderItem.product", "product")
+          .where("order.id = :orderId", { orderId: result.orderId })
+          .andWhere("order.userId = :userId", { userId })
+          .getOne();
+
+        if (!order) {
+          await queryRunner.rollbackTransaction();
+          return res.status(404).json({
+            success: false,
+            message: "Order not found or does not belong to the user",
+          });
+        }
+
+        if (order.status !== OrderStatus.Completed) {
+          await queryRunner.rollbackTransaction();
+          return res.status(400).json({
+            success: false,
+            message: "Return is only allowed after delivery",
+          });
+        }
+
+        const item = order.orderItems.find(
+          (i: { id: number }) => i.id === result.orderItemId
+        );
+
+        if (!item) {
+          await queryRunner.rollbackTransaction();
+          return res.status(404).json({
+            success: false,
+            message: "Product not found in this order",
+          });
+        }
+
+        if (!item.product.isReturnable) {
+          await queryRunner.rollbackTransaction();
+          return res.status(400).json({
+            success: false,
+            message: "This product is not eligible for return",
+          });
+        }
+
+        const refundableAmount = +item.subTotal / +item.qty;
+        const totalRefund = +refundableAmount * +result.returnedQty;
+
+        // Update order refund
+        await orderRepository.save({
+          id: order.id,
+          totalReturned: (+order.totalReturned || 0) + totalRefund,
+          returnedQty: +result.returnedQty,
+          refundStatus: RefundStatus.None,
+        });
+
+        const productVariantRepository =
+          queryRunner.manager.getRepository(ProductVariantEntity);
+        const findProductVariant = await productVariantRepository.findOne({
+          where: { id: item.productVariantId },
+        });
+
+        if (!findProductVariant) {
+          await queryRunner.rollbackTransaction();
+          return res.status(404).json({
+            success: false,
+            message: "Product variant not found",
+          });
+        }
+
+        const updatedStockQty =
+          +findProductVariant.stockQty + +result.returnedQty;
+
+        await productVariantRepository.save({
+          id: item.productVariantId,
+          stockQty: updatedStockQty,
+        });
+
+        const orderItemRepository =
+          queryRunner.manager.getRepository(OrderItemEntity);
+        await orderItemRepository.save({
+          id: item.id,
+          returnedQty: result.returnedQty,
+        });
+      }
+
+      // Update return record
+      const updated = returnRepository.merge(result, req.body);
+      await returnRepository.save(updated);
+
+      await queryRunner.commitTransaction();
+
+      return res.status(200).json({
+        success: true,
+        message: `Updated return request for ID ${id}`,
+        data: updated,
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      logger.error("Error updating return:", error);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while processing the return request",
+      });
+    } finally {
+      await queryRunner.release();
+    }
+  }
+);
+
+export const requestFullOrderReturn = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    const { orderId } = req.params;
+    const userId = req.id;
+    console.log("orderId", orderId);
 
     const connection = await getDBConnection();
-    const repository = await connection.getRepository(ReturnEntity);
-    const result = await repository.findOneBy({ id });
+    const queryRunner = connection.createQueryRunner();
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+      const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+
+      const order = await orderRepository
+        .createQueryBuilder("order")
+        .leftJoinAndSelect("order.orderItems", "orderItem")
+        .leftJoinAndSelect("orderItem.product", "product")
+        .where("order.id = :orderId", { orderId })
+        .andWhere("order.userId = :userId", { userId })
+        .getOne();
+
+      if (!order) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({
+          success: false,
+          message: "Order not found or not owned by user",
+        });
+      }
+
+      if (order.status !== OrderStatus.Completed) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: "Only completed orders can be returned",
+        });
+      }
+
+      const createdReturns = [];
+
+      for (const item of order.orderItems) {
+        if (!item.product.isReturnable) continue;
+
+        const alreadyReturned = await returnRepository.findOneBy({
+          orderItemId: item.id,
+          status: ReturnStatus.Requested,
+        });
+
+        if (alreadyReturned) continue;
+
+        const remainingQty = +item.qty - (+item.returnedQty || 0);
+        if (remainingQty <= 0) continue;
+
+        const newReturn = returnRepository.create({
+          userId,
+          orderId: order.id,
+          orderItemId: item.id,
+          returnedQty: remainingQty,
+          status: ReturnStatus.Requested,
+        });
+
+        const saved = await returnRepository.save(newReturn);
+        createdReturns.push(saved);
+      }
+
+      await queryRunner.commitTransaction();
+      return res.status(200).json({
+        success: true,
+        message: "Return request submitted for all eligible items",
+        data: createdReturns,
+      });
+    } catch (err) {
+      console.log("err", err);
+
+      await queryRunner.rollbackTransaction();
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while submitting the return request",
+      });
+    } finally {
+      await queryRunner.release();
     }
+  }
+);
 
-    // if(status === ReturnStatus.Approved){
-    //   const repositoryOrderItem = await connection.getRepository(OrderItemEntity);
+export const completeFullOrderReturn = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { orderId } = req.params;
 
-    //   const findOrderItems = repositoryOrderItem.find()
+    const connection = await getDBConnection();
+    const queryRunner = connection.createQueryRunner();
 
-    // }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const updateData = await repository.merge(result, req.body);
-    await repository.save(updateData);
+    try {
+      const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+      const orderItemRepository =
+        queryRunner.manager.getRepository(OrderItemEntity);
+      const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+      const variantRepository =
+        queryRunner.manager.getRepository(ProductVariantEntity);
 
-    return res.status(200).json({
-      success: true,
-      message: `Update a single Return of id ${req.params.id}`,
-      data: updateData,
-    });
+      const pendingReturns = await returnRepository.find({
+        where: { orderId, status: ReturnStatus.Requested },
+      });
+
+      if (pendingReturns.length === 0) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({
+          success: false,
+          message: "No pending returns found for this order",
+        });
+      }
+
+      let totalRefund = 0;
+      let returnedQty = 0;
+
+      for (const ret of pendingReturns) {
+        const orderItem = await orderItemRepository.findOneBy({
+          id: ret.orderItemId,
+        });
+        if (!orderItem) continue;
+
+        const refundAmount =
+          (+orderItem.subTotal / +orderItem.qty) * ret.returnedQty;
+        totalRefund += refundAmount;
+        returnedQty += orderItem.qty;
+
+        // Update product variant stock
+        const variant = await variantRepository.findOneBy({
+          id: orderItem.productVariantId,
+        });
+        if (variant) {
+          await variantRepository.save({
+            id: variant.id,
+            stockQty: +variant.stockQty + ret.returnedQty,
+          });
+        }
+
+        // Update order item
+        await orderItemRepository.save({
+          id: orderItem.id,
+          returnedQty: (+orderItem.returnedQty || 0) + ret.returnedQty,
+        });
+
+        // Mark return as completed
+        await returnRepository.save({
+          id: ret.id,
+          status: ReturnStatus.Completed,
+        });
+      }
+
+      // Update order totalReturned
+      const order = await orderRepository.findOneBy({ id: orderId });
+      await orderRepository.save({
+        id: order.id,
+        totalReturned: (+order?.totalReturned || 0) + totalRefund,
+        returnedQty,
+        refundStatus: RefundStatus.None,
+        status: OrderStatus.Returned,
+      });
+
+      await queryRunner.commitTransaction();
+
+      return res.status(200).json({
+        success: true,
+        message: "Return completed for all pending items",
+        totalRefund,
+      });
+    } catch (err) {
+      console.log("err", err);
+
+      await queryRunner.rollbackTransaction();
+      return res.status(500).json({
+        success: false,
+        message: "Failed to complete return",
+      });
+    } finally {
+      await queryRunner.release();
+    }
   }
 );
 

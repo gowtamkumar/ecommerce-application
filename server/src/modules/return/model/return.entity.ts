@@ -16,6 +16,9 @@ export class ReturnEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ name: "order_id" })
+  orderId!: number;
+
   @Column({ name: "order_item_id" })
   orderItemId!: number;
   @ManyToOne(() => OrderItemEntity, (orderItem) => orderItem.returns, {
@@ -24,16 +27,16 @@ export class ReturnEntity {
   @JoinColumn({ name: "order_item_id" })
   orderItem!: OrderItemEntity;
 
-  @Column()
+  @Column({ nullable: true })
   reason!: string;
 
   @Column({ name: "returned_qty", type: "int", default: 0 })
   returnedQty!: number;
 
-  @Column()
+  @Column({ nullable: true })
   phone!: string;
 
-  @Column()
+  @Column({ nullable: true })
   image!: string;
 
   @Column({ type: "enum", enum: ReturnStatus, default: ReturnStatus.Requested })
@@ -50,6 +53,6 @@ export class ReturnEntity {
   @CreateDateColumn({ name: "requested_at", type: "timestamptz" })
   requestedAt?: string;
 
-  @UpdateDateColumn({ name: "processed_at", type: "timestamptz" })
-  processedAt?: string;
+  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+  updatedAt?: string;
 }

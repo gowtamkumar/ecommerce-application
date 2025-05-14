@@ -44,17 +44,7 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
       FROM users`
     );
-
-    // const payments = await connection.query(
-    //   `SELECT
-    //            SUM(CASE WHEN payment_method = 'SSLCOMMERZ' and payment_type = 'Debit' THEN  COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount
-    //            SUM(CASE WHEN payment_method = 'Cash' and payment_type = 'Debit' THEN  COALESCE(amount, 0) ELSE 0 END) AS cash_debit_amount,
-    //            SUM(CASE WHEN payment_method = 'SSLCOMMERZ' and payment_type = 'Credit' THEN  COALESCE(amount, 0) ELSE 0 END) AS ssl_credit_amount,
-    //            SUM(CASE WHEN payment_method = 'Cash' and payment_type = 'Credit' THEN  COALESCE(amount, 0) ELSE 0 END) AS cash_credit_amount
-
-    //   FROM payments  where created_at BETWEEN '${fromDate}' AND '${toDate}'`
-    // );
-
+    
     const payments = await connection.query(
       `SELECT
         SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount,
