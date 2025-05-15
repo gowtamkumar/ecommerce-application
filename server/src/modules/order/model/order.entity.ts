@@ -17,6 +17,7 @@ import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.e
 import { UserEntity } from "../../auth/model/user.entity";
 import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
+import { ReturnStatus } from "../../return/enums/return-status.enum";
 
 @Entity("orders")
 export class OrderEntity {
@@ -60,7 +61,10 @@ export class OrderEntity {
 
   // return
   @Column({ name: "returned_qty", nullable: true })
-  returnedQty!: number;
+  returnedQty!: number; // should be chnage requestQty
+
+  @Column({ name: "approved_qty", nullable: true })
+  approvedQty!: number;
 
   @Column({
     name: "total_returned",
@@ -70,6 +74,14 @@ export class OrderEntity {
     nullable: true,
   })
   totalReturned!: number;
+
+  @Column({
+    name: "returned_status",
+    type: "enum",
+    enum: ReturnStatus,
+    nullable: true,
+  })
+  returnedStatus!: ReturnStatus;
 
   // refunded
   @Column({

@@ -11,6 +11,7 @@ import { OrderEntity } from "../../order/model/order.entity";
 import { OrderStatus, RefundStatus } from "../../order/enums";
 import dayjs from "dayjs";
 import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
+import { returnFullOrderValidationSchema } from "../../../validation/return/returnfullOrderValidation";
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -81,7 +82,7 @@ export const createReturn = asyncHandler(
       });
     }
 
-    const { orderItemId, orderId, returnedQty } = validation.data;
+    const { orderItemId, orderId, returnedQty, status } = validation.data;
 
     const connection = await getDBConnection();
     const repositoryReturn = connection.getRepository(ReturnEntity);
@@ -154,6 +155,8 @@ export const createReturn = asyncHandler(
     const newReturn = repositoryReturn.create(validation.data);
     const save = await repositoryReturn.save(newReturn);
 
+    // repositoryOrder.save()
+
     return res.status(200).json({
       success: true,
       message: "Return request created successfully",
@@ -161,77 +164,6 @@ export const createReturn = asyncHandler(
     });
   }
 );
-
-// // @desc Create a single Return
-// // @route POST /api/v1/Return
-// // @access Public
-// export const createReturn = asyncHandler(
-//   async (req: CustomRequest, res: Response) => {
-//     logger.info(`Service: createReturn ${req.method} ${req.url}`);
-
-//     const userId = req.id;
-
-//     const validation = returnValidationSchema.safeParse({
-//       ...req.body,
-//       userId,
-//     });
-
-//     if (!validation.success) {
-//       const formattedErrors = validation.error.issues.map((issue) => ({
-//         path: issue.path.join("."),
-//         message: issue.message,
-//       }));
-
-//       return res.status(400).json({
-//         success: false,
-//         issues: formattedErrors,
-//       });
-//     }
-
-//     const orderItemId = validation.data.orderItemId;
-//     const returnQty = validation.data.returnQty;
-
-//     const connection = await getDBConnection();
-//     const repositoryReturn = connection.getRepository(ReturnEntity);
-//     const repositoryOrder = connection.getRepository(OrderEntity);
-
-//     const order = await repositoryOrder.findOne({
-//       where: { id: validation.data.orderId, userId },
-//       relations: ["orderItems"],
-//     });
-
-//     if (!order) {
-//       throw new Error(`Order not found or does not belong to user`);
-//     }
-
-//     const item = order.orderItems.find(
-//       (i: { id: number }) => i.id === orderItemId
-//     );
-
-//     if (!item) {
-//       throw new Error("Product not found in this order");
-//     }
-
-//     if (returnQty > item.qty) {
-//       throw new Error(`You can only return up to ${item.qty} units`);
-//     }
-
-//     const newReturn = repositoryReturn.create(validation.data);
-//     const save = await repositoryReturn.save(newReturn);
-
-//     if (save.orderItemId) {
-//       const repositoryOrderItems = connection.getRepository(OrderItemEntity);
-//       const findOrderItem = repositoryOrder.findOneBy(save.orderItemId);
-//       // if(findOrderItem)
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Create a new Return",
-//       data: save,
-//     });
-//   }
-// );
 
 // @desc Update a single Return
 // @route PUT /api/v1/Return/:id
@@ -383,9 +315,26 @@ export const updateReturn = asyncHandler(
 
 export const requestFullOrderReturn = asyncHandler(
   async (req: CustomRequest, res: Response) => {
-    const { orderId } = req.params;
     const userId = req.id;
-    console.log("orderId", orderId);
+
+    const validation = returnFullOrderValidationSchema.safeParse({
+      ...req.body,
+      userId,
+    });
+
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const { orderId, reason, phone, image } = validation.data;
 
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
@@ -439,6 +388,9 @@ export const requestFullOrderReturn = asyncHandler(
         const newReturn = returnRepository.create({
           userId,
           orderId: order.id,
+          reason,
+          phone,
+          image,
           orderItemId: item.id,
           returnedQty: remainingQty,
           status: ReturnStatus.Requested,
@@ -486,22 +438,22 @@ export const completeFullOrderReturn = asyncHandler(
       const variantRepository =
         queryRunner.manager.getRepository(ProductVariantEntity);
 
-      const pendingReturns = await returnRepository.find({
+      const requestedReturns = await returnRepository.find({
         where: { orderId, status: ReturnStatus.Requested },
       });
 
-      if (pendingReturns.length === 0) {
+      if (requestedReturns.length === 0) {
         await queryRunner.rollbackTransaction();
         return res.status(404).json({
           success: false,
-          message: "No pending returns found for this order",
+          message: "No requested returns found for this order",
         });
       }
 
       let totalRefund = 0;
       let returnedQty = 0;
 
-      for (const ret of pendingReturns) {
+      for (const ret of requestedReturns) {
         const orderItem = await orderItemRepository.findOneBy({
           id: ret.orderItemId,
         });

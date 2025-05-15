@@ -30,8 +30,11 @@ export class ReturnEntity {
   @Column({ nullable: true })
   reason!: string;
 
-  @Column({ name: "returned_qty", type: "int", default: 0 })
-  returnedQty!: number;
+  @Column({ name: "request_qty", type: "int", default: 0 })
+  returnedQty!: number; // shouldbe change requestQty
+
+  @Column({ name: "approved_qty", type: "int", default: 0 })
+  approvedQty!: number;
 
   @Column({ nullable: true })
   phone!: string;
