@@ -2,52 +2,44 @@
 import appConfig from "@/appConfig";
 import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
-// Save a new Return
 export async function saveReturn(data: any) {
+  const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/returns`, {
     method: "POST",
     cache: "no-cache",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify(data),
   });
-
-  return await handleResponse(res);
+  return await res.json();
 }
 
-// Retrieve all Returns
-export async function getReturns() {
-  const headers = await getAuthHeaders();
+// single-product
 
-  const res = await fetch(`${appConfig.apiUrl}/returns`, {
+export async function returnOrder(data: any) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/returns/full-request`, {
+    method: "POST",
     cache: "no-cache",
     headers,
-  });
-
-  return await handleResponse(res);
-}
-
-// Update an existing Return
-export async function updateReturn(data: any) {
-  const headers = await getAuthHeaders();
-
-  const res = await fetch(`${appConfig.apiUrl}/returns/${data.id}`, {
-    method: "PUT",
-    headers,
     body: JSON.stringify(data),
   });
-
-  return await handleResponse(res);
+  return await res.json();
 }
 
-// Delete a Return
-export async function deleteReturn(id: string) {
+export async function singleProductReturn(params: any) {
+  const { orderItemId, status, approvedQty } = params;
+  console.log("params", params);
+  
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/returns/${id}`, {
-    method: "DELETE",
-    headers,
-  });
+  const res = await fetch(
+    `${appConfig.apiUrl}/returns/single-product/${orderItemId}`,
+    {
+      method: "PUT",
+      cache: "no-cache",
+      headers,
+      body: JSON.stringify({ status, approvedQty }),
+    }
+  );
   return await handleResponse(res);
 }

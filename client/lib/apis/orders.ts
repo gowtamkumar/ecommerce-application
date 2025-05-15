@@ -15,9 +15,20 @@ export async function saveOrder(data: any) {
   return await res.json();
 }
 
-export async function getOrders(status?: string) {
+export async function getOrders(params?: any) {
+  const { status, returnedStatus } = params;
+
+  let queryString = "";
+
+  if (status) {
+    queryString += `status=${status}&`;
+  }
+  if (returnedStatus) {
+    queryString += `returnedStatus=${returnedStatus}&`;
+  }
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/orders?status=${status}`, {
+  const res = await fetch(`${appConfig.apiUrl}/orders?${queryString}`, {
     cache: "no-cache",
     headers,
   });

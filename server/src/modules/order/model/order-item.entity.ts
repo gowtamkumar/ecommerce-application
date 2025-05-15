@@ -44,8 +44,13 @@ export class OrderItemEntity {
   @Column()
   qty!: number;
 
-  @Column({ name: "returned_qty", nullable: true })
-  returnedQty!: number;
+  // return
+  @Column({ name: "requested_qty", nullable: true })
+  requestedQty!: number;
+
+  @Column({ name: "approved_qty", nullable: true })
+  approvedQty!: number;
+
 
   @Column({
     name: "tax_amount",

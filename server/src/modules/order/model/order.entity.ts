@@ -60,8 +60,8 @@ export class OrderEntity {
   couponDiscount!: number;
 
   // return
-  @Column({ name: "returned_qty", nullable: true })
-  returnedQty!: number; // should be chnage requestQty
+  @Column({ name: "requested_qty", nullable: true })
+  requestedQty!: number;
 
   @Column({ name: "approved_qty", nullable: true })
   approvedQty!: number;

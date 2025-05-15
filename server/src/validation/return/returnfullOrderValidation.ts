@@ -16,5 +16,5 @@ export const returnFullOrderValidationSchema = z.object({
   userId: z.number({
     required_error: "User is required",
   }),
-  image: z.number().optional().nullable(),
+  image: z.string().optional().nullable(),
 });

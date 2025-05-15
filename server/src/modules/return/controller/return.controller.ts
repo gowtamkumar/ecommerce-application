@@ -64,7 +64,6 @@ export const createReturn = asyncHandler(
     logger.info(`Service: createReturn ${req.method} ${req.url}`);
 
     const userId = req.id;
-
     const validation = returnValidationSchema.safeParse({
       ...req.body,
       userId,
@@ -81,100 +80,368 @@ export const createReturn = asyncHandler(
         issues: formattedErrors,
       });
     }
-
-    const { orderItemId, orderId, returnedQty, status } = validation.data;
-
+    const { orderItemId, orderId, requestedQty } = validation.data;    
     const connection = await getDBConnection();
-    const repositoryReturn = connection.getRepository(ReturnEntity);
-    const repositoryOrder = connection.getRepository(OrderEntity);
 
-    const order = await repositoryOrder
-      .createQueryBuilder("order")
-      .leftJoinAndSelect("order.orderItems", "orderItem")
-      .leftJoinAndSelect("orderItem.product", "product")
-      .where("order.id = :orderId", { orderId })
-      .andWhere("order.userId = :userId", { userId })
-      .select([
-        "order.id",
-        "order.status",
-        "order.updatedAt",
-        "orderItem.id",
-        "orderItem.qty",
-        "product.id",
-        "product.name",
-        "product.isReturnable",
-      ])
-      .getOne();
+    await connection.transaction(async (manager: any) => {
+      const repositoryReturn = manager.getRepository(ReturnEntity);
+      const repositoryOrder = manager.getRepository(OrderEntity);
 
-    if (!order) {
-      throw new Error(`Order not found or does not belong to user`);
-    }
+      const findReturn = await repositoryReturn.findOne({
+        where: { orderItemId },
+      });
 
-    if (order.status !== OrderStatus.Completed) {
-      throw new Error("Return is allowed only after delivery");
-    }
+      if (findReturn) throw new Error(`You already Request`);
+      const order = await repositoryOrder
+        .createQueryBuilder("order")
+        .leftJoinAndSelect("order.orderItems", "orderItem")
+        .leftJoinAndSelect("orderItem.product", "product")
+        .where("order.id = :orderId", { orderId })
+        .andWhere("order.userId = :userId", { userId })
+        .select([
+          "order.id",
+          "order.status",
+          "order.updatedAt",
+          "orderItem.id",
+          "orderItem.qty",
+          "product.id",
+          "product.name",
+          "product.isReturnable",
+        ])
+        .getOne();
 
-    const item = order.orderItems.find(
-      (i: { id: number }) => i.id === orderItemId
-    );
+        console.log('order', order);
+        
 
-    if (!item) {
-      throw new Error("Product not found in this order");
-    }
+      if (!order) throw new Error(`Order not found or does not belong to user`);
+      if (order.status !== OrderStatus.Completed)
+        throw new Error("Return is allowed only after delivery");
 
-    if (!item.product.isReturnable) {
-      throw new Error("This product is not eligible for return");
-    }
+      const item = order.orderItems.find((i: any) => i.id === orderItemId);
+      if (!item) throw new Error("Product not found in this order");
+      if (!item.product.isReturnable)
+        throw new Error("This product is not eligible for return");
 
-    // ✅ Check return window (7 days from delivery)
-    const deliveredAt = order.updatedAt; // Assuming updatedAt = deliveredAt
-    const now = new Date();
+      const deliveredAt = order.updatedAt;
+      const now = new Date();
+      const sevenDaysLater = dayjs(deliveredAt).add(7, "day"); // make configurable later
+      if (dayjs(now).isAfter(sevenDaysLater))
+        throw new Error("Return window expired");
 
-    const sevenDaysLater = dayjs(deliveredAt).add(7, "day"); //here need to dynamic day from setting
-    if (dayjs(now).isAfter(sevenDaysLater)) {
-      throw new Error("Return window expired");
-    }
+      const remainingQty = item.qty;
+      if (requestedQty > remainingQty) {
+        throw new Error(`You can only return up to ${remainingQty} units`);
+      }
 
-    // ✅ Total returned quantity logic
-    const existingReturns = await repositoryReturn.find({
-      where: { orderItemId },
-    });
+      const newReturn = repositoryReturn.create(validation.data);
+      const savedReturn = await repositoryReturn.save(newReturn);
 
-    const alreadyReturnedQty = existingReturns.reduce(
-      (sum: any, r: any) => sum + r.returnQty,
-      0
-    );
+      const orderItemRepository = manager.getRepository(OrderItemEntity);
+      await orderItemRepository.save({
+        id: item.id,
+        requestedQty,
+      });
 
-    const remainingQty = item.qty - alreadyReturnedQty;
+      await repositoryOrder.save({
+        id: order.id,
+        requestedQty,
+        returnedStatus: ReturnStatus.Requested,
+      });
 
-    if (returnedQty > remainingQty) {
-      throw new Error(`You can only return up to ${remainingQty} units`);
-    }
-
-    // ✅ Create and save the return request
-    const newReturn = repositoryReturn.create(validation.data);
-    const save = await repositoryReturn.save(newReturn);
-
-    // repositoryOrder.save()
-
-    return res.status(200).json({
-      success: true,
-      message: "Return request created successfully",
-      data: save,
+      return res.status(200).json({
+        success: true,
+        message: "Return request created successfully",
+        data: savedReturn,
+      });
     });
   }
 );
 
+// export const createReturn = asyncHandler(
+//   async (req: CustomRequest, res: Response) => {
+//     logger.info(`Service: createReturn ${req.method} ${req.url}`);
+
+//     const userId = req.id;
+//     const validation = returnValidationSchema.safeParse({
+//       ...req.body,
+//       userId,
+//     });
+
+//     if (!validation.success) {
+//       const formattedErrors = validation.error.issues.map((issue) => ({
+//         path: issue.path.join("."),
+//         message: issue.message,
+//       }));
+
+//       return res.status(400).json({
+//         success: false,
+//         issues: formattedErrors,
+//       });
+//     }
+
+//     const { orderItemId, orderId, requestedQty, status } = validation.data;
+
+//     const connection = await getDBConnection();
+//     const repositoryReturn = connection.getRepository(ReturnEntity);
+//     const repositoryOrder = connection.getRepository(OrderEntity);
+
+//     const order = await repositoryOrder
+//       .createQueryBuilder("order")
+//       .leftJoinAndSelect("order.orderItems", "orderItem")
+//       .leftJoinAndSelect("orderItem.product", "product")
+//       .where("order.id = :orderId", { orderId })
+//       .andWhere("order.userId = :userId", { userId })
+//       .select([
+//         "order.id",
+//         "order.status",
+//         "order.updatedAt",
+//         "orderItem.id",
+//         "orderItem.qty",
+//         "product.id",
+//         "product.name",
+//         "product.isReturnable",
+//       ])
+//       .getOne();
+
+//     if (!order) {
+//       throw new Error(`Order not found or does not belong to user`);
+//     }
+
+//     if (order.status !== OrderStatus.Completed) {
+//       throw new Error("Return is allowed only after delivery");
+//     }
+
+//     const item = order.orderItems.find(
+//       (i: { id: number }) => i.id === orderItemId
+//     );
+
+//     if (!item) {
+//       throw new Error("Product not found in this order");
+//     }
+
+//     if (!item.product.isReturnable) {
+//       throw new Error("This product is not eligible for return");
+//     }
+
+//     // ✅ Check return window (7 days from delivery)
+//     const deliveredAt = order.updatedAt; // Assuming updatedAt = deliveredAt
+//     const now = new Date();
+
+//     const sevenDaysLater = dayjs(deliveredAt).add(7, "day"); //here need to dynamic day from setting
+//     if (dayjs(now).isAfter(sevenDaysLater)) {
+//       throw new Error("Return window expired");
+//     }
+
+//     // ✅ Total returned quantity logic
+//     const existingReturns = await repositoryReturn.find({
+//       where: { orderItemId },
+//     });
+
+//     const alreadyReturnedQty = existingReturns.reduce(
+//       (sum: any, r: any) => sum + r.returnQty,
+//       0
+//     );
+
+//     const remainingQty = item.qty - alreadyReturnedQty;
+
+//     if (requestedQty > remainingQty) {
+//       throw new Error(`You can only return up to ${remainingQty} units`);
+//     }
+
+//     // ✅ Create and save the return request
+//     const newReturn = repositoryReturn.create(validation.data);
+//     const save = await repositoryReturn.save(newReturn);
+
+//     const orderItemRepository = connection.getRepository(OrderItemEntity);
+//     await orderItemRepository.save({
+//       id: item.id,
+//       requestedQty,
+//     });
+//     await repositoryOrder.save({ id: order.id, requestedQty });
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Return request created successfully",
+//       data: save,
+//     });
+//   }
+// );
+
 // @desc Update a single Return
 // @route PUT /api/v1/Return/:id
 // @access Public
+
+export const singleProductReturn = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: updateReturn ${req.method} ${req.url}`);
+    const userId = req.id;
+    const { orderItemId } = req.params;
+    const { status, approvedQty } = req.body;    
+
+    const connection = await getDBConnection();
+    const queryRunner = connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+      const result = await returnRepository.findOne({ where: { orderItemId } });
+
+      if (!result) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({
+          success: false,
+          message: `Return resource not found for order item ID #${orderItemId}`,
+        });
+      }
+
+      const approved_qty = approvedQty ?? result.requestedQty;
+
+      if (+result.requestedQty < +approved_qty) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: `Approved return quantity (${approved_qty}) exceeds the originally requested quantity (${result.requestedQty}) for return ID #${result.id}.`,
+        });
+      }
+
+      if (result.status === ReturnStatus.Completed) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: `Return request has already been completed.`,
+        });
+      }
+
+      let order: OrderEntity | null = null;
+
+      if (status === ReturnStatus.Completed) {
+        const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+        order = await orderRepository
+          .createQueryBuilder("order")
+          .leftJoinAndSelect("order.orderItems", "orderItem")
+          .leftJoinAndSelect("orderItem.product", "product")
+          .where("order.id = :orderId", { orderId: result.orderId })
+          .andWhere("order.userId = :userId", { userId })
+          .getOne();
+
+        if (!order) {
+          await queryRunner.rollbackTransaction();
+          return res.status(404).json({
+            success: false,
+            message: "Order not found or does not belong to the user",
+          });
+        }
+
+        if (order.status !== OrderStatus.Completed) {
+          await queryRunner.rollbackTransaction();
+          return res.status(400).json({
+            success: false,
+            message: "Return is only allowed after delivery",
+          });
+        }
+
+        const item = order.orderItems.find(
+          (i: any) => i.id === result.orderItemId
+        );
+
+        if (!item) {
+          await queryRunner.rollbackTransaction();
+          return res.status(404).json({
+            success: false,
+            message: "Product not found in this order",
+          });
+        }
+
+        if (!item.product.isReturnable) {
+          await queryRunner.rollbackTransaction();
+          return res.status(400).json({
+            success: false,
+            message: "This product is not eligible for return",
+          });
+        }
+
+        const refundableAmount = +item.subTotal / +item.qty;
+        const totalRefund = refundableAmount * +approved_qty;
+
+        // Update Order
+        await queryRunner.manager.getRepository(OrderEntity).save({
+          id: order.id,
+          totalReturned: (+order.totalReturned || 0) + totalRefund,
+          approvedQty: (+order.approvedQty || 0) + +approved_qty,
+          refundStatus: RefundStatus.None,
+          returnedStatus: ReturnStatus.Completed,
+        });
+
+        // Update stock
+        const productVariantRepository =
+          queryRunner.manager.getRepository(ProductVariantEntity);
+        const productVariant = await productVariantRepository.findOne({
+          where: { id: item.productVariantId },
+        });
+
+        if (!productVariant) {
+          await queryRunner.rollbackTransaction();
+          return res.status(404).json({
+            success: false,
+            message: "Product variant not found",
+          });
+        }
+
+        await productVariantRepository.save({
+          id: item.productVariantId,
+          stockQty: +productVariant.stockQty + +approved_qty,
+        });
+
+        // Update order item approvedQty
+        await queryRunner.manager.getRepository(OrderItemEntity).save({
+          id: item.id,
+          approvedQty: approved_qty,
+        });
+      }
+
+      // Fallback: if status is not `Completed`, only update `returnedStatus`
+      if (!order && status !== ReturnStatus.Completed) {
+        await queryRunner.manager
+          .getRepository(OrderEntity)
+          .update({ id: result.orderId }, { returnedStatus: status });
+      }
+
+      // Update return record
+      const updatedReturn = returnRepository.merge(result, {
+        ...req.body,
+        approvedQty: approved_qty,
+      });
+      await returnRepository.save(updatedReturn);
+
+      await queryRunner.commitTransaction();
+
+      return res.status(200).json({
+        success: true,
+        message: `Updated return request for ID ${result.id}`,
+        data: updatedReturn,
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      logger.error("Error updating return:", error);
+      return res.status(500).json({
+        success: false,
+        message:
+          "An internal server error occurred while updating the return request.",
+      });
+    } finally {
+      await queryRunner.release();
+    }
+  }
+);
 
 export const updateReturn = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: updateReturn ${req.method} ${req.url}`);
     const userId = req.id;
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, approvedQty } = req.body;
 
     const connection = await getDBConnection();
     const queryRunner = connection.createQueryRunner();
@@ -191,6 +458,14 @@ export const updateReturn = asyncHandler(
         return res.status(404).json({
           success: false,
           message: `Return resource not found for ID #${id}`,
+        });
+      }
+
+      if (+result.requestedQty < +approvedQty) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: `Approved return quantity (${approvedQty}) exceeds the originally requested quantity (${result.requestedQty}) for return ID #${id}. Operation aborted.`,
         });
       }
 
@@ -249,14 +524,15 @@ export const updateReturn = asyncHandler(
         }
 
         const refundableAmount = +item.subTotal / +item.qty;
-        const totalRefund = +refundableAmount * +result.returnedQty;
+        const totalRefund = +refundableAmount * +approvedQty;
 
         // Update order refund
         await orderRepository.save({
           id: order.id,
           totalReturned: (+order.totalReturned || 0) + totalRefund,
-          returnedQty: +result.returnedQty,
+          approvedQty: (order.approvedQty || 0) + +approvedQty,
           refundStatus: RefundStatus.None,
+          returnedStatus: ReturnStatus.Completed,
         });
 
         const productVariantRepository =
@@ -273,8 +549,7 @@ export const updateReturn = asyncHandler(
           });
         }
 
-        const updatedStockQty =
-          +findProductVariant.stockQty + +result.returnedQty;
+        const updatedStockQty = +findProductVariant.stockQty + +approvedQty;
 
         await productVariantRepository.save({
           id: item.productVariantId,
@@ -285,7 +560,7 @@ export const updateReturn = asyncHandler(
           queryRunner.manager.getRepository(OrderItemEntity);
         await orderItemRepository.save({
           id: item.id,
-          returnedQty: result.returnedQty,
+          approvedQty,
         });
       }
 
@@ -346,6 +621,18 @@ export const requestFullOrderReturn = asyncHandler(
       const orderRepository = queryRunner.manager.getRepository(OrderEntity);
       const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
 
+      const findReturn = await returnRepository.findOne({
+        where: { orderId },
+      });
+
+      if (findReturn) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({
+          success: false,
+          message: "You already Requested",
+        });
+      }
+
       const order = await orderRepository
         .createQueryBuilder("order")
         .leftJoinAndSelect("order.orderItems", "orderItem")
@@ -382,9 +669,6 @@ export const requestFullOrderReturn = asyncHandler(
 
         if (alreadyReturned) continue;
 
-        const remainingQty = +item.qty - (+item.returnedQty || 0);
-        if (remainingQty <= 0) continue;
-
         const newReturn = returnRepository.create({
           userId,
           orderId: order.id,
@@ -392,12 +676,27 @@ export const requestFullOrderReturn = asyncHandler(
           phone,
           image,
           orderItemId: item.id,
-          returnedQty: remainingQty,
+          requestedQty: +item.qty,
           status: ReturnStatus.Requested,
         });
 
         const saved = await returnRepository.save(newReturn);
         createdReturns.push(saved);
+
+        // Update order
+        await orderRepository.save({
+          id: order.id,
+          requestedQty: +item.qty,
+          refundStatus: RefundStatus.None,
+          returnedStatus: ReturnStatus.Requested,
+        });
+
+        const orderItemRepository =
+          queryRunner.manager.getRepository(OrderItemEntity);
+        await orderItemRepository.save({
+          id: item.id,
+          requestedQty: +item.qty,
+        });
       }
 
       await queryRunner.commitTransaction();
@@ -451,7 +750,7 @@ export const completeFullOrderReturn = asyncHandler(
       }
 
       let totalRefund = 0;
-      let returnedQty = 0;
+      let requestedQty = 0;
 
       for (const ret of requestedReturns) {
         const orderItem = await orderItemRepository.findOneBy({
@@ -460,9 +759,9 @@ export const completeFullOrderReturn = asyncHandler(
         if (!orderItem) continue;
 
         const refundAmount =
-          (+orderItem.subTotal / +orderItem.qty) * ret.returnedQty;
+          (+orderItem.subTotal / +orderItem.requestedQty) * ret.requestedQty;
         totalRefund += refundAmount;
-        returnedQty += orderItem.qty;
+        requestedQty += orderItem.requestedQty;
 
         // Update product variant stock
         const variant = await variantRepository.findOneBy({
@@ -471,14 +770,14 @@ export const completeFullOrderReturn = asyncHandler(
         if (variant) {
           await variantRepository.save({
             id: variant.id,
-            stockQty: +variant.stockQty + ret.returnedQty,
+            stockQty: +variant.stockQty + +ret.requestedQty,
           });
         }
 
         // Update order item
         await orderItemRepository.save({
           id: orderItem.id,
-          returnedQty: (+orderItem.returnedQty || 0) + ret.returnedQty,
+          approvedQty: +ret.requestedQty,
         });
 
         // Mark return as completed
@@ -488,21 +787,24 @@ export const completeFullOrderReturn = asyncHandler(
         });
       }
 
-      // Update order totalReturned
+      // Update order total Returned
       const order = await orderRepository.findOneBy({ id: orderId });
       await orderRepository.save({
         id: order.id,
         totalReturned: (+order?.totalReturned || 0) + totalRefund,
-        returnedQty,
+        approvedQty: requestedQty,
         refundStatus: RefundStatus.None,
+        returnedStatus: ReturnStatus.Completed,
         status: OrderStatus.Returned,
       });
+
+      console.log("requestedQty", requestedQty);
 
       await queryRunner.commitTransaction();
 
       return res.status(200).json({
         success: true,
-        message: "Return completed for all pending items",
+        message: "Return completed for items",
         totalRefund,
       });
     } catch (err) {

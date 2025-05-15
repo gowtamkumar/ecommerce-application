@@ -11,7 +11,7 @@ import {
   Divider,
   Tabs,
 } from "antd";
-import { CheckOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,6 +28,7 @@ import { ActionType } from "@/constants/constants";
 import CancelOrder from "./CancelOrder";
 import { getUserOrders } from "@/lib/apis/orders";
 import { errorNotification } from "@/lib/utils/notification";
+import ReturnRequestOrderItem from "./ReturnRequestOrderItem";
 
 interface DataType {
   key: React.Key;
@@ -222,7 +223,6 @@ const UserOrders = () => {
 
       {
         title: "Unit Price",
-        // dataIndex: "unitPrice",
         key: "unitPrice",
         render: (v: any) => {
           return <span>{(+v.unitPrice + +v.taxAmount).toFixed(2)}</span>;
@@ -242,6 +242,7 @@ const UserOrders = () => {
         key: "subTotal",
         dataIndex: "subTotal",
       },
+     
     ];
 
     return (
@@ -259,6 +260,7 @@ const UserOrders = () => {
             <span className="font-bold">Shipping Address: </span>
             <code> {value.shippingAddress?.address}</code>
           </h1>
+
           <Divider dashed />
           <Timeline
             items={(value?.orderTrackings || []).map(
@@ -399,28 +401,47 @@ const UserOrders = () => {
       title: "Action",
       key: "action",
       render: (value) => {
-        if (!["Pending", "Approved", "Processing"].includes(value.status))
-          return null;
+        if (["Pending", "Approved", "Processing"].includes(value.status))
+          return (
+            <Button
+              size="small"
+              title="Cancel Order"
+              className="me-1"
+              onClick={() => {
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    cancelOrder: true,
+                    payload: { id: value.id, status: "Canceled" },
+                  })
+                );
+              }}
+              disabled={value.status === "Completed"}
+            >
+              Cancel Order
+            </Button>
+          );
 
-        return (
-          <Button
-            size="small"
-            title="Cancel Order"
-            className="me-1"
-            onClick={() => {
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  cancelOrder: true,
-                  payload: { id: value.id, status: "Canceled" },
-                })
-              );
-            }}
-            disabled={value.status === "Completed"}
-          >
-            Cancel Order
-          </Button>
-        );
+        // if (["Completed"].includes(value.status))
+        //   return (
+        //     <Button
+        //       size="small"
+        //       title="Return Request Order"
+        //       className="me-1"
+        //       disabled={value.status === "Requested"}
+        //       onClick={() => {
+        //         dispatch(
+        //           setAction({
+        //             type: ActionType.UPDATE,
+        //             returnAllOrder: true,
+        //             payload: { orderId: value.id },
+        //           })
+        //         );
+        //       }}
+        //     >
+        //      All Order Return
+        //     </Button>
+        //   );
       },
     },
   ];
@@ -453,10 +474,6 @@ const UserOrders = () => {
       key: "Completed",
       label: "Completed",
     },
-    // {
-    //   key: "Returned",
-    //   label: "Returned",
-    // },
   ];
 
   return (
@@ -481,6 +498,8 @@ const UserOrders = () => {
         size="large"
       />
       <CancelOrder />
+      {/* <ReturnRequestAllOrder /> */}
+    
     </div>
   );
 };

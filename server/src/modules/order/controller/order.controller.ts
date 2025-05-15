@@ -323,7 +323,7 @@ export const getOrders = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: getOrders ${req.method} ${req.url}`);
 
-    const { status } = req.query;
+    const { status, returnedStatus } = req.query;
 
     const connection = await getDBConnection();
     const orderRepository = connection.getRepository(OrderEntity);
@@ -357,6 +357,12 @@ export const getOrders = asyncHandler(
     qb.leftJoin("order.payments", "payments");
     qb.leftJoin("order.shippingAddress", "shippingAddress");
     qb.addOrderBy("order.trackingNo", "DESC");
+
+    if (returnedStatus)
+      qb.andWhere("order.returnedStatus IN (:...returnedStatus)", {
+        returnedStatus: returnedStatus.toString().split(","),
+      });
+
     if (status)
       qb.andWhere("order.status IN (:...status)", {
         status: status.toString().split(","),

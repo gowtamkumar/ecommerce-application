@@ -14,10 +14,14 @@ import {
 import dayjs from "dayjs";
 import { CiLocationOn } from "react-icons/ci";
 import { useDispatch } from "react-redux";
-import { setProductRating } from "@/redux/features/global/globalSlice";
+import {
+  setAction,
+  setProductRating,
+} from "@/redux/features/global/globalSlice";
 import { ActionType } from "@/constants/constants";
 import dynamic from "next/dynamic";
 import { getOrderQuery } from "@/lib/apis/orders";
+import ReturnRequestOrderItem from "./ReturnRequestOrderItem";
 
 const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
   ssr: false,
@@ -59,12 +63,23 @@ export default function OrderTracker() {
       render: (v: { name: string }) => <span>{v.name}</span>,
     },
     {
+      title: "Material",
+      dataIndex: "material",
+      key: "material",
+    },
+    {
       title: "Color",
-      render: (v: any) => <span>Need to Get in product variant</span>,
+      dataIndex: "productVariant",
+      render: (v: any) => {
+        return <span>{v?.color?.name}</span>;
+      },
     },
     {
       title: "Size",
-      render: (v: any) => <span>Need to Get in product variant</span>,
+      dataIndex: "productVariant",
+      render: (v: any) => {
+        return <span>{v?.size?.name}</span>;
+      },
     },
 
     {
@@ -84,9 +99,43 @@ export default function OrderTracker() {
 
     { title: "Qty", dataIndex: "qty", key: "qty" },
     {
+      title: "Return Requested",
+      dataIndex: "requestedQty",
+      key: "requestedQty",
+    },
+    {
+      title: "Approved Request",
+      dataIndex: "approvedQty",
+      key: "approvedQty",
+    },
+    {
       title: "Sub Total",
       key: "subTotal",
       dataIndex: "subTotal",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (v: any) => {
+        if (["Completed"].includes(order.status))
+          return (
+            <Button
+              size="small"
+              disabled={v.requestedQty > 0}
+              onClick={() => {
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    returnOrderItem: true,
+                    payload: { orderId: v.orderId, orderItemId: v.id },
+                  })
+                );
+              }}
+            >
+              Return Request
+            </Button>
+          );
+      },
     },
   ];
 
@@ -126,7 +175,24 @@ export default function OrderTracker() {
         <>
           <div className="grid grid-cols-3">
             <div className="col-span-1 p-2">
-              <h1 className="font-bold">Order No:{order.trackingNo}</h1>
+              <h1>
+                <span className="font-bold">Order No: </span>
+                <code>{order.trackingNo}</code>
+              </h1>
+              <h1>
+                <span className="font-bold">Delivery Man: </span>
+                <code>{order?.deliveryMan?.name}</code>
+              </h1>
+              <h1>
+                <span className="font-bold">Shipping Address: </span>
+                <code> {order.shippingAddress?.address}</code>
+              </h1>
+              {order?.returnedStatus && (
+                <h1>
+                  <span className="font-bold">Return Status: </span>
+                  <code>{order?.returnedStatus}</code>
+                </h1>
+              )}
             </div>
             <div className="col-span-1 p-2 flex gap-2">
               <div>
@@ -259,6 +325,7 @@ export default function OrderTracker() {
       ) : (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
+      <ReturnRequestOrderItem />
     </>
   );
 }

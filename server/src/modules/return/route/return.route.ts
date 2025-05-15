@@ -6,6 +6,7 @@ import {
   getReturn,
   getReturns,
   requestFullOrderReturn,
+  singleProductReturn,
   updateReturn,
 } from "../controller/return.controller";
 
@@ -15,6 +16,7 @@ router.route("/").get(getReturns).post(createReturn);
 router.route("/full-request").post(requestFullOrderReturn);
 router.route("/full-complete/:orderId").get(completeFullOrderReturn);
 
+router.route("/single-product/:orderItemId").put(singleProductReturn);
 router.route("/:id").get(getReturn).put(updateReturn).delete(deleteReturn);
 
 export default router;

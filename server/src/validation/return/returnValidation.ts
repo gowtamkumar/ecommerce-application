@@ -16,20 +16,17 @@ export const returnValidationSchema = z.object({
     required_error: "Phone is required",
   }),
 
-  returnedQty: z.number({
-    required_error: "returned Qty is required",
+  requestedQty: z.number({
+    required_error: "Requested Qty is required",
   }),
 
   userId: z.number({
     required_error: "User is required",
   }),
 
-  image: z.number().optional().nullable(),
+  image: z.string().optional().nullable(),
 
-  status: z.enum(
-    ["Requested", "Approved", "Rejected", "Completed", "Refunded"],
-    {
-      required_error: "status is required",
-    }
-  ),
+  status: z
+    .enum(["Requested", "Approved", "Rejected", "Completed", "Refunded"])
+    .optional(),
 });

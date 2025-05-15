@@ -38,6 +38,9 @@ const Dashboard = () => {
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
+  console.log("dashboardReports", dashboardReports);
+  
+
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 

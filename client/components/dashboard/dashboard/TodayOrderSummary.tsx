@@ -100,7 +100,7 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
               <span>{+total_shipped_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Orders Completed:</span>
+              <span>Completed:</span>
               <span>{+total_completed_product_count}</span>
             </div>
           </div>
@@ -137,7 +137,7 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
               <span>{total_shipped_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>Orders Completed:</span>
+              <span>Completed:</span>
               <span>{total_completed_order_amount || "0.00"}</span>
             </div>
           </div>
@@ -160,7 +160,6 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
           </div>
         </div>
       </div>
-      
     </>
   );
 };

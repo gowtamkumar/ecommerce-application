@@ -39,6 +39,7 @@ import dayjs from "dayjs";
 import { getStatus } from "@/lib/utils/getStatus";
 import { FaAmazonPay } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import ReturnOrderStatusUpdate from "@/components/dashboard/return/ReturnOrderStatusUpdate";
 
 const OrderStatusChange = dynamic(
   () => import("@/components/dashboard/order/OrderStatusUpdate"),
@@ -60,7 +61,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const Page: React.FC = () => {
-  const [tabKey, setTabKey] = useState("Pending");
+  const [tabKey, setTabKey] = useState("Requested");
   const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState(null) as any;
   const global = useSelector(selectGlobal);
@@ -70,7 +71,9 @@ const Page: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getOrders({ status: tabKey });
+      const res = await getOrders({ returnedStatus: tabKey });
+      console.log("res", res);
+
       const newOrders = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
@@ -263,7 +266,6 @@ const Page: React.FC = () => {
       },
       {
         title: "Sale Price",
-        // dataIndex: "salePrice",
         key: "salePrice",
         render: (v: any) => {
           return (
@@ -278,9 +280,36 @@ const Page: React.FC = () => {
 
       { title: "Qty", dataIndex: "qty", key: "qty" },
       {
+        title: "Requested Qty",
+        dataIndex: "requestedQty",
+        key: "requestedQty",
+      },
+      { title: "Approved Qty", dataIndex: "approvedQty", key: "approvedQty" },
+      {
         title: "Sub Total",
         key: "subTotal",
         dataIndex: "subTotal",
+      },
+      {
+        render: () => {
+          return (
+            <Button
+              size="small"
+              icon={<CheckOutlined />}
+              title="Return Status Change"
+              className="me-1"
+              onClick={() => {
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    orderReturnStatusUpdate: true,
+                    payload: { orderItemId: value.id },
+                  })
+                );
+              }}
+            />
+          );
+        },
       },
     ];
 
@@ -310,6 +339,10 @@ const Page: React.FC = () => {
           <h1>
             <span className="font-bold">Delivery Man: </span>
             <code>{value?.deliveryMan?.name}</code>
+          </h1>
+          <h1>
+            <span className="font-bold">Return Status: </span>
+            <code>{value?.returnedStatus}</code>
           </h1>
           <Divider dashed />
           <div className="p-4 bg-white">
@@ -428,17 +461,10 @@ const Page: React.FC = () => {
       key: "user",
       render: (customer) => <span>{customer?.name}</span>,
     },
-    // {
-    //   title: "Shipping Address",
-    //   dataIndex: "shippingAddress",
-    //   key: "shippingAddress",
-    //   render: (value) => <span>{value.address}</span>,
-    // },
     {
       title: "Payment Method",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
-      // render: (value) => <span>{value.address}</span>,
     },
 
     {
@@ -464,70 +490,21 @@ const Page: React.FC = () => {
       key: "operation",
       render: (value) => (
         <div className="flex gap-2 justify-end">
-          <Button
-            size="small"
-            icon={<FaAmazonPay />}
-            title="Payment"
-            className="me-1"
-            onClick={() => {
-              route.push("/dashboard/payments/new");
-
-              // const amount = +value.subTotal + +value.shippingCharge;
-              // dispatch(
-              //   setAction({
-              //     payment: true,
-              //     type: ActionType.CREATE,
-              //     payload: {
-              //       orderId: value.id,
-              //       amount,
-              //       paymentType: "Debit",
-              //       paymentMethod: value.paymentMethod,
-              //       userId: value.userId,
-              //     },
-              //   })
-              // );
-            }}
-          />
-
-          <Button
-            size="small"
-            icon={<UserAddOutlined />}
-            title="Assign Delivery man"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  assign: true,
-                  payload: { id: value.id },
-                })
-              )
-            }
-          />
           {/* <Button
             size="small"
             icon={<CheckOutlined />}
-            title="Renew Order"
-            className="me-1"
-            disabled={value.status !== "Returned"}
-          /> */}
-          <Button
-            size="small"
-            icon={<CheckOutlined />}
-            title="Order Status Change"
+            title="Return Status Change"
             className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
-                  orderStatusUpdate: true,
+                  orderReturnStatusUpdate: true,
                   payload: { id: value.id },
                 })
               )
             }
-            disabled={
-              value.status === "Completed" || value.status === "Returned"
-            }
-          />
+          /> */}
           <Popconfirm
             title={
               <span>
@@ -556,36 +533,28 @@ const Page: React.FC = () => {
 
   const items: TabsProps["items"] = [
     {
-      key: "Pending",
-      label: "Pending",
-    },
-    {
-      key: "Approved",
-      label: "Approved",
+      key: "Requested",
+      label: "Requested",
     },
     {
       key: "Processing",
       label: "Processing",
     },
     {
-      key: "On Shipping",
-      label: "On Shipping",
+      key: "Approved",
+      label: "Approved",
     },
     {
-      key: "Shipped",
-      label: "Shipped",
-    },
-    {
-      key: "Canceled",
-      label: "Canceled",
+      key: "Rejected",
+      label: "Rejected",
     },
     {
       key: "Completed",
       label: "Completed",
     },
     {
-      key: "Returned",
-      label: "Returned",
+      key: "Refunded",
+      label: "Refunded",
     },
   ];
 
@@ -607,9 +576,7 @@ const Page: React.FC = () => {
         bordered
         size="large"
       />
-      {global.action.orderStatusUpdate && <OrderStatusChange />}
-      {/* {global.action.payment && <AddPayment />} */}
-      {global.action.assign && <AssignDeliveryMan />}
+      {global.action.orderReturnStatusUpdate && <ReturnOrderStatusUpdate />}
     </div>
   );
 };
