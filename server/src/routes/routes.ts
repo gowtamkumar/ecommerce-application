@@ -34,7 +34,7 @@ import postRoute from "../modules/blog/post/route/post.route";
 import homeRoute from "../modules/other/pages/home/route/home.route";
 import notificationRoute from "../modules/other/notification/route/notification.route";
 import couponRoute from "../modules/coupon/route/coupon.route";
-import returnsRoute from "../modules/return/route/return.route";
+// import returnsRoute from "../modules/return/route/return.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 
 // Define the type for the Express application
@@ -66,11 +66,11 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/sizes", AuthGuard, sizeRoute);
   app.use("/api/v1/units", AuthGuard, unitRoute);
   app.use("/api/v1/colors", colorRoute);
-  app.use("/api/v1/status", AuthGuard, statusRoute);
+  // app.use("/api/v1/status", AuthGuard, statusRoute);
   app.use("/api/v1/reports", AuthGuard, reportRoute);
   app.use("/api/v1/notifications", AuthGuard, notificationRoute);
   app.use("/api/v1/coupons", couponRoute);
-  app.use("/api/v1/returns", AuthGuard, returnsRoute);
+  // app.use("/api/v1/returns", AuthGuard, returnsRoute);
   // public route
   app.use("/api/v1/home", homeRoute);
   app.use("/api/v1/visitors", visitorRoute);

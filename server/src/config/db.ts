@@ -18,12 +18,10 @@ import { ReviewEntity } from "../modules/review/model/review.entity";
 import { OrderTrackingEntity } from "../modules/order-tracking/model/order-tracking.entity";
 import { TaxEntity } from "../modules/tax/model/tax.entity";
 import { SizeEntity } from "../modules/size/model/size.entity";
-import { StatusEntity } from "../modules/status/model/status.entity";
 import { ColorEntity } from "../modules/color/model/color.entity";
 import { UnitEntity } from "../modules/unit/model/unit.entity";
 import { ShippingChargeEntity } from "../modules/shipping-charge/model/shipping-charge.entity";
 import { UserActivityEntity } from "../modules/auth/model/user-activity.entity";
-import { VisitorEntity } from "../modules/visitor/model/visitor.entity";
 import { FileEntity } from "../modules/other/file/model/file.entity";
 import { DivisionEntity } from "../modules/other/geo-location/divisions/model/division.entity";
 import { DistrictEntity } from "../modules/other/geo-location/districts/model/district.entity";
@@ -42,7 +40,6 @@ import { AppliedCouponEntity } from "../modules/coupon/model/applied-coupon.enti
 import { ApplicableCategoryEntity } from "../modules/discount/model/applicable-category.entity";
 import { ApplicableBrandEntity } from "../modules/discount/model/applicable-brand.entity";
 import { ApplicableProductEntity } from "../modules/discount/model/applicable-products.entity";
-import { ReturnEntity } from "../modules/return/model/return.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -119,7 +116,7 @@ const dbConnection = new DataSource({
     // PostEntity,
     // PostCategoryEntity,
     // CommentEntity,
-    ReturnEntity,
+    // ReturnEntity,
     MenuEntity,
     NotificationEntity,
   ],

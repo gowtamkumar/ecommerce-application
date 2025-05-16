@@ -98,45 +98,13 @@ export default function OrderTracker() {
     },
 
     { title: "Qty", dataIndex: "qty", key: "qty" },
-    {
-      title: "Return Requested",
-      dataIndex: "requestedQty",
-      key: "requestedQty",
-    },
-    {
-      title: "Approved Request",
-      dataIndex: "approvedQty",
-      key: "approvedQty",
-    },
+   
     {
       title: "Sub Total",
       key: "subTotal",
       dataIndex: "subTotal",
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (v: any) => {
-        if (["Completed"].includes(order.status))
-          return (
-            <Button
-              size="small"
-              disabled={v.requestedQty > 0}
-              onClick={() => {
-                dispatch(
-                  setAction({
-                    type: ActionType.UPDATE,
-                    returnOrderItem: true,
-                    payload: { orderId: v.orderId, orderItemId: v.id },
-                  })
-                );
-              }}
-            >
-              Return Request
-            </Button>
-          );
-      },
-    },
+
   ];
 
   return (
@@ -325,7 +293,6 @@ export default function OrderTracker() {
       ) : (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
-      <ReturnRequestOrderItem />
     </>
   );
 }

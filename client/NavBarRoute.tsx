@@ -153,19 +153,19 @@ const navbarRoute = [
     label: <Link href="/dashboard/orders">Orders</Link>,
     route: "true",
   },
-  {
-    key: "return_manage",
-    label: "Return Manage",
-    disabled: "true",
-    route: "true",
-  },
+  // {
+  //   key: "return_manage",
+  //   label: "Return Manage",
+  //   disabled: "true",
+  //   route: "true",
+  // },
 
-  {
-    key: "return_request",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/return">Return</Link>,
-    route: "true",
-  },
+  // {
+  //   key: "return_request",
+  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/return">Return</Link>,
+  //   route: "true",
+  // },
 
   // {
   //   key: "blog",

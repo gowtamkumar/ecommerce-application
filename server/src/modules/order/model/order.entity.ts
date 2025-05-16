@@ -59,48 +59,48 @@ export class OrderEntity {
   })
   couponDiscount!: number;
 
-  // return
-  @Column({ name: "requested_qty", nullable: true })
-  requestedQty!: number;
+  // // return
+  // @Column({ name: "requested_qty", nullable: true })
+  // requestedQty!: number;
 
-  @Column({ name: "approved_qty", nullable: true })
-  approvedQty!: number;
+  // @Column({ name: "approved_qty", nullable: true })
+  // approvedQty!: number;
 
-  @Column({
-    name: "total_returned",
-    type: "numeric",
-    precision: 10,
-    scale: 2,
-    nullable: true,
-  })
-  totalReturned!: number;
+  // @Column({
+  //   name: "total_returned",
+  //   type: "numeric",
+  //   precision: 10,
+  //   scale: 2,
+  //   nullable: true,
+  // })
+  // totalReturned!: number;
 
-  @Column({
-    name: "returned_status",
-    type: "enum",
-    enum: ReturnStatus,
-    nullable: true,
-  })
-  returnedStatus!: ReturnStatus;
+  // @Column({
+  //   name: "returned_status",
+  //   type: "enum",
+  //   enum: ReturnStatus,
+  //   nullable: true,
+  // })
+  // returnedStatus!: ReturnStatus;
 
-  // refunded
-  @Column({
-    name: "total_refuned",
-    type: "numeric",
-    precision: 10,
-    scale: 2,
-    nullable: true,
-  })
-  totalRefuned!: number;
+  // // refunded
+  // @Column({
+  //   name: "total_refuned",
+  //   type: "numeric",
+  //   precision: 10,
+  //   scale: 2,
+  //   nullable: true,
+  // })
+  // totalRefuned!: number;
 
-  @Column({
-    name: "refund_status",
-    type: "enum",
-    enum: RefundStatus,
-    nullable: true,
-  })
-  refundStatus!: RefundStatus;
-  // refunded end
+  // @Column({
+  //   name: "refund_status",
+  //   type: "enum",
+  //   enum: RefundStatus,
+  //   nullable: true,
+  // })
+  // refundStatus!: RefundStatus;
+  // // refunded end
 
   @Column({
     name: "total_tax",
