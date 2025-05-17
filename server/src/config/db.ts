@@ -40,6 +40,7 @@ import { AppliedCouponEntity } from "../modules/coupon/model/applied-coupon.enti
 import { ApplicableCategoryEntity } from "../modules/discount/model/applicable-category.entity";
 import { ApplicableBrandEntity } from "../modules/discount/model/applicable-brand.entity";
 import { ApplicableProductEntity } from "../modules/discount/model/applicable-products.entity";
+import { ContactEntity } from "../modules/contact/model/contact.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -117,6 +118,7 @@ const dbConnection = new DataSource({
     // PostCategoryEntity,
     // CommentEntity,
     // ReturnEntity,
+    ContactEntity,
     MenuEntity,
     NotificationEntity,
   ],

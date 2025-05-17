@@ -12,6 +12,7 @@ import { ApplicableCategoryEntity } from "../model/applicable-category.entity";
 import { In, Repository } from "typeorm";
 import { ScopeEnum } from "../enum";
 import { singleDiscountQuery } from "../../../sqlQuery";
+import { updateStatusDiscountValidation } from "../../../validation/discount/updateStatusDiscountValidation";
 
 // @desc Get all Discounts
 // @route GET /api/v1/Discounts
@@ -25,7 +26,6 @@ export const getDiscounts = asyncHandler(
     const repository = connection.getRepository(DiscountEntity);
 
     console.log("scope", scope);
-    
 
     // Validate allowed scopes
 
@@ -318,6 +318,48 @@ export const updateDiscount = asyncHandler(
       success: true,
       message: `Updated Discount with id ${id}`,
       data: updatedDiscount,
+    });
+  }
+);
+// @desc Update a single Discount
+// @route PUT /api/v1/Discounts/status:id
+// @access Public
+export const discountStatusUpdate = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: discountStatusUpdate ${req.method} ${req.url}`);
+    const { id } = req.params;
+    const validation = updateStatusDiscountValidation.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(400).json({
+        success: false,
+        issues: validation.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
+    }
+
+    const connection = await getDBConnection();
+    const repository = connection.getRepository(DiscountEntity);
+
+    const existingDiscount = await repository.findOneBy({ id });
+    if (!existingDiscount) {
+      return res.status(404).json({
+        success: false,
+        message: `Discount with id ${id} not found`,
+      });
+    }
+
+    const result = await repository.save({
+      id: existingDiscount.id,
+      status: validation.data.status,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Updated Discount with id ${id}`,
+      data: result,
     });
   }
 );

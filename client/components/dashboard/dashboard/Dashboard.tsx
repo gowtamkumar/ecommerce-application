@@ -14,7 +14,7 @@ import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
 import { errorNotification } from "@/lib/utils/notification";
 const LossProfit = dynamic(() => import("./LossProfit"));
-const WidgetStats = dynamic(() => import("./components/WidgetStats"));
+// const WidgetStats = dynamic(() => import("./components/WidgetStats"));
 
 const StockReport = dynamic(() => import("./components/StockReport"));
 const TopCustomer = dynamic(() => import("./components/TopCustomer"));
@@ -29,7 +29,6 @@ const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
   const {
-    total_returned_order_amount,
     top_selling_product,
     top_customers,
     product_alert_stock_report,
@@ -39,7 +38,6 @@ const Dashboard = () => {
   const { RangePicker } = DatePicker;
 
   console.log("dashboardReports", dashboardReports);
-  
 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
@@ -113,30 +111,8 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
-      <div className="grid grid-cols-4 gap-2">
-        {/* <WidgetStats
-          title="TOTAL SALE"
-          value={total_sale_amount || "0.00"}
-          icon={<ShoppingOutlined />}
-          color="primary"
-        /> */}
-
-        {/* <WidgetStats
-          title="TOTAL ORDER"
-          value={total_order_amount || "0.00"}
-          icon={<LineChartOutlined />}
-          color="primary"
-        /> */}
-
-        <WidgetStats
-          title="ORDER RETURN"
-          value={total_returned_order_amount || "0.00"}
-          icon={<RollbackOutlined />}
-          color="primary"
-        />
-
-
+      <div className="py-2">
+        <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
       </div>
 
       <StockReport recentHistory={dashboardReports} />
@@ -147,7 +123,7 @@ const Dashboard = () => {
             value={{
               saleAmount,
               purchaseAmount,
-              total_sale_return_shipping_amount,
+              total_sale_return_shipping_amount: 0,
             }}
           />
         </div>

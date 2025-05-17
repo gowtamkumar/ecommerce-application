@@ -34,6 +34,7 @@ import postRoute from "../modules/blog/post/route/post.route";
 import homeRoute from "../modules/other/pages/home/route/home.route";
 import notificationRoute from "../modules/other/notification/route/notification.route";
 import couponRoute from "../modules/coupon/route/coupon.route";
+import contactsRoute from "../modules/contact/route/contact.route";
 // import returnsRoute from "../modules/return/route/return.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
 
@@ -80,4 +81,5 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/districts", districtRoute);
   app.use("/api/v1/upazilas", upazilaRoute);
   app.use("/api/v1/unions", unionsRoute);
+  app.use("/api/v1/contacts", contactsRoute);
 };

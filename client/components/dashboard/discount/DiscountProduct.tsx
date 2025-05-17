@@ -12,7 +12,6 @@ import {
   Table,
   TableColumnsType,
   TableColumnType,
-  Tag,
 } from "antd";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import Image from "next/image";

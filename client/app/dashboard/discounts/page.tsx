@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
 import DiscountDetails from "@/components/dashboard/discount/DiscountDetails";
+import DiscountStatusUpdate from "@/components/dashboard/discount/DiscountStatusUpdate";
 
 const DiscountList = dynamic(
   () => import("@/components/dashboard/discount/DiscountList")
@@ -41,6 +42,7 @@ export default function Discount() {
         }
       />
       {global.action.type === ActionType.VIEW && <DiscountDetails/>}
+      {global.action.type === ActionType.UPDATE && <DiscountStatusUpdate/>}
     </div>
   );
 }

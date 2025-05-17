@@ -17,7 +17,7 @@ import {
   Upload,
 } from "antd";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import {  PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getProduct,
@@ -217,8 +217,9 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.thumbnailImage,
-        url: `${appConfig.baseApiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
-          }`,
+        url: `${appConfig.baseApiUrl}/uploads/${
+          newData.thumbnailImage || "no-data.png"
+        }`,
       };
       newData.fileThumbnailList = [newfileThumbnail];
     }
@@ -229,8 +230,9 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.hoverImage,
-        url: `${appConfig.baseApiUrl}/uploads/${newData.hoverImage || "no-data.png"
-          }`,
+        url: `${appConfig.baseApiUrl}/uploads/${
+          newData.hoverImage || "no-data.png"
+        }`,
       };
       newData.fileHoverList = [newfileHover];
     }
@@ -511,7 +513,7 @@ const AddProduct = ({
                 <Checkbox>Product Variant</Checkbox>
               </Form.Item>
 
-              {!formValues.variant && (
+              {!form.getFieldValue("variant") && (
                 <>
                   <Form.Item
                     name="purchasePrice"
@@ -809,7 +811,11 @@ const AddProduct = ({
                           item.fileName !== v.fileName
                       );
                       form.setFieldsValue({ images: find, fileList: newfind });
-                      setFormValues({ images: find, fileList: newfind });
+                      setFormValues({
+                        ...formValues,
+                        images: find,
+                        fileList: newfind,
+                      });
                       if (v.fileName) {
                         const params = { filename: v.fileName };
                         await fileDeleteWithPhoto(params);

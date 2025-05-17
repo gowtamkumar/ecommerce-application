@@ -156,6 +156,7 @@ const AddDiscount = () => {
     newData.startDate = new Date(values.startDate).toISOString();
     newData.endDate = new Date(values.endDate).toISOString();
     newData.value = +values.value;
+    
 
 
     const result = newData.id
@@ -167,6 +168,9 @@ const AddDiscount = () => {
       : "Successfully Added";
 
     const res = await handleAsyncAction(result, messageData, dispatch);
+
+    console.log("res", res);
+    
 
     if (res.success) {
       route.push("/dashboard/discounts");
@@ -361,8 +365,8 @@ const AddDiscount = () => {
         <Select allowClear placeholder="Select" optionFilterProp="children">
           <Select.Option value="Percentage">Percentage</Select.Option>
           <Select.Option value="Fixed">Fixed Amount</Select.Option>
-          <Select.Option value="FreeShipping">Free Shipping</Select.Option>
-          <Select.Option value="FreeGift">Free Gift</Select.Option>
+          {/* <Select.Option value="FreeShipping">Free Shipping</Select.Option>
+          <Select.Option value="FreeGift">Free Gift</Select.Option> */}
         </Select>
       </Form.Item>
 

@@ -22,6 +22,7 @@ import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 import { NotificationEntity } from "../../other/notification/model/notification.entity";
 import { UserEntity } from "../../auth/model/user.entity";
 import { Repository } from "typeorm";
+import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {
@@ -117,22 +118,16 @@ export const createOrder = asyncHandler(
         await cartRepo.remove(cartsList);
 
         // order tracking
-        // const newOrderTracking = {
-        //   status: savedOrder.status,
-        //   orderId,
-        //   userId,
-        //   location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-        // } as OrderTracking;
-
-        // await orderTracking(newOrderTracking);
-        const orderTrackingRepo =
-          queryRunner.manager.getRepository(OrderTrackingEntity);
-        const newOrderTracking = orderTrackingRepo.create({
+        const newOrderTracking = {
+          status: savedOrder.status,
           orderId,
           userId,
           location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-        });
-        await orderTrackingRepo.save(newOrderTracking);
+        } as OrderTracking;
+        const orderTrackingRepo =
+          queryRunner.manager.getRepository(OrderTrackingEntity);
+
+        await orderTracking(newOrderTracking, orderTrackingRepo);
 
         // applied coupon
         if (validation.data.couponId) {
@@ -163,7 +158,7 @@ export const createOrder = asyncHandler(
       }
 
       // ssl ecommerce intregration
-      let paymentUrl = "";
+      let paymentUrl = null;
       if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
         const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
         paymentUrl = onlinePaymentRes;
@@ -171,7 +166,7 @@ export const createOrder = asyncHandler(
 
       return res.status(200).json({
         success: true,
-        message: "Order created, redirecting to payment gateway.",
+        message: "Order created",
         data: {
           orderId: savedOrder.id,
           paymentUrl,
@@ -192,41 +187,47 @@ export const createOrder = asyncHandler(
   }
 );
 
-export const orderTracking = async ({
-  orderId,
-  userId,
-  location,
-  status,
-}: OrderTracking) => {
-  const connection = await getDBConnection();
+export const orderTracking = async (
+  value: OrderTracking,
+  orderTrackingRepo: Repository<OrderTrackingEntity>
+) => {
+  const { orderId, userId, location, status } = value;
 
-  console.log("tracking", orderId, userId, location, status);
+  let trackingStatus: OrderTrackingStatusEnum;
 
-  let trackingStatus = {};
-
-  if (status === OrderStatus.Pending) {
-    trackingStatus = "Order Placed";
-  } else if (status === OrderStatus.Processing) {
-    trackingStatus = "Order is Being Processed";
-  } else if (status === OrderStatus.Approved) {
-    trackingStatus = "Order Approved";
-  } else if (status === OrderStatus.OnShipping) {
-    trackingStatus = "Order Ready to Ship";
-  } else if (status === OrderStatus.Shipped) {
-    trackingStatus = "Order Shipped";
-  } else if (status === OrderStatus.Completed) {
-    trackingStatus = "Order Delivered";
-  } else if (status === OrderStatus.Canceled) {
-    trackingStatus = "Order Canceled";
+  switch (status) {
+    case OrderStatus.Pending:
+      trackingStatus = OrderTrackingStatusEnum.OrderPlaced;
+      break;
+    case OrderStatus.Processing:
+      trackingStatus = OrderTrackingStatusEnum.Processing;
+      break;
+    case OrderStatus.Approved:
+      trackingStatus = OrderTrackingStatusEnum.OrderApproved;
+      break;
+    case OrderStatus.OnShipping:
+      trackingStatus = OrderTrackingStatusEnum.OrderReadytoShip;
+      break;
+    case OrderStatus.Shipped:
+      trackingStatus = OrderTrackingStatusEnum.Shipped;
+      break;
+    case OrderStatus.Completed:
+      trackingStatus = OrderTrackingStatusEnum.OrderDelivered;
+      break;
+    case OrderStatus.Canceled:
+      trackingStatus = OrderTrackingStatusEnum.OrderCanceled;
+      break;
+    default:
+      throw new Error("Invalid Order Status for tracking");
   }
 
-  const orderTrackingRepo = connection.getRepository(OrderTrackingEntity);
   const newOrderTracking = orderTrackingRepo.create({
     orderId,
     userId,
     location,
     status: trackingStatus,
   });
+
   await orderTrackingRepo.save(newOrderTracking);
 };
 
@@ -746,7 +747,10 @@ export const orderStatusUpdate = asyncHandler(
         location,
       } as OrderTracking;
 
-      await orderTracking(newOrderTracking);
+      const orderTrackingRepo =
+        queryRunner.manager.getRepository(OrderTrackingEntity);
+
+      await orderTracking(newOrderTracking, orderTrackingRepo);
 
       await sendOrderNotification(notification);
 

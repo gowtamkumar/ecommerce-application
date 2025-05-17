@@ -44,7 +44,7 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
       FROM users`
     );
-    
+
     const payments = await connection.query(
       `SELECT
         SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount,
@@ -54,11 +54,6 @@ export const getDashboardReport = asyncHandler(
       FROM payments
       WHERE created_at BETWEEN '${fromDate}' AND '${toDate}'`
     );
-
-    // SUM(CASE WHEN status = 'Completed' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_amount
-    // SUM(CASE WHEN status = 'Pending' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_order_amount,
-    // SUM(CASE WHEN status = 'Returned' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_sale_return_amount,
-    // SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(sub_total, 0) + COALESCE(shipping_charge, 0) + COALESCE(total_tax, 0) - COALESCE(total_discount, 0)) ELSE 0 END) AS total_canceled_amount,
 
     // order sale, count etc,
     const results = await connection.query(`
@@ -70,10 +65,7 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_completed_order_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_pending_order_count,
           SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_order_count,
-          SUM(CASE WHEN status = 'Returned' THEN 1 ELSE 0 END) AS total_returned_order_count,
 
-          SUM(CASE WHEN status = 'Returned' THEN  COALESCE(shipping_charge, 0) ELSE 0 END) AS total_sale_return_shipping_charge,
-      
           SUM(CASE WHEN status = 'Pending' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_pending_product_count,
           SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_canceled_product_count,
           SUM(CASE WHEN status = 'Approved' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_approved_product_count,
@@ -88,8 +80,7 @@ export const getDashboardReport = asyncHandler(
           SUM(CASE WHEN status = 'Processing' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_processing_order_amount,
           SUM(CASE WHEN status = 'On Shipping' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_on_shipping_order_amount,
           SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_shipped_order_amount,
-          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_completed_order_amount,
-          SUM(CASE WHEN status = 'Returned' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_returned_order_amount
+          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_completed_order_amount
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
 

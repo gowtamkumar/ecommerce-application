@@ -1,6 +1,6 @@
 export enum OrderTrackingStatusEnum {
   OrderPlaced = "Order Placed",
-  Processed="Order is Being Processed",
+  Processing="Order is Being Processed",
   OrderApproved = "Order Approved",
   OrderReadytoShip = "Order Ready to Ship",
   Shipped = "Order Shipped",

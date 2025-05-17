@@ -24,8 +24,10 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
-import { AiOutlineEye, AiOutlineLayout } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { TbStatusChange } from "react-icons/tb";
+
 
 interface DataType {
   key: string;
@@ -265,9 +267,7 @@ const DiscountList: React.FC = () => {
 
     {
       title: "Expiry",
-      // dataIndex: "endDate",
       key: "Expiry",
-      // sorter: (a, b) => a.endDate.length - b.endDate.length,
       render: (value) => {
         return {
           children: (
@@ -286,7 +286,6 @@ const DiscountList: React.FC = () => {
       key: "status",
       ...getColumnSearchProps("status"),
       sortDirections: ["descend", "ascend"],
-      // sorter: (a, b) => a.active.length - b.active.length,
       render: (value) => (
         <Tag color={value.status === "Active" ? "green" : "red"}>
           {value.status}
@@ -322,16 +321,21 @@ const DiscountList: React.FC = () => {
             title="Edit"
             className="me-1"
             onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
-            // onClick={() =>
+          />
 
-            //   dispatch(
-            //     setAction({
-            //       discount: true,
-            //       type: ActionType.UPDATE,
-            //       payload: value,
-            //     })
-            //   )
-            // }
+          <Button
+            size="small"
+            icon={<TbStatusChange />}
+            title="Status"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  type: ActionType.UPDATE,
+                  payload: value,
+                })
+              )
+            }
           />
           <Popconfirm
             title={

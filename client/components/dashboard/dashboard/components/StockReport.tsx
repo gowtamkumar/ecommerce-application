@@ -11,9 +11,7 @@ const StockReport = ({ recentHistory }: any) => {
   const [tabKey, setTabKey] = useState("Pending");
   const {
     orders = [],
-    total_order_pending_count,
     total_active_user,
-    total_returned_order_count,
     total_canceled_count,
   } = recentHistory;
 
@@ -21,22 +19,6 @@ const StockReport = ({ recentHistory }: any) => {
     <div className="grid grid-cols-12 gap-2">
       <div className="col-span-3 bg-white mb-3 ">
         <Card title="Recent History" size="small">
-          {/* <div className="alert alert-success">
-            Total Pending Order
-            <Statistic value={total_order_pending_count || "0"} />
-          </div> */}
-          {/* <div>
-            Total Sales Items
-            <Statistic value={total_sale_count || "0"} />
-          </div> */}
-          <div>
-            Total Sales Return Items
-            <Statistic value={total_returned_order_count || "0"} />
-          </div>
-          <div>
-            Total Order Canceled Items
-            <Statistic value={total_canceled_count || "0"} />
-          </div>
           <div>
             Active user
             <Statistic value={total_active_user || "0"} />
@@ -73,7 +55,6 @@ const StockReport = ({ recentHistory }: any) => {
                 />
               ),
             },
-           
           ]}
         />
       </div>

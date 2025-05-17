@@ -77,6 +77,17 @@ export async function updateDiscount(data: any) {
 
   return await handleResponse(res);
 }
+export async function discountStatusUpdate(data: any) {  
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/discounts/status/${data.id}`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify({ status: data.status }),
+  });
+
+  return await handleResponse(res);
+}
 
 export async function deleteDiscount(id: string) {
   const headers = await getAuthHeaders();

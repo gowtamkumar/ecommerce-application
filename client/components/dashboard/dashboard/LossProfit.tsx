@@ -22,7 +22,6 @@ export default function LossProfit({ value }: LossProfitProps) {
             +saleAmount -
             (+purchaseAmount + +(total_sale_return_shipping_amount || 0))
           ).toFixed(2)}
-          // formatter={formatter}
           prefix={
             saleAmount >= purchaseAmount ? (
               <ArrowUpOutlined />
