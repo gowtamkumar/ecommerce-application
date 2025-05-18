@@ -2,27 +2,33 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import ProductDetails from "./ProductDetails";
-import { Spin } from "antd";
-import RatingProduct from "./RatingProducts";
-import ProductDescription from "./ProductDescription";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { setLoading } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { errorNotification } from "@/lib/utils/notification";
 import { getProductBySlug } from "@/lib/apis/product";
-import ReviewTable from "./review-rating/ReviewTable";
-import ProductCard from "./ProductCard";
 import {
   selectProduct,
   setProduct,
 } from "@/redux/features/products/productSlice";
+import dynamic from "next/dynamic";
+
+const ReviewTable = dynamic(() => import("./review-rating/ReviewTable"), {
+  ssr: false,
+});
+const ProductCard = dynamic(() => import("./ProductCard"), { ssr: false });
+const RatingProduct = dynamic(() => import("./RatingProducts"), { ssr: false });
+const ProductDescription = dynamic(() => import("./ProductDescription"), {
+  ssr: false,
+});
+const ProductDetails = dynamic(() => import("./ProductDetails"), {
+  ssr: false,
+});
 
 export default function SingleProduct() {
   const [selectVariant, setSelectVariant] = useState<any>({});
   const { slug } = useParams();
   const [checkStock, setCheckStock] = useState(0);
   const dispatch = useDispatch();
-  // const global = useSelector(selectGlobal);
   const products = useSelector(selectProduct);
   const { product } = products;
 

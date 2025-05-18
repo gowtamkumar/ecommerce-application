@@ -69,42 +69,40 @@ export default function Card({ item }: { item: any }) {
 
   const hoverImage = item?.hoverImage
     ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
-    : "/pos_software.png";
+    : "/default-placeholder.png";
 
   return (
-    <div className="rounded-lg bg-gray-100 flex flex-col h-full">
+    <div className="rounded-lg bg-gray-100 flex flex-col h-full p-2">
+      {/* Image + Hover */}
       <div className="relative group">
         <Image
           src={thumbnailImage}
           alt={item.name}
           width={1000}
           height={1000}
+          className="rounded"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         {+item.discountAmount > 0 && (
-          <p className="text-xs absolute   bg-blue-500 rounded-r-lg  p-1 text-white z-10 top-2">
+          <p className="text-xs absolute top-2 left-0 bg-blue-500 rounded-r-lg p-1 text-white z-10">
             Save:৳ {item.discountAmount}
           </p>
         )}
-        {/* Hover Overlay */}
+
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
           <Image
             src={hoverImage}
             alt={item.name}
             width={1000}
             height={1000}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="relative"
+            className="rounded"
           />
 
-          {/* <div className="mt-4 mr-3 p-4 absolute z-20 bg-white text-black rounded-full transform translate-x-10 group-hover:translate-x-0 transition duration-500"> */}
           <div className="p-1 absolute z-20 bg-white text-black rounded-lg transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <button
               className="cursor-pointer"
               onClick={() => {
                 if (session.status === "unauthenticated") {
-                  console.log("eeeeeee");
-
                   dispatch(setUnAuthorize(true));
                 } else {
                   AddToWishlist(item.id);
@@ -117,38 +115,45 @@ export default function Card({ item }: { item: any }) {
         </div>
       </div>
 
-      <div className="grid grid-rows-[auto_1fr_auto] flex-grow p-2">
-        <h3 className="font-semibold text-sm mb-2">
-          <Link href={`/products/${item.slug}`} className="hover:underline">
-            {item.name.slice(0, 50)}
-          </Link>
-        </h3>
-        <span className="flex gap-1 items-center">
-          <Rate disabled value={+item.avgRating || 0} />
-          {item.reviewsCount && item.reviewsCount}
-        </span>
+      {/* Content area */}
+      <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full">
+          <div className="mt-auto">
+            <h3 className="font-semibold text-sm mb-2">
+              <Link href={`/products/${item.slug}`} className="hover:underline">
+                {item.name.slice(0, 50)}
+              </Link>
+            </h3>
 
-        <div className="flex justify-between items-center">
-          <p className="text-gray-500 mb-1 text-md">৳ {item.finalPrice}</p>
+            <div className="flex gap-1 items-center text-xs mb-2">
+              <Rate disabled value={+item.avgRating || 0} />
+              {item.reviewsCount && item.reviewsCount}
+            </div>
+
+            <div className="text-gray-700 text-sm font-medium mb-1">
+              ৳ {item.finalPrice}
+            </div>
+
+            {+item?.discountValue > 0 && (
+              <div className="text-xs mb-2">
+                <span className="line-through text-gray-500">
+                  ৳ {item.salePrice}
+                </span>
+                <span className="text-red-600 ml-2">
+                  -{item.discountValue}
+                  {item.discountStrategy === "Percentage" ? "%" : " BDT"}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {+item?.discountValue > 0 && (
-          <div className="text-xs">
-            <span className="line-through text-gray-500">
-              ৳ {item.salePrice}
-            </span>
-            <span className="text-red-600 ml-2">
-              - {item.discountValue}
-              {item?.discountStrategy === "Percentage" ? "%" : "BDT"}
-            </span>
-          </div>
-        )}
+        {/* Push button to bottom */}
+        <div className="mt-auto">
+          <AddToCartButton item={{ ...item, qty: 1 }} />
+        </div>
       </div>
 
-      {/* AddToCartButton at the bottom */}
-      <div className="mt-auto">
-        <AddToCartButton item={{ ...item, qty: 1 }} />
-      </div>
       {global.unAuthorize && <ModalLogin />}
     </div>
   );

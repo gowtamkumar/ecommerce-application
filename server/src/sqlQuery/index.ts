@@ -244,7 +244,7 @@ export const productsQuery = async (queryData: any) => {
     ];
   };
 
-  const categoryFilter = parseFilter(categoryId);  
+  const categoryFilter = parseFilter(categoryId);
   const brandFilter = parseFilter(brandId);
 
   const query = `

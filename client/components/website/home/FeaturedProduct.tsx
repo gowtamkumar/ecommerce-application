@@ -40,8 +40,8 @@ const FeaturedProduct = ({ products }: any) => {
       pagination
     >
       {products?.map((item: any) => (
-        <SwiperSlide key={item.id}>
-          <Card item={item} />
+        <SwiperSlide key={item.id} className="!h-auto">
+            <Card item={item} />
         </SwiperSlide>
       ))}
     </Swiper>

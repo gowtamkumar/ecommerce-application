@@ -152,7 +152,7 @@ const ProductDetails = ({
         </div>
 
         <div
-          className="text-gray-700 mb-4 leading-6"
+          className="text-gray-700 my-2 leading-6"
           dangerouslySetInnerHTML={{
             __html: shortDescription,
           }}
@@ -174,8 +174,9 @@ const ProductDetails = ({
                   );
                   setCheckStock(item.stockQty);
                 }}
-                className={`flex items-center gap-2 px-3 py-2 border rounded-md ${defaultProduct?.id === item.id ? "!bg-gray-200" : "bg-white"
-                  }`}
+                className={`flex items-center gap-2 px-3 py-2 border rounded-md ${
+                  defaultProduct?.id === item.id ? "!bg-gray-200" : "bg-white"
+                }`}
               >
                 <span>{item?.size?.name}</span>
                 <span className="w-[1px] h-4 bg-gray-400" />
@@ -195,7 +196,7 @@ const ProductDetails = ({
 
         <p>In stock {checkStock} Items</p>
 
-        <div className="flex items-center justify-between px-3 py-1 rounded-lg bg-gray-200 font-bold w-40">
+        <div className="flex items-center justify-between px-3 rounded-lg bg-gray-200 font-bold w-40">
           <Button
             type="default"
             size="small"
@@ -216,7 +217,7 @@ const ProductDetails = ({
         </div>
 
         {/* product Action section */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 my-2">
           {findProduct ? (
             <div>
               <Button
