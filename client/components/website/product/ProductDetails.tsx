@@ -159,8 +159,8 @@ const ProductDetails = ({
         />
 
         {variant && (
-          <div className="mb-4">
-            <span>Size: </span>
+          <div className="flex gap-2 items-center">
+            <span className="font-semibold">Variant:</span>
             {(productVariants || []).map((item: any, idx: number) => (
               <Button
                 key={idx}
@@ -174,15 +174,25 @@ const ProductDetails = ({
                   );
                   setCheckStock(item.stockQty);
                 }}
-                className={`mr-2 px-2 py-1 focus:outline-none  ${
-                  defaultProduct?.id === item.id ? "!bg-gray-200" : ""
-                }`}
+                className={`flex items-center gap-2 px-3 py-2 border rounded-md ${defaultProduct?.id === item.id ? "!bg-gray-200" : "bg-white"
+                  }`}
               >
-                {item?.size?.name} {item?.color?.name}
+                <span>{item?.size?.name}</span>
+                <span className="w-[1px] h-4 bg-gray-400" />
+
+                {/* Color swatch with label */}
+                <div className="flex items-center gap-1">
+                  <div
+                    className="w-4 h-4 rounded-full border"
+                    style={{ backgroundColor: item?.color?.value || "#000" }}
+                  />
+                  <span>{item?.color?.name}</span>
+                </div>
               </Button>
             ))}
           </div>
         )}
+
         <p>In stock {checkStock} Items</p>
 
         <div className="flex items-center justify-between px-3 py-1 rounded-lg bg-gray-200 font-bold w-40">

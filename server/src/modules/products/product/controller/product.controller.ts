@@ -329,7 +329,7 @@ export const getProductByslug = asyncHandler(
               'default', pv.default,
               'stockQty', pv.stock_qty,
               'size', JSONB_BUILD_OBJECT('name', s.name),
-              'color', JSONB_BUILD_OBJECT('name', colors.name)
+              'color', JSONB_BUILD_OBJECT('name', colors.name, 'color', colors.color)
             )
           ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
         ) AS "productVariants",
