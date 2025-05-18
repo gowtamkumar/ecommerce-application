@@ -167,10 +167,7 @@ const AddDiscount = () => {
       ? "Successfully Updated"
       : "Successfully Added";
 
-    const res = await handleAsyncAction(result, messageData, dispatch);
-
-    console.log("res", res);
-    
+    const res = await handleAsyncAction(result, messageData, dispatch);    
 
     if (res.success) {
       route.push("/dashboard/discounts");

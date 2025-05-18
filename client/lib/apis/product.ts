@@ -109,13 +109,20 @@ export async function getPublicProduct(id: string) {
   });
   return await handleResponse(res);
 }
+export async function getDashboardProducts() {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/products/dashboard`, {
+    method: "GET",
+    headers,
+  });
+  return await handleResponse(res);
+}
 
 export async function getProductBySlug(params: any) {
   const { slug, productVariantId } = params;
   let queryString = "";
 
   console.log("params", params);
-  
 
   if (productVariantId) {
     queryString += `productVariantId=${productVariantId}`;

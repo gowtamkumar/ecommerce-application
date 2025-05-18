@@ -22,6 +22,7 @@ import { DiscountEntity } from "../../../discount/model/discount.entity";
 import { Status } from "../../../../enums/status.enum";
 import { CouponProductEntity } from "../../../coupon/model/coupon-product.entity";
 import { ApplicableProductEntity } from "../../../discount/model/applicable-products.entity";
+import { StockAdjustEntity } from "../../../stock-adjust/model/stock-adjust.entity";
 
 @Entity("products")
 export class ProductEntity {
@@ -31,16 +32,13 @@ export class ProductEntity {
   @Column()
   name!: string;
 
-  // @Column({ unique: true }) //need to change this nullable true
-  // sku!: string;
-
   @Column()
   slug!: string;
 
   @Column({ type: "boolean", default: false })
   variant?: boolean;
 
-  @Column({ type: "boolean", default: true })
+  @Column({ name: "is_returnable", type: "boolean", default: true })
   isReturnable?: boolean;
 
   @Column({ type: "boolean", default: false })
@@ -145,4 +143,7 @@ export class ProductEntity {
 
   @OneToMany((_type) => ApplicableProductEntity, (items) => items.product)
   applicableProducts!: ApplicableProductEntity[];
+
+  @OneToMany((_type) => StockAdjustEntity, (item) => item.product)
+  stockAdjusts!: StockAdjustEntity[];
 }

@@ -1,10 +1,10 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
-import { deleteStatus, getStatuses } from "@/lib/apis/status";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectGlobal,
@@ -19,21 +19,24 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
+import dayjs from "dayjs";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { deleteStockAdjust, getStockAdjusts } from "@/lib/apis/stock-adjust";
 
 interface DataType {
   key: string;
-  name: string;
-  status: boolean;
+  type: string;
+  qty: number;
+  product: { name: string };
 }
 
 type DataIndex = keyof DataType;
 
-const StatusList = () => {
-  const [status, setStatus] = useState([] as any);
+const StockAdjustList: React.FC = () => {
+  const [StockAdjusts, setStockAdjusts] = useState([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -45,8 +48,10 @@ const StatusList = () => {
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
     try {
-      const res = await getStatuses();
-      setStatus(res?.data);
+      const res = await getStockAdjusts();
+      console.log("res", res);
+
+      setStockAdjusts(res?.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -57,7 +62,7 @@ const StatusList = () => {
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteStatus(id);
+      await deleteStockAdjust(id);
       successNotification({ message: "Successfully deleted" });
       fetchData();
     } catch (error: any) {
@@ -98,8 +103,8 @@ const StatusList = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value);
             setSelectedKeys(e.target.value ? [e.target.value] : []);
+            setSearchInput(e.target.value);
           }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
@@ -176,60 +181,27 @@ const StatusList = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      sorter: (a, b) => a.type.length - b.type.length,
+      ...getColumnSearchProps("type"),
+    },
+    {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: "30%",
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name"),
+      dataIndex: "product",
+      key: "product",
+      sorter: (a, b) => a.product.name.length - b.product.name.length,
+      render: (value) => {
+        return <p>{value.name}</p>;
+      },
     },
 
     {
-      title: "Action",
-      key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "10%",
-      render: (value) => (
-        <div className="gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  status: true,
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
-          <Popconfirm
-            title={
-              <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Status?
-              </span>
-            }
-            onConfirm={() => handleDelete(value.id)}
-            placement="left"
-            okText="Yes"
-            okType="danger"
-            cancelText="No"
-            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-          >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
-          </Popconfirm>
-        </div>
-      ),
+      title: "Qty",
+      dataIndex: "qty",
+      key: "qty",
+      sorter: (a, b) => a.qty - b.qty,
     },
   ];
 
@@ -238,12 +210,12 @@ const StatusList = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={status}
-      pagination={{ pageSize: 15 }}
+      dataSource={StockAdjusts}
+      pagination={{ pageSize: 10 }}
       bordered
       size="small"
     />
   );
 };
 
-export default StatusList;
+export default StockAdjustList;

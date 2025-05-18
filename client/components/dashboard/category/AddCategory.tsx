@@ -70,7 +70,6 @@ const AddCategory = () => {
     try {
       const newData = { ...payload };
       const categories = await getAntdCategories();
-      console.log("🚀 ~ categories:", categories);
       setCategories(categories.data);
       setFormData(newData); // Use product.data?.tags or default to empty array
       setFormValues(newData);

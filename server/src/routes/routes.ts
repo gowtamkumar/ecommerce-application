@@ -14,7 +14,6 @@ import taxRoute from "../modules/tax/route/tax.route";
 import sizeRoute from "../modules/size/route/size.route";
 import unitRoute from "../modules/unit/route/unit.route";
 import colorRoute from "../modules/color/route/color.route";
-import statusRoute from "../modules/status/route/status.route";
 import settingRoute from "../modules/other/setting/route/setting.route";
 import currencyRoute from "../modules/currency/route/currency.route";
 import bannerRoute from "../modules/banner/route/banner.route";
@@ -34,6 +33,7 @@ import postRoute from "../modules/blog/post/route/post.route";
 import homeRoute from "../modules/other/pages/home/route/home.route";
 import notificationRoute from "../modules/other/notification/route/notification.route";
 import couponRoute from "../modules/coupon/route/coupon.route";
+import stockAdjust from "../modules/stock-adjust/route/stock-adjust.route";
 import contactsRoute from "../modules/contact/route/contact.route";
 // import returnsRoute from "../modules/return/route/return.route";
 import { AuthGuard } from "../middlewares/auth.middleware";
@@ -67,10 +67,10 @@ export const setupRoutes = (app: any) => {
   app.use("/api/v1/sizes", AuthGuard, sizeRoute);
   app.use("/api/v1/units", AuthGuard, unitRoute);
   app.use("/api/v1/colors", colorRoute);
-  // app.use("/api/v1/status", AuthGuard, statusRoute);
   app.use("/api/v1/reports", AuthGuard, reportRoute);
   app.use("/api/v1/notifications", AuthGuard, notificationRoute);
   app.use("/api/v1/coupons", couponRoute);
+  app.use("/api/v1/stock-adjusts", AuthGuard, stockAdjust);
   // app.use("/api/v1/returns", AuthGuard, returnsRoute);
   // public route
   app.use("/api/v1/home", homeRoute);

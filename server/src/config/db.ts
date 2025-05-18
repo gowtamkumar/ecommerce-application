@@ -41,6 +41,7 @@ import { ApplicableCategoryEntity } from "../modules/discount/model/applicable-c
 import { ApplicableBrandEntity } from "../modules/discount/model/applicable-brand.entity";
 import { ApplicableProductEntity } from "../modules/discount/model/applicable-products.entity";
 import { ContactEntity } from "../modules/contact/model/contact.entity";
+import { StockAdjustEntity } from "../modules/stock-adjust/model/stock-adjust.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
 dotenv.config();
@@ -109,6 +110,7 @@ const dbConnection = new DataSource({
     DistrictEntity,
     UpazilaEntity,
     UnionEntity,
+    StockAdjustEntity,
     // VisitorEntity,
     CurrencyEntity,
     BannerEntity,

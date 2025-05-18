@@ -13,6 +13,7 @@ import { getCurrencies } from "@/lib/apis/currency";
 import appConfig from "@/appConfig";
 import SyncGeoLocation from "./SyncGeoLocation";
 import { useRouter, useSearchParams } from "next/navigation";
+import StockAdjust from "./stock-adjust/StockAdjust";
 
 const Size = dynamic(() => import("@/app/dashboard/size/page"), {
   ssr: false,
@@ -157,6 +158,11 @@ export default function Index() {
           label: "Leads",
           key: "leads",
           children: <Lead />,
+        },
+        {
+          label: "Stock Adjust",
+          key: "stock_adjust",
+          children: <StockAdjust />,
         },
         {
           label: "Sync Geo locaton",
