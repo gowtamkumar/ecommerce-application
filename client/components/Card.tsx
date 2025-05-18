@@ -1,6 +1,6 @@
 "use client";
 import appConfig from "@/appConfig";
-import { message, Rate } from "antd";
+import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { FaRegHeart } from "react-icons/fa";

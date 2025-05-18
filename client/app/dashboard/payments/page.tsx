@@ -3,19 +3,16 @@ import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
-import { setAction } from "@/redux/features/global/globalSlice";
+import { useRouter } from "next/navigation";
 
 const PaymentList = dynamic(
   () => import("@/components/dashboard/payment/PaymentList"),
-  { ssr: false },
-  
+  { ssr: false }
 );
 
 export default function Payment() {
   const [tabKey, setTabKey] = useState("payment");
-  const dispatch = useDispatch();
+  const route = useRouter();
 
   return (
     <div className="container bg-white p-3  ">
@@ -32,21 +29,14 @@ export default function Payment() {
         tabBarExtraContent={
           <Button
             size="small"
-            className="capitalize"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  payment: true,
-                  type: ActionType.CREATE,
-                })
-              )
-            }
+            onClick={() => {
+              route.push("/dashboard/payments/new");
+            }}
           >
             <PlusOutlined className="mx-1" /> New Payment
           </Button>
         }
       />
-      {/* <AddPayment /> */}
     </div>
   );
 }

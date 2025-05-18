@@ -121,11 +121,11 @@ const ProductCard: React.FC = () => {
           const url = `/product/${item.slug}`;
           const thumbnailImage = item?.thumbnailImage
             ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
-            : "/pos_software.png";
+            : "/default-placeholder.png";
 
           const hoverImage = item?.hoverImage
             ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
-            : "/pos_software.png";
+            : "/default-placeholder.png";
           return (
             <div key={item.id}>
               {global.productView ? (

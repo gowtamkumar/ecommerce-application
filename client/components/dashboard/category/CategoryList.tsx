@@ -27,9 +27,8 @@ import {
 
 interface DataType {
   key: React.ReactNode;
-  name: string;
+  label: string;
   slug: string;
-  description: string;
   image: string;
   active: boolean;
   children?: DataType[];
@@ -182,12 +181,10 @@ const CategoryList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name"),
+      title: "label",
+      dataIndex: "label",
+      key: "label",
+      ...getColumnSearchProps("label"),
     },
     {
       title: "Image",
@@ -202,21 +199,19 @@ const CategoryList: React.FC = () => {
       ),
     },
     {
-      title: "Noted",
+      title: "Description",
       dataIndex: "description",
       key: "description",
-      ...getColumnSearchProps("description"),
     },
-
     {
       title: "Status",
       key: "active",
+      dataIndex: "active", // Required for getColumnSearchProps to work
       ...getColumnSearchProps("active"),
-      sortDirections: ["descend", "ascend"],
-      // sorter: (a, b) => a.status.length - b.status.length,
-      render: (value) => (
-        <Tag color={value.active ? "green" : "red"}>
-          {value.active ? "Active" : "Inactive"}
+      sorter: (a, b) => Number(a.active) - Number(b.active),
+      render: (active: boolean) => (
+        <Tag color={active ? "green" : "red"}>
+          {active ? "Active" : "Inactive"}
         </Tag>
       ),
     },
@@ -242,8 +237,9 @@ const CategoryList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
+                  url: `${appConfig.baseApiUrl}/uploads/${
+                    newData.image || "no-data.png"
+                  }`,
                 };
                 newData.fileList = [file];
               }

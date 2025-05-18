@@ -148,7 +148,7 @@ export const createDashboardPayment = asyncHandler(
       const updateOrder = {
         id: order.id,
         paymentStatus:
-          amount < due ? PaymentStatus.PertialPaid : PaymentStatus.Paid,
+          amount < due ? PaymentStatus.PartialPaid : PaymentStatus.Paid,
         paymentMethod,
       };
 
@@ -173,6 +173,8 @@ export const createDashboardPayment = asyncHandler(
       });
     }
   }
+
+  
 );
 
 // @desc Update a single Payment

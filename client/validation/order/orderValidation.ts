@@ -12,13 +12,6 @@ export const orderValidationSchema = z.object({
   totalTax: z.number().optional(),
   shippingCharge: z.number().optional(),
   note: z.string().optional(),
-  // phoneNo: z.string({
-  //   required_error: "Phone no is Required",
-  // }),
-  // email: z.string().optional(),
-  // paymentStatus: z.enum(["Paid", "NotPaid", "PertialPaid"], {
-  //   required_error: "Payment Status is required",
-  // }),
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
     required_error: "Payment Method is Required",
   }),

@@ -112,7 +112,7 @@ const dbConnection = new DataSource({
     UnionEntity,
     StockAdjustEntity,
     // VisitorEntity,
-    CurrencyEntity,
+    // CurrencyEntity,
     BannerEntity,
     SettingEntity,
     LeadEntity,

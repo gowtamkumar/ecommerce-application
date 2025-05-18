@@ -12,7 +12,7 @@ export const orderUpdateValidationSchema = z.object({
     required_error: "Phone no is Required",
   }),
   email: z.string().optional(),
-  paymentStatus: z.enum(["Paid", "NotPaid", "PertialPaid"], {
+  paymentStatus: z.enum(["Paid", "Not Paid", "PertialPaid"], {
     required_error: "Payment Status is required",
   }),
 

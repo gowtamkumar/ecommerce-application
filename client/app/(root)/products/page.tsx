@@ -2,7 +2,7 @@ import ModalLogin from "@/components/website/login/ModalLogin";
 import dynamic from "next/dynamic";
 
 const CategoryHeader = dynamic(
-  () => import("@/components/website/Sidebar-filter/FilterHeader")
+  () => import("@/components/website/sidebar-filter/FilterHeader")
 );
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const Header = dynamic(() => import("@/components/website/header/Header"));
@@ -10,7 +10,7 @@ const ProductCard = dynamic(
   () => import("@/components/website/product/ProductCard")
 );
 const FilterSidebar = dynamic(
-  () => import("@/components/website/Sidebar-filter/Index")
+  () => import("@/components/website/sidebar-filter/Index")
 );
 const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
 

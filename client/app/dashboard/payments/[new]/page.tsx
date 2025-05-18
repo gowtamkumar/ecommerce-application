@@ -144,7 +144,6 @@ export default function OrderTracker() {
                   <h1 className="font-bold">Delivery Address</h1>
                   <p> {order?.shippingAddress?.type}:</p>
                   <p>{order?.shippingAddress?.address}</p>
-
                   <p>Phone No: {order?.shippingAddress?.phoneNo}</p>
                 </div>
               </div>

@@ -317,6 +317,7 @@ function formatCategoryTree(node: any): any {
     key: node.id.toString(),
     // value: node.id.toString(),
     slug: node.slug,
+    active: node.active,
     label: node.name,
     title: node.name,
     children:

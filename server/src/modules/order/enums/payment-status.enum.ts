@@ -1,7 +1,7 @@
 export enum PaymentStatus {
   Paid = "Paid",
-  NotPaid = "NotPaid",
+  NotPaid = "Not Paid",
   Failed = "Failed",
   Canceled = "Canceled",
-  PertialPaid = "PertialPaid",
+  PartialPaid = "Partial Paid",
 }

@@ -226,7 +226,7 @@ note,
 cancel_resson
 coupon_id,
 shipping_address_id,
-payment_status(Paid/NotPaid/PertialPaid),
+payment_status(Paid/Not Paid/Partial Paid),
 payment_method(cash/ssecommer/strip)
 payment_type(Online/Offline)
 payment_transaction_id,
