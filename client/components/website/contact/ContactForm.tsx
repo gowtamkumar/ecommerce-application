@@ -60,18 +60,18 @@ export default function ContactForm() {
             },
           ]}
         >
-          <Input placeholder="Enter Name" />
+          <Input placeholder="Enter Name" size="large" />
         </Form.Item>
         <Form.Item
           name="email"
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: " E-mail is Required",
-          //   },
-          // ]}
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: " E-mail is Required",
+        //   },
+        // ]}
         >
-          <Input placeholder="Enter E-mail" />
+          <Input placeholder="Enter E-mail" size="large" />
         </Form.Item>
 
         <Form.Item
@@ -84,7 +84,7 @@ export default function ContactForm() {
             },
           ]}
         >
-          <Input placeholder="Enter Phone No" />
+          <Input placeholder="Enter Phone No" size="large" />
         </Form.Item>
 
         <Form.Item
@@ -96,7 +96,7 @@ export default function ContactForm() {
             },
           ]}
         >
-          <Input placeholder="Enter Subject" />
+          <Input placeholder="Enter Subject" size="large" />
         </Form.Item>
 
         <Form.Item
@@ -104,22 +104,26 @@ export default function ContactForm() {
           rules={[
             {
               required: true,
-              message: "message is Required",
+              message: "Message is Required",
             },
           ]}
         >
-          <Input.TextArea rows={6} placeholder="Enter" />
+          <Input.TextArea rows={6} placeholder="Enter" size="large" />
         </Form.Item>
 
-        <Form.Item className="flex gap-2">
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="me-2"
-            loading={loading}
-          >
-            Send
-          </Button>
+        <Form.Item>
+          <div className="flex gap-2">
+            <Button htmlType="reset">Reset</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="me-2"
+              loading={loading}
+            >
+              Send
+            </Button>
+
+          </div>
         </Form.Item>
         <div className="alert">{success}</div>
       </Form>

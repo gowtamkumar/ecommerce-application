@@ -11,8 +11,8 @@ export default function SecondWeight() {
           </Link>
         </li>
         <li className="mb-4">
-          <Link href="/terms-conditions" className="hover:underline">
-            Term of SErvice
+          <Link href="/support-and-help" className="hover:underline">
+            Support & Help
           </Link>
         </li>
         <li className="mb-4">
@@ -20,7 +20,6 @@ export default function SecondWeight() {
             Privacy Policy
           </Link>
         </li>
-
       </ul>
     </div>
   );

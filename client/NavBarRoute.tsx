@@ -16,14 +16,15 @@ import {
   MdDashboard,
   MdLocalShipping,
   MdOutlineDiscount,
+  MdOutlineSpatialTracking,
   MdPayment,
 } from "react-icons/md";
 import { IoReorderFour } from "react-icons/io5";
-import { RiBatteryChargeFill } from "react-icons/ri";
+import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
 import { TbReport } from "react-icons/tb";
 import { IoIosSettings } from "react-icons/io";
-
-// key as like features
+import { SiWish } from "react-icons/si";
+import { CiLogout } from "react-icons/ci";
 
 const handleBackup = async (): Promise<void> => {
   const date = new Date();
@@ -77,13 +78,13 @@ const navbarRoute = [
     children: [
       {
         key: "new_product",
-        icon: <FaRegCircle className="h-4 w-4 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
         label: <Link href="/dashboard/product/new">New Product</Link>,
         route: "true",
       },
       {
         key: "products",
-        icon: <FaRegCircle className="h-4 w-4 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
         label: <Link href="/dashboard/product">Products</Link>,
         route: "true",
       },
@@ -148,13 +149,13 @@ const navbarRoute = [
     children: [
       {
         key: "new_payment",
-        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
         label: <Link href="/dashboard/payments/new">New payment</Link>,
         route: "true",
       },
       {
         key: "Payment",
-        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
         label: <Link href="/dashboard/payments">Payments</Link>,
         route: "true",
       },
@@ -229,13 +230,13 @@ const navbarRoute = [
     children: [
       {
         key: "new_discount",
-        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
         label: <Link href="/dashboard/discounts/new">New discount</Link>,
         route: "true",
       },
       {
         key: "discounts",
-        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
         label: <Link href="/dashboard/discounts">Discounts</Link>,
         route: "true",
       },
@@ -313,17 +314,17 @@ const profileRoute: MenuProps["items"] = [
   {
     key: "my_account",
     label: <Link href={"/profile"}>My Account</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <RiAccountCircleLine className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "orders",
     label: <Link href="/profile">Orders</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "wishlist",
     label: <Link href="/profile">Wishlist</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <SiWish className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "order_track",
@@ -352,27 +353,27 @@ const userProfileRoute: MenuProps["items"] = [
   {
     key: "my_account",
     label: <Link href="/profile?tab=my_account">My Account</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <RiAccountCircleLine className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "orders",
     label: <Link href="/profile?tab=orders">Orders</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "wishlist",
     label: <Link href="/profile?tab=wishlist">Wishlist</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <SiWish className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "order_track",
     label: <Link href="/profile?tab=track_order">Order Track</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdOutlineSpatialTracking className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "logout",
     label: <Link href="/">Logout</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <CiLogout className="h-5 w-5 text-blue-500" />,
     onClick: () => {
       signOut();
     },

@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-
 const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
   const {
     total_completed_product_count,
@@ -43,27 +42,27 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
               <span>{+total_pending_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cancelled:</span>
+              <span>Cancelled</span>
               <span>{+total_canceled_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Approved:</span>
+              <span>Approved</span>
               <span>{+total_approved_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Processing:</span>
+              <span>Processing</span>
               <span>{+total_processing_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>On Shipping:</span>
+              <span>On Shipping</span>
               <span>{+total_on_shipping_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shipped:</span>
+              <span>Shipped</span>
               <span>{+total_shipped_order_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Completed:</span>
+              <span>Completed</span>
               <span>{+total_completed_order_count}</span>
             </div>
           </div>
@@ -80,27 +79,27 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
               <span>{+total_pending_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cancelled:</span>
+              <span>Cancelled</span>
               <span>{+total_canceled_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Approved:</span>
+              <span>Approved</span>
               <span>{+total_approved_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Processing:</span>
+              <span>Processing</span>
               <span>{+total_processing_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>On Shipping:</span>
+              <span>On Shipping</span>
               <span>{+total_on_shipping_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shipped:</span>
+              <span>Shipped</span>
               <span>{+total_shipped_product_count}</span>
             </div>
             <div className="flex justify-between">
-              <span>Completed:</span>
+              <span>Completed</span>
               <span>{+total_completed_product_count}</span>
             </div>
           </div>
@@ -117,27 +116,27 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
               <span>{total_pending_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cancelled:</span>
+              <span>Cancelled</span>
               <span>{total_canceled_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>Approved:</span>
+              <span>Approved</span>
               <span>{total_approved_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>Processing:</span>
+              <span>Processing</span>
               <span>{total_processing_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>On Shipping:</span>
+              <span>On Shipping</span>
               <span>{total_on_shipping_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shipped:</span>
+              <span>Shipped</span>
               <span>{total_shipped_order_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>Completed:</span>
+              <span>Completed</span>
               <span>{total_completed_order_amount || "0.00"}</span>
             </div>
           </div>
@@ -150,11 +149,11 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
           </h2>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>COD Order Amount::</span>
+              <span>COD Order Amount</span>
               <span>{payments?.cash_debit_amount || "0.00"}</span>
             </div>
             <div className="flex justify-between">
-              <span>SSL Order Amount:</span>
+              <span>SSL Order Amount</span>
               <span>{payments?.ssl_debit_amount || "0.00"}</span>
             </div>
           </div>

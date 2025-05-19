@@ -1,21 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, DatePicker, Spin, Statistic } from "antd";
-import {
-  SendOutlined,
-  ShoppingOutlined,
-  RollbackOutlined,
-  LineChartOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-} from "@ant-design/icons";
+import { DatePicker, Spin } from "antd";
 import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
 import { errorNotification } from "@/lib/utils/notification";
 const LossProfit = dynamic(() => import("./LossProfit"));
-// const WidgetStats = dynamic(() => import("./components/WidgetStats"));
-
 const StockReport = dynamic(() => import("./components/StockReport"));
 const TopCustomer = dynamic(() => import("./components/TopCustomer"));
 const StockAlert = dynamic(() => import("./components/StockAlert"));
@@ -33,7 +23,6 @@ const Dashboard = () => {
     top_customers,
     product_alert_stock_report,
     loss_profit,
-    total_sale_return_shipping_amount,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
@@ -53,8 +42,6 @@ const Dashboard = () => {
         startDate: firstDateOfMonth.toISOString(),
         endDate: lastDateOfMonth.toISOString(),
       });
-
-      console.log("results", results);
 
       if (!results.success) {
         errorNotification({ message: results.message });

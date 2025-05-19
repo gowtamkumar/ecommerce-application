@@ -10,8 +10,12 @@ const ScrollToCart: React.FC = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!cart?.carts?.cartSummary?.totalQty) {
+      setMounted(false);
+    } else {
+      setMounted(true);
+    }
+  }, [cart?.carts?.cartSummary?.totalQty]);
 
   if (!mounted) return null; // 👈 important! don't render until mounted
 

@@ -72,9 +72,8 @@ export default function MyAccount() {
         name: `image ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.image,
-        url: `${appConfig.baseApiUrl}/uploads/${
-          newData.image || "no-data.png"
-        }`,
+        url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
+          }`,
       };
       newData.fileList = [newfile];
     }
@@ -343,23 +342,24 @@ export default function MyAccount() {
           </Form.Item>
         </div>
         <Form.Item {...tailLayout}>
-          <Button
-            size="small"
-            type="default"
-            onClick={() => resetFormData(formValues)}
-          >
-            Reset
-          </Button>
-          <Button
-            className="mx-2"
-            size="small"
-            type="primary"
-            htmlType="submit"
-            loading={global.loading.save}
-            disabled={global.loading.save}
-          >
-            {global.action.payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="small"
+              type="default"
+              onClick={() => resetFormData(formValues)}
+            >
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              loading={global.loading.save}
+              disabled={global.loading.save}
+            >
+              {global.action.payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
 

@@ -75,6 +75,7 @@ export default function HeaderRight() {
         <Dropdown
           menu={{ items: userProfileRoute as any }}
           placement="bottomLeft"
+        
           trigger={["click"]}
         >
           <Avatar

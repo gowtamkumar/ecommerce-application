@@ -84,7 +84,6 @@ export default function OrderTracker() {
 
     {
       title: "Unit Price",
-      // dataIndex: "unitPrice",
       key: "unitPrice",
       render: (v: any) => {
         return <span>{(+v.unitPrice + +v.taxAmount).toFixed(2)}</span>;
@@ -98,17 +97,16 @@ export default function OrderTracker() {
     },
 
     { title: "Qty", dataIndex: "qty", key: "qty" },
-   
+
     {
       title: "Sub Total",
       key: "subTotal",
       dataIndex: "subTotal",
     },
-
   ];
 
   return (
-    <>
+    <div className="mt-2">
       <Form
         form={form}
         onFinish={handleOrderTracking}
@@ -293,6 +291,6 @@ export default function OrderTracker() {
       ) : (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
-    </>
+    </div>
   );
 }

@@ -16,10 +16,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 import { ToastContainer } from "react-toastify";
-// import ScrollToCart from "@/components/website/ScrollToCart";
 import dynamic from "next/dynamic";
-
-const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
 const CookieWebsite = dynamic(
   () => import("@/components/website/CookieBanner")

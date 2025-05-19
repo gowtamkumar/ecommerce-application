@@ -20,7 +20,6 @@ export default function CategoryProduct({ id }: { id: string }) {
         perPage: 12,
         page: 1,
       });
-      console.log("Fetched Products:", products);
       setProducts(products?.data || []);
     } catch (error) {
       console.error("Failed to fetch products:", error);
