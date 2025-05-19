@@ -30,7 +30,6 @@ export default function Index() {
     dispatch(setLoading({ loading: true }));
     try {
       const setting = await getSettings();
-
       const newData = setting.data;
       if (newData?.image) {
         const newfile = {

@@ -14,11 +14,13 @@ import appConfig from "@/appConfig";
 import Image from "next/image";
 import robots from "@/app/robots";
 import { useRouter } from "next/navigation";
+import { setLoading, setSetting } from "@/redux/features/global/globalSlice";
+import HeaderLogo from "../website/header/Logo";
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
-  const [setting, setSetting] = useState<{ logo: string }>({ logo: "" });
+  // const [setting, setSetting] = useState<{ logo: string }>({ logo: "" });
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const route = useRouter();
@@ -41,9 +43,8 @@ const Sidebar = () => {
 
   useEffect(() => {
     (async () => {
-      const logo = await getSettings();
-      const singleLogo = logo.data ? logo.data[0]?.image : null;
-      setSetting({ logo: singleLogo });
+      const setting = await getSettings();
+      dispatch(setSetting(setting.data));
     })();
   }, []);
 
@@ -103,19 +104,7 @@ const Sidebar = () => {
             route.push("/");
           }}
         >
-          <Image
-            src={
-              setting?.logo
-                ? `${appConfig.baseApiUrl}/uploads/${setting.logo}`
-                : "/pos_software.png"
-            }
-            alt={setting?.logo}
-            loading="lazy"
-            width={50}
-            height={50}
-            // className="mx-auto h-5 w-auto"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+          <HeaderLogo />
         </div>
         <Menu theme="dark" mode="inline" items={filteredChildren} />
       </Sider>

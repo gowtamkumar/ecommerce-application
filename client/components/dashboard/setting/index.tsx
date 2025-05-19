@@ -1,13 +1,8 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
-import {
-  selectGlobal,
-  setFormValues,
-} from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
+
 
 import SyncGeoLocation from "./SyncGeoLocation";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -35,45 +30,8 @@ const Lead = dynamic(() => import("./lead/Lead"), { ssr: false });
 
 export default function Index() {
   const [tabKey, setTabKey] = useState<any>("sizes");
-  // const [currencies, setCurrencies] = useState([] as any);
-  const global = useSelector(selectGlobal);
-  const dispatch = useDispatch();
   const route = useRouter();
   const params = useSearchParams();
-  const tab = params.get("tab");
-
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   setTabKey(tab);
-  //   // const fetchSettings = async () => {
-  //   //   try {
-  //   //     const setting = await getSettings();
-
-  //   //     // const currency = await getCurrencies();
-  //   //     if (isMounted) {
-  //   //       const data = setting?.data;
-  //   //       const newfile = {
-  //   //         uid: Math.random() * 1000 + "",
-  //   //         name: `logo ${Math.random() * 10000 + ""}`,
-  //   //         status: "done",
-  //   //         fileName: data.image,
-  //   //         url: `${appConfig.baseApiUrl}/uploads/${
-  //   //           data.image || "no-data.png"
-  //   //         }`,
-  //   //       };
-  //   //       dispatch(setSetting({ ...data, fileList: [newfile] }));
-  //   //       // setCurrencies(currency.data);
-  //   //     }
-  //   //   } catch (error) {
-  //   //     console.error("Failed to fetch settings:", error);
-  //   //   }
-  //   // };
-  //   // fetchSettings();
-  //   return () => {
-  //     isMounted = false;
-  //     dispatch(setFormValues({}));
-  //   };
-  // }, [dispatch, global.action]);
 
   return (
     <Tabs

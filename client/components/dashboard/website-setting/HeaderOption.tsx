@@ -24,10 +24,17 @@ const HeaderOption = () => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
+    const { id, leftText } = values;
+
+    const payload = {
+      id,
+      headerOption: { leftText },
+    };
+
     try {
-      const res = values.id
-        ? await updateSetting(values)
-        : await saveSetting(values);
+      const res = id
+        ? await updateSetting(payload)
+        : await saveSetting(payload);
 
       if (!res?.success) {
         errorNotification({ message: res?.message || "Operation failed" });
@@ -49,20 +56,18 @@ const HeaderOption = () => {
     }
   };
 
-
   const layout = {
     labelCol: { span: 3 },
-    wrapperCol: { span: 12 },
+    wrapperCol: { span: 10 },
   };
 
-  const tailLayout = {
-    wrapperCol: { offset: 3, span: 12 },
-  };
+
 
   return (
     <div className="container mx-auto">
       <Form
         {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
@@ -73,29 +78,23 @@ const HeaderOption = () => {
         </Form.Item>
 
         <Form.Item
-          name="companyName"
-          label="Company Name"
+          name="leftText"
+          label="Left Text"
           rules={[
             {
               required: true,
-              message: "Company Name is required",
+              message: "Left Text is required",
             },
           ]}
         >
           <Input placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item name="address" label="Address">
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-    
+        <Form.Item>
           <Button
             size="small"
             color="primary"
             htmlType="submit"
-            className="capitalize"
             loading={loading}
           >
             Save

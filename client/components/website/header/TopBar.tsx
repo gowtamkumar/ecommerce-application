@@ -1,14 +1,18 @@
-import { Button } from "antd";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Link from "next/link";
 import { BiUser } from "react-icons/bi";
+import { useSelector } from "react-redux";
 
 export default function TopBar() {
+  const global = useSelector(selectGlobal);
+  const setting = global?.setting?.headerOption?.leftText || "";
+
   return (
     <div className="container flex justify-between items-center mx-auto">
       <div className="text-sm flex gap-1 items-center p-2">
-        <span> We are available 24/7, Need help?</span>
+        <span> {setting}</span>
         <a href="tel:+01767-163576" className="text-blue-500">
-          +01767-163576
+          +{global.setting.phone}
         </a>
       </div>
 

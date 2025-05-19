@@ -16,7 +16,7 @@ const SocialIcon = dynamic(() => import("./SocialIcon"));
 
 export default function WebFooter() {
   return (
-    <footer className="bg-gray-800  text-white">
+    <footer className="bg-gray-800 text-white">
       <FooterTop />
       <div className="container mx-auto">
         <div className="grid grid-cols-1 text-center md:text-start gap-2 py-6 lg:py-8 md:grid-cols-4 ">
