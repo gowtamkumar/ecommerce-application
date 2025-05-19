@@ -20,17 +20,17 @@ export default function SyncGeoLocation() {
       dispatch(setLoading({}));
     }
 
-
     console.log("www", syncGeo);
   }
   return (
     <div className="container mx-auto flex items-center h-lvh justify-center">
       <Button
+        type="primary"
         onClick={() => syncFun()}
         loading={global.loading?.sync}
         disabled={global.loading?.sync}
       >
-        Sync
+        Sync Geo locaton
       </Button>
     </div>
   );

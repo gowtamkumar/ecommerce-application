@@ -49,8 +49,6 @@ const StockAdjustList: React.FC = () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getStockAdjusts();
-      console.log("res", res);
-
       setStockAdjusts(res?.data);
     } catch (err: any) {
       errorNotification({ message: err.message });

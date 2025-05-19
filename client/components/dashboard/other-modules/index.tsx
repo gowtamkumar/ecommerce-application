@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
-
-import SyncGeoLocation from "./SyncGeoLocation";
 import { useRouter, useSearchParams } from "next/navigation";
 import StockAdjust from "./stock-adjust/StockAdjust";
 
@@ -38,7 +36,7 @@ export default function Index() {
       activeKey={tabKey}
       onChange={(key) => {
         setTabKey(key);
-        route.push(`/dashboard/setting?tab=${key}`);
+        route.push(`/dashboard/other-modules?tab=${key}`);
       }}
       type="card"
       items={[
@@ -73,16 +71,7 @@ export default function Index() {
           key: "reviews",
           children: <Review />,
         },
-        // {
-        //   label: "Status",
-        //   key: "status",
-        //   children: <Status />,
-        // },
-        // {
-        //   label: "Post",
-        //   key: "post",
-        //   children: <Post />,
-        // },
+        
         {
           label: "Leads",
           key: "leads",
@@ -93,11 +82,7 @@ export default function Index() {
           key: "stock_adjust",
           children: <StockAdjust />,
         },
-        {
-          label: "Sync Geo locaton",
-          key: "geo_locations",
-          children: <SyncGeoLocation />,
-        },
+       
       ]}
     />
   );

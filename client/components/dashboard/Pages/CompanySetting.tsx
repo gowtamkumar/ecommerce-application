@@ -58,6 +58,8 @@ const CompanySetting = () => {
 
       successNotification({ message: res.message });
     } catch (error: any) {
+     
+      
       errorNotification({
         message:
           error?.response?.data?.message ||
@@ -191,7 +193,7 @@ const CompanySetting = () => {
             <Upload
               name="image"
               listType="picture-card"
-              fileList={global.setting?.fileList || []}
+              fileList={global?.setting?.fileList || []}
               onRemove={async (v) => {
                 form.setFieldsValue({ image: null, fileList: [] });
                 dispatch(setSetting({ image: null, fileList: [] }));
@@ -206,7 +208,7 @@ const CompanySetting = () => {
               customRequest={customUploadRequest}
               maxCount={1}
             >
-              {global.setting?.fileList?.length >= 1 ? null : uploadButton}
+              {global?.setting?.fileList?.length >= 1 ? null : uploadButton}
             </Upload>
           </ImgCrop>
         </Form.Item>

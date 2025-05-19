@@ -7,9 +7,8 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "@/constants/constants";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { getDashboardProducts } from "@/lib/apis/product";
-import { saveStockAdjust, updateStockAdjust } from "@/lib/apis/stock-adjust";
+import { saveStockAdjust } from "@/lib/apis/stock-adjust";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import {
   errorNotification,
@@ -129,8 +128,6 @@ const AddStockAdjust = () => {
             }
             onChange={(v) => {
               const findProduct = products.find((item: any) => item.id === v);
-              console.log("findProduct", findProduct);
-
               form.setFieldsValue(findProduct ?? { productVariants: [] });
             }}
           >
@@ -150,8 +147,8 @@ const AddStockAdjust = () => {
                 <table width="100%">
                   <thead className="mb-1">
                     <tr className="text-start">
-                      <th className="text-start w-1/6">Size</th>
                       <th className="text-start w-1/6">Color</th>
+                      <th className="text-start w-1/6">Size</th>
                       <th className="text-start w-1/6">Unit Price</th>
                       <th className="text-start w-1/6">Purchase Price</th>
                       <th className="text-start w-1/6">Stock Qty</th>

@@ -18,9 +18,10 @@ import {
   MdOutlineDiscount,
   MdOutlineSpatialTracking,
   MdPayment,
+  MdViewModule,
 } from "react-icons/md";
 import { IoReorderFour } from "react-icons/io5";
-import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
+import { RiAccountCircleLine, RiBatteryChargeFill, RiPagesFill } from "react-icons/ri";
 import { TbReport } from "react-icons/tb";
 import { IoIosSettings } from "react-icons/io";
 import { SiWish } from "react-icons/si";
@@ -169,12 +170,6 @@ const navbarRoute = [
     route: "true",
   },
   {
-    key: "today_order",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/today-order">Today Order</Link>,
-    route: "true",
-  },
-  {
     key: "order",
     icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/orders">Orders</Link>,
@@ -297,15 +292,15 @@ const navbarRoute = [
     route: "true",
   },
   {
-    key: "setting_manage",
-    icon: <IoIosSettings className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/setting?tab=company_setting">Setting</Link>,
+    key: "other_module",
+    icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/other-modules?tab=company_setting">Other Module</Link>,
     route: "true",
   },
   {
-    key: "web_setting",
-    icon: <IoIosSettings className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/website-setting">Web Setting </Link>,
+    key: "pages",
+    icon: <RiPagesFill className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/pages">Pages</Link>,
     route: "true",
   },
 ];

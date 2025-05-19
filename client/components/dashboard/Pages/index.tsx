@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import appConfig from "@/appConfig";
 import { errorNotification } from "@/lib/utils/notification";
 import CompanySetting from "./CompanySetting";
+import SyncGeoLocation from "./SyncGeoLocation";
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
@@ -36,23 +37,21 @@ export default function Index() {
           uid: Math.random() * 1000 + "",
           name: `logo ${Math.random() * 10000 + ""}`,
           status: "done",
-          fileName: newData.image,
-          url: `${appConfig.baseApiUrl}/uploads/${
-            newData.image || "no-data.png"
-          }`,
+          fileName: newData?.image,
+          url: `${appConfig.baseApiUrl}/uploads/${newData?.image || "no-data.png"
+            }`,
         };
         newData.fileList = [newfile];
       }
 
-      if (newData?.footerOption.image) {
+      if (newData?.footerOption?.image) {
         const newfile = {
           uid: Math.random() * 1000 + "",
           name: `logo ${Math.random() * 10000 + ""}`,
           status: "done",
-          fileName: newData.footerOption.image,
-          url: `${appConfig.baseApiUrl}/uploads/${
-            newData.footerOption.image || "no-data.png"
-          }`,
+          fileName: newData?.footerOption?.image,
+          url: `${appConfig.baseApiUrl}/uploads/${newData?.footerOption?.image || "no-data.png"
+            }`,
         };
         newData.footerOption.fileList = [newfile];
       }
@@ -72,7 +71,6 @@ export default function Index() {
       activeKey={tabKey}
       onChange={(key) => {
         setTabKey(key);
-        // route.push(`/dashboard/setting?tab=${key}`);
       }}
       type="card"
       items={[
@@ -124,6 +122,11 @@ export default function Index() {
           label: "Footer Option",
           key: "footer_option",
           children: <FooterOption />,
+        },
+        {
+          label: "Sync Geo locaton",
+          key: "geo_locations",
+          children: <SyncGeoLocation />,
         },
       ]}
     />

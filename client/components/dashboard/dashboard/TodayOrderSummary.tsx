@@ -32,10 +32,10 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
     <>
       <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl shadow p-4 w-full">
-          <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
+          <h3 className="font-semibold text-lg mb-2 flex items-center justify-between">
             Total Order Summary
             <span>🛒</span>
-          </h2>
+          </h3>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>Pending</span>
