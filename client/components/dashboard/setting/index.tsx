@@ -3,14 +3,12 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
-import { getSettings } from "@/lib/apis/setting";
 import {
   selectGlobal,
   setFormValues,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { getCurrencies } from "@/lib/apis/currency";
-import appConfig from "@/appConfig";
+
 import SyncGeoLocation from "./SyncGeoLocation";
 import { useRouter, useSearchParams } from "next/navigation";
 import StockAdjust from "./stock-adjust/StockAdjust";
@@ -33,59 +31,49 @@ const Banner = dynamic(() => import("@/app/dashboard/banner/page"), {
 const Review = dynamic(() => import("@/app/dashboard/review/page"), {
   ssr: false,
 });
-// const Status = dynamic(
-//   () => import("@/app/(dashboard)/dashboard/status/page"),
-//   { ssr: false }
-// );
-// const EmailSetting = dynamic(() => import("./EmailSetting"), { ssr: false });
 const Lead = dynamic(() => import("./lead/Lead"), { ssr: false });
-// const Currency = dynamic(() => import("./currency/Currency"), { ssr: false });
-const CompanySetting = dynamic(() => import("./CompanySetting"), {
-  ssr: false,
-});
 
 export default function Index() {
-  const [tabKey, setTabKey] = useState<any>("company_setting");
-  const [currencies, setCurrencies] = useState([] as any);
+  const [tabKey, setTabKey] = useState<any>("sizes");
+  // const [currencies, setCurrencies] = useState([] as any);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
   const params = useSearchParams();
   const tab = params.get("tab");
 
-  useEffect(() => {
-    let isMounted = true;
-    setTabKey(tab);
-    const fetchSettings = async () => {
-      try {
-        const setting = await getSettings();
-        console.log("setting", setting);
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   setTabKey(tab);
+  //   // const fetchSettings = async () => {
+  //   //   try {
+  //   //     const setting = await getSettings();
 
-        const currency = await getCurrencies();
-        if (isMounted) {
-          const data = setting?.data;
-          const newfile = {
-            uid: Math.random() * 1000 + "",
-            name: `logo ${Math.random() * 10000 + ""}`,
-            status: "done",
-            fileName: data.image,
-            url: `${appConfig.baseApiUrl}/uploads/${
-              data.image || "no-data.png"
-            }`,
-          };
-          dispatch(setFormValues({ ...data, fileList: [newfile] }));
-          setCurrencies(currency.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch settings:", error);
-      }
-    };
-    fetchSettings();
-    return () => {
-      isMounted = false;
-      dispatch(setFormValues({}));
-    };
-  }, [dispatch, global.action]);
+  //   //     // const currency = await getCurrencies();
+  //   //     if (isMounted) {
+  //   //       const data = setting?.data;
+  //   //       const newfile = {
+  //   //         uid: Math.random() * 1000 + "",
+  //   //         name: `logo ${Math.random() * 10000 + ""}`,
+  //   //         status: "done",
+  //   //         fileName: data.image,
+  //   //         url: `${appConfig.baseApiUrl}/uploads/${
+  //   //           data.image || "no-data.png"
+  //   //         }`,
+  //   //       };
+  //   //       dispatch(setSetting({ ...data, fileList: [newfile] }));
+  //   //       // setCurrencies(currency.data);
+  //   //     }
+  //   //   } catch (error) {
+  //   //     console.error("Failed to fetch settings:", error);
+  //   //   }
+  //   // };
+  //   // fetchSettings();
+  //   return () => {
+  //     isMounted = false;
+  //     dispatch(setFormValues({}));
+  //   };
+  // }, [dispatch, global.action]);
 
   return (
     <Tabs
@@ -98,21 +86,6 @@ export default function Index() {
       }}
       type="card"
       items={[
-        {
-          label: "Company Setting",
-          key: "company_setting",
-          children: <CompanySetting />,
-        },
-        // {
-        //   label: "Email Config",
-        //   key: "email_config",
-        //   children: <EmailSetting />,
-        // },
-        // {
-        //   label: "Currency Setting",
-        //   key: "currency_stting",
-        //   children: <Currency />,
-        // },
         {
           label: "Sizes",
           key: "sizes",

@@ -1,22 +1,7 @@
 "use client";
-import {
-  Form,
-  Card,
-  Input,
-  Button,
-  Typography,
-  Select,
-  Space,
-  notification,
-  Checkbox,
-} from "antd";
+import { Form, Card, Input, Button, Select, Space, Checkbox } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import {
-  getDashboardMenus,
-  getMenus,
-  saveMenu,
-  updateMenu,
-} from "@/lib/apis/admin/menu";
+import { getDashboardMenus, saveMenu, updateMenu } from "@/lib/apis/admin/menu";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
@@ -53,7 +38,6 @@ const Index = () => {
     const handleRes = await handleAsyncAction(result, messageData, dispatch);
 
     console.log(handleRes);
-
 
     if (handleRes.success) {
       form.setFieldsValue({

@@ -74,7 +74,6 @@ export default async function RootLayout({
         <AuthProvider session={session}>
           <StoreProvider>
             <AntdRegistry>
-              {/* <CartSync /> */}
               {children}
               <ScrollToTop />
               <CookieWebsite />

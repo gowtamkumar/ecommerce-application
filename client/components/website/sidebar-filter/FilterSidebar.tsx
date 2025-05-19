@@ -117,7 +117,7 @@ export default function FilterSidebar() {
 
       <ul className="space-y-2">
         <Divider orientation="left" className="font-semibold">
-          <p className="font-semibold">Category </p>
+          Category
         </Divider>
         <li>
           <Checkbox.Group
@@ -140,8 +140,8 @@ export default function FilterSidebar() {
       </ul>
 
       <ul className="space-y-2">
-        <Divider orientation="left">
-          <p className="font-semibold">Brands</p>
+        <Divider orientation="left" className="font-semibold">
+          Brands
         </Divider>
         <li>
           <label className="flex items-center">

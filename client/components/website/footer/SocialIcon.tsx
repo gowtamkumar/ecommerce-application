@@ -1,4 +1,5 @@
 "use client";
+import appConfig from "@/appConfig";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,16 +22,18 @@ export default function SocialIcon() {
       <span className="text-sm  sm:text-center text-black">
         © {new Date().getFullYear()} {settingData?.footerOption?.copyRight}
       </span>
-      <div className="bg-black">
-        <div className="w-full max-w-[900px] mx-auto">
-          <Image
-            src="/banglargonji-payment-methods.png.webp"
-            alt="Payment Gateway"
-            width={1000}
-            height={1000}
-            className="w-full h-auto object-contain"
-          />
-        </div>
+      <div className="w-full max-w-[900px] mx-auto">
+        <Image
+          src={
+            settingData?.footerOption?.image
+              ? `${appConfig.baseApiUrl}/uploads/${settingData?.footerOption?.image}`
+              : "/banglargonji-payment-methods.png.webp"
+          }
+          alt="Payment Gateway"
+          width={900}
+          height={100} // This helps Next.js set aspect ratio
+          className="w-auto h-[50px] mx-auto object-contain"
+        />
       </div>
       <div className="flex justify-center mt-4 md:justify-center md:mt-0 space-x-5 rtl:space-x-reverse text-center text-black">
         {settingData?.socialLink?.linkedinUrl && (

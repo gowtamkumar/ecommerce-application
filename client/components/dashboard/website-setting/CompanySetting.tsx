@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { Button, Form, Image, Input, Modal, Upload } from "antd";
 import {
   selectGlobal,
-  setFormValues,
+  setAction,
+  setSetting,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
@@ -12,10 +13,13 @@ import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import appConfig from "@/appConfig";
 import {
-  handleAsyncAction,
   handlePreview,
   handlePreviewCancel,
 } from "@/lib/utils/commonFunctions";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -30,25 +34,41 @@ const uploadButton = (
   </div>
 );
 
-const CompanySetting = ({ currencies }: any) => {
+const CompanySetting = () => {
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  form.setFieldsValue(global.formValues);
+  form.setFieldsValue(global.setting);
 
   const handleSubmit = async (values: any) => {
-    const result = values.id
-      ? () => updateSetting(values)
-      : () => saveSetting(values);
+    setLoading(true);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
+    try {
+      const res = values.id
+        ? await updateSetting(values)
+        : await saveSetting(values);
 
-    await handleAsyncAction(result, messageData, dispatch);
+      if (!res?.success) {
+        errorNotification({ message: res?.message || "Operation failed" });
+        return;
+      }
+
+      successNotification({ message: res.message });
+    } catch (error: any) {
+      errorNotification({
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Unexpected error",
+      });
+    } finally {
+      setLoading(false);
+      dispatch(setSetting({}));
+      dispatch(setAction({}));
+    }
   };
 
   const customUploadRequest = async (options: any) => {
@@ -76,8 +96,8 @@ const CompanySetting = ({ currencies }: any) => {
         image: newFileName,
       });
       dispatch(
-        setFormValues({
-          ...global.formValues,
+        setSetting({
+          ...global.setting,
           fileList: [newfile],
           image: newFileName,
         })
@@ -88,24 +108,9 @@ const CompanySetting = ({ currencies }: any) => {
     }
   };
 
-  const resetFormData = (value: any) => {
-    if (value?.id) {
-      form.setFieldsValue(value);
-      dispatch(setFormValues(form.getFieldsValue()));
-    } else {
-      form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
-    }
-    setLoading(false);
-  };
-
   const layout = {
     labelCol: { span: 3 },
-    wrapperCol: { span: 12 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 3, span: 12 },
+    wrapperCol: { span: 10 },
   };
 
   const normFile = (e: { fileList: string }) => {
@@ -119,6 +124,7 @@ const CompanySetting = ({ currencies }: any) => {
     <div className="container mx-auto">
       <Form
         {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
@@ -185,10 +191,10 @@ const CompanySetting = ({ currencies }: any) => {
             <Upload
               name="image"
               listType="picture-card"
-              fileList={global.formValues?.fileList || []}
+              fileList={global.setting?.fileList || []}
               onRemove={async (v) => {
                 form.setFieldsValue({ image: null, fileList: [] });
-                dispatch(setFormValues({ image: null, fileList: [] }));
+                dispatch(setSetting({ image: null, fileList: [] }));
 
                 if (v.fileName) {
                   const params = { filename: v.fileName };
@@ -200,7 +206,7 @@ const CompanySetting = ({ currencies }: any) => {
               customRequest={customUploadRequest}
               maxCount={1}
             >
-              {global.formValues?.fileList?.length >= 1 ? null : uploadButton}
+              {global.setting?.fileList?.length >= 1 ? null : uploadButton}
             </Upload>
           </ImgCrop>
         </Form.Item>
@@ -225,24 +231,15 @@ const CompanySetting = ({ currencies }: any) => {
           />
         </Modal>
 
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button
-              size="small"
-              onClick={() => resetFormData(global.formValues)}
-            >
-              Reset
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              htmlType="submit"
-              loading={loading}
-            >
-              Save
-            </Button>
-
-          </div>
+        <Form.Item>
+          <Button
+            size="small"
+            color="primary"
+            htmlType="submit"
+            loading={loading}
+          >
+            Save
+          </Button>
         </Form.Item>
       </Form>
     </div>

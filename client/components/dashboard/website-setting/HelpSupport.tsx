@@ -4,10 +4,14 @@ import { Button, Form, Input } from "antd";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
+  setSetting,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 const HelpSupport = () => {
   const [loading, setLoading] = useState(false);
@@ -16,66 +20,62 @@ const HelpSupport = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const helpSupport = {
-    id: global.formValues.id,
-    ...global.formValues.helpSupport,
+    id: global.setting.id,
+    ...global.setting.helpSupport,
   };
   form.setFieldsValue(helpSupport);
 
   const handleSubmit = async (values: any) => {
+    setLoading(true);
     const cashDelivery = values.cashDelivery;
     const returnSupport = values.returnSupport;
     const guarantee = values.guarantee;
     const originalProduct = values.originalProduct;
 
+    let payload = {
+      id: values.id,
+      helpSupport: {
+        returnSupport,
+        originalProduct,
+        guarantee,
+        cashDelivery,
+      },
+    };
     try {
-      let newData = {
-        id: values.id,
-        helpSupport: {
-          returnSupport,
-          originalProduct,
-          guarantee,
-          cashDelivery,
-        },
-      };
-      // return console.log("newData:", newData);
-      setLoading(true)
-      const result = newData.id
-        ? await updateSetting(newData)
-        : await saveSetting(newData);
-      setTimeout(async () => {
-        setLoading(false)
-        dispatch(setFormValues({}));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      console.log("🚀 ~ err:", err);
-    }
-  };
+      const res = values.id
+        ? await updateSetting(payload)
+        : await saveSetting(payload);
 
-  const resetFormData = (value: any) => {
-    if (value?.id) {
-      form.setFieldsValue(value);
-      dispatch(setFormValues(form.getFieldsValue()));
-    } else {
-      form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
+      if (!res?.success) {
+        errorNotification({ message: res?.message || "Operation failed" });
+        return;
+      }
+
+      successNotification({ message: res.message });
+    } catch (error: any) {
+      errorNotification({
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Unexpected error",
+      });
+    } finally {
+      setLoading(false);
+      dispatch(setSetting({}));
+      dispatch(setAction({}));
     }
-    setLoading(false)
   };
 
   const layout = {
     labelCol: { span: 3 },
-    wrapperCol: { span: 12 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 3, span: 12 },
+    wrapperCol: { span: 10 },
   };
 
   return (
     <div className="container mx-auto">
       <Form
         {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
@@ -100,14 +100,7 @@ const HelpSupport = () => {
           <Input placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item {...tailLayout}>
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={() => resetFormData(global.formValues)}
-          >
-            Reset
-          </Button>
+        <Form.Item>
           <Button
             size="small"
             color="primary"

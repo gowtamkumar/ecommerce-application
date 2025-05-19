@@ -4,10 +4,14 @@ import { Button, Form, Input } from "antd";
 import {
   selectGlobal,
   setAction,
-  setFormValues
+  setSetting,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 const HeaderOption = () => {
   const [loading, setLoading] = useState(false);
@@ -16,36 +20,35 @@ const HeaderOption = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  form.setFieldsValue(global.formValues);
+  form.setFieldsValue(global.setting);
 
   const handleSubmit = async (values: any) => {
+    setLoading(true);
     try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
-      setLoading(true)
-      const result = newData.id
-        ? await updateSetting(newData)
-        : await saveSetting(newData);
-      setTimeout(async () => {
-        setLoading(false)
-        dispatch(setFormValues({}));
-        dispatch(setAction({}));
-      }, 100);
-    } catch (err: any) {
-      console.log("🚀 ~ err:", err);
+      const res = values.id
+        ? await updateSetting(values)
+        : await saveSetting(values);
+
+      if (!res?.success) {
+        errorNotification({ message: res?.message || "Operation failed" });
+        return;
+      }
+
+      successNotification({ message: res.message });
+    } catch (error: any) {
+      errorNotification({
+        message:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Unexpected error",
+      });
+    } finally {
+      setLoading(false);
+      dispatch(setSetting({}));
+      dispatch(setAction({}));
     }
   };
 
-  const resetFormData = (value: any) => {
-    if (value?.id) {
-      form.setFieldsValue(value);
-      dispatch(setFormValues(form.getFieldsValue()));
-    } else {
-      form.resetFields();
-      dispatch(setFormValues(form.getFieldsValue()));
-    }
-    setLoading(false)
-  };
 
   const layout = {
     labelCol: { span: 3 },
@@ -87,13 +90,7 @@ const HeaderOption = () => {
         </Form.Item>
 
         <Form.Item {...tailLayout}>
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={() => resetFormData(global.formValues)}
-          >
-            Reset
-          </Button>
+    
           <Button
             size="small"
             color="primary"
