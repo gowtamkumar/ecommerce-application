@@ -468,24 +468,8 @@ const Page: React.FC = () => {
             size="small"
             icon={<FaAmazonPay />}
             title="Payment"
-            className="me-1"
             onClick={() => {
               route.push("/dashboard/payments/new");
-
-              // const amount = +value.subTotal + +value.shippingCharge;
-              // dispatch(
-              //   setAction({
-              //     payment: true,
-              //     type: ActionType.CREATE,
-              //     payload: {
-              //       orderId: value.id,
-              //       amount,
-              //       paymentType: "Debit",
-              //       paymentMethod: value.paymentMethod,
-              //       userId: value.userId,
-              //     },
-              //   })
-              // );
             }}
           />
 
@@ -493,7 +477,6 @@ const Page: React.FC = () => {
             size="small"
             icon={<UserAddOutlined />}
             title="Assign Delivery man"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
@@ -503,18 +486,11 @@ const Page: React.FC = () => {
               )
             }
           />
-          {/* <Button
-            size="small"
-            icon={<CheckOutlined />}
-            title="Renew Order"
-            className="me-1"
-            disabled={value.status !== "Returned"}
-          /> */}
+         
           <Button
             size="small"
             icon={<CheckOutlined />}
             title="Order Status Change"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({

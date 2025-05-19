@@ -1,9 +1,27 @@
-import { FaBeer, FaRegUser } from "react-icons/fa";
+import {
+  FaBeer,
+  FaProductHunt,
+  FaRegCircle,
+  FaRegUser,
+  FaUser,
+} from "react-icons/fa";
 import { MenuProps } from "antd";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { backupDB } from "./lib/apis/backupDB";
 import appConfig from "./appConfig";
+import {
+  MdBrandingWatermark,
+  MdCategory,
+  MdDashboard,
+  MdLocalShipping,
+  MdOutlineDiscount,
+  MdPayment,
+} from "react-icons/md";
+import { IoReorderFour } from "react-icons/io5";
+import { RiBatteryChargeFill } from "react-icons/ri";
+import { TbReport } from "react-icons/tb";
+import { IoIosSettings } from "react-icons/io";
 
 // key as like features
 
@@ -46,26 +64,26 @@ const handleBackup = async (): Promise<void> => {
 const navbarRoute = [
   {
     key: "dashboard",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdDashboard className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard">Dashboard</Link>,
     route: "true",
   },
 
   {
     key: "product",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <FaProductHunt className="h-5 w-5 text-blue-500" />,
     label: "Product Manage",
     route: "true",
     children: [
       {
         key: "new_product",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-4 text-blue-500" />,
         label: <Link href="/dashboard/product/new">New Product</Link>,
         route: "true",
       },
       {
         key: "products",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-4 w-4 text-blue-500" />,
         label: <Link href="/dashboard/product">Products</Link>,
         route: "true",
       },
@@ -93,13 +111,13 @@ const navbarRoute = [
 
   {
     key: "category",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdCategory className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/category">Category</Link>,
     route: "true",
   },
   {
     key: "brands",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdBrandingWatermark className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/brands">Brands</Link>,
     route: "true",
   },
@@ -122,19 +140,27 @@ const navbarRoute = [
   //   label: <Link href="/dashboard/status">Status</Link>,
   //   route: "true",
   // },
+  {
+    key: "payment_manage",
+    icon: <MdPayment className="h-5 w-5 text-blue-500" />,
+    label: "Payment Manage",
+    route: "true",
+    children: [
+      {
+        key: "new_payment",
+        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/payments/new">New payment</Link>,
+        route: "true",
+      },
+      {
+        key: "Payment",
+        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/payments">Payments</Link>,
+        route: "true",
+      },
+    ],
+  },
 
-  {
-    key: "new_payment",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/payments/new">New payment</Link>,
-    route: "true",
-  },
-  {
-    key: "Payment",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/payments">Payments</Link>,
-    route: "true",
-  },
   {
     key: "order_manage",
     label: "Order Manage",
@@ -149,7 +175,7 @@ const navbarRoute = [
   },
   {
     key: "order",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/orders">Orders</Link>,
     route: "true",
   },
@@ -197,19 +223,19 @@ const navbarRoute = [
 
   {
     key: "discount",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
     label: "Discount Manage",
     route: "true",
     children: [
       {
         key: "new_discount",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
         label: <Link href="/dashboard/discounts/new">New discount</Link>,
         route: "true",
       },
       {
         key: "discounts",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        icon: <FaRegCircle className="h-5 w-5 text-blue-500" />,
         label: <Link href="/dashboard/discounts">Discounts</Link>,
         route: "true",
       },
@@ -225,14 +251,14 @@ const navbarRoute = [
 
   {
     key: "shipping_address",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdLocalShipping className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/shipping-address">Shipping Address</Link>,
     route: "true",
   },
 
   {
     key: "shipping_charge",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <RiBatteryChargeFill className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/shipping-charges">Shipping Charge</Link>,
     route: "true",
   },
@@ -245,7 +271,7 @@ const navbarRoute = [
   },
   {
     key: "report",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <TbReport className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/report">Report</Link>,
     route: "true",
   },
@@ -265,19 +291,19 @@ const navbarRoute = [
 
   {
     key: "user",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <FaUser className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/user">User</Link>,
     route: "true",
   },
   {
     key: "setting_manage",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <IoIosSettings className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/setting?tab=company_setting">Setting</Link>,
     route: "true",
   },
   {
     key: "web_setting",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <IoIosSettings className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/website-setting">Web Setting </Link>,
     route: "true",
   },

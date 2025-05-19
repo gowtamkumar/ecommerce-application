@@ -125,7 +125,8 @@ const AddWishlist = () => {
           </Select>
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Button className="me-2" size="small" onClick={resetFormData}>
+          <div className="flex gap-2">
+            <Button size="small" onClick={resetFormData}>
             Reset
           </Button>
           <Button
@@ -137,6 +138,7 @@ const AddWishlist = () => {
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

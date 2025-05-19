@@ -17,10 +17,10 @@ export const handleAsyncAction = async (
   try {
     dispatch(setLoading({ save: true }));
     const res = await asyncFn();
-    console.log("🚀 ~ Response:", res);
 
     if (!res.success) {
       errorNotification({ message: res.message });
+      return;
     }
 
     dispatch(setAction({}));

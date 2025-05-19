@@ -102,8 +102,8 @@ const AddLead = () => {
           <Input placeholder="Enter E-mail" />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Button
-            className="me-2"
+          <div className="flex gap-2">
+            <Button
             size="small"
             onClick={resetFormData}
           >
@@ -118,6 +118,7 @@ const AddLead = () => {
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

@@ -96,8 +96,7 @@ const TaxList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
-          {
+          onChange={(e) => {
             setSearchInput(e.target.value)
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
@@ -210,17 +209,17 @@ const TaxList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
+      width: "7%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
-                  tax:true,
+                  tax: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

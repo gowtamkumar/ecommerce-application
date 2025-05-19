@@ -127,7 +127,6 @@ const AddShippingAddress = () => {
         {...layout}
         form={form}
         onFinish={handleSubmit}
-        // onValuesChange={(_v, values) => dispatch(setFormValues(values))}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -318,18 +317,20 @@ const AddShippingAddress = () => {
         </Form.Item>
 
         <Form.Item {...tailLayout}>
-          <Button className="me-2" size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="small" onClick={resetFormData}>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

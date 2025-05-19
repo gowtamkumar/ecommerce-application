@@ -265,7 +265,7 @@ const ProductList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       className: "text-end w-20",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}

@@ -94,7 +94,8 @@ const AddUnit = () => {
           <Input placeholder="Enter Name" />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Button className="me-2" size="small" onClick={resetFormData}>
+         <div className="flex gap-2">
+           <Button  size="small" onClick={resetFormData}>
             Reset
           </Button>
           <Button
@@ -106,6 +107,7 @@ const AddUnit = () => {
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
+         </div>
         </Form.Item>
       </Form>
     </Modal>

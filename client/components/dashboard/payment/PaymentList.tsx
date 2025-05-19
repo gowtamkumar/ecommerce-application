@@ -212,12 +212,11 @@ const PaymentList: React.FC = () => {
       className: "text-end",
       width: "10%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({

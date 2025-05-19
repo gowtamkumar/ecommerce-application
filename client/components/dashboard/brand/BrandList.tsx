@@ -217,7 +217,7 @@ const BrandList: React.FC = () => {
       className: "text-end",
       width: "12%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}

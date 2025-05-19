@@ -313,11 +313,9 @@ export const deleteCategory = asyncHandler(
 
 function formatCategoryTree(node: any): any {
   return {
-    // ...node,
+    ...node,
     key: node.id.toString(),
-    // value: node.id.toString(),
-    slug: node.slug,
-    active: node.active,
+    value: node.id,
     label: node.name,
     title: node.name,
     children:

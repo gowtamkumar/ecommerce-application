@@ -256,18 +256,20 @@ const AddStockAdjust = () => {
         </div>
 
         <Form.Item {...tailLayout}>
-          <Button className="me-2" size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            htmlType="submit"
-            type="primary"
-            loading={global.loading.save}
-            disabled={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="small" onClick={resetFormData}>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              htmlType="submit"
+              type="primary"
+              loading={global.loading.save}
+              disabled={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

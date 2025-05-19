@@ -190,13 +190,16 @@ const CategoryList: React.FC = () => {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (value) => (
-        <Image
-          width={60}
-          alt={value}
-          src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
-        />
-      ),
+      render: (value) => {
+        return (
+          <Image
+            width={40}
+            height={40}
+            alt={value}
+            src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
+          />
+        );
+      },
     },
     {
       title: "Description",
@@ -223,12 +226,11 @@ const CategoryList: React.FC = () => {
       className: "text-end",
       width: "12%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() => {
               const newData = { ...value };
               if (newData.image) {

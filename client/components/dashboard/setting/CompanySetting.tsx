@@ -226,21 +226,23 @@ const CompanySetting = ({ currencies }: any) => {
         </Modal>
 
         <Form.Item {...tailLayout}>
-          <Button
-            className="me-2"
-            size="small"
-            onClick={() => resetFormData(global.formValues)}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            loading={loading}
-          >
-            Save
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="small"
+              onClick={() => resetFormData(global.formValues)}
+            >
+              Reset
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              htmlType="submit"
+              loading={loading}
+            >
+              Save
+            </Button>
+
+          </div>
         </Form.Item>
       </Form>
     </div>

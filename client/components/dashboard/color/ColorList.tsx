@@ -199,14 +199,13 @@ const ColorList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "10%",
+      width: "5%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({

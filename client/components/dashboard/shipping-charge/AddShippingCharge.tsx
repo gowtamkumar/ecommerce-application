@@ -91,23 +91,27 @@ const AddShippingCharge = () => {
           ? "Update Shipping Charge"
           : "Create Shipping Charge"
       }
-      width={500}
+      width={600}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
       footer={null}
     >
-      <Form
-        {...layout}
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-      >
+      <Form {...layout} form={form} onFinish={handleSubmit} autoComplete="off">
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item name="divisionId" label="Division" className="mb-1">
+        <Form.Item
+          name="divisionId"
+          label="Division"
+          rules={[
+            {
+              required: true,
+              message: "Division is required",
+            },
+          ]}
+        >
           <Select
             showSearch
             allowClear
@@ -129,8 +133,13 @@ const AddShippingCharge = () => {
 
         <Form.Item
           name="shippingCharge"
-          className="mb-1"
           label="Shipping Amount"
+          rules={[
+            {
+              required: true,
+              message: "Shipping Amount is required",
+            },
+          ]}
         >
           <InputNumber placeholder="Enter" style={{ width: "100%" }} />
         </Form.Item>
@@ -155,19 +164,22 @@ const AddShippingCharge = () => {
             <Select.Option value={false}>Inactive</Select.Option>
           </Select>
         </Form.Item>
+        
         <Form.Item {...tailLayout}>
-          <Button className="me-2" size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="small" onClick={resetFormData}>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

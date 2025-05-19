@@ -23,7 +23,10 @@ import {
   deleteShippingAddress,
   getShippingAddress,
 } from "@/lib/apis/shipping-address";
-import { errorNotification, successNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -50,7 +53,7 @@ const ShippingAddressList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData()
+    fetchData();
   }, [global.action]);
 
   const fetchData = async () => {
@@ -78,8 +81,6 @@ const ShippingAddressList: React.FC = () => {
       dispatch(setAction({}));
     }
   };
-
-
 
   const handleSearch = (
     selectedKeys: string[],
@@ -111,13 +112,12 @@ const ShippingAddressList: React.FC = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
+          onChange={(e) => {
             if (searchInput.current) {
               searchInput.current.input?.focus();
             }
             setSelectedKeys(e.target.value ? [e.target.value] : []);
-          }
-          }
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -221,8 +221,6 @@ const ShippingAddressList: React.FC = () => {
       title: "E-mail",
       dataIndex: "email",
       key: "email",
-      // width: "15%",
-      // responsive: ['md'],
       sorter: (a, b) => a.email.length - b.email.length,
       ...getColumnSearchProps("email"),
     },
@@ -282,26 +280,25 @@ const ShippingAddressList: React.FC = () => {
       key: "status",
       ...getColumnSearchProps("status"),
       sortDirections: ["descend", "ascend"],
-      render: (value) => (
-        <Tag color={value.status ? "green" : "red"}>
-          {value.status ? "Active" : "Inactive"}
-        </Tag>
-      ),
+      render: (value) => {
+        return (
+          <Tag color={value.status ? "green" : "red"}>
+            {value.status ? "Active" : "Inactive"}
+          </Tag>
+        );
+      },
     },
 
     {
       title: "Action",
       key: "action",
       sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "12%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({

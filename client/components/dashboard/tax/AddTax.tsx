@@ -115,8 +115,8 @@ const AddTax = () => {
         </Form.Item>
 
         <Form.Item {...tailLayout}>
-          <Button
-            className="me-2"
+          <div className="flex gap-2">
+            <Button
             size="small"
             onClick={() => resetFormData(global.action?.payload)}
           >
@@ -131,6 +131,7 @@ const AddTax = () => {
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

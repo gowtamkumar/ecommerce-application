@@ -227,11 +227,11 @@ const AddBanner = () => {
             rotationSlider
             aspectSlider
             showReset
-            // modalWidth={1000}
-            // aspect={18 / 6}
-            // minZoom={1}
-            // maxZoom={3}
-            // cropShape='rect'
+          // modalWidth={1000}
+          // aspect={18 / 6}
+          // minZoom={1}
+          // maxZoom={3}
+          // cropShape='rect'
           >
             <Upload
               name="image"
@@ -292,23 +292,24 @@ const AddBanner = () => {
         </Form.Item>
 
         <Form.Item {...tailLayout}>
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={() => resetFormData(payload)}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            className="capitalize"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="small"
+              onClick={() => resetFormData(payload)}
+            >
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              className="capitalize"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

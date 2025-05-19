@@ -156,7 +156,7 @@ const AddDiscount = () => {
     newData.startDate = new Date(values.startDate).toISOString();
     newData.endDate = new Date(values.endDate).toISOString();
     newData.value = +values.value;
-    
+
 
 
     const result = newData.id
@@ -167,7 +167,7 @@ const AddDiscount = () => {
       ? "Successfully Updated"
       : "Successfully Added";
 
-    const res = await handleAsyncAction(result, messageData, dispatch);    
+    const res = await handleAsyncAction(result, messageData, dispatch);
 
     if (res.success) {
       route.push("/dashboard/discounts");
@@ -176,11 +176,6 @@ const AddDiscount = () => {
     }
   };
 
-  // const setFormData = (v: any) => {
-  //   const newData = { ...v };
-  //   form.setFieldsValue(newData);
-  //   setFormValues(form.getFieldsValue());
-  // };
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
@@ -523,22 +518,23 @@ const AddDiscount = () => {
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Button
-          className="me-2"
-          size="small"
-          onClick={() => resetFormData(payload)}
-        >
-          Reset
-        </Button>
-        <Button
-          size="small"
-          type="primary"
-          htmlType="submit"
-          disabled={global.loading.save}
-          loading={global.loading.save}
-        >
-          {payload?.id ? "Update" : "Save"}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            size="small"
+            onClick={() => resetFormData(payload)}
+          >
+            Reset
+          </Button>
+          <Button
+            size="small"
+            type="primary"
+            htmlType="submit"
+            disabled={global.loading.save}
+            loading={global.loading.save}
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
       </Form.Item>
     </Form>
   );

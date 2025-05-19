@@ -47,7 +47,7 @@ const AddBrand = () => {
     setFormData(newData);
     return () => {
       setFormValues({});
-      form.resetFields()
+      form.resetFields();
     };
   }, [payload]);
 
@@ -166,7 +166,6 @@ const AddBrand = () => {
           <Input placeholder="Enter " />
         </Form.Item>
 
-
         <Form.Item name="status" label="Status" className="mb-1">
           <Select
             showSearch
@@ -232,25 +231,21 @@ const AddBrand = () => {
           />
         </Modal>
 
-
         <Form.Item {...tailLayout}>
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={() => resetFormData(payload)}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            className="capitalize"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="small" onClick={() => resetFormData(payload)}>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

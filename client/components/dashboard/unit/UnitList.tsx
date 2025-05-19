@@ -178,7 +178,6 @@ const UnitList: React.FC = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "30%",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
     },
@@ -188,9 +187,9 @@ const UnitList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "10%",
+      width: "5%",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}

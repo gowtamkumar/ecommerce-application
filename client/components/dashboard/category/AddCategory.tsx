@@ -26,12 +26,14 @@ import ImgCrop from "antd-img-crop";
 import { PlusOutlined } from "@ant-design/icons";
 import appConfig from "@/appConfig";
 import {
-  handleAsyncAction,
   handlePreview,
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 const uploadButton = (
   <div>
@@ -81,17 +83,31 @@ const AddCategory = () => {
   };
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
+    dispatch(setLoading({ save: true }));
 
-    const result = newData.id
-      ? () => updateCategory(newData)
-      : () => saveCategory(newData);
+    try {
+      const res = values.id
+        ? await updateCategory(values)
+        : await saveCategory(values);
 
-    const messageData = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
+      if (!res?.success) {
+        errorNotification({ message: res?.message || "Operation failed" });
+        return null;
+      }
 
-    await handleAsyncAction(result, messageData, dispatch);
+      dispatch(setAction({}));
+      successNotification({ message: res.message });
+      return res;
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "An unexpected error occurred";
+      errorNotification({ message: errorMessage });
+      return null;
+    } finally {
+      dispatch(setLoading({ save: false }));
+    }
   };
 
   const handleClose = () => {
@@ -267,23 +283,21 @@ const AddCategory = () => {
         </Modal>
 
         <Form.Item {...tailLayout}>
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={() => resetFormData(payload)}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            className="capitalize"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="small" onClick={() => resetFormData(payload)}>
+              Reset
+            </Button>
+
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

@@ -123,9 +123,8 @@ const OrderStatusUpdate = () => {
           <Input.TextArea placeholder="Enter location" />
         </Form.Item>
 
-        <div className="text-end">
+        <div className="flex gap-2 justify-end">
           <Button
-            className="mx-2 capitalize"
             size="small"
             onClick={resetFormData}
           >
@@ -135,7 +134,6 @@ const OrderStatusUpdate = () => {
             size="small"
             color="primary"
             htmlType="submit"
-            className="capitalize"
             loading={global.loading.save}
             disabled={!payload?.id}
           >

@@ -21,7 +21,7 @@ export default function ShippingCharge() {
   const dispatch = useDispatch();
 
   return (
-    <div className="container bg-white p-3  ">
+    <div className="container bg-white p-3">
       <Tabs
         activeKey={tabKey}
         onChange={(key) => setTabKey(key)}
@@ -43,7 +43,7 @@ export default function ShippingCharge() {
               )
             }
           >
-            <PlusOutlined className="mx-1" /> New charge
+            <PlusOutlined /> New charge
           </Button>
         }
       />

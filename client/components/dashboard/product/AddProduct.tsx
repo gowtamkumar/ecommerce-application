@@ -861,19 +861,14 @@ const AddProduct = ({
           colors={colors}
         />
 
-        <div className="col-span-1 text-end">
-          <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={() => resetFormData(product)}
-          >
+        <div className="flex gap-2 justify-end">
+          <Button size="small" onClick={() => resetFormData(product)}>
             Reset
           </Button>
           <Button
             size="small"
             color="primary"
             onClick={handleSubmit}
-            className="capitalize"
             loading={global.loading.save}
             disabled={global.loading.save}
           >

@@ -183,8 +183,6 @@ const ReviewList: React.FC = () => {
       dataIndex: "product",
       key: "product",
       render: (value) => <div>{value.name}</div>,
-
-      // sorter: (a, b) => a.product.length - b.product.length,
     },
 
     {
@@ -192,7 +190,6 @@ const ReviewList: React.FC = () => {
       title: "Rating",
       dataIndex: "rating",
       key: "rating",
-      // sorter: (a, b) => a.rating.length - b.rating.length,
     },
 
     {
@@ -229,14 +226,13 @@ const ReviewList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: "10%",
+      width: '8%',
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({

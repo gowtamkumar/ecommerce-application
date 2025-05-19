@@ -299,12 +299,11 @@ const DiscountList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       className: "text-end",
       render: (value) => (
-        <div className="gap-2">
+        <div className="flex gap-2">
           <Button
             size="small"
             icon={<AiOutlineEye />}
             title="View"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
@@ -319,7 +318,6 @@ const DiscountList: React.FC = () => {
             size="small"
             icon={<FormOutlined />}
             title="Edit"
-            className="me-1"
             onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
           />
 
@@ -327,7 +325,6 @@ const DiscountList: React.FC = () => {
             size="small"
             icon={<TbStatusChange />}
             title="Status"
-            className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
