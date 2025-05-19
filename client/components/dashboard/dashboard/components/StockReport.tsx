@@ -12,7 +12,6 @@ const StockReport = ({ recentHistory }: any) => {
   const {
     orders = [],
     total_active_user,
-    total_canceled_count,
   } = recentHistory;
 
   return (

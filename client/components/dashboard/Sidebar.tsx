@@ -1,7 +1,7 @@
 "use client";
 import { Drawer, Layout, Menu, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect } from "react";
 import {
   selectLayout,
   setCollapsed,
@@ -9,12 +9,7 @@ import {
   setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
 import { navbarRoute } from "@/NavBarRoute";
-import { getSettings } from "@/lib/apis/setting";
-import appConfig from "@/appConfig";
-import Image from "next/image";
-import robots from "@/app/robots";
 import { useRouter } from "next/navigation";
-import { setLoading, setSetting } from "@/redux/features/global/globalSlice";
 import HeaderLogo from "../website/header/Logo";
 
 const { Sider } = Layout;
@@ -41,12 +36,12 @@ const Sidebar = () => {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    (async () => {
-      const setting = await getSettings();
-      dispatch(setSetting(setting.data));
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const setting = await getSettings();
+  //     dispatch(setSetting(setting.data));
+  //   })();
+  // }, []);
 
   const onClose = () => {
     dispatch(setOpen(false));

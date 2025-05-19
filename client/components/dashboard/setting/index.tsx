@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
 
-
 import SyncGeoLocation from "./SyncGeoLocation";
 import { useRouter, useSearchParams } from "next/navigation";
 import StockAdjust from "./stock-adjust/StockAdjust";
@@ -31,7 +30,6 @@ const Lead = dynamic(() => import("./lead/Lead"), { ssr: false });
 export default function Index() {
   const [tabKey, setTabKey] = useState<any>("sizes");
   const route = useRouter();
-  const params = useSearchParams();
 
   return (
     <Tabs

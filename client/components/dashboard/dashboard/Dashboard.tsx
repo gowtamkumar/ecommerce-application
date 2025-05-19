@@ -5,12 +5,14 @@ import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
 import { errorNotification } from "@/lib/utils/notification";
+import { getSettings } from "@/lib/apis/setting";
+import { setSetting } from "@/redux/features/global/globalSlice";
+import { useDispatch } from "react-redux";
 const LossProfit = dynamic(() => import("./LossProfit"));
 const StockReport = dynamic(() => import("./components/StockReport"));
 const TopCustomer = dynamic(() => import("./components/TopCustomer"));
 const StockAlert = dynamic(() => import("./components/StockAlert"));
 const TotalOrderSummaryDashboard = dynamic(() => import("./TodayOrderSummary"));
-
 const TopSellingProduct = dynamic(
   () => import("./components/TopSallingProduct")
 );
@@ -18,6 +20,8 @@ const TopSellingProduct = dynamic(
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
   const {
     top_selling_product,
     top_customers,
@@ -25,8 +29,6 @@ const Dashboard = () => {
     loss_profit,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
-
-  console.log("dashboardReports", dashboardReports);
 
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
@@ -42,6 +44,9 @@ const Dashboard = () => {
         startDate: firstDateOfMonth.toISOString(),
         endDate: lastDateOfMonth.toISOString(),
       });
+
+      const setting = await getSettings();
+      dispatch(setSetting(setting.data));
 
       if (!results.success) {
         errorNotification({ message: results.message });
@@ -90,8 +95,6 @@ const Dashboard = () => {
               if (value) newDate.startDate = dayjs(value[0]).toISOString();
               if (value) newDate.endDate = dayjs(value[1]).toISOString();
               const results = await getDashboardReports(newDate);
-              console.log("results", results);
-
               setDashboardReports(results.data);
             }}
             className="mx-2 w-100"
