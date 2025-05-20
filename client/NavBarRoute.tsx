@@ -286,6 +286,13 @@ const navbarRoute = [
   },
 
   {
+    key: "general_setting",
+    icon: <FaUser className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/general-setting">General Setting</Link>,
+    route: "true",
+  },
+
+  {
     key: "user",
     icon: <FaUser className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/user">User</Link>,
@@ -295,12 +302,6 @@ const navbarRoute = [
     key: "other_module",
     icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/other-modules?tab=company_setting">Other Module</Link>,
-    route: "true",
-  },
-  {
-    key: "pages",
-    icon: <RiPagesFill className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/pages">Pages</Link>,
     route: "true",
   },
 ];

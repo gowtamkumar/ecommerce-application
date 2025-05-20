@@ -24,7 +24,7 @@ export async function getDiscounts(params?: { scope: string }) {
     queryString += `scope=${scope}`;
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/discounts${queryString}`, {
+  const res = await fetch(`${appConfig.apiUrl}/discounts?${queryString}`, {
     headers,
   });
 

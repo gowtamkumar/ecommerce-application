@@ -14,6 +14,7 @@ import { getAntdCategories } from "@/lib/apis/categories";
 import Link from "next/link";
 import { Button } from "antd";
 import { getSettings } from "@/lib/apis/setting";
+import Head from "next/head";
 
 const TopBar = dynamic(() => import("./TopBar"));
 const MainMenu = dynamic(() => import("./Menu"));
@@ -65,11 +66,9 @@ export default function Header() {
       )}
 
       <header
-        className={`${
-          isScrolled ? "fixed z-50 top-0 left-0" : ""
-        }  w-full bg-white  transition-transform duration-300 ${
-          isScrolled ? "translate-y-0" : "mt-0"
-        }`}
+        className={`${isScrolled ? "fixed z-50 top-0 left-0" : ""
+          }  w-full bg-white  transition-transform duration-300 ${isScrolled ? "translate-y-0" : "mt-0"
+          }`}
       >
         <div className="bg-gray-100">
           <SearchSection />

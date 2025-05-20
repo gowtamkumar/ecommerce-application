@@ -11,15 +11,16 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import appConfig from "@/appConfig";
 import { errorNotification } from "@/lib/utils/notification";
-import CompanySetting from "./CompanySetting";
+import GeneralSettings from "./GeneralSettings";
 import SyncGeoLocation from "./SyncGeoLocation";
+import SeoAndSocialMedia from "./SeoAndSocialMedia";
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
 const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false });
 
 export default function Index() {
-  const [tabKey, setTabKey] = useState<any>("company");
+  const [tabKey, setTabKey] = useState<any>("general_settings");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -29,31 +30,31 @@ export default function Index() {
 
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));
+
+    const createUploadFile = (filename: string): any => ({
+      uid: `${Date.now()}-${Math.random()}`,
+      name: `image-${Math.floor(Math.random() * 10000)}`,
+      status: "done",
+      fileName: filename,
+      url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
+    });
+
     try {
       const setting = await getSettings();
       const newData = setting.data;
+
       if (newData?.image) {
-        const newfile = {
-          uid: Math.random() * 1000 + "",
-          name: `logo ${Math.random() * 10000 + ""}`,
-          status: "done",
-          fileName: newData?.image,
-          url: `${appConfig.baseApiUrl}/uploads/${newData?.image || "no-data.png"
-            }`,
-        };
-        newData.fileList = [newfile];
+        newData.fileList = [createUploadFile(newData.image)];
+      }
+
+      if (newData?.favicon) {
+        newData.faviconfileList = [createUploadFile(newData.favicon)];
       }
 
       if (newData?.footerOption?.image) {
-        const newfile = {
-          uid: Math.random() * 1000 + "",
-          name: `logo ${Math.random() * 10000 + ""}`,
-          status: "done",
-          fileName: newData?.footerOption?.image,
-          url: `${appConfig.baseApiUrl}/uploads/${newData?.footerOption?.image || "no-data.png"
-            }`,
-        };
-        newData.footerOption.fileList = [newfile];
+        newData.footerOption.fileList = [
+          createUploadFile(newData.footerOption.image),
+        ];
       }
 
       dispatch(setSetting(newData));
@@ -75,9 +76,9 @@ export default function Index() {
       type="card"
       items={[
         {
-          label: "Company Setting",
-          key: "company",
-          children: <CompanySetting />,
+          label: "General Settings",
+          key: "general_settings",
+          children: <GeneralSettings />,
         },
         {
           label: "Menu",
@@ -112,11 +113,11 @@ export default function Index() {
         //   key: "contact_page",
         //   children: <ContactPage />,
         // },
-        // {
-        //   label: "Term Policy Page",
-        //   key: "term_policy_page",
-        //   children: <TermPolicyPage />,
-        // },
+        {
+          label: "SEO & Social Media",
+          key: "seo_&_social_media",
+          children: <SeoAndSocialMedia />,
+        },
 
         {
           label: "Footer Option",

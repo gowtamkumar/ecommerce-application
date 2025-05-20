@@ -17,6 +17,7 @@ import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 import { ToastContainer } from "react-toastify";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
 const CookieWebsite = dynamic(
   () => import("@/components/website/CookieBanner")
@@ -67,6 +68,9 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/banner-1.jpg" />
+      </head>
       <body
         suppressHydrationWarning={true}
         className={`${poppinsFont.variable}`}

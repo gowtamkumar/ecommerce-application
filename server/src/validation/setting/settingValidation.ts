@@ -1,10 +1,11 @@
 import { z } from "zod";
 
 export const settingValidationSchema = z.object({
-  companyName: z.string({
+  siteName: z.string({
     required_error: "Company Name is required",
   }),
   image: z.string().optional(),
+  favicon: z.string().optional(),
   url: z.string().optional(),
   address: z.string().optional(),
   email: z.string().optional(),

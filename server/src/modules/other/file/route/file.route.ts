@@ -30,6 +30,10 @@ router.route("/uploads").post(
       maxCount: 1,
     },
     {
+      name: "favicon",
+      maxCount: 1,
+    },
+    {
       name: "images",
       maxCount: 5,
     },

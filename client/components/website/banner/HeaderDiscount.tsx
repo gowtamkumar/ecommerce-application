@@ -4,26 +4,19 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Navigation,
   Scrollbar,
-  A11y,
   Autoplay,
   Pagination,
 } from "swiper/modules";
 import Image from "next/image";
 import { Button } from "antd";
-import { useDispatch } from "react-redux";
-import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
 import appConfig from "@/appConfig";
 
 export default function HeaderDiscount({ discounts }: any) {
-  const dispatch = useDispatch();
   const router = useRouter();
 
-  console.log("discounts", discounts);
-  
-
   return (
-    <div className="md:col-span-3 ">
+    <div className="md:col-span-3">
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, Autoplay]}
         slidesPerView={1}
@@ -39,11 +32,10 @@ export default function HeaderDiscount({ discounts }: any) {
                   alt={item.type}
                   src={
                     item.image
-                      ? `${appConfig.baseApiUrl}/uploads/${item.image}`
+                      ? `${appConfig.baseApiUrl}/uploads/${item?.image}`
                       : "/image-box-12.jpg"
                   }
                   loading="lazy"
-                  // fill
                   width={0}
                   height={0}
                   className="md:h-[57vh] md:w-[60vw] rounded-lg"
@@ -51,17 +43,14 @@ export default function HeaderDiscount({ discounts }: any) {
                 />
                 <div className="absolute flex items-center justify-center bottom-0 left-0 top-0 w-full text-white">
                   <div className="flex flex-col items-center justify-center">
-                    <h4 className="text-3xl font-bold"> Discount</h4>
-                    <h2 className="font-bold text-1xl">{item.value}% Off</h2>
+                    <h2 className="font-bold text-1xl">{item?.title}</h2>
+                    <p>{item?.description}</p>
                     <div className="text-center">
                       <div className="flex justify-center items-center">
                         <Button
                           className="px-2 text-5xl font-bold"
                           onClick={() => {
-                            dispatch(
-                              setProductFilter({ discount: item.value })
-                            );
-                            router.push("/products");
+                            router.push(`/offers${item?.url}`);
                           }}
                         >
                           Shop Now

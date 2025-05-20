@@ -60,7 +60,7 @@ const EmailSetting = () => {
         </Form.Item>
 
         <Form.Item
-          name="companyName"
+          name="siteName"
           label="Company Name"
           rules={[
             {

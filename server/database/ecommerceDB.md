@@ -328,7 +328,7 @@ symble
 ## setting
 
 id,
-companyName
+siteName
 logo,
 address,
 phone,

@@ -2,10 +2,11 @@ import appConfig from "@/appConfig";
 import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
-import { getHomeApi } from "@/lib/apis/home";
+import { getHome } from "@/lib/apis/home";
 import { Button } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Favicon from "./(root)/Favicon";
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
@@ -25,7 +26,7 @@ const HeaderDiscount = dynamic(
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export default async function Home() {
-  const home = await getHomeApi();
+  const home = await getHome();
   const { banners, categories, products, topSellingProducts } = home.data || {};
 
   return (

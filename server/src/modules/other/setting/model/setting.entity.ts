@@ -11,11 +11,14 @@ export class SettingEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "company_name" })
-  companyName!: string;
+  @Column({ name: "site_name" })
+  siteName!: string;
 
   @Column({ nullable: true })
   image!: string;
+
+  @Column({ nullable: true })
+  favicon!: string;
 
   @Column({ nullable: true })
   address!: string;

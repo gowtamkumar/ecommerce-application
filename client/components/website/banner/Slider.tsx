@@ -8,14 +8,11 @@ import {
   A11y,
   Autoplay,
   EffectFade,
-  Navigation,
   Pagination,
   Scrollbar,
 } from "swiper/modules";
 import "swiper/css/free-mode";
 import "swiper/css/thumbs";
-import Image from "next/image";
-import { CiCircleChevLeft, CiCircleChevRight } from "react-icons/ci";
 
 export default function Slider({ banners }: any) {
   return (
@@ -69,7 +66,7 @@ export default function Slider({ banners }: any) {
                         {description?.slice(0, 100)}
                       </p>
                       <Button type="primary">
-                        <Link href={`${url ? url : "/shop"}`}>Shop Now</Link>
+                        <Link href={`${url ? url : "/products"}`}>Shop Now</Link>
                       </Button>
                     </div>
                     {/* <div className="bg-slate-600 md:order-2 order-1">
