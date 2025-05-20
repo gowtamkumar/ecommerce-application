@@ -10,7 +10,7 @@ export default function FirstWeight() {
   const data = global.setting;
 
   return (
-    <div className="flex flex-col justify-center items-center md:justify-start md:items-start">
+    <div className="flex flex-col justify-center items-center md:justify-start md:items-start text-gray-300">
       <Image
         src={
           data?.image
@@ -19,9 +19,10 @@ export default function FirstWeight() {
         }
         alt={data?.image || "weight-image"}
         width="100"
-        height="100"
+        height="50"
+        className="h-[50]"
       />
-      <div className="mt-3 text-gray-300">
+      <div className="mt-3 ">
         <address>{data?.address}</address>
         <p>Mobile: {data?.phone}</p>
         <Link href={`mailto:${data?.email}`}>E-mail: {data?.email}</Link>

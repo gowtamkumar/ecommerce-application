@@ -2,12 +2,12 @@ import appConfig from "@/appConfig";
 import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import ScrollToCart from "@/components/website/ScrollToCart";
-import { getFilterDiscounts } from "@/lib/apis/discount";
+import { getDiscounts } from "@/lib/apis/discount";
 import Link from "next/link";
 import React from "react";
 
 export default async function Offers() {
-  const offers = await getFilterDiscounts({
+  const offers = await getDiscounts({
     scope: "Global,Products,Brand,Category",
   });
 

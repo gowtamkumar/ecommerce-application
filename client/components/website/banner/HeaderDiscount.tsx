@@ -19,6 +19,9 @@ export default function HeaderDiscount({ discounts }: any) {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  console.log("discounts", discounts);
+  
+
   return (
     <div className="md:col-span-3 ">
       <Swiper

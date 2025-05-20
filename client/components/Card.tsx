@@ -4,6 +4,7 @@ import { Rate } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { FaRegHeart } from "react-icons/fa";
+import { HiViewfinderCircle } from "react-icons/hi2";
 import AddToCartButton from "./AddToCartButton";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { useDispatch, useSelector } from "react-redux";
@@ -72,7 +73,7 @@ export default function Card({ item }: { item: any }) {
     : "/default-placeholder.png";
 
   return (
-    <div className="rounded-lg bg-gray-100 flex flex-col h-full p-2">
+    <div className="rounded-lg bg-gray-100 flex flex-col h-full px-4 py-2">
       {/* Image + Hover */}
       <div className="relative group">
         <Image
@@ -98,7 +99,7 @@ export default function Card({ item }: { item: any }) {
             className="rounded"
           />
 
-          <div className="p-1 absolute z-20 bg-white text-black rounded-lg transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="p-1 absolute z-20 bg-white text-black rounded-lg transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-3 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <button
               className="cursor-pointer"
               onClick={() => {
@@ -110,6 +111,18 @@ export default function Card({ item }: { item: any }) {
               }}
             >
               <FaRegHeart size={22} />
+            </button>
+            <button
+              className="cursor-pointer"
+              onClick={() => {
+                if (session.status === "unauthenticated") {
+                  dispatch(setUnAuthorize(true));
+                } else {
+                  AddToWishlist(item.id);
+                }
+              }}
+            >
+              <HiViewfinderCircle size={22} />
             </button>
           </div>
         </div>

@@ -24,11 +24,6 @@ export const getDiscounts = asyncHandler(
     const { scope } = req.query as any;
     const connection = await getDBConnection();
     const repository = connection.getRepository(DiscountEntity);
-
-    console.log("scope", scope);
-
-    // Validate allowed scopes
-
     const whereClause: any = {};
 
     if (scope) {

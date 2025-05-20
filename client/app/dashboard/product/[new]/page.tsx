@@ -1,7 +1,7 @@
 import { getBrands } from "@/lib/apis/brand";
 import { getCategories } from "@/lib/apis/categories";
 import { getColors } from "@/lib/apis/color";
-import { getFilterDiscounts } from "@/lib/apis/discount";
+import { getDiscounts } from "@/lib/apis/discount";
 import { getSizes } from "@/lib/apis/size";
 import { getUnits } from "@/lib/apis/unit";
 import dynamic from "next/dynamic";
@@ -25,7 +25,7 @@ export default async function Product() {
     getSizes(),
     getUnits(),
     getColors(),
-    getFilterDiscounts({scope: "Product"}),
+    getDiscounts({scope: "Product"}),
     getCategories(),
     getTaxs(),
   ]);

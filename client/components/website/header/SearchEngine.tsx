@@ -64,7 +64,7 @@ export default function SearchEngine() {
           onChange={(e: any) => setQuery(e.target.value)}
           placeholder="Search for products..."
           draggable
-          style={{ height: 45 }}
+          style={{ height: 40 }}
 
           suffix={
             <SearchOutlined

@@ -1,12 +1,4 @@
 import dynamic from "next/dynamic";
-// import { getSettings } from "@/lib/apis/setting";
-
-import { FaTruckPickup } from "react-icons/fa6";
-import { IoIosCall } from "react-icons/io";
-import { CiGift } from "react-icons/ci";
-import { MdOutlinePayment } from "react-icons/md";
-import { useSelector } from "react-redux";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
 import FooterTop from "./FooterTop";
 const FourWeight = dynamic(() => import("../weight/FourWeight"));
 const ThirdWeight = dynamic(() => import("../weight/ThirdWeight"));

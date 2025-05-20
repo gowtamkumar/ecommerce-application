@@ -7,8 +7,7 @@ import React from "react";
 import {
   FaFacebookF,
   FaInstagram,
-  FaLinkedinIn,
-  FaTwitter,
+  FaLinkedinIn
 } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { useSelector } from "react-redux";
@@ -18,8 +17,8 @@ export default function SocialIcon() {
   const settingData = global.setting;
 
   return (
-    <div className="container mx-auto flex-row text-center py-6 md:flex md:items-center md:justify-between">
-      <span className="text-sm  sm:text-center text-black">
+    <div className="container mx-auto flex-row text-center md:flex md:items-center md:justify-between py-1">
+      <span className="text-sm sm:text-center text-black">
         © {new Date().getFullYear()} {settingData?.footerOption?.copyRight}
       </span>
       <div className="w-full max-w-[900px] mx-auto">
@@ -35,7 +34,7 @@ export default function SocialIcon() {
           className="w-auto h-[50px] mx-auto object-contain"
         />
       </div>
-      <div className="flex justify-center mt-4 md:justify-center md:mt-0 space-x-5 rtl:space-x-reverse text-center text-black">
+      <div className="flex justify-center md:justify-center space-x-5 text-center text-black">
         {settingData?.socialLink?.linkedinUrl && (
           <Link
             href={settingData?.socialLink?.facebookUrl}

@@ -14,24 +14,19 @@ export async function saveDiscount(data: any) {
   return await handleResponse(res);
 }
 
-export async function getDiscounts() {
+export async function getDiscounts(params?: { scope: string }) {
+  const scope = params?.scope;
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/discounts`, {
-    cache: "no-cache",
+
+  let queryString = "";
+
+  if (scope) {
+    queryString += `scope=${scope}`;
+  }
+
+  const res = await fetch(`${appConfig.apiUrl}/discounts${queryString}`, {
     headers,
   });
-
-  return await handleResponse(res);
-}
-
-export async function getFilterDiscounts(params?: { scope: string }) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(
-    `${appConfig.apiUrl}/discounts?scope=${params?.scope}`,
-    {
-      headers,
-    }
-  );
 
   return await handleResponse(res);
 }
@@ -77,7 +72,7 @@ export async function updateDiscount(data: any) {
 
   return await handleResponse(res);
 }
-export async function discountStatusUpdate(data: any) {  
+export async function discountStatusUpdate(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/discounts/status/${data.id}`, {
     method: "PATCH",

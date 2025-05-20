@@ -19,13 +19,6 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   const banners = await bannerRepository.find({
     where: { active: true },
-    // select: {
-    //   id: true,
-    //   title: true,
-    //   image: true,
-    //   url: true,
-    //   description: true,
-    // },
   });
 
   const categoriesRepository = connection.getRepository(CategoriesEntity);
@@ -52,7 +45,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get Home page data",
+    message: "Get Home page successfully",
     data: {
       products: {
         total,
