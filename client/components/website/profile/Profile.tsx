@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
-// api
 import NotificationsUser from "./NotificationsUser";
 import { useRouter, useSearchParams } from "next/navigation";
 import "./notification.css";
@@ -13,10 +12,7 @@ import { IoReorderFour } from "react-icons/io5";
 import { SiWish } from "react-icons/si";
 import { MdLocalShipping, MdOutlineSpatialTracking } from "react-icons/md";
 import { IoIosNotifications } from "react-icons/io";
-
-// const ProfileDashboard = dynamic(() => import("./ProfileDashboard"), {
-//   ssr: false,
-// });
+import ChangePassword from "./PasswordChange";
 
 const UserOrders = dynamic(
   () => import("@/components/website/profile/UserOrders"),
@@ -130,6 +126,16 @@ export default function Profile() {
           ),
           key: "notification",
           children: <NotificationsUser />,
+        },
+        {
+          label: (
+            <span className="flex items-center gap-2">
+              <IoIosNotifications size={20} />
+              Change Password
+            </span>
+          ),
+          key: "change_password",
+          children: <ChangePassword />,
         },
       ]}
     />

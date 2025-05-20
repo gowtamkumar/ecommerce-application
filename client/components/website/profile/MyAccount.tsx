@@ -88,7 +88,7 @@ export default function MyAccount() {
       let newData = { ...values };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
-      const result = await updateUser(newData);
+      const result = await updateUser(values);
 
       if (result.success) {
         successNotification({ message: result.message });
@@ -130,8 +130,10 @@ export default function MyAccount() {
 
     try {
       const res = await uploadFile(formData);
+      console.log("res", res);
+      
       if (!res || !res.data) {
-        throw new Error("Invalid response format");
+        errorNotification({ message: "Invalid response format" });
       }
       const filename = res.data[0].filename;
       const newfile = {
@@ -144,6 +146,7 @@ export default function MyAccount() {
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:
       form.setFieldsValue({
+        ...formValues,
         fileList: [newfile],
         image: newFileName,
       });
@@ -154,7 +157,7 @@ export default function MyAccount() {
       });
 
       onSuccess("Ok");
-    } catch (err) {
+    } catch (err: any) {
       console.error("🚀 ~ Upload error:", err);
       onError({ err });
     }
@@ -167,28 +170,6 @@ export default function MyAccount() {
     return e && e.fileList;
   };
 
-  // const handleCancel = () => setPreviewOpen(false);
-
-  // file Preview
-  // const handlePreview = async (file: any) => {
-  //   if (!file.url && !file.preview) {
-  //     file.preview = await getBase64(file.originFileObj);
-  //   }
-  //   setPreviewImage(file.url || file.preview);
-  //   setPreviewOpen(true);
-  //   setPreviewTitle(
-  //     file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-  //   );
-  // };
-
-  // const getBase64 = (file: any) =>
-  //   new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => resolve(reader.result);
-  //     reader.onerror = (error) => reject(error);
-  //   });
-
   const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 12 },
@@ -198,9 +179,9 @@ export default function MyAccount() {
   };
 
   return (
-    <div className="py-10">
-      <div className="flex justify-between items-center gap-2">
-        <div> Personal Information</div>
+    <div>
+      <div className="flex justify-between items-center gap-2 pb-10">
+        <p> Personal Information</p>
         <div hidden={edit}>
           <Button
             icon={<EditOutlined />}
@@ -216,154 +197,153 @@ export default function MyAccount() {
         </div>
       </div>
 
-      <Form
-        {...layout}
-        form={form}
-        onFinish={handleSubmit}
-        scrollToFirstError={true}
-      >
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "Name is required",
-            },
-          ]}
+      <div className="md:w-1/2">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          scrollToFirstError={true}
         >
-          <Input placeholder="Enter name" disabled={!edit} />
-        </Form.Item>
-
-        <Form.Item name="username" label="Username">
-          <Input placeholder="Enter" disabled />
-        </Form.Item>
-
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              required: true,
-              message: "E-mail is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter" disabled={!edit} />
-        </Form.Item>
-
-        <Form.Item name="gender" label="Gender">
-          <Radio.Group disabled={!edit}>
-            <Radio value="Male">Male</Radio>
-            <Radio value="Female">Female</Radio>
-          </Radio.Group>
-        </Form.Item>
-
-        <Form.Item
-          name="phone"
-          label="Phone No"
-          rules={[
-            {
-              required: true,
-              message: "Phone is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter phone" disabled={!edit} />
-        </Form.Item>
-
-        <Form.Item name="address" label="Address">
-          <Input.TextArea placeholder="Enter " disabled={!edit} />
-        </Form.Item>
-
-        <Form.Item name="dob" label="Date of Brith">
-          <DatePicker placeholder="Enter" disabled={!edit} />
-        </Form.Item>
-
-        <Form.Item
-          hidden={!global.action.payload?.id}
-          name="status"
-          label="Status"
-        >
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select Status"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-            disabled={!edit}
-          >
-            <Select.Option value="Active">Active</Select.Option>
-            <Select.Option value="Inactive">Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-        <div>
-          <Form.Item
-            name="fileList"
-            label="Image"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
-          >
-            <ImgCrop rotationSlider>
-              <Upload
-                disabled={!edit}
-                name="image"
-                listType="picture-card"
-                fileList={formValues?.fileList || []}
-                onRemove={async (v) => {
-                  if (v.fileName) {
-                    form.setFieldsValue({ image: null, fileList: [] });
-                    setFormValues({ image: null, fileList: [] });
-                    const params = { filename: v.fileName };
-                    await fileDeleteWithPhoto(params);
-                  }
-                }}
-                className="avatar-uploader"
-                // onPreview={handlePreview}
-                customRequest={customUploadRequest}
-                maxCount={1}
-              >
-                {formValues?.fileList?.length >= 1 ? null : uploadButton}
-              </Upload>
-            </ImgCrop>
-          </Form.Item>
-
-          <Form.Item name="image" hidden>
+          <Form.Item name="id" hidden>
             <Input />
           </Form.Item>
-        </div>
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button
-              size="small"
-              type="default"
-              onClick={() => resetFormData(formValues)}
-            >
-              Reset
-            </Button>
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              loading={global.loading.save}
-              disabled={global.loading.save}
-            >
-              {global.action.payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
-      </Form>
 
-      <ChangePassword />
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                required: true,
+                message: "Name is required",
+              },
+            ]}
+          >
+            <Input placeholder="Enter name" disabled={!edit} />
+          </Form.Item>
+
+          <Form.Item name="username" label="Username">
+            <Input placeholder="Enter" disabled />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="E-mail"
+            rules={[
+              {
+                required: true,
+                message: "E-mail is required",
+              },
+            ]}
+          >
+            <Input placeholder="Enter" disabled={!edit} />
+          </Form.Item>
+
+          <Form.Item name="gender" label="Gender">
+            <Radio.Group disabled={!edit}>
+              <Radio value="Male">Male</Radio>
+              <Radio value="Female">Female</Radio>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item
+            name="phone"
+            label="Phone No"
+            rules={[
+              {
+                required: true,
+                message: "Phone is required",
+              },
+            ]}
+          >
+            <Input placeholder="Enter phone" disabled={!edit} />
+          </Form.Item>
+
+          <Form.Item name="address" label="Address">
+            <Input.TextArea placeholder="Enter " disabled={!edit} />
+          </Form.Item>
+
+          <Form.Item name="dob" label="Date of Brith">
+            <DatePicker placeholder="Enter" disabled={!edit} />
+          </Form.Item>
+
+          <Form.Item
+            hidden={!global.action.payload?.id}
+            name="status"
+            label="Status"
+          >
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select Status"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children as any)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+              disabled={!edit}
+            >
+              <Select.Option value="Active">Active</Select.Option>
+              <Select.Option value="Inactive">Inactive</Select.Option>
+            </Select>
+          </Form.Item>
+          <div>
+            <Form.Item
+              name="fileList"
+              label="Image"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+              tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
+            >
+              <ImgCrop rotationSlider>
+                <Upload
+                  disabled={!edit}
+                  name="image"
+                  listType="picture-card"
+                  fileList={formValues?.fileList || []}
+                  onRemove={async (v) => {
+                    if (v.fileName) {
+                      form.setFieldsValue({ image: null, fileList: [] });
+                      setFormValues({ image: null, fileList: [] });
+                      const params = { filename: v.fileName };
+                      await fileDeleteWithPhoto(params);
+                    }
+                  }}
+                  className="avatar-uploader"
+                  customRequest={customUploadRequest}
+                  maxCount={1}
+                >
+                  {formValues?.fileList?.length >= 1 ? null : uploadButton}
+                </Upload>
+              </ImgCrop>
+            </Form.Item>
+
+            <Form.Item name="image" hidden>
+              <Input />
+            </Form.Item>
+          </div>
+          <Form.Item {...tailLayout}>
+            <div className="flex gap-2">
+              <Button
+                size="small"
+                type="default"
+                onClick={() => resetFormData(formValues)}
+              >
+                Reset
+              </Button>
+              <Button
+                size="small"
+                type="primary"
+                htmlType="submit"
+                loading={global.loading.save}
+                disabled={global.loading.save}
+              >
+                {global.action.payload?.id ? "Update" : "Save"}
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 }
