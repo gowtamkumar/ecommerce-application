@@ -112,7 +112,7 @@ export default function Card({ item }: { item: any }) {
             >
               <FaRegHeart size={22} />
             </button>
-            <button
+            {/* <button
               className="cursor-pointer"
               onClick={() => {
                 if (session.status === "unauthenticated") {
@@ -123,7 +123,7 @@ export default function Card({ item }: { item: any }) {
               }}
             >
               <HiViewfinderCircle size={22} />
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

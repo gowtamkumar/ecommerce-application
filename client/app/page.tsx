@@ -1,12 +1,10 @@
 import appConfig from "@/appConfig";
-import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { getHome } from "@/lib/apis/home";
 import { Button } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import Favicon from "./(root)/Favicon";
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
@@ -20,62 +18,51 @@ const HeaderDiscount = dynamic(
   () => import("@/components/website/banner/HeaderDiscount")
 );
 
-// const MoreDiscover = dynamic(
-//   () => import("@/components/website/home/MoreDiscover")
-// );
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
 export async function generateMetadata() {
   const home = await getHome();
-  const { home_meta_description, home_meta_image, home_meta_title } =
-    home.data.homeMetaData || {};
+  const { metaDescription, metaImage, metaTitle, metaKeywords } =
+    home.data.homePage || {};
 
-  if (!home.data.homeMetaData) {
+  if (!home.data.homePage) {
     return {
       metadataBase: new URL(`${appConfig.baseUrl}`), // Replace with your actual domain
-      title: "ecommerce - Premium Skincare Products & Solutions",
+      title: "ecommerce - Premium Products",
       description:
-        "Explore ecommerce for high-quality skincare solutions. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
+        "Explore ecommerce for high-quality Product. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
       robots: "noindex, nofollow",
     };
   }
 
-  const homeSeoData = {
-    title: home_meta_title,
-    metaDescription: home_meta_description,
-    metaImage: home_meta_image,
-    metaKeywords:
-      "ecommerce, skincare, cosmeceuticals, anti-aging, skincare products, acne treatment, skin health, beauty products",
-  };
-
   const canonicalUrl = appConfig.baseUrl;
+  const imageUrl = `${appConfig.baseApiUrl}/uploads/${metaImage}`;
 
   return {
     metadataBase: new URL(`${canonicalUrl}`), // Dynamically set base URL
-    title: `${homeSeoData.title} - Premium Skincare Products & Solutions - Buy Now | ecommerce`,
-    description: homeSeoData.metaDescription,
-    keywords: homeSeoData.metaKeywords,
+    title: `${metaTitle} - Premium Skincare Products & Solutions - Buy Now | ecommerce`,
+    description: metaDescription,
+    keywords: metaKeywords,
     robots: "index, follow",
     openGraph: {
-      title: homeSeoData.title,
-      description:
-        "Explore ecommerce for high-quality skincare solutions. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
+      title: metaTitle,
+      description: metaDescription,
       url: canonicalUrl,
       type: "website",
       images: [
         {
-          url: homeSeoData.metaImage,
+          url: imageUrl,
           width: 800,
           height: 600,
-          alt: homeSeoData.title,
+          alt: metaTitle,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: homeSeoData.title,
-      description: homeSeoData.metaDescription,
-      images: home_meta_image ? home_meta_image : ["/logo.png"],
+      title: metaTitle,
+      description: metaDescription,
+      images: imageUrl,
     },
     alternates: {
       canonical: canonicalUrl,
@@ -101,29 +88,37 @@ export default async function Home() {
   const home = await getHome();
   const { banners, categories, products, topSellingProducts } = home.data || {};
 
+  const sliderBanners =
+    banners?.filter((item: { type: string }) => item.type === "Slider") || [];
+  const discounts =
+    banners?.filter((item: { type: string }) => item.type === "Slider Right") ||
+    [];
+
   return (
     <>
       <header>
         <Header />
         <div className="container mx-auto py-4">
           <div className="grid md:grid-cols-12 grid-cols-1 gap-2">
-            <Slider
-              banners={banners?.filter(
-                (item: { type: string }) => item.type === "Slider"
-              )}
-            />
-            <HeaderDiscount
-              discounts={banners?.filter(
-                (item: { type: string }) => item.type === "Slider Right"
-              )}
-            />
+            {sliderBanners?.length > 0 && <Slider banners={sliderBanners} />}
+            {discounts?.length > 0 && <HeaderDiscount discounts={discounts} />}
           </div>
         </div>
       </header>
 
       <main>
         {/* all category show */}
-        {categories && <CategoryCard categories={categories} />}
+        {categories && (
+          <div className="container mx-auto py-4">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold">Shop by Category</h2>
+              <Link href={"/categories"} className="hover:underline">
+                View all
+              </Link>
+            </div>
+            <CategoryCard categories={categories} />
+          </div>
+        )}
         {banners.length > 0 && (
           <section className="container mx-auto grid md:grid-cols-3 gap-8 py-3">
             {banners

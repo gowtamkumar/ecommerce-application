@@ -13,7 +13,7 @@ import appConfig from "@/appConfig";
 import { errorNotification } from "@/lib/utils/notification";
 import GeneralSettings from "./GeneralSettings";
 import SyncGeoLocation from "./SyncGeoLocation";
-import SeoAndSocialMedia from "./SeoAndSocialMedia";
+import Seo from "./Seo";
 import { useRouter, useSearchParams } from "next/navigation";
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
@@ -48,6 +48,8 @@ export default function Index() {
       const setting = await getSettings();
       const newData = setting.data;
 
+ 
+
       if (newData?.image) {
         newData.fileList = [createUploadFile(newData.image)];
       }
@@ -61,6 +63,12 @@ export default function Index() {
           createUploadFile(newData.footerOption.image),
         ];
       }
+      if (newData?.homePage?.metaImage) {
+        newData.homePage.metaImagefileList = [
+          createUploadFile(newData?.homePage?.metaImage),
+        ];
+      }
+      
 
       dispatch(setSetting(newData));
     } catch (err: any) {
@@ -120,9 +128,9 @@ export default function Index() {
         //   children: <ContactPage />,
         // },
         {
-          label: "SEO & Social Media",
-          key: "seo_&_social_media",
-          children: <SeoAndSocialMedia />,
+          label: "SEO",
+          key: "seo",
+          children: <Seo />,
         },
 
         {

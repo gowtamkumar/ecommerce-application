@@ -13,8 +13,9 @@ interface Product {
   productCategories: any;
   description: string;
   thumbnailImage: string;
-  images: string[];
+  images: any;
   reviews: any[];
+  tags: any;
   colors: any;
   brand: any;
   rating: string;
@@ -28,8 +29,9 @@ interface GenerateMetadataParams {
 }
 
 export async function generateMetadata({ params }: GenerateMetadataParams) {
+  const { slug } = await params;
   const product = await getProductBySlug({
-    slug: params.slug,
+    slug,
   });
 
   const urlGet = appConfig.baseUrl;
@@ -51,17 +53,18 @@ export async function generateMetadata({ params }: GenerateMetadataParams) {
     images,
     reviews,
     rating,
+    tags,
     finalPrice,
   } = (product.data as Product) || {};
-  const canonicalUrl = `${urlGet}/product/${params.slug}`;
+  const canonicalUrl = `${urlGet}/products/${slug}`;
 
   // Ensure images URLs are absolute
   const absoluteMetaImgUrl =
     thumbnailImage && `${imageUrl}/uploads/${thumbnailImage}`;
 
-  const absolutePhotosUrls = images?.map(
-    (image: string) => `${imageUrl}/uploads/${image}`
-  );
+  const absolutePhotosUrls = images
+    ?.split(",")
+    .map((image: string) => `${imageUrl}/uploads/${image}`);
 
   const reviewsSchema = reviews?.map((item: any) => ({
     "@type": "Review",
@@ -82,20 +85,12 @@ export async function generateMetadata({ params }: GenerateMetadataParams) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: name || "Default Product Name",
-    // image: imageUrls?.length ? imageUrls : ["/logo.png"],
     description: description || "Default product description",
-    // category: category?.name || "Default Category",
-    // color: colors || "Black",
-    // brand: {
-    //   "@type": "Brand",
-    //   name: brand?.name || "Default Brand",
-    //   url: `${appConfig.baseUrl}/brand/${brand?.slug}` || "",
-    // },
     offers: {
       "@type": "Offer",
       priceCurrency: "BDT",
       price: finalPrice || "0.00",
-      url: `${appConfig.baseUrl}/product/${params.slug}`,
+      url: `${appConfig.baseUrl}/products/${slug}`,
       availability: "https://schema.org/InStock",
     },
     aggregateRating: {
@@ -108,9 +103,9 @@ export async function generateMetadata({ params }: GenerateMetadataParams) {
 
   return {
     metadataBase: new URL(urlGet as string), // Ensuring base URL is set correctly for image links
-    title: `${name} - Buy Now | ecommerce`,
+    title: `Buy Now | ${name}`,
     description: description,
-    keywords: `${name}, buy ${name}`,
+    keywords: `${name}, ${tags}`,
     robots: "index, follow",
     openGraph: {
       title: name,

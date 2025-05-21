@@ -129,12 +129,12 @@ export const updateSetting = asyncHandler(
     const connection = await getDBConnection();
     const repository = await connection.getRepository(SettingEntity);
     const result = await repository.findOneBy({ id });
-    const updateData = await repository.merge(result, req.body);
-    await repository.save(updateData);
+    const settingRes = await repository.merge(result, req.body);
+    await repository.save(settingRes);
     return res.status(200).json({
       success: true,
-      message: `Update a single Setting of id ${req.params.id}`,
-      data: updateData,
+      message: `Setting updated successfully`,
+      data: settingRes,
     });
   }
 );

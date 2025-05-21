@@ -26,6 +26,10 @@ router.route("/uploads").post(
       maxCount: 1,
     },
     {
+      name: "metaImage",
+      maxCount: 1,
+    },
+    {
       name: "image",
       maxCount: 1,
     },

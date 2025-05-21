@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Layout, theme } from "antd";
 import React, { Suspense } from "react";
 import { useSession } from "next-auth/react";
+import { Metadata } from "next";
 const { Content } = Layout;
 
 const FooterOption = dynamic(() => import("@/components/dashboard/Footer"), {
@@ -19,6 +20,8 @@ const DashboardHeader = dynamic(() => import("@/components/dashboard/Header"), {
 const Sidebar = dynamic(() => import("@/components/dashboard/Sidebar"), {
   ssr: false,
 });
+
+
 
 export default function DashboardLayout({
   children,

@@ -11,6 +11,7 @@ import {
   setProduct,
 } from "@/redux/features/products/productSlice";
 import dynamic from "next/dynamic";
+import BreadCrumb from "../Breadcrumb";
 
 const ReviewTable = dynamic(() => import("./review-rating/ReviewTable"), {
   ssr: false,
@@ -139,6 +140,18 @@ export default function SingleProduct() {
   //   review: reviewsSchema,
   // };
 
+  const newPath = [
+    { title: "Home", url: "/" },
+    // {
+    //   title: category?.name,
+    //   url: `/category/${category?.slug}`,
+    // },
+    // {
+    //   title: name,
+    //   url: `/product/${slug}`,
+    // },
+  ];
+
   return (
     <div className="container mx-auto">
       {/* <NextSeo
@@ -160,6 +173,11 @@ export default function SingleProduct() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
         />
       </Head> */}
+
+      {/* <BreadCrumb
+        containerClasses=""
+        path={newPath}
+      /> */}
 
       <ProductDetails
         setSelectVariant={setSelectVariant}

@@ -8,7 +8,7 @@ import appConfig from "@/appConfig";
 
 const ProductImageGallery = ({ images }: { images: string }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
-  const newimages = images?.split(",");  
+  const newimages = images?.split(",")
 
   return (
     <div className="w-full">

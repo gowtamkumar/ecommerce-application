@@ -34,6 +34,8 @@ export class SettingEntity {
 
   @Column({ name: "social_link", type: "simple-json", nullable: true })
   socialLink!: string;
+  @Column({ type: "simple-json", nullable: true })
+  seo!: string;
 
   @Column({ name: "email_config", type: "simple-json", nullable: true })
   emailConfig!: string;

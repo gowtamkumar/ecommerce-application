@@ -7,7 +7,7 @@ import {
   selectProduct,
   setProducts,
 } from "@/redux/features/products/productSlice";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
@@ -35,14 +35,20 @@ const ProductCard: React.FC = () => {
   const [pagination, setPagination] = useState<PaginationProps>(
     {} as PaginationProps
   );
+
   const [currentPage, setCurrentPage] = useState(1);
   const searchQuery = useSearchParams();
+
   const searchParams = searchQuery.get("search");
   const categoryIdParams = searchQuery.get("categoryId");
   const global = useSelector(selectGlobal);
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
   const session = useSession();
+  const params = useParams()
+
+  console.log("params", params);
+
 
   const {
     categoryId: categoryIds,
@@ -64,6 +70,8 @@ const ProductCard: React.FC = () => {
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
   if (newSearchs) newSearch += newSearchs;
+
+  console.log("customQuery", customQuery);
 
   useEffect(() => {
     fetchProducts();
@@ -113,9 +121,8 @@ const ProductCard: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div
-        className={`grid gap-1 ${
-          global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
-        }`}
+        className={`grid gap-1 ${global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
+          }`}
       >
         {products?.map((item: any) => {
           const url = `/product/${item.slug}`;

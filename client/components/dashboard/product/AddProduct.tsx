@@ -178,6 +178,10 @@ const AddProduct = ({
       newData.productVariants = [productVariants];
     }
 
+    newData.tags = tags;
+
+    // return console.log("ee", newData);
+
     const result = newData.id
       ? () => updateProduct(newData)
       : () => saveProduct(newData);
