@@ -23,29 +23,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import appConfig from "@/appConfig";
-import dynamic from "next/dynamic";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { imageUploadSizeFileValidation } from "@/lib/utils/imageUploadValidation";
+import { imageSetFile } from "@/lib/utils/imageSetFile";
+import uploadButton from "../uploadButton";
 
-const ChangePassword = dynamic(() => import("./PasswordChange"), {
-  ssr: false,
-});
-
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
+// const uploadButton = (
+//   <div>
+//     <PlusOutlined />
+//     <div
+//       style={{
+//         marginTop: 8,
+//       }}
+//     >
+//       Upload
+//     </div>
+//   </div>
+// );
 
 export default function MyAccount() {
   const [user, setUser] = useState({} as any);
@@ -67,14 +64,7 @@ export default function MyAccount() {
     const newData = { ...res.data };
 
     if (newData.image) {
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `image ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: newData.image,
-        url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-          }`,
-      };
+      const newfile = await imageSetFile(newData.image);
       newData.fileList = [newfile];
     }
     if (newData.dob) newData.dob = dayjs(newData.dob);
@@ -85,7 +75,6 @@ export default function MyAccount() {
 
   const handleSubmit = async (values: any) => {
     try {
-      let newData = { ...values };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = await updateUser(values);
@@ -130,35 +119,38 @@ export default function MyAccount() {
 
     try {
       const res = await uploadFile(formData);
-      console.log("res", res);
-      
+
       if (!res || !res.data) {
-        errorNotification({ message: "Invalid response format" });
+        errorNotification({ message: res.message });
       }
-      const filename = res.data[0].filename;
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `image ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
-      };
-      const newFileName = res.data.length ? filename : null;
+      const resFilename = res.data?.length ? res.data[0].filename : null;
+
+      // const newfile = {
+      //   uid: Math.random() * 1000 + "",
+      //   name: `image ${Math.random() * 10000 + ""}`,
+      //   status: "done",
+      //   fileName: resFilename,
+      //   url: `${appConfig.baseApiUrl}/uploads/${resFilename || "no-data.png"}`,
+      // };
+      const newfile = await imageSetFile(resFilename);
+      console.log("newfile", newfile);
+
       // Assuming you're updating form data here:
       form.setFieldsValue({
         ...formValues,
         fileList: [newfile],
-        image: newFileName,
+        image: resFilename,
       });
       setFormValues({
         ...formValues,
         fileList: [newfile],
-        image: newFileName,
+        image: resFilename,
       });
 
       onSuccess("Ok");
     } catch (err: any) {
       console.error("🚀 ~ Upload error:", err);
+      errorNotification({ message: "Invalid response format" });
       onError({ err });
     }
   };
@@ -168,14 +160,6 @@ export default function MyAccount() {
       return e;
     }
     return e && e.fileList;
-  };
-
-  const layout = {
-    labelCol: { span: 5 },
-    wrapperCol: { span: 12 },
-  };
-  const tailLayout = {
-    wrapperCol: { offset: 5, span: 12 },
   };
 
   return (
@@ -293,7 +277,7 @@ export default function MyAccount() {
               label="Image"
               valuePropName="fileList"
               getValueFromEvent={normFile}
-              tooltip="(PNG/JPG/JPEG/BMP, Max. 3MB)"
+              tooltip="(PNG/JPG/JPEG/BMP, Max. 1MB)"
             >
               <ImgCrop rotationSlider>
                 <Upload
@@ -312,6 +296,9 @@ export default function MyAccount() {
                   className="avatar-uploader"
                   customRequest={customUploadRequest}
                   maxCount={1}
+                  beforeUpload={async (file) => {
+                    await imageUploadSizeFileValidation(file, Upload);
+                  }}
                 >
                   {formValues?.fileList?.length >= 1 ? null : uploadButton}
                 </Upload>
@@ -322,7 +309,7 @@ export default function MyAccount() {
               <Input />
             </Form.Item>
           </div>
-          <Form.Item {...tailLayout}>
+          <Form.Item>
             <div className="flex gap-2">
               <Button
                 size="small"

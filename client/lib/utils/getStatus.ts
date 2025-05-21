@@ -12,7 +12,6 @@ export function getStatus(value: string) {
       return "green";
     case "Returned":
       return "red";
-
     case "Pending":
       return "yellow";
     default:
