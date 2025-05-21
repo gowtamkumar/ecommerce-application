@@ -1,4 +1,5 @@
 import { selectGlobal } from "@/redux/features/global/globalSlice";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { BiUser } from "react-icons/bi";
 import { useSelector } from "react-redux";
@@ -6,6 +7,8 @@ import { useSelector } from "react-redux";
 export default function TopBar() {
   const global = useSelector(selectGlobal);
   const setting = global?.setting?.headerOption?.leftText || "";
+
+  const session = useSession();
 
   return (
     <div className="container flex justify-between items-center mx-auto">
@@ -20,12 +23,16 @@ export default function TopBar() {
         <Link href="/about">About</Link>
         <Link href="/contact">Contact Us</Link>
         <Link href="/profile?tab=my_account">My Account</Link>
-        <Link href="/login" className="flex gap-1 items-center">
-          <BiUser /> Login
-        </Link>
-        <Link href="/register">
-          <span className="text-sm">Sign up</span>
-        </Link>
+        {session.status === "unauthenticated" && (
+          <>
+            <Link href="/login" className="flex gap-1 items-center">
+              <BiUser /> Login
+            </Link>
+            <Link href="/register">
+              <span className="text-sm">Sign up</span>
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

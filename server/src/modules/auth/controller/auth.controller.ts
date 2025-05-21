@@ -640,7 +640,7 @@ export const updateUser = asyncHandler(
     delete updateData.password;
     return res.status(200).json({
       success: true,
-      message: `Update a User of id ${req.params.id}`,
+      message: `Profile updated successfully`,
       data: updateData,
     });
   }

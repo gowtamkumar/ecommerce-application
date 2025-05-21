@@ -14,17 +14,22 @@ import { errorNotification } from "@/lib/utils/notification";
 import GeneralSettings from "./GeneralSettings";
 import SyncGeoLocation from "./SyncGeoLocation";
 import SeoAndSocialMedia from "./SeoAndSocialMedia";
+import { useRouter, useSearchParams } from "next/navigation";
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
 const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false });
 
 export default function Index() {
-  const [tabKey, setTabKey] = useState<any>("general_settings");
+  const [tabKey, setTabKey] = useState<any>("site_settings");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const route = useRouter();
+
+  const search = useSearchParams();
 
   useEffect(() => {
+    setTabKey(search.get("tab"));
     fetchData();
   }, [global.action]);
 
@@ -72,12 +77,13 @@ export default function Index() {
       activeKey={tabKey}
       onChange={(key) => {
         setTabKey(key);
+        route.push(`/dashboard/general-setting?tab=${key}`);
       }}
       type="card"
       items={[
         {
           label: "General Settings",
-          key: "general_settings",
+          key: "site_settings",
           children: <GeneralSettings />,
         },
         {

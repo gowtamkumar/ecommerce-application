@@ -285,6 +285,13 @@ const navbarRoute = [
     route: "true",
   },
 
+   {
+    key: "other_module",
+    icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/other-modules?tab=sizes">Other Module</Link>,
+    route: "true",
+  },
+
   {
     key: "general_setting",
     icon: <FaUser className="h-5 w-5 text-blue-500" />,
@@ -298,12 +305,7 @@ const navbarRoute = [
     label: <Link href="/dashboard/user">User</Link>,
     route: "true",
   },
-  {
-    key: "other_module",
-    icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/other-modules?tab=company_setting">Other Module</Link>,
-    route: "true",
-  },
+ 
 ];
 
 const profileRoute: MenuProps["items"] = [

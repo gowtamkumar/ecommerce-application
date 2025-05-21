@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Tabs } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -28,6 +28,12 @@ const Lead = dynamic(() => import("./lead/Lead"), { ssr: false });
 export default function Index() {
   const [tabKey, setTabKey] = useState<any>("sizes");
   const route = useRouter();
+
+  const search = useSearchParams();
+
+  useEffect(() => {
+    setTabKey(search.get("tab"));
+  }, []);
 
   return (
     <Tabs
@@ -71,7 +77,7 @@ export default function Index() {
           key: "reviews",
           children: <Review />,
         },
-        
+
         {
           label: "Leads",
           key: "leads",
@@ -82,7 +88,6 @@ export default function Index() {
           key: "stock_adjust",
           children: <StockAdjust />,
         },
-       
       ]}
     />
   );

@@ -1,27 +1,25 @@
 import { errorNotification } from "./notification";
 
-export function imageUploadSizeFileValidation(file: any, Upload: any) {
-  const isAllowedType = [
-    "image/jpeg",
-    "image/png",
-    "image/jpg",
-    "image/bmp",
-  ].includes(file.type);
-  const isLt1M = file.size / 1024 / 1024 < 1;
+export function imageUploadSizeFileValidation(file: File): boolean {
+  const maxSizeInBytes = 1 * 1024 * 1024; // 1MB
+  const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
 
-  if (!isAllowedType) {
+  const isImage = allowedTypes.includes(file.type);
+  const isUnderLimit = file.size <= maxSizeInBytes;
+
+  if (!isImage) {
     errorNotification({
-      message: "Only JPG/PNG/JPEG/BMP files are allowed!",
+      message: "Only JPG/PNG/JPEG files are allowed!",
     });
-    return Upload.LIST_IGNORE;
+    return false;
   }
 
-  if (!isLt1M) {
+  if (!isUnderLimit) {
     errorNotification({
       message: "Image must be smaller than 1MB!",
     });
-    return Upload.LIST_IGNORE;
+    return false;
   }
 
-  return true; // allow upload
+  return true;
 }
