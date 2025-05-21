@@ -70,6 +70,7 @@ export default function CategoryCard({ categories }: any) {
                   <div
                     className="flex flex-col py-5 gap-2 items-center justify-center mx-auto bg-gray-100  text-center cursor-pointer rounded-lg"
                     onClick={() => {
+                      
                       router.push(`/products?categoryId=${item.id}&`);
                     }}
                   >

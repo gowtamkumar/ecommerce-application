@@ -25,6 +25,78 @@ const HeaderDiscount = dynamic(
 // );
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
+export async function generateMetadata() {
+  const home = await getHome();
+  const { home_meta_description, home_meta_image, home_meta_title } =
+    home.data.homeMetaData || {};
+
+  if (!home.data.homeMetaData) {
+    return {
+      metadataBase: new URL(`${appConfig.baseUrl}`), // Replace with your actual domain
+      title: "ecommerce - Premium Skincare Products & Solutions",
+      description:
+        "Explore ecommerce for high-quality skincare solutions. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
+      robots: "noindex, nofollow",
+    };
+  }
+
+  const homeSeoData = {
+    title: home_meta_title,
+    metaDescription: home_meta_description,
+    metaImage: home_meta_image,
+    metaKeywords:
+      "ecommerce, skincare, cosmeceuticals, anti-aging, skincare products, acne treatment, skin health, beauty products",
+  };
+
+  const canonicalUrl = appConfig.baseUrl;
+
+  return {
+    metadataBase: new URL(`${canonicalUrl}`), // Dynamically set base URL
+    title: `${homeSeoData.title} - Premium Skincare Products & Solutions - Buy Now | ecommerce`,
+    description: homeSeoData.metaDescription,
+    keywords: homeSeoData.metaKeywords,
+    robots: "index, follow",
+    openGraph: {
+      title: homeSeoData.title,
+      description:
+        "Explore ecommerce for high-quality skincare solutions. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
+      url: canonicalUrl,
+      type: "website",
+      images: [
+        {
+          url: homeSeoData.metaImage,
+          width: 800,
+          height: 600,
+          alt: homeSeoData.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: homeSeoData.title,
+      description: homeSeoData.metaDescription,
+      images: home_meta_image ? home_meta_image : ["/logo.png"],
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    additionalMetaTags: [
+      {
+        name: "author",
+        content: "ecommerce",
+      },
+      {
+        name: "theme-color",
+        content: "#ff6600",
+      },
+      {
+        name: "canonical",
+        content: canonicalUrl,
+      },
+    ],
+  };
+}
+
 export default async function Home() {
   const home = await getHome();
   const { banners, categories, products, topSellingProducts } = home.data || {};

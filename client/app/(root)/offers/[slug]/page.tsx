@@ -20,6 +20,8 @@ export default async function Offer({ params }: { params: { slug: string } }) {
     products = productsRes.data || [];
   }
 
+  
+
   return (
     <>
       <Header />

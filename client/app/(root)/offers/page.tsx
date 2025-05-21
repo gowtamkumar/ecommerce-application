@@ -18,9 +18,12 @@ export default async function Offers() {
         {offers.data.length > 0 && (
           <section className="container mx-auto grid md:grid-cols-4 gap-8 py-3">
             {offers.data.map((item: any, index: number) => (
-              <Link key={index} className="bottom-auto" href={`/offers/${item.slug}`}>
+              <Link
+                key={index}
+                className="bottom-auto"
+                href={`/offers/${item.slug}`}
+              >
                 <div
-
                   className="bg-cover  bg-center rounded-lg h-56 flex flex-col justify-center items-start text-white p-4 text-start"
                   style={{
                     backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,

@@ -3,6 +3,7 @@ const publicUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const baseApiUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 
 
@@ -14,6 +15,7 @@ export const appConfig = {
   publicUrl,
   apiUrl,
   baseApiUrl,
+  baseUrl,
   author: {
     name: "E-commerce",
     email: "demo@gmail.com",

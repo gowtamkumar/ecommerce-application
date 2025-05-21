@@ -122,8 +122,6 @@ export async function getProductBySlug(params: any) {
   const { slug, productVariantId } = params;
   let queryString = "";
 
-  console.log("params", params);
-
   if (productVariantId) {
     queryString += `productVariantId=${productVariantId}`;
   }
