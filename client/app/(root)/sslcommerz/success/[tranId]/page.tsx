@@ -3,10 +3,10 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Sslcommerz Payment Success",
-  description: "...",
-};
+// export const metadata: Metadata = {
+//   title: "Sslcommerz Payment Success",
+//   description: "...",
+// };
 
 export default function Success() {
   const params = useParams();

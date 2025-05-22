@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -18,19 +19,7 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
+import uploadButton from "@/components/website/uploadButton";
 
 const AddBanner = () => {
   const [formValues, setFormValues] = useState({
@@ -43,7 +32,7 @@ const AddBanner = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
+    const newData = { ...global.action.payload };
     setFormData(newData);
     return () => {
       setFormValues({});
@@ -227,11 +216,11 @@ const AddBanner = () => {
             rotationSlider
             aspectSlider
             showReset
-          // modalWidth={1000}
-          // aspect={18 / 6}
-          // minZoom={1}
-          // maxZoom={3}
-          // cropShape='rect'
+            // modalWidth={1000}
+            // aspect={18 / 6}
+            // minZoom={1}
+            // maxZoom={3}
+            // cropShape='rect'
           >
             <Upload
               name="image"
@@ -293,10 +282,7 @@ const AddBanner = () => {
 
         <Form.Item {...tailLayout}>
           <div className="flex gap-2">
-            <Button
-              size="small"
-              onClick={() => resetFormData(payload)}
-            >
+            <Button size="small" onClick={() => resetFormData(payload)}>
               Reset
             </Button>
             <Button

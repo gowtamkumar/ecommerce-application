@@ -13,9 +13,6 @@ import {
 import ApplyCoupon from "./ApplyCoupon";
 import { getUserShippingAddresses } from "@/lib/apis/shipping-address";
 
-const Breadcrumb = dynamic(() => import("@/components/Breadcrumb"), {
-  ssr: false,
-});
 const CheckoutSummary = dynamic(() => import("./CheckoutSummary"), {
   ssr: false,
 });
@@ -67,14 +64,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Breadcrumb
-        homeElement={"Home"}
-        separator={<span>___</span>}
-        activeClasses="text-amber-500"
-        containerClasses="flex bg-bioxin-accent from-purple-600 to-blue-600"
-        listClasses="hover:underline mx-2 font-bold"
-        capitalizeLinks
-      />
+     
       <div className="container lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
         <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
           <div className="col-span-2 bg-white rounded-md content-between">

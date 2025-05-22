@@ -12,10 +12,10 @@ import { Metadata } from "next";
 
 const Button = dynamic(() => import("@/components/share-component/Button"));
 
-export const metadata: Metadata = {
-  title: "Reset Password",
-  description: "...",
-};
+// export const metadata: Metadata = {
+//   title: "Reset Password",
+//   description: "...",
+// };
 
 export default function ResetPassrod() {
   const params = useParams();

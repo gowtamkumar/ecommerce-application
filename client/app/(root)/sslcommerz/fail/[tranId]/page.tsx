@@ -4,10 +4,10 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Sslcommerz Payment Fail",
-  description: "...",
-};
+// export const metadata: Metadata = {
+//   title: "Sslcommerz Payment Fail",
+//   description: "...",
+// };
 
 export default function PaymentFail() {
   const params = useParams();

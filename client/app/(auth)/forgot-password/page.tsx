@@ -10,10 +10,10 @@ import dynamic from "next/dynamic";
 import { Metadata } from "next";
 const Button = dynamic(() => import("@/components/share-component/Button"), { ssr: false })
 
-export const metadata: Metadata = {
-  title: "Forgot Password",
-  description: "...",
-};
+// export const metadata: Metadata = {
+//   title: "Forgot Password",
+//   description: "...",
+// };
 
 
 export default function ForgotPassrod() {
