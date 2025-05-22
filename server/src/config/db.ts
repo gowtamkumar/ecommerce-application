@@ -43,7 +43,6 @@ import { ApplicableProductEntity } from "../modules/discount/model/applicable-pr
 import { ContactEntity } from "../modules/contact/model/contact.entity";
 import { StockAdjustEntity } from "../modules/stock-adjust/model/stock-adjust.entity";
 
-// dotenv.config({ path: path.join(__dirname, "../../.env") });
 const envFile =
   process.env.NODE_ENV === "production"
     ? ".env.production"

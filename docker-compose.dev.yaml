@@ -54,7 +54,7 @@ services:
       - /server/app/node_modules
       - ./server:/app
     env_file:
-      - ./server/.env
+      - ./server/.env.development
     depends_on:
       - postgres
     networks:
