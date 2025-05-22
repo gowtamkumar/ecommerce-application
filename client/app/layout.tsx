@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import localFont from "next/font/local";
 import dynamic from "next/dynamic";
 import { getServerSession } from "next-auth";
@@ -21,7 +20,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
-import Head from "next/head";
 
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
@@ -79,10 +77,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <Head>
+      <head>
         {favicon && <link rel="icon" href={favicon} />}
         {renderSeoCode(setting?.seo?.headerCode)}
-      </Head>
+      </head>
       <body suppressHydrationWarning className={poppinsFont.variable}>
         {/* Google Tag Manager (noscript) */}
         {setting?.seo?.bodyStartCode && (

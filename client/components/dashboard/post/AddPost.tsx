@@ -19,7 +19,6 @@ import ImgCrop from "antd-img-crop";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { getCategories } from "@/lib/apis/categories";
 import appConfig from "@/appConfig";
-import TextQuillEditor from "@/components/share-component/editor-quill/TextQuillEditor";
 import {
   handleAsyncAction,
   handlePreview,
@@ -309,10 +308,10 @@ const AddPost = () => {
           <div className="col-span-1">
             <label htmlFor="content">Content</label>
 
-            <TextQuillEditor
+            {/* <TextQuillEditor
               editorContent={editorContent}
               setEditorContent={setEditorContent}
-            />
+            /> */}
           </div>
 
           <div className={`col-span-1`}>

@@ -1,8 +1,16 @@
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 const Header = dynamic(() => import("@/components/website/header/Header"));
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
-const ContactForm = dynamic(() => import("@/components/website/contact/ContactForm"));
+const ContactForm = dynamic(
+  () => import("@/components/website/contact/ContactForm")
+);
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description: "...",
+};
 
 export default function page() {
   return (

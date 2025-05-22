@@ -7,7 +7,13 @@ import { sendForgotPassword } from "@/lib/apis/sendForgotPassword";
 import { useFormState } from "react-dom";
 import { forgotPasswordValidationSchema } from "@/validation/user/forgotPasswordValidation";
 import dynamic from "next/dynamic";
+import { Metadata } from "next";
 const Button = dynamic(() => import("@/components/share-component/Button"), { ssr: false })
+
+export const metadata: Metadata = {
+  title: "Forgot Password",
+  description: "...",
+};
 
 
 export default function ForgotPassrod() {

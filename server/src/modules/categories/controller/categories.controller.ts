@@ -89,6 +89,24 @@ export const getAntdCategories = asyncHandler(
   }
 );
 
+
+export const getCategoriesForMenu = asyncHandler(
+  async (req: Request, res: Response) => {
+    logger.info(`Service: getCategoriesForMenu ${req.method} ${req.url}`);
+
+    const connection = await getDBConnection();
+    const repository = connection.getTreeRepository(CategoriesEntity);
+
+    const result = await repository.findTrees();
+
+    return res.status(200).json({
+      success: true,
+      message: "Get all for Menu",
+      data: result,
+    });
+  }
+);
+
 // @desc Get all Categorys
 // @route GET /api/v1/categories
 // @access Public

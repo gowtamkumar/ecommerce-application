@@ -194,8 +194,6 @@ export default function SingleProduct() {
         <h3 className="text-lg font-bold mb-4">Related Product</h3>
         <ProductCard />
       </section>
-
-      {/* <RelatedProducts relatedProducts={relatedProducts} /> */}
     </div>
   );
 }

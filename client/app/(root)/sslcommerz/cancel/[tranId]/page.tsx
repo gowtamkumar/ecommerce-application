@@ -1,6 +1,12 @@
 "use client";
+import { Metadata } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Sslcommerz Payment Cancel",
+  description: "...",
+};
 
 export default function PaymentCancel() {
   const params = useParams();

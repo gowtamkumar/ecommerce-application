@@ -1,7 +1,14 @@
 import ContactForm from "@/components/website/contact/ContactForm";
 import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Support and help",
+  description: "...",
+};
+
 
 export default function Support() {
   return (

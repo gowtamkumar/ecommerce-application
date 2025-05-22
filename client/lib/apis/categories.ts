@@ -20,6 +20,17 @@ export async function getAntdCategories() {
   return await handleResponse(res);
 }
 
+
+export async function getCategoriesForMenu() {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/categories/menu`, {
+    cache: "no-cache",
+    headers,
+  });
+
+  return await handleResponse(res);
+}
+
 export async function getCategories() {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/categories`, {

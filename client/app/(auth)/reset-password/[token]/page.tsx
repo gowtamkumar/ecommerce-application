@@ -8,8 +8,14 @@ import { resetPasswordValidationSchema } from "@/validation/user/resetPasswordVa
 import { resetPassword } from "@/lib/apis/resetPassword";
 import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
+import { Metadata } from "next";
 
 const Button = dynamic(() => import("@/components/share-component/Button"));
+
+export const metadata: Metadata = {
+  title: "Reset Password",
+  description: "...",
+};
 
 export default function ResetPassrod() {
   const params = useParams();

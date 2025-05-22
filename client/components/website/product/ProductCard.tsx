@@ -47,8 +47,6 @@ const ProductCard: React.FC = () => {
   const session = useSession();
   const params = useParams()
 
-  console.log("params", params);
-
 
   const {
     categoryId: categoryIds,
@@ -70,8 +68,6 @@ const ProductCard: React.FC = () => {
   let newSearch = "";
   if (searchParams) newSearch += searchParams;
   if (newSearchs) newSearch += newSearchs;
-
-  console.log("customQuery", customQuery);
 
   useEffect(() => {
     fetchProducts();

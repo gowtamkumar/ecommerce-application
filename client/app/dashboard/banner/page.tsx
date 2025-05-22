@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 const AddBanner = dynamic(() => import('@/components/dashboard/banner/AddBanner'), { ssr: false })
 const BannerList = dynamic(() => import('@/components/dashboard/banner/BannerList'), { ssr: false })
 
+
 export default function Banner() {
   const [tabKey, setTabKey] = useState("banner_list");
   const dispatch = useDispatch();

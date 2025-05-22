@@ -6,6 +6,51 @@ import { getDiscounts } from "@/lib/apis/discount";
 import Link from "next/link";
 import React from "react";
 
+export async function generateMetadata() {
+  const discountsRes = await getDiscounts({
+    scope: "Global,Products,Brand,Category",
+  });
+
+  const discounts = discountsRes.data;
+
+  const baseUrl = appConfig.baseUrl;
+
+
+  // Fallback if API doesn't return expected data
+  if (!Array.isArray(discounts) || discounts.length === 0) {
+    return {
+      metadataBase: new URL(`${baseUrl}`),
+      title: "Ecommerce Discounts",
+      description: "Check out our latest discounts and offers.",
+      keywords: "discounts, deals, offers",
+      robots: "index, follow",
+    };
+  }
+
+  // Optional: Map discounts to keywords or description
+  const discountNames = discounts.map((d: any) => d.name).join(", ");
+  const topDescription = `Discover amazing offers: ${discountNames}`;
+
+  return {
+    metadataBase: new URL(`${baseUrl}`),
+    title: "Latest Discounts & Deals",
+    description: topDescription,
+    keywords: discountNames,
+    robots: "index, follow",
+    openGraph: {
+      title: "Best Ecommerce Offers",
+      description: topDescription,
+      url: `${baseUrl}/offers`,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Top Discounts Available",
+      description: topDescription,
+    },
+  };
+}
+
 export default async function Offers() {
   const offers = await getDiscounts({
     scope: "Global,Products,Brand,Category",

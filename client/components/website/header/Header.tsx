@@ -10,11 +10,10 @@ import {
   setMobile,
   setSetting,
 } from "@/redux/features/global/globalSlice";
-import { getAntdCategories } from "@/lib/apis/categories";
+import {  getCategoriesForMenu } from "@/lib/apis/categories";
 import Link from "next/link";
 import { Button } from "antd";
 import { getSettings } from "@/lib/apis/setting";
-import Head from "next/head";
 
 const TopBar = dynamic(() => import("./TopBar"));
 const MainMenu = dynamic(() => import("./Menu"));
@@ -28,7 +27,7 @@ export default function Header() {
   const fetchCategory = async () => {
     const setting = await getSettings();
     dispatch(setSetting(setting?.data));
-    const response = await getAntdCategories();
+    const response = await getCategoriesForMenu();
     dispatch(setCategories(response.data));
   };
 

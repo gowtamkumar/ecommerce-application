@@ -1,6 +1,12 @@
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 const Header = dynamic(() => import("@/components/website/header/Header"));
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "...",
+};
 
 const page = () => {
   return (

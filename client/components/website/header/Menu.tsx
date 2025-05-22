@@ -6,31 +6,51 @@ import Link from "next/link";
 import { CiMenuFries } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
+import { useMemo } from "react";
 
 const MainMenu = () => {
-  // const pathname = usePathname(); // Get current route
   const global = useSelector(selectGlobal);
 
-  const newData = global.categories?.map((item: any) => {
+  type MenuItem = {
+    key: string;
+    label: React.ReactNode;
+    title: string;
+    children: MenuItem[] | null;
+  };
+
+  function formatCategory(node: {
+    key: string;
+    id: number;
+    name: string;
+    children?: any[];
+  }): MenuItem {
     return {
-      ...item,
-      key: item.key.toString(),
+      key: node.id.toString(),
       label: (
         <Link
-          href={`/products?categoryId=${item.key}`}
+          href={`/products?categoryId=${node.id}&`}
           rel="noopener noreferrer"
         >
-          {item.label}
+          {node.name}
         </Link>
       ),
+      title: node.name,
+      children:
+        Array.isArray(node.children) && node.children.length > 0
+          ? node.children.map(formatCategory)
+          : null,
     };
-  });
+  }
+
+  const optimizeCategory = useMemo(() => {
+    return global.categories ? global?.categories?.map(formatCategory) : [];
+  }, [global.categories]);
 
   return (
     <div className="flex items-center">
       <Dropdown
         menu={{
-          items: newData,
+          items: optimizeCategory,
         }}
         trigger={["click"]}
       >

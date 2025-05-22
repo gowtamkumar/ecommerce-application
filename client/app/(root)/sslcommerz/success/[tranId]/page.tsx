@@ -1,11 +1,16 @@
 'use client'
+import { Metadata } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Sslcommerz Payment Success",
+  description: "...",
+};
 
 export default function Success() {
   const params = useParams();
 
-  console.log("params", params);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">

@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 
@@ -8,6 +9,12 @@ const Header = dynamic(
 const WebFooter = dynamic(
   () => import("@/components/website/footer/Footer")
 )
+
+export const metadata: Metadata = {
+  title: "Support and help",
+  description: "...",
+};
+
 const page = () => {
   return (
     <>

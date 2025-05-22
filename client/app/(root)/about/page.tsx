@@ -1,14 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-const WebFooter = dynamic(
-  () => import("@/components/website/footer/Footer")
-);
+const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 
-const Header = dynamic(
-  () => import("@/components/website/header/Header")
-);
+const Header = dynamic(() => import("@/components/website/header/Header"));
+
+export const metadata: Metadata = {
+  title: "About us",
+  description: "...",
+};
 
 export default function About() {
   return (
