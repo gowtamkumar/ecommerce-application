@@ -13,7 +13,12 @@ import { setupRoutes } from "./src/routes/routes";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
 
-dotenv.config();
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development";
+
+dotenv.config({ path: envFile });
 const app = express();
 
 // access public folder for image
@@ -22,13 +27,18 @@ if (process.env.NODE_ENV === "development") {
 }
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "..", "public"), {
-    setHeaders: (res) => {
-      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-      res.setHeader("Pragma", "no-cache");
-      res.setHeader("Expires", "0");
-    },
-  }));
+  app.use(
+    express.static(path.join(__dirname, "..", "public"), {
+      setHeaders: (res) => {
+        res.setHeader(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+      },
+    })
+  );
 }
 
 // Connect to database

@@ -44,7 +44,12 @@ import { ContactEntity } from "../modules/contact/model/contact.entity";
 import { StockAdjustEntity } from "../modules/stock-adjust/model/stock-adjust.entity";
 
 // dotenv.config({ path: path.join(__dirname, "../../.env") });
-dotenv.config();
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development";
+
+dotenv.config({ path: envFile });
 
 const inEnvFile = {
   DB_TYPE: process.env.DB_TYPE,
