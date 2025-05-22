@@ -21,6 +21,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
 import { auth } from "@/auth";
+import Head from "next/head";
 
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
@@ -78,10 +79,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <head>
+      <Head>
         {favicon && <link rel="icon" href={favicon} />}
         {renderSeoCode(setting?.seo?.headerCode)}
-      </head>
+      </Head>
       <body suppressHydrationWarning className={poppinsFont.variable}>
         {/* Google Tag Manager (noscript) */}
         {setting?.seo?.bodyStartCode && (
