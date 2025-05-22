@@ -1,11 +1,11 @@
 "use server";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../authOption";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../../authOption";
 import appConfig from "@/appConfig";
+import { auth } from "@/auth";
 
 export async function saveDivision(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -29,7 +29,7 @@ export async function saveDivision(data: any) {
 }
 
 export async function getDivisions() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -51,7 +51,7 @@ export async function getDivisions() {
 }
 
 export async function getDivision(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -72,7 +72,7 @@ export async function getDivision(data: any) {
   return res.json();
 }
 // export async function updateDivision(data: any) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/divisions/${data.id}`,
 //     {

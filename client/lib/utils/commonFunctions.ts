@@ -5,9 +5,10 @@ import {
   setPreviewOpen,
   setPreviewTitle,
 } from "@/redux/features/global/globalSlice";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../authOption";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../authOption";
 import { errorNotification, successNotification } from "./notification";
+import { auth } from "@/auth";
 
 export const handleAsyncAction = async (
   asyncFn: () => Promise<any>,
@@ -62,7 +63,7 @@ export const handleAsyncDeleteAction = async (
 };
 
 export async function getAuthHeaders() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   // if (!session?.user?.accessToken) {
   //   throw new Error("User not authenticated");
   // }

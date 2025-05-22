@@ -1,11 +1,12 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../authOption";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../../authOption";
 import appConfig from "@/appConfig";
+import { auth } from "@/auth";
 
 export async function saveUpazila(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -35,7 +36,7 @@ export async function getUpazilas(params?: any) {
     queryParams.append("districtId", districtId);
   }
 
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -58,7 +59,7 @@ export async function getUpazilas(params?: any) {
 }
 
 export async function getUpazila(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -83,7 +84,7 @@ export async function getUpazila(data: any) {
 }
 
 // export async function updateUpazila(data: any) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/upazilas/${data.id}`,
 //     {
@@ -100,7 +101,7 @@ export async function getUpazila(data: any) {
 // }
 
 // export async function deleteUpazila(id: string) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/upazilas/${id}`,
 //     {

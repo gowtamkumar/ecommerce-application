@@ -1,11 +1,12 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../authOption";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../../authOption";
 import appConfig from "@/appConfig";
+import { auth } from "@/auth";
 
 export async function saveUnion(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -31,7 +32,7 @@ export async function getUnions(params?: any) {
   const { upazilaId } = params;
 
   const queryData = upazilaId ? `?upazilaId=${upazilaId}` : "";
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -51,7 +52,7 @@ export async function getUnions(params?: any) {
 }
 
 export async function getUnion(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -73,7 +74,7 @@ export async function getUnion(data: any) {
 }
 
 // export async function updateUnion(data: any) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/unions/${data.id}`,
 //     {
@@ -90,7 +91,7 @@ export async function getUnion(data: any) {
 // }
 
 // export async function deleteUnion(id: string) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/unions/${id}`,
 //     {

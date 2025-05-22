@@ -1,7 +1,7 @@
 import localFont from "next/font/local";
 import dynamic from "next/dynamic";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../lib/authOption";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../lib/authOption";
 import { getSettings } from "@/lib/apis/setting";
 import appConfig from "@/appConfig";
 import StoreProvider from "@/redux/storeProvider";
@@ -20,6 +20,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/autoplay";
+import { auth } from "@/auth";
 
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
@@ -68,7 +69,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const settingRes = await getSettings();
   const setting = settingRes?.data || {};
   const favicon = setting?.favicon

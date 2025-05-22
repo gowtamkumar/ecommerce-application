@@ -1,8 +1,9 @@
 "use server";
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../authOption";
 import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 import appConfig from "@/appConfig";
-import { authOptions } from "../authOption";
+import { auth } from "@/auth";
 
 export async function saveFile(data: any) {
   const headers = await getAuthHeaders();
@@ -17,7 +18,7 @@ export async function saveFile(data: any) {
 }
 
 export async function uploadFile(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const res = await fetch(`${appConfig.apiUrl}/files/uploads`, {
     method: "POST",
     cache: "no-cache",

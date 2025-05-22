@@ -1,7 +1,8 @@
-import ScrollToCart from "@/components/website/ScrollToCart";
-import { authOptions } from "@/lib/authOption";
+import { auth } from "@/auth";
+// import ScrollToCart from "@/components/website/ScrollToCart";
+// import { authOptions } from "@/lib/authOption";
+// import { getServerSession } from "next-auth";
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
@@ -22,7 +23,7 @@ export default async function CheckOut() {
   //   redirect("/login");
   // }
 
-  const session: any = await getServerSession(authOptions);
+  const session: any = await auth();
 
   if (!session?.token) {
     redirect("/login");

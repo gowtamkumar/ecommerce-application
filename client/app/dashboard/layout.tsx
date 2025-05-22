@@ -25,9 +25,9 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  // const {
+  //   token: { colorBgContainer, borderRadiusLG },
+  // } = theme.useToken();
 
   const session: any = useSession();
 
@@ -41,8 +41,8 @@ export default function DashboardLayout({
         style={{
           padding: 10,
           minHeight: "80vh",
-          background: colorBgContainer,
-          borderRadius: borderRadiusLG,
+          // background: colorBgContainer,
+          // borderRadius: borderRadiusLG,
         }}
       >
         <Layout style={{ minHeight: "100vh" }}>

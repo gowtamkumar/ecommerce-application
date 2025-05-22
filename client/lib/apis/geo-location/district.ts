@@ -1,11 +1,12 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../authOption";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../../authOption";
 import appConfig from "@/appConfig";
+import { auth } from "@/auth";
 
 export async function saveDistrict(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -37,7 +38,7 @@ export async function getDistricts(params?: any) {
     queryData.append("divisionId", divisionId);
   }
 
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -57,7 +58,7 @@ export async function getDistricts(params?: any) {
 }
 
 export async function getDistrict(data: any) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user?.accessToken) {
     throw new Error("No access token found");
@@ -79,7 +80,7 @@ export async function getDistrict(data: any) {
 }
 
 // export async function updateDistricts(data: any) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/districts/${data.id}`,
 //     {
@@ -96,7 +97,7 @@ export async function getDistrict(data: any) {
 // }
 
 // export async function deleteDistricts(id: string) {
-//   const session = await getServerSession(authOptions);
+//   const session = await auth();
 //   const res = await fetch(
 //     `${appConfig.apiUrl}/districts/${id}`,
 //     {
