@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -38,24 +38,24 @@ const ColorList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
-    dispatch(setLoading({ loading: true }));
+  const fetchData = useCallback(async () => {
+    // dispatch(setLoading({ loading: true }));
     try {
       const res = await getColors();
       setColors(res?.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
-      dispatch(setLoading({ loading: false }));
+      // dispatch(setLoading({}));
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]); // 👈 safer and cleaner
 
   const handleDelete = async (id: string) => {
-    dispatch(setLoading({ delete: true }));
+    // dispatch(setLoading({ delete: true }));
     try {
       await deleteColor(id);
       successNotification({ message: "Successfully deleted" });
@@ -63,7 +63,7 @@ const ColorList: React.FC = () => {
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      dispatch(setLoading({ delete: false }));
+      // dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
     }
   };
@@ -233,7 +233,6 @@ const ColorList: React.FC = () => {
             <Button
               size="small"
               danger
-              loading={global.loading?.delete}
               icon={<RestOutlined />}
             />
           </Popconfirm>
@@ -245,7 +244,7 @@ const ColorList: React.FC = () => {
   return (
     <Table
       scroll={{ x: "auto" }}
-      loading={global.loading.loading}
+      loading={global.loading.color}
       columns={columns}
       dataSource={colors}
       pagination={{ pageSize: 10 }}

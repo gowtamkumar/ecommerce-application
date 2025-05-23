@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -18,19 +19,7 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
+import uploadButton from "@/components/website/uploadButton";
 
 const AddBrand = () => {
   const [formValues, setFormValues] = useState({
@@ -45,10 +34,6 @@ const AddBrand = () => {
   useEffect(() => {
     const newData = { ...payload };
     setFormData(newData);
-    return () => {
-      setFormValues({});
-      form.resetFields();
-    };
   }, [payload]);
 
   const handleSubmit = async (values: any) => {
@@ -105,6 +90,8 @@ const AddBrand = () => {
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
+    setFormValues({});
+    form.resetFields();
   };
 
   const setFormData = (v: any) => {

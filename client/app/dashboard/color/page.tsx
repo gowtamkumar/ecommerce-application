@@ -4,8 +4,8 @@ import dynamic from "next/dynamic";
 import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
-import { setAction } from "@/redux/features/global/globalSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
 
 const ColorList = dynamic(
   () => import("@/components/dashboard/color/ColorList"),
@@ -19,7 +19,8 @@ const AddColor = dynamic(
 export default function Color() {
   const [tabKey, setTabKey] = useState("Color_list");
   const dispatch = useDispatch();
-
+  const global = useSelector(selectGlobal);
+  const { action } = global;
   return (
     <div className="container-fluid bg-white p-3  ">
       <Tabs
@@ -49,7 +50,7 @@ export default function Color() {
           </Button>
         }
       />
-      <AddColor />
+      {action?.type === ActionType.CREATE && action?.color && <AddColor />}
     </div>
   );
 }

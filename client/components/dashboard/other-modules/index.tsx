@@ -33,7 +33,7 @@ export default function Index() {
 
   useEffect(() => {
     setTabKey(search.get("tab"));
-  }, []);
+  }, [search]);
 
   return (
     <Tabs

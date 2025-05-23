@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -34,19 +35,8 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import uploadButton from "@/components/website/uploadButton";
 
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
 
 const AddCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -59,15 +49,8 @@ const AddCategory = () => {
   const dispatch = useDispatch();
   const { payload, type } = global.action;
 
-  useEffect(() => {
-    fetchData();
-    return () => {
-      setFormValues({});
-      form.resetFields();
-    };
-  }, [global.action]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
@@ -80,7 +63,12 @@ const AddCategory = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, global.action?.type]); // 👈 safer and cleaner
+
 
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));

@@ -19,27 +19,26 @@ export const handleAsyncAction = async (
     dispatch(setLoading({ save: true }));
     const res = await asyncFn();
 
+    console.log("🚀 ~ res: fun", res);
+
     if (!res.success) {
       errorNotification({ message: res.message });
-      return;
+      dispatch(setLoading({}));
+      return null
     }
 
+    successNotification({ message: res.message });
+    dispatch(setLoading({}));
     dispatch(setAction({}));
-    console.log("call back function");
-
-    successNotification({ message: successMessage });
     return res; // Return the successful response
   } catch (error: any) {
-    // console.log("🚀 ~ Error:", error?.message);
+    console.log("🚀 ~ Error:", error?.message);
     //
     const errorMessage = error?.message || "An unexpected error occurred";
     errorNotification({ message: errorMessage });
 
     // Return the error object or reject as a Promise
     return Promise.reject(error); // Ensures error propagation
-  } finally {
-    console.log("Finally block executed");
-    dispatch(setLoading({}));
   }
 };
 
@@ -75,7 +74,6 @@ export async function getAuthHeaders() {
 
 // Function to handle API responses
 export async function handleResponse(res: Response) {
-
   return res.json();
 }
 
@@ -111,4 +109,3 @@ export const normFile = (e: { fileList: string }) => {
   }
   return e && e.fileList;
 };
-

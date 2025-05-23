@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -43,7 +44,7 @@ const BrandList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [global.action]);
+  }, [global.action?.type]);
 
   const fetchData = async () => {
     dispatch(setLoading({ loading: true }));

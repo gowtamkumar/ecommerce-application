@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import {
   Button,
@@ -7,7 +8,6 @@ import {
   Input,
   Modal,
 } from "antd";
-import { ActionType } from "../../../constants/constants";
 import {
   green,
   presetPalettes,
@@ -18,10 +18,10 @@ import {
   grey,
 } from "@ant-design/colors";
 import { saveColor, updateColor } from "@/lib/apis/color";
+import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,11 +39,11 @@ const AddColor = () => {
   useEffect(() => {
     const newData = { ...payload };
     form.setFieldsValue(newData);
+
     return () => {
-      dispatch(setFormValues({}));
       form.resetFields();
     };
-  }, [global.action]);
+  }, []);
 
   const handleSubmit = async (values: any) => {
     const result = values.id
@@ -59,7 +59,7 @@ const AddColor = () => {
 
   const handleClose = () => {
     dispatch(setAction({}));
-    dispatch(setLoading({}));
+    // dispatch(setLoading({}));
   };
 
   const resetFormData = () => {
@@ -69,8 +69,6 @@ const AddColor = () => {
       form.resetFields();
     }
   };
-
-
 
   const genPresets = (presets = presetPalettes) =>
     Object.entries(presets).map<Presets>(([label, colors]) => ({
@@ -95,7 +93,7 @@ const AddColor = () => {
   const tailLayout = {
     wrapperCol: { offset: 6, span: 14 },
   };
-  
+
   return (
     <Modal
       title={type === ActionType.UPDATE ? "Update Color" : "Create Color"}
@@ -117,16 +115,7 @@ const AddColor = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "Name is required",
-            },
-          ]}
-        >
+        <Form.Item name="name" label="Name">
           <Input
             placeholder="Enter Name"
             onChange={({ target }) => {
