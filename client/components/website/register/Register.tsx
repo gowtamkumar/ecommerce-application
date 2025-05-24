@@ -28,17 +28,13 @@ const Register = () => {
     try {
       // return console.log("newData:", newData);
       const result = await saveUser(values);
-      console.log("result:", result);
-      
+
       if (result?.success) {
         router.push("/login");
       }
 
       setTimeout(async () => {
         dispatch(setLoading({ save: false }));
-        // toast.success(
-        //   `Address ${newData?.id ? "Updated" : "Created"} Successfully`
-        // );
       }, 100);
     } catch (err: any) {
       console.log(err);

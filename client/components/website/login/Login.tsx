@@ -31,36 +31,57 @@ const Login = () => {
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));
     try {
-      let newData = { ...values };
       const result: any = await signIn("credentials", {
-        ...newData,
+        ...values,
         redirect: false,
       });
 
-      const getSesson: any = await getSession();
-
-      fetchCartData().then((cart: any) => {
-        dispatch(replaceCart(cart)); // ✅ Sync cart with Redux
-      });
-
-      setTimeout(async () => {
-        if (result.status === 401) {
-          dispatch(setResponse({ type: "error", message: result.error }));
-        }
-        if (getSesson?.user?.role === "Admin" && result?.status === 200) {
-          router.push("/dashboard");
-          return;
-        }
-
-        if (getSesson?.user?.role === "User" && result?.status === 200) {
-          router.push("/");
-          return;
-        }
-
+      if (result?.error) {
+        dispatch(
+          setResponse({ type: "error", message: "Invalid Login Credentials" })
+        );
         dispatch(setLoading({ save: false }));
-      }, 5000);
+        return;
+      }
+
+      // Wait for session to reflect login — loop check or force reload
+      const checkSession = async (): Promise<any> => {
+        for (let i = 0; i < 10; i++) {
+          const session = await getSession();
+          if (session?.user) return session;
+          await new Promise((r) => setTimeout(r, 300));
+        }
+        return null;
+      };
+
+      const session = await checkSession();
+
+      if (!session?.user) {
+        dispatch(
+          setResponse({
+            type: "error",
+            message: "Login succeeded but session failed",
+          })
+        );
+        dispatch(setLoading({ save: false }));
+        return;
+      }
+
+      // Load user cart
+      const cart = await fetchCartData();
+      dispatch(replaceCart(cart));
+
+      // Navigate based on user role
+      if (session.user.role === "Admin") {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
+      }
     } catch (err: any) {
-      console.log(err);
+      console.error("Login error:", err);
+      dispatch(setResponse({ type: "error", message: "Something went wrong" }));
+    } finally {
+      dispatch(setLoading({ save: false }));
     }
   };
 

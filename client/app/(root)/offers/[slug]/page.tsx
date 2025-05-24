@@ -11,7 +11,7 @@ import React from "react";
 export async function generateMetadata({
   params,
 }: any) {
-  const slug = params.slug;
+  const { slug } = await params;
 
   const discountRes = await getDiscountBySlug(slug);
   const discount = discountRes?.data;
@@ -45,13 +45,13 @@ export async function generateMetadata({
       type: "website",
       images: imageUrl
         ? [
-            {
-              url: imageUrl,
-              width: 800,
-              height: 600,
-              alt: name,
-            },
-          ]
+          {
+            url: imageUrl,
+            width: 800,
+            height: 600,
+            alt: name,
+          },
+        ]
         : [],
     },
     twitter: {

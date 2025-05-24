@@ -10,14 +10,12 @@ export const metadata: Metadata = {
   description: "...",
 };
 
-
 export default function page() {
   return (
     <>
       <Header />
       <Login />
       <WebFooter />
-     
     </>
   );
 }

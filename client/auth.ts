@@ -17,12 +17,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },
         });
-
-        const user = await res.json(); // Get response as text
-        console.log("user", user);
-
+        const user = await res.json();
         try {
-          // const user = JSON.parse(text); // Attempt to parse as JSON
           if (res.ok && user.data) {
             const newuser = { ...user.data, accessToken: user.accessToken };
             return newuser;
@@ -34,7 +30,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           throw new Error("Invalid response from server");
         }
       },
-    } as any),
+    }),
     // Google OAuth
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -62,12 +58,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const user = await res.json();
         return user.data;
       },
-    } as any),
+    }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
 
-      async profile(profile: any) {
+      async profile(profile: { name: any; email: any }) {
         const newUser = {
           name: profile.name,
           email: profile.email,
@@ -105,7 +101,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         token: { exp: token.exp, iat: token.iat, jti: token.jti },
       };
     },
-    async jwt({ token, user, account, profile }: any) {
+    async jwt({ token, user, account, profile }) {
       if (typeof user !== "undefined") {
         return {
           ...token,

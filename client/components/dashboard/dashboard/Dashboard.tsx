@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { DatePicker, Spin } from "antd";
@@ -57,7 +58,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [dispatch, firstDateOfMonth, lastDateOfMonth]);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchData(); // Call the function to fetch data
