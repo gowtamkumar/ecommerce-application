@@ -28,8 +28,8 @@ interface GenerateMetadataParams {
   };
 }
 
-export async function generateMetadata({ params }: GenerateMetadataParams) {
-  const { slug } = await params;
+export async function generateMetadata({ params }: any) {
+  const slug = params.slug;
   const product = await getProductBySlug({
     slug,
   });
@@ -146,12 +146,28 @@ export async function generateMetadata({ params }: GenerateMetadataParams) {
   };
 }
 
-export default function Product() {
+export default function Product({ params }: any) {
+  const slug = params.slug;
+  if (!slug) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-gray-100">
+          <h1 className="text-center text-2xl font-bold mt-10">
+            Product Not Found
+          </h1>
+        </div>
+        <ScrollToCart />
+        <WebFooter />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
       <div className="min-h-screen bg-gray-100">
-        <SingleProduct />
+        <SingleProduct slug={slug} />
       </div>
       <ScrollToCart />
       <WebFooter />

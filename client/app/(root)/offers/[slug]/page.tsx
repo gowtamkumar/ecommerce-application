@@ -10,10 +10,8 @@ import React from "react";
 
 export async function generateMetadata({
   params,
-}: {
-  params: { slug: string };
-}) {
-  const { slug } = params;
+}: any) {
+  const slug = params.slug;
 
   const discountRes = await getDiscountBySlug(slug);
   const discount = discountRes?.data;
@@ -31,7 +29,6 @@ export async function generateMetadata({
   }
 
   const { name, description, image, tags } = discount;
-
   const canonicalUrl = `${baseUrl}/discounts/${slug}`;
   const imageUrl = image ? `${appConfig.baseApiUrl}/uploads/${image}` : null;
 
@@ -79,9 +76,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function Offer({ params }: { params: { slug: string } }) {
-  // Await params to ensure it's ready
-  const { slug } = await params; // This will fix the error
+export default async function Offer({ params }: any) {
+  const slug = params.slug;
 
   const discount = await getDiscountBySlug(slug);
 

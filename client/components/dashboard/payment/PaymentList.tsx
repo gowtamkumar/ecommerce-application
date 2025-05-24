@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -41,11 +41,7 @@ const PaymentList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
+    const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getPayments();
@@ -55,7 +51,13 @@ const PaymentList: React.FC = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+  
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ save: true }));

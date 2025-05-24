@@ -43,7 +43,7 @@ export default function MyWishlist() {
         wishlists.map((item: any) => {
           const id = item.wishlistId;
           return (
-            <div className="py-12">
+            <div className="py-12" key={id}>
               <Card item={item} />
               <div className="mt-2">
                 <Button

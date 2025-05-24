@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -39,12 +39,7 @@ const ReviewList: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getReviews();
@@ -54,7 +49,10 @@ const ReviewList: React.FC = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -226,7 +224,7 @@ const ReviewList: React.FC = () => {
       key: "action",
       sortDirections: ["descend", "ascend"],
       className: "text-end",
-      width: '8%',
+      width: "8%",
       render: (value) => (
         <div className="flex gap-2">
           <Button

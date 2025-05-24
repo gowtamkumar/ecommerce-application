@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import appConfig from "@/appConfig";
 import { deleteCart, getCartLists } from "@/lib/apis/cart";

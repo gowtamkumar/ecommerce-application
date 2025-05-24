@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { setLoading } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,6 @@ import {
   setProduct,
 } from "@/redux/features/products/productSlice";
 import dynamic from "next/dynamic";
-import BreadCrumb from "../Breadcrumb";
 
 const ReviewTable = dynamic(() => import("./review-rating/ReviewTable"), {
   ssr: false,
@@ -25,19 +23,15 @@ const ProductDetails = dynamic(() => import("./ProductDetails"), {
   ssr: false,
 });
 
-export default function SingleProduct() {
+export default function SingleProduct({ slug }: { slug: string }) {
   const [selectVariant, setSelectVariant] = useState<any>({});
-  const { slug } = useParams();
+  // const { slug } = useParams();
   const [checkStock, setCheckStock] = useState(0);
   const dispatch = useDispatch();
   const products = useSelector(selectProduct);
   const { product } = products;
 
-  useEffect(() => {
-    fetchProductData();
-  }, [dispatch, selectVariant?.productVariantId]);
-
-  const fetchProductData = async () => {
+  const fetchProductData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
 
     try {
@@ -71,7 +65,11 @@ export default function SingleProduct() {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch, slug, selectVariant]);
+
+  useEffect(() => {
+    fetchProductData();
+  }, [fetchProductData]);
 
   const productRating = product?.reviews?.reduce(
     (

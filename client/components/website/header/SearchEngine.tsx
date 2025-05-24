@@ -6,7 +6,7 @@ import { Button, Input, Space } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 const { Search } = Input;
 import { SearchOutlined } from "@ant-design/icons";
@@ -25,23 +25,24 @@ export default function SearchEngine() {
     return () => clearTimeout(timer);
   }, [query]);
 
+
+  const fetchResults = useCallback(async () => {
+    if (!debouncedQuery) {
+      setResults([]);
+      return;
+    }
+    dispatch(setLoading({ search: true }));
+    const res = await getPublicProducts({
+      search: debouncedQuery,
+    });
+
+    setResults(res.data);
+    dispatch(setLoading({ search: false }));
+  }, [debouncedQuery, dispatch]);
+
   useEffect(() => {
-    const fetchResults = async () => {
-      if (!debouncedQuery) {
-        setResults([]);
-        return;
-      }
-      dispatch(setLoading({ search: true }));
-      const res = await getPublicProducts({
-        search: debouncedQuery,
-      });
-
-      setResults(res.data);
-      dispatch(setLoading({ search: false }));
-    };
-
     fetchResults();
-  }, [debouncedQuery]);
+  }, [fetchResults]);
 
   const searchHandle = () => {
     dispatch(setOpen(false));
@@ -57,25 +58,25 @@ export default function SearchEngine() {
         }}
       >
         <div className="py-4 md:py-0">
-        <Input
-          size="large"
-          allowClear
-          value={query}
-          onChange={(e: any) => setQuery(e.target.value)}
-          placeholder="Search for products..."
-          draggable
-          style={{ height: 40 }}
+          <Input
+            size="large"
+            allowClear
+            value={query}
+            onChange={(e: any) => setQuery(e.target.value)}
+            placeholder="Search for products..."
+            draggable
+            style={{ height: 40 }}
 
-          suffix={
-            <SearchOutlined
-              style={{ color: "#aaa", cursor: "pointer", fontSize: 22 }}
-              onClick={searchHandle}
-            />
-          }
-        />
+            suffix={
+              <SearchOutlined
+                style={{ color: "#aaa", cursor: "pointer", fontSize: 22 }}
+                onClick={searchHandle}
+              />
+            }
+          />
 
         </div>
-       
+
       </form>
       <div className="absolute z-40 bg-white md:w-[40vw]">
         {global.loading.search

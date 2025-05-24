@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -42,11 +42,7 @@ const PostList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       dispatch(setLoading({ loading: true }));
       const res = await getPosts();
@@ -56,14 +52,18 @@ const PostList: React.FC = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (id: string) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deletePost(id);
-      successNotification({ message: "Successfully deleted" });
-      fetchData();
+      const res = await deletePost(id);
+      setPosts((prevPosts) => prevPosts.filter((post: any) => post.id !== id));
+      successNotification({ message: res.message });
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {

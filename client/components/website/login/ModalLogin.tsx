@@ -25,7 +25,7 @@ export default function ModalLogin() {
     try {
       dispatch(setLoading({ save: true }));
       let newData = { ...values };
-      const result = await signIn("credentials", {
+      const result: any = await signIn("credentials", {
         ...newData,
         redirect: false,
       });

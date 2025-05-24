@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Tabs } from "antd";
 import dynamic from "next/dynamic";
 import { getSettings } from "@/lib/apis/setting";
@@ -28,12 +28,7 @@ export default function Index() {
 
   const search = useSearchParams();
 
-  useEffect(() => {
-    setTabKey(search.get("tab"));
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
+    const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
 
     const createUploadFile = (filename: string): any => ({
@@ -76,7 +71,14 @@ export default function Index() {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+
+  useEffect(() => {
+    setTabKey(search.get("tab"));
+    fetchData();
+  }, [fetchData, global.action, search]);
+
 
   return (
     <Tabs

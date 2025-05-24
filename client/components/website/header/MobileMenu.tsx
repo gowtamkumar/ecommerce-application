@@ -14,7 +14,7 @@ export default function MobileMenu() {
 
   useEffect(() => {
     setMenu(global.categories);
-  }, []);
+  }, [global.categories]);
 
   const AccordionItem = ({ item, onClose }: any) => {
     const [isOpen, setIsOpen] = useState(false);

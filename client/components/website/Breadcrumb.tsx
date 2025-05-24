@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import React, { ReactNode } from "react";
 import Link from "next/link";
@@ -10,10 +9,7 @@ type TBreadCrumbProps = {
   path?: any;
 };
 
-const BreadCrumb = ({
-  containerClasses = "",
-  path,
-}: TBreadCrumbProps) => {
+const BreadCrumb = ({ containerClasses = "", path }: TBreadCrumbProps) => {
   return (
     <div className="hidden md:block">
       <nav
@@ -23,7 +19,7 @@ const BreadCrumb = ({
           {path.map((item: any, index: any) => {
             return (
               <React.Fragment key={index}>
-                {index !== 0 && <BsDashLg size={30}  />}
+                {index !== 0 && <BsDashLg size={30} />}
                 <li>
                   <Link className="font-bold" href={item.url}>
                     {item.title}

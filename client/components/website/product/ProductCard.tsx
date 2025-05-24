@@ -8,7 +8,7 @@ import {
   setProducts,
 } from "@/redux/features/products/productSlice";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
@@ -45,8 +45,7 @@ const ProductCard: React.FC = () => {
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
   const session = useSession();
-  const params = useParams()
-
+  const params = useParams();
 
   const {
     categoryId: categoryIds,
@@ -69,23 +68,7 @@ const ProductCard: React.FC = () => {
   if (searchParams) newSearch += searchParams;
   if (newSearchs) newSearch += newSearchs;
 
-  useEffect(() => {
-    fetchProducts();
-  }, [
-    customQuery,
-    brandId,
-    newSearch,
-    lowPrice,
-    highPrice,
-    colorId,
-    rating,
-    maxPrice,
-    minPrice,
-    discount,
-    dispatch,
-    currentPage,
-  ]);
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const products = await getPublicProducts({
         page: currentPage,
@@ -112,13 +95,31 @@ const ProductCard: React.FC = () => {
     } catch (error) {
       console.error("Failed to fetch products:", error);
     }
-  };
+  }, [
+    brandId,
+    colorId,
+    currentPage,
+    customQuery,
+    discount,
+    dispatch,
+    highPrice,
+    lowPrice,
+    maxPrice,
+    minPrice,
+    newSearch,
+    rating,
+  ]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div
-        className={`grid gap-1 ${global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
-          }`}
+        className={`grid gap-1 ${
+          global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
+        }`}
       >
         {products?.map((item: any) => {
           const url = `/product/${item.slug}`;

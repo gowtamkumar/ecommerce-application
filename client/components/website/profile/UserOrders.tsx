@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
   Input,
@@ -45,31 +45,34 @@ const UserOrders = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
+  const fetchData = useCallback(
+    async (status: string) => {
+      dispatch(setLoading({ loading: true }));
+      try {
+        const res = await getUserOrders(status);
+        if (!res.success) {
+          console.log("Error fetching orders");
+          errorNotification({ message: res.message });
+          return;
+        }
+        const newOrders = res.data?.map((items: any, idx: number) => ({
+          ...items,
+          key: idx.toString(),
+        }));
+
+        setOrders(newOrders);
+      } catch (error: any) {
+        errorNotification({ message: error?.message });
+      } finally {
+        dispatch(setLoading({ loading: false }));
+      }
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     fetchData(tabKey);
-  }, [dispatch, tabKey, global.action]);
-
-  const fetchData = async (status: string) => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const res = await getUserOrders(status);
-      if (!res.success) {
-        console.log("Error fetching orders");
-        errorNotification({ message: res.message });
-        return;
-      }
-      const newOrders = res.data?.map((items: any, idx: number) => ({
-        ...items,
-        key: idx.toString(),
-      }));
-
-      setOrders(newOrders);
-    } catch (error: any) {
-      errorNotification({ message: error?.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  };
+  }, [fetchData, tabKey]);
 
   const onChange = (key: string) => {
     setTabKey(key);
@@ -242,7 +245,6 @@ const UserOrders = () => {
         key: "subTotal",
         dataIndex: "subTotal",
       },
-     
     ];
 
     return (
@@ -499,7 +501,6 @@ const UserOrders = () => {
       />
       <CancelOrder />
       {/* <ReturnRequestAllOrder /> */}
-    
     </div>
   );
 };

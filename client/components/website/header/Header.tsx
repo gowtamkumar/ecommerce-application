@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import SearchSection from "./SearchSection";
 import HeaderRight from "./HeaderRight";
@@ -10,7 +10,7 @@ import {
   setMobile,
   setSetting,
 } from "@/redux/features/global/globalSlice";
-import {  getCategoriesForMenu } from "@/lib/apis/categories";
+import { getCategoriesForMenu } from "@/lib/apis/categories";
 import Link from "next/link";
 import { Button } from "antd";
 import { getSettings } from "@/lib/apis/setting";
@@ -24,12 +24,12 @@ export default function Header() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const fetchCategory = async () => {
+  const fetchCategory = useCallback(async () => {
     const setting = await getSettings();
     dispatch(setSetting(setting?.data));
     const response = await getCategoriesForMenu();
     dispatch(setCategories(response.data));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     fetchCategory();
@@ -54,7 +54,7 @@ export default function Header() {
       window.removeEventListener("resize", updateBackground);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [dispatch, fetchCategory]);
 
   return (
     <div className="w-full">
@@ -65,9 +65,11 @@ export default function Header() {
       )}
 
       <header
-        className={`${isScrolled ? "fixed z-50 top-0 left-0" : ""
-          }  w-full bg-white  transition-transform duration-300 ${isScrolled ? "translate-y-0" : "mt-0"
-          }`}
+        className={`${
+          isScrolled ? "fixed z-50 top-0 left-0" : ""
+        }  w-full bg-white  transition-transform duration-300 ${
+          isScrolled ? "translate-y-0" : "mt-0"
+        }`}
       >
         <div className="bg-gray-100">
           <SearchSection />

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Button,
   Divider,
@@ -56,15 +56,7 @@ const AddPost = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData();
-    return () => {
-      setFormValues({});
-      form.resetFields();
-    };
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       dispatch(setLoading({ loading: true }));
       const newData = { ...payload };
@@ -75,13 +67,22 @@ const AddPost = () => {
       setTags(newData?.tags || []);
       setEditorContent(newData?.content || "");
       setCategories(resCategory.data);
-      setFormData({ ...newData, postCategories });
+      form.setFieldsValue({ ...newData, postCategories });
+      setFormValues({ ...newData, postCategories });
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch, form, payload]);
+
+  useEffect(() => {
+    fetchData();
+    return () => {
+      setFormValues({});
+      form.resetFields();
+    };
+  }, [fetchData, form]);
 
   const handleSubmit = async () => {
     const values = await form.validateFields();

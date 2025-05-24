@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getPublicProducts } from "@/lib/apis/product";
 import Card from "@/components/Card";
 import { Empty, Spin } from "antd";
@@ -8,12 +8,8 @@ export default function CategoryProduct({ id }: { id: string }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
-    fetchProducts();
-  }, [id]);
-
-  const fetchProducts = async () => {
     try {
       const products = await getPublicProducts({
         categoryId: id.toString(),
@@ -26,7 +22,11 @@ export default function CategoryProduct({ id }: { id: string }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   if (loading) {
     return (

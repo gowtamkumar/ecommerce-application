@@ -46,16 +46,18 @@ const Seo = () => {
   const global = useSelector(selectGlobal);
 
   // Combine setting values
-  const helpSupport = {
+
+
+  const helpSupport = React.useMemo(() => ({
     id: global.setting.id,
     ...global.setting.seo,
     ...global.setting.homePage,
-  };
+  }), [global.setting]);
 
   // Populate form on setting change
   useEffect(() => {
     form.setFieldsValue(helpSupport);
-  }, [global.setting]);
+  }, [form, global.setting, helpSupport]);
 
   // Submit Handler
   const handleSubmit = async (values: any) => {

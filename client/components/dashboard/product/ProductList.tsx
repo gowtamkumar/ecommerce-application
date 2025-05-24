@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -52,25 +52,25 @@ const ProductList: React.FC = () => {
   const dispatch = useDispatch();
   const route = useRouter();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       dispatch(setLoading({ loading: true }));
       const res = await getProducts();
       const newProducts = res.data.map((items: any, idx: number) => ({
         ...items,
         key: idx.toString(),
-      }));      
+      }));
       setProducts(newProducts);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -347,12 +347,14 @@ const ProductList: React.FC = () => {
             <h2>
               <strong>Slug:</strong> {value.slug}
             </h2>
-           
+
             <h2>
               <strong>Discount:</strong>
               {value?.discount &&
                 `${value?.discount.value}${
-                  value?.discount.discountStrategy === "Percentage" ? "%" : "BDT"
+                  value?.discount.discountStrategy === "Percentage"
+                    ? "%"
+                    : "BDT"
                 }`}
             </h2>
             <h2>

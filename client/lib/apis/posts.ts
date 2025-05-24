@@ -20,8 +20,8 @@ export async function getPosts() {
   return await handleResponse(res);
 }
 
-export async function getPost(data: { id: string }) {
-  const res = await fetch(`${appConfig.apiUrl}/posts/${data.id}`, {
+export async function getPost( id: string) {
+  const res = await fetch(`${appConfig.apiUrl}/posts/${id}`, {
     method: "GET",
     cache: "no-cache",
   });

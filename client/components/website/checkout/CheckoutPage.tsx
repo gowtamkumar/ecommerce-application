@@ -27,44 +27,42 @@ export default function CheckoutPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    async function fetchData() {
+      const shippingAddress = await getUserShippingAddresses();
+
+      const activeShippingAddress = shippingAddress.data?.find(
+        (item: { status: boolean }) => item.status
+      );
+
+      if (activeShippingAddress?.divisionId) {
+        const getShippingCharge = await getShippingCharges({
+          divisionId: activeShippingAddress.divisionId,
+        });
+
+        dispatch(
+          setShippingCharge(
+            getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
+          )
+        );
+      }
+
+      dispatch(setShippingAddress(shippingAddress.data));
+      dispatch(
+        setCheckoutFormData({
+          paymentMethod: "Cash",
+          shippingAddressId: activeShippingAddress?.id, //need to logic implements
+        })
+      );
+    }
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
       dispatch(setShippingCharge({}));
     };
-  }, []);
-
-  async function fetchData() {
-    const shippingAddress = await getUserShippingAddresses();
-
-    const activeShippingAddress = shippingAddress.data?.find(
-      (item: { status: boolean }) => item.status
-    );
-
-    if (activeShippingAddress?.divisionId) {
-      const getShippingCharge = await getShippingCharges({
-        divisionId: activeShippingAddress.divisionId,
-      });
-
-      dispatch(
-        setShippingCharge(
-          getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
-        )
-      );
-    }
-
-    dispatch(setShippingAddress(shippingAddress.data));
-    dispatch(
-      setCheckoutFormData({
-        paymentMethod: "Cash",
-        shippingAddressId: activeShippingAddress?.id, //need to logic implements
-      })
-    );
-  }
+  }, [dispatch]);
 
   return (
     <>
-     
       <div className="container lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
         <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
           <div className="col-span-2 bg-white rounded-md content-between">

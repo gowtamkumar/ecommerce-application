@@ -34,11 +34,11 @@ const FooterOption = () => {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
-  const initialData = {
+  const initialData = React.useMemo(() => ({
     id: global.setting?.id,
     ...global.setting?.footerOption,
     ...global.setting?.socialLink,
-  }
+  }), [global.setting]);
 
   useEffect(() => {
     form.setFieldsValue(initialData);

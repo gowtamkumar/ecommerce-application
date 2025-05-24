@@ -28,8 +28,13 @@ const AuthorSection = dynamic(
   () => import("@/components/website/blog/AuthorSection")
 );
 
-export default async function page({ params }: { params: { id: string } }) {
-  const { data: post } = await getPost(params);
+interface PageProps {
+  params: { id: string };
+}
+
+export default async function page({ params }: any) {
+  const { id } = params;
+  const { data: post } = await getPost(id);
   return (
     <>
       <div

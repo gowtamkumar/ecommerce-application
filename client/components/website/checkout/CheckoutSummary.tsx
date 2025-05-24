@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { saveOrder } from "@/lib/apis/orders";
 import {
@@ -93,7 +92,6 @@ export default function CheckoutSummary() {
         dispatch(setShippingAddress([]));
         dispatch(setShippingCharge({}));
         console.log("res.data.", res.data);
-        
 
         if (res.data.paymentUrl) {
           window.location.href = res.data.paymentUrl;
