@@ -18,23 +18,19 @@ const AddLead = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
+    const newData = { ...global.action.payload };
     form.setFieldsValue(newData);
     return () => {
       form.resetFields();
     };
-  }, [global.action]);
+  }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
     const asyncFn = values.id
       ? () => updateLead(values)
       : () => saveLead(values);
 
-    const successMessage = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(asyncFn, successMessage, dispatch);
+    await handleAsyncAction(asyncFn, dispatch);
   };
 
   const handleClose = () => {

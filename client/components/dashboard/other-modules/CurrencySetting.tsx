@@ -24,11 +24,7 @@ const CurrencySetting = () => {
       ? () => updateSetting(values)
       : () => saveSetting(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const resetFormData = (value: any) => {

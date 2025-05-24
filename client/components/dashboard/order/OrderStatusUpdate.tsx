@@ -32,11 +32,9 @@ const OrderStatusUpdate = () => {
   const handleSubmit = async (values: any) => {
     const result = () => orderStatusUpdateApi(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
 
-  const res =  await handleAsyncAction(result, messageData, dispatch);
+
+  const res =  await handleAsyncAction(result, dispatch);
   console.log("res", res);
   
   };

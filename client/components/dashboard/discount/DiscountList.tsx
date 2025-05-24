@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -28,7 +28,6 @@ import { AiOutlineEye } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { TbStatusChange } from "react-icons/tb";
 
-
 interface DataType {
   key: string;
   name: string;
@@ -50,15 +49,7 @@ const DiscountList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
-
-  useEffect(() => {
-    fetchData();
-  }, [
-    global.action.type === ActionType.DELETE ||
-      global.action.type === ActionType.UPDATE,
-  ]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getDiscounts();
@@ -72,7 +63,11 @@ const DiscountList: React.FC = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));

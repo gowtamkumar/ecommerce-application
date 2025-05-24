@@ -3,7 +3,7 @@ import Caregory from "@/components/website/categories/Caregory";
 import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import { getPublicCategories } from "@/lib/apis/categories";
-import React from "react";
+import React, { use } from "react";
 
 export async function generateMetadata() {
   const categoriesRes = await getPublicCategories();

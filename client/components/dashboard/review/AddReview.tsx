@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Rate, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
@@ -20,17 +20,7 @@ const AddReview = () => {
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const newData = { ...payload };
-    form.setFieldsValue(newData);
-    fetchData();
-    return () => {
-      form.resetFields();
-    };
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const products = await getProducts();
@@ -40,25 +30,29 @@ const AddReview = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    const newData = { ...global.action.payload };
+    form.setFieldsValue(newData);
+    fetchData();
+    return () => {
+      form.resetFields();
+    };
+  }, [fetchData, form, global.action]);
 
   const handleSubmit = async (values: any) => {
     const result = values.id
       ? () => updateReview(values)
       : () => saveReview(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
   };
-
 
   const resetFormData = () => {
     if (payload?.id) {
@@ -139,17 +133,17 @@ const AddReview = () => {
         <Form.Item {...tailLayout}>
           <div className="flex gap-2">
             <Button size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
           </div>
         </Form.Item>
       </Form>

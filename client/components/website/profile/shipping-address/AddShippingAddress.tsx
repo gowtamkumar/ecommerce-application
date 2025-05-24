@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +14,11 @@ import { getUnions } from "@/lib/apis/geo-location/union";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
 import { ActionType } from "@/constants/constants";
-import { selectGlobal, setAction, setLoading } from "@/redux/features/global/globalSlice";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
 
 //TODO need to work update oparation
 
@@ -29,24 +33,23 @@ const AddShippingAddress = () => {
   const global = useSelector(selectGlobal);
   const { payload, type, userShippingAddress } = global.action;
 
-  useEffect(() => {
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
       const disvision = await getDivisions();
       setDivision(disvision.data);
-      setFormData(newData);
-      // setFormValues(newData);
+      form.setFieldsValue(newData);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch, form, payload]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
@@ -55,11 +58,7 @@ const AddShippingAddress = () => {
       ? () => updateShippingAddress(newData)
       : () => saveShippingAddress(newData);
 
-    const messageData = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
     form.resetFields();
   };
 
@@ -68,11 +67,7 @@ const AddShippingAddress = () => {
     dispatch(setLoading({}));
   };
 
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    // dispatch(setFormValues(form.getFieldsValue()));
-  };
+
 
   const resetFormData = () => {
     if (payload?.id) {

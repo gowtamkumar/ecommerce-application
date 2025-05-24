@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   DatePicker,
@@ -27,19 +27,7 @@ import { getBrands } from "@/lib/apis/brand";
 import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
 import { useParams, useRouter } from "next/navigation";
 import dayjs from "dayjs";
-
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
+import uploadButton from "@/components/website/uploadButton";
 
 const AddDiscount = () => {
   const [loading, setLoading] = useState(false);
@@ -58,35 +46,7 @@ const AddDiscount = () => {
   const { payload } = global.action;
   const route = useRouter();
 
-  useEffect(() => {
-    setLoading(true);
-    initialize();
-
-    return () => {
-      if (params.new === "new") {
-        form.resetFields();
-        setFormValues({ fileList: [] });
-      }
-    };
-  }, []);
-
-  const generateFile = (fileName: string, identifier: string | number) => ({
-    uid: `${Math.random() * 1000}`,
-    name: `photo`,
-    status: "done",
-    fileName,
-    url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
-  });
-
-  const parseDateFields = (data: any) => ({
-    ...data,
-    startDate: data.startDate ? dayjs(data.startDate) : null,
-    endDate: data.endDate ? dayjs(data.endDate) : null,
-    createdAt: data.createdAt ? dayjs(data.createdAt) : null,
-    updatedAt: data.updatedAt ? dayjs(data.updatedAt) : null,
-  });
-
-  const initialize = async () => {
+  const initialize = useCallback(async () => {
     try {
       await fetchInitialData();
 
@@ -133,7 +93,35 @@ const AddDiscount = () => {
       setLoading(false);
       console.error("Initialization error:", error);
     }
-  };
+  }, [form, params.new]);
+
+  useEffect(() => {
+    setLoading(true);
+    initialize();
+
+    return () => {
+      if (params.new === "new") {
+        form.resetFields();
+        setFormValues({ fileList: [] });
+      }
+    };
+  }, [form, initialize, params.new]);
+
+  const generateFile = (fileName: string, identifier: string | number) => ({
+    uid: `${Math.random() * 1000}`,
+    name: `photo`,
+    status: "done",
+    fileName,
+    url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
+  });
+
+  const parseDateFields = (data: any) => ({
+    ...data,
+    startDate: data.startDate ? dayjs(data.startDate) : null,
+    endDate: data.endDate ? dayjs(data.endDate) : null,
+    createdAt: data.createdAt ? dayjs(data.createdAt) : null,
+    updatedAt: data.updatedAt ? dayjs(data.updatedAt) : null,
+  });
 
   const fetchInitialData = async () => {
     try {
@@ -157,25 +145,16 @@ const AddDiscount = () => {
     newData.endDate = new Date(values.endDate).toISOString();
     newData.value = +values.value;
 
-
-
     const result = newData.id
       ? () => updateDiscount(newData)
       : () => saveDiscount(newData);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    const res = await handleAsyncAction(result, messageData, dispatch);
+    const res = await handleAsyncAction(result, dispatch);
 
     if (res.success) {
       route.push("/dashboard/discounts");
-      form.resetFields();
-      setFormValues({ fileList: [] });
     }
   };
-
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
@@ -519,10 +498,7 @@ const AddDiscount = () => {
 
       <Form.Item {...tailLayout}>
         <div className="flex gap-2">
-          <Button
-            size="small"
-            onClick={() => resetFormData(payload)}
-          >
+          <Button size="small" onClick={() => resetFormData(payload)}>
             Reset
           </Button>
           <Button

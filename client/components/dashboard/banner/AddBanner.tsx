@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -9,7 +8,6 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import { saveBanner, updateBanner } from "@/lib/apis/banner";
 import appConfig from "@/appConfig";
@@ -33,12 +31,13 @@ const AddBanner = () => {
 
   useEffect(() => {
     const newData = { ...global.action.payload };
-    setFormData(newData);
+    form.setFieldsValue(newData);
+    setFormValues(newData);
     return () => {
       setFormValues({});
       form.resetFields();
     };
-  }, [global.action]);
+  }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
@@ -47,11 +46,7 @@ const AddBanner = () => {
       ? () => updateBanner(newData)
       : () => saveBanner(newData);
 
-    const messageData = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const customUploadRequest = async (options: any) => {
@@ -94,12 +89,6 @@ const AddBanner = () => {
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
-  };
-
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    setFormValues(form.getFieldsValue());
   };
 
   const resetFormData = (value: any) => {

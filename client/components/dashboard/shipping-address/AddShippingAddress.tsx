@@ -35,8 +35,7 @@ const AddShippingAddress = () => {
       dispatch(setLoading({ loading: true }));
 
       try {
-        setFormData(payload);
-
+        form.setFieldsValue(payload);
         const division = await getDivisions();
         setDivision(division.data);
         if (type === ActionType.UPDATE) {
@@ -65,7 +64,7 @@ const AddShippingAddress = () => {
     } else {
       console.log("No type detected, skipping fetch.");
     }
-  }, [type]); // Ensure payload is included if necessary
+  }, [dispatch, form, payload, type]); // Ensure payload is included if necessary
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
@@ -73,13 +72,7 @@ const AddShippingAddress = () => {
     const result = newData.id
       ? () => updateShippingAddress(newData)
       : () => saveShippingAddress(newData);
-
-    const messageData = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
-    form.resetFields();
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
@@ -90,11 +83,6 @@ const AddShippingAddress = () => {
     setUpazilas([]);
     setUnions([]);
     form.resetFields();
-  };
-
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
   };
 
   const resetFormData = () => {

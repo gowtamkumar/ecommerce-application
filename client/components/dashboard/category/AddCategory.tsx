@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -37,7 +36,6 @@ import {
 } from "@/lib/utils/notification";
 import uploadButton from "@/components/website/uploadButton";
 
-
 const AddCategory = () => {
   const [categories, setCategories] = useState([]);
   const [formValues, setFormValues] = useState({
@@ -49,26 +47,24 @@ const AddCategory = () => {
   const dispatch = useDispatch();
   const { payload, type } = global.action;
 
-
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
       const categories = await getAntdCategories();
       setCategories(categories.data);
-      setFormData(newData); // Use product.data?.tags or default to empty array
+      form.setFieldsValue(newData);
       setFormValues(newData);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  }, [dispatch]);
+  }, [dispatch, payload, form]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData, global.action?.type]); // 👈 safer and cleaner
-
 
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));
@@ -101,12 +97,6 @@ const AddCategory = () => {
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
-  };
-
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
-    setFormValues(form.getFieldsValue());
   };
 
   const resetFormData = (value: any) => {

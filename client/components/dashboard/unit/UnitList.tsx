@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import type {  TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -19,7 +19,10 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { errorNotification, successNotification } from "@/lib/utils/notification";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 
 interface DataType {
   key: string;
@@ -35,12 +38,7 @@ const UnitList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-
-  useEffect(() => {
-    fetchData();
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getUnits();
@@ -50,7 +48,11 @@ const UnitList: React.FC = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, global.action.type]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -95,11 +97,10 @@ const UnitList: React.FC = () => {
         <Input
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>{
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -198,7 +199,7 @@ const UnitList: React.FC = () => {
             onClick={() =>
               dispatch(
                 setAction({
-                  unit:true,
+                  unit: true,
                   type: ActionType.UPDATE,
                   payload: value,
                 })

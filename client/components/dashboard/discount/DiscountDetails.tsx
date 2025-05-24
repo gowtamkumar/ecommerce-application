@@ -5,7 +5,7 @@ import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
 import { message, Modal, Spin } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DiscountProduct from "./DiscountProduct";
 
@@ -15,13 +15,8 @@ export default function DiscountDetails() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const value = { ...global.action.payload };
-
-  useEffect(() => {
+  const featchData = useCallback(async () => {
     setLoading(true);
-    featchData();
-  }, [global.action]);
-
-  const featchData = async () => {
     const id = value.id;
     if (!id) {
       setLoading(false);
@@ -50,7 +45,11 @@ export default function DiscountDetails() {
     };
     setDiscount(res.data);
     setLoading(false);
-  };
+  }, [value.id]);
+  
+  useEffect(() => {
+    featchData();
+  }, [featchData]);
 
   return (
     <Modal

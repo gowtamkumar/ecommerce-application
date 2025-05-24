@@ -50,7 +50,7 @@ export default function Color() {
           </Button>
         }
       />
-      {action?.type === ActionType.CREATE && action?.color && <AddColor />}
+      <AddColor />
     </div>
   );
 }

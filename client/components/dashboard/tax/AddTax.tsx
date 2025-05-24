@@ -8,7 +8,6 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { saveTax, updateTax } from "@/lib/apis/tax";
-import dayjs from "dayjs";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const AddTax = () => {
@@ -19,29 +18,23 @@ const AddTax = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
+    const newData = { ...global.action.payload };
     form.setFieldsValue(newData);
     return () => {
       form.resetFields();
     };
-  }, [global.action]);
+  }, [form, global.action]);
 
-  const handleSubmit = async (values: any) => {    
+  const handleSubmit = async (values: any) => {
     const result = values.id ? () => updateTax(values) : () => saveTax(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
   };
-
-
 
   const resetFormData = (value: any) => {
     const newData = { ...value };
@@ -117,20 +110,20 @@ const AddTax = () => {
         <Form.Item {...tailLayout}>
           <div className="flex gap-2">
             <Button
-            size="small"
-            onClick={() => resetFormData(global.action?.payload)}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            loading={global.loading.save}
-            disabled={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+              size="small"
+              onClick={() => resetFormData(global.action?.payload)}
+            >
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              loading={global.loading.save}
+              disabled={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
           </div>
         </Form.Item>
       </Form>

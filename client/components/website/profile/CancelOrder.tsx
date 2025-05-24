@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect } from "react";
 import { Button, Form, Input, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
@@ -19,20 +19,15 @@ const CancelOrder = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    form.setFieldsValue(payload);
+    form.setFieldsValue(global.action.payload);
     return () => {
       form.resetFields();
     };
-  }, [global.action]);
+  }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
     const result = () => values.id && orderStatusUpdateApi(values);
-
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {

@@ -25,17 +25,13 @@ const Index = () => {
   const handelSave = async (value: any) => {
     const result = () => updateMenu(value);
 
-    const messageData = "Successfully Save";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const createMenu = async () => {
     const result = () => saveMenu({ name: newMenu });
 
-    const messageData = "Successfully Created";
-
-    const handleRes = await handleAsyncAction(result, messageData, dispatch);
+    const handleRes = await handleAsyncAction(result, dispatch);
 
     console.log(handleRes);
 

@@ -28,19 +28,8 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import uploadButton from "@/components/website/uploadButton";
 
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
 
 const AddUser = () => {
   const [formValues, setFormValues] = useState({
@@ -54,36 +43,27 @@ const AddUser = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
+    const newData = { ...global.action.payload };
     if (newData.dob) newData.dob = dayjs(newData.dob);
-    setFormData(newData);
+    form.setFieldsValue(newData);
+    setFormValues(newData);
     return () => {
       setFormValues({});
       form.resetFields();
     };
-  }, [global.action]);
+  }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
-
     const result = values.id
       ? () => updateUser(values)
       : () => saveUser(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
-  };
-
-  const setFormData = (value: any) => {
-    form.setFieldsValue(value);
-    setFormValues(form.getFieldsValue());
   };
 
   const resetFormData = (value: any) => {
@@ -317,10 +297,7 @@ const AddUser = () => {
 
         <Form.Item {...tailLayout}>
           <div className="flex gap-2">
-            <Button
-              size="small"
-              onClick={() => resetFormData(payload)}
-            >
+            <Button size="small" onClick={() => resetFormData(payload)}>
               Reset
             </Button>
             <Button

@@ -38,11 +38,11 @@ const FooterOption = () => {
     id: global.setting?.id,
     ...global.setting?.footerOption,
     ...global.setting?.socialLink,
-  };
+  }
 
   useEffect(() => {
     form.setFieldsValue(initialData);
-  }, [form, global.setting]);
+  }, [form, initialData]);
 
   const handleSubmit = async (values: any) => {
     setLoading(true);

@@ -29,18 +29,8 @@ const ReturnOrderStatusUpdate = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    console.log("Status", values);
-
-    // return;
-
     const result = () => singleProductReturn(values);
-
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    const res = await handleAsyncAction(result, messageData, dispatch);
-    console.log("res", res);
+     await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {

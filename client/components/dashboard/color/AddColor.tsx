@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import {
   Button,
@@ -39,27 +38,22 @@ const AddColor = () => {
   useEffect(() => {
     const newData = { ...payload };
     form.setFieldsValue(newData);
-
     return () => {
       form.resetFields();
     };
-  }, []);
+  }, [form, payload, type]);
 
   const handleSubmit = async (values: any) => {
     const result = values.id
       ? () => updateColor(values)
       : () => saveColor(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
-    // dispatch(setLoading({}));
+    dispatch(setLoading({}));
   };
 
   const resetFormData = () => {
@@ -143,18 +137,20 @@ const AddColor = () => {
         </Form.Item>
 
         <Form.Item {...tailLayout}>
-          <Button className="me-2" size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            htmlType="submit"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="small" onClick={resetFormData}>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

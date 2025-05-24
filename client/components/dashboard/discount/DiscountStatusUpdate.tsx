@@ -13,11 +13,11 @@ export default function DiscountStatusUpdate() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const value = { ...global.action.payload };
-
   const route = useRouter();
+  
   useEffect(() => {
     form.setFieldsValue({ id: value.id });
-  }, [global.action]);
+  }, [form, value.id]);
 
   const handleSubmit = async (values: { id: number; status: string }) => {
     if (!values?.id || !values?.status) return;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { DatePicker, Spin } from "antd";
 import dayjs from "dayjs";
 import { getDashboardReports } from "@/lib/apis/reports";
@@ -33,11 +33,7 @@ const Dashboard = () => {
   const firstDateOfMonth = dayjs().startOf("month");
   const lastDateOfMonth = dayjs().endOf("month");
 
-  useEffect(() => {
-    fetchData(); // Call the function to fetch data
-  }, []); // Empty dependency array ensures this only runs once on mount
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const results = await getDashboardReports({
@@ -61,7 +57,11 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dispatch, firstDateOfMonth, lastDateOfMonth]);
+
+  useEffect(() => {
+    fetchData(); // Call the function to fetch data
+  }, [fetchData]); // Empty dependency array ensures this only runs once on mount
 
   const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
     (

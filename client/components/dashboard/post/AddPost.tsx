@@ -91,11 +91,7 @@ const AddPost = () => {
       ? () => updatePost(newData)
       : () => savePost(newData);
 
-    const successMessage = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(asyncFn, successMessage, dispatch);
+    await handleAsyncAction(asyncFn, dispatch);
   };
 
   // this function for tag

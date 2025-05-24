@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   Button,
@@ -36,19 +36,7 @@ import {
 } from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
 import ProductVariant from "./ProductVariant";
-
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
+import uploadButton from "@/components/website/uploadButton";
 
 const AddProduct = ({
   sizes,
@@ -76,19 +64,7 @@ const AddProduct = ({
   const params = useParams<{ new: string }>();
   const route = useRouter();
 
-  useEffect(() => {
-    // Call the async function
-    fetchData();
-    // Cleanup function
-    return () => {
-      if (params.new === "new") {
-        form.resetFields();
-        setTags([]);
-      }
-    };
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const generateFile = (fileName: string, identifier: string | number) => ({
       uid: `${Math.random() * 1000}`,
       name: `photo ${identifier}`,
@@ -159,7 +135,19 @@ const AddProduct = ({
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch, form, params.new]);
+
+  useEffect(() => {
+    // Call the async function
+    fetchData();
+    // Cleanup function
+    return () => {
+      if (params.new === "new") {
+        form.resetFields();
+        setTags([]);
+      }
+    };
+  }, [fetchData, form, params.new]);
 
   const handleSubmit = async () => {
     const newData = await form.validateFields();
@@ -186,20 +174,11 @@ const AddProduct = ({
       ? () => updateProduct(newData)
       : () => saveProduct(newData);
 
-    const messageData = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    const funRes = await handleAsyncAction(result, messageData, dispatch);
-
-    if (!funRes.success) {
-      return;
-    }
+    await handleAsyncAction(result, dispatch);
 
     setTags([]);
     setFormValues({});
     route.push(`/dashboard/product`);
-    form.resetFields();
   };
 
   const setFormData = (value: any) => {

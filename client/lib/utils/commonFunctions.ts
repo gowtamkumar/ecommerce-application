@@ -12,7 +12,6 @@ import { auth } from "@/auth";
 
 export const handleAsyncAction = async (
   asyncFn: () => Promise<any>,
-  successMessage: string,
   dispatch: any
 ): Promise<any> => {
   try {

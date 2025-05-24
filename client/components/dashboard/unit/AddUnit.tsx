@@ -4,7 +4,6 @@ import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
   setAction,
-  setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,24 +18,19 @@ const AddUnit = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
+    const newData = { ...global.action.payload };
     form.setFieldsValue(newData);
     return () => {
-      dispatch(setFormValues({}));
       form.resetFields();
     };
-  }, [global.action]);
+  }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
     const result = values.id
       ? () => updateUnit(values)
       : () => saveUnit(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
@@ -94,20 +88,20 @@ const AddUnit = () => {
           <Input placeholder="Enter Name" />
         </Form.Item>
         <Form.Item {...tailLayout}>
-         <div className="flex gap-2">
-           <Button  size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            disabled={global.loading.save}
-            loading={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
-         </div>
+          <div className="flex gap-2">
+            <Button size="small" onClick={resetFormData}>
+              Reset
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              htmlType="submit"
+              disabled={global.loading.save}
+              loading={global.loading.save}
+            >
+              {payload?.id ? "Update" : "Save"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

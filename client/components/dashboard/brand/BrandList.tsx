@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
@@ -42,11 +41,7 @@ const BrandList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData();
-  }, [global.action?.type]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getBrands();
@@ -56,7 +51,11 @@ const BrandList: React.FC = () => {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));

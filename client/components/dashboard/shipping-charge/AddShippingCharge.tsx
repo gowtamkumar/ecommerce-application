@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
@@ -23,26 +23,26 @@ const AddShippingCharge = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchData();
-    return () => {
-      form.resetFields();
-    };
-  }, [global.action]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
       const res = await getDivisions();
       setDivisions(res.data);
-      setFormData(newData); // Use product.data?.tags or default to empty array
+      form.setFieldsValue(newData);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  };
+  }, [dispatch, form, payload]);
+
+  useEffect(() => {
+    fetchData();
+    return () => {
+      form.resetFields();
+    };
+  }, [fetchData, form, global.action]);
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values, shippingCharge: +values.shippingCharge };
@@ -51,20 +51,12 @@ const AddShippingCharge = () => {
       ? () => updateShippingCharge(newData)
       : () => saveShippingCharge(newData);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
-  };
-
-  const setFormData = (value: any) => {
-    form.setFieldsValue(value);
   };
 
   const resetFormData = () => {
@@ -164,7 +156,7 @@ const AddShippingCharge = () => {
             <Select.Option value={false}>Inactive</Select.Option>
           </Select>
         </Form.Item>
-        
+
         <Form.Item {...tailLayout}>
           <div className="flex gap-2">
             <Button size="small" onClick={resetFormData}>

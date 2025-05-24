@@ -19,32 +19,23 @@ const NewReview = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newData = { ...payload };
-    setFormData(newData);
+    const newData = { ...global.productRating.payload };
+    form.setFieldsValue(newData);
     return () => {
       form.resetFields();
     };
-  }, [global.productRating]);
+  }, [form, global.productRating]);
 
   const handleSubmit = async (values: any) => {
     const result = () => saveReview(values);
 
-    const messageData = values.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
     dispatch(setProductRating({}));
   };
 
   const handleClose = () => {
     dispatch(setProductRating({}));
     dispatch(setLoading({}));
-  };
-
-  const setFormData = (v: any) => {
-    const newData = { ...v };
-    form.setFieldsValue(newData);
   };
 
   const layout = {

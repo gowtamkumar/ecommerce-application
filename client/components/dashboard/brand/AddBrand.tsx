@@ -43,11 +43,7 @@ const AddBrand = () => {
       ? () => updateBrand(newData)
       : () => saveBrand(newData);
 
-    const messageData = newData.id
-      ? "Successfully Updated"
-      : "Successfully Added";
-
-    await handleAsyncAction(result, messageData, dispatch);
+    await handleAsyncAction(result, dispatch);
   };
 
   const customUploadRequest = async (options: any) => {

@@ -39,31 +39,32 @@ const ColorList: React.FC = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(async () => {
-    // dispatch(setLoading({ loading: true }));
+    dispatch(setLoading({ color: true }));
     try {
       const res = await getColors();
       setColors(res?.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
-      // dispatch(setLoading({}));
+      dispatch(setLoading({}));
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]); // 👈 safer and cleaner
+  }, [fetchData, global.action.type]); // 👈 safer and cleaner
 
   const handleDelete = async (id: string) => {
-    // dispatch(setLoading({ delete: true }));
+    dispatch(setLoading({ delete: true }));
     try {
-      await deleteColor(id);
-      successNotification({ message: "Successfully deleted" });
-      fetchData();
+     const res =  await deleteColor(id);
+      successNotification({ message: res.message });
+      const newData = colors.filter((item: any) => item.id !== id);
+      setColors(newData);
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
-      // dispatch(setLoading({ delete: false }));
+      dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
     }
   };

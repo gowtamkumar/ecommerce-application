@@ -9,9 +9,10 @@ export default function Caregory({ categories }: any) {
   return (
     <section className="container mx-auto">
       <div className="grid grid-cols-6 gap-2 items-center justify-center ">
-        {(categories || []).map((item: any, idx: number) => {
+        {(categories || []).map((item: any) => {
           return (
             <div
+            key={item.id}
               className="py-5 flex flex-col items-center gap-2 justify-center bg-gray-100 cursor-pointer rounded-lg"
               onClick={() => {
                 router.push(`/products?categoryId=${item.id}&`);
