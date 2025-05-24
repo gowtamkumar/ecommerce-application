@@ -4,14 +4,19 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export class ContactEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+  
   @Column()
   name!: string;
+
   @Column({ nullable: true })
   email!: string;
+
   @Column()
   phone!: string;
+
   @Column()
   subject!: string;
+
   @Column()
   message!: string;
 }

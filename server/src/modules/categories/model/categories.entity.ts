@@ -23,11 +23,9 @@ export class CategoriesEntity {
   @Column({ nullable: true })
   name!: string;
 
-  @Column({ nullable: true }) //need to remove nullable true
+  @Column()
   slug!: string;
 
-  // @Column({ name: "parent_id", nullable: true })
-  // parentId!: string;
 
   @Column({ nullable: true })
   image?: string;

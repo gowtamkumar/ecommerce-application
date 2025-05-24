@@ -1,4 +1,4 @@
-## users:(done)
+## users
 
 id,
 name,
@@ -12,7 +12,6 @@ gender,
 point:number
 status(Active/Inactive/Block)
 image,
-shippingAddresses:[from shipping_address table]
 last_login: date with time zone
 last_logout: date with time zone
 ip_address(optional),
@@ -27,7 +26,7 @@ id,
 type,
 timestamp
 
-## shipping_address :(done)
+## shipping_address
 
 id,
 type:[Home/Office]
@@ -37,91 +36,82 @@ email,
 alternative_phone_no,
 country:string
 user_id,
-city,
-thana
-union,
-zip_code,
+divisionId,
+districtId
+upazilaId,
+unionId,
 address,
 status,
 
-## shipping_charge :(done)
+## shipping_charge
 
 id,
 district_id,
 weight
-amount,
+shippingCharge,
 note,
 status,
 
-## products :(done)
+## products
 
-id,
-featured: boolean, this field for only show home page(need to add)
-name:string,
+id!: number;
+name!: string;
+slug!: string;
+variant?: boolean;
+isReturnable?: boolean;
+featured?: boolean;
+description?: string;
+shortDescription?: string;
+taxId?: number;
+discountId?: number;
+enableReview?: boolean;
+limitPurchaseQty?: number;
+alertQty!: number;
+status!: Status;
+brandId?: number;
+unitId!: number;
+tags!: string[];
+thumbnailImage!: string;
+hoverImage!: string;
+images!: string[];
+userId!: number;
+createdAt?: string;
+updatedAt?: string;
 
-slug(unique),
-hover_image,
-thumbnail_image,
-images:array
+## product variants
 
-<!-- shipping_cost:numeric, -->
+id!: number;
+sku!: string;
+unitPrice!: number;
+purchasePrice!: number;
+productId!: number;
+sizeId?: number;
+colorId?: number;
+material!: string;
+image!: string;
+default?: boolean;
+stockQty?: number;
 
-brand_id,
-unit_id,
-limit_purchase_qty:number,
-tax_id: number,
-
-<!-- discount_id:number -->
-
-discountStrategy,
-discount_value
-alert_qty
-tags: ['ddd','aa']
-user_id,
-description,
-short_description,
-enable_review: boolean,
-status:['acitve/inactive'],
-createdAt,
-updatedAt
-product_varient:array come from onther table
-product_category:array come from onther table
-isReturnable:boolean
-variant:boolean
-
-## product variants:(done)
-
-id,
-purchase_price:numeric,
-unit_price:numeric
-product_id
-size_id
-sku(unique),
-color_id
-material
-image: string,
-stock_qty:number,
-default:boolean
-
-## product_category:(done)
+## product_category
 
 id,
 category_id,
 product_id
 
-## size (done)
+## size
 
 id,
 name,
 status,
+userId
 
-## color (done)
+## color
 
 id,
 name,
 color,
 
-## unit (done)
+## unit
 
 id,
 name,
@@ -131,7 +121,7 @@ name,
 id,
 type:['order', 'product', "FreeShipping"]'free_gift', 'bogo', 'cashback',
 code,
-discountStrategy:(Percentage, Fixed, FreeShipping).
+discountType:(Percentage, Fixed, FreeShipping).
 value,
 image
 start_date,
@@ -139,13 +129,12 @@ expiry_Date
 min_order_amount,
 minimum_cart_value
 max_discount_value
-usage_limit,
-usage_per_user,
 max_user,
 usage_count,
-products:[],(optoinal)
+usage_limit,
+usage_per_user,
 user_id,
-status:boolean
+active:boolean
 createdAt
 updatedAt
 
@@ -157,7 +146,7 @@ coupon_id
 createdAt
 updatedAt
 
-## applied_coupon(not applied)
+## applied_coupon
 
 id,
 user_id,
@@ -166,11 +155,11 @@ order_id,
 discount_amount,
 applied_at:
 
-## categories:(done)
+## categories
 
 id,
 name,
-parent_id,
+slug,
 user_id,
 description
 image;
@@ -179,7 +168,7 @@ tags:[""] (need to add)
 createdAt
 updatedAt
 
-## wishlists:(done)
+## wishlists
 
 id,
 product_id,
@@ -187,93 +176,90 @@ user_id,
 createdAt,
 updatedAt
 
-## carts:(need to implemnent)
+## carts
 
 id,
 product_id,
 product_variant_id,
 user_id,
 qty,
-cart_status:[active, saved]
 createdAt,
 updatedAt
 
-## brands:(done)
+## brands
 
 id,
 name,
+slug,
 image,
 description
 status:(Active/Inactive),,
-user_id,
+userId,
 createdAt
 updatedAt
 
-## orders:
+## orders
 
-id,
-user_id,
-order_date,
-delivery_id(assing addmin),
-tracking_no,
-shipping_charge,
-total_tax,
-total_discount,
-sub_total,
-coupon_discount
-grand_total,
-note,
-cancel_resson
-coupon_id,
-shipping_address_id,
-payment_status(Paid/Not Paid/Partial Paid),
-payment_method(cash/ssecommer/strip)
-payment_type(Online/Offline)
-payment_transaction_id,
-status: ["Processing","Approved","On Shipping","Shipped","Completed","Pending","Returned", "Canceled"],
-createdAt
-updatedAt
+id!: number;
+trackingNo!: string;
+totalQty!: number
+subTotal!: number;
+totalItemsDiscount!: number;
+couponDiscount!: number;
+totalTax!: number;
+shippingCharge?: number;
+grandTotal!: number;
+shippingAddressId?: number;
+couponId?: number;
+cancelResson!: string;
+paymentStatus!: enum;
+paymentMethod!: enum;
+status!: enum;
+tranId?: string;
+userId?: number;
+deliveryId?: number;
+createdAt?: string;
+updatedAt?: string;
 
-## orderItems:
+## order_items
 
-id,
-order_id,
+id!: number;
+orderId!: number;
+unitPrice!: string;
+purchasePrice!: string;
+qty!: number;
+taxAmount!: string;
+discountedUnitPrice!: string;
+totalDiscountedPrice!: string;
+discountAmountPerUnit!: string;
+totalDiscountAmount!: string;
+subTotal!: string; //need to remove nullable
+productId!: number;
+productVariantId!: number;
 
-<!-- total_amount, -->
-
-product_id,
-price,
-purchase_price,
-product_variant_id,
-color_id,
-size_id,
-qty,
-tax,
-discount_amount,
-
-## order_status (optional)
+## order_status
 
 id,
 status:string,
 
-  <!-- ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"] -->
-
 ## order_tracking
 
-order_id,
-location:string,
-status: ["Order placed", "Order Approved", 'order Ready to Ship', "Order Handover to Courier", "Order Delivered"]
-createdAt
-updatedAt
+id!: number;
+orderId!: number;
+userId!: number;
+location!: string;
+status!: emum;
+createdAt?: string;
+updatedAt?: string;
 
-## tax:(done)
+## tax
 
 id,
 name
 value,
 status:boolean
 
-## reviews:(done)
+## reviews
 
 id,
 product_id,
@@ -286,21 +272,20 @@ dislike:number
 createdAt
 updatedAt
 
-## payments:(need to implement sslecommerce)
+## payments
 
-id,
-order_id,
-date,
-payment_method,
-amount,
-user_id,
-is_successfull:boolean,
-transaction_id,
-createdAt
-updatedAt
+id!: number;
+orderId!: number;
+paymentDate!: string;
+paymentType!: enum;
+paymentMethod!: enum;
+amount!: number;
+userId!: number;
+tranId!: string;
+createdAt?: string;
+updatedAt?: string;
 
-## logs:
-
+## logs
 id,
 error:boolean,
 user_id,
@@ -320,33 +305,33 @@ createdAt
 updatedAt
 
 ## currency
-
 id,
 name,
 symble
 
 ## setting
+id!: number;
+siteName!: string;
+image!: string;
+favicon!: string;
+address!: string;
+phone!: string;
+email!: string;
+currencyId!: number;
+socialLink!: string;
+seo!: string;
+emailConfig!: string;
+paymentAccount!: string;
+homePage!: string;
+aboutPage!: string;
+contactPage!: string;
+termPolicyPage!: string;
+footerOption!: string;
+headerOption!: string;
+helpSupport!: string;
+updatedAt?: string;
 
-id,
-siteName
-logo,
-address,
-phone,
-email
-currencyId,
-social_link: jsonb
-email_config:jsonb,
-payment_account:jsonb,
-home_page: jsonb,
-about_page: jsonb,
-contact_page: jsonb,
-term_policy_page: jsonb,
-footer_option: jsonb,
-header_option: jsonb,
-help_Support: jsonb
-mobile_notification:boolean(this field defind for mobile sms to user)
-
-## banner: ToDo
+## banner
 
 title,
 type:["Slider", "Middle", 'Left', 'Right', 'Footer'],
@@ -355,7 +340,7 @@ description,
 url,
 status: boolean,
 
-## leads(done)
+## leads
 
 id,
 email,
@@ -392,19 +377,19 @@ status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
 created_at,
 updated_at,
 
-## menu (working)
+## menu
+id!: number;
+name!: string;
+items!: string;
+footerMenu!: boolean;
+topBarMenu!: boolean;
+mainMenu!: boolean;
+active!: boolean;
+userId!: number;
+createdAt?: string;
+updatedAt?: string;
 
-id,
-user_id,
-item:any,
-status boolean,
-main_menu boolean,
-top_bar_menu boolean,
-footer_menu boolean,
-created_at,
-updated_at,
-
-# notification(done)
+# notification
 
 id,
 user_id: nmber,
@@ -417,126 +402,109 @@ created_at,
 updated_at
 
 ## stock adjustment
-  type:[add, subtract]
-  productId,
-  variantId,
-  qty
 
-## user point:
-# User points are a loyalty mechanism where customers earn points for actions like:
+type:[add, subtract]
+productId,
+variantId,
+qty
 
-1. Making purchases
-2. Referring friends
-3. Writing reviews
-4. Signing up or completing their profile
-5. Membership upgrades
+## contacts
 
-## point Database Desing:
+name,
+email,
+phone,
+subject,
+message
 
-## Table: points_transactions
+## coupons // offer
 
-- id (UUID)
-- user_id (FK to users)
-- points (int) — positive or negative
-- reason (string) — 'purchase', 'referral', etc.
-- created_at (timestamp)
+id!: number;
+type!: CouponType;
+code!: string;
+discountType!: DiscountType;
+value!: number;
+startDate!: string;
+expiryDate!: string;
+minOrderAmount!: number;
+mincartValue!: number;
+maxUser!: number;
+maxDiscountValue!: number;
+usageCount!: number;
+usageLimit!: number;
+usagePerUser!: number;
+image!: string;
+active!: boolean;
+userId?: number;
+createdAt?: string;
+updatedAt?: string;
 
-## ✅ 2. Point Rules Definition
-  Purchase (per $1 spent) => 1 point
-  First signup => 50 points
-  Product review => 10 points
-  Friend referral => 100 points
-  Birthday bonus => 50 points
+## coupon_products
 
-  Store these in a config table or environment file to make them adjustable.
+id!: number;
+productId!: number;
+couponId?: number;
+createdAt?: string;
+updatedAt?: string;
 
-## ✅ 3. Redemption Rules
-  Example:
+## applied_coupons
 
-  100 points = $1 off
+id!: number;
+couponId!: number;
+orderId!: number;
+discountAmount!: string;
+userId!: number;
+appliedAt?: string;
 
-  Minimum redemption: 500 points
+## discount
 
-  So if a user has 1200 points, they can get $12 off.
+id!: number;
+name!: string;
+key!: string;
+scope!: enum;
+slug!: string;
+promotionType!: enum;
+discountStrategy!: enum;
+offerDetails!: object;
+value!: number;
+startDate!: string;
+endDate!: string;
+priority!: number; // Higher number = Higher priority for applied first
+stackable!: boolean; // If true, this discount can be combined with others
+status!: Status;
+image!: string;
+description!: string;
+userId?: number;
+createdAt?: string;
+updatedAt?: string;
 
-  You can:
+## applicable_products 
 
-  Apply during checkout
+id!: number;
+productId!: number;
+discountId?: number;
+createdAt?: string;
+updatedAt?: string;
 
-  Show available rewards on user profile
+## applicable_categories 
 
+id!: number;
+categoryId!: number;
+discountId?: number;
+createdAt?: string;
+updatedAt?: string;
 
-## ✅ 5. Frontend Display
-  Show point balance on dashboard
+## applicable_brands 
 
-  Show earned points per order
+id!: number;
+brandId!: number;
+discountId!: number;
+createdAt?: string;
+updatedAt?: string;
 
-  Show rewards available to redeem
-
-  Allow point-based filters (e.g., “Shop with Points”)
-
-
-## What Is a Membership?
-# A membership is a customer tier or subscription that provides exclusive benefits, such as:
-
-  Extra discounts
-
-  Early access to sales
-
-  Free shipping
-
-  Bonus reward points
-
-  Exclusive products or services
-
-  # 🎯 Examples of Membership Models
-    Paid => 	Amazon Prime, Flipkart Plus => 	Pay monthly/yearly for benefits
-    Points-Based =>	Earned after spending a threshold =>	"Gold Member after spending ₹10,000"
-    Invite Only =>	Given by admins or high loyalty users =>	Elite or VIP club
-    Tiered Levels =>	Silver / Gold / Platinum =>	Benefits increase with each level
-
-
-
-  # Database Design
-    Table: memberships
-    - id
-    - name (Silver, Gold, Prime)
-    - fee (nullable)
-    - duration_days (e.g., 365)
-    - discount_percentage
-    - bonus_points_multiplier
-    - free_shipping (boolean)
-    - active
-
-    Table: user_memberships
-    - id
-    - user_id
-    - membership_id
-    - start_date
-    - end_date
-
-
- # How It Works
-  1. User Joins Membership
-    Either by paying (e.g., ₹999/year) or by qualifying (e.g., ₹50,000 total spend)
-
-  2. System Applies Benefits
-
-  💰 Cart discounts:
-    Apply extra discount if user is a member
-
-    Example: if (user.membership) apply 5% extra
-
-  🚚 Free Shipping:
-
-    Skip shipping fee for members
-
-  🎁 Bonus Points:
-
-    Multiply earned points by 2x or 3x
-
-  3. Membership Expiry
-    On login or checkout, check end_date
-
-    Deactivate if expired
-
+## stock_adjusts
+id!: number;
+productId!: number;
+type!: enum;
+productVariantId!: number;
+qty!: number;
+userId!: number;

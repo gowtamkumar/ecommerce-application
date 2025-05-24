@@ -25,6 +25,9 @@ export class BrandEntity {
   @Column({ nullable: true })
   image!: string;
 
+  @Column({ nullable: true })
+  description!: string;
+
   @Column({
     type: "enum",
     enum: Status,
