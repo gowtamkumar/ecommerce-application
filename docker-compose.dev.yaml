@@ -51,8 +51,8 @@ services:
     ports:
       - "3900:3900"
     volumes:
-      - /server/app/node_modules
       - ./server:/app
+      - /app/node_modules
     env_file:
       - ./server/.env.development
     depends_on:
@@ -71,12 +71,13 @@ services:
       - ./client/.env.local
     restart: always
     volumes:
-      - /client/app/node_modules
       - ./client:/app
+      - /app/node_modules
     depends_on:
       - server
     networks:
       - main_network
+    command: sh -c "npm install && npm run dev"
 
 networks:
   main_network:
