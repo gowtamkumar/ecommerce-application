@@ -20,8 +20,8 @@ services:
     container_name: ecommerce_pgadmin
     image: dpage/pgadmin4:latest
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@example.com
-      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_DEFAULT_EMAIL=gowtampaul0@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
     ports:
       - "5050:80"
     depends_on:
@@ -54,7 +54,7 @@ services:
       - ./server:/app
       - /app/node_modules
     env_file:
-      - ./server/.env.development
+      - ./server/.env
     depends_on:
       - postgres
     networks:

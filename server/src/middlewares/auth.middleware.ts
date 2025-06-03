@@ -24,12 +24,10 @@ const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
   const token = authorization?.split(" ")[1] || req.cookies?.accessToken;
 
   if (!token) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "Authentication Failed: Token is missing",
-      });
+    return res.status(401).json({
+      success: false,
+      message: "Authentication Failed: Token is missing",
+    });
   }
 
   try {
@@ -46,7 +44,6 @@ const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
     console.error("Authentication Error:", error);
 
     if (error instanceof jwt.TokenExpiredError) {
-      
       return res.status(401).json({
         success: false,
         message: "Authentication Failed: Token has expired",
