@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Tabs } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import StockAdjust from "./stock-adjust/StockAdjust";
+import Brand from "../brand/Brand";
 
 const Size = dynamic(() => import("@/app/dashboard/size/page"), {
   ssr: false,
@@ -71,6 +72,11 @@ export default function Index() {
           label: "Banner",
           key: "banners",
           children: <Banner />,
+        },
+        {
+          label: "Brands",
+          key: "brand",
+          children: <Brand />,
         },
         {
           label: "Reviews",

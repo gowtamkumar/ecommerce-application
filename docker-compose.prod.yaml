@@ -1,4 +1,3 @@
-version: "3.8" # Use the latest version if possible
 services:
   postgres:
     container_name: postgres
@@ -23,16 +22,8 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - .env.local
-    # environment:
-    #   - NEXTAUTH_URL=http://localhost:3000
-    #   - NEXT_PUBLIC_API_URL=http://backend:3900 # Updated to use backend service name
-    #   - NEXTAUTH_SECRET=resturant-application
-    #   - AUTH_SECRET=AwZLoFadutg7Efmiz5OhAGEzZOSsVQOySI8eTBarztM
-    #   - NODE_ENV=production
+      - ./client/.env.local
     restart: always
-    # volumes:
-    #   - ./client:/app
     depends_on:
       - backend
 
@@ -43,35 +34,34 @@ services:
       context: ./server
     ports:
       - 3900:3900
-    # volumes:
-    #   # - ./server/app/node_modules
-    #   - ./server:/app
     env_file:
-      - .env.production
-    # environment:
-    #   DB_TYPE: postgres
-    #   DB_USERNAME: postgres
-    #   DB_PASSWORD: postgres # Use Docker secrets or env files
-    #   DB_DATABASE: db_postgres
-    #   DB_HOST: postgres
-    #   DB_PORT: 5432
-    #   NODE_ENV: production
-    #   JWT_SECRET: dsafasd
-    #   JWT_EXPIRES: 24
+      - ./server/.env.production
     depends_on:
       - postgres
-      # nginx:
-  #   image: nginx:latest
-  #   container_name: nginx
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #   depends_on:
-  #     - client
-  #     - server
-  #   networks:
-  #     - main_network
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+    depends_on:
+      - frontend
+      - backend
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+    command: certonly --webroot --webroot-path=/var/www/certbot --email your@email.com --agree-tos --no-eff-email -d yourdomain.com -d www.yourdomain.com
+
+networks:
+  main_network:
+    driver: bridge
 
 volumes:
   pg_data:

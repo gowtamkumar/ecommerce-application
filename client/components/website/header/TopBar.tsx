@@ -15,7 +15,7 @@ export default function TopBar() {
       <div className="text-sm flex gap-1 items-center p-2">
         <span> {setting}</span>
         <a href="tel:+01767-163576" className="text-blue-500">
-          +{global.setting.phone}
+          +{global.setting?.phone}
         </a>
       </div>
 

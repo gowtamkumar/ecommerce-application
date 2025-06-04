@@ -117,12 +117,12 @@ const navbarRoute = [
     label: <Link href="/dashboard/category">Category</Link>,
     route: "true",
   },
-  {
-    key: "brands",
-    icon: <MdBrandingWatermark className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/brands">Brands</Link>,
-    route: "true",
-  },
+  // {
+  //   key: "brands",
+  //   icon: <MdBrandingWatermark className="h-5 w-5 text-blue-500" />,
+  //   label: <Link href="/dashboard/brands">Brands</Link>,
+  //   route: "true",
+  // },
   // {
   //   key: "taxs",
   //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,

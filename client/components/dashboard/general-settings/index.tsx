@@ -43,8 +43,6 @@ export default function Index() {
       const setting = await getSettings();
       const newData = setting.data;
 
- 
-
       if (newData?.image) {
         newData.fileList = [createUploadFile(newData.image)];
       }

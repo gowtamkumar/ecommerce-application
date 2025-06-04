@@ -110,17 +110,23 @@ const sendCookiesResponse = (token: string, res: Response) => {
 // Function to generate signed JWT token
 const getSignJwtToken = (user: any): string => {
   return jwt.sign(
-    { id: user.id, name: user.name, username: user.username, role: user.role },
+    {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      role: user.role,
+    },
     process.env.JWT_SECRET!,
     {
-      expiresIn: process.env.JWT_EXPIRES + "h",
+      expiresIn: (process.env.JWT_EXPIRES +
+        "h") as jwt.SignOptions["expiresIn"],
     }
   );
 };
 
 const getResetSignJwtToken = (email: string) => {
   return jwt.sign({ user: email }, process.env.RESET_SECRET!, {
-    expiresIn: process.env.REST_EXPIRESIN,
+    expiresIn: process.env.REST_EXPIRESIN as jwt.SignOptions["expiresIn"],
   });
 };
 

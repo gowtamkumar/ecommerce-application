@@ -30,13 +30,8 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import uploadButton from "@/components/website/uploadButton";
 
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div style={{ marginTop: 8 }}>Upload</div>
-  </div>
-);
 
 const FileUploadField = ({
   name,
