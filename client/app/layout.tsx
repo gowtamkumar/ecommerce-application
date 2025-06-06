@@ -79,10 +79,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <Head>
+      <head>
         {favicon && <link rel="icon" href={favicon} />}
         {renderSeoCode(setting?.seo?.headerCode)}
-      </Head>
+      </head>
       <body suppressHydrationWarning className={poppinsFont.variable}>
         {/* Google Tag Manager (noscript) */}
         {setting?.seo?.bodyStartCode && (
