@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { CiSquareChevLeft, CiSquareChevRight } from "react-icons/ci";
@@ -22,16 +23,15 @@ const ProductImageGallery = ({ images }: { images: string }) => {
         modules={[FreeMode, Navigation, Thumbs]}
       >
         {(newimages || []).map((item: string, idx: number) => {
+          const image = item
+            ? `${appConfig.baseApiUrl}/uploads/${item}`
+            : "/pos_software.png";
           return (
             <SwiperSlide key={idx}>
               <div className="relative w-full h-[50vh]">
                 <Zoom>
                   <Image
-                    src={
-                      item
-                        ? `${appConfig.baseApiUrl}/uploads/${item}`
-                        : "/pos_software.png"
-                    }
+                    src={image}
                     alt={item}
                     fill
                     sizes="100vw"
@@ -61,6 +61,9 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           }}
         >
           {(newimages || []).map((item: string, idx: number) => {
+            const image = item
+              ? `${appConfig.baseApiUrl}/uploads/${item}`
+              : "/default-placeholder.png";
             return (
               <SwiperSlide key={idx}>
                 <div className="relative w-full h-[10vh] cursor-pointer">
@@ -70,11 +73,7 @@ const ProductImageGallery = ({ images }: { images: string }) => {
                     sizes="100vw"
                     className="object-cover"
                     {...(idx === 0 ? { priority: true } : { loading: "lazy" })}
-                    src={
-                      item
-                        ? `${appConfig.baseApiUrl}/uploads/${item}`
-                        : "/default-placeholder.png"
-                    }
+                    src={image}
                   />
                 </div>
               </SwiperSlide>

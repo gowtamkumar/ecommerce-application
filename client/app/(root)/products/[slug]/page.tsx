@@ -146,8 +146,8 @@ export async function generateMetadata({ params }: any) {
   };
 }
 
-export default function Product({ params }: any) {
-  const slug = params.slug;
+export default async function Product({ params }: any) {
+  const slug = await params.slug;
   if (!slug) {
     return (
       <>
