@@ -54,7 +54,7 @@ services:
       - ./server:/app
       - /app/node_modules
     env_file:
-      - ./server/.env
+      - ./server/.env.development
     depends_on:
       - postgres
     networks:
@@ -66,7 +66,7 @@ services:
       dockerfile: dockerfile
       context: ./client
     ports:
-      - "3000:3000"
+      - "3100:3100"
     env_file:
       - ./client/.env.local
     restart: always

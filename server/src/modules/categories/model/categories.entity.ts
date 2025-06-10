@@ -26,7 +26,6 @@ export class CategoriesEntity {
   @Column()
   slug!: string;
 
-
   @Column({ nullable: true })
   image?: string;
 

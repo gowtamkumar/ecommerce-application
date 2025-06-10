@@ -172,6 +172,8 @@ export const createCategory = asyncHandler(
       userId: req.id,
     });
 
+  
+
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
         path: issue.path.join("."),
@@ -186,6 +188,13 @@ export const createCategory = asyncHandler(
 
     const { name, image, userId, parentId, description } = validation.data;
     const categoriesRepository = connection.getRepository(CategoriesEntity);
+
+       const slug = name
+      .toLowerCase()
+      .trim()
+      .split(" ")
+      .join("-");
+
 
     let level = 1;
     let parent = null;
@@ -214,6 +223,7 @@ export const createCategory = asyncHandler(
     // Create the new category
     const newCategory = categoriesRepository.create({
       name,
+      slug,
       image,
       userId,
       level,

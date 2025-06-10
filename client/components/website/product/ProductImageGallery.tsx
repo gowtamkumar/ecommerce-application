@@ -5,10 +5,12 @@ import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 import Image from "next/image";
 import "./heroSectionSlider.css";
 import appConfig from "@/appConfig";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const ProductImageGallery = ({ images }: { images: string }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null) as any;
-  const newimages = images?.split(",")
+  const newimages = images?.split(",");
 
   return (
     <div className="w-full">
@@ -23,18 +25,20 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           return (
             <SwiperSlide key={idx}>
               <div className="relative w-full h-[50vh]">
-                <Image
-                  src={
-                    item
-                      ? `${appConfig.baseApiUrl}/uploads/${item}`
-                      : "/pos_software.png"
-                  }
-                  alt={item}
-                  fill
-                  sizes="100vw"
-                  className="object-cover"
-                  {...(idx === 0 ? { priority: true } : { loading: "lazy" })}
-                />
+                <Zoom>
+                  <Image
+                    src={
+                      item
+                        ? `${appConfig.baseApiUrl}/uploads/${item}`
+                        : "/pos_software.png"
+                    }
+                    alt={item}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                    {...(idx === 0 ? { priority: true } : { loading: "lazy" })}
+                  />
+                </Zoom>
               </div>
             </SwiperSlide>
           );
