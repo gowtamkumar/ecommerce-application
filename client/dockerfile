@@ -1,15 +1,17 @@
-### Stage 1 ###
-FROM node:22.16.0-alpine
-
+# pull the official base image
+FROM node:22.16.0-alpine AS development
+ENV NODE_ENV development
+# set working direction
 WORKDIR /app
-
-COPY package.json ./
-
-RUN npm install --legacy-peer-deps
-# RUN npm run build
-
-COPY . .
-
-EXPOSE 3000
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+# Cache and Install dependencies
+COPY package*.json ./
+RUN npm install
+# copy app files
+COPY . ./
+# Expose port
+EXPOSE 3100
+# start the app
 
 CMD [ "npm", "run", "dev" ]
