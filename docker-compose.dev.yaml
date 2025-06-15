@@ -4,9 +4,9 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: semicolonitinventery
-      POSTGRES_PASSWORD: semicolonit@
-      POSTGRES_DB: inventory_sas
+      POSTGRES_USER: ecommerce_admin
+      POSTGRES_PASSWORD: gowtampaul1995@
+      POSTGRES_DB: ecommerce_db
       TZ: "GMT"
       PGTZ: "GMT"
     ports:
@@ -20,8 +20,8 @@ services:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
     environment:
-      - PGADMIN_DEFAULT_EMAIL=gowtam.semicolonit@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=semicolonit@
+      - PGADMIN_DEFAULT_EMAIL=gowtampaul0@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=gowtampaul1995@
     ports:
       - "5050:80"
     depends_on:
@@ -54,7 +54,7 @@ services:
     ports:
       - "3100:3100"
     env_file:
-      - ./client/.env.development
+      - ./client/.env.local
     volumes:
       - ./client:/app
       - /app/node_modules
