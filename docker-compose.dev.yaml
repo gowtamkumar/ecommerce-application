@@ -4,7 +4,7 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: ecommerce_admin
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: gowtampaul1995@
       POSTGRES_DB: ecommerce_db
       TZ: "GMT"
@@ -62,46 +62,6 @@ services:
       - server
     networks:
       - main_network
-  # nginx:
-  #   image: nginx:latest
-  #   container_name: nginx
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #   depends_on:
-  #     - client
-  #     - server
-  #   networks:
-  #     - main_network
-
-  # backup:
-  #   image: postgres:16-alpine
-  #   container_name: db_backup
-  #   depends_on:
-  #     - postgres
-  #   entrypoint: ["sh", "-c", "/backup.sh"]
-  #   volumes:
-  #     - ./backups:/backups # Mount local folder to store backups
-  #     - ./scripts/backup.sh:/backup.sh
-  #   environment:
-  #     PGPASSWORD: password # match your DB password
-  #   networks:
-  #     - main_network
-
-  # restore:
-  #   image: postgres:16-alpine
-  #   container_name: postgres_restore
-  #   depends_on:
-  #     - postgres
-  #   volumes:
-  #     - ./backups:/backups  # Mount backup directory
-  #     - ./scripts/restore.sh:/restore.sh  # Mount restore script
-  #   entrypoint: ["sh", "/restore.sh"]  # Execute the restore script
-  #   environment:
-  #     PGPASSWORD: password  # PostgreSQL password
-  #   networks:
-  #     - main_network
 
 
 networks:
@@ -110,4 +70,3 @@ networks:
 
 volumes:
   postgres_data:
-  postgres_backups:

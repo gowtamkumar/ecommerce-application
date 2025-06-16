@@ -4,7 +4,7 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_USER: ecommerce_admin
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: gowtampaul1995@
       POSTGRES_DB: ecommerce_db
       TZ: "GMT"
