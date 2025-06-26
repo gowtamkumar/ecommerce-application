@@ -19,7 +19,7 @@ export default function ProductVariant({
   return (
     <div>
       {formValues.variant && (
-        <div>
+        <>
           <Form.List name="productVariants">
             {(fields, { add, remove }) => (
               <div>
@@ -84,7 +84,7 @@ export default function ProductVariant({
                             name={[name, "unitPrice"]}
                             rules={[{ required: true, message: "Unit Price" }]}
                           >
-                            <InputNumber placeholder="Unit Price" min={1} />
+                            <InputNumber placeholder="Unit Price" min={1} className="!w-full" />
                           </Form.Item>
                         </td>
 
@@ -96,7 +96,7 @@ export default function ProductVariant({
                               { required: true, message: "Purchase Price" },
                             ]}
                           >
-                            <InputNumber placeholder="Purchase Price" min={1} />
+                            <InputNumber placeholder="Purchase Price" min={1} className="!w-full" />
                           </Form.Item>
                         </td>
                         <td>
@@ -135,7 +135,7 @@ export default function ProductVariant({
                             name={[name, "stockQty"]}
                             rules={[{ required: true, message: "Stock Qty" }]}
                           >
-                            <InputNumber placeholder="Enter" min={1} />
+                            <InputNumber placeholder="Enter" min={1} className="!w-full" />
                           </Form.Item>
                         </td>
                         <td>
@@ -145,6 +145,7 @@ export default function ProductVariant({
                             valuePropName="checked"
                           >
                             <Checkbox
+                              className="!w-full !mx-2"
                               onChange={(e) => {
                                 if (e.target.checked) {
                                   fields.forEach((field, index) => {
@@ -166,7 +167,11 @@ export default function ProductVariant({
                             />
                           </Form.Item>
                         </td>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
+                        <td>
+                          <Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                          </Form.Item>
+                        </td>
                       </tr>
                     </tbody>
                   ))}
@@ -174,7 +179,7 @@ export default function ProductVariant({
               </div>
             )}
           </Form.List>
-        </div>
+        </>
       )}
     </div>
   );

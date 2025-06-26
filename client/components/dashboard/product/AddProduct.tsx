@@ -464,17 +464,13 @@ const AddProduct = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 items-center">
               <Form.Item name="enableReview" valuePropName="checked">
                 <Checkbox>Enable Review</Checkbox>
               </Form.Item>
 
-              <Form.Item
-                name="limitPurchaseQty"
-                label="Limit Purchase Qty"
-                className="w-full"
-              >
-                <InputNumber placeholder="Enter" />
+              <Form.Item name="limitPurchaseQty" label="Limit Purchase Qty">
+                <InputNumber placeholder="Enter" className="!w-full" />
               </Form.Item>
 
               <Form.Item
@@ -488,10 +484,10 @@ const AddProduct = ({
                 ]}
                 className="w-full"
               >
-                <InputNumber placeholder="Enter" className="w-full" />
+                <InputNumber placeholder="Enter" className="!w-full" />
               </Form.Item>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <Form.Item name="variant" valuePropName="checked">
                 <Checkbox>Product Variant</Checkbox>
               </Form.Item>
@@ -508,7 +504,7 @@ const AddProduct = ({
                       },
                     ]}
                   >
-                    <InputNumber placeholder="Enter" className="w-full" />
+                    <InputNumber placeholder="Enter" className="!w-full" />
                   </Form.Item>
 
                   <Form.Item
@@ -521,7 +517,7 @@ const AddProduct = ({
                       },
                     ]}
                   >
-                    <InputNumber placeholder="Enter" className="w-full" />
+                    <InputNumber placeholder="Enter" className="!w-full" />
                   </Form.Item>
 
                   <Form.Item
@@ -534,7 +530,7 @@ const AddProduct = ({
                       },
                     ]}
                   >
-                    <InputNumber placeholder="Enter" className="w-full" />
+                    <InputNumber placeholder="Enter" className="!w-full" />
                   </Form.Item>
                 </>
               )}

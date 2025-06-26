@@ -259,6 +259,19 @@ const navbarRoute = [
     route: "true",
   },
 
+   {
+    key: "stock_module",
+    label: "Stock Adjust",
+    disabled: "true",
+    route: "true",
+  },
+
+ {
+    key: "stock_adjust",
+    icon: <RiBatteryChargeFill className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/stock-adjust">Stock Adjust</Link>,
+    route: "true",
+  },
   {
     key: "report_section",
     label: "Report",
