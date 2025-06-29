@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DB_NAME="ecommerce_db"
-PG_USER="postgres"
+PG_USER="admin"
 BACKUP_FILE="/backups/backup_20250505_105515.sql"
 
 echo "📦 Waiting for PostgreSQL to be ready..."

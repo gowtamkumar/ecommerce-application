@@ -19,7 +19,7 @@ services:
       - ./scripts/restore.sh:/restore.sh  # Mount restore script
     entrypoint: ["sh", "/restore.sh"]  # Execute the restore script
     environment:
-      PGPASSWORD: postgres  # PostgreSQL password
+      PGPASSWORD: gowtampaul1995@  # PostgreSQL password
     depends_on:
       - postgres
     networks:
