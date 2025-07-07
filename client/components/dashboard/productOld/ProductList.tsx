@@ -1,4 +1,3 @@
-"use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
@@ -25,7 +24,7 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
-// import MDEditor from "@uiw/react-md-editor";
+import MDEditor from "@uiw/react-md-editor";
 
 interface Discount {
   discountStrategy: string;
@@ -46,7 +45,7 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const ProductList = () => {
+const ProductList: React.FC = () => {
   const [products, setProducts] = useState([] as any);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
@@ -338,7 +337,7 @@ const ProductList = () => {
       <>
         <div className="grid grid-cols-3 gap-2">
           <div className="col-span-2">
-            <h2 className="font-bold">Product Details: </h2>
+            <h1 className="font-bold">Product Details: </h1>
             <h2>
               <strong>Variant:</strong> {value.variant ? "Yes" : "No"}
             </h2>
@@ -376,18 +375,18 @@ const ProductList = () => {
             </h2>
             <h2>
               <strong>Short Description:</strong>
-              {/* <MDEditor.Markdown
+              <MDEditor.Markdown
                 source={value.shortDescription}
                 style={{ whiteSpace: "pre-wrap" }}
-              /> */}
-              {value.shortDescription}
+              />
+              {/* {value.shortDescription} */}
             </h2>
             <h2>
               <strong>Description:</strong>
-              {/* <MDEditor.Markdown
+              <MDEditor.Markdown
                 source={value.description}
                 style={{ whiteSpace: "pre-wrap" }}
-              /> */}
+              />
             </h2>
             <h2>
               Enable Review:{" "}
@@ -402,38 +401,14 @@ const ProductList = () => {
                 {value.status}
               </Tag>
             </h2>
-          </div>
-          <div className="col-span-1">
-            <div className="flex justify-between">
-              <div>
-                <p>Hover Image</p>
-                <Image
-                  width={150}
-                  alt={value.name}
-                  src={`${appConfig.baseApiUrl}/uploads/${
-                    value.hoverImage || "no-data.png"
-                  }`}
-                />
-              </div>
 
-              <div>
-                <p>Thumbnail Image</p>
-                <Image
-                  width={150}
-                  alt={value.name}
-                  src={`${appConfig.baseApiUrl}/uploads/${
-                    value.thumbnailImage || "no-data.png"
-                  }`}
-                />
-              </div>
-            </div>
-            <p>Images:</p>
-            <div>
-              {value?.images?.map((item: string) => {
+            <div className="flex gap-2">
+              Images:
+              {value.images?.map((item: string) => {
                 return (
                   <Image
                     key={item}
-                    width={100}
+                    width={200}
                     alt={item}
                     src={`${appConfig.baseApiUrl}/uploads/${
                       item || "no-data.png"
@@ -442,6 +417,9 @@ const ProductList = () => {
                 );
               })}
             </div>
+          </div>
+          <div className="col-span-1">
+            hare need to show review product related review
           </div>
         </div>
 

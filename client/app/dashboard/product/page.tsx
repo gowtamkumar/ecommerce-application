@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Tabs } from "antd";
+import { Button, Spin, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const ProductList = dynamic(() => import('@/components/dashboard/product/ProductList'), { ssr: false })
+const ProductList = dynamic(() => import('@/components/dashboard/productOld/ProductList'), { loading: () => <Spin /> })
 
 export default function Product() {
   const [tabKey, setTabKey] = useState("product_list");
