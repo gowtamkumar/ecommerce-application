@@ -19,7 +19,7 @@ services:
       - ./backups:/backups # Mount local folder to store backups
       - ./scripts/backup.sh:/backup.sh
     environment:
-      PGPASSWORD: postgres # match your DB password
+      PGPASSWORD: gowtampaul1995@  # match your DB password
     depends_on:
       - postgres
     networks:
