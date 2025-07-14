@@ -538,25 +538,31 @@ export const cartIncrementDecrement = asyncHandler(
     }
 
     const repository = await connection.getRepository(CartEntity);
+    const result = await repository.findOne({
+      where: { id },
+      relations: ["productVariant"],
+    });
 
-    const result = await repository.findOneBy({ id });
     if (!result) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 
     let qty = 0;
-
     if (validation.data.type === incrementDecrementType.Increment) {
-      qty = result.qty + 1;
+      if (result.productVariant.stockQty < validation.data.qty) {
+        throw new Error(`Out of stock`);
+      }
+      qty = validation.data.qty;
     } else if (validation.data.type === incrementDecrementType.Decrement) {
       if (result.qty === 1) {
         throw new Error(
           `Minimum 1 qty should be keep otherwise you can remove`
         );
       } else {
-        qty = result.qty - 1;
+        qty = validation.data.qty;
       }
     }
+
     const cartUpdate = await repository.save({ id: result.id, qty });
 
     return res.status(200).json({

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import appConfig from "@/appConfig";
 import {
@@ -5,11 +6,17 @@ import {
   getCartLists,
   incrementDecrementCart,
 } from "@/lib/apis/cart";
-import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
+import { errorNotification } from "@/lib/utils/notification";
+import {
+  decrementCart,
+  incrementCart,
+  replaceCart,
+  selectCart,
+} from "@/redux/features/cart/cartSlice";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Popconfirm } from "antd";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,11 +24,32 @@ export default function OrderSummary() {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const cart = useSelector(selectCart);
+  const debouncedSyncRef = useRef<any>(null);
+
+  // Debounce utility
+  const debounce = (func: Function, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  useEffect(() => {
+    debouncedSyncRef.current = debounce(async (item: any) => {
+      const res = await incrementDecrementCart(item);
+      if (!res.success) {
+        errorNotification({ message: res.message });
+      }
+      const getCartList = await getCartLists();
+      dispatch(replaceCart(getCartList.data));
+    }, 500); // 500ms debounce
+  }, []);
 
   async function removeItemCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
-      const removeCartRes = await deleteCart(id);      
+      const removeCartRes = await deleteCart(id);
 
       if (removeCartRes.success) {
         const getCartList = await getCartLists();
@@ -36,13 +64,23 @@ export default function OrderSummary() {
     }
   }
 
-  async function cartIncrementDecrementHandle(value: any) {
-    const incrementCartRes = await incrementDecrementCart(value);
-    if (incrementCartRes.success) {
-      const getCartList = await getCartLists();
-      dispatch(replaceCart(getCartList.data));
+  const handleIncrementDecrement = async (item: any) => {
+    if (item.type === "Decrement") {
+      dispatch(decrementCart(item));
+    } else {
+      dispatch(incrementCart(item));
     }
-  }
+    // Debounced backend sync
+    debouncedSyncRef.current(item);
+  };
+
+  // async function cartIncrementDecrementHandle(value: any) {
+  //   const incrementCartRes = await incrementDecrementCart(value);
+  //   if (incrementCartRes.success) {
+  //     const getCartList = await getCartLists();
+  //     dispatch(replaceCart(getCartList.data));
+  //   }
+  // }
 
   function stockCheckingAndPurchaseLimit(value: any) {
     let checkStock = value?.stockQty;
@@ -111,9 +149,10 @@ export default function OrderSummary() {
                     <button
                       className="px-2 py-1 bg-gray-200 rounded cursor-pointer"
                       onClick={() =>
-                        cartIncrementDecrementHandle({
+                        handleIncrementDecrement({
                           type: "Decrement",
                           id: item.id,
+                          qty: item.qty - 1,
                         })
                       }
                       disabled={item?.qty <= 1}
@@ -124,9 +163,10 @@ export default function OrderSummary() {
                     <button
                       className="px-2 py-1 bg-gray-200 rounded cursor-pointer"
                       onClick={() =>
-                        cartIncrementDecrementHandle({
+                        handleIncrementDecrement({
                           type: "Increment",
                           id: item.id,
+                          qty: item.qty + 1,
                         })
                       }
                       disabled={stockCheckingAndPurchaseLimit(item)}
@@ -136,9 +176,7 @@ export default function OrderSummary() {
                   </div>
                 </td>
 
-                <td className="p-3 text-green-600">
-                  ৳ {item.salePrice}
-                </td>
+                <td className="p-3 text-green-600">৳ {item.salePrice}</td>
                 {/* <td className="p-3 text-green-600">৳ {item.taxAmount}</td> */}
                 <td className="p-3 text-green-600">
                   ৳ {item.totalDiscountAmount}
@@ -165,7 +203,6 @@ export default function OrderSummary() {
           </tbody>
         </table>
       </div>
-
     </>
   );
 }
