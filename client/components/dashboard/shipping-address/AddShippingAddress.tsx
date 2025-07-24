@@ -177,19 +177,6 @@ const AddShippingAddress = () => {
           <Input placeholder="Enter " />
         </Form.Item>
 
-        <Form.Item
-          name="country"
-          label="Country"
-          rules={[
-            {
-              required: true,
-              message: "country is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
         <Form.Item name="divisionId" label="Division" className="mb-1">
           <Select
             showSearch

@@ -12,9 +12,6 @@ export const updateShippingAddressValidationSchema = z.object({
     required_error: "Phone No is required",
   }),
   alternativPhoneNo: z.string().optional(),
-  country: z.string({
-    required_error: "Country is required",
-  }),
   divisionId: z.number({
     required_error: "Division is required",
   }),

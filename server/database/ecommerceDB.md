@@ -34,7 +34,6 @@ name:
 phone_no,
 email,
 alternative_phone_no,
-country:string
 user_id,
 divisionId,
 districtId

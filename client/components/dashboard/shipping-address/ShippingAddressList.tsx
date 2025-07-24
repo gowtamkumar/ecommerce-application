@@ -34,7 +34,6 @@ interface DataType {
   name: string;
   phoneNo: string;
   email: string;
-  country: string;
   division: any;
   user: any;
   district: any;
@@ -223,14 +222,6 @@ const ShippingAddressList: React.FC = () => {
       key: "email",
       sorter: (a, b) => a.email.length - b.email.length,
       ...getColumnSearchProps("email"),
-    },
-
-    {
-      title: "Country",
-      dataIndex: "country",
-      key: "country",
-      sorter: (a, b) => a.country.length - b.country.length,
-      ...getColumnSearchProps("country"),
     },
 
     {
