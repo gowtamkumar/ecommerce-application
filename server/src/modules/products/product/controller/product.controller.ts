@@ -584,7 +584,7 @@ export const getProductByslug = asyncHandler(
         JSONB_BUILD_OBJECT('name', t.name, 'value', t.value) AS "tax",
         JSONB_BUILD_OBJECT('name', b.name, 'slug', b.slug, 'image', b.image, 'status', b.status) AS "brand",
         JSONB_AGG(
-          JSONB_BUILD_OBJECT('category', JSONB_BUILD_OBJECT('name', c.name, 'slug', c.slug))
+          DISTINCT JSONB_BUILD_OBJECT('category', JSONB_BUILD_OBJECT('name', c.name, 'slug', c.slug))
         ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
         COALESCE(
           JSONB_AGG(
