@@ -35,9 +35,6 @@ export class ShippingAddressEntity {
   @Column({ name: "alternative_phone_no", nullable: true })
   alternativePhoneNo?: string;
 
-  @Column({ name: "country" })
-  country!: string;
-
   @Column({ name: "division_id", nullable: true })
   divisionId!: number;
   @ManyToOne(

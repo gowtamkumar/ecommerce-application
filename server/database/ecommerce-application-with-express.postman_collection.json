@@ -1262,7 +1262,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"type\": \"Office\",\n    \"name\": \"Gowtam kumar\",\n    \"phoneNo\": \"01767164394\",\n    \"email\": \"gowtam@gmail.com\",\n    \"userId\": 1,\n    \"country\": \"Bangladesh\",\n    \"divisionId\": 1,\n    \"districtId\": 1,\n    \"upazilaId\": 1,\n    \"unionId\": 1,\n    \"address\": \"Kayem koala high school\",\n    \"status\": true\n}",
+							"raw": "{\n    \"type\": \"Office\",\n    \"name\": \"Gowtam kumar\",\n    \"phoneNo\": \"01767164394\",\n    \"email\": \"gowtam@gmail.com\",\n    \"userId\": 1,\n   \"divisionId\": 1,\n    \"districtId\": 1,\n    \"upazilaId\": 1,\n    \"unionId\": 1,\n    \"address\": \"Kayem koala high school\",\n    \"status\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"

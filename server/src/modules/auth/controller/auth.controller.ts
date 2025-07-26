@@ -381,7 +381,6 @@ export const getMe = asyncHandler(
       // "orderShippingAddress.type",
       // "orderShippingAddress.phoneNo",
       // "orderShippingAddress.email",
-      // "orderShippingAddress.country",
       // "orderShippingAddress.alternativePhoneNo",
       // "orderShippingAddress.address",
       // "orderShippingAddress.phoneNo",

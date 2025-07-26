@@ -35,7 +35,6 @@ interface DataType {
   name: string;
   phoneNo: string;
   email: string;
-  country: string;
   division: any;
   user: any;
   district: any;
@@ -219,13 +218,7 @@ const ShippingAddressList = () => {
       ...getColumnSearchProps("email"),
     },
 
-    {
-      title: "Country",
-      dataIndex: "country",
-      key: "country",
-      sorter: (a, b) => a.country.length - b.country.length,
-      ...getColumnSearchProps("country"),
-    },
+
 
     {
       ...getColumnSearchProps("division"),

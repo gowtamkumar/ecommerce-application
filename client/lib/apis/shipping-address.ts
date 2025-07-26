@@ -9,7 +9,6 @@ interface ShippingAddress {
   city: string;
   state: string;
   zipCode: string;
-  country: string;
   [key: string]: any; // Allow additional properties
 }
 
