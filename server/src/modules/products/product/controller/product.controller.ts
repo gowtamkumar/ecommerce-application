@@ -1,16 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../../middlewares/async.middleware";
-import { ProductEntity } from "../model/product.entity";
-import { getDBConnection } from "../../../../config/db";
-import { productValidationSchema } from "../../../../validation";
-import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
-import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
+import { NextFunction, Request, Response } from "express";
 import { Brackets } from "typeorm";
-import { updateProductValidationSchema } from "../../../../validation/products/product/updateProductValidation";
-import { logger } from "../../../../middlewares/logger";
-import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
+import { getDBConnection } from "../../../../config/db";
 import { CustomRequest } from "../../../../enums/custom-request-type";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { logger } from "../../../../middlewares/logger";
 import { productsQuery } from "../../../../sqlQuery";
+import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
+import { productValidationSchema } from "../../../../validation";
+import { updateProductValidationSchema } from "../../../../validation/products/product/updateProductValidation";
+import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
+import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
+import { ProductEntity } from "../model/product.entity";
 
 // @desc Create a Product
 // @route POST /api/v1/products
@@ -567,7 +567,7 @@ export const getProductByslug = asyncHandler(
         ), 2) AS "finalPrice",
         COALESCE(
           JSONB_AGG(
-            JSONB_BUILD_OBJECT(
+           DISTINCT JSONB_BUILD_OBJECT(
               'id', pv.id,
               'unitPrice', pv.unit_price,
               'sizeId', pv.size_id,
