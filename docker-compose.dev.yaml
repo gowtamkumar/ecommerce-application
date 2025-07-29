@@ -17,7 +17,7 @@ services:
       - main_network
 
   pgadmin:
-    container_name: pgadmin
+    container_name: pgadmin_ecommerce
     image: dpage/pgadmin4:latest
     environment:
       - PGADMIN_DEFAULT_EMAIL=gowtampaul0@gmail.com
@@ -62,7 +62,6 @@ services:
       - server
     networks:
       - main_network
-
 
 networks:
   main_network:

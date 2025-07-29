@@ -1,15 +1,14 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { setLoading } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { errorNotification } from "@/lib/utils/notification";
 import { getProductBySlug } from "@/lib/apis/product";
+import { errorNotification } from "@/lib/utils/notification";
+import { setLoading } from "@/redux/features/global/globalSlice";
 import {
   selectProduct,
   setProduct,
 } from "@/redux/features/products/productSlice";
 import dynamic from "next/dynamic";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const ReviewTable = dynamic(() => import("./review-rating/ReviewTable"), {
   ssr: false,
@@ -30,6 +29,8 @@ export default function SingleProduct({ slug }: { slug: string }) {
   const dispatch = useDispatch();
   const products = useSelector(selectProduct);
   const { product } = products;
+
+  // #ToDo here need to optimize this code and need to check single product system
 
   const fetchProductData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));

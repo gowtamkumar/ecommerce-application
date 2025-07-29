@@ -23,9 +23,9 @@ const Header = dynamic(() => import("@/components/website/header/Header"));
 export async function generateMetadata() {
   const home = await getHome();
   const { metaDescription, metaImage, metaTitle, metaKeywords } =
-    home.data.homePage || {};
+    home.data?.homePage || {};
 
-  if (!home.data.homePage) {
+  if (!home.data?.homePage) {
     return {
       metadataBase: new URL(`${appConfig.baseUrl}`), // Replace with your actual domain
       title: "ecommerce - Premium Products",
@@ -119,7 +119,7 @@ export default async function Home() {
             <CategoryCard categories={categories} />
           </div>
         )}
-        {banners.length > 0 && (
+        {banners?.length > 0 && (
           <section className="container mx-auto grid md:grid-cols-3 gap-8 py-3">
             {banners
               ?.filter((item: { type: string }) => item.type === "Banner")
@@ -178,7 +178,7 @@ export default async function Home() {
           </section>
         )}
         {/* product banner */}
-        {banners.length > 0 && (
+        {banners?.length > 0 && (
           <SellerAds
             banners={(banners || []).filter(
               (item: { type: string }) => item.type === "Footer"

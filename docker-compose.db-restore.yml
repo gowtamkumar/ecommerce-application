@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: postgres_db
+    container_name: postgres_db_resotre
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -15,11 +15,11 @@ services:
     image: postgres:16-alpine
     container_name: postgres_restore
     volumes:
-      - ./backups:/backups  # Mount backup directory
-      - ./scripts/restore.sh:/restore.sh  # Mount restore script
-    entrypoint: ["sh", "/restore.sh"]  # Execute the restore script
+      - ./backups:/backups # Mount backup directory
+      - ./scripts/restore.sh:/restore.sh # Mount restore script
+    entrypoint: ["sh", "/restore.sh"] # Execute the restore script
     environment:
-      PGPASSWORD: gowtampaul1995@  # PostgreSQL password
+      PGPASSWORD: gowtampaul1995@ # PostgreSQL password
     depends_on:
       - postgres
     networks:
