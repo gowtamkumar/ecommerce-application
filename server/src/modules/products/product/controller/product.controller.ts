@@ -482,8 +482,10 @@ export const getProductByslug = asyncHandler(
         LEFT JOIN LATERAL (
           SELECT pv.id, pv.unit_price
           FROM product_variants pv
-          WHERE pv.product_id = p.id AND pv.default = true
-          ORDER BY pv.id
+          WHERE pv.product_id = p.id
+          ORDER BY 
+          CASE WHEN pv.default = true THEN 0 ELSE 1 END,
+          pv.id
           LIMIT 1
         ) dpv ON true
         WHERE p.slug = $1 AND p.status = 'Active'
