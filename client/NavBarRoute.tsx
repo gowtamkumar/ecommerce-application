@@ -1,3 +1,7 @@
+import { MenuProps } from "antd";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { CiLogout } from "react-icons/ci";
 import {
   FaBeer,
   FaProductHunt,
@@ -5,27 +9,20 @@ import {
   FaRegUser,
   FaUser,
 } from "react-icons/fa";
-import { MenuProps } from "antd";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
-import { backupDB } from "./lib/apis/backupDB";
-import appConfig from "./appConfig";
+import { IoReorderFour } from "react-icons/io5";
 import {
-  MdBrandingWatermark,
   MdCategory,
   MdDashboard,
   MdLocalShipping,
   MdOutlineDiscount,
   MdOutlineSpatialTracking,
   MdPayment,
-  MdViewModule,
+  MdViewModule
 } from "react-icons/md";
-import { IoReorderFour } from "react-icons/io5";
-import { RiAccountCircleLine, RiBatteryChargeFill, RiPagesFill } from "react-icons/ri";
-import { TbReport } from "react-icons/tb";
-import { IoIosSettings } from "react-icons/io";
+import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
 import { SiWish } from "react-icons/si";
-import { CiLogout } from "react-icons/ci";
+import { TbReport } from "react-icons/tb";
+import appConfig from "./appConfig";
 
 const handleBackup = async (): Promise<void> => {
   const date = new Date();
@@ -238,6 +235,29 @@ const navbarRoute = [
     ],
   },
 
+
+  {
+    key: "coupon",
+    icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
+    label: "Coupon",
+    route: "true",
+    children: [
+      {
+        key: "new_coupon",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/coupons/new">New coupon</Link>,
+        route: "true",
+      },
+      {
+        key: "coupons",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/coupons">Coupons</Link>,
+        route: "true",
+      },
+    ],
+  },
+
+
   {
     key: "Shipping_managment",
     label: "Shipping",
@@ -259,14 +279,14 @@ const navbarRoute = [
     route: "true",
   },
 
-   {
+  {
     key: "stock_module",
     label: "Stock Adjust",
     disabled: "true",
     route: "true",
   },
 
- {
+  {
     key: "stock_adjust",
     icon: <RiBatteryChargeFill className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/stock-adjust">Stock Adjust</Link>,
@@ -298,7 +318,7 @@ const navbarRoute = [
     route: "true",
   },
 
-   {
+  {
     key: "other_module",
     icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/other-modules?tab=sizes">Other Module</Link>,
@@ -318,7 +338,7 @@ const navbarRoute = [
     label: <Link href="/dashboard/user">User</Link>,
     route: "true",
   },
- 
+
 ];
 
 const profileRoute: MenuProps["items"] = [
@@ -453,4 +473,5 @@ const webSiteNavbarItems: MenuProps["items"] = [
   },
 ];
 
-export { navbarRoute, profileRoute, webSiteNavbarItems, userProfileRoute };
+export { navbarRoute, profileRoute, userProfileRoute, webSiteNavbarItems };
+
