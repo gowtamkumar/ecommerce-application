@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
+import { NextFunction, Request, Response } from "express";
 import { getDBConnection } from "../../../config/db";
-import { ShippingChargeEntity } from "../model/shipping-charge.entity";
+import { CustomRequest } from "../../../enums/custom-request-type";
+import { asyncHandler } from "../../../middlewares/async.middleware";
+import { logger } from "../../../middlewares/logger";
 import { shippingChargeValidationSchema } from "../../../validation/shipping-charge/shippingChargeValidation";
 import { updateShippingChargeValidationSchema } from "../../../validation/shipping-charge/updateShippingChargeValidation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { ShippingChargeEntity } from "../model/shipping-charge.entity";
 // import { shippingChargeValidationSchema } from "../../../validation";
 
 // @desc Get all shippingCharge
@@ -18,17 +18,17 @@ export const getShippingCharges = asyncHandler(
     const connection = await getDBConnection();
     const repository = connection.getRepository(ShippingChargeEntity);
 
-    const { divisionId } = req.query;
+    const { districtId } = req.query;
 
     let customQuery = {} as any;
 
-    if (divisionId) {
-      customQuery.divisionId = divisionId;
+    if (districtId) {
+      customQuery.districtId = districtId;
     }
 
     const result = await repository.find({
-      relations: ["division"],
-      where: { divisionId: customQuery.divisionId },
+      relations: ["district"],
+      where: { districtId: customQuery.districtId },
     });
 
     return res.status(200).json({

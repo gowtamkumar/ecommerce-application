@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { getCoupon, saveCoupon, updateCoupon } from "@/lib/apis/admin/coupon";
 import { getProducts } from "@/lib/apis/admin/product";
@@ -153,7 +152,7 @@ const AddCoupon = () => {
           <Select placeholder="Select">
             <Select.Option value="Order">Order</Select.Option>
             <Select.Option value="Product">Product</Select.Option>
-            <Select.Option value="FreeShipping">FreeShipping</Select.Option>
+            {/* <Select.Option value="FreeShipping">FreeShipping</Select.Option> */}
           </Select>
         </Form.Item>
 
@@ -216,7 +215,7 @@ const AddCoupon = () => {
           <Select placeholder="Select">
             <Select.Option value="Percentage">Percentage</Select.Option>
             <Select.Option value="Fixed">Fixed</Select.Option>
-            <Select.Option value="FreeShipping">FreeShipping</Select.Option>
+            {/* <Select.Option value="FreeShipping">FreeShipping</Select.Option> */}
           </Select>
         </Form.Item>
 

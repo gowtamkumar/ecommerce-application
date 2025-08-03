@@ -1,22 +1,3 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-  setSearchedColumn,
-  setSearchText,
-} from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import {
   deleteShippingCharge,
@@ -26,11 +7,26 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+  setSearchedColumn,
+  setSearchText,
+} from "@/redux/features/global/globalSlice";
+import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
+import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useDispatch, useSelector } from "react-redux";
+
 
 interface DataType {
-  divsionId: any;
+  districtId: any;
   key: string;
-  divsion: any;
+  district: any;
   shippingCharge: number;
   note: string;
   status: boolean;
@@ -44,7 +40,7 @@ const ShippingChargeList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const fetchData = useCallback( async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getShippingCharges();
@@ -182,9 +178,9 @@ const ShippingChargeList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Division",
-      dataIndex: "division",
-      key: "division",
+      title: "District",
+      dataIndex: "district",
+      key: "district",
       render: (value) => <span>{value?.name}</span>,
     },
 

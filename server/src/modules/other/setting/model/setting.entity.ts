@@ -17,6 +17,15 @@ export class SettingEntity {
   @Column({ nullable: true })
   image!: string;
 
+  @Column({
+    name: "order_free_shipping_amount",
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  orderFreeShippingAmount!: number;
+
   @Column({ nullable: true })
   favicon!: string;
 

@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { Button, Tabs } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Tabs } from "antd";
+import dynamic from "next/dynamic";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const AddShippingCharge = dynamic(
   () => import("@/components/dashboard/shipping-charge/AddShippingCharge"),
@@ -43,7 +43,7 @@ export default function ShippingCharge() {
               )
             }
           >
-            <PlusOutlined /> New charge
+            <PlusOutlined /> New Shipping Charge
           </Button>
         }
       />

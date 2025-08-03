@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const updateShippingChargeValidationSchema = z.object({
-  divisionId: z.number({
-    required_error: "Division is required",
+  districtId: z.number({
+    required_error: "District is required",
   }),
 
   shippingCharge: z.number({

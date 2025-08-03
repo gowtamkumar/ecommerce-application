@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
-import { ActionType } from "../../../constants/constants";
+import { getDistricts } from "@/lib/apis/geo-location/district";
+import {
+  saveShippingCharge,
+  updateShippingCharge,
+} from "@/lib/apis/shipping-charge";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  saveShippingCharge,
-  updateShippingCharge,
-} from "@/lib/apis/shipping-charge";
-import { getDivisions } from "@/lib/apis/geo-location/division";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
+import { ActionType } from "../../../constants/constants";
 
 const AddShippingCharge = () => {
-  const [divisions, setDivisions] = useState([]);
+  const [districts, setDistricts] = useState([]);
   const global = useSelector(selectGlobal);
   const { payload, type } = global.action;
   // hook
@@ -27,8 +27,8 @@ const AddShippingCharge = () => {
     dispatch(setLoading({ loading: true }));
     try {
       const newData = { ...payload };
-      const res = await getDivisions();
-      setDivisions(res.data);
+      const res = await getDistricts({});
+      setDistricts(res.data);
       form.setFieldsValue(newData);
     } catch (err: any) {
       errorNotification({ message: err.message });
@@ -45,7 +45,7 @@ const AddShippingCharge = () => {
   }, [fetchData, form, global.action]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values, shippingCharge: +values.shippingCharge };
+    const newData = { ...values, shippingCharge: +values.shippingCharge };
 
     const result = newData.id
       ? () => updateShippingCharge(newData)
@@ -95,12 +95,12 @@ const AddShippingCharge = () => {
         </Form.Item>
 
         <Form.Item
-          name="divisionId"
-          label="Division"
+          name="districtId"
+          label="District"
           rules={[
             {
               required: true,
-              message: "Division is required",
+              message: "District is required",
             },
           ]}
         >
@@ -115,7 +115,7 @@ const AddShippingCharge = () => {
                 .indexOf(input.toLowerCase()) >= 0
             }
           >
-            {divisions.map((item: { name: string; id: number }) => (
+            {districts.map((item: { name: string; id: number }) => (
               <Select.Option key={item.id} value={item.id}>
                 {item.name}
               </Select.Option>

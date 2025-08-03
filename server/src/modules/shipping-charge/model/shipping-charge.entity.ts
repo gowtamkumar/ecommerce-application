@@ -6,24 +6,24 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { DivisionEntity } from "../../other/geo-location/divisions/model/division.entity";
+import { DistrictEntity } from "../../other/geo-location/districts/model/district.entity";
 
 @Entity("shipping_charges")
 export class ShippingChargeEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "division_id", unique: true })
-  divisionId!: number;
+  @Column({ name: "district_id", unique: true })
+  districtId!: number;
   @ManyToOne(
-    (_type) => DivisionEntity,
-    (division) => division.shippingCharges,
+    (_type) => DistrictEntity,
+    (district) => district.shippingCharges,
     {
       onDelete: "CASCADE",
     }
   )
-  @JoinColumn({ name: "division_id" })
-  division!: DivisionEntity;
+  @JoinColumn({ name: "district_id" })
+  district!: DistrictEntity;
 
   @Column({ name: "shipping_amount", type: "numeric", precision: 15, scale: 2 })
   shippingCharge!: number;

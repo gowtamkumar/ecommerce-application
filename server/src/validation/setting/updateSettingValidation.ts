@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const updateSettingValidationSchema = z.object({
   siteName: z.string().optional(),
+  orderFreeShippingAmount: z.string().optional(),
   image: z.string().optional(),
   url: z.string().optional(),
   address: z.string().optional(),

@@ -1,17 +1,19 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
+import { NextFunction, Request, Response } from "express";
 import { getDBConnection } from "../../../config/db";
-import { CartEntity } from "../model/cart.entity";
-import { cartValidationSchema } from "../../../validation";
-import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
-import { CustomRequest } from "../../../enums/custom-request-type";
-import { logger } from "../../../middlewares/logger";
-import { cartIncrementDecrementValidationSchema } from "../../../validation/cart/cartIncrementDecrementValidationSchema";
-import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
 import { CouponType } from "../../../enums/coupon-type.enum";
+import { CustomRequest } from "../../../enums/custom-request-type";
 import { DiscountType } from "../../../enums/discount-type.enum";
-import { CouponEntity } from "../../coupon/model/coupon.entity";
+import { asyncHandler } from "../../../middlewares/async.middleware";
+import { logger } from "../../../middlewares/logger";
+import { cartValidationSchema } from "../../../validation";
+import { cartIncrementDecrementValidationSchema } from "../../../validation/cart/cartIncrementDecrementValidationSchema";
+import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
+import { CouponEntity } from "../../coupon/model/coupon.entity";
+import { SettingEntity } from "../../other/setting/model/setting.entity";
+import { ShippingChargeEntity } from "../../shipping-charge/model/shipping-charge.entity";
+import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
+import { CartEntity } from "../model/cart.entity";
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -182,7 +184,7 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 export const cartListApplyCoupon = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: cartListApplyCoupon ${req.method} ${req.url}`);
-    const { couponCode, shippingCost } = req.query;
+    const { couponCode, districtId } = req.query;
     const userId = req?.id;
 
     if (!userId) {
@@ -480,13 +482,27 @@ export const cartListApplyCoupon = asyncHandler(
       );
 
       // Check for FreeShipping
-      if (validCoupon.type === DiscountType.FreeShipping) {
-        shippingCharge = 0;
-      }
+      // if (validCoupon.type === DiscountType.FreeShipping) {
+      //   shippingCharge = 0;
+      // }
     }
 
-    if (shippingCost && validCoupon?.type !== DiscountType.FreeShipping) {
-      shippingCharge = +shippingCost;
+    const settingRepository = await connection.getRepository(SettingEntity);
+    const setting = (await settingRepository.find())[0];
+
+    if (districtId && setting.orderFreeShippingAmount > grandTotal) {
+      const shippingAddressRepository = await connection.getRepository(
+        ShippingChargeEntity
+      );
+      const findShippingAddress = await shippingAddressRepository.findOne({
+        where: { districtId },
+      });
+
+      shippingCharge = +findShippingAddress.shippingCharge;
+    }
+
+    if (setting.orderFreeShippingAmount <= grandTotal) {
+      shippingCharge = 0;
     }
 
     grandTotal = +grandTotal - +couponDiscount + +shippingCharge;

@@ -7,9 +7,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { ShippingAddressEntity } from "../../../../shipping-address/model/shipping-address.entity";
+import { ShippingChargeEntity } from "../../../../shipping-charge/model/shipping-charge.entity";
 import { DivisionEntity } from "../../divisions/model/division.entity";
 import { UpazilaEntity } from "../../upazilas/model/upazila.entity";
-import { ShippingAddressEntity } from "../../../../shipping-address/model/shipping-address.entity";
 
 @Entity("districts")
 export class DistrictEntity {
@@ -39,6 +40,12 @@ export class DistrictEntity {
 
   @OneToMany((_type) => UpazilaEntity, (upazila) => upazila.district)
   upazilas!: UpazilaEntity[];
+
+  @OneToMany(
+    (_type) => ShippingChargeEntity,
+    (shippingCharge) => shippingCharge.district
+  )
+  shippingCharges!: ShippingChargeEntity[];
 
   @OneToMany(
     (_type) => ShippingAddressEntity,
