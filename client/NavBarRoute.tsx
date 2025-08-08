@@ -328,7 +328,7 @@ const navbarRoute = [
   {
     key: "general_setting",
     icon: <FaUser className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/general-setting">General Setting</Link>,
+    label: <Link href="/dashboard/general-setting?tab=site_settings">General Setting</Link>,
     route: "true",
   },
 

@@ -1,4 +1,9 @@
-import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Report',
+  description: 'This is a Report.',
+};
 
 export default function page() {
   return <div>
@@ -7,10 +12,10 @@ export default function page() {
     3. total Customer
     4. seller Statistis
     4. product stock with variant
-    5. Total Sale 
-      1. Revenue
-      2. profit
-      3. loss
-    
+    5. Total Sale
+    1. Revenue
+    2. profit
+    3. loss
+
   </div>
 }

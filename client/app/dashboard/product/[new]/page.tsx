@@ -5,7 +5,13 @@ import { getDiscounts } from "@/lib/apis/discount";
 import { getSizes } from "@/lib/apis/size";
 import { getTaxs } from "@/lib/apis/tax";
 import { getUnits } from "@/lib/apis/unit";
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
+
+export const metadata: Metadata = {
+  title: 'New Product',
+  description: 'New Product page',
+};
 
 const AddProduct = dynamic(
   () => import("@/components/dashboard/product/AddProduct"),

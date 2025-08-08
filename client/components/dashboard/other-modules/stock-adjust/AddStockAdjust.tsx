@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Button, Divider, Form, Input, InputNumber, Modal, Select } from "antd";
+import { ActionType } from "@/constants/constants";
+import { getDashboardProducts } from "@/lib/apis/product";
+import { saveStockAdjust } from "@/lib/apis/stock-adjust";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { ActionType } from "@/constants/constants";
-import { getDashboardProducts } from "@/lib/apis/product";
-import { saveStockAdjust } from "@/lib/apis/stock-adjust";
 import { MinusCircleOutlined } from "@ant-design/icons";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
+import { Button, Divider, Form, Input, InputNumber, Modal, Select } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddStockAdjust = () => {
   const [products, setProducts] = useState([]);
@@ -69,12 +69,14 @@ const AddStockAdjust = () => {
 
   const layout = {
     labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
+    wrapperCol: { span: 12 },
   };
 
   const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
+    wrapperCol: { offset: 4, span: 12 },
   };
+
+  console.log(form);
 
   return (
     <Modal
@@ -138,8 +140,7 @@ const AddStockAdjust = () => {
             ))}
           </Select>
         </Form.Item>
-
-        <div>
+        {form.getFieldsValue().productVariants && (
           <Form.List name="productVariants">
             {(fields, { add, remove }) => (
               <div>
@@ -250,7 +251,7 @@ const AddStockAdjust = () => {
               </div>
             )}
           </Form.List>
-        </div>
+        )}
 
         <Form.Item {...tailLayout}>
           <div className="flex gap-2">

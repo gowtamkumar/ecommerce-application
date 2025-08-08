@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { useDispatch, useSelector } from "react-redux";
+'use client'
+import appConfig from "@/appConfig";
+import { ActionType } from "@/constants/constants";
+import { deleteUser, getUsers } from "@/lib/apis/user";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
@@ -11,20 +13,14 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import { deleteUser, getUsers } from "@/lib/apis/user";
-import dayjs from "dayjs";
-import appConfig from "@/appConfig";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
+import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import dayjs from "dayjs";
+import { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useDispatch, useSelector } from "react-redux";
 
 interface DataType {
   key: string;
@@ -322,9 +318,8 @@ const UserList = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${
-                    newData.image || "no-data.png"
-                  }`,
+                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
+                    }`,
                 };
                 newData.fileList = [file];
               }

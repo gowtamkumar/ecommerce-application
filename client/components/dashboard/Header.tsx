@@ -1,16 +1,14 @@
-import { AiOutlineMenuUnfold } from "react-icons/ai";
-import { theme, Layout, Button, Dropdown, Avatar } from "antd";
-import React from "react";
-import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
+import appConfig from "@/appConfig";
+import { userProfileRoute } from "@/NavBarRoute";
 import {
   selectLayout,
   setCollapsed,
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
-import { userProfileRoute } from "@/NavBarRoute";
+import { Avatar, Button, Dropdown, Layout, theme } from "antd";
 import { useSession } from "next-auth/react";
-import appConfig from "@/appConfig";
+import { AiOutlineMenuUnfold } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function DashboardHeader() {
   const {
@@ -54,11 +52,11 @@ export default function DashboardHeader() {
         />
       </div>
 
-      <div className="md:flex gap-2 hidden">
+      {/* <div className="md:flex gap-2 hidden">
         <Button type="dashed" size="small" className="text-cyan-950">
           <Link href="/dashboard/orders">ORDER LIST</Link>
         </Button>
-      </div>
+      </div> */}
 
       {/* this button show only Mobile a  */}
       <div hidden={layout.screenWidth > 820}>

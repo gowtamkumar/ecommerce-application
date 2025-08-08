@@ -1,11 +1,10 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { useDispatch, useSelector } from "react-redux";
+import appConfig from "@/appConfig";
+import { deleteProduct, getProducts } from "@/lib/apis/admin/product";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
@@ -13,18 +12,14 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { deleteProduct, getProducts } from "@/lib/apis/admin/product";
+import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
+import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
 import { useRouter } from "next/navigation";
-import appConfig from "@/appConfig";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
+import { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useDispatch, useSelector } from "react-redux";
 // import MDEditor from "@uiw/react-md-editor";
 
 interface Discount {
@@ -225,8 +220,7 @@ const ProductList = () => {
       render: (value) => (
         <span>
           {value?.value &&
-            `${value?.value}${
-              value?.discountStrategy === "Percentage" ? "%" : "BDT"
+            `${value?.value}${value?.discountStrategy === "Percentage" ? "%" : "BDT"
             }`}
         </span>
       ),
@@ -352,10 +346,9 @@ const ProductList = () => {
             <h2>
               <strong>Discount:</strong>
               {value?.discount &&
-                `${value?.discount.value}${
-                  value?.discount.discountStrategy === "Percentage"
-                    ? "%"
-                    : "BDT"
+                `${value?.discount.value}${value?.discount.discountStrategy === "Percentage"
+                  ? "%"
+                  : "BDT"
                 }`}
             </h2>
             <h2>
@@ -410,9 +403,8 @@ const ProductList = () => {
                 <Image
                   width={150}
                   alt={value.name}
-                  src={`${appConfig.baseApiUrl}/uploads/${
-                    value.hoverImage || "no-data.png"
-                  }`}
+                  src={`${appConfig.baseApiClientUrl}/uploads/${value.hoverImage || "no-data.png"
+                    }`}
                 />
               </div>
 
@@ -421,9 +413,8 @@ const ProductList = () => {
                 <Image
                   width={150}
                   alt={value.name}
-                  src={`${appConfig.baseApiUrl}/uploads/${
-                    value.thumbnailImage || "no-data.png"
-                  }`}
+                  src={`${appConfig.baseApiClientUrl}/uploads/${value.thumbnailImage || "no-data.png"
+                    }`}
                 />
               </div>
             </div>
@@ -435,9 +426,8 @@ const ProductList = () => {
                     key={item}
                     width={100}
                     alt={item}
-                    src={`${appConfig.baseApiUrl}/uploads/${
-                      item || "no-data.png"
-                    }`}
+                    src={`${appConfig.baseApiClientUrl}/uploads/${item || "no-data.png"
+                      }`}
                   />
                 );
               })}
