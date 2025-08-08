@@ -1,5 +1,4 @@
 import { Form, Input, Select, Tag } from "antd";
-import React from "react";
 
 export default function ProductRightTopSection({
   brands,

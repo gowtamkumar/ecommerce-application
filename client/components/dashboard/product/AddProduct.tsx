@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Button, Divider, Form, Input } from "antd";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
+import appConfig from "@/appConfig";
 import {
   getProduct,
   saveProduct,
   updateProduct,
 } from "@/lib/apis/admin/product";
-import appConfig from "@/appConfig";
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { Button, Divider, Form, Input } from "antd";
 import dynamic from "next/dynamic";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const ProductRightTopSection = dynamic(
   () => import("./ProductRightTopSection"),
@@ -210,9 +210,8 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.thumbnailImage,
-        url: `${appConfig.baseApiUrl}/uploads/${
-          newData.thumbnailImage || "no-data.png"
-        }`,
+        url: `${appConfig.baseApiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
+          }`,
       };
       newData.fileThumbnailList = [newfileThumbnail];
     }
@@ -223,9 +222,8 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.hoverImage,
-        url: `${appConfig.baseApiUrl}/uploads/${
-          newData.hoverImage || "no-data.png"
-        }`,
+        url: `${appConfig.baseApiUrl}/uploads/${newData.hoverImage || "no-data.png"
+          }`,
       };
       newData.fileHoverList = [newfileHover];
     }
@@ -357,7 +355,7 @@ const AddProduct = ({
               categories={categories}
               units={units}
               tags={tags}
-              setTags
+              setTags={setTags}
             />
             {/* image upload section */}
             <ImageUpload

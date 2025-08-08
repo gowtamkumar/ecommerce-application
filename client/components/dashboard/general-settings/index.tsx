@@ -1,24 +1,31 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { Tabs } from "antd";
-import dynamic from "next/dynamic";
+import appConfig from "@/appConfig";
 import { getSettings } from "@/lib/apis/setting";
+import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setLoading,
   setSetting,
 } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import appConfig from "@/appConfig";
-import { errorNotification } from "@/lib/utils/notification";
-import GeneralSettings from "./GeneralSettings";
-import SyncGeoLocation from "./SyncGeoLocation";
-import Seo from "./Seo";
+import { Tabs } from "antd";
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Seo from "./Seo";
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
 const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false });
+const OrderAdnShhiping = dynamic(() => import("./OrderAndShipping"), {
+  ssr: false,
+});
+const GeneralSettings = dynamic(() => import("./GeneralSettings"), {
+  ssr: false,
+});
+const SyncGeoLocation = dynamic(() => import("./SyncGeoLocation"), {
+  ssr: false,
+});
 
 export default function Index() {
   const [tabKey, setTabKey] = useState<any>("site_settings");
@@ -28,7 +35,7 @@ export default function Index() {
 
   const search = useSearchParams();
 
-    const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
 
     const createUploadFile = (filename: string): any => ({
@@ -61,7 +68,6 @@ export default function Index() {
           createUploadFile(newData?.homePage?.metaImage),
         ];
       }
-      
 
       dispatch(setSetting(newData));
     } catch (err: any) {
@@ -71,12 +77,10 @@ export default function Index() {
     }
   }, [dispatch]);
 
-
   useEffect(() => {
     setTabKey(search.get("tab"));
     fetchData();
   }, [fetchData, global.action, search]);
-
 
   return (
     <Tabs
@@ -99,6 +103,11 @@ export default function Index() {
           key: "menu",
           children: <Menu />,
         },
+        {
+          label: "Order and Shipping",
+          key: "order_and_shipping",
+          children: <OrderAdnShhiping />,
+        },
 
         {
           label: "Header Option",
@@ -112,11 +121,6 @@ export default function Index() {
           children: <HelpSupport />,
         },
 
-        // {
-        //   label: "Home Page",
-        //   key: "home_page",
-        //   children: <HomePage />,
-        // },
         // {
         //   label: "About Page",
         //   key: "about_page",
