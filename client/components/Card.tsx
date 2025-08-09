@@ -1,22 +1,21 @@
 "use client";
 import appConfig from "@/appConfig";
-import { Rate } from "antd";
-import Image from "next/image";
-import Link from "next/link";
-import { FaRegHeart } from "react-icons/fa";
-import { HiViewfinderCircle } from "react-icons/hi2";
-import AddToCartButton from "./AddToCartButton";
 import { saveWishlist } from "@/lib/apis/wishlist";
-import { useDispatch, useSelector } from "react-redux";
-import { useSession } from "next-auth/react";
-import {
-  selectGlobal,
-  setUnAuthorize,
-} from "@/redux/features/global/globalSlice";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import {
+  selectGlobal,
+  setUnAuthorize,
+} from "@/redux/features/global/globalSlice";
+import { Rate } from "antd";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+import { FaRegHeart } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import AddToCartButton from "./AddToCartButton";
 import ModalLogin from "./website/login/ModalLogin";
 interface CardItems {
   id: number;

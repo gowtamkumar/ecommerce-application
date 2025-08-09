@@ -1,6 +1,3 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import ImgCrop from 'antd-img-crop';
 import appConfig from '@/appConfig';
 import uploadButton from '@/components/website/uploadButton';
 import { fileDeleteWithPhoto, uploadFile } from '@/lib/apis/file';
@@ -8,6 +5,8 @@ import { handlePreview, handlePreviewCancel, normFile } from '@/lib/utils/common
 import { errorNotification } from '@/lib/utils/notification';
 import { selectGlobal } from '@/redux/features/global/globalSlice';
 import { Form, Image, Input, Modal, Upload } from 'antd';
+import ImgCrop from 'antd-img-crop';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function ImageUpload({ formValues, form, setFormValues }: any) {
   const global = useSelector(selectGlobal);
@@ -17,9 +16,13 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
     const { filename, file, onSuccess, onError } = options;
     const formData = new FormData();
     formData.append(filename, file);
+    console.log("options", options);
 
     try {
       const res = await uploadFile(formData);
+
+      console.log("res", res);
+
 
       if (!res || !res.data) {
         errorNotification({ message: res.message });

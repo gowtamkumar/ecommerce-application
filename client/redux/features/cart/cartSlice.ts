@@ -1,4 +1,3 @@
-import { CartResult } from "@/lib/utils/cartCalculationFun";
 // import type { RootState } from "@/redux/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -38,6 +37,7 @@ export const cartSlice = createSlice({
     },
     addCart: (state, action: PayloadAction<any>): any => {
       const { id } = action.payload;
+      console.log("state.carts", state.carts);
 
       const existingProductIndex = state.carts.findIndex(
         (item: any) => item.id === id

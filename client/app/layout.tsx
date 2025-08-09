@@ -1,27 +1,26 @@
-import localFont from "next/font/local";
 import dynamic from "next/dynamic";
+import localFont from "next/font/local";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../lib/authOption";
-import { getSettings } from "@/lib/apis/setting";
 import appConfig from "@/appConfig";
+import { getSettings } from "@/lib/apis/setting";
 import StoreProvider from "@/redux/storeProvider";
-import AuthProvider from "../lib/SessionProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ToastContainer } from "react-toastify";
+import AuthProvider from "../lib/SessionProvider";
 
 // Global styles
-import "./globals.css";
-import "./style.css";
+import { auth } from "@/auth";
+import "@ant-design/v5-patch-for-react-19";
 import "antd/dist/reset.css";
 import "react-toastify/dist/ReactToastify.css";
-import "@ant-design/v5-patch-for-react-19";
 import "swiper/css";
+import "swiper/css/autoplay";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import "swiper/css/autoplay";
-import { auth } from "@/auth";
-import Head from "next/head";
+import "./globals.css";
+import "./style.css";
 
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
@@ -74,7 +73,7 @@ export default async function RootLayout({
   const settingRes = await getSettings();
   const setting = settingRes?.data || {};
   const favicon = setting?.favicon
-    ? `${appConfig.baseApiUrl}/uploads/${setting.favicon}`
+    ? `${appConfig.baseApiClientUrl}/uploads/${setting.favicon}`
     : "";
 
   return (

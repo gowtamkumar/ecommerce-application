@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "@/constants/constants";
+import { deleteDiscount, getDiscounts } from "@/lib/apis/discount";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
@@ -12,21 +11,17 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import { deleteDiscount, getDiscounts } from "@/lib/apis/discount";
+import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
+import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
-import { AiOutlineEye } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { AiOutlineEye } from "react-icons/ai";
 import { TbStatusChange } from "react-icons/tb";
+import { useDispatch, useSelector } from "react-redux";
 
 interface DataType {
   key: string;
@@ -192,7 +187,7 @@ const DiscountList: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       ...getColumnSearchProps("name"),
-      title: "name",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name?.length - b.name?.length,

@@ -1,4 +1,19 @@
-import React, { useEffect, useState } from "react";
+'use client'
+import appConfig from "@/appConfig";
+import uploadButton from "@/components/website/uploadButton";
+import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import { saveUser, updateUser } from "@/lib/apis/user";
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
 import {
   Button,
   DatePicker,
@@ -9,26 +24,11 @@ import {
   Select,
   Upload,
 } from "antd";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { saveUser, updateUser } from "@/lib/apis/user";
-import dayjs from "dayjs";
 import ImgCrop from "antd-img-crop";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import { PlusOutlined } from "@ant-design/icons";
-import appConfig from "@/appConfig";
-import {
-  handleAsyncAction,
-  handlePreview,
-  handlePreviewCancel,
-  normFile,
-} from "@/lib/utils/commonFunctions";
-import uploadButton from "@/components/website/uploadButton";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "../../../constants/constants";
 
 
 const AddUser = () => {

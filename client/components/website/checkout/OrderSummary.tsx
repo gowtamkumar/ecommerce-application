@@ -16,7 +16,7 @@ import {
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Popconfirm } from "antd";
 import Image from "next/image";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { MdDelete } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 

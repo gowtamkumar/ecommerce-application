@@ -3,12 +3,18 @@ import { getCategories } from "@/lib/apis/categories";
 import { getColors } from "@/lib/apis/color";
 import { getDiscounts } from "@/lib/apis/discount";
 import { getSizes } from "@/lib/apis/size";
-import { getUnits } from "@/lib/apis/unit";
-import dynamic from "next/dynamic";
 import { getTaxs } from "@/lib/apis/tax";
+import { getUnits } from "@/lib/apis/unit";
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
+
+export const metadata: Metadata = {
+  title: 'New Product',
+  description: 'New Product page',
+};
 
 const AddProduct = dynamic(
-  () => import("@/components/dashboard/productOld/AddProduct"),
+  () => import("@/components/dashboard/product/AddProduct"),
   {
     loading: () => "new product loadding............",
   }
@@ -28,7 +34,7 @@ export default async function Product() {
     getSizes(),
     getUnits(),
     getColors(),
-    getDiscounts({scope: "Product"}),
+    getDiscounts({ scope: "Product" }),
     getCategories(),
     getTaxs(),
   ]);

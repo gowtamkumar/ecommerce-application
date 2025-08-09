@@ -3,8 +3,8 @@ import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { getDiscounts } from "@/lib/apis/discount";
+import { Empty } from "antd";
 import Link from "next/link";
-import React from "react";
 
 export async function generateMetadata() {
   const discountsRes = await getDiscounts({
@@ -14,7 +14,6 @@ export async function generateMetadata() {
   const discounts = discountsRes.data;
 
   const baseUrl = appConfig.baseUrl;
-
 
   // Fallback if API doesn't return expected data
   if (!Array.isArray(discounts) || discounts.length === 0) {
@@ -60,7 +59,7 @@ export default async function Offers() {
     <>
       <Header />
       <div>
-        {offers.data.length > 0 && (
+        {offers.data.length > 0 ? (
           <section className="container mx-auto grid md:grid-cols-4 gap-8 py-3">
             {offers.data.map((item: any, index: number) => (
               <Link
@@ -77,6 +76,8 @@ export default async function Offers() {
               </Link>
             ))}
           </section>
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         )}
       </div>
 

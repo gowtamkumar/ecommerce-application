@@ -1,4 +1,25 @@
-import React, { useCallback, useEffect, useState } from "react";
+import appConfig from "@/appConfig";
+import uploadButton from "@/components/website/uploadButton";
+import {
+  getAntdCategories,
+  saveCategory,
+  updateCategory,
+} from "@/lib/apis/categories";
+import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import {
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
 import {
   Button,
   Form,
@@ -9,32 +30,10 @@ import {
   TreeSelect,
   Upload,
 } from "antd";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getAntdCategories,
-  saveCategory,
-  updateCategory,
-} from "@/lib/apis/categories";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import ImgCrop from "antd-img-crop";
-import { PlusOutlined } from "@ant-design/icons";
-import appConfig from "@/appConfig";
-import {
-  handlePreview,
-  handlePreviewCancel,
-  normFile,
-} from "@/lib/utils/commonFunctions";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
-import uploadButton from "@/components/website/uploadButton";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "../../../constants/constants";
 
 const AddCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -64,7 +63,7 @@ const AddCategory = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, global.action?.type]); // 👈 safer and cleaner
+  }, [fetchData, global.action]); // 👈 safer and cleaner
 
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));
