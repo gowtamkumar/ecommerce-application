@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import { getDashboardReports } from "@/lib/apis/reports";
+import { getSettings } from "@/lib/apis/setting";
+import { errorNotification } from "@/lib/utils/notification";
+import { setSetting } from "@/redux/features/global/globalSlice";
 import { DatePicker, Spin } from "antd";
 import dayjs from "dayjs";
-import { getDashboardReports } from "@/lib/apis/reports";
 import dynamic from "next/dynamic";
-import { errorNotification } from "@/lib/utils/notification";
-import { getSettings } from "@/lib/apis/setting";
-import { setSetting } from "@/redux/features/global/globalSlice";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 const LossProfit = dynamic(() => import("./LossProfit"));
 const StockReport = dynamic(() => import("./components/StockReport"));
@@ -41,6 +41,9 @@ const Dashboard = () => {
         startDate: firstDateOfMonth.toISOString(),
         endDate: lastDateOfMonth.toISOString(),
       });
+
+      console.log("results", results);
+
 
       const setting = await getSettings();
       dispatch(setSetting(setting.data));

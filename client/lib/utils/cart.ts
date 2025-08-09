@@ -1,4 +1,3 @@
-import appConfig from "@/appConfig";
 import { getCartLists } from "../apis/cart";
 
 export const fetchCartData = async () => {
