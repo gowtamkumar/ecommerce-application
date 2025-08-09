@@ -1,10 +1,9 @@
 export enum OrderStatus {
+  Pending = "Pending",
   Processing = "Processing",
-  Approved = "Approved",
-  OnShipping = "On Shipping",
+  // Approved = "Approved",
   Shipped = "Shipped",
   Canceled = "Canceled",
-  Completed = "Completed",
-  Pending = "Pending",
-  Returned = "Returned",
+  Delivered = "Delivered",
+  // Returned = "Returned",
 }

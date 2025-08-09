@@ -1,17 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
-import { ActionType } from "../../../constants/constants";
-import { toast } from "react-toastify";
+import { orderStatusUpdateApi } from "@/lib/apis/orders";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import {
   selectGlobal,
   setAction,
   setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, Modal, Select } from "antd";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
-import { orderStatusUpdateApi } from "@/lib/apis/orders";
+import { ActionType } from "../../../constants/constants";
 
 const OrderStatusUpdate = () => {
   const global = useSelector(selectGlobal);
@@ -34,9 +33,9 @@ const OrderStatusUpdate = () => {
 
 
 
-  const res =  await handleAsyncAction(result, dispatch);
-  console.log("res", res);
-  
+    const res = await handleAsyncAction(result, dispatch);
+    console.log("res", res);
+
   };
 
   const handleClose = () => {
@@ -91,14 +90,11 @@ const OrderStatusUpdate = () => {
         <Form.Item name="status" label="Status" className="mb-1">
           <Select placeholder="Select Status">
             {[
-              "Processing",
-              "Approved",
-              "On Shipping",
-              "Shipped",
-              "Completed",
               "Pending",
-              "Returned",
+              "Processing",
+              "Shipped",
               "Canceled",
+              "Delivered",
             ].map((item, idx) => (
               <Select.Option key={idx} value={item}>
                 {item}

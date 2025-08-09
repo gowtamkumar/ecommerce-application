@@ -1,28 +1,25 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
+import { Request, Response } from "express";
+import { Repository } from "typeorm";
 import { getDBConnection } from "../../../config/db";
-import { OrderEntity } from "../model/order.entity";
+import { CustomRequest } from "../../../enums/custom-request-type";
+import { asyncHandler } from "../../../middlewares/async.middleware";
+import { logger } from "../../../middlewares/logger";
 import {
   onlineCreateOrderValidationSchema,
   orderDeliveryManValidationSchema,
   orderStatusUpdateValidationSchema,
   orderUpdateValidationSchema,
 } from "../../../validation";
-import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
-import { PaymentEntity } from "../../payment/model/payment.entity";
-import dayjs from "dayjs";
-import { OrderStatus, PaymentMethod, PaymentStatus } from "../enums";
-import { PaymentType } from "../../payment/enums/payment-type.enum";
-import { OrderItemEntity } from "../model/order-item.entity";
-import { CartEntity } from "../../cart/model/cart.entity";
-import { logger } from "../../../middlewares/logger";
-import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
-import { CustomRequest } from "../../../enums/custom-request-type";
-import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
-import { NotificationEntity } from "../../other/notification/model/notification.entity";
 import { UserEntity } from "../../auth/model/user.entity";
-import { Repository } from "typeorm";
+import { CartEntity } from "../../cart/model/cart.entity";
+import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
 import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
+import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
+import { NotificationEntity } from "../../other/notification/model/notification.entity";
+import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
+import { OrderStatus, PaymentMethod, PaymentStatus } from "../enums";
+import { OrderItemEntity } from "../model/order-item.entity";
+import { OrderEntity } from "../model/order.entity";
 const SSLCommerzPayment = require("sslcommerz-lts");
 
 interface Notification {
@@ -202,16 +199,11 @@ export const orderTracking = async (
     case OrderStatus.Processing:
       trackingStatus = OrderTrackingStatusEnum.Processing;
       break;
-    case OrderStatus.Approved:
-      trackingStatus = OrderTrackingStatusEnum.OrderApproved;
-      break;
-    case OrderStatus.OnShipping:
-      trackingStatus = OrderTrackingStatusEnum.OrderReadytoShip;
-      break;
+
     case OrderStatus.Shipped:
       trackingStatus = OrderTrackingStatusEnum.Shipped;
       break;
-    case OrderStatus.Completed:
+    case OrderStatus.Delivered:
       trackingStatus = OrderTrackingStatusEnum.OrderDelivered;
       break;
     case OrderStatus.Canceled:
@@ -692,11 +684,9 @@ export const orderStatusUpdate = asyncHandler(
 
     if (
       status === OrderStatus.Canceled &&
-      ![
-        OrderStatus.Pending,
-        OrderStatus.Approved,
-        OrderStatus.Processing,
-      ].includes(result.status as OrderStatus)
+      ![OrderStatus.Pending, OrderStatus.Processing].includes(
+        result.status as OrderStatus
+      )
     ) {
       throw new Error(
         `Sorry, you can't cancel this order because it's already '${result.status}'.`
@@ -707,9 +697,7 @@ export const orderStatusUpdate = asyncHandler(
       if (
         [
           OrderStatus.Canceled,
-          OrderStatus.Approved,
-          OrderStatus.Completed,
-          OrderStatus.OnShipping,
+          OrderStatus.Delivered,
           OrderStatus.Shipped,
         ].includes(status as OrderStatus)
       ) {

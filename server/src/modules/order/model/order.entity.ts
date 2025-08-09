@@ -9,15 +9,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { OrderStatus } from "../enums/order-status.enum";
-import { PaymentMethod, PaymentStatus, RefundStatus } from "../enums";
-import { OrderItemEntity } from "./order-item.entity";
-import { PaymentEntity } from "../../payment/model/payment.entity";
-import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
 import { UserEntity } from "../../auth/model/user.entity";
-import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
 import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
-import { ReturnStatus } from "../../return/enums/return-status.enum";
+import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
+import { PaymentEntity } from "../../payment/model/payment.entity";
+import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
+import { PaymentMethod, PaymentStatus } from "../enums";
+import { OrderStatus } from "../enums/order-status.enum";
+import { OrderItemEntity } from "./order-item.entity";
 
 @Entity("orders")
 export class OrderEntity {

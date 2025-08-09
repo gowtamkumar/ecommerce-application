@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { asyncHandler } from "../../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../../config/db";
-import { OrderEntity } from "../../../order/model/order.entity";
 import dayjs from "dayjs";
+import { Request, Response } from "express";
+import { getDBConnection } from "../../../../config/db";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
 import { logger } from "../../../../middlewares/logger";
 import { topSellingProductQuery } from "../../../../sqlQuery";
+import { OrderEntity } from "../../../order/model/order.entity";
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
@@ -60,27 +60,21 @@ export const getDashboardReport = asyncHandler(
       SELECT
           SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_order_count,
           SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_order_count,
-          SUM(CASE WHEN status = 'On Shipping' THEN 1 ELSE 0 END) AS total_on_shipping_order_count,
-          SUM(CASE WHEN status = 'Approved' THEN 1 ELSE 0 END) AS total_approved_order_count,
-          SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS total_completed_order_count,
+          SUM(CASE WHEN status = 'Delivered' THEN 1 ELSE 0 END) AS total_Delivered_order_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_pending_order_count,
           SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_order_count,
 
           SUM(CASE WHEN status = 'Pending' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_pending_product_count,
           SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_canceled_product_count,
-          SUM(CASE WHEN status = 'Approved' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_approved_product_count,
           SUM(CASE WHEN status = 'Processing' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_processing_product_count,
-          SUM(CASE WHEN status = 'On Shipping' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_on_shipping_product_count,
           SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_shipped_product_count,
-          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_completed_product_count,
+          SUM(CASE WHEN status = 'Delivered' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_Delivered_product_count,
 
           SUM(CASE WHEN status = 'Pending' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_pending_order_amount,
           SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_canceled_order_amount,
-          SUM(CASE WHEN status = 'Approved' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_approved_order_amount,
           SUM(CASE WHEN status = 'Processing' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_processing_order_amount,
-          SUM(CASE WHEN status = 'On Shipping' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_on_shipping_order_amount,
           SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_shipped_order_amount,
-          SUM(CASE WHEN status = 'Completed' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_completed_order_amount
+          SUM(CASE WHEN status = 'Delivered' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_Delivered_order_amount
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
 
@@ -95,7 +89,7 @@ export const getDashboardReport = asyncHandler(
           LEFT JOIN 
             orders ON orders.id = oi.order_id
           WHERE 
-            orders.status = 'Completed'
+            orders.status = 'Delivered'
           GROUP BY 
             oi.product_id
             order by total_sale_amount DESC
@@ -126,7 +120,7 @@ export const getDashboardReport = asyncHandler(
           LEFT JOIN 
               users ON users.id = orders.user_id
           WHERE 
-              orders.status = 'Completed'
+              orders.status = 'Delivered'
           GROUP BY 
               users.id, users.name
         )
@@ -176,7 +170,7 @@ export const getDashboardReport = asyncHandler(
             order_items oi
         LEFT JOIN 
             orders ON orders.id = oi.order_id
-        WHERE created_at BETWEEN '${fromDate}' AND '${toDate}' AND orders.status = 'Completed'
+        WHERE created_at BETWEEN '${fromDate}' AND '${toDate}' AND orders.status = 'Delivered'
         GROUP BY 
             oi.product_id
       )
