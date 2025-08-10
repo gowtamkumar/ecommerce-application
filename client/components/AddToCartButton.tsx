@@ -1,19 +1,18 @@
 "use client";
-import React from "react";
+import { getCartLists, saveCart } from "@/lib/apis/cart";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
+import { replaceCart } from "@/redux/features/cart/cartSlice";
 import {
   selectGlobal,
   setLoading,
   setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
 import { Button } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { replaceCart } from "@/redux/features/cart/cartSlice";
-import { getCartLists, saveCart } from "@/lib/apis/cart";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
 import { useSession } from "next-auth/react";
+import { useDispatch, useSelector } from "react-redux";
 
 // type Product = {
 //   id: number;
@@ -48,12 +47,12 @@ export default function AddToCartButton({ item }: { item: any }) {
 
     const cartResponse = await saveCart(newData);
 
-    if (!cartResponse.success) {
+    if (!cartResponse?.success) {
       errorNotification({ message: cartResponse.message });
       return;
     }
 
-    if (cartResponse.success) {
+    if (cartResponse?.success) {
       successNotification({ message: cartResponse.message });
     }
 

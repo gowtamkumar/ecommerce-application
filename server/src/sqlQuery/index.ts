@@ -5,7 +5,7 @@ SELECT
     SUM(COALESCE(oi.sub_total, 0)) AS total_amount
 FROM order_items oi
 LEFT JOIN orders ON orders.id = oi.order_id
-WHERE orders.status = 'Completed'
+WHERE orders.status = 'Delivered'
 GROUP BY oi.product_id
 ),
 productTable AS (

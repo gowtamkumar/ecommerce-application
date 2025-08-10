@@ -37,49 +37,47 @@ export const cartSlice = createSlice({
     },
     addCart: (state, action: PayloadAction<any>): any => {
       const { id } = action.payload;
-      console.log("state.carts", state.carts);
-
-      const existingProductIndex = state.carts.findIndex(
+      const existingProductIndex = state.carts.cartList.findIndex(
         (item: any) => item.id === id
       );
 
       if (existingProductIndex !== -1) {
-        state.carts[existingProductIndex].qty++;
+        state.carts.cartList[existingProductIndex].qty++;
       } else {
         state.carts.push(action.payload);
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     clearCart: (state): any => {
-      state.carts = [];
+      state.carts = {};
       localStorage.removeItem("carts");
     },
 
     incrementCart: (state, action: PayloadAction<any>): any => {
-      const existingProductIndex = state.carts.findIndex(
+      const existingProductIndex = state.carts.cartList.findIndex(
         (item: any) => item.id === action.payload.id
       );
       if (existingProductIndex !== -1) {
-        state.carts[existingProductIndex].qty++;
+        state.carts.cartList[existingProductIndex].qty++;
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
 
     decrementCart: (state, action: PayloadAction<any>): any => {
-      const existingProductIndex = state.carts.findIndex(
+      const existingProductIndex = state.carts.cartList.findIndex(
         (item: any) => item.id === action.payload.id
       );
       if (existingProductIndex !== -1) {
-        state.carts[existingProductIndex].qty--;
+        state.carts.cartList[existingProductIndex].qty--;
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     removeCart: (state, action: PayloadAction<any>): any => {
-      const findProduct = state.carts.find(
+      const findProduct = state.carts.cartList.find(
         (item: any) => item.id === action.payload.id
       );
       if (findProduct) {
-        state.carts = state.carts.filter(
+        state.carts.cartList = state.carts.cartList.filter(
           (item: any) => item.id !== findProduct.id
         );
       }

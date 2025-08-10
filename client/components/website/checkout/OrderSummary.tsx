@@ -24,6 +24,7 @@ export default function OrderSummary() {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const cart = useSelector(selectCart);
+  // Inside your component or hook
   const debouncedSyncRef = useRef<any>(null);
 
   // Debounce utility
