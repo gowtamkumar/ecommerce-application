@@ -8,5 +8,5 @@ export const loginValidationSchema = z.object({
     .string({
       required_error: "password is required",
     })
-    .min(6, { message: "Must be 5 or more characters long" }),
+    .min(6, { message: "Must be 6 or more characters long" }),
 });

@@ -7,10 +7,10 @@ export const updateUserValidationSchema = z.object({
   }),
   image: z.string().optional().nullable(),
   phone: z.string().optional(),
-  username: z
-    .string()
-    .min(5, { message: "Must be 5 or more characters long" })
-    .optional(),
+  // username: z
+  //   .string()
+  //   .min(5, { message: "Must be 5 or more characters long" })
+  //   .optional(),
   email: z
     .string({
       required_error: "email is required",
