@@ -63,6 +63,7 @@ export const getCoupon = asyncHandler(
         updatedAt: true,
         products: {
           id: true, // optional — only if you want to include CouponProductEntity id
+          productId: true,
           product: {
             name: true,
           },
