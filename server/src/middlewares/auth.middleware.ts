@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { CustomRequest } from "../enums/custom-request-type";
 
 // Define the type for the middleware function
@@ -66,34 +66,25 @@ const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
 };
 
 // isAuthorize middleware
-const isAuthorize: MiddlewareFunction = async (
-  req: CustomRequest,
-  res,
-  next
-) => {
-  const { authorization } = req.headers;
-  let token = authorization?.split(" ")[1] || req.cookies.accessToken;
-
-  try {
-    if (req.role === "Admin") {
-      jwt.verify(
-        token,
-        process.env.JWT_SECRET!,
-        (error: any, decodedToken: any) => {
-          if (error) {
-            throw new Error("Invalid or expired reset token new");
-          }
-        }
-      );
-      return next();
-    } else {
-      return next({ statusCode: 401, message: "Authorize Failed!" });
-    }
-  } catch (err) {
-    return next({ statusCode: 401, message: "Authorize Failed!" });
+const isAuthorize = (roles: string[] | string) => {
+  if (typeof roles === "string") {
+    roles = [roles];
   }
-};
 
+  console.log("roles", roles);
+
+  // || !roles.includes(req.role)
+
+  return (req: CustomRequest, res: Response, next: NextFunction): void => {
+    console.log("req role", req);
+
+    if (!req.username || !roles.includes(req.role as string)) {
+      res.status(403).json({ message: "Forbidden: insufficient rights" });
+      return;
+    }
+    next();
+  };
+};
 // Function to send cookies response
 
 const sendCookiesResponse = (token: string, res: Response) => {
@@ -161,11 +152,11 @@ const matchPassword = async (
 
 export {
   AuthGuard,
-  isAuthorize,
-  sendCookiesResponse,
-  hashedPassword,
-  getSignJwtToken,
-  matchPassword,
   getResetSignJwtToken,
   getResetVerifyJwtToken,
+  getSignJwtToken,
+  hashedPassword,
+  isAuthorize,
+  matchPassword,
+  sendCookiesResponse,
 };
