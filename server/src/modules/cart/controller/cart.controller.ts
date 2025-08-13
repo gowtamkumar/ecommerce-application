@@ -216,7 +216,7 @@ export const cartListApplyCoupon = asyncHandler(
         message = "Invalid or expired coupon";
       }
 
-      if (coupon && coupon.products.length > 0) {
+      if (coupon) {
         // Check usage_per_user limit
         const totalUserUsage = await connection
           .getRepository(AppliedCouponEntity)
@@ -490,22 +490,23 @@ export const cartListApplyCoupon = asyncHandler(
     const settingRepository = await connection.getRepository(SettingEntity);
     const setting = (await settingRepository.find())[0];
 
-    if (districtId && setting.orderFreeShippingAmount > grandTotal) {
-      const shippingAddressRepository = await connection.getRepository(
-        ShippingChargeEntity
-      );
-      const findShippingAddress = await shippingAddressRepository.findOne({
-        where: { districtId },
-      });
+    const shippingAddressRepository = await connection.getRepository(
+      ShippingChargeEntity
+    );
 
-      shippingCharge = +findShippingAddress.shippingCharge;
-    }
+    const findShippingAddress = await shippingAddressRepository.findOne({
+      where: { districtId },
+    });
 
-    if (setting.orderFreeShippingAmount <= grandTotal) {
+    grandTotal = +grandTotal - (+couponDiscount || 0);
+
+    if (districtId && (+setting?.orderFreeShippingAmount || 0) > +grandTotal) {
       shippingCharge = 0;
+    } else {
+      shippingCharge = +findShippingAddress?.shippingCharge || 0;
     }
 
-    grandTotal = +grandTotal - +couponDiscount + +shippingCharge;
+    grandTotal += +shippingCharge;
 
     return res.status(200).json({
       success: true,
