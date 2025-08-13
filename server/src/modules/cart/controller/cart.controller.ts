@@ -399,7 +399,7 @@ export const cartListApplyCoupon = asyncHandler(
             totalTax: "0.00",
             shippingCharge: "0.00",
             grandTotal: "0.00",
-            totalSalePrice: "0.00",
+            // totalSalePrice: "0.00",
           },
         },
       });
@@ -411,7 +411,7 @@ export const cartListApplyCoupon = asyncHandler(
     let totalItemsDiscount = 0;
     let totalTax = 0;
     let grandTotal = 0;
-    let totalSalePrice = 0;
+    // let totalSalePrice = 0;
 
     cart.forEach(
       (item: {
@@ -428,7 +428,7 @@ export const cartListApplyCoupon = asyncHandler(
         const subtotalAmount = +item.subTotal;
 
         totalQty += +qty;
-        totalSalePrice = +item.salePrice * +qty;
+        // totalSalePrice = +item.salePrice * +qty;
         subTotal += +subtotalAmount;
         totalItemsDiscount += +discountAmount;
         totalTax += +taxAmount;
@@ -490,20 +490,25 @@ export const cartListApplyCoupon = asyncHandler(
     const settingRepository = await connection.getRepository(SettingEntity);
     const setting = (await settingRepository.find())[0];
 
-    const shippingAddressRepository = await connection.getRepository(
-      ShippingChargeEntity
-    );
+    grandTotal -= +couponDiscount;
 
-    const findShippingAddress = await shippingAddressRepository.findOne({
-      where: { districtId },
-    });
+    if (districtId) {
+      const shippingAddressRepository = await connection.getRepository(
+        ShippingChargeEntity
+      );
+      const findShippingAddress = await shippingAddressRepository.findOne({
+        where: { districtId },
+      });
 
-    grandTotal = +grandTotal - (+couponDiscount || 0);
+      const newlog =
+        +setting?.orderFreeShippingAmount > 0 &&
+        +setting?.orderFreeShippingAmount <= +grandTotal;
 
-    if (districtId && (+setting?.orderFreeShippingAmount || 0) > +grandTotal) {
-      shippingCharge = 0;
-    } else {
-      shippingCharge = +findShippingAddress?.shippingCharge || 0;
+      if (districtId && newlog) {
+        shippingCharge = 0;
+      } else {
+        shippingCharge = +findShippingAddress?.shippingCharge || 0;
+      }
     }
 
     grandTotal += +shippingCharge;
@@ -523,7 +528,7 @@ export const cartListApplyCoupon = asyncHandler(
           totalTax: totalTax.toFixed(2),
           shippingCharge: shippingCharge.toFixed(2),
           grandTotal: grandTotal.toFixed(2),
-          totalSalePrice: totalSalePrice.toFixed(2),
+          // totalSalePrice: totalSalePrice.toFixed(2),
         },
       },
     });
