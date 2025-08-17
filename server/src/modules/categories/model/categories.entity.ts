@@ -10,9 +10,9 @@ import {
   TreeParent,
   UpdateDateColumn,
 } from "typeorm";
-import { ProductCategoryEntity } from "../../products/product-category/model/product-category.entity";
 import { PostCategoryEntity } from "../../blog/post/model/post-category.entity";
 import { ApplicableCategoryEntity } from "../../discount/model/applicable-category.entity";
+import { ProductCategoryEntity } from "../../products/product-category/model/product-category.entity";
 
 @Entity("categories")
 @Tree("materialized-path")
@@ -62,11 +62,11 @@ export class CategoriesEntity {
   )
   productCategories!: ProductCategoryEntity[];
 
-  // @OneToMany(
-  //   (_type) => PostCategoryEntity,
-  //   (productCategory) => productCategory.category
-  // )
-  // postCategories!: PostCategoryEntity[];
+  @OneToMany(
+    (_type) => PostCategoryEntity,
+    (productCategory) => productCategory.category
+  )
+  postCategories!: PostCategoryEntity[];
 
   @OneToMany(
     (_type) => ApplicableCategoryEntity,

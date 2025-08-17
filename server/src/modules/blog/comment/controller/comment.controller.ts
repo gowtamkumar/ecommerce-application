@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { NextFunction, Request, Response } from "express";
 import { getDBConnection } from "../../../../config/db";
-import { CommentEntity } from "../model/comment.entity";
+import { CustomRequest } from "../../../../enums/custom-request-type";
+import { asyncHandler } from "../../../../middlewares/async.middleware";
+import { logger } from "../../../../middlewares/logger";
 import { commentValidationSchema } from "../../../../validation";
 import { updateCommentValidationSchema } from "../../../../validation/comment/updateCommentValidation";
-import { logger } from "../../../../middlewares/logger";
-import { CustomRequest } from "../../../../enums/custom-request-type";
+import { CommentEntity } from "../model/comment.entity";
 
 // @desc Get all Comment
 // @route GET /api/v1/Comment
@@ -15,16 +15,7 @@ export const getComments = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(CommentEntity);
 
-  const result = await repository.find({
-    relations: {
-      product: true,
-    },
-    select: {
-      product: {
-        name: true,
-      },
-    },
-  });
+  const result = await repository.find();
 
   return res.status(200).json({
     success: true,
@@ -59,38 +50,40 @@ export const getComment = asyncHandler(
 // @desc Create a single Comment
 // @route POST /api/v1/Comment
 // @access Public
-export const createComment = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createComment ${req.method} ${req.url}`);
-  const connection = await getDBConnection();
-  const validation = commentValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
+export const createComment = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: createComment ${req.method} ${req.url}`);
+    const connection = await getDBConnection();
+    const validation = commentValidationSchema.safeParse({
+      ...req.body,
+      userId: req.id,
+    });
 
-  if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-    }));
+    if (!validation.success) {
+      const formattedErrors = validation.error.issues.map((issue) => ({
+        path: issue.path.join("."),
+        message: issue.message,
+      }));
 
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
+      return res.status(400).json({
+        success: false,
+        issues: formattedErrors,
+      });
+    }
+
+    const repository = connection.getRepository(CommentEntity);
+
+    const newComment = repository.create(validation.data);
+
+    const save = await repository.save(newComment);
+
+    return res.status(200).json({
+      success: true,
+      message: "Create a new Comment",
+      data: save,
     });
   }
-
-  const repository = connection.getRepository(CommentEntity);
-
-  const newComment = repository.create(validation.data);
-
-  const save = await repository.save(newComment);
-
-  return res.status(200).json({
-    success: true,
-    message: "Create a new Comment",
-    data: save,
-  });
-});
+);
 
 // @desc Update a single Comment
 // @route PUT /api/v1/Comment/:id

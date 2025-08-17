@@ -9,18 +9,18 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { PostStatus } from "../enums";
 import { UserEntity } from "../../../auth/model/user.entity";
-import { PostCategoryEntity } from "./post-category.entity";
 import { CommentEntity } from "../../comment/model/comment.entity";
+import { PostStatus } from "../enums";
+import { PostCategoryEntity } from "./post-category.entity";
 
 @Entity("posts")
 export class PostEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  // @Column()
-  // slug!: string;
+  @Column()
+  slug!: string;
 
   @Column()
   title!: string;
@@ -36,11 +36,11 @@ export class PostEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
-  // @ManyToOne((_type) => UserEntity, (user) => user.posts, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "user_id" })
-  // user!: UserEntity;
+  @ManyToOne((_type) => UserEntity, (user) => user.posts, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
 
   @Column({
     type: "enum",

@@ -4,6 +4,9 @@ export const postValidationSchema = z.object({
   title: z.string({
     required_error: "Title is required",
   }),
+  slug: z.string({
+    required_error: "slug is required",
+  }),
   image: z.string({
     required_error: "Image is required",
   }),
@@ -17,7 +20,5 @@ export const postValidationSchema = z.object({
   status: z.enum(["Draft", "Published", "Archived"], {
     required_error: "Status is required",
   }),
-  postCategories: z
-    .array(z.number())
-    .nonempty({ message: "can't be empty!" }),
+  postCategories: z.array(z.number()).nonempty({ message: "can't be empty!" }),
 });

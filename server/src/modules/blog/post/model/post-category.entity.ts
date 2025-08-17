@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { PostEntity } from "./post.entity";
 import { CategoriesEntity } from "../../../categories/model/categories.entity";
+import { PostEntity } from "./post.entity";
 
 @Entity("post_categories")
 export class PostCategoryEntity {
@@ -24,10 +24,13 @@ export class PostCategoryEntity {
 
   @Column({ name: "category_id" })
   categoryId!: number;
-  // @ManyToOne((_type) => CategoriesEntity, (category) => category.postCategories, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "category_id" })
-  // category!: CategoriesEntity;
-
+  @ManyToOne(
+    (_type) => CategoriesEntity,
+    (category) => category.postCategories,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  @JoinColumn({ name: "category_id" })
+  category!: CategoriesEntity;
 }

@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { commentStatusEnum } from "../enums/comment.status.enum";
 import { UserEntity } from "../../../auth/model/user.entity";
 import { PostEntity } from "../../post/model/post.entity";
+import { commentStatusEnum } from "../enums/comment.status.enum";
 
 @Entity("comments")
 export class CommentEntity {
@@ -28,11 +28,11 @@ export class CommentEntity {
   @Column({ nullable: true })
   content!: string;
 
-  @Column({ nullable: true })
-  like!: number;
+  // @Column({ nullable: true })
+  // like!: number;
 
-  @Column({ name: "dis_like", nullable: true })
-  disLike!: number;
+  // @Column({ name: "dis_like", nullable: true })
+  // disLike!: number;
 
   @Column({
     type: "enum",
@@ -43,9 +43,9 @@ export class CommentEntity {
 
   @Column({ name: "user_id" })
   userId!: number;
-  // @ManyToOne((_type) => UserEntity, (user) => user.comments)
-  // @JoinColumn({ name: "user_id" })
-  // user!: UserEntity;
+  @ManyToOne((_type) => UserEntity, (user) => user.comments)
+  @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt?: string;

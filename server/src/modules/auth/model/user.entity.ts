@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { RoleEnum } from "../enums/role.enum";
 import {
   Column,
   CreateDateColumn,
@@ -8,18 +7,19 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { GenderEnum, TypeEnum } from "../enums";
-import { StatusEnum } from "../enums/status.enum";
-import { OrderEntity } from "../../order/model/order.entity";
-import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
-import { ReviewEntity } from "../../review/model/review.entity";
-import { WishListEntity } from "../../wishlist/model/wishlist.entity";
-import { PaymentEntity } from "../../payment/model/payment.entity";
-import { UserActivityEntity } from "./user-activity.entity";
-import { PostEntity } from "../../blog/post/model/post.entity";
 import { CommentEntity } from "../../blog/comment/model/comment.entity";
+import { PostEntity } from "../../blog/post/model/post.entity";
+import { OrderEntity } from "../../order/model/order.entity";
 import { NotificationEntity } from "../../other/notification/model/notification.entity";
+import { PaymentEntity } from "../../payment/model/payment.entity";
+import { ProductEntity } from "../../products/product/model/product.entity";
+import { ReviewEntity } from "../../review/model/review.entity";
+import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
+import { WishListEntity } from "../../wishlist/model/wishlist.entity";
+import { GenderEnum, TypeEnum } from "../enums";
+import { RoleEnum } from "../enums/role.enum";
+import { StatusEnum } from "../enums/status.enum";
+import { UserActivityEntity } from "./user-activity.entity";
 
 @Entity("users")
 export class UserEntity {
@@ -29,10 +29,10 @@ export class UserEntity {
   @Column()
   name!: string;
 
-  @Column({ unique: true,nullable: true })
+  @Column({ unique: true, nullable: true })
   username!: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   password?: string;
 
   @Column({ unique: true })
@@ -117,16 +117,12 @@ export class UserEntity {
   @OneToMany((_type) => UserActivityEntity, (userActivity) => userActivity.user)
   userActivities!: UserActivityEntity[];
 
-  // @OneToMany((_type) => PostEntity, (post) => post.user)
-  // posts!: PostEntity[];
+  @OneToMany((_type) => PostEntity, (post) => post.user)
+  posts!: PostEntity[];
 
-  // @OneToMany((_type) => CommentEntity, (comment) => comment.user)
-  // comments!: CommentEntity[];
+  @OneToMany((_type) => CommentEntity, (comment) => comment.user)
+  comments!: CommentEntity[];
 
   @OneToMany((_type) => NotificationEntity, (notification) => notification.user)
   notifications!: NotificationEntity[];
-
-
-  
-
 }
