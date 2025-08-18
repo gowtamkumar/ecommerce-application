@@ -58,7 +58,7 @@ export const setupRoutes = (app: any) => {
   app.use(
     "/api/v1/shipping-charges",
     AuthGuard,
-    isAuthorize("Admin"),
+    isAuthorize(["Admin"]),
     shippingChargeRoutes
   );
   app.use("/api/v1/discounts", discountRoutes);
