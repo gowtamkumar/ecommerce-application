@@ -12,7 +12,12 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  FormOutlined,
+  QuestionCircleOutlined,
+  RestOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
@@ -26,6 +31,7 @@ interface DataType {
   slug: string;
   image: string;
   active: boolean;
+  isFeatured: boolean;
   children?: DataType[];
 }
 
@@ -191,7 +197,8 @@ const CategoryList: React.FC = () => {
             width={40}
             height={40}
             alt={value}
-            src={`${appConfig.baseApiClientUrl}/uploads/${value || "no-data.png"}`}
+            src={`${appConfig.baseApiClientUrl}/uploads/${value || "no-data.png"
+              }`}
           />
         );
       },
@@ -211,6 +218,16 @@ const CategoryList: React.FC = () => {
         <Tag color={active ? "green" : "red"}>
           {active ? "Active" : "Inactive"}
         </Tag>
+      ),
+    },
+    {
+      title: "Featured",
+      key: "isFeatured",
+      dataIndex: "isFeatured", // Required for getColumnSearchProps to work
+      ...getColumnSearchProps("isFeatured"),
+      sorter: (a, b) => Number(a.isFeatured) - Number(b.isFeatured),
+      render: (value: boolean) => (
+        <Tag color={value ? "green" : "red"}>{value ? "Yes" : "No"}</Tag>
       ),
     },
 

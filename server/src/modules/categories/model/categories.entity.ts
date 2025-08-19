@@ -41,6 +41,13 @@ export class CategoriesEntity {
   })
   active!: boolean;
 
+  @Column({
+    name: "is_featured",
+    type: "boolean",
+    default: false,
+  })
+  isFeatured!: boolean;
+
   @TreeChildren()
   children!: CategoriesEntity[];
 

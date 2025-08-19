@@ -22,6 +22,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import {
   Button,
+  Checkbox,
   Form,
   Image,
   Input,
@@ -209,6 +210,10 @@ const AddCategory = () => {
             <Select.Option value={true}>Active</Select.Option>
             <Select.Option value={false}>Inactive</Select.Option>
           </Select>
+        </Form.Item>
+
+        <Form.Item name="isFeatured" valuePropName="checked" label={null}>
+          <Checkbox>Is Featured</Checkbox>
         </Form.Item>
 
         <Form.Item

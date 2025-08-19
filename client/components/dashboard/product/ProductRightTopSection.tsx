@@ -1,4 +1,4 @@
-import { Form, Input, Select, Tag } from "antd";
+import { Form, Input, Select, Tag, TreeSelect } from "antd";
 
 export default function ProductRightTopSection({
   brands,
@@ -66,7 +66,17 @@ export default function ProductRightTopSection({
           },
         ]}
       >
-        <Select
+        <TreeSelect
+          showSearch
+          style={{ width: "100%" }}
+          dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+          placeholder="Please select"
+          allowClear
+          treeDefaultExpandAll
+          treeData={categories}
+          multiple
+        />
+        {/* <Select
           showSearch
           allowClear
           placeholder="Select"
@@ -83,7 +93,7 @@ export default function ProductRightTopSection({
               {item.name}
             </Select.Option>
           ))}
-        </Select>
+        </Select> */}
       </Form.Item>
 
       <Form.Item

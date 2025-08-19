@@ -10,5 +10,6 @@ export const categoriesValidationSchema = z.object({
   parentId: z.number().optional(),
   image: z.string().optional(),
   description: z.string().optional(),
+  isFeatured: z.boolean().optional(),
   status: z.boolean().optional(),
 });

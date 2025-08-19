@@ -1,5 +1,5 @@
 import { getBrands } from "@/lib/apis/brand";
-import { getCategories } from "@/lib/apis/categories";
+import { getAntdCategories } from "@/lib/apis/categories";
 import { getColors } from "@/lib/apis/color";
 import { getDiscounts } from "@/lib/apis/discount";
 import { getSizes } from "@/lib/apis/size";
@@ -35,7 +35,7 @@ export default async function Product() {
     getUnits(),
     getColors(),
     getDiscounts({ scope: "Product" }),
-    getCategories(),
+    getAntdCategories(),
     getTaxs(),
   ]);
 
