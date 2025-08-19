@@ -1,4 +1,4 @@
-import { Form, Input, Select, Tag, TreeSelect } from "antd";
+import { Checkbox, Form, Input, Select, Tag, TreeSelect } from "antd";
 
 export default function ProductRightTopSection({
   brands,
@@ -20,21 +20,31 @@ export default function ProductRightTopSection({
 
   return (
     <>
-      <Form.Item
-        name="status"
-        label="Status"
-        rules={[
-          {
-            required: true,
-            message: "Status is required",
-          },
-        ]}
-      >
-        <Select showSearch allowClear placeholder="Select Status">
-          <Select.Option value="Active">Active</Select.Option>
-          <Select.Option value="Inactive">Inactive</Select.Option>
-        </Select>
-      </Form.Item>
+      <div className="grid grid-cols-2  gap-3 items-center">
+        <div className="col-span-1">
+          <Form.Item
+            name="status"
+            label="Status"
+            rules={[
+              {
+                required: true,
+                message: "Status is required",
+              },
+            ]}
+          >
+            <Select showSearch allowClear placeholder="Select Status">
+              <Select.Option value="Active">Active</Select.Option>
+              <Select.Option value="Inactive">Inactive</Select.Option>
+            </Select>
+          </Form.Item>
+        </div>
+
+        <div className="col-span-1 self-end">
+          <Form.Item name="featured" valuePropName="checked" label={null}>
+            <Checkbox>Featured</Checkbox>
+          </Form.Item>
+        </div>
+      </div>
 
       <Form.Item name="brandId" label="Brand">
         <Select

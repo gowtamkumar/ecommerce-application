@@ -33,6 +33,7 @@ export const updateProductValidationSchema = z.object({
   }),
   enableReview: z.boolean().optional(),
   variant: z.boolean().optional(),
+  featured: z.boolean().optional(),
   alertQty: z.number({
     required_error: "Alert Qty is Required",
   }),
