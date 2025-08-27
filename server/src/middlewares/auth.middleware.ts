@@ -70,14 +70,7 @@ const isAuthorize = (roles: string[] | string) => {
   if (typeof roles === "string") {
     roles = [roles];
   }
-
-  console.log("roles", roles);
-
-  // || !roles.includes(req.role)
-
   return (req: CustomRequest, res: Response, next: NextFunction): void => {
-    console.log("req role", req);
-
     if (!req.username || !roles.includes(req.role as string)) {
       res.status(403).json({ message: "Forbidden: insufficient rights" });
       return;

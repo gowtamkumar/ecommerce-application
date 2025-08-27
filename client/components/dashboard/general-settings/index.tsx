@@ -122,6 +122,12 @@ export default function Index() {
         },
 
         // {
+        //   label: "Home Page",
+        //   key: "home_page",
+        //   children: <HomePage />,
+        // },
+
+        // {
         //   label: "About Page",
         //   key: "about_page",
         //   children: <AboutPage />,

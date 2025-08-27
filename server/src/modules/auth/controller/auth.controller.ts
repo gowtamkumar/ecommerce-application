@@ -1,31 +1,31 @@
+import { NextFunction, Request, Response } from "express";
+import fs from "fs";
+import { join } from "path";
 import "reflect-metadata";
-import { Request, Response, NextFunction } from "express";
+import { sendEmail } from "../../../common/sendMail";
+import { getDBConnection } from "../../../config/db";
+import { CustomRequest } from "../../../enums/custom-request-type";
+import { asyncHandler } from "../../../middlewares/async.middleware";
 import {
-  sendCookiesResponse,
-  hashedPassword,
-  getSignJwtToken,
-  matchPassword,
   getResetSignJwtToken,
   getResetVerifyJwtToken,
+  getSignJwtToken,
+  hashedPassword,
+  matchPassword,
+  sendCookiesResponse,
 } from "../../../middlewares/auth.middleware";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { sendEmail } from "../../../middlewares/sendMail.middleware";
-import { UserEntity } from "../model/user.entity";
-import { getDBConnection } from "../../../config/db";
+import { logger } from "../../../middlewares/logger";
 import {
   updateUserValidationSchema,
   userValidationSchema,
 } from "../../../validation";
-import { UserActivityEntity } from "../model/user-activity.entity";
-import { join } from "path";
-import { FileEntity } from "../../other/file/model/file.entity";
-import fs from "fs";
-import { loginValidationSchema } from "../../../validation/user/loginValidation";
 import { forgotPasswordValidationSchema } from "../../../validation/user/forgotPasswordValidation";
+import { loginValidationSchema } from "../../../validation/user/loginValidation";
 import { resetPasswordValidationSchema } from "../../../validation/user/resetPasswordValidation";
 import { updatePasswordValidationSchema } from "../../../validation/user/updatePasswordValidation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { FileEntity } from "../../other/file/model/file.entity";
+import { UserActivityEntity } from "../model/user-activity.entity";
+import { UserEntity } from "../model/user.entity";
 
 // @desc Register User
 // @route POST /api/v1/auth/register

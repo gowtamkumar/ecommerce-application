@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Repository } from "typeorm";
+import { sendSms } from "../../../common/sendSms";
 import { getDBConnection } from "../../../config/db";
 import { CustomRequest } from "../../../enums/custom-request-type";
 import { asyncHandler } from "../../../middlewares/async.middleware";
@@ -720,10 +721,15 @@ export const orderStatusUpdate = asyncHandler(
         ...validation.data,
       });
 
+      const message = `Your order has been ${status}. Order Tracking No: ${result.trackingNo}`;
+      const userRepository = await connection.getRepository(UserEntity);
+      const getuser = await userRepository.findOne({ where: { id: userId } });
+      const ssmsRes = await sendSms(getuser.phone, message);
+
       const notification: Notification = {
         type: "Order",
         title: status,
-        message: `Your order has been ${status}. Order Tracking No: ${result.trackingNo}`,
+        message,
         userId,
         orderId: result.id,
       };
