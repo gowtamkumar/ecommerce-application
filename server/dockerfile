@@ -9,10 +9,10 @@ RUN apk add --no-cache postgresql-client
 WORKDIR /app
 
 # Copy only package files first (better caching)
-COPY package*.json ./
+COPY package*.json yarn.lock ./
 
 # Install dependencies
-RUN npm install
+RUN yarn install
 
 # Copy the rest of your app
 COPY . .
@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 3900
 
 # Start development server
-CMD ["npm", "run", "start:dev"]
+CMD ["yarn", "run", "start:dev"]
