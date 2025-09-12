@@ -1,3 +1,11 @@
+## system design architechture:
+
+https://drive.google.com/file/d/1F8wKzSxrdB0Y4XbEGoMEfLNeh6Gw5b9R/view?usp=sharing
+
+## database design:
+
+https://drive.google.com/file/d/13js55jvrKmDTGD-6QCTg_FWHj9NIMoX3/view?usp=sharing
+
 Good question 👌 — if you want to **design a system (like ERP, eCommerce, SaaS, etc.)**, you should follow a **step-by-step process**.
 
 Here’s the **basic 8 steps** you need for **system design** (from idea → design → implementation):
