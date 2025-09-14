@@ -1,9 +1,3 @@
-Got it ✅ — I’ll reorganize and structure your content into a clean, well-organized **high-level system design document** for an e-commerce platform like Amazon/Walmart.
-
-Here’s the polished version:
-
----
-
 # High-Level Design of an E-Commerce Platform
 
 ## Objective
