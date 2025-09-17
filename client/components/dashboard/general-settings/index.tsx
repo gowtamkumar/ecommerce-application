@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "./Seo";
+import WhatsAppWidgetSetting from "./WhatsAppWidgetSetting";
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
@@ -120,7 +121,11 @@ export default function Index() {
           key: "help_Support",
           children: <HelpSupport />,
         },
-
+        {
+          label: "Whatsapp Widget",
+          key: "whatsApp_widget",
+          children: <WhatsAppWidgetSetting />,
+        },
         // {
         //   label: "Home Page",
         //   key: "home_page",

@@ -49,6 +49,9 @@ export class SettingEntity {
   @Column({ name: "email_config", type: "simple-json", nullable: true })
   emailConfig!: string;
 
+  @Column({ name: "whats_app_widget", type: "simple-json", nullable: true })
+  whatsAppWidget!: string;
+
   @Column({ name: "payment_account", type: "simple-json", nullable: true })
   paymentAccount!: string;
 
