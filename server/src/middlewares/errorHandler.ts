@@ -1,27 +1,22 @@
-import { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
+import { NextFunction, Request, Response } from 'express';
+import { ZodError } from 'zod';
 
-export const errorHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (err: any, _req: Request, res: Response, next: NextFunction) => {
   const errStatus = err.statusCode || 500;
-  const errMsg = err.message || "Internal Server Error";
+  const errMsg = err.message || 'Internal Server Error';
 
   if (!res.headersSent) {
     // Check if the error is a Zod validation error
     if (err instanceof ZodError) {
       const formattedErrors = err.errors.map((issue) => ({
-        path: issue.path.join("."),
+        path: issue.path.join('.'),
         message: issue.message,
       }));
 
       res.status(400).json({
         success: false,
         error: {
-          type: "Validation Error",
+          type: 'Validation Error',
           issues: formattedErrors,
         },
       });
@@ -30,7 +25,7 @@ export const errorHandler = (
         success: false,
         status: errStatus,
         message: errMsg,
-        stack: process.env.NODE_ENV === "development" ? err.stack : {},
+        stack: process.env.NODE_ENV === 'development' ? err.stack : {},
       });
     }
   } else {

@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   createFile,
   fileUpload,
@@ -7,45 +7,45 @@ import {
   getFiles,
   updateFile,
   deleteFileWithPhoto,
-} from "../controller/file.controller";
-import { AuthGuard } from "../../../../middlewares/auth.middleware";
-import { upload } from "../../../../middlewares/fileUpload";
+} from '../controller/file.controller';
+import { AuthGuard } from '../../../../middlewares/auth.middleware';
+import { upload } from '../../../../middlewares/fileUpload';
 
 const router = express.Router();
 
-router.route("/").get(getFiles).post(createFile);
-router.route("/delete-file-with-photo").post(deleteFileWithPhoto);
-router.route("/uploads").post(
+router.route('/').get(getFiles).post(createFile);
+router.route('/delete-file-with-photo').post(deleteFileWithPhoto);
+router.route('/uploads').post(
   upload.fields([
     {
-      name: "thumbnailImage",
+      name: 'thumbnailImage',
       maxCount: 1,
     },
     {
-      name: "hoverImage",
+      name: 'hoverImage',
       maxCount: 1,
     },
     {
-      name: "metaImage",
+      name: 'metaImage',
       maxCount: 1,
     },
     {
-      name: "image",
+      name: 'image',
       maxCount: 1,
     },
     {
-      name: "favicon",
+      name: 'favicon',
       maxCount: 1,
     },
     {
-      name: "images",
+      name: 'images',
       maxCount: 5,
     },
   ]),
   AuthGuard,
-  fileUpload
+  fileUpload,
 );
 
-router.route("/:id").get(getFile).put(updateFile).delete(deleteFile);
+router.route('/:id').get(getFile).put(updateFile).delete(deleteFile);
 
 export default router;

@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
+import { Request, Response, NextFunction } from 'express';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../config/db';
 // import { memuValidationSchema } from "../../../validation";
 // import { join } from "path";
 // import { FileEntity } from "../../other/file/model/file.entity";
 // import fs from "fs";
-import { MenuEntity } from "../model/menu.entity";
-import { menuValidationSchema } from "../../../validation/menu/menuValidation";
-import { updateMenuValidationSchema } from "../../../validation/menu/updateMenuValidation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { MenuEntity } from '../model/menu.entity';
+import { menuValidationSchema } from '../../../validation/menu/menuValidation';
+import { updateMenuValidationSchema } from '../../../validation/menu/updateMenuValidation';
+import { logger } from '../../../middlewares/logger';
+import { CustomRequest } from '../../../enums/custom-request-type';
 
 // @desc Get all memus
 // @route GET /api/v1/memus
@@ -24,7 +24,7 @@ export const getMemus = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get all memus",
+    message: 'Get all memus',
     data: result,
   });
 });
@@ -32,46 +32,42 @@ export const getMemus = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get all memus
 // @route GET /api/v1/memus
 // @access Public
-export const getDashboardMemus = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: getDashboardMemus ${req.method} ${req.url}`);
+export const getDashboardMemus = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getDashboardMemus ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(MenuEntity);
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(MenuEntity);
 
-    const result = await repository.find();
+  const result = await repository.find();
 
-    return res.status(200).json({
-      success: true,
-      message: "Get all Dashboard memus",
-      data: result,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get all Dashboard memus',
+    data: result,
+  });
+});
 
 // @desc Get a single Memu
 // @route GET /api/v1/memus/:id
 // @access Public
-export const getMemu = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getMemu ${req.method} ${req.url}`);
+export const getMemu = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getMemu ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(MenuEntity);
-    const result = await repository.findOneBy({ id });
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(MenuEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Memu of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Memu of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Memu
 // @route POST /api/v1/memus
@@ -87,7 +83,7 @@ export const createMemu = asyncHandler(async (req: CustomRequest, res: Response)
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 
@@ -104,7 +100,7 @@ export const createMemu = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: "Create a new Memu",
+    message: 'Create a new Memu',
     data: save,
   });
 });
@@ -120,11 +116,11 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
     ...req.body,
   });
 
-  console.log("req.body", req.body);
-  
+  console.log('req.body', req.body);
+
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 

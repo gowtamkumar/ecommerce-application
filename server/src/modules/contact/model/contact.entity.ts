@@ -1,10 +1,10 @@
-import "reflect-metadata";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-@Entity("contacts")
+import 'reflect-metadata';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+@Entity('contacts')
 export class ContactEntity {
   @PrimaryGeneratedColumn()
   id!: number;
-  
+
   @Column()
   name!: string;
 

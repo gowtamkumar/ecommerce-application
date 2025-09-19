@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -7,22 +7,22 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { UserEntity } from "../../../auth/model/user.entity";
-import { PostEntity } from "../../post/model/post.entity";
-import { commentStatusEnum } from "../enums/comment.status.enum";
+} from 'typeorm';
+import { UserEntity } from '../../../auth/model/user.entity';
+import { PostEntity } from '../../post/model/post.entity';
+import { commentStatusEnum } from '../enums/comment.status.enum';
 
-@Entity("comments")
+@Entity('comments')
 export class CommentEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "post_id" })
+  @Column({ name: 'post_id' })
   postId!: number;
   @ManyToOne((_type) => PostEntity, (post) => post.comments, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "post_id" })
+  @JoinColumn({ name: 'post_id' })
   post!: PostEntity;
 
   @Column({ nullable: true })
@@ -35,21 +35,21 @@ export class CommentEntity {
   // disLike!: number;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: commentStatusEnum,
     default: commentStatusEnum.Pending,
   })
   status!: commentStatusEnum;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.comments)
-  @JoinColumn({ name: "user_id" })
+  @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 }

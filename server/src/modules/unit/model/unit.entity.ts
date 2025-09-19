@@ -1,8 +1,8 @@
-import "reflect-metadata";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
+import 'reflect-metadata';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
 
-@Entity("units")
+@Entity('units')
 export class UnitEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -10,9 +10,8 @@ export class UnitEntity {
   @Column()
   name!: string;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
-
 
   @OneToMany((_type) => ProductEntity, (product) => product.unit)
   products!: ProductEntity[];

@@ -1,8 +1,8 @@
-import "reflect-metadata";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { BannerType } from "../enums/banner-type.enum";
+import 'reflect-metadata';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BannerType } from '../enums/banner-type.enum';
 
-@Entity("banners")
+@Entity('banners')
 export class BannerEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -10,7 +10,7 @@ export class BannerEntity {
   @Column()
   title!: string;
 
-  @Column({ type: "enum", enum: BannerType, default: BannerType.Slider })
+  @Column({ type: 'enum', enum: BannerType, default: BannerType.Slider })
   type!: BannerType;
 
   @Column()
@@ -22,9 +22,9 @@ export class BannerEntity {
   @Column({ nullable: true })
   description!: string;
 
-  @Column({ type: "boolean", default: true })
+  @Column({ type: 'boolean', default: true })
   active!: boolean;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 }

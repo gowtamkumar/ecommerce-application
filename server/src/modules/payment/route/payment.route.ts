@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   createDashboardPayment,
   createPayment,
@@ -9,19 +9,19 @@ import {
   sslcommerzFailHandler,
   sslcommerzSuccessHandler,
   updatePayment,
-} from "../controller/payment.controller";
-import { AuthGuard } from "../../../middlewares/auth.middleware";
+} from '../controller/payment.controller';
+import { AuthGuard } from '../../../middlewares/auth.middleware';
 
 const router = express.Router();
 
-router.route("/").get(getPayments).post(AuthGuard, createPayment);
-router.route("/dashboard").post(AuthGuard, createDashboardPayment);
-router.route("/success/:tranId").post(sslcommerzSuccessHandler);
-router.route("/fail/:tranId").post(sslcommerzFailHandler);
-router.route("/cancel/:tranId").post(sslcommerzCancelHandler);
+router.route('/').get(getPayments).post(AuthGuard, createPayment);
+router.route('/dashboard').post(AuthGuard, createDashboardPayment);
+router.route('/success/:tranId').post(sslcommerzSuccessHandler);
+router.route('/fail/:tranId').post(sslcommerzFailHandler);
+router.route('/cancel/:tranId').post(sslcommerzCancelHandler);
 
 router
-  .route("/:id")
+  .route('/:id')
   .get(getPayment)
   .patch(AuthGuard, updatePayment)
   .delete(AuthGuard, deletePayment);

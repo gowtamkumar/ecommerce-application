@@ -1,21 +1,21 @@
-var GoogleStrategy = require("passport-google-oauth20").Strategy;
-import passport from "passport";
-import { getDBConnection } from "../config/db";
-import { UserEntity } from "../modules/auth/model/user.entity";
-import { getSignJwtToken, sendCookiesResponse } from "./auth.middleware";
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+import passport from 'passport';
+import { getDBConnection } from '../config/db';
+import { UserEntity } from '../modules/auth/model/user.entity';
+import { getSignJwtToken } from './auth.middleware';
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: '/auth/google/callback',
     },
     async function (
       accessToken: any,
       refreshToken: any,
       profile: any,
-      cb: (arg0: any, arg1: any) => any
+      cb: (arg0: any, arg1: any) => any,
     ) {
       try {
         const connection = await getDBConnection();
@@ -27,7 +27,7 @@ passport.use(
         });
 
         if (!user) {
-          console.log("user not find");
+          console.log('user not find');
         }
 
         const token = getSignJwtToken(user);
@@ -42,8 +42,8 @@ passport.use(
         //   return cb(err, user);
         // });
       } catch (error) {
-        console.log("asdf");
+        console.log('asdf');
       }
-    }
-  )
+    },
+  ),
 );

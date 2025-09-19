@@ -1,106 +1,101 @@
-import { NextFunction, Request, Response } from "express";
-import { Brackets } from "typeorm";
-import { getDBConnection } from "../../../../config/db";
-import { CustomRequest } from "../../../../enums/custom-request-type";
-import { asyncHandler } from "../../../../middlewares/async.middleware";
-import { logger } from "../../../../middlewares/logger";
-import { productsQuery } from "../../../../sqlQuery";
-import { fileDeleteFunction } from "../../../../utils/fileDeleteFunction";
-import { productValidationSchema } from "../../../../validation";
-import { updateProductValidationSchema } from "../../../../validation/products/product/updateProductValidation";
-import { ProductCategoryEntity } from "../../product-category/model/product-category.entity";
-import { ProductVariantEntity } from "../../product-variant/model/product-variant.entity";
-import { ProductEntity } from "../model/product.entity";
+import { NextFunction, Request, Response } from 'express';
+import { Brackets } from 'typeorm';
+import { getDBConnection } from '../../../../config/db';
+import { CustomRequest } from '../../../../enums/custom-request-type';
+import { asyncHandler } from '../../../../middlewares/async.middleware';
+import { logger } from '../../../../middlewares/logger';
+import { productsQuery } from '../../../../sqlQuery';
+import { fileDeleteFunction } from '../../../../utils/fileDeleteFunction';
+import { productValidationSchema } from '../../../../validation';
+import { updateProductValidationSchema } from '../../../../validation/products/product/updateProductValidation';
+import { ProductCategoryEntity } from '../../product-category/model/product-category.entity';
+import { ProductVariantEntity } from '../../product-variant/model/product-variant.entity';
+import { ProductEntity } from '../model/product.entity';
 
 // @desc Create a Product
 // @route POST /api/v1/products
 // @access Public
-export const createProduct = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: createProduct ${req.method} ${req.url}`);
+export const createProduct = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: createProduct ${req.method} ${req.url}`);
 
-    // Validate request body
-    const validation = productValidationSchema.safeParse({
-      ...req.body,
-      userId: req.id,
-    });
+  // Validate request body
+  const validation = productValidationSchema.safeParse({
+    ...req.body,
+    userId: req.id,
+  });
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const connection = await getDBConnection();
-    const productRepository = connection.getRepository(ProductEntity);
-
-    const { productVariants, productCategories, ...restData } = validation.data;
-    // // Generate URL slug
-    // const count = (await productRepository.count()) + 1;
-    // const sku = `SKU-${count.toString().padStart(6, "0")}`;
-
-    restData.slug = (restData.slug ? restData.slug : restData.name)
-      .toLowerCase()
-      .trim()
-      .split(" ")
-      .join("-");
-
-    // Create product entity
-    const product = productRepository.create(restData);
-
-    // Save product to database
-    const savedProduct = await productRepository.save(product);
-    // Prepare promises for saving product variants and categories
-    const promises = [];
-
-    if (productVariants) {
-      const productVariantRepository =
-        connection.getRepository(ProductVariantEntity);
-      const productVariantEntities = productVariants.map((variant) => ({
-        ...variant,
-        productId: savedProduct.id,
-      }));
-      promises.push(productVariantRepository.save(productVariantEntities));
-    }
-
-    // if (productColors) {
-    //   const productColorRepository =
-    //     connection.getRepository(ProductColorEntity);
-    //   const productColorEntities = productColors.map((color, idx: number) => ({
-    //     colorId: +color,
-    //     default: idx === 0 ? true : false,
-    //     productId: savedProduct.id,
-    //   }));
-    //   promises.push(productColorRepository.save(productColorEntities));
-    // }
-
-    if (productCategories) {
-      const productCategoryRepository = connection.getRepository(
-        ProductCategoryEntity
-      );
-      const productCategoryEntities = productCategories.map((item) => ({
-        categoryId: +item,
-        productId: savedProduct.id,
-      }));
-      promises.push(productCategoryRepository.save(productCategoryEntities));
-    }
-
-    // Execute all promises concurrently
-    await Promise.all(promises);
-
-    return res.status(201).json({
-      success: true,
-      message: "Product created successfully",
-      data: savedProduct,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const connection = await getDBConnection();
+  const productRepository = connection.getRepository(ProductEntity);
+
+  const { productVariants, productCategories, ...restData } = validation.data;
+  // // Generate URL slug
+  // const count = (await productRepository.count()) + 1;
+  // const sku = `SKU-${count.toString().padStart(6, "0")}`;
+
+  restData.slug = (restData.slug ? restData.slug : restData.name)
+    .toLowerCase()
+    .trim()
+    .split(' ')
+    .join('-');
+
+  // Create product entity
+  const product = productRepository.create(restData);
+
+  // Save product to database
+  const savedProduct = await productRepository.save(product);
+  // Prepare promises for saving product variants and categories
+  const promises = [];
+
+  if (productVariants) {
+    const productVariantRepository = connection.getRepository(ProductVariantEntity);
+    const productVariantEntities = productVariants.map((variant) => ({
+      ...variant,
+      productId: savedProduct.id,
+    }));
+    promises.push(productVariantRepository.save(productVariantEntities));
+  }
+
+  // if (productColors) {
+  //   const productColorRepository =
+  //     connection.getRepository(ProductColorEntity);
+  //   const productColorEntities = productColors.map((color, idx: number) => ({
+  //     colorId: +color,
+  //     default: idx === 0 ? true : false,
+  //     productId: savedProduct.id,
+  //   }));
+  //   promises.push(productColorRepository.save(productColorEntities));
+  // }
+
+  if (productCategories) {
+    const productCategoryRepository = connection.getRepository(ProductCategoryEntity);
+    const productCategoryEntities = productCategories.map((item) => ({
+      categoryId: +item,
+      productId: savedProduct.id,
+    }));
+    promises.push(productCategoryRepository.save(productCategoryEntities));
+  }
+
+  // Execute all promises concurrently
+  await Promise.all(promises);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Product created successfully',
+    data: savedProduct,
+  });
+});
 
 // @desc Get all Products
 // @route GET /api/v1/products
@@ -330,22 +325,22 @@ export const getProducts = async (req: Request, res: Response) => {
   const productRepository = connection.getRepository(ProductEntity);
 
   try {
-    const qb = productRepository.createQueryBuilder("product");
-    qb.select(["product", "productVariants"]);
-    qb.leftJoin("product.productVariants", "productVariants");
+    const qb = productRepository.createQueryBuilder('product');
+    qb.select(['product', 'productVariants']);
+    qb.leftJoin('product.productVariants', 'productVariants');
 
     const results = await qb.getMany();
 
     res.status(200).json({
       success: true,
-      message: "Fetched all products successfully",
+      message: 'Fetched all products successfully',
       totalItem: results.length,
       data: results,
     });
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: "An error occurred while fetching the products.",
+      message: 'An error occurred while fetching the products.',
       error: error.message,
     });
   }
@@ -367,7 +362,7 @@ export const getPublicProducts = async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get products successfully",
+    message: 'Get products successfully',
     total,
     page,
     perPage,
@@ -380,65 +375,63 @@ export const getPublicProducts = async (req: Request, res: Response) => {
 // @desc Get a single Product
 // @route GET /api/v1/products/:id
 // @access Public
-export const getProduct = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getProduct ${req.method} ${req.url}`);
+export const getProduct = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getProduct ${req.method} ${req.url}`);
 
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const connection = await getDBConnection();
-    const productRepository = connection.getRepository(ProductEntity);
-    const qb = productRepository.createQueryBuilder("product");
-    qb.select([
-      "product",
-      "user.id",
-      "user.name",
-      "brand.id",
-      "brand.name",
-      "reviews.id",
-      "reviews.rating",
-      "reviews.comment",
-      "tax.name",
-      "tax.value",
-      "productVariants",
-      "productCategories",
-      "category.id",
-      "category.name",
-      "size.name",
-      "color.name",
-      "discount.discountStrategy",
-      "discount.value",
-    ]);
-    qb.leftJoin("product.user", "user");
-    qb.leftJoin("product.brand", "brand");
-    qb.leftJoin("product.reviews", "reviews");
-    qb.leftJoin("product.tax", "tax");
-    qb.leftJoin("product.discount", "discount");
-    qb.leftJoin("product.productVariants", "productVariants");
-    qb.leftJoin("product.productCategories", "productCategories");
-    qb.leftJoin("productCategories.category", "category");
-    qb.leftJoin("productVariants.size", "size");
-    qb.leftJoin("productVariants.color", "color");
-    qb.orderBy("productVariants.id", "DESC");
+  const connection = await getDBConnection();
+  const productRepository = connection.getRepository(ProductEntity);
+  const qb = productRepository.createQueryBuilder('product');
+  qb.select([
+    'product',
+    'user.id',
+    'user.name',
+    'brand.id',
+    'brand.name',
+    'reviews.id',
+    'reviews.rating',
+    'reviews.comment',
+    'tax.name',
+    'tax.value',
+    'productVariants',
+    'productCategories',
+    'category.id',
+    'category.name',
+    'size.name',
+    'color.name',
+    'discount.discountStrategy',
+    'discount.value',
+  ]);
+  qb.leftJoin('product.user', 'user');
+  qb.leftJoin('product.brand', 'brand');
+  qb.leftJoin('product.reviews', 'reviews');
+  qb.leftJoin('product.tax', 'tax');
+  qb.leftJoin('product.discount', 'discount');
+  qb.leftJoin('product.productVariants', 'productVariants');
+  qb.leftJoin('product.productCategories', 'productCategories');
+  qb.leftJoin('productCategories.category', 'category');
+  qb.leftJoin('productVariants.size', 'size');
+  qb.leftJoin('productVariants.color', 'color');
+  qb.orderBy('productVariants.id', 'DESC');
 
-    qb.where({ id });
+  qb.where({ id });
 
-    const result = await qb.getOne();
+  const result = await qb.getOne();
 
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: `Resource not found with id #${id}`,
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Fetched product with id #${id}`,
-      data: result,
+  if (!result) {
+    return res.status(404).json({
+      success: false,
+      message: `Resource not found with id #${id}`,
     });
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Fetched product with id #${id}`,
+    data: result,
+  });
+});
 
 // @desc Get a single Product by slug
 // @route GET /api/v1/products/slug/:slug
@@ -616,7 +609,7 @@ export const getProductByslug = asyncHandler(
         p.short_description, p.enable_review, p.limit_purchase_qty, p.tags, rt.reviews_count, 
         rt.average_rating, t.name, t.value, b.id, b.image, b.status, b.name, p.unit_price, p.images;
       `,
-      [slug, productVariantId]
+      [slug, productVariantId],
     );
 
     if (!result[0]) {
@@ -631,7 +624,7 @@ export const getProductByslug = asyncHandler(
       message: `Fetched product with slug #${slug}`,
       data: result[0],
     });
-  }
+  },
 );
 
 // export const getProductByslug = asyncHandler(
@@ -857,93 +850,82 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
   logger.info(`Service: getDashboardProducts ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
-  const {
-    search,
-    lowPrice,
-    highPrice,
-    brandId,
-    status,
-    categoryId,
-    minPrice,
-    maxPrice,
-    discount,
-  } = req.query;
+  const { search, lowPrice, highPrice, brandId, status, categoryId, minPrice, maxPrice, discount } =
+    req.query;
 
   try {
-    const qb = productRepository.createQueryBuilder("product");
+    const qb = productRepository.createQueryBuilder('product');
     qb.select([
-      "product",
-      "user.id",
-      "user.name",
-      "brand.id",
-      "brand.name",
-      "reviews.id",
-      "reviews.rating",
-      "reviews.comment",
-      "tax.name",
-      "tax.value",
-      "productVariants",
-      "productCategories",
-      "category.id",
-      "category.name",
-      "size.name",
-      "color.name",
-      "discount.discountStrategy",
-      "discount.value",
+      'product',
+      'user.id',
+      'user.name',
+      'brand.id',
+      'brand.name',
+      'reviews.id',
+      'reviews.rating',
+      'reviews.comment',
+      'tax.name',
+      'tax.value',
+      'productVariants',
+      'productCategories',
+      'category.id',
+      'category.name',
+      'size.name',
+      'color.name',
+      'discount.discountStrategy',
+      'discount.value',
     ]);
-    qb.leftJoin("product.user", "user");
-    qb.leftJoin("product.brand", "brand");
-    qb.leftJoin("product.reviews", "reviews");
-    qb.leftJoin("product.tax", "tax");
-    qb.leftJoin("product.discount", "discount");
-    qb.leftJoin("product.productVariants", "productVariants");
-    qb.leftJoin("product.productCategories", "productCategories");
-    qb.leftJoin("productCategories.category", "category");
-    qb.leftJoin("productVariants.size", "size");
-    qb.leftJoin("productVariants.color", "color");
-    qb.orderBy("productVariants.id", "DESC");
-    qb.addOrderBy("product.slug", "ASC");
+    qb.leftJoin('product.user', 'user');
+    qb.leftJoin('product.brand', 'brand');
+    qb.leftJoin('product.reviews', 'reviews');
+    qb.leftJoin('product.tax', 'tax');
+    qb.leftJoin('product.discount', 'discount');
+    qb.leftJoin('product.productVariants', 'productVariants');
+    qb.leftJoin('product.productCategories', 'productCategories');
+    qb.leftJoin('productCategories.category', 'category');
+    qb.leftJoin('productVariants.size', 'size');
+    qb.leftJoin('productVariants.color', 'color');
+    qb.orderBy('productVariants.id', 'DESC');
+    qb.addOrderBy('product.slug', 'ASC');
 
     if (status) qb.andWhere({ status });
 
     if (categoryId)
-      qb.andWhere("productCategories.categoryId IN (:...categoryIds)", {
-        categoryIds: categoryId.toString().split(","),
+      qb.andWhere('productCategories.categoryId IN (:...categoryIds)', {
+        categoryIds: categoryId.toString().split(','),
       });
 
     if (brandId)
-      qb.andWhere("product.brandId IN (:...brandIds)", {
-        brandIds: brandId.toString().split(","),
+      qb.andWhere('product.brandId IN (:...brandIds)', {
+        brandIds: brandId.toString().split(','),
       });
 
     if (minPrice && maxPrice)
-      qb.andWhere(
-        `productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`
-      );
+      qb.andWhere(`productVariants.unit_price BETWEEN ${minPrice} AND ${maxPrice}`);
 
     if (discount) qb.andWhere(`discount.value BETWEEN 0 AND ${discount}`);
 
     // if (discount) qb.andWhere(`discount.value = :value`, { value: discount });
 
-    if (lowPrice) qb.orderBy("productVariants.unit_price", "ASC");
-    if (highPrice) qb.orderBy("productVariants.unit_price", "DESC");
+    if (lowPrice) qb.orderBy('productVariants.unit_price', 'ASC');
+    if (highPrice) qb.orderBy('productVariants.unit_price', 'DESC');
 
     if (search) {
       qb.andWhere(
         new Brackets((db) => {
-          db.orWhere("LOWER(product.name) ILIKE LOWER(:search)", {
+          db.orWhere('LOWER(product.name) ILIKE LOWER(:search)', {
             search: `%${search}%`,
           });
-          db.orWhere("LOWER(product.description) ILIKE LOWER(:search)", {
+          db.orWhere('LOWER(product.description) ILIKE LOWER(:search)', {
             search: `%${search}%`,
           });
-          db.orWhere("LOWER(product.shortDescription) ILIKE LOWER(:search)", {
+          db.orWhere('LOWER(product.shortDescription) ILIKE LOWER(:search)', {
             search: `%${search}%`,
           });
-          db.orWhere("LOWER(brand.name) ILIKE LOWER(:search)", {
+          db.orWhere('LOWER(brand.name) ILIKE LOWER(:search)', {
             search: `%${search}%`,
           });
-        })
+        }),
       );
     }
 
@@ -951,14 +933,14 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Fetched all products successfully",
+      message: 'Fetched all products successfully',
       totalItem: results.length,
       data: results,
     });
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: "An error occurred while fetching the products.",
+      message: 'An error occurred while fetching the products.',
       error: error.message,
     });
   }
@@ -967,103 +949,100 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
 // @desc Update a single Product
 // @route PUT /api/v1/products/:id
 // @access Public
-export const updateProduct = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: updateProduct ${req.method} ${req.url}`);
+export const updateProduct = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateProduct ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    // Validate request body
-    const validation = updateProductValidationSchema.safeParse(req.body);
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  const { id } = req.params;
+  // Validate request body
+  const validation = updateProductValidationSchema.safeParse(req.body);
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const { productVariants, productCategories, ...restData } = validation.data;
-
-    // Get DB connection
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(ProductEntity);
-
-    // Find the existing product
-    const product = await repository.findOneBy({ id });
-
-    if (!product) {
-      throw new Error(`Product not found`);
-    }
-
-    // Handle product variants
-    let productVariantPromise = Promise.resolve();
-    if (productVariants.length) {
-      productVariantPromise = (async () => {
-        const repoProductVariant =
-          connection.getRepository(ProductVariantEntity);
-
-        const productVariantItems = productVariants.map(async (item: any) => {
-          if (item.id) {
-            await repoProductVariant.save({
-              ...item,
-              purchasePrice: +item.purchasePrice,
-              unitPrice: +item.unitPrice,
-            });
-          } else {
-            const productVariantCreate = repoProductVariant.create({
-              unitPrice: +item.unitPrice,
-              purchasePrice: +item.purchasePrice,
-              productId: id,
-              ...item,
-            });
-            await repoProductVariant.save(productVariantCreate);
-          }
-        });
-      })();
-    }
-
-    // Handle product categories
-    let productCategoryPromise = Promise.resolve();
-    if (productCategories) {
-      productCategoryPromise = (async () => {
-        const repoPCategory = connection.getRepository(ProductCategoryEntity);
-
-        const existingCategories = await repoPCategory.find({
-          where: { productId: id },
-        });
-
-        if (existingCategories) {
-          const res = await repoPCategory.remove(existingCategories);
-        }
-
-        const productCategoryItems = productCategories.map((item: number) => {
-          return {
-            categoryId: +item,
-            productId: +id,
-          };
-        });
-        await repoPCategory.save(productCategoryItems);
-      })();
-    }
-
-    // Wait for both operations to complete
-    await Promise.all([productVariantPromise, productCategoryPromise]);
-
-    // Merge and save the updated product data
-    const updatedProduct = repository.merge(product, restData);
-    await repository.save(updatedProduct);
-
-    return res.status(200).json({
-      success: true,
-      message: `Updated product with id ${id}`,
-      data: updatedProduct,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const { productVariants, productCategories, ...restData } = validation.data;
+
+  // Get DB connection
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(ProductEntity);
+
+  // Find the existing product
+  const product = await repository.findOneBy({ id });
+
+  if (!product) {
+    throw new Error(`Product not found`);
+  }
+
+  // Handle product variants
+  let productVariantPromise = Promise.resolve();
+  if (productVariants.length) {
+    productVariantPromise = (async () => {
+      const repoProductVariant = connection.getRepository(ProductVariantEntity);
+
+      const productVariantItems = productVariants.map(async (item: any) => {
+        if (item.id) {
+          await repoProductVariant.save({
+            ...item,
+            purchasePrice: +item.purchasePrice,
+            unitPrice: +item.unitPrice,
+          });
+        } else {
+          const productVariantCreate = repoProductVariant.create({
+            unitPrice: +item.unitPrice,
+            purchasePrice: +item.purchasePrice,
+            productId: id,
+            ...item,
+          });
+          await repoProductVariant.save(productVariantCreate);
+        }
+      });
+    })();
+  }
+
+  // Handle product categories
+  let productCategoryPromise = Promise.resolve();
+  if (productCategories) {
+    productCategoryPromise = (async () => {
+      const repoPCategory = connection.getRepository(ProductCategoryEntity);
+
+      const existingCategories = await repoPCategory.find({
+        where: { productId: id },
+      });
+
+      if (existingCategories) {
+        const res = await repoPCategory.remove(existingCategories);
+      }
+
+      const productCategoryItems = productCategories.map((item: number) => {
+        return {
+          categoryId: +item,
+          productId: +id,
+        };
+      });
+      await repoPCategory.save(productCategoryItems);
+    })();
+  }
+
+  // Wait for both operations to complete
+  await Promise.all([productVariantPromise, productCategoryPromise]);
+
+  // Merge and save the updated product data
+  const updatedProduct = repository.merge(product, restData);
+  await repository.save(updatedProduct);
+
+  return res.status(200).json({
+    success: true,
+    message: `Updated product with id ${id}`,
+    data: updatedProduct,
+  });
+});
 
 // @desc Get active Products
 // @route GET /api/v1/products/active
@@ -1122,32 +1101,30 @@ export const updateProduct = asyncHandler(
 // @desc Delete a single Product
 // @route DELETE /api/v1/products/:id
 // @access Public
-export const deleteProduct = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: deleteProduct ${req.method} ${req.url}`);
+export const deleteProduct = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteProduct ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const productRepository = await connection.getRepository(ProductEntity);
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const productRepository = await connection.getRepository(ProductEntity);
 
-    // Check if the product exists
-    const product = await productRepository.findOneBy({ id });
-    if (!product) {
-      throw new Error(`Product not found with id #${id}`);
-    }
-
-    // If there are images associated with the product, delete them
-    if (product.images && product.images.length > 0) {
-      fileDeleteFunction(product.images);
-    }
-
-    // Delete the product
-    await productRepository.delete({ id });
-
-    return res.status(200).json({
-      success: true,
-      message: `Product with id ${id} deleted successfully.`,
-      data: product,
-    });
+  // Check if the product exists
+  const product = await productRepository.findOneBy({ id });
+  if (!product) {
+    throw new Error(`Product not found with id #${id}`);
   }
-);
+
+  // If there are images associated with the product, delete them
+  if (product.images && product.images.length > 0) {
+    fileDeleteFunction(product.images);
+  }
+
+  // Delete the product
+  await productRepository.delete({ id });
+
+  return res.status(200).json({
+    success: true,
+    message: `Product with id ${id} deleted successfully.`,
+    data: product,
+  });
+});

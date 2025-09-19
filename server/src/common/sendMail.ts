@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
-import { Options } from "nodemailer/lib/mailer";
+import nodemailer from 'nodemailer';
+import { Options } from 'nodemailer/lib/mailer';
 
 export const sendEmail = async (mailOptions: Options) => {
   try {
@@ -12,13 +12,18 @@ export const sendEmail = async (mailOptions: Options) => {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
       },
-    } as any);
+    } as unknown as {
+      host: string;
+      port: number;
+      secure: boolean;
+      auth: { user: string; pass: string };
+    });
 
     await transporter.sendMail(mailOptions);
 
-    console.log("email sent sucessfully");
+    console.log('email sent sucessfully');
   } catch (error) {
-    throw new Error("email not sent");
-    // console.log(error, "email not sent");
+    console.log(error, 'email not sent');
+    throw new Error('email not sent');
   }
 };

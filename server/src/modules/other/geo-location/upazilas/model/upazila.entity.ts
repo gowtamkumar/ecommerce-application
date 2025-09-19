@@ -1,31 +1,24 @@
-import "reflect-metadata";
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { DistrictEntity } from "../../districts/model/district.entity";
-import { UnionEntity } from "../../unions/model/union.entity";
-import { ShippingAddressEntity } from "../../../../shipping-address/model/shipping-address.entity";
+import 'reflect-metadata';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { DistrictEntity } from '../../districts/model/district.entity';
+import { UnionEntity } from '../../unions/model/union.entity';
+import { ShippingAddressEntity } from '../../../../shipping-address/model/shipping-address.entity';
 
-@Entity("upazilas")
+@Entity('upazilas')
 export class UpazilaEntity {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({ name: "district_id", nullable: true })
+  @Column({ name: 'district_id', nullable: true })
   districtId!: number;
   @ManyToOne((_type) => DistrictEntity, (district) => district.upazilas)
-  @JoinColumn({ name: "district_id" })
+  @JoinColumn({ name: 'district_id' })
   district!: DistrictEntity;
 
   @Column()
   name!: string;
 
-  @Column({ name: "bn_name" })
+  @Column({ name: 'bn_name' })
   bnName!: string;
 
   @Column({ nullable: true })
@@ -34,9 +27,6 @@ export class UpazilaEntity {
   @OneToMany((_type) => UnionEntity, (union) => union.upazila)
   unions!: UnionEntity[];
 
-  @OneToMany(
-    (_type) => ShippingAddressEntity,
-    (shippingAddress) => shippingAddress.upazila
-  )
+  @OneToMany((_type) => ShippingAddressEntity, (shippingAddress) => shippingAddress.upazila)
   shippingAddress!: ShippingAddressEntity[];
 }

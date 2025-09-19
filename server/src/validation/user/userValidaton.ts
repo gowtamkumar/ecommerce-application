@@ -1,27 +1,27 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const userValidationSchema = z.object({
   name: z.string({
-    required_error: "Name is required",
-    invalid_type_error: "Name must be a string",
+    required_error: 'Name is required',
+    invalid_type_error: 'Name must be a string',
   }),
   username: z
-    .string({ required_error: "Name is required" })
-    .min(5, { message: "Must be 5 or more characters long" }),
+    .string({ required_error: 'Name is required' })
+    .min(5, { message: 'Must be 5 or more characters long' }),
   password: z
     .string({
-      required_error: "password is required",
+      required_error: 'password is required',
     })
-    .min(6, { message: "Must be 6 or more characters long" }),
+    .min(6, { message: 'Must be 6 or more characters long' }),
   phone: z.string().optional(),
   email: z
     .string({
-      required_error: "email is required",
+      required_error: 'email is required',
     })
     .email(),
   dob: z.string().optional(),
   resetToken: z.string().optional(),
   // resetTokenExpire: z.number().optional(),
-  role: z.enum(["Admin", "User"]).optional(),
-  status: z.enum(["Active", "Inactive", "Block"]).optional(),
+  role: z.enum(['Admin', 'User']).optional(),
+  status: z.enum(['Active', 'Inactive', 'Block']).optional(),
 });

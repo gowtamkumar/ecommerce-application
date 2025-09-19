@@ -1,29 +1,27 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
-import { MembershipEntity } from "../model/membership.entity";
-import { createMembershipValidationSchema } from "../../../validation/membership/memberShipValidation";
+import { Request, Response, NextFunction } from 'express';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../config/db';
+import { logger } from '../../../middlewares/logger';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { MembershipEntity } from '../model/membership.entity';
+import { createMembershipValidationSchema } from '../../../validation/membership/memberShipValidation';
 
 // @desc Get all Membership
 // @route GET /api/v1/Membership
 // @access Public
-export const getMemberships = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: getMemberships ${req.method} ${req.url}`);
+export const getMemberships = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getMemberships ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(MembershipEntity);
-    const result = await repository.find();
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(MembershipEntity);
+  const result = await repository.find();
 
-    return res.status(200).json({
-      success: true,
-      message: "Get all Membership",
-      data: result,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get all Membership',
+    data: result,
+  });
+});
 
 // @desc Get a single Membership
 // @route GET /api/v1/Membership/:id
@@ -46,7 +44,7 @@ export const getMembership = asyncHandler(
       message: `Get a single Membership of id ${req.params.id}`,
       data: result,
     });
-  }
+  },
 );
 
 // async applyMembershipBenefits(userId: string, orderAmount: number, basePoints: number) {
@@ -121,103 +119,97 @@ export const getMembership = asyncHandler(
 // @desc Create a single Membership
 // @route POST /api/v1/Membership
 // @access Public
-export const createMembership = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: createMembership ${req.method} ${req.url}`);
+export const createMembership = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: createMembership ${req.method} ${req.url}`);
 
-    const validation = createMembershipValidationSchema.safeParse(req.body);
+  const validation = createMembershipValidationSchema.safeParse(req.body);
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(MembershipEntity);
-
-    const newMembership = repository.create(validation.data);
-    const save = await repository.save(newMembership);
-
-    return res.status(200).json({
-      success: true,
-      message: "Create a new Membership",
-      data: save,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(MembershipEntity);
+
+  const newMembership = repository.create(validation.data);
+  const save = await repository.save(newMembership);
+
+  return res.status(200).json({
+    success: true,
+    message: 'Create a new Membership',
+    data: save,
+  });
+});
 
 // @desc Update a single Membership
 // @route PUT /api/v1/Membership/:id
 // @access Public
-export const updateMembership = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: updateMembership ${req.method} ${req.url}`);
+export const updateMembership = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: updateMembership ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
+  const { id } = req.params;
+  const connection = await getDBConnection();
 
-    const validation = createMembershipValidationSchema.safeParse({
-      ...req.body,
-    });
+  const validation = createMembershipValidationSchema.safeParse({
+    ...req.body,
+  });
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const repository = await connection.getRepository(MembershipEntity);
-    const result = await repository.findOneBy({ id });
-
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    const updateData = await repository.merge(result, validation.data);
-    await repository.save(updateData);
-    return res.status(200).json({
-      success: true,
-      message: `Update a single Membership of id ${req.params.id}`,
-      data: updateData,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const repository = await connection.getRepository(MembershipEntity);
+  const result = await repository.findOneBy({ id });
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  const updateData = await repository.merge(result, validation.data);
+  await repository.save(updateData);
+  return res.status(200).json({
+    success: true,
+    message: `Update a single Membership of id ${req.params.id}`,
+    data: updateData,
+  });
+});
 
 // @desc Delete a single Membership
 // @route DELETE /api/v1/Membership/:id
 // @access Public
-export const deleteMembership = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: deleteMembership ${req.method} ${req.url}`);
+export const deleteMembership = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteMembership ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(MembershipEntity);
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(MembershipEntity);
 
-    const result = await repository.findOneBy({ id });
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    await repository.delete({ id });
-
-    return res.status(200).json({
-      success: true,
-      message: `Delete a single Membership of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  await repository.delete({ id });
+
+  return res.status(200).json({
+    success: true,
+    message: `Delete a single Membership of id ${req.params.id}`,
+    data: result,
+  });
+});

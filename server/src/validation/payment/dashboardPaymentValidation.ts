@@ -1,19 +1,19 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const dashboardPaymentValidationSchema = z.object({
   paymentDate: z.string({
-    required_error: "Date is required",
+    required_error: 'Date is required',
   }),
-  paymentType: z.enum(["Debit", "Credit"], {
-    required_error: "Payment Type is required",
+  paymentType: z.enum(['Debit', 'Credit'], {
+    required_error: 'Payment Type is required',
   }),
   orderId: z.number().optional(),
   userId: z.number({
-    required_error: "user is required",
+    required_error: 'user is required',
   }),
   paymentMethod: z.string({
-    required_error: "Payment method is required",
+    required_error: 'Payment method is required',
   }),
-  amount: z.number({ required_error: "Amount is Required" }),
-  due: z.number({ required_error: "Due is Required" }),
+  amount: z.number({ required_error: 'Amount is Required' }),
+  due: z.number({ required_error: 'Due is Required' }),
 });

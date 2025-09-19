@@ -1,27 +1,22 @@
-import multer from "multer";
-import path, { extname, resolve } from "path";
-import { CustomRequest } from "../enums/custom-request-type";
+import multer from 'multer';
+import path, { extname } from 'path';
 
 // Set up storage for uploaded files
 const storage = multer.diskStorage({
   destination: (req, file, callback: any) => {
-    if (!file) return callback(new Error("Upload file error"), null);
+    if (!file) return callback(new Error('Upload file error'), null);
     return callback(null, 'public/uploads');
   },
 
-  filename: (req: CustomRequest, file, callback: any) => {
+  filename: (file: any, callback: any) => {
     if (file) {
       const imagePattern = /(jpg|jpeg|png)/gi;
-      const mathExt = extname(file.originalname).replace(".", "");
+      const mathExt = extname(file.originalname).replace('.', '');
 
       if (!imagePattern.test(mathExt)) {
-        return callback(
-          new Error("Error: Images only! (jpeg, jpg, png)"),
-          null
-        );
+        return callback(new Error('Error: Images only! (jpeg, jpg, png)'), null);
       }
-      const imageName =
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname);
+      const imageName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
       return callback(null, imageName);
     }
   },

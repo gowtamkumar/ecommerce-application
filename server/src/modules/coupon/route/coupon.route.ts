@@ -1,19 +1,19 @@
-import express from "express";
+import express from 'express';
 import {
   createCoupon,
   deleteCoupon,
   getCoupon,
   getCoupons,
   updateCoupon,
-} from "../controller/coupon.controller";
-import { AuthGuard } from "../../../middlewares/auth.middleware";
+} from '../controller/coupon.controller';
+import { AuthGuard } from '../../../middlewares/auth.middleware';
 
 const router = express.Router();
 
-router.route("/").get(getCoupons).post(AuthGuard, createCoupon);
+router.route('/').get(getCoupons).post(AuthGuard, createCoupon);
 
 router
-  .route("/:id")
+  .route('/:id')
   .get(AuthGuard, getCoupon)
   .patch(AuthGuard, updateCoupon)
   .delete(AuthGuard, deleteCoupon);

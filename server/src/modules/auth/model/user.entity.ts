@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -6,22 +6,22 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { CommentEntity } from "../../blog/comment/model/comment.entity";
-import { PostEntity } from "../../blog/post/model/post.entity";
-import { OrderEntity } from "../../order/model/order.entity";
-import { NotificationEntity } from "../../other/notification/model/notification.entity";
-import { PaymentEntity } from "../../payment/model/payment.entity";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { ReviewEntity } from "../../review/model/review.entity";
-import { ShippingAddressEntity } from "../../shipping-address/model/shipping-address.entity";
-import { WishListEntity } from "../../wishlist/model/wishlist.entity";
-import { GenderEnum, TypeEnum } from "../enums";
-import { RoleEnum } from "../enums/role.enum";
-import { StatusEnum } from "../enums/status.enum";
-import { UserActivityEntity } from "./user-activity.entity";
+} from 'typeorm';
+import { CommentEntity } from '../../blog/comment/model/comment.entity';
+import { PostEntity } from '../../blog/post/model/post.entity';
+import { OrderEntity } from '../../order/model/order.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
+import { PaymentEntity } from '../../payment/model/payment.entity';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { ReviewEntity } from '../../review/model/review.entity';
+import { ShippingAddressEntity } from '../../shipping-address/model/shipping-address.entity';
+import { WishListEntity } from '../../wishlist/model/wishlist.entity';
+import { GenderEnum, TypeEnum } from '../enums';
+import { RoleEnum } from '../enums/role.enum';
+import { StatusEnum } from '../enums/status.enum';
+import { UserActivityEntity } from './user-activity.entity';
 
-@Entity("users")
+@Entity('users')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -38,7 +38,7 @@ export class UserEntity {
   @Column({ unique: true })
   email!: string;
 
-  @Column({ type: "enum", enum: TypeEnum, default: TypeEnum.Customer })
+  @Column({ type: 'enum', enum: TypeEnum, default: TypeEnum.Customer })
   type!: TypeEnum;
 
   @Column({ unique: true, nullable: true })
@@ -47,7 +47,7 @@ export class UserEntity {
   @Column({ nullable: true })
   dob?: string;
 
-  @Column({ type: "enum", enum: GenderEnum, nullable: true })
+  @Column({ type: 'enum', enum: GenderEnum, nullable: true })
   gender!: GenderEnum;
 
   @Column({ nullable: true })
@@ -59,38 +59,38 @@ export class UserEntity {
   @Column({ nullable: true })
   image?: string;
 
-  @Column({ type: "enum", enum: RoleEnum, default: RoleEnum.User })
+  @Column({ type: 'enum', enum: RoleEnum, default: RoleEnum.User })
   role!: RoleEnum;
 
   // @Column({ name: "is_admin", type: "boolean", default: false })
   // isAdmin!: boolean;
 
-  @Column({ type: "enum", enum: StatusEnum, default: StatusEnum.Active })
+  @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.Active })
   status!: StatusEnum;
 
-  @Column({ name: "last_login", type: "timestamp", nullable: true })
+  @Column({ name: 'last_login', type: 'timestamp', nullable: true })
   lastLogin?: string;
 
-  @Column({ name: "last_logout", type: "timestamp", nullable: true })
+  @Column({ name: 'last_logout', type: 'timestamp', nullable: true })
   lastLogout?: string;
 
-  @Column({ name: "ip_address", nullable: true })
+  @Column({ name: 'ip_address', nullable: true })
   ipAddress?: string;
 
-  @Column({ name: "divice_id", nullable: true })
+  @Column({ name: 'divice_id', nullable: true })
   diviceId?: string;
 
-  @Column({ name: "reset_token", nullable: true })
+  @Column({ name: 'reset_token', nullable: true })
   resetToken?: string;
 
   // @Column({ name: "reset_token_expire", type: "bigint", nullable: true })
   // resetTokenExpire?: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
   // Relation
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 
   @OneToMany((_type) => ProductEntity, (product) => product.user)

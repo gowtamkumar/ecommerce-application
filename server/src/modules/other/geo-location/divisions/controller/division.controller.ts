@@ -1,77 +1,73 @@
-import fs from "fs";
+import fs from 'fs';
 
-import { Request, Response, NextFunction } from "express";
-import { DivisionEntity } from "../model/division.entity";
-import { DistrictEntity } from "../../districts/model/district.entity";
-import { UpazilaEntity } from "../../upazilas/model/upazila.entity";
-import { UnionEntity } from "../../unions/model/union.entity";
-import { asyncHandler } from "../../../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../../../config/db";
-import { CustomRequest } from "../../../../../enums/custom-request-type";
+import { Request, Response, NextFunction } from 'express';
+import { DivisionEntity } from '../model/division.entity';
+import { DistrictEntity } from '../../districts/model/district.entity';
+import { UpazilaEntity } from '../../upazilas/model/upazila.entity';
+import { UnionEntity } from '../../unions/model/union.entity';
+import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../../../config/db';
+import { CustomRequest } from '../../../../../enums/custom-request-type';
 
 // @desc Get all Division
 // @route GET /api/v1/Division
 // @access Public
-export const getDivisions = asyncHandler(
-  async (req: Request, res: Response) => {
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(DivisionEntity);
+export const getDivisions = asyncHandler(async (req: Request, res: Response) => {
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(DivisionEntity);
 
-    const result = await repository.find();
+  const result = await repository.find();
 
-    return res.status(200).json({
-      success: true,
-      message: "Get all Division",
-      data: result,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get all Division',
+    data: result,
+  });
+});
 
 // @desc Get a single Division
 // @route GET /api/v1/Division/:id
 // @access Public
-export const getDivision = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(DivisionEntity);
+export const getDivision = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(DivisionEntity);
 
-    // const qb = repository.createQueryBuilder("division");
-    // qb.select([
-    //   "division",
-    //   "division.name",
-    //   "division.bnName",
-    //   "districts.id",
-    //   "districts.name",
-    //   "districts.bnName",
-    //   "upazilas.id",
-    //   "upazilas.name",
-    //   "upazilas.bnName",
-    //   "unions.id",
-    //   "unions.name",
-    //   "unions.bnName",
-    // ]);
+  // const qb = repository.createQueryBuilder("division");
+  // qb.select([
+  //   "division",
+  //   "division.name",
+  //   "division.bnName",
+  //   "districts.id",
+  //   "districts.name",
+  //   "districts.bnName",
+  //   "upazilas.id",
+  //   "upazilas.name",
+  //   "upazilas.bnName",
+  //   "unions.id",
+  //   "unions.name",
+  //   "unions.bnName",
+  // ]);
 
-    // qb.leftJoin("division.districts", "districts");
-    // qb.leftJoin("districts.upazilas", "upazilas");
-    // qb.leftJoin("upazilas.unions", "unions");
+  // qb.leftJoin("division.districts", "districts");
+  // qb.leftJoin("districts.upazilas", "upazilas");
+  // qb.leftJoin("upazilas.unions", "unions");
 
-    // qb.where({ id });
-    // const result = await qb.getOne();
+  // qb.where({ id });
+  // const result = await qb.getOne();
 
-    const result = await repository.findOneBy({ id });
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Division of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Division of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Division
 // @route POST /api/v1/Division
@@ -87,8 +83,8 @@ export const syncGeoLocation = asyncHandler(
     try {
       // Divisions start
       const fileDivisions = fs.readFileSync(
-        process.cwd() + "/database/fack-data/divisions.json",
-        "utf8"
+        process.cwd() + '/database/fack-data/divisions.json',
+        'utf8',
       );
       const jsonDataDivisions = JSON.parse(fileDivisions);
 
@@ -99,7 +95,7 @@ export const syncGeoLocation = asyncHandler(
           name: item.name.trim(),
           url: item.url.trim(),
           bnName: item.bn_name.trim(),
-        }))
+        })),
       );
       await queryRunner.manager.save(newDivision);
       // Divisions end
@@ -107,8 +103,8 @@ export const syncGeoLocation = asyncHandler(
       // district start
 
       const fileDistrict = fs.readFileSync(
-        process.cwd() + "/database/fack-data/districts.json",
-        "utf8"
+        process.cwd() + '/database/fack-data/districts.json',
+        'utf8',
       );
       const jsonDataDistrict = JSON.parse(fileDistrict);
 
@@ -121,7 +117,7 @@ export const syncGeoLocation = asyncHandler(
           bnName: item.bn_name.trim(),
           lat: item.lat.trim(),
           lon: item.lon.trim(),
-        }))
+        })),
       );
 
       await queryRunner.manager.save(newDistrict);
@@ -129,8 +125,8 @@ export const syncGeoLocation = asyncHandler(
       // ...................................................................
       // upazila start
       const fileupazilas = fs.readFileSync(
-        process.cwd() + "/database/fack-data/upazilas.json",
-        "utf8"
+        process.cwd() + '/database/fack-data/upazilas.json',
+        'utf8',
       );
       const jsonDataUpazilas = JSON.parse(fileupazilas);
 
@@ -142,16 +138,13 @@ export const syncGeoLocation = asyncHandler(
           districtId: item.district_id,
           bnName: item.bn_name.trim(),
           url: item.url.trim(),
-        }))
+        })),
       );
       await queryRunner.manager.save(newUpazila);
       // upazila end
       // ...................................................................
       // union start
-      const fileUnions = fs.readFileSync(
-        process.cwd() + "/database/fack-data/unions.json",
-        "utf8"
-      );
+      const fileUnions = fs.readFileSync(process.cwd() + '/database/fack-data/unions.json', 'utf8');
       const jsonDataUnions = JSON.parse(fileUnions);
       const repositoryUnion = dbconnection.getRepository(UnionEntity);
 
@@ -161,7 +154,7 @@ export const syncGeoLocation = asyncHandler(
           upazillaId: item.upazilla_id,
           bnName: item.bn_name.trim(),
           url: item.url.trim(),
-        }))
+        })),
       );
       // union end
 
@@ -172,19 +165,17 @@ export const syncGeoLocation = asyncHandler(
       // Send success response
       return res.status(201).json({
         success: true,
-        message: "Division, Upazila and Union created",
+        message: 'Division, Upazila and Union created',
       });
     } catch (error) {
-      console.error("Transaction failed:", error);
+      console.error('Transaction failed:', error);
       await queryRunner.rollbackTransaction();
       // Send error response
-      return res
-        .status(500)
-        .json({ success: false, message: "Could not sync geolocation data" });
+      return res.status(500).json({ success: false, message: 'Could not sync geolocation data' });
     } finally {
       await queryRunner.release();
     }
-  }
+  },
 );
 
 // @desc Create a single Division
@@ -288,10 +279,7 @@ export const syncGeoLocation = asyncHandler(
 export const createDivision = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
 
-  const file = fs.readFileSync(
-    process.cwd() + "/database/fack-data/divisions.json",
-    "utf8"
-  );
+  const file = fs.readFileSync(process.cwd() + '/database/fack-data/divisions.json', 'utf8');
   const jsonData = JSON.parse(file);
 
   // const validation = DivisionValidationSchema.safeParse({
@@ -308,13 +296,13 @@ export const createDivision = asyncHandler(async (req: CustomRequest, res: Respo
   const repository = connection.getRepository(DivisionEntity);
 
   const newDivision = repository.create(
-    jsonData[2].data.map((item: any) => ({ ...item, bnName: item.bn_name }))
+    jsonData[2].data.map((item: any) => ({ ...item, bnName: item.bn_name })),
   );
   const save = await repository.save(newDivision);
 
   return res.status(200).json({
     success: true,
-    message: "Create a new Division",
+    message: 'Create a new Division',
     data: save,
   });
 });

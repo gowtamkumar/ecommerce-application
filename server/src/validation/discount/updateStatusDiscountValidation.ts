@@ -1,5 +1,5 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const updateStatusDiscountValidation = z.object({
-  status: z.enum(["Active", "Inactive"]).optional(),
+  status: z.enum(['Active', 'Inactive']).optional(),
 });

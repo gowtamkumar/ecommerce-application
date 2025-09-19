@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -7,39 +7,39 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { OrderEntity } from "../../order/model/order.entity";
-import { OrderTrackingStatusEnum } from "../enums/order-tracking-status.enum";
+} from 'typeorm';
+import { OrderEntity } from '../../order/model/order.entity';
+import { OrderTrackingStatusEnum } from '../enums/order-tracking-status.enum';
 
-@Entity("order_trackings")
+@Entity('order_trackings')
 export class OrderTrackingEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "order_id" })
+  @Column({ name: 'order_id' })
   orderId!: number;
   @ManyToOne((_type) => OrderEntity, (order) => order.orderTrackings, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "order_id" })
+  @JoinColumn({ name: 'order_id' })
   order!: OrderEntity;
 
-  @Column({ name: "user_id", nullable: true })
+  @Column({ name: 'user_id', nullable: true })
   userId!: number;
 
   @Column({ nullable: true })
   location!: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: OrderTrackingStatusEnum,
     default: OrderTrackingStatusEnum.OrderPlaced,
   })
   status!: OrderTrackingStatusEnum;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 }

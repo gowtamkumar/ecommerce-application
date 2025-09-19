@@ -1,13 +1,13 @@
-import { join } from "path";
-import { getDBConnection } from "../config/db";
-import { FileEntity } from "../modules/other/file/model/file.entity";
-import fs from "fs";
-import { logger } from "../middlewares/logger";
+import { join } from 'path';
+import { getDBConnection } from '../config/db';
+import { FileEntity } from '../modules/other/file/model/file.entity';
+import fs from 'fs';
+import { logger } from '../middlewares/logger';
 
 export const fileDeleteFunction = async (images: any) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(FileEntity);
-  const directory = join(process.cwd(), "/public/uploads");
+  const directory = join(process.cwd(), '/public/uploads');
 
   // Use Promise.all to handle multiple file deletions in parallel
   const fileDeletions = images.map(async (item: any) => {

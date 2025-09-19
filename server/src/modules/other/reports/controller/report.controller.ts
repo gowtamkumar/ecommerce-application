@@ -1,62 +1,61 @@
-import dayjs from "dayjs";
-import { Request, Response } from "express";
-import { getDBConnection } from "../../../../config/db";
-import { asyncHandler } from "../../../../middlewares/async.middleware";
-import { logger } from "../../../../middlewares/logger";
-import { topSellingProductQuery } from "../../../../sqlQuery";
-import { OrderEntity } from "../../../order/model/order.entity";
+import dayjs from 'dayjs';
+import { Request, Response } from 'express';
+import { getDBConnection } from '../../../../config/db';
+import { asyncHandler } from '../../../../middlewares/async.middleware';
+import { logger } from '../../../../middlewares/logger';
+import { topSellingProductQuery } from '../../../../sqlQuery';
+import { OrderEntity } from '../../../order/model/order.entity';
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report
 // @access Public
-export const getDashboardReport = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: getDashbordReport ${req.method} ${req.url}`);
-    // logger.error(`Error: something `); //this is error log
-    // logger.log({
-    //   level: 'info',
-    //   message: 'Hello distributed log files!'
-    // })
+export const getDashboardReport = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getDashbordReport ${req.method} ${req.url}`);
+  // logger.error(`Error: something `); //this is error log
+  // logger.log({
+  //   level: 'info',
+  //   message: 'Hello distributed log files!'
+  // })
 
-    const { status, startDate, endDate }: any = req.query;
-    const connection = await getDBConnection();
+  const { status, startDate, endDate }: any = req.query;
+  const connection = await getDBConnection();
 
-    const fromDate = dayjs(startDate).toISOString();
-    const toDate = dayjs(endDate).toISOString();
+  const fromDate = dayjs(startDate).toISOString();
+  const toDate = dayjs(endDate).toISOString();
 
-    const orderRepository = connection.getRepository(OrderEntity);
-    const qb = orderRepository.createQueryBuilder("order");
-    qb.select(["order", "orderItems", "product", "payments", "user.name"]);
-    qb.leftJoin("order.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("order.user", "user");
-    qb.leftJoin("order.payments", "payments");
+  const orderRepository = connection.getRepository(OrderEntity);
+  const qb = orderRepository.createQueryBuilder('order');
+  qb.select(['order', 'orderItems', 'product', 'payments', 'user.name']);
+  qb.leftJoin('order.orderItems', 'orderItems');
+  qb.leftJoin('orderItems.product', 'product');
+  qb.leftJoin('order.user', 'user');
+  qb.leftJoin('order.payments', 'payments');
 
-    if (status) qb.where({ status });
-    qb.andWhere(`order.createdAt BETWEEN '${fromDate}' AND '${toDate}'`);
-    qb.orderBy("order.trackingNo", "DESC");
-    const orders = await qb.getMany();
-    // user info
-    const user = await connection.query(
-      `SELECT
+  if (status) qb.where({ status });
+  qb.andWhere(`order.createdAt BETWEEN '${fromDate}' AND '${toDate}'`);
+  qb.orderBy('order.trackingNo', 'DESC');
+  const orders = await qb.getMany();
+  // user info
+  const user = await connection.query(
+    `SELECT
           SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS total_active_user,
           SUM(CASE WHEN status = 'Inactive' THEN 1 ELSE 0 END) AS total_inactive_user,
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
-      FROM users`
-    );
+      FROM users`,
+  );
 
-    const payments = await connection.query(
-      `SELECT
+  const payments = await connection.query(
+    `SELECT
         SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount,
         SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_debit_amount,
         SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_credit_amount,
         SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_credit_amount
       FROM payments
-      WHERE created_at BETWEEN '${fromDate}' AND '${toDate}'`
-    );
+      WHERE created_at BETWEEN '${fromDate}' AND '${toDate}'`,
+  );
 
-    // order sale, count etc,
-    const results = await connection.query(`
+  // order sale, count etc,
+  const results = await connection.query(`
       SELECT
           SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_order_count,
           SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_order_count,
@@ -78,8 +77,8 @@ export const getDashboardReport = asyncHandler(
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
 
-    const top_selling_product = await connection.query(
-      `with orderItems as (
+  const top_selling_product = await connection.query(
+    `with orderItems as (
           SELECT 
             oi.product_id AS product_id,
             SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
@@ -102,11 +101,11 @@ export const getDashboardReport = asyncHandler(
         products.alert_qty
       from orderItems oI
       LEFT JOIN products ON products.id = oI.product_id;
-    `
-    );
+    `,
+  );
 
-    const top_customers = await connection.query(
-      `
+  const top_customers = await connection.query(
+    `
         WITH customerSales AS (
           SELECT 
               users.id AS customer_id,
@@ -131,11 +130,11 @@ export const getDashboardReport = asyncHandler(
             cs.total_qty
         FROM customerSales cs
         ORDER BY cs.total_sale_amount DESC;
-    `
-    );
+    `,
+  );
 
-    const product_alert_stock_report = await connection.query(
-      `
+  const product_alert_stock_report = await connection.query(
+    `
      WITH productVariants AS (
         SELECT 
             product_id,
@@ -156,11 +155,11 @@ export const getDashboardReport = asyncHandler(
       WHERE products.alert_qty > productVariants.stock_qty
       ORDER BY 
           productVariants.stock_qty ASC
-    `
-    );
+    `,
+  );
 
-    const loss_profit = await connection.query(
-      `
+  const loss_profit = await connection.query(
+    `
       with orderItems as (
       SELECT 
             oi.product_id AS product_id,
@@ -182,39 +181,36 @@ export const getDashboardReport = asyncHandler(
         products.name
       from orderItems oI
       LEFT JOIN products ON products.id = oI.product_id 
-    `
-    );
+    `,
+  );
 
-    return res.status(200).json({
-      success: true,
-      message: "Get Dashboard Report",
-      data: {
-        ...user[0],
-        ...results[0],
-        orders,
-        top_selling_product,
-        top_customers,
-        product_alert_stock_report,
-        loss_profit,
-        payments: payments[0],
-        // user_activity,
-      },
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get Dashboard Report',
+    data: {
+      ...user[0],
+      ...results[0],
+      orders,
+      top_selling_product,
+      top_customers,
+      product_alert_stock_report,
+      loss_profit,
+      payments: payments[0],
+      // user_activity,
+    },
+  });
+});
 
-export const getTopSellingProduct = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: getTopSellingProduct ${req.method} ${req.url}`);
+export const getTopSellingProduct = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getTopSellingProduct ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
+  const connection = await getDBConnection();
 
-    const topSellingProducts = await connection.query(topSellingProductQuery);
+  const topSellingProducts = await connection.query(topSellingProductQuery);
 
-    return res.status(200).json({
-      success: true,
-      message: "Get Top selling Products",
-      data: topSellingProducts,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get Top selling Products',
+    data: topSellingProducts,
+  });
+});

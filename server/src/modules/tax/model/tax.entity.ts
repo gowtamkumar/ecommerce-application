@@ -1,9 +1,9 @@
-import "reflect-metadata";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { Status } from "../../../enums/status.enum";
+import 'reflect-metadata';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { Status } from '../../../enums/status.enum';
 
-@Entity("taxs")
+@Entity('taxs')
 export class TaxEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -14,10 +14,10 @@ export class TaxEntity {
   @Column()
   value!: number;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 
-  @Column({ type: "enum", enum: Status, default: Status.Active })
+  @Column({ type: 'enum', enum: Status, default: Status.Active })
   status!: Status;
 
   @OneToMany((_type) => ProductEntity, (product) => product.tax)

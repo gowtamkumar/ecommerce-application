@@ -1,11 +1,11 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
 @Entity('memberships')
 export class MembershipEntity {

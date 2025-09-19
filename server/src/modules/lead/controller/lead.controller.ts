@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { LeadEntity } from "../model/lead.entity";
-import { leadValidationSchema } from "../../../validation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { Request, Response, NextFunction } from 'express';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../config/db';
+import { LeadEntity } from '../model/lead.entity';
+import { leadValidationSchema } from '../../../validation';
+import { logger } from '../../../middlewares/logger';
+import { CustomRequest } from '../../../enums/custom-request-type';
 
 // @desc Get all Lead
 // @route GET /api/v1/Lead
@@ -18,7 +18,7 @@ export const getLeads = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get all Lead",
+    message: 'Get all Lead',
     data: result,
   });
 });
@@ -26,26 +26,24 @@ export const getLeads = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get a single Lead
 // @route GET /api/v1/Lead/:id
 // @access Public
-export const getLead = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getLead ${req.method} ${req.url}`);
+export const getLead = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getLead ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(LeadEntity);
-    const result = await repository.findOneBy({ id });
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(LeadEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Lead of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Lead of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Lead
 // @route POST /api/v1/Lead
@@ -57,7 +55,7 @@ export const createLead = asyncHandler(async (req: CustomRequest, res: Response)
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 
@@ -82,7 +80,7 @@ export const createLead = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: "Create a new Lead",
+    message: 'Create a new Lead',
     data: save,
   });
 });
@@ -102,7 +100,7 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 

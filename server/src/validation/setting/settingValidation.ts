@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const settingValidationSchema = z.object({
   siteName: z.string({
-    required_error: "Company Name is required",
+    required_error: 'Company Name is required',
   }),
   orderFreeShippingAmount: z.string().optional(),
   image: z.string().optional(),
@@ -13,7 +13,7 @@ export const settingValidationSchema = z.object({
   phone: z.string().optional(),
   currencyId: z.number().optional(),
   userId: z.number({
-    required_error: "User is required",
+    required_error: 'User is required',
   }),
   helpSupport: z.any().optional(),
   socialLink: z.any().optional(),

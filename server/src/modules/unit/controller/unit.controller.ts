@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../config/db";
-import { UnitEntity } from "../model/unit.entity";
-import { unitValidationSchema } from "../../../validation";
-import { logger } from "../../../middlewares/logger";
-import { CustomRequest } from "../../../enums/custom-request-type";
+import { Request, Response, NextFunction } from 'express';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../config/db';
+import { UnitEntity } from '../model/unit.entity';
+import { unitValidationSchema } from '../../../validation';
+import { logger } from '../../../middlewares/logger';
+import { CustomRequest } from '../../../enums/custom-request-type';
 
 // @desc Get all Unit
 // @route GET /api/v1/Unit
@@ -19,7 +19,7 @@ export const getUnits = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get all Unit",
+    message: 'Get all Unit',
     data: result,
   });
 });
@@ -27,26 +27,24 @@ export const getUnits = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get a single Unit
 // @route GET /api/v1/Unit/:id
 // @access Public
-export const getUnit = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getUnit ${req.method} ${req.url}`);
+export const getUnit = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getUnit ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(UnitEntity);
-    const result = await repository.findOneBy({ id });
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(UnitEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Unit of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Unit of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Unit
 // @route POST /api/v1/Unit
@@ -62,7 +60,7 @@ export const createUnit = asyncHandler(async (req: CustomRequest, res: Response)
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 
@@ -79,7 +77,7 @@ export const createUnit = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: "Create a new Unit",
+    message: 'Create a new Unit',
     data: save,
   });
 });

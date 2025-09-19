@@ -237,9 +237,9 @@ export const productsQuery = async (queryData: any) => {
     return [
       ...new Set(
         filter
-          .split(",")
-          .filter((id: any) => id.trim() !== "" && !isNaN(id)) // Ensure valid numbers
-          .map((id: any) => parseInt(id.trim()))
+          .split(',')
+          .filter((id: any) => id.trim() !== '' && !isNaN(id)) // Ensure valid numbers
+          .map((id: any) => parseInt(id.trim())),
       ),
     ];
   };
@@ -277,7 +277,7 @@ export const productsQuery = async (queryData: any) => {
           ORDER BY 
               pv.default DESC, pv.id
           LIMIT 1
-      ) pv ON true ${featured ? `WHERE p.featured = ${featured}` : ""}
+      ) pv ON true ${featured ? `WHERE p.featured = ${featured}` : ''}
   ),
   reviewsTable AS (
       SELECT 
@@ -458,18 +458,14 @@ WHERE 1=1
     AND "id" IN (
       SELECT product_id 
       FROM product_categories 
-      WHERE category_id IN (${categoryFilter.join(",")})
+      WHERE category_id IN (${categoryFilter.join(',')})
     )
   `
-      : ""
+      : ''
   }
-  ${brandFilter.length ? `AND "brandId" IN (${brandFilter.join(",")})` : ""}
-  ${
-    minPrice && maxPrice
-      ? `AND "finalPrice" BETWEEN ${minPrice} AND ${maxPrice}`
-      : ""
-  }
-  ${discount ? `AND "discountValue" BETWEEN 0 AND ${discount}` : ""}
+  ${brandFilter.length ? `AND "brandId" IN (${brandFilter.join(',')})` : ''}
+  ${minPrice && maxPrice ? `AND "finalPrice" BETWEEN ${minPrice} AND ${maxPrice}` : ''}
+  ${discount ? `AND "discountValue" BETWEEN 0 AND ${discount}` : ''}
   ${
     search
       ? `
@@ -478,15 +474,15 @@ WHERE 1=1
       LOWER("slug") ILIKE LOWER('%${search}%')
     )
   `
-      : ""
+      : ''
   }
       
  ${
    discountId
      ? `AND "discountId" = ${discountId}`
      : discountSlug
-     ? `AND "discountSlug" = '${discountSlug}'`
-     : ""
+       ? `AND "discountSlug" = '${discountSlug}'`
+       : ''
  }
 ORDER BY ${lowPrice && !highPrice ? `"finalPrice" ASC` : `"finalPrice" DESC`}
 LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}

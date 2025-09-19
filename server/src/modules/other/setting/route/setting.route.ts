@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   createSetting,
   dbBackup,
@@ -6,16 +6,16 @@ import {
   getSetting,
   getSettings,
   updateSetting,
-} from "../controller/setting.controller";
-import { AuthGuard } from "../../../../middlewares/auth.middleware";
+} from '../controller/setting.controller';
+import { AuthGuard } from '../../../../middlewares/auth.middleware';
 
 const router = express.Router();
 
-router.route("/").get(getSettings).post(AuthGuard, createSetting);
-router.route("/db-backup").post(AuthGuard, dbBackup);
+router.route('/').get(getSettings).post(AuthGuard, createSetting);
+router.route('/db-backup').post(AuthGuard, dbBackup);
 
 router
-  .route("/:id")
+  .route('/:id')
   .get(AuthGuard, getSetting)
   .patch(AuthGuard, updateSetting)
   .delete(AuthGuard, deleteSetting);

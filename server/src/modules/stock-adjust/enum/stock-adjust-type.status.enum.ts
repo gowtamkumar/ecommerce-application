@@ -1,4 +1,4 @@
 export enum StockAdjustTypeEnum {
-  Add = "Add",
-  Subtract = "Subtract",
+  Add = 'Add',
+  Subtract = 'Subtract',
 }

@@ -1,15 +1,8 @@
-import "reflect-metadata";
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
+import 'reflect-metadata';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductVariantEntity } from '../../products/product-variant/model/product-variant.entity';
 
-@Entity("colors")
+@Entity('colors')
 export class ColorEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -20,7 +13,7 @@ export class ColorEntity {
   @Column()
   color!: string;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 
   @OneToMany((_type) => ProductVariantEntity, (items) => items.color)

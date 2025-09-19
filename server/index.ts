@@ -1,17 +1,17 @@
-import "reflect-metadata";
-import express from "express";
-import dotenv from "dotenv";
-import morgan from "morgan";
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import colors from "colors";
-import { errorHandler } from "./src/middlewares/errorHandler";
-import { getDBConnection } from "./src/config/db";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
 import helmet from "helmet";
+import morgan from "morgan";
+import "reflect-metadata";
+import { getDBConnection } from "./src/config/db";
+import { errorHandler } from "./src/middlewares/errorHandler";
 // all routes
-import { setupRoutes } from "./src/routes/routes";
 import { rateLimit } from "express-rate-limit";
 import path from "path";
+import { setupRoutes } from "./src/routes/routes";
 
 const envFile =
   process.env.NODE_ENV === "production"
@@ -26,20 +26,8 @@ if (process.env.NODE_ENV === "development") {
   app.use(express.static(path.join(__dirname, "public")));
 }
 
-
 if (process.env.NODE_ENV === "production") {
-  app.use(
-    express.static(path.join(__dirname, "..", "public"), {
-      setHeaders: (res) => {
-        res.setHeader(
-          "Cache-Control",
-          "no-store, no-cache, must-revalidate, proxy-revalidate"
-        );
-        res.setHeader("Pragma", "no-cache");
-        res.setHeader("Expires", "0");
-      },
-    })
-  );
+  app.use(express.static(path.join(__dirname, "..", "public")));
 }
 
 // Connect to database

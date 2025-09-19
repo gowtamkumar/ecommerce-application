@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -7,40 +7,40 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { UserEntity } from "../../auth/model/user.entity";
-import { OrderEntity } from "../../order/model/order.entity";
+} from 'typeorm';
+import { UserEntity } from '../../auth/model/user.entity';
+import { OrderEntity } from '../../order/model/order.entity';
 
-@Entity("applied_coupons")
+@Entity('applied_coupons')
 export class AppliedCouponEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "coupon_id" })
+  @Column({ name: 'coupon_id' })
   couponId!: number;
 
-  @Column({ name: "order_id" })
+  @Column({ name: 'order_id' })
   orderId!: number;
   @ManyToOne((_type) => OrderEntity, (item) => item.appliedCouponItems, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "order_id" })
+  @JoinColumn({ name: 'order_id' })
   order!: OrderEntity;
 
   @Column({
-    name: "discount_amount",
-    type: "numeric",
+    name: 'discount_amount',
+    type: 'numeric',
     precision: 10,
     scale: 2,
   })
   discountAmount!: string;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.reviews)
-  @JoinColumn({ name: "user_id" })
+  @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
 
-  @CreateDateColumn({ name: "applied_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'applied_at', type: 'timestamp' })
   appliedAt?: string;
 }

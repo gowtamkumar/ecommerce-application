@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -6,10 +6,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { MenuStatus } from "../enums/menu-status.enum";
+} from 'typeorm';
+import { MenuStatus } from '../enums/menu-status.enum';
 
-@Entity("menus")
+@Entity('menus')
 export class MenuEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -17,45 +17,45 @@ export class MenuEntity {
   @Column()
   name!: string;
 
-  @Column({ type: "simple-json", nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   items!: string;
 
   // @Column({ nullable: true })
   // image!: string;
 
   @Column({
-    type: "boolean",
-    name: "footer_menu",
+    type: 'boolean',
+    name: 'footer_menu',
     default: false,
   })
   footerMenu!: boolean;
 
   @Column({
-    type: "boolean",
-    name: "top_bar_menu",
+    type: 'boolean',
+    name: 'top_bar_menu',
     default: false,
   })
   topBarMenu!: boolean;
 
   @Column({
-    type: "boolean",
-    name: "main_menu",
+    type: 'boolean',
+    name: 'main_menu',
     default: false,
   })
   mainMenu!: boolean;
 
   @Column({
-    type: "boolean",
+    type: 'boolean',
     default: true,
   })
   active!: boolean;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 }

@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import fs from "fs";
-import { join } from "path";
-import "reflect-metadata";
-import { sendEmail } from "../../../common/sendMail";
-import { getDBConnection } from "../../../config/db";
-import { CustomRequest } from "../../../enums/custom-request-type";
-import { asyncHandler } from "../../../middlewares/async.middleware";
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import { join } from 'path';
+import 'reflect-metadata';
+import { sendEmail } from '../../../common/sendMail';
+import { getDBConnection } from '../../../config/db';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { asyncHandler } from '../../../middlewares/async.middleware';
 import {
   getResetSignJwtToken,
   getResetVerifyJwtToken,
@@ -13,147 +13,138 @@ import {
   hashedPassword,
   matchPassword,
   sendCookiesResponse,
-} from "../../../middlewares/auth.middleware";
-import { logger } from "../../../middlewares/logger";
-import {
-  updateUserValidationSchema,
-  userValidationSchema,
-} from "../../../validation";
-import { forgotPasswordValidationSchema } from "../../../validation/user/forgotPasswordValidation";
-import { loginValidationSchema } from "../../../validation/user/loginValidation";
-import { resetPasswordValidationSchema } from "../../../validation/user/resetPasswordValidation";
-import { updatePasswordValidationSchema } from "../../../validation/user/updatePasswordValidation";
-import { FileEntity } from "../../other/file/model/file.entity";
-import { UserActivityEntity } from "../model/user-activity.entity";
-import { UserEntity } from "../model/user.entity";
+} from '../../../middlewares/auth.middleware';
+import { logger } from '../../../middlewares/logger';
+import { updateUserValidationSchema, userValidationSchema } from '../../../validation';
+import { forgotPasswordValidationSchema } from '../../../validation/user/forgotPasswordValidation';
+import { loginValidationSchema } from '../../../validation/user/loginValidation';
+import { resetPasswordValidationSchema } from '../../../validation/user/resetPasswordValidation';
+import { updatePasswordValidationSchema } from '../../../validation/user/updatePasswordValidation';
+import { FileEntity } from '../../other/file/model/file.entity';
+import { UserActivityEntity } from '../model/user-activity.entity';
+import { UserEntity } from '../model/user.entity';
 
 // @desc Register User
 // @route POST /api/v1/auth/register
 // @access Public
-export const register = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: register ${req.method} ${req.url}`);
+export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: register ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
+  const connection = await getDBConnection();
 
-    const validation = userValidationSchema.safeParse(req.body);
+  const validation = userValidationSchema.safeParse(req.body);
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const userRepository = connection.getRepository(UserEntity);
-    const findUser = await userRepository.findOne({
-      where: { username: validation.data.username },
-    });
-
-    if (findUser) {
-      throw new Error("User already registered");
-    }
-
-    const createUser = await userRepository.create({
-      ...validation.data,
-      password: await hashedPassword(validation.data.password),
-    });
-
-    if (!createUser) {
-      throw new Error("User Create not successful");
-    }
-
-    const user = await userRepository.save(createUser);
-
-    const token = getSignJwtToken(user);
-    const cookies = sendCookiesResponse(token, res);
-
-    if (!cookies) {
-      throw new Error("Token not set in cookies");
-    }
-
-    delete user.password;
-    return res.status(200).json({
-      success: true,
-      message: "Create a new Register",
-      data: user,
-      accessToken: token,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const userRepository = connection.getRepository(UserEntity);
+  const findUser = await userRepository.findOne({
+    where: { username: validation.data.username },
+  });
+
+  if (findUser) {
+    throw new Error('User already registered');
+  }
+
+  const createUser = await userRepository.create({
+    ...validation.data,
+    password: await hashedPassword(validation.data.password),
+  });
+
+  if (!createUser) {
+    throw new Error('User Create not successful');
+  }
+
+  const user = await userRepository.save(createUser);
+
+  const token = getSignJwtToken(user);
+  const cookies = sendCookiesResponse(token, res);
+
+  if (!cookies) {
+    throw new Error('Token not set in cookies');
+  }
+
+  delete user.password;
+  return res.status(200).json({
+    success: true,
+    message: 'Create a new Register',
+    data: user,
+    accessToken: token,
+  });
+});
 
 // @desc Get Users
 // @route GET /api/v1/auth/users
 // @access Public
-export const getUsers = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getUsers ${req.method} ${req.url}`);
+export const getUsers = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getUsers ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
+  const connection = await getDBConnection();
 
-    const userRepository = connection.getRepository(UserEntity);
+  const userRepository = connection.getRepository(UserEntity);
 
-    const results = await userRepository.find({
-      relations: {
-        products: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        email: true,
-        phone: true,
-        type: true,
-        point: true,
-        image: true,
-        role: true,
-        status: true,
-        lastLogin: true,
-        lastLogout: true,
-        ipAddress: true,
-        diviceId: true,
-        dob: true,
-        // products: true,
-      },
-    }); // populate is relation array data
+  const results = await userRepository.find({
+    relations: {
+      products: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+      phone: true,
+      type: true,
+      point: true,
+      image: true,
+      role: true,
+      status: true,
+      lastLogin: true,
+      lastLogout: true,
+      ipAddress: true,
+      diviceId: true,
+      dob: true,
+      // products: true,
+    },
+  }); // populate is relation array data
 
-    return res.status(200).json({
-      success: true,
-      message: "Get all users",
-      data: results,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get all users',
+    data: results,
+  });
+});
 
 // // @desc Get a single user
 // // @route GET /api/v1/auth/users/:id
 // // @access Private
-export const getUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getUser ${req.method} ${req.url}`);
+export const getUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getUser ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
+  const connection = await getDBConnection();
 
-    const userRepository = connection.getRepository(UserEntity);
+  const userRepository = connection.getRepository(UserEntity);
 
-    const user = await userRepository.findOne({ where: { id: req.params.id } });
+  const user = await userRepository.findOne({ where: { id: req.params.id } });
 
-    if (!user) {
-      throw new Error("User is not found");
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Get a user",
-      data: user,
-    });
+  if (!user) {
+    throw new Error('User is not found');
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: 'Get a user',
+    data: user,
+  });
+});
 
 // // @desc Get a single user
 // // @route GET /api/v1/auth/users/:id
@@ -183,10 +174,10 @@ export const getUserByEmail = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "user create by email successfully",
+      message: 'user create by email successfully',
       data: { ...user, accessToken: token },
     });
-  }
+  },
 );
 
 // // @desc Get a single user
@@ -221,82 +212,77 @@ export const getUserByEmail = asyncHandler(
 // // @desc Login User
 // // @route POST /api/v1/auth/login
 // // @access Public
-export const login = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: login ${req.method} ${req.url}`);
+export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: login ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const { username, password } = req.body;
+  const connection = await getDBConnection();
+  const { username, password } = req.body;
 
-    const validation = loginValidationSchema.safeParse(req.body);
+  const validation = loginValidationSchema.safeParse(req.body);
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const ip =
-      (req.headers["x-forwarded-for"] as string) ||
-      req.socket.remoteAddress ||
-      null;
-
-    const userRepository = connection.getRepository(UserEntity);
-    const userActivityRepository = connection.getRepository(UserActivityEntity);
-
-    const oldUser = await userRepository.findOne({
-      where: { username: validation.data.username },
-    });
-
-    if (!oldUser) {
-      res.status(404);
-      throw new Error(`Username ${username} not found`);
-    }
-
-    const isMatch = await matchPassword(password, oldUser);
-
-    if (!isMatch) {
-      res.status(401);
-      throw new Error("Authorization is not valid!");
-    }
-
-    const token = getSignJwtToken(oldUser);
-    const cookies = sendCookiesResponse(token, res);
-
-    if (!cookies) {
-      res.status(500);
-      throw new Error("Token not set in cookies");
-    }
-
-    oldUser.lastLogin = new Date();
-    oldUser.ipAddress = ip;
-
-    await userRepository.save(oldUser);
-
-    // user activity start
-    const userActivity = userActivityRepository.create({
-      timestamp: new Date(),
-      userId: oldUser.id,
-    });
-    await userActivityRepository.save(userActivity);
-    // user activity end
-
-    delete oldUser.password;
-
-    return res.status(200).json({
-      success: true,
-      message: "Login Successful",
-      data: oldUser,
-      accessToken: token,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || null;
+
+  const userRepository = connection.getRepository(UserEntity);
+  const userActivityRepository = connection.getRepository(UserActivityEntity);
+
+  const oldUser = await userRepository.findOne({
+    where: { username: validation.data.username },
+  });
+
+  if (!oldUser) {
+    res.status(404);
+    throw new Error(`Username ${username} not found`);
+  }
+
+  const isMatch = await matchPassword(password, oldUser);
+
+  if (!isMatch) {
+    res.status(401);
+    throw new Error('Authorization is not valid!');
+  }
+
+  const token = getSignJwtToken(oldUser);
+  const cookies = sendCookiesResponse(token, res);
+
+  if (!cookies) {
+    res.status(500);
+    throw new Error('Token not set in cookies');
+  }
+
+  oldUser.lastLogin = new Date();
+  oldUser.ipAddress = ip;
+
+  await userRepository.save(oldUser);
+
+  // user activity start
+  const userActivity = userActivityRepository.create({
+    timestamp: new Date(),
+    userId: oldUser.id,
+  });
+  await userActivityRepository.save(userActivity);
+  // user activity end
+
+  delete oldUser.password;
+
+  return res.status(200).json({
+    success: true,
+    message: 'Login Successful',
+    data: oldUser,
+    accessToken: token,
+  });
+});
 
 // // @desc Login by google
 // // @route POST /api/v1/auth/auth/google
@@ -334,108 +320,106 @@ export const logout = asyncHandler(
     const user = await userRepository.findOne({ where: { id: req.id } });
 
     if (!user) {
-      throw new Error("User is not found");
+      throw new Error('User is not found');
     }
 
     await userRepository.save({ id: user.id, lastLogout: new Date() });
 
     return res.status(200).json({
       success: true,
-      message: "Logout Successful",
+      message: 'Logout Successful',
       data: null,
     });
-  }
+  },
 );
 
 // // @desc Get me
 // // @route GET /api/v1/auth/me
 // // @access Private
-export const getMe = asyncHandler(
-  async (req: CustomRequest, res: Response, next: NextFunction) => {
-    logger.info(`Service: getMe ${req.method} ${req.url}`);
+export const getMe = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
+  logger.info(`Service: getMe ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
+  const connection = await getDBConnection();
 
-    const userRepository = connection.getRepository(UserEntity);
+  const userRepository = connection.getRepository(UserEntity);
 
-    const qb = userRepository.createQueryBuilder("user");
-    qb.select([
-      "user.id",
-      "user.name",
-      "user.username",
-      "user.email",
-      "user.phone",
-      "user.type",
-      "user.point",
-      "user.role",
-      "user.image",
-      "user.dob",
-      "user.gender",
-      "user.address",
-      "user.status",
-      "user.lastLogin",
-      "user.lastLogout",
-      "user.lastLogout",
+  const qb = userRepository.createQueryBuilder('user');
+  qb.select([
+    'user.id',
+    'user.name',
+    'user.username',
+    'user.email',
+    'user.phone',
+    'user.type',
+    'user.point',
+    'user.role',
+    'user.image',
+    'user.dob',
+    'user.gender',
+    'user.address',
+    'user.status',
+    'user.lastLogin',
+    'user.lastLogout',
+    'user.lastLogout',
 
-      // "orderShippingAddress.name",
-      // "orderShippingAddress.type",
-      // "orderShippingAddress.phoneNo",
-      // "orderShippingAddress.email",
-      // "orderShippingAddress.alternativePhoneNo",
-      // "orderShippingAddress.address",
-      // "orderShippingAddress.phoneNo",
+    // "orderShippingAddress.name",
+    // "orderShippingAddress.type",
+    // "orderShippingAddress.phoneNo",
+    // "orderShippingAddress.email",
+    // "orderShippingAddress.alternativePhoneNo",
+    // "orderShippingAddress.address",
+    // "orderShippingAddress.phoneNo",
 
-      // "orderDeliveries",
-      // "wishlists",
+    // "orderDeliveries",
+    // "wishlists",
 
-      // "orderItems.purchasePrice",
-      // "orderItems.discountAmount",
-      // "orderItems.unitPrice",
-      // "orderItems.qty",
-      // "orderItems.taxAmount",
-      // "orderItems.productId",
+    // "orderItems.purchasePrice",
+    // "orderItems.discountAmount",
+    // "orderItems.unitPrice",
+    // "orderItems.qty",
+    // "orderItems.taxAmount",
+    // "orderItems.productId",
 
-      // "orderProduct.name",
-      // "orderTrackings.location",
-      // "orderTrackings.createdAt",
-      // "orderTrackings.status",
-      // "deliveryMan.name",
-      // "payments",
-      // "size.name",
-      // "color.name",
-    ]);
+    // "orderProduct.name",
+    // "orderTrackings.location",
+    // "orderTrackings.createdAt",
+    // "orderTrackings.status",
+    // "deliveryMan.name",
+    // "payments",
+    // "size.name",
+    // "color.name",
+  ]);
 
-    // qb.leftJoin("user.orders", "orders");
+  // qb.leftJoin("user.orders", "orders");
 
-    // qb.leftJoin("orders.orderItems", "orderItems");
-    // qb.leftJoin("orderItems.product", "orderProduct");
-    // qb.leftJoin("orders.orderTrackings", "orderTrackings");
-    // qb.leftJoin("orders.deliveryMan", "deliveryMan");
-    // qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
+  // qb.leftJoin("orders.orderItems", "orderItems");
+  // qb.leftJoin("orderItems.product", "orderProduct");
+  // qb.leftJoin("orders.orderTrackings", "orderTrackings");
+  // qb.leftJoin("orders.deliveryMan", "deliveryMan");
+  // qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
 
-    // qb.leftJoin("user.products", "products");
-    // qb.leftJoin("user.shippingAddress", "shippingAddress");
-    // qb.leftJoin("user.orderDeliveries", "orderDeliveries");
-    // qb.leftJoin("user.wishlists", "wishlists");
-    // qb.leftJoin("wishlists.product", "product");
-    // qb.leftJoin("product.discount", "discount");
-    // qb.leftJoin("product.tax", "tax");
-    // qb.leftJoin("product.reviews", "reviews");
-    qb.where({ id: req.id });
+  // qb.leftJoin("user.products", "products");
+  // qb.leftJoin("user.shippingAddress", "shippingAddress");
+  // qb.leftJoin("user.orderDeliveries", "orderDeliveries");
+  // qb.leftJoin("user.wishlists", "wishlists");
+  // qb.leftJoin("wishlists.product", "product");
+  // qb.leftJoin("product.discount", "discount");
+  // qb.leftJoin("product.tax", "tax");
+  // qb.leftJoin("product.reviews", "reviews");
+  qb.where({ id: req.id });
 
-    const user = await qb.getOne();
+  const user = await qb.getOne();
 
-    if (!user) {
-      throw new Error("Authorization is not Valid!");
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "I am Here",
-      data: user,
-    });
+  if (!user) {
+    throw new Error('Authorization is not Valid!');
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: 'I am Here',
+    data: user,
+  });
+});
 
 // // @desc Forget password
 // // @route POST /api/v1/auth/forgot-password
@@ -448,7 +432,7 @@ export const forgotPassword = asyncHandler(
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
+        path: issue.path.join('.'),
         message: issue.message,
       }));
 
@@ -464,13 +448,13 @@ export const forgotPassword = asyncHandler(
     });
 
     if (!findMail) {
-      throw new Error("User with this email does not exist");
+      throw new Error('User with this email does not exist');
     }
 
     const resetToken = getResetSignJwtToken(findMail.email);
 
     if (!resetToken) {
-      throw new Error("Reset token not Generated");
+      throw new Error('Reset token not Generated');
     }
 
     const updateData = await userRepository.merge(findMail, {
@@ -484,10 +468,10 @@ export const forgotPassword = asyncHandler(
 
     const resetUrl = `${req.protocol}://${req.headers.origin}/reset-password/${resetToken}`;
 
-    let mailOptions = {
+    const mailOptions = {
       to: findMail.email,
       from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_ADDRESS}>`,
-      subject: "Password Reset",
+      subject: 'Password Reset',
       text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account. Please click on the following link, or paste it into your browser to complete the process within one hour of receiving it: ${resetUrl}`,
     };
 
@@ -495,10 +479,10 @@ export const forgotPassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "Forget password successful. Please check your email address",
+      message: 'Forget password successful. Please check your email address',
       data: {},
     });
-  }
+  },
 );
 
 // // @desc Reset password
@@ -515,7 +499,7 @@ export const resetPassword = asyncHandler(
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
+        path: issue.path.join('.'),
         message: issue.message,
       }));
 
@@ -537,7 +521,7 @@ export const resetPassword = asyncHandler(
     });
 
     if (!user) {
-      throw new Error("Invalid or expired reset token");
+      throw new Error('Invalid or expired reset token');
     }
 
     const updateData = await userRepository.merge(user, {
@@ -549,10 +533,10 @@ export const resetPassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "Reset password",
+      message: 'Reset password',
       data: {},
     });
-  }
+  },
 );
 
 // // @desc Update password
@@ -566,7 +550,7 @@ export const updatePassword = asyncHandler(
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
+        path: issue.path.join('.'),
         message: issue.message,
       }));
 
@@ -581,14 +565,14 @@ export const updatePassword = asyncHandler(
     const user = await userRepository.findOne({ where: { id: req.id } });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     if (
       !validation.data.newPassword ||
       !(await matchPassword(validation.data.currentPassword, user))
     ) {
-      throw new Error("Current password is incorrect");
+      throw new Error('Current password is incorrect');
     }
 
     const password = await hashedPassword(validation.data.newPassword);
@@ -601,85 +585,81 @@ export const updatePassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "Update password",
+      message: 'Update password',
     });
-  }
+  },
 );
 
 // // @desc Update a single user
 // // @route PUT /api/v1/auth/users/:id
 // // @access Public
-export const updateUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: updateUser ${req.method} ${req.url}`);
+export const updateUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: updateUser ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const validation = updateUserValidationSchema.safeParse(req.body);
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  const { id } = req.params;
+  const validation = updateUserValidationSchema.safeParse(req.body);
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const connection = await getDBConnection();
-    const userRepository = await connection.getRepository(UserEntity);
-
-    const user = await userRepository.findOneBy({ id });
-    if (!user) {
-      throw new Error("User is not found");
-    }
-    const updateData = await userRepository.merge(user, validation.data);
-    await userRepository.save(updateData);
-    delete updateData.password;
-    return res.status(200).json({
-      success: true,
-      message: `Profile updated successfully`,
-      data: updateData,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const connection = await getDBConnection();
+  const userRepository = await connection.getRepository(UserEntity);
+
+  const user = await userRepository.findOneBy({ id });
+  if (!user) {
+    throw new Error('User is not found');
+  }
+  const updateData = await userRepository.merge(user, validation.data);
+  await userRepository.save(updateData);
+  delete updateData.password;
+  return res.status(200).json({
+    success: true,
+    message: `Profile updated successfully`,
+    data: updateData,
+  });
+});
 
 // @desc Delete a single user
 // @route DELETE /api/v1/auth/users/:id
 // @access Public
-export const deleteUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: deleteUser ${req.method} ${req.url}`);
+export const deleteUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: deleteUser ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const { id } = req.params;
+  const connection = await getDBConnection();
+  const { id } = req.params;
 
-    const userRepository = await connection.getRepository(UserEntity);
+  const userRepository = await connection.getRepository(UserEntity);
 
-    const user = await userRepository.findOne({ where: { id } });
+  const user = await userRepository.findOne({ where: { id } });
 
-    if (!user) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    if (user.image) {
-      const repository = connection.getRepository(FileEntity);
-      const directory = join(process.cwd(), "/public/uploads");
-      const filePath = `${directory}/${user.image}`;
-      const [deleteFile] = await Promise.all([
-        repository.findOne({ where: { filename: user.image } }),
-        fs.promises.unlink(filePath),
-      ]);
-      await repository.remove(deleteFile);
-    }
-
-    await userRepository.delete({ id });
-
-    return res.status(200).json({
-      success: true,
-      message: `Delete a user of id ${req.params.id}`,
-      data: user,
-    });
+  if (!user) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  if (user.image) {
+    const repository = connection.getRepository(FileEntity);
+    const directory = join(process.cwd(), '/public/uploads');
+    const filePath = `${directory}/${user.image}`;
+    const [deleteFile] = await Promise.all([
+      repository.findOne({ where: { filename: user.image } }),
+      fs.promises.unlink(filePath),
+    ]);
+    await repository.remove(deleteFile);
+  }
+
+  await userRepository.delete({ id });
+
+  return res.status(200).json({
+    success: true,
+    message: `Delete a user of id ${req.params.id}`,
+    data: user,
+  });
+});

@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import 'reflect-metadata';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("currencies")
+@Entity('currencies')
 export class CurrencyEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -12,6 +12,6 @@ export class CurrencyEntity {
   @Column()
   symbol!: string;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 }

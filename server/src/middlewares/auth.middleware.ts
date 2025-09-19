@@ -1,14 +1,10 @@
-import bcrypt from "bcryptjs";
-import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { CustomRequest } from "../enums/custom-request-type";
+import bcrypt from 'bcryptjs';
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { CustomRequest } from '../enums/custom-request-type';
 
 // Define the type for the middleware function
-type MiddlewareFunction = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => void;
+type MiddlewareFunction = (req: Request, res: Response, next: NextFunction) => void;
 
 // Define the type for the token payload
 interface TokenPayload {
@@ -21,12 +17,12 @@ interface TokenPayload {
 // AuthGuard middleware
 const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
-  const token = authorization?.split(" ")[1] || req.cookies?.accessToken;
+  const token = authorization?.split(' ')[1] || req.cookies?.accessToken;
 
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Authentication Failed: Token is missing",
+      message: 'Authentication Failed: Token is missing',
     });
   }
 
@@ -41,38 +37,38 @@ const AuthGuard = (req: CustomRequest, res: Response, next: NextFunction) => {
 
     next();
   } catch (error) {
-    console.error("Authentication Error:", error);
+    console.error('Authentication Error:', error);
 
     if (error instanceof jwt.TokenExpiredError) {
       return res.status(401).json({
         success: false,
-        message: "Authentication Failed: Token has expired",
+        message: 'Authentication Failed: Token has expired',
       });
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).json({
         success: false,
-        message: "Authentication Failed: Invalid token",
+        message: 'Authentication Failed: Invalid token',
       });
     }
 
     // General error fallback
     res.status(500).json({
       success: false,
-      message: "Authentication Failed: An unexpected error occurred",
+      message: 'Authentication Failed: An unexpected error occurred',
     });
   }
 };
 
 // isAuthorize middleware
 const isAuthorize = (roles: string[] | string) => {
-  if (typeof roles === "string") {
+  if (typeof roles === 'string') {
     roles = [roles];
   }
   return (req: CustomRequest, res: Response, next: NextFunction): void => {
     if (!req.username || !roles.includes(req.role as string)) {
-      res.status(403).json({ message: "Forbidden: insufficient rights" });
+      res.status(403).json({ message: 'Forbidden: insufficient rights' });
       return;
     }
     next();
@@ -82,7 +78,7 @@ const isAuthorize = (roles: string[] | string) => {
 
 const sendCookiesResponse = (token: string, res: Response) => {
   const maxAge = Number(process.env.JWT_EXPIRES) * 60 * 60 * 1000; // would expire in 1 day
-  let options = {
+  const options = {
     maxAge,
     httpOnly: true, // The cookie is only accessible by the web server
     secure: false, // Set to true if you're using HTTPS
@@ -102,31 +98,26 @@ const getSignJwtToken = (user: any): string => {
     },
     process.env.JWT_SECRET!,
     {
-      expiresIn: (process.env.JWT_EXPIRES +
-        "h") as jwt.SignOptions["expiresIn"],
-    }
+      expiresIn: (process.env.JWT_EXPIRES + 'h') as jwt.SignOptions['expiresIn'],
+    },
   );
 };
 
 const getResetSignJwtToken = (email: string) => {
   return jwt.sign({ user: email }, process.env.RESET_SECRET!, {
-    expiresIn: process.env.REST_EXPIRESIN as jwt.SignOptions["expiresIn"],
+    expiresIn: process.env.REST_EXPIRESIN as jwt.SignOptions['expiresIn'],
   });
 };
 
 const getResetVerifyJwtToken = (token: string, res: any) => {
   try {
-    jwt.verify(
-      token,
-      process.env.RESET_SECRET!,
-      (error: any, decodedToken: any) => {
-        if (error) {
-          throw new Error("Invalid or expired reset token new");
-        }
+    jwt.verify(token, process.env.RESET_SECRET!, (error: any, decodedToken: any) => {
+      if (error) {
+        throw new Error('Invalid or expired reset token new');
       }
-    );
+    });
   } catch (error) {
-    throw new Error("Invalid or expired reset token try catch");
+    throw new Error('Invalid or expired reset token try catch');
   }
 };
 
@@ -136,10 +127,7 @@ const hashedPassword = async (password: string): Promise<string> => {
 };
 
 // Function to compare passwords
-const matchPassword = async (
-  enterPassword: string,
-  user: any
-): Promise<boolean> => {
+const matchPassword = async (enterPassword: string, user: any): Promise<boolean> => {
   return bcrypt.compare(enterPassword, user.password);
 };
 

@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -9,13 +9,13 @@ import {
   TreeChildren,
   TreeParent,
   UpdateDateColumn,
-} from "typeorm";
-import { PostCategoryEntity } from "../../blog/post/model/post-category.entity";
-import { ApplicableCategoryEntity } from "../../discount/model/applicable-category.entity";
-import { ProductCategoryEntity } from "../../products/product-category/model/product-category.entity";
+} from 'typeorm';
+import { PostCategoryEntity } from '../../blog/post/model/post-category.entity';
+import { ApplicableCategoryEntity } from '../../discount/model/applicable-category.entity';
+import { ProductCategoryEntity } from '../../products/product-category/model/product-category.entity';
 
-@Entity("categories")
-@Tree("materialized-path")
+@Entity('categories')
+@Tree('materialized-path')
 export class CategoriesEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -36,14 +36,14 @@ export class CategoriesEntity {
   description?: string;
 
   @Column({
-    type: "boolean",
+    type: 'boolean',
     default: true,
   })
   active!: boolean;
 
   @Column({
-    name: "is_featured",
-    type: "boolean",
+    name: 'is_featured',
+    type: 'boolean',
     default: false,
   })
   isFeatured!: boolean;
@@ -51,33 +51,24 @@ export class CategoriesEntity {
   @TreeChildren()
   children!: CategoriesEntity[];
 
-  @TreeParent({ onDelete: "CASCADE" })
+  @TreeParent({ onDelete: 'CASCADE' })
   parent!: CategoriesEntity;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 
-  @OneToMany(
-    (_type) => ProductCategoryEntity,
-    (productCategory) => productCategory.category
-  )
+  @OneToMany((_type) => ProductCategoryEntity, (productCategory) => productCategory.category)
   productCategories!: ProductCategoryEntity[];
 
-  @OneToMany(
-    (_type) => PostCategoryEntity,
-    (productCategory) => productCategory.category
-  )
+  @OneToMany((_type) => PostCategoryEntity, (productCategory) => productCategory.category)
   postCategories!: PostCategoryEntity[];
 
-  @OneToMany(
-    (_type) => ApplicableCategoryEntity,
-    (apCategory) => apCategory.category
-  )
+  @OneToMany((_type) => ApplicableCategoryEntity, (apCategory) => apCategory.category)
   applicableCategories!: ApplicableCategoryEntity[];
 }

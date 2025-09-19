@@ -80,7 +80,7 @@
 //         issues: formattedErrors,
 //       });
 //     }
-//     const { orderItemId, orderId, requestedQty } = validation.data;    
+//     const { orderItemId, orderId, requestedQty } = validation.data;
 //     const connection = await getDBConnection();
 
 //     await connection.transaction(async (manager: any) => {
@@ -111,7 +111,6 @@
 //         .getOne();
 
 //         console.log('order', order);
-        
 
 //       if (!order) throw new Error(`Order not found or does not belong to user`);
 //       if (order.status !== OrderStatus.Completed)
@@ -276,7 +275,7 @@
 //     logger.info(`Service: updateReturn ${req.method} ${req.url}`);
 //     const userId = req.id;
 //     const { orderItemId } = req.params;
-//     const { status, approvedQty } = req.body;    
+//     const { status, approvedQty } = req.body;
 
 //     const connection = await getDBConnection();
 //     const queryRunner = connection.createQueryRunner();

@@ -1,9 +1,9 @@
-import fs from "fs";
-import { Request, Response, NextFunction } from "express";
-import { UnionEntity } from "../model/union.entity";
-import { asyncHandler } from "../../../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../../../config/db";
-import { CustomRequest } from "../../../../../enums/custom-request-type";
+import fs from 'fs';
+import { Request, Response, NextFunction } from 'express';
+import { UnionEntity } from '../model/union.entity';
+import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../../../config/db';
+import { CustomRequest } from '../../../../../enums/custom-request-type';
 
 // @desc Get all Union
 // @route GET /api/v1/Union
@@ -14,19 +14,19 @@ export const getUnions = asyncHandler(async (req: Request, res: Response) => {
 
   const { upazilaId } = req.query;
 
-  let customQuery = {} as any;
+  const customQuery = {} as any;
 
   if (upazilaId) {
     customQuery.upazilaId = upazilaId;
   }
-  
+
   const result = await repository.find({
     where: { upazilaId: customQuery.upazilaId },
   });
 
   return res.status(200).json({
     success: true,
-    message: "Get all Union",
+    message: 'Get all Union',
     data: result,
   });
 });
@@ -34,24 +34,22 @@ export const getUnions = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get a single Union
 // @route GET /api/v1/Union/:id
 // @access Public
-export const getUnion = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(UnionEntity);
-    const result = await repository.findOneBy({ id });
+export const getUnion = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(UnionEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Union of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Union of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Union
 // @route POST /api/v1/Union
@@ -69,10 +67,7 @@ export const createUnion = asyncHandler(async (req: CustomRequest, res: Response
   //   });
   // }
 
-  const file = fs.readFileSync(
-    process.cwd() + "/database/fack-data/unions.json",
-    "utf8"
-  );
+  const file = fs.readFileSync(process.cwd() + '/database/fack-data/unions.json', 'utf8');
   const jsonData = JSON.parse(file);
 
   const repository = connection.getRepository(UnionEntity);
@@ -82,13 +77,13 @@ export const createUnion = asyncHandler(async (req: CustomRequest, res: Response
       ...item,
       upazillaId: item.upazilla_id,
       bnName: item.bn_name,
-    }))
+    })),
   );
   const save = await repository.save(newUnion);
 
   return res.status(200).json({
     success: true,
-    message: "Create a new Union",
+    message: 'Create a new Union',
     data: save,
   });
 });

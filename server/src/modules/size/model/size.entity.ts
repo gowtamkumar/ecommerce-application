@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
-@Entity("sizes")
+import 'reflect-metadata';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductVariantEntity } from '../../products/product-variant/model/product-variant.entity';
+@Entity('sizes')
 export class SizeEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -9,16 +9,13 @@ export class SizeEntity {
   @Column()
   name!: string;
 
-  @Column({ type: "boolean", default: true })
+  @Column({ type: 'boolean', default: true })
   status!: boolean;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 
-  @OneToMany(
-    (_type) => ProductVariantEntity,
-    (productVarients) => productVarients.size
-  )
+  @OneToMany((_type) => ProductVariantEntity, (productVarients) => productVarients.size)
   productVariants!: ProductVariantEntity[];
 
   // @OneToMany((_type) => OrderItemEntity, (orderItem) => orderItem.size)

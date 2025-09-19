@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -6,11 +6,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
-@Entity("user_memberships")
+@Entity('user_memberships')
 export class UserMembershipEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   // @ManyToOne(() => User)
@@ -19,9 +19,9 @@ export class UserMembershipEntity {
   // @ManyToOne(() => Membership)
   // membership: Membership;
 
-  @Column({ name: "start_date", type: "timestamp" })
+  @Column({ name: 'start_date', type: 'timestamp' })
   startDate!: Date;
 
-  @Column({ name: "end_date", type: "timestamp" })
+  @Column({ name: 'end_date', type: 'timestamp' })
   endDate!: Date;
 }

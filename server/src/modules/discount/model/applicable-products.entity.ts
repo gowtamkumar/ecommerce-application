@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -7,38 +7,34 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { DiscountEntity } from "./discount.entity";
+} from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { DiscountEntity } from './discount.entity';
 
-@Entity("applicable_products")
+@Entity('applicable_products')
 export class ApplicableProductEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "product_id" })
+  @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.applicableProducts, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "product_id" })
+  @JoinColumn({ name: 'product_id' })
   product!: ProductEntity;
 
-  @Column({ name: "discount_id" })
+  @Column({ name: 'discount_id' })
   discountId?: number;
-  @ManyToOne(
-      (_type) => DiscountEntity,
-      (discount) => discount.applicableProducts,
-      {
-        onDelete: "CASCADE",
-      }
-    )
-    @JoinColumn({ name: "discount_id" })
-    discount!: DiscountEntity;
+  @ManyToOne((_type) => DiscountEntity, (discount) => discount.applicableProducts, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'discount_id' })
+  discount!: DiscountEntity;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 }

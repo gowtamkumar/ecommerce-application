@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -6,10 +6,10 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { UserEntity } from "./user.entity";
+} from 'typeorm';
+import { UserEntity } from './user.entity';
 
-@Entity("user_activities")
+@Entity('user_activities')
 export class UserActivityEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -17,10 +17,10 @@ export class UserActivityEntity {
   // @Column({})
   // type!: string;
 
-  @Column({name: "user_id"})
+  @Column({ name: 'user_id' })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.userActivities)
-  @JoinColumn({ name: "user_id" })
+  @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
   @Column()

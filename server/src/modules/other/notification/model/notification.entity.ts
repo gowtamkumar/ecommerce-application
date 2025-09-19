@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -8,10 +8,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { UserEntity } from "../../../auth/model/user.entity";
+} from 'typeorm';
+import { UserEntity } from '../../../auth/model/user.entity';
 
-@Entity("notifications")
+@Entity('notifications')
 export class NotificationEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -25,24 +25,24 @@ export class NotificationEntity {
   @Column()
   message!: string;
 
-  @Column({ name: "is_read", type: "boolean", default: false })
+  @Column({ name: 'is_read', type: 'boolean', default: false })
   isRead!: boolean;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.notifications, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "user_id" })
+  @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
 
-  @Column({ name: "order_id", nullable: true })
+  @Column({ name: 'order_id', nullable: true })
   orderId!: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp with time zone" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp with time zone" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt?: string;
 }
 

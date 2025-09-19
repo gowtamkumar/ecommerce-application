@@ -17,10 +17,10 @@ class ErrorResponse extends Error {
     super(message);
     this.statusCode = statusCode;
 
-    if (option && option.name === "JoiValidationError") {
+    if (option && option.name === 'JoiValidationError') {
       this.joiValidationErrors = (option as JoiValidationError).error;
     }
-    if (option && option.name === "CustomError") {
+    if (option && option.name === 'CustomError') {
       this.customErrors = (option as CustomError).errors || {};
     }
 

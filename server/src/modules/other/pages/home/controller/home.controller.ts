@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { asyncHandler } from "../../../../../middlewares/async.middleware";
-import { logger } from "../../../../../middlewares/logger";
-import { getDBConnection } from "../../../../../config/db";
-import { CategoriesEntity } from "../../../../categories/model/categories.entity";
-import { productsQuery, topSellingProductQuery } from "../../../../../sqlQuery";
-import { BannerEntity } from "../../../../banner/model/banner.entity";
-import { SettingEntity } from "../../../setting/model/setting.entity";
+import { Request, Response } from 'express';
+import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { logger } from '../../../../../middlewares/logger';
+import { getDBConnection } from '../../../../../config/db';
+import { CategoriesEntity } from '../../../../categories/model/categories.entity';
+import { productsQuery, topSellingProductQuery } from '../../../../../sqlQuery';
+import { BannerEntity } from '../../../../banner/model/banner.entity';
+import { SettingEntity } from '../../../setting/model/setting.entity';
 
 // @desc Get getHome data
 // @route GET /api/v1/home
@@ -50,7 +50,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get Home page successfully",
+    message: 'Get Home page successfully',
     data: {
       products: {
         total,

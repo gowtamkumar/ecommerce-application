@@ -1,9 +1,9 @@
-import "reflect-metadata";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ShippingAddressEntity } from "../../../../shipping-address/model/shipping-address.entity";
-import { DistrictEntity } from "../../districts/model/district.entity";
+import 'reflect-metadata';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ShippingAddressEntity } from '../../../../shipping-address/model/shipping-address.entity';
+import { DistrictEntity } from '../../districts/model/district.entity';
 
-@Entity("divisions")
+@Entity('divisions')
 export class DivisionEntity {
   @PrimaryGeneratedColumn()
   id!: string;
@@ -11,7 +11,7 @@ export class DivisionEntity {
   @Column()
   name!: string;
 
-  @Column({ name: "bn_name" })
+  @Column({ name: 'bn_name' })
   bnName!: string;
 
   @Column()
@@ -20,9 +20,6 @@ export class DivisionEntity {
   @OneToMany((_type) => DistrictEntity, (district) => district.division)
   districts!: DistrictEntity[];
 
-  @OneToMany(
-    (_type) => ShippingAddressEntity,
-    (shippingAddress) => shippingAddress.division
-  )
+  @OneToMany((_type) => ShippingAddressEntity, (shippingAddress) => shippingAddress.division)
   shippingAddress!: ShippingAddressEntity[];
 }

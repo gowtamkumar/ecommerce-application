@@ -1,4 +1,4 @@
-export enum incrementDecrementType{
-  Increment="Increment",
-  Decrement="Decrement",
+export enum incrementDecrementType {
+  Increment = 'Increment',
+  Decrement = 'Decrement',
 }

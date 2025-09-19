@@ -1,27 +1,27 @@
-import { Request, Response } from "express";
-import { Repository } from "typeorm";
-import { sendSms } from "../../../common/sendSms";
-import { getDBConnection } from "../../../config/db";
-import { CustomRequest } from "../../../enums/custom-request-type";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { logger } from "../../../middlewares/logger";
+import { Request, Response } from 'express';
+import { Repository } from 'typeorm';
+import { sendSms } from '../../../common/sendSms';
+import { getDBConnection } from '../../../config/db';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
 import {
   onlineCreateOrderValidationSchema,
   orderDeliveryManValidationSchema,
   orderStatusUpdateValidationSchema,
   orderUpdateValidationSchema,
-} from "../../../validation";
-import { UserEntity } from "../../auth/model/user.entity";
-import { CartEntity } from "../../cart/model/cart.entity";
-import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
-import { OrderTrackingStatusEnum } from "../../order-tracking/enums/order-tracking-status.enum";
-import { OrderTrackingEntity } from "../../order-tracking/model/order-tracking.entity";
-import { NotificationEntity } from "../../other/notification/model/notification.entity";
-import { ProductVariantEntity } from "../../products/product-variant/model/product-variant.entity";
-import { OrderStatus, PaymentMethod, PaymentStatus } from "../enums";
-import { OrderItemEntity } from "../model/order-item.entity";
-import { OrderEntity } from "../model/order.entity";
-const SSLCommerzPayment = require("sslcommerz-lts");
+} from '../../../validation';
+import { UserEntity } from '../../auth/model/user.entity';
+import { CartEntity } from '../../cart/model/cart.entity';
+import { AppliedCouponEntity } from '../../coupon/model/applied-coupon.entity';
+import { OrderTrackingStatusEnum } from '../../order-tracking/enums/order-tracking-status.enum';
+import { OrderTrackingEntity } from '../../order-tracking/model/order-tracking.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
+import { ProductVariantEntity } from '../../products/product-variant/model/product-variant.entity';
+import { OrderStatus, PaymentMethod, PaymentStatus } from '../enums';
+import { OrderItemEntity } from '../model/order-item.entity';
+import { OrderEntity } from '../model/order.entity';
+const SSLCommerzPayment = require('sslcommerz-lts');
 
 interface Notification {
   type: string;
@@ -41,153 +41,142 @@ interface OrderTracking {
 // @desc Create a single Order
 // @route POST /api/v1/orders
 // @access Public
-export const createOrder = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: createOrder ${req.method} ${req.url}`);
+export const createOrder = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: createOrder ${req.method} ${req.url}`);
 
-    const tranId = Date.now().toString();
-    const userId = req.id as number | string;
-    const connection = await getDBConnection();
-    const queryRunner = connection.createQueryRunner();
+  const tranId = Date.now().toString();
+  const userId = req.id as number | string;
+  const connection = await getDBConnection();
+  const queryRunner = connection.createQueryRunner();
 
-    await queryRunner.connect();
+  await queryRunner.connect();
 
-    // Validation should happen BEFORE transaction
-    const validation = onlineCreateOrderValidationSchema.safeParse({
-      ...req.body,
-      userId,
+  // Validation should happen BEFORE transaction
+  const validation = onlineCreateOrderValidationSchema.safeParse({
+    ...req.body,
+    userId,
+  });
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
+  await queryRunner.startTransaction(); // Move here after validation
+
+  try {
+    const { shippingCharge, subTotal, paymentMethod, orderItems, ...orderData } = validation.data;
+
+    const repository = queryRunner.manager.getRepository(OrderEntity);
+    const count = (await repository.count()) + 1;
+    const trackingNo = `TRK-${count.toString().padStart(10, '0')}`;
+
+    const newOrder = repository.create({
+      shippingCharge,
+      subTotal,
+      paymentMethod,
+      paymentStatus: PaymentStatus.NotPaid,
+      ...orderData,
+      trackingNo,
+      tranId,
     });
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+    const savedOrder = await repository.save(newOrder);
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
+    const orderId = savedOrder.id;
 
-    await queryRunner.startTransaction(); // Move here after validation
-
-    try {
-      const {
-        shippingCharge,
-        subTotal,
-        paymentMethod,
-        orderItems,
-        ...orderData
-      } = validation.data;
-
-      const repository = queryRunner.manager.getRepository(OrderEntity);
-      const count = (await repository.count()) + 1;
-      const trackingNo = `TRK-${count.toString().padStart(10, "0")}`;
-
-      const newOrder = repository.create({
-        shippingCharge,
-        subTotal,
-        paymentMethod,
-        paymentStatus: PaymentStatus.NotPaid,
-        ...orderData,
-        trackingNo,
-        tranId,
-      });
-
-      const savedOrder = await repository.save(newOrder);
-
-      const orderId = savedOrder.id;
-
-      if (orderItems?.length && orderId) {
-        const repoOrderItems =
-          queryRunner.manager.getRepository(OrderItemEntity);
-        const newOrderItems = repoOrderItems.create(
-          orderItems.map((item: any) => ({
-            ...item,
-            orderId,
-          }))
-        );
-        await repoOrderItems.save(newOrderItems);
-
-        // clear cart
-        const cartRepo = queryRunner.manager.getRepository(CartEntity);
-        const cartsList = await cartRepo.find({ where: { userId } });
-        await cartRepo.remove(cartsList);
-
-        // order tracking
-        const newOrderTracking = {
-          status: savedOrder.status,
+    if (orderItems?.length && orderId) {
+      const repoOrderItems = queryRunner.manager.getRepository(OrderItemEntity);
+      const newOrderItems = repoOrderItems.create(
+        orderItems.map((item: any) => ({
+          ...item,
           orderId,
-          userId,
-          location: "অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।",
-        } as OrderTracking;
-        const orderTrackingRepo =
-          queryRunner.manager.getRepository(OrderTrackingEntity);
+        })),
+      );
+      await repoOrderItems.save(newOrderItems);
 
-        await orderTracking(newOrderTracking, orderTrackingRepo);
+      // clear cart
+      const cartRepo = queryRunner.manager.getRepository(CartEntity);
+      const cartsList = await cartRepo.find({ where: { userId } });
+      await cartRepo.remove(cartsList);
 
-        // applied coupon
-        if (validation.data.couponId) {
-          const couponRepo =
-            queryRunner.manager.getRepository(AppliedCouponEntity);
-          const newCouponApplied = couponRepo.create({
-            orderId: savedOrder.id,
-            userId,
-            discountAmount: validation.data.couponDiscount,
-            couponId: validation.data.couponId,
-          });
-          await couponRepo.save(newCouponApplied);
-        }
+      // order tracking
+      const newOrderTracking = {
+        status: savedOrder.status,
+        orderId,
+        userId,
+        location: 'অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।',
+      } as OrderTracking;
+      const orderTrackingRepo = queryRunner.manager.getRepository(OrderTrackingEntity);
 
-        // notification
-        const notification: Notification = {
-          type: "Order",
-          title: "Order Placed",
-          message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
-          userId,
+      await orderTracking(newOrderTracking, orderTrackingRepo);
+
+      // applied coupon
+      if (validation.data.couponId) {
+        const couponRepo = queryRunner.manager.getRepository(AppliedCouponEntity);
+        const newCouponApplied = couponRepo.create({
           orderId: savedOrder.id,
-        };
-        await sendOrderNotification(notification);
+          userId,
+          discountAmount: validation.data.couponDiscount,
+          couponId: validation.data.couponId,
+        });
+        await couponRepo.save(newCouponApplied);
       }
 
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.commitTransaction();
-      }
-
-      // ssl ecommerce intregration
-      let paymentUrl = null;
-      if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
-        const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
-        paymentUrl = onlinePaymentRes;
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Order created",
-        data: {
-          orderId: savedOrder.id,
-          paymentUrl,
-        },
-      });
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-      console.error("Transaction failed:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to create Order",
-      });
-    } finally {
-      await queryRunner.release();
+      // notification
+      const notification: Notification = {
+        type: 'Order',
+        title: 'Order Placed',
+        message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
+        userId,
+        orderId: savedOrder.id,
+      };
+      await sendOrderNotification(notification);
     }
+
+    if (queryRunner.isTransactionActive) {
+      await queryRunner.commitTransaction();
+    }
+
+    // ssl ecommerce intregration
+    let paymentUrl = null;
+    if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
+      const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
+      paymentUrl = onlinePaymentRes;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Order created',
+      data: {
+        orderId: savedOrder.id,
+        paymentUrl,
+      },
+    });
+  } catch (error) {
+    if (queryRunner.isTransactionActive) {
+      await queryRunner.rollbackTransaction();
+    }
+    console.error('Transaction failed:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to create Order',
+    });
+  } finally {
+    await queryRunner.release();
   }
-);
+});
 
 export const orderTracking = async (
   value: OrderTracking,
-  orderTrackingRepo: Repository<OrderTrackingEntity>
+  orderTrackingRepo: Repository<OrderTrackingEntity>,
 ) => {
   const { orderId, userId, location, status } = value;
 
@@ -211,7 +200,7 @@ export const orderTracking = async (
       trackingStatus = OrderTrackingStatusEnum.OrderCanceled;
       break;
     default:
-      throw new Error("Invalid Order Status for tracking");
+      throw new Error('Invalid Order Status for tracking');
   }
 
   const newOrderTracking = orderTrackingRepo.create({
@@ -225,7 +214,7 @@ export const orderTracking = async (
 };
 
 export const sendOrderNotification = async (
-  notification: Notification
+  notification: Notification,
 ): Promise<{ success: boolean; message: string }> => {
   logger.info(`Service: sendOrderNotification`);
   const connection = await getDBConnection(); // Consider reusing an existing connection
@@ -237,22 +226,18 @@ export const sendOrderNotification = async (
 
     return {
       success: true,
-      message: "Notification sent successfully",
+      message: 'Notification sent successfully',
     };
   } catch (error) {
-    console.error("Failed to send notification:", error);
+    console.error('Failed to send notification:', error);
     return {
       success: false,
-      message: "Failed to send notification",
+      message: 'Failed to send notification',
     };
   }
 };
 
-export const onlinePayment = async (
-  req: CustomRequest,
-  res: Response,
-  savedOrder: any
-) => {
+export const onlinePayment = async (req: CustomRequest, res: Response, savedOrder: any) => {
   logger.info(`Service: onlinePayment ${req.method} ${req.url}`);
   const userId = req.id as number | string;
   const tranId = savedOrder.tranId;
@@ -272,31 +257,31 @@ export const onlinePayment = async (
 
   const paymentPayload = {
     total_amount: savedOrder.grandTotal,
-    currency: "BDT",
+    currency: 'BDT',
     tran_id: tranId,
     success_url: `${BACK_END_URL}/payments/success/${tranId}`,
     fail_url: `${BACK_END_URL}/payments/fail/${tranId}`,
     cancel_url: `${BACK_END_URL}/payments/cancel/${tranId}`,
     ipn_url: `${BACK_END_URL}/payment-ipn/${tranId}`,
 
-    shipping_method: "Courier",
-    product_name: "productNames",
-    product_category: "General",
-    product_profile: "general",
+    shipping_method: 'Courier',
+    product_name: 'productNames',
+    product_category: 'General',
+    product_profile: 'general',
 
     cus_name: customer.name,
     cus_email: customer.email,
-    cus_add1: customer.address || "Dhaka",
-    cus_city: customer.city || "Dhaka",
-    cus_postcode: customer.postcode || "1000",
-    cus_country: "Bangladesh",
-    cus_phone: customer.phone || "01711111111",
+    cus_add1: customer.address || 'Dhaka',
+    cus_city: customer.city || 'Dhaka',
+    cus_postcode: customer.postcode || '1000',
+    cus_country: 'Bangladesh',
+    cus_phone: customer.phone || '01711111111',
 
     ship_name: customer.name,
-    ship_add1: customer.address || "Dhaka",
-    ship_city: customer.city || "Dhaka",
+    ship_add1: customer.address || 'Dhaka',
+    ship_city: customer.city || 'Dhaka',
     ship_postcode: customer.postcode || 1000,
-    ship_country: "Bangladesh",
+    ship_country: 'Bangladesh',
 
     // cus_add1: "Dhaka",
     // cus_state: "Dhaka",
@@ -305,7 +290,7 @@ export const onlinePayment = async (
     // ship_state: "Dhaka",
   };
   const apiResponse = await sslcz.init(paymentPayload);
-  console.log("apiResponse", apiResponse);
+  console.log('apiResponse', apiResponse);
 
   return apiResponse.GatewayPageURL;
 };
@@ -313,206 +298,200 @@ export const onlinePayment = async (
 // @desc Get all Order
 // @route GET /api/v1/Order
 // @access Public
-export const getOrders = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: getOrders ${req.method} ${req.url}`);
+export const getOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: getOrders ${req.method} ${req.url}`);
 
-    const { status, returnedStatus } = req.query;
+  const { status, returnedStatus } = req.query;
 
-    const connection = await getDBConnection();
-    const orderRepository = connection.getRepository(OrderEntity);
+  const connection = await getDBConnection();
+  const orderRepository = connection.getRepository(OrderEntity);
 
-    const qb = orderRepository.createQueryBuilder("order");
-    qb.select([
-      "order",
-      "orderItems",
-      "productVariant.id",
-      "productVariant.material",
-      "productVariant.default",
-      "color.name",
-      "color.color",
-      "size.name",
-      "product",
-      "payments",
-      "orderTrackings",
-      "deliveryMan.name",
-      "user.name",
-      "shippingAddress",
-    ]);
+  const qb = orderRepository.createQueryBuilder('order');
+  qb.select([
+    'order',
+    'orderItems',
+    'productVariant.id',
+    'productVariant.material',
+    'productVariant.default',
+    'color.name',
+    'color.color',
+    'size.name',
+    'product',
+    'payments',
+    'orderTrackings',
+    'deliveryMan.name',
+    'user.name',
+    'shippingAddress',
+  ]);
 
-    qb.leftJoin("order.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("orderItems.productVariant", "productVariant");
-    qb.leftJoin("productVariant.color", "color");
-    qb.leftJoin("productVariant.size", "size");
-    qb.leftJoin("order.orderTrackings", "orderTrackings");
-    qb.leftJoin("order.deliveryMan", "deliveryMan");
-    qb.leftJoin("order.user", "user");
-    qb.leftJoin("order.payments", "payments");
-    qb.leftJoin("order.shippingAddress", "shippingAddress");
-    qb.addOrderBy("order.trackingNo", "DESC");
+  qb.leftJoin('order.orderItems', 'orderItems');
+  qb.leftJoin('orderItems.product', 'product');
+  qb.leftJoin('orderItems.productVariant', 'productVariant');
+  qb.leftJoin('productVariant.color', 'color');
+  qb.leftJoin('productVariant.size', 'size');
+  qb.leftJoin('order.orderTrackings', 'orderTrackings');
+  qb.leftJoin('order.deliveryMan', 'deliveryMan');
+  qb.leftJoin('order.user', 'user');
+  qb.leftJoin('order.payments', 'payments');
+  qb.leftJoin('order.shippingAddress', 'shippingAddress');
+  qb.addOrderBy('order.trackingNo', 'DESC');
 
-    if (returnedStatus)
-      qb.andWhere("order.returnedStatus IN (:...returnedStatus)", {
-        returnedStatus: returnedStatus.toString().split(","),
-      });
-
-    if (status)
-      qb.andWhere("order.status IN (:...status)", {
-        status: status.toString().split(","),
-      });
-
-    const results = await qb.getMany();
-
-    return res.status(200).json({
-      success: true,
-      message: "Get all Order",
-      data: results,
+  if (returnedStatus)
+    qb.andWhere('order.returnedStatus IN (:...returnedStatus)', {
+      returnedStatus: returnedStatus.toString().split(','),
     });
-  }
-);
 
-export const getUserOrders = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
-    const { status } = req.query;
-    const userId = req.id;
-    const connection = await getDBConnection();
-    const orderRepository = connection.getRepository(OrderEntity);
-
-    const qb = orderRepository.createQueryBuilder("order");
-    qb.select([
-      "order",
-      "orderItems",
-      "product",
-      "payments",
-      "orderTrackings",
-      "deliveryMan.name",
-      "user.name",
-      "shippingAddress",
-      "productVariant.id",
-      "productVariant.material",
-      "productVariant.default",
-      "color.name",
-      "color.color",
-      "size.name",
-    ]);
-
-    qb.leftJoin("order.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("orderItems.productVariant", "productVariant");
-    qb.leftJoin("productVariant.color", "color");
-    qb.leftJoin("productVariant.size", "size");
-    qb.leftJoin("order.orderTrackings", "orderTrackings");
-    qb.leftJoin("order.deliveryMan", "deliveryMan");
-    qb.leftJoin("order.user", "user");
-    qb.leftJoin("order.payments", "payments");
-    qb.leftJoin("order.shippingAddress", "shippingAddress");
-    if (userId) qb.where({ userId });
-    if (status)
-      qb.andWhere("order.status IN (:...status)", {
-        status: status.toString().split(","),
-      });
-    const results = await qb.getMany();
-
-    return res.status(200).json({
-      success: true,
-      message: "Get all Order",
-      data: results,
+  if (status)
+    qb.andWhere('order.status IN (:...status)', {
+      status: status.toString().split(','),
     });
-  }
-);
+
+  const results = await qb.getMany();
+
+  return res.status(200).json({
+    success: true,
+    message: 'Get all Order',
+    data: results,
+  });
+});
+
+export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
+  const { status } = req.query;
+  const userId = req.id;
+  const connection = await getDBConnection();
+  const orderRepository = connection.getRepository(OrderEntity);
+
+  const qb = orderRepository.createQueryBuilder('order');
+  qb.select([
+    'order',
+    'orderItems',
+    'product',
+    'payments',
+    'orderTrackings',
+    'deliveryMan.name',
+    'user.name',
+    'shippingAddress',
+    'productVariant.id',
+    'productVariant.material',
+    'productVariant.default',
+    'color.name',
+    'color.color',
+    'size.name',
+  ]);
+
+  qb.leftJoin('order.orderItems', 'orderItems');
+  qb.leftJoin('orderItems.product', 'product');
+  qb.leftJoin('orderItems.productVariant', 'productVariant');
+  qb.leftJoin('productVariant.color', 'color');
+  qb.leftJoin('productVariant.size', 'size');
+  qb.leftJoin('order.orderTrackings', 'orderTrackings');
+  qb.leftJoin('order.deliveryMan', 'deliveryMan');
+  qb.leftJoin('order.user', 'user');
+  qb.leftJoin('order.payments', 'payments');
+  qb.leftJoin('order.shippingAddress', 'shippingAddress');
+  if (userId) qb.where({ userId });
+  if (status)
+    qb.andWhere('order.status IN (:...status)', {
+      status: status.toString().split(','),
+    });
+  const results = await qb.getMany();
+
+  return res.status(200).json({
+    success: true,
+    message: 'Get all Order',
+    data: results,
+  });
+});
 
 // @desc Get a single Order
 // @route GET /api/v1/orders/query?id=1
 // @access Public
-export const getOrderQuery = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { id, trackingNo } = req.query; // Assuming the order ID will be passed in the URL as a parameter (e.g., /orders/:id)
-    logger.info(`Service: getOrderQuery ${req.method} ${req.url}`);
+export const getOrderQuery = asyncHandler(async (req: Request, res: Response) => {
+  const { id, trackingNo } = req.query; // Assuming the order ID will be passed in the URL as a parameter (e.g., /orders/:id)
+  logger.info(`Service: getOrderQuery ${req.method} ${req.url}`);
 
-    const connection = await getDBConnection();
-    const orderRepository = connection.getRepository(OrderEntity);
+  const connection = await getDBConnection();
+  const orderRepository = connection.getRepository(OrderEntity);
 
-    const qb = orderRepository.createQueryBuilder("order");
+  const qb = orderRepository.createQueryBuilder('order');
 
-    qb.select([
-      "order",
-      "orderItems",
-      "productVariant",
-      "color",
-      "size",
-      "product",
-      "payments",
-      "orderTrackings",
-      "deliveryMan",
-      "user",
-      "shippingAddress",
-    ]);
+  qb.select([
+    'order',
+    'orderItems',
+    'productVariant',
+    'color',
+    'size',
+    'product',
+    'payments',
+    'orderTrackings',
+    'deliveryMan',
+    'user',
+    'shippingAddress',
+  ]);
 
-    qb.leftJoin("order.orderItems", "orderItems");
-    qb.leftJoin("orderItems.product", "product");
-    qb.leftJoin("orderItems.productVariant", "productVariant");
-    qb.leftJoin("productVariant.color", "color");
-    qb.leftJoin("productVariant.size", "size");
-    qb.leftJoin("order.orderTrackings", "orderTrackings");
-    qb.leftJoin("order.deliveryMan", "deliveryMan");
-    qb.leftJoin("order.user", "user");
-    qb.leftJoin("order.payments", "payments");
-    qb.leftJoin("order.shippingAddress", "shippingAddress");
+  qb.leftJoin('order.orderItems', 'orderItems');
+  qb.leftJoin('orderItems.product', 'product');
+  qb.leftJoin('orderItems.productVariant', 'productVariant');
+  qb.leftJoin('productVariant.color', 'color');
+  qb.leftJoin('productVariant.size', 'size');
+  qb.leftJoin('order.orderTrackings', 'orderTrackings');
+  qb.leftJoin('order.deliveryMan', 'deliveryMan');
+  qb.leftJoin('order.user', 'user');
+  qb.leftJoin('order.payments', 'payments');
+  qb.leftJoin('order.shippingAddress', 'shippingAddress');
 
-    qb.addSelect(
-      (subQuery: any) =>
-        subQuery
-          .select("COALESCE(SUM(p.amount), 0)", "totalCredit")
-          .from("payments", "p")
-          .where("p.order_id = order.id")
-          .andWhere("p.payment_type = :credit", { credit: "Credit" }),
-      "order_totalCredit"
-    );
+  qb.addSelect(
+    (subQuery: any) =>
+      subQuery
+        .select('COALESCE(SUM(p.amount), 0)', 'totalCredit')
+        .from('payments', 'p')
+        .where('p.order_id = order.id')
+        .andWhere('p.payment_type = :credit', { credit: 'Credit' }),
+    'order_totalCredit',
+  );
 
-    qb.addSelect(
-      (subQuery: any) =>
-        subQuery
-          .select("COALESCE(SUM(p.amount), 0)", "totalDebit")
-          .from("payments", "p")
-          .where("p.order_id = order.id")
-          .andWhere("p.payment_type = :debit", { debit: "Debit" }),
-      "order_totalDebit"
-    );
+  qb.addSelect(
+    (subQuery: any) =>
+      subQuery
+        .select('COALESCE(SUM(p.amount), 0)', 'totalDebit')
+        .from('payments', 'p')
+        .where('p.order_id = order.id')
+        .andWhere('p.payment_type = :debit', { debit: 'Debit' }),
+    'order_totalDebit',
+  );
 
-    // Filter to get a single order by ID
-    qb.where("order.id = :id", { id });
-    qb.orWhere("order.trackingNo = :trackingNo", { trackingNo });
+  // Filter to get a single order by ID
+  qb.where('order.id = :id', { id });
+  qb.orWhere('order.trackingNo = :trackingNo', { trackingNo });
 
-    const results = await qb.getRawAndEntities();
+  const results = await qb.getRawAndEntities();
 
-    if (!results.entities.length) {
-      return res.status(404).json({
-        success: false,
-        message: `Order with ID ${id} not found.`,
-      });
-    }
-
-    const raw = results.raw[0];
-    const order = results.entities[0];
-
-    const totalCredit = Number(raw.order_totalCredit) || 0;
-    const totalDebit = Number(raw.order_totalDebit) || 0;
-
-    return res.status(200).json({
-      success: true,
-      message: `Order with ID ${id} retrieved successfully`,
-      data: {
-        ...order,
-        totalCredit,
-        totalDebit,
-        paid: (totalDebit - totalCredit).toFixed(2),
-        due: (+order.grandTotal - totalDebit + totalCredit).toFixed(2),
-      },
+  if (!results.entities.length) {
+    return res.status(404).json({
+      success: false,
+      message: `Order with ID ${id} not found.`,
     });
   }
-);
+
+  const raw = results.raw[0];
+  const order = results.entities[0];
+
+  const totalCredit = Number(raw.order_totalCredit) || 0;
+  const totalDebit = Number(raw.order_totalDebit) || 0;
+
+  return res.status(200).json({
+    success: true,
+    message: `Order with ID ${id} retrieved successfully`,
+    data: {
+      ...order,
+      totalCredit,
+      totalDebit,
+      paid: (totalDebit - totalCredit).toFixed(2),
+      due: (+order.grandTotal - totalDebit + totalCredit).toFixed(2),
+    },
+  });
+});
 
 // @desc Update a single Order
 // @route PUT /api/v1/Order/:id
@@ -526,7 +505,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 
@@ -564,7 +543,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
         qty: item.qty,
         unitPrice: item.unitPrice,
         orderId: save.id,
-      }))
+      })),
     );
     await repoOrderitems.save(newOrderItems);
   }
@@ -602,178 +581,157 @@ export const orderReview = asyncHandler(async (req: Request, res: Response) => {
 // @desc assign DeliveryMan
 // @route patch /api/v1/order/assign/:id
 // @access Public
-export const assignDeliveryMan = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: assignDeliveryMan ${req.method} ${req.url}`);
+export const assignDeliveryMan = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: assignDeliveryMan ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const validation = orderDeliveryManValidationSchema.safeParse(req.body);
+  const { id } = req.params;
+  const validation = orderDeliveryManValidationSchema.safeParse(req.body);
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
 
-    const connection = await getDBConnection();
+  const connection = await getDBConnection();
 
-    const repository = await connection.getRepository(OrderEntity);
+  const repository = await connection.getRepository(OrderEntity);
 
-    const result = await repository.findOne({ where: { id } });
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+  const result = await repository.findOne({ where: { id } });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  const save = await repository.save({
+    id: result.id,
+    deliveryId: validation.data.deliveryId,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: 'Assign Delivery man',
+    data: save,
+  });
+});
+
+export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: orderStatusUpdate ${req.method} ${req.url}`);
+
+  const userId = req.id as string | number;
+  const { id } = req.params;
+
+  const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
+
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
+    });
+  }
+
+  const status = validation.data.status;
+  const location = validation.data.location;
+
+  const connection = await getDBConnection();
+  const queryRunner = connection.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  const repository = queryRunner.manager.getRepository(OrderEntity);
+  const result = await repository.findOne({
+    where: { id },
+    relations: ['orderItems'],
+  });
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  if (
+    status === OrderStatus.Canceled &&
+    ![OrderStatus.Pending, OrderStatus.Processing].includes(result.status as OrderStatus)
+  ) {
+    throw new Error(`Sorry, you can't cancel this order because it's already '${result.status}'.`);
+  }
+
+  try {
+    if (
+      [OrderStatus.Canceled, OrderStatus.Delivered, OrderStatus.Shipped].includes(
+        status as OrderStatus,
+      )
+    ) {
+      const productVariantRepo = queryRunner.manager.getRepository(ProductVariantEntity);
+
+      const isStockIncrease = [OrderStatus.Canceled].includes(status as OrderStatus);
+
+      await adjustStock(result.orderItems, isStockIncrease, productVariantRepo);
     }
 
     const save = await repository.save({
       id: result.id,
-      deliveryId: validation.data.deliveryId,
+      ...validation.data,
     });
+
+    const message = `Your order has been ${status}. Order Tracking No: ${result.trackingNo}`;
+    const userRepository = await connection.getRepository(UserEntity);
+    const getuser = await userRepository.findOne({ where: { id: userId } });
+    const ssmsRes = await sendSms(getuser.phone, message);
+
+    const notification: Notification = {
+      type: 'Order',
+      title: status,
+      message,
+      userId,
+      orderId: result.id,
+    };
+
+    const newOrderTracking = {
+      status: status,
+      orderId: result.id,
+      userId,
+      location,
+    } as OrderTracking;
+
+    const orderTrackingRepo = queryRunner.manager.getRepository(OrderTrackingEntity);
+
+    await orderTracking(newOrderTracking, orderTrackingRepo);
+
+    await sendOrderNotification(notification);
+
+    await queryRunner.commitTransaction();
 
     return res.status(200).json({
       success: true,
-      message: "Assign Delivery man",
+      message: `Order Status Update of id ${req.params.id}`,
       data: save,
     });
-  }
-);
-
-export const orderStatusUpdate = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: orderStatusUpdate ${req.method} ${req.url}`);
-
-    const userId = req.id as string | number;
-    const { id } = req.params;
-
-    const validation = orderStatusUpdateValidationSchema.safeParse(req.body);
-
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
-
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const status = validation.data.status;
-    const location = validation.data.location;
-
-    const connection = await getDBConnection();
-    const queryRunner = connection.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    const repository = queryRunner.manager.getRepository(OrderEntity);
-    const result = await repository.findOne({
-      where: { id },
-      relations: ["orderItems"],
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    return res.status(500).json({
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to update order status',
     });
-
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    if (
-      status === OrderStatus.Canceled &&
-      ![OrderStatus.Pending, OrderStatus.Processing].includes(
-        result.status as OrderStatus
-      )
-    ) {
-      throw new Error(
-        `Sorry, you can't cancel this order because it's already '${result.status}'.`
-      );
-    }
-
-    try {
-      if (
-        [
-          OrderStatus.Canceled,
-          OrderStatus.Delivered,
-          OrderStatus.Shipped,
-        ].includes(status as OrderStatus)
-      ) {
-        const productVariantRepo =
-          queryRunner.manager.getRepository(ProductVariantEntity);
-
-        const isStockIncrease = [OrderStatus.Canceled].includes(
-          status as OrderStatus
-        );
-
-        await adjustStock(
-          result.orderItems,
-          isStockIncrease,
-          productVariantRepo
-        );
-      }
-
-      const save = await repository.save({
-        id: result.id,
-        ...validation.data,
-      });
-
-      const message = `Your order has been ${status}. Order Tracking No: ${result.trackingNo}`;
-      const userRepository = await connection.getRepository(UserEntity);
-      const getuser = await userRepository.findOne({ where: { id: userId } });
-      const ssmsRes = await sendSms(getuser.phone, message);
-
-      const notification: Notification = {
-        type: "Order",
-        title: status,
-        message,
-        userId,
-        orderId: result.id,
-      };
-
-      const newOrderTracking = {
-        status: status,
-        orderId: result.id,
-        userId,
-        location,
-      } as OrderTracking;
-
-      const orderTrackingRepo =
-        queryRunner.manager.getRepository(OrderTrackingEntity);
-
-      await orderTracking(newOrderTracking, orderTrackingRepo);
-
-      await sendOrderNotification(notification);
-
-      await queryRunner.commitTransaction();
-
-      return res.status(200).json({
-        success: true,
-        message: `Order Status Update of id ${req.params.id}`,
-        data: save,
-      });
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      return res.status(500).json({
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to update order status",
-      });
-    } finally {
-      await queryRunner.release();
-    }
+  } finally {
+    await queryRunner.release();
   }
-);
+});
 
 async function adjustStock(
   orderItems: OrderItemEntity[],
   isStockIncrease: boolean,
-  productVariantRepo: Repository<ProductVariantEntity>
+  productVariantRepo: Repository<ProductVariantEntity>,
 ) {
   for (const item of orderItems) {
     const findProductVariant: any = await productVariantRepo.findOne({
@@ -788,13 +746,11 @@ async function adjustStock(
     // ❗Check if stock is enough before reducing
     if (!isStockIncrease && currentStock < itemQty) {
       throw new Error(
-        `Insufficient stock for product variant ID ${item.productVariantId}. Required: ${itemQty}, Available: ${currentStock}`
+        `Insufficient stock for product variant ID ${item.productVariantId}. Required: ${itemQty}, Available: ${currentStock}`,
       );
     }
 
-    const newStockQty = isStockIncrease
-      ? currentStock + itemQty
-      : currentStock - itemQty;
+    const newStockQty = isStockIncrease ? currentStock + itemQty : currentStock - itemQty;
 
     await productVariantRepo.save({
       id: findProductVariant.id,

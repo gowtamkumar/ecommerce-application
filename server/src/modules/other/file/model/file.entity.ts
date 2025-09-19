@@ -1,7 +1,7 @@
-import "reflect-metadata";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import 'reflect-metadata';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("files")
+@Entity('files')
 export class FileEntity {
   @PrimaryGeneratedColumn()
   id!: number;

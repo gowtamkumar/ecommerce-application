@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const updateSettingValidationSchema = z.object({
   siteName: z.string().optional(),

@@ -1,14 +1,12 @@
-import winston, { format } from "winston";
+import winston, { format } from 'winston';
 
 export const logger = winston.createLogger({
-  level: "info",
+  level: 'info',
   format: format.combine(
     winston.format.colorize(),
     // winston.format.json(),
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.printf(
-      ({ timestamp, level, message }) => `${timestamp} [${level}]: [${message}]`
-    )
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    format.printf(({ timestamp, level, message }) => `${timestamp} [${level}]: [${message}]`),
   ),
   // defaultMeta: { service: "user-service" },
   transports: [
@@ -22,7 +20,7 @@ export const logger = winston.createLogger({
     // - Write all logs with importance level of `info` or higher to `combined.log`
     //   (i.e., fatal, error, warn, and info, but not trace)
     //
-    new winston.transports.File({ filename: "app.log", level: "info" }), //this use create a app log
+    new winston.transports.File({ filename: 'app.log', level: 'info' }), //this use create a app log
   ],
 });
 

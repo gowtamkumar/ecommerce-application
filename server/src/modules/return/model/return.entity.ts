@@ -32,7 +32,7 @@
 
 //   @Column({ name: "requested_qty", type: "int", default: 0 })
 //   requestedQty!: number;
-  
+
 //   @Column({ name: "approved_qty", type: "int", default: 0 })
 //   approvedQty!: number;
 

@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -6,12 +6,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { Status } from "../../../enums/status.enum";
-import { ApplicableBrandEntity } from "../../discount/model/applicable-brand.entity";
+} from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { Status } from '../../../enums/status.enum';
+import { ApplicableBrandEntity } from '../../discount/model/applicable-brand.entity';
 
-@Entity("brands")
+@Entity('brands')
 export class BrandEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -29,19 +29,19 @@ export class BrandEntity {
   description!: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Status,
     default: Status.Active,
   })
   status!: Status;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 
   @OneToMany((_type) => ProductEntity, (product) => product.brand)

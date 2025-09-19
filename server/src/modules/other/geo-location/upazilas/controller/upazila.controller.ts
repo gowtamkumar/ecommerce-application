@@ -1,9 +1,9 @@
-import fs from "fs";
-import { Request, Response, NextFunction } from "express";
-import { UpazilaEntity } from "../model/upazila.entity";
-import { asyncHandler } from "../../../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../../../config/db";
-import { CustomRequest } from "../../../../../enums/custom-request-type";
+import fs from 'fs';
+import { Request, Response, NextFunction } from 'express';
+import { UpazilaEntity } from '../model/upazila.entity';
+import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../../../config/db';
+import { CustomRequest } from '../../../../../enums/custom-request-type';
 
 // @desc Get all Upazila
 // @route GET /api/v1/Upazila
@@ -14,7 +14,7 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
 
   const { districtId } = req.query;
 
-  let customQuery = {} as any;
+  const customQuery = {} as any;
 
   if (districtId) {
     customQuery.districtId = districtId;
@@ -26,7 +26,7 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get all Upazila",
+    message: 'Get all Upazila',
     data: result,
   });
 });
@@ -34,24 +34,22 @@ export const getUpazilas = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get a single Upazila
 // @route GET /api/v1/Upazila/:id
 // @access Public
-export const getUpazila = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(UpazilaEntity);
-    const result = await repository.findOneBy({ id });
+export const getUpazila = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(UpazilaEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Upazila of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Upazila of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Upazila
 // @route POST /api/v1/Upazila
@@ -68,10 +66,7 @@ export const createUpazila = asyncHandler(async (req: CustomRequest, res: Respon
   //     message: validation.error.formErrors,
   //   });
   // }
-  const file = fs.readFileSync(
-    process.cwd() + "/database/fack-data/upazilas.json",
-    "utf8"
-  );
+  const file = fs.readFileSync(process.cwd() + '/database/fack-data/upazilas.json', 'utf8');
   const jsonData = JSON.parse(file);
 
   const repository = connection.getRepository(UpazilaEntity);
@@ -81,13 +76,13 @@ export const createUpazila = asyncHandler(async (req: CustomRequest, res: Respon
       ...item,
       districtId: item.district_id,
       bnName: item.bn_name,
-    }))
+    })),
   );
   const save = await repository.save(newUpazila);
 
   return res.status(200).json({
     success: true,
-    message: "Create a new Upazila",
+    message: 'Create a new Upazila',
     data: save,
   });
 });

@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   createComment,
   deleteComment,
@@ -7,14 +7,14 @@ import {
   updateComment,
   commentLike,
   commentDisLike,
-} from "../controller/comment.controller";
+} from '../controller/comment.controller';
 
 const router = express.Router();
 
-router.route("/").get(getComments).post(createComment);
+router.route('/').get(getComments).post(createComment);
 
-router.route("/:id").get(getComment).patch(updateComment).delete(deleteComment);
-router.route("/like/:id").patch(commentLike);
-router.route("/dislike/:id").patch(commentDisLike);
+router.route('/:id').get(getComment).patch(updateComment).delete(deleteComment);
+router.route('/like/:id').patch(commentLike);
+router.route('/dislike/:id').patch(commentDisLike);
 
 export default router;

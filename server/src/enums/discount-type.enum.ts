@@ -1,5 +1,5 @@
 export enum DiscountType {
-  Percentage = "Percentage",
-  Fixed = "Fixed",
+  Percentage = 'Percentage',
+  Fixed = 'Fixed',
   // FreeShipping="FreeShipping"
 }

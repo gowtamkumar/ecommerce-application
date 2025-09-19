@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   createShippingAddress,
   deleteShippingAddress,
@@ -6,15 +6,15 @@ import {
   getShippingAddresses,
   getUserShippingAddresses,
   updateShippingAddress,
-} from "../controller/shipping-address.controller";
+} from '../controller/shipping-address.controller';
 
 const router = express.Router();
 
-router.route("/").get(getShippingAddresses).post(createShippingAddress);
-router.route("/user").get(getUserShippingAddresses);
+router.route('/').get(getShippingAddresses).post(createShippingAddress);
+router.route('/user').get(getUserShippingAddresses);
 
 router
-  .route("/:id")
+  .route('/:id')
   .get(getShippingAddress)
   .put(updateShippingAddress)
   .delete(deleteShippingAddress);

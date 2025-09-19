@@ -1,19 +1,19 @@
-import { NextFunction, Request, Response } from "express";
-import { getDBConnection } from "../../../config/db";
-import { CouponType } from "../../../enums/coupon-type.enum";
-import { CustomRequest } from "../../../enums/custom-request-type";
-import { DiscountType } from "../../../enums/discount-type.enum";
-import { asyncHandler } from "../../../middlewares/async.middleware";
-import { logger } from "../../../middlewares/logger";
-import { cartValidationSchema } from "../../../validation";
-import { cartIncrementDecrementValidationSchema } from "../../../validation/cart/cartIncrementDecrementValidationSchema";
-import { updateCartValidationSchema } from "../../../validation/cart/updateCartValidation";
-import { AppliedCouponEntity } from "../../coupon/model/applied-coupon.entity";
-import { CouponEntity } from "../../coupon/model/coupon.entity";
-import { SettingEntity } from "../../other/setting/model/setting.entity";
-import { ShippingChargeEntity } from "../../shipping-charge/model/shipping-charge.entity";
-import { incrementDecrementType } from "../enums/increment-decrement-type.enum";
-import { CartEntity } from "../model/cart.entity";
+import { NextFunction, Request, Response } from 'express';
+import { getDBConnection } from '../../../config/db';
+import { CouponType } from '../../../enums/coupon-type.enum';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { DiscountType } from '../../../enums/discount-type.enum';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
+import { cartValidationSchema } from '../../../validation';
+import { cartIncrementDecrementValidationSchema } from '../../../validation/cart/cartIncrementDecrementValidationSchema';
+import { updateCartValidationSchema } from '../../../validation/cart/updateCartValidation';
+import { AppliedCouponEntity } from '../../coupon/model/applied-coupon.entity';
+import { CouponEntity } from '../../coupon/model/coupon.entity';
+import { SettingEntity } from '../../other/setting/model/setting.entity';
+import { ShippingChargeEntity } from '../../shipping-charge/model/shipping-charge.entity';
+import { incrementDecrementType } from '../enums/increment-decrement-type.enum';
+import { CartEntity } from '../model/cart.entity';
 
 // @desc Get all Cart
 // @route GET /api/v1/Cart
@@ -176,69 +176,66 @@ export const getCarts = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get all Cart",
+    message: 'Get all Cart',
     data: result,
   });
 });
 
-export const cartListApplyCoupon = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    logger.info(`Service: cartListApplyCoupon ${req.method} ${req.url}`);
-    const { couponCode, districtId } = req.query;
-    const userId = req?.id;
+export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: cartListApplyCoupon ${req.method} ${req.url}`);
+  const { couponCode, districtId } = req.query;
+  const userId = req?.id;
 
-    if (!userId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not authenticated" });
+  if (!userId) {
+    return res.status(400).json({ success: false, message: 'User not authenticated' });
+  }
+
+  const connection = await getDBConnection();
+
+  // Initialize coupon-related variables
+  let validCoupon: any = null;
+  let couponDiscount = 0;
+  let shippingCharge = 0; // Example flat shipping charge
+  let message = '';
+
+  if (couponCode) {
+    const coupon = await connection
+      .getRepository(CouponEntity)
+      .createQueryBuilder('coupon')
+      .select(['coupon', 'products'])
+      .leftJoin('coupon.products', 'products')
+      .where('coupon.code = :code', { code: couponCode })
+      .andWhere('coupon.active = true')
+      .andWhere('NOW() BETWEEN coupon.startDate AND coupon.expiryDate')
+      .getOne();
+
+    if (!coupon) {
+      message = 'Invalid or expired coupon';
     }
 
-    const connection = await getDBConnection();
+    if (coupon) {
+      // Check usage_per_user limit
+      const totalUserUsage = await connection
+        .getRepository(AppliedCouponEntity)
+        .createQueryBuilder('appliedCoupon')
+        .where('appliedCoupon.userId = :userId', { userId })
+        .andWhere('appliedCoupon.couponId = :couponId', {
+          couponId: coupon.id,
+        })
+        .getCount();
 
-    // Initialize coupon-related variables
-    let validCoupon: any = null;
-    let couponDiscount = 0;
-    let shippingCharge = 0; // Example flat shipping charge
-    let message = "";
-
-    if (couponCode) {
-      const coupon = await connection
-        .getRepository(CouponEntity)
-        .createQueryBuilder("coupon")
-        .select(["coupon", "products"])
-        .leftJoin("coupon.products", "products")
-        .where("coupon.code = :code", { code: couponCode })
-        .andWhere("coupon.active = true")
-        .andWhere("NOW() BETWEEN coupon.startDate AND coupon.expiryDate")
-        .getOne();
-
-      if (!coupon) {
-        message = "Invalid or expired coupon";
-      }
-
-      if (coupon) {
-        // Check usage_per_user limit
-        const totalUserUsage = await connection
-          .getRepository(AppliedCouponEntity)
-          .createQueryBuilder("appliedCoupon")
-          .where("appliedCoupon.userId = :userId", { userId })
-          .andWhere("appliedCoupon.couponId = :couponId", {
-            couponId: coupon.id,
-          })
-          .getCount();
-
-        if (totalUserUsage >= coupon.usagePerUser) {
-          message = `You already applied ${totalUserUsage} time. You can only use this coupon ${coupon.usagePerUser} time(s)`;
-        } else {
-          message = "Coupon applied successfully";
-          validCoupon = coupon;
-        }
+      if (totalUserUsage >= coupon.usagePerUser) {
+        message = `You already applied ${totalUserUsage} time. You can only use this coupon ${coupon.usagePerUser} time(s)`;
+      } else {
+        message = 'Coupon applied successfully';
+        validCoupon = coupon;
       }
     }
+  }
 
-    // Step 2: Fetch the cart details
-    const cart = await connection.query(
-      `
+  // Step 2: Fetch the cart details
+  const cart = await connection.query(
+    `
         WITH selectedDiscounts AS (
         SELECT DISTINCT ON (p.id) 
             p.id AS product_id,  
@@ -380,291 +377,272 @@ export const cartListApplyCoupon = asyncHandler(
     LEFT JOIN product_variants AS pv ON pv.id = carts.product_variant_id
     LEFT JOIN selectedDiscounts sd ON sd.product_id = p.id
     WHERE carts.user_id = $1`,
-      [userId]
-    );
+    [userId],
+  );
 
-    if (!cart.length) {
-      // return res.status(400).json({ success: false, message: "Cart is empty" });
-      return res.status(200).json({
-        success: false,
-        message: "Cart is empty",
-        data: {
-          cartList: cart,
-          cartSummary: {
-            totalQty: 0,
-            subTotal: "0.00", //unit_price + tax - discount
-            totalItemsDiscount: "0.00", //item.totalDiscountAmount
-            couponDiscount: "0.00",
-            totalDiscount: "0.00", //coupon + totalitemdiscount
-            totalTax: "0.00",
-            shippingCharge: "0.00",
-            grandTotal: "0.00",
-            // totalSalePrice: "0.00",
-          },
-        },
-      });
-    }
-
-    // Step 3: Calculate totals
-    let totalQty = 0;
-    let subTotal = 0;
-    let totalItemsDiscount = 0;
-    let totalTax = 0;
-    let grandTotal = 0;
-    // let totalSalePrice = 0;
-
-    cart.forEach(
-      (item: {
-        qty: number;
-        taxAmount: string;
-        discountAmount: number;
-        totalDiscountAmount: number | string;
-        subTotal: string;
-        salePrice: string;
-      }) => {
-        const qty = +item.qty || 0;
-        const taxAmount = +item.taxAmount || 0;
-        const discountAmount = +item.totalDiscountAmount || 0;
-        const subtotalAmount = +item.subTotal;
-
-        totalQty += +qty;
-        // totalSalePrice = +item.salePrice * +qty;
-        subTotal += +subtotalAmount;
-        totalItemsDiscount += +discountAmount;
-        totalTax += +taxAmount;
-        grandTotal += +subtotalAmount;
-      }
-    );
-
-    if (validCoupon) {
-      if (grandTotal < validCoupon.minOrderAmount) {
-        message = `Minmum order amount must be at least ${validCoupon.minOrderAmount} to apply this coupon`;
-        validCoupon = null;
-      }
-
-      if (totalQty < +validCoupon.mincartValue) {
-        message = `Cart value must be at least ${validCoupon.mincartValue} to apply this coupon`;
-        validCoupon = null;
-      }
-
-      if (+validCoupon.usageCount === +validCoupon.usageLimit) {
-        message = `Coupon usage limit reached`;
-        validCoupon = null;
-      }
-    }
-
-    // Step 4: Apply the coupon if provided
-    if (validCoupon) {
-      if (validCoupon.type === CouponType.Order) {
-        if (validCoupon.discountType === DiscountType.Percentage) {
-          couponDiscount = (+grandTotal * validCoupon.value) / 100;
-        } else if (validCoupon.discountType === DiscountType.Fixed) {
-          couponDiscount = validCoupon.value;
-        }
-      } else if (validCoupon.type === CouponType.Product) {
-        const validProductIds = validCoupon.products.map(
-          (p: any) => p.productId
-        );
-        cart.forEach((item: any) => {
-          if (validProductIds.includes(item.productId)) {
-            if (validCoupon.discountType === DiscountType.Percentage) {
-              couponDiscount += (+item.subTotal * +validCoupon.value) / 100;
-            } else if (validCoupon.discountType === DiscountType.Fixed) {
-              couponDiscount += validCoupon.value * item.qty;
-            }
-          }
-        });
-      }
-
-      couponDiscount = Math.min(
-        couponDiscount,
-        validCoupon.maxDiscountValue || couponDiscount
-      );
-
-      // Check for FreeShipping
-      // if (validCoupon.type === DiscountType.FreeShipping) {
-      //   shippingCharge = 0;
-      // }
-    }
-
-    const settingRepository = await connection.getRepository(SettingEntity);
-    const setting = (await settingRepository.find())[0];
-
-    grandTotal -= +couponDiscount;
-
-    if (districtId) {
-      const shippingAddressRepository = await connection.getRepository(
-        ShippingChargeEntity
-      );
-      const findShippingAddress = await shippingAddressRepository.findOne({
-        where: { districtId },
-      });
-
-      const newlog =
-        +setting?.orderFreeShippingAmount > 0 &&
-        +setting?.orderFreeShippingAmount <= +grandTotal;
-
-      if (districtId && newlog) {
-        shippingCharge = 0;
-      } else {
-        shippingCharge = +findShippingAddress?.shippingCharge || 0;
-      }
-    }
-
-    grandTotal += +shippingCharge;
-
+  if (!cart.length) {
+    // return res.status(400).json({ success: false, message: "Cart is empty" });
     return res.status(200).json({
-      success: true,
-      message: !couponCode ? "Get Cart list" : message,
+      success: false,
+      message: 'Cart is empty',
       data: {
         cartList: cart,
         cartSummary: {
-          totalQty,
-          subTotal: subTotal.toFixed(2), //unit_price + tax - discount
-          totalItemsDiscount: (+totalItemsDiscount || 0).toFixed(2), //item.totalDiscountAmount
-          couponDiscount: couponDiscount.toFixed(2),
-          totalDiscount: (totalItemsDiscount + couponDiscount).toFixed(2), //coupon + totalitemdiscount
-          couponId: +couponDiscount > 0 && validCoupon ? validCoupon.id : null,
-          totalTax: totalTax.toFixed(2),
-          shippingCharge: shippingCharge.toFixed(2),
-          grandTotal: grandTotal.toFixed(2),
-          // totalSalePrice: totalSalePrice.toFixed(2),
+          totalQty: 0,
+          subTotal: '0.00', //unit_price + tax - discount
+          totalItemsDiscount: '0.00', //item.totalDiscountAmount
+          couponDiscount: '0.00',
+          totalDiscount: '0.00', //coupon + totalitemdiscount
+          totalTax: '0.00',
+          shippingCharge: '0.00',
+          grandTotal: '0.00',
+          // totalSalePrice: "0.00",
         },
       },
     });
   }
-);
+
+  // Step 3: Calculate totals
+  let totalQty = 0;
+  let subTotal = 0;
+  let totalItemsDiscount = 0;
+  let totalTax = 0;
+  let grandTotal = 0;
+  // let totalSalePrice = 0;
+
+  cart.forEach(
+    (item: {
+      qty: number;
+      taxAmount: string;
+      discountAmount: number;
+      totalDiscountAmount: number | string;
+      subTotal: string;
+      salePrice: string;
+    }) => {
+      const qty = +item.qty || 0;
+      const taxAmount = +item.taxAmount || 0;
+      const discountAmount = +item.totalDiscountAmount || 0;
+      const subtotalAmount = +item.subTotal;
+
+      totalQty += +qty;
+      // totalSalePrice = +item.salePrice * +qty;
+      subTotal += +subtotalAmount;
+      totalItemsDiscount += +discountAmount;
+      totalTax += +taxAmount;
+      grandTotal += +subtotalAmount;
+    },
+  );
+
+  if (validCoupon) {
+    if (grandTotal < validCoupon.minOrderAmount) {
+      message = `Minmum order amount must be at least ${validCoupon.minOrderAmount} to apply this coupon`;
+      validCoupon = null;
+    }
+
+    if (totalQty < +validCoupon.mincartValue) {
+      message = `Cart value must be at least ${validCoupon.mincartValue} to apply this coupon`;
+      validCoupon = null;
+    }
+
+    if (+validCoupon.usageCount === +validCoupon.usageLimit) {
+      message = `Coupon usage limit reached`;
+      validCoupon = null;
+    }
+  }
+
+  // Step 4: Apply the coupon if provided
+  if (validCoupon) {
+    if (validCoupon.type === CouponType.Order) {
+      if (validCoupon.discountType === DiscountType.Percentage) {
+        couponDiscount = (+grandTotal * validCoupon.value) / 100;
+      } else if (validCoupon.discountType === DiscountType.Fixed) {
+        couponDiscount = validCoupon.value;
+      }
+    } else if (validCoupon.type === CouponType.Product) {
+      const validProductIds = validCoupon.products.map((p: any) => p.productId);
+      cart.forEach((item: any) => {
+        if (validProductIds.includes(item.productId)) {
+          if (validCoupon.discountType === DiscountType.Percentage) {
+            couponDiscount += (+item.subTotal * +validCoupon.value) / 100;
+          } else if (validCoupon.discountType === DiscountType.Fixed) {
+            couponDiscount += validCoupon.value * item.qty;
+          }
+        }
+      });
+    }
+
+    couponDiscount = Math.min(couponDiscount, validCoupon.maxDiscountValue || couponDiscount);
+
+    // Check for FreeShipping
+    // if (validCoupon.type === DiscountType.FreeShipping) {
+    //   shippingCharge = 0;
+    // }
+  }
+
+  const settingRepository = await connection.getRepository(SettingEntity);
+  const setting = (await settingRepository.find())[0];
+
+  grandTotal -= +couponDiscount;
+
+  if (districtId) {
+    const shippingAddressRepository = await connection.getRepository(ShippingChargeEntity);
+    const findShippingAddress = await shippingAddressRepository.findOne({
+      where: { districtId },
+    });
+
+    const newlog =
+      +setting?.orderFreeShippingAmount > 0 && +setting?.orderFreeShippingAmount <= +grandTotal;
+
+    if (districtId && newlog) {
+      shippingCharge = 0;
+    } else {
+      shippingCharge = +findShippingAddress?.shippingCharge || 0;
+    }
+  }
+
+  grandTotal += +shippingCharge;
+
+  return res.status(200).json({
+    success: true,
+    message: !couponCode ? 'Get Cart list' : message,
+    data: {
+      cartList: cart,
+      cartSummary: {
+        totalQty,
+        subTotal: subTotal.toFixed(2), //unit_price + tax - discount
+        totalItemsDiscount: (+totalItemsDiscount || 0).toFixed(2), //item.totalDiscountAmount
+        couponDiscount: couponDiscount.toFixed(2),
+        totalDiscount: (totalItemsDiscount + couponDiscount).toFixed(2), //coupon + totalitemdiscount
+        couponId: +couponDiscount > 0 && validCoupon ? validCoupon.id : null,
+        totalTax: totalTax.toFixed(2),
+        shippingCharge: shippingCharge.toFixed(2),
+        grandTotal: grandTotal.toFixed(2),
+        // totalSalePrice: totalSalePrice.toFixed(2),
+      },
+    },
+  });
+});
 
 // @desc Update a single Cart
 // @route PUT /api/v1/Cart/:id
 // @access Public
-export const cartIncrementDecrement = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
+export const cartIncrementDecrement = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
 
-    const validation = cartIncrementDecrementValidationSchema.safeParse(
-      req.body
-    );
+  const validation = cartIncrementDecrementValidationSchema.safeParse(req.body);
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const repository = await connection.getRepository(CartEntity);
-    const result = await repository.findOne({
-      where: { id },
-      relations: ["productVariant"],
-    });
-
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    let qty = 0;
-    if (validation.data.type === incrementDecrementType.Increment) {
-      if (result.productVariant.stockQty < validation.data.qty) {
-        throw new Error(`Out of stock`);
-      }
-      qty = validation.data.qty;
-    } else if (validation.data.type === incrementDecrementType.Decrement) {
-      if (result.qty === 1) {
-        throw new Error(
-          `Minimum 1 qty should be keep otherwise you can remove`
-        );
-      } else {
-        qty = validation.data.qty;
-      }
-    }
-
-    const cartUpdate = await repository.save({ id: result.id, qty });
-
-    return res.status(200).json({
-      success: true,
-      message: `Update a single Cart of id ${req.params.id}`,
-      data: cartUpdate,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const repository = await connection.getRepository(CartEntity);
+  const result = await repository.findOne({
+    where: { id },
+    relations: ['productVariant'],
+  });
+
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  let qty = 0;
+  if (validation.data.type === incrementDecrementType.Increment) {
+    if (result.productVariant.stockQty < validation.data.qty) {
+      throw new Error(`Out of stock`);
+    }
+    qty = validation.data.qty;
+  } else if (validation.data.type === incrementDecrementType.Decrement) {
+    if (result.qty === 1) {
+      throw new Error(`Minimum 1 qty should be keep otherwise you can remove`);
+    } else {
+      qty = validation.data.qty;
+    }
+  }
+
+  const cartUpdate = await repository.save({ id: result.id, qty });
+
+  return res.status(200).json({
+    success: true,
+    message: `Update a single Cart of id ${req.params.id}`,
+    data: cartUpdate,
+  });
+});
 
 // @desc Get a single Cart
 // @route GET /api/v1/Cart/:id
 // @access Public
-export const getCart = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(CartEntity);
-    const result = await repository.findOneBy({ id });
+export const getCart = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(CartEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single Cart of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single Cart of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single Cart
 // @route POST /api/v1/Cart
 // @access Public
-export const createCart = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
-    const connection = await getDBConnection();
+export const createCart = asyncHandler(async (req: CustomRequest, res: Response) => {
+  const connection = await getDBConnection();
 
-    const userId = req.id;
+  const userId = req.id;
 
-    const validation = cartValidationSchema.safeParse({
-      ...req.body,
-      userId,
-    });
+  const validation = cartValidationSchema.safeParse({
+    ...req.body,
+    userId,
+  });
 
-    if (!validation.success) {
-      const formattedErrors = validation.error.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      }));
+  if (!validation.success) {
+    const formattedErrors = validation.error.issues.map((issue) => ({
+      path: issue.path.join('.'),
+      message: issue.message,
+    }));
 
-      return res.status(400).json({
-        success: false,
-        issues: formattedErrors,
-      });
-    }
-
-    const repository = connection.getRepository(CartEntity);
-
-    const findCart = await repository.findOneBy({
-      productId: validation.data.productId,
-      userId,
-    });
-
-    if (findCart) {
-      throw new Error(`This product is already added please update Quantity`);
-    }
-
-    const newCart = repository.create(validation.data);
-
-    const added = await repository.save(newCart);
-
-    return res.status(200).json({
-      success: true,
-      message: "Add to Cart successfully",
-      data: added,
+    return res.status(400).json({
+      success: false,
+      issues: formattedErrors,
     });
   }
-);
+
+  const repository = connection.getRepository(CartEntity);
+
+  const findCart = await repository.findOneBy({
+    productId: validation.data.productId,
+    userId,
+  });
+
+  if (findCart) {
+    throw new Error(`This product is already added please update Quantity`);
+  }
+
+  const newCart = repository.create(validation.data);
+
+  const added = await repository.save(newCart);
+
+  return res.status(200).json({
+    success: true,
+    message: 'Add to Cart successfully',
+    data: added,
+  });
+});
 
 // @desc Update a single Cart
 // @route PUT /api/v1/Cart/:id
@@ -678,7 +656,7 @@ export const updateCart = asyncHandler(async (req: Request, res: Response) => {
   });
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 

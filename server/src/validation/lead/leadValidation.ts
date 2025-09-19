@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const leadValidationSchema = z.object({
   email: z.string({
-    required_error: "E-mail is required",
+    required_error: 'E-mail is required',
   }),
 });

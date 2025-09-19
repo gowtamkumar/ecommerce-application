@@ -1,70 +1,63 @@
-import fs from "fs";
+import fs from 'fs';
 
-import { Request, Response, NextFunction } from "express";
-import { DistrictEntity } from "../model/district.entity";
-import { asyncHandler } from "../../../../../middlewares/async.middleware";
-import { getDBConnection } from "../../../../../config/db";
-import { CustomRequest } from "../../../../../enums/custom-request-type";
+import { Request, Response, NextFunction } from 'express';
+import { DistrictEntity } from '../model/district.entity';
+import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { getDBConnection } from '../../../../../config/db';
+import { CustomRequest } from '../../../../../enums/custom-request-type';
 
 // @desc Get all District
 // @route GET /api/v1/District
 // @access Public
-export const getDistricts = asyncHandler(
-  async (req: Request, res: Response) => {
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(DistrictEntity);
+export const getDistricts = asyncHandler(async (req: Request, res: Response) => {
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(DistrictEntity);
 
-    const { divisionId } = req.query;
+  const { divisionId } = req.query;
 
-    let customQuery = {} as any;
+  const customQuery = {} as any;
 
-    if (divisionId) {
-       customQuery.divisionId = divisionId;
-    }
-    const result = await repository.find({
-      where: { divisionId: customQuery.divisionId },
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Get all District",
-      data: result,
-    });
+  if (divisionId) {
+    customQuery.divisionId = divisionId;
   }
-);
+  const result = await repository.find({
+    where: { divisionId: customQuery.divisionId },
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: 'Get all District',
+    data: result,
+  });
+});
 
 // @desc Get a single District
 // @route GET /api/v1/District/:id
 // @access Public
-export const getDistrict = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(DistrictEntity);
-    const result = await repository.findOneBy({ id });
+export const getDistrict = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(DistrictEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single District of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single District of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single District
 // @route POST /api/v1/District
 // @access Public
 export const createDistrict = asyncHandler(async (req: CustomRequest, res: Response) => {
   const connection = await getDBConnection();
- 
-  const file = fs.readFileSync(
-    process.cwd() + "/database/fack-data/districts.json",
-    "utf8"
-  );
+
+  const file = fs.readFileSync(process.cwd() + '/database/fack-data/districts.json', 'utf8');
   const jsonData = JSON.parse(file);
 
   const repository = connection.getRepository(DistrictEntity);
@@ -74,13 +67,13 @@ export const createDistrict = asyncHandler(async (req: CustomRequest, res: Respo
       ...item,
       divisionId: item.division_id,
       bnName: item.bn_name,
-    }))
+    })),
   );
   const save = await repository.save(newDistrict);
 
   return res.status(200).json({
     success: true,
-    message: "Create a new District",
+    message: 'Create a new District',
     data: save,
   });
 });

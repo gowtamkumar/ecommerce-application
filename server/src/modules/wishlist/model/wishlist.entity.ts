@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -7,34 +7,34 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { UserEntity } from "../../auth/model/user.entity";
+} from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { UserEntity } from '../../auth/model/user.entity';
 
-@Entity("wishlists")
+@Entity('wishlists')
 export class WishListEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "product_id" })
+  @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.wishlists, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "product_id" })
+  @JoinColumn({ name: 'product_id' })
   product!: ProductEntity;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.wishlists, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "user_id" })
+  @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt!: string;
 }

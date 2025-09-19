@@ -1,1 +1,1 @@
-export * from './menu-status.enum'
+export * from './menu-status.enum';

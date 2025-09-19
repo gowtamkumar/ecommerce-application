@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-import { FileEntity } from "../model/file.entity";
-import { getDBConnection } from "../../../../config/db";
-import { fileValidationSchema } from "../../../../validation";
-import { join } from "path";
-import fs from "fs";
-import { asyncHandler } from "../../../../middlewares/async.middleware";
-import { logger } from "../../../../middlewares/logger";
-import { CustomRequest } from "../../../../enums/custom-request-type";
+import { FileEntity } from '../model/file.entity';
+import { getDBConnection } from '../../../../config/db';
+import { fileValidationSchema } from '../../../../validation';
+import { join } from 'path';
+import fs from 'fs';
+import { asyncHandler } from '../../../../middlewares/async.middleware';
+import { logger } from '../../../../middlewares/logger';
+import { CustomRequest } from '../../../../enums/custom-request-type';
 
 // @desc Get all Files
 // @route GET /api/v1/Files
@@ -22,7 +22,7 @@ export const getFiles = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: "Get all Files",
+    message: 'Get all Files',
     data: result,
   });
 });
@@ -30,26 +30,24 @@ export const getFiles = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get a single File
 // @route GET /api/v1/Files/:id
 // @access Public
-export const getFile = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getFile ${req.method} ${req.url}`);
+export const getFile = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: getFile ${req.method} ${req.url}`);
 
-    const { id } = req.params;
-    const connection = await getDBConnection();
-    const repository = await connection.getRepository(FileEntity);
-    const result = await repository.findOneBy({ id });
+  const { id } = req.params;
+  const connection = await getDBConnection();
+  const repository = await connection.getRepository(FileEntity);
+  const result = await repository.findOneBy({ id });
 
-    if (!result) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Get a single File of id ${req.params.id}`,
-      data: result,
-    });
+  if (!result) {
+    throw new Error(`Resource not found of id #${req.params.id}`);
   }
-);
+
+  return res.status(200).json({
+    success: true,
+    message: `Get a single File of id ${req.params.id}`,
+    data: result,
+  });
+});
 
 // @desc Create a single File
 // @route POST /api/v1/Files
@@ -62,7 +60,7 @@ export const createFile = asyncHandler(async (req: CustomRequest, res: Response)
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
-      path: issue.path.join("."),
+      path: issue.path.join('.'),
       message: issue.message,
     }));
 
@@ -78,7 +76,7 @@ export const createFile = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: "Create a new File",
+    message: 'Create a new File',
     data: save,
   });
 });
@@ -105,7 +103,7 @@ export const fileUpload = asyncHandler(async (req: CustomRequest, res: Response)
   const save = await repository.save(newFile);
   return res.status(200).json({
     success: true,
-    message: "Create a new File",
+    message: 'Create a new File',
     data: save,
   });
 });
@@ -162,44 +160,42 @@ export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
 // @desc Delete a single File
 // @route DELETE /api/v1/files/
 // @access Public
-export const deleteFileWithPhoto = asyncHandler(
-  async (req: Request, res: Response) => {
-    logger.info(`Service: deleteFileWithPhoto ${req.method} ${req.url}`);
+export const deleteFileWithPhoto = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: deleteFileWithPhoto ${req.method} ${req.url}`);
 
-    const { filename } = req.body;
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(FileEntity);
-    const directory = join(process.cwd(), "/public/uploads");
-    const filePath = `${directory}/${filename}`;
+  const { filename } = req.body;
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(FileEntity);
+  const directory = join(process.cwd(), '/public/uploads');
+  const filePath = `${directory}/${filename}`;
 
-    try {
-      // Find the file entity in the database and unlink the file concurrently
-      const [deleteFile] = await Promise.all([
-        repository.findOne({ where: { filename } }),
-        fs.promises.unlink(filePath),
-      ]);
+  try {
+    // Find the file entity in the database and unlink the file concurrently
+    const [deleteFile] = await Promise.all([
+      repository.findOne({ where: { filename } }),
+      fs.promises.unlink(filePath),
+    ]);
 
-      if (!deleteFile) {
-        return res.status(404).json({
-          success: false,
-          message: "File not found",
-        });
-      }
-
-      // Remove the file entity from the database
-      await repository.remove(deleteFile);
-
-      return res.status(200).json({
-        success: true,
-        message: `Deleted file with filename: ${filename}`,
-        data: deleteFile,
-      });
-    } catch (error: any) {
-      return res.status(500).json({
+    if (!deleteFile) {
+      return res.status(404).json({
         success: false,
-        message: "An error occurred while deleting the file",
-        error: error.message,
+        message: 'File not found',
       });
     }
+
+    // Remove the file entity from the database
+    await repository.remove(deleteFile);
+
+    return res.status(200).json({
+      success: true,
+      message: `Deleted file with filename: ${filename}`,
+      data: deleteFile,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while deleting the file',
+      error: error.message,
+    });
   }
-);
+});

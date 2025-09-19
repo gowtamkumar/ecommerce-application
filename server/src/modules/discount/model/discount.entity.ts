@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   BeforeInsert,
   Column,
@@ -7,15 +7,15 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { Status } from "../../../enums/status.enum";
-import { DiscountStrategyEnum, PromotionTypeEnum, ScopeEnum } from "../enum";
-import { ApplicableBrandEntity } from "./applicable-brand.entity";
-import { ApplicableCategoryEntity } from "./applicable-category.entity";
-import { ApplicableProductEntity } from "./applicable-products.entity";
+} from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { Status } from '../../../enums/status.enum';
+import { DiscountStrategyEnum, PromotionTypeEnum, ScopeEnum } from '../enum';
+import { ApplicableBrandEntity } from './applicable-brand.entity';
+import { ApplicableCategoryEntity } from './applicable-category.entity';
+import { ApplicableProductEntity } from './applicable-products.entity';
 
-@Entity("discounts")
+@Entity('discounts')
 export class DiscountEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -26,49 +26,49 @@ export class DiscountEntity {
   @Column({ length: 50, unique: true, nullable: true }) // should be auto generate
   key!: string;
 
-  @Column({ type: "enum", enum: ScopeEnum })
+  @Column({ type: 'enum', enum: ScopeEnum })
   scope!: ScopeEnum;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   slug!: string;
 
-  @Column({ name: "promotion_type", type: "enum", enum: PromotionTypeEnum })
+  @Column({ name: 'promotion_type', type: 'enum', enum: PromotionTypeEnum })
   promotionType!: PromotionTypeEnum;
 
   @Column({
-    name: "discount_strategy",
-    type: "enum",
+    name: 'discount_strategy',
+    type: 'enum',
     enum: DiscountStrategyEnum,
   })
   discountStrategy!: DiscountStrategyEnum;
 
-  @Column({ name: "offer_details", type: "jsonb", nullable: true })
+  @Column({ name: 'offer_details', type: 'jsonb', nullable: true })
   offerDetails!: Record<string, any>;
 
-  @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   value!: number;
 
   @Column({
-    name: "start_date",
-    type: "timestamp with time zone",
+    name: 'start_date',
+    type: 'timestamp with time zone',
     nullable: true,
   })
   startDate!: string;
 
   @Column({
-    name: "end_date",
-    type: "timestamp with time zone",
+    name: 'end_date',
+    type: 'timestamp with time zone',
     nullable: true,
   })
   endDate!: string;
 
-  @Column({ type: "int", default: 1 })
+  @Column({ type: 'int', default: 1 })
   priority!: number; // Higher number = Higher priority for applied first
 
-  @Column({ type: "boolean", default: false })
+  @Column({ type: 'boolean', default: false })
   stackable!: boolean; // If true, this discount can be combined with others
 
-  @Column({ type: "enum", enum: Status, default: Status.Active })
+  @Column({ type: 'enum', enum: Status, default: Status.Active })
   status!: Status;
 
   @Column({ nullable: true })
@@ -77,14 +77,13 @@ export class DiscountEntity {
   @Column({ nullable: true })
   description!: string;
 
-
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId?: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 
   @OneToMany((_type) => ProductEntity, (item) => item.discount)
@@ -98,12 +97,11 @@ export class DiscountEntity {
 
   @OneToMany((_type) => ApplicableProductEntity, (item) => item.discount)
   applicableProducts!: ApplicableProductEntity[];
-  
+
   @BeforeInsert()
   generateCode() {
     if (!this.key) {
-      this.key = `DISC-${Math.random()
-        .toString(36).toUpperCase()}`;
+      this.key = `DISC-${Math.random().toString(36).toUpperCase()}`;
     }
   }
 }

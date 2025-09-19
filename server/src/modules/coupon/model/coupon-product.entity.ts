@@ -1,4 +1,4 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
@@ -7,34 +7,34 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProductEntity } from "../../products/product/model/product.entity";
-import { CouponEntity } from "./coupon.entity";
+} from 'typeorm';
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { CouponEntity } from './coupon.entity';
 
-@Entity("coupon_products")
+@Entity('coupon_products')
 export class CouponProductEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "product_id" })
+  @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.couponProducts, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "product_id" })
+  @JoinColumn({ name: 'product_id' })
   product!: ProductEntity;
 
-  @Column({ name: "coupon_id" })
+  @Column({ name: 'coupon_id' })
   couponId?: number;
   @ManyToOne((_type) => CouponEntity, (coupon) => coupon.products, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "coupon_id" })
+  @JoinColumn({ name: 'coupon_id' })
   coupon!: CouponEntity;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt?: string;
 }

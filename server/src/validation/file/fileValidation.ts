@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const fileValidationSchema = z.object({
   fieldname: z.string({
-    required_error: "field name is required",
+    required_error: 'field name is required',
   }),
   originalname: z.string().optional(),
   encoding: z.string().optional(),
