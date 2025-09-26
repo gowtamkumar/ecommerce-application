@@ -1,44 +1,42 @@
-import colors from "colors";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import dotenv from "dotenv";
-import express from "express";
-import helmet from "helmet";
-import morgan from "morgan";
-import "reflect-metadata";
-import { getDBConnection } from "./src/config/db";
-import { errorHandler } from "./src/middlewares/errorHandler";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import colors from 'colors';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import 'reflect-metadata';
+import { getDBConnection } from './src/config/db';
+import { errorHandler } from './src/middlewares/errorHandler';
 // all routes
-import { rateLimit } from "express-rate-limit";
-import path from "path";
-import { setupRoutes } from "./src/routes/routes";
+import { rateLimit } from 'express-rate-limit';
+import path from 'path';
+import { setupRoutes } from './src/routes/routes';
 
-const envFile =
-  process.env.NODE_ENV === "production"
-    ? ".env.production"
-    : ".env.development";
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 
 dotenv.config({ path: envFile });
 const app = express();
 
 // access public folder for image
-if (process.env.NODE_ENV === "development") {
-  app.use(express.static(path.join(__dirname, "public")));
+if (process.env.NODE_ENV === 'development') {
+  app.use(express.static(path.join(__dirname, 'public')));
 }
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "..", "public")));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '..', 'public')));
 }
 
 // Connect to database
-if (process.env.NODE_ENV !== "test") {
+if (process.env.NODE_ENV !== 'test') {
   getDBConnection();
 }
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-  standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
   // store: ... , // Redis, Memcached, etc. See below.
 });
@@ -52,17 +50,17 @@ app.use(express.urlencoded({ extended: true })); // it parses incoming request w
 app.use(
   helmet({
     crossOriginResourcePolicy: false, // Allow cross-origin images
-  })
+  }),
 );
-app.use(cors({ origin: "*" })); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
+app.use(cors({ origin: '*' })); // CORS is crucial for security and functioning of web applications making cross-origin requests. In Node.js, the cors middleware for Express simplifies enabling and configuring CORS, allowing you to control resource sharing with fine-grained policies. This ensures that your API can be securely accessed by authorized web applications across different domains.
 
 // app.use((req, res, next) => {
 //   // console.log(`Static file request: ${req.url}`);
 //   next();
 // });
 // Dev logging middleware
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
 }
 
 //main route
@@ -71,30 +69,26 @@ setupRoutes(app);
 app.use(errorHandler);
 
 //root route
-app.get("/", (req, res) => {
-  res.send("Welcome to nodejs server!");
+app.get('/', (req, res) => {
+  res.send('Welcome to nodejs server!');
 });
 
 // app.use(logger)
 
 // not found route
-app.get("*", (req, res) => {
-  res.send("Not found route, Please right route hite");
+app.get('*', (req, res) => {
+  res.send('Not found route, Please right route hite');
 });
 
 // Port
 const PORT = process.env.PORT || 3900;
 
 const server = app.listen(PORT, () => {
-  console.log(
-    colors.magenta(
-      `Server running in ${process.env.NODE_ENV} Mode on Port ${PORT}`
-    )
-  );
+  console.log(colors.magenta(`Server running in ${process.env.NODE_ENV} Mode on Port ${PORT}`));
 });
 
 //handle and unhandle promise rejections
-process.on("unhandledRejection", (err: any, _message) => {
+process.on('unhandledRejection', (err: any, _message) => {
   console.log(colors.red(`Error ${err.message}`));
   // close server & process exit
   server.close(() => process.exit(1));

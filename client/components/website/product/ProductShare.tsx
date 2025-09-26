@@ -5,14 +5,12 @@ import { FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import {
+  EmailIcon,
+  EmailShareButton,
   FacebookShareButton,
   TwitterShareButton,
-  WhatsappShareButton,
-  EmailShareButton,
-  FacebookIcon,
-  TwitterIcon,
   WhatsappIcon,
-  EmailIcon,
+  WhatsappShareButton,
 } from "react-share";
 
 interface ProductShareProps {

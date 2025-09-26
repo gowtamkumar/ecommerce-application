@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express from 'express';
+import { AuthGuard } from '../../../../middlewares/auth.middleware';
+import { upload } from '../../../../middlewares/fileUpload';
 import {
   createFile,
-  fileUpload,
   deleteFile,
+  deleteFileWithPhoto,
+  fileUpload,
   getFile,
   getFiles,
   updateFile,
-  deleteFileWithPhoto,
 } from '../controller/file.controller';
-import { AuthGuard } from '../../../../middlewares/auth.middleware';
-import { upload } from '../../../../middlewares/fileUpload';
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ router.route('/uploads').post(
       name: 'images',
       maxCount: 5,
     },
-  ]),
+  ]) as any,
   AuthGuard,
   fileUpload,
 );
