@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: postgres_db
+    container_name: ecommerce_postgres_db
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: ecommerce_db
       TZ: "GMT"
       PGTZ: "GMT"
+    ports:
+      - "5544:5432" # external:internal
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -28,83 +30,39 @@ services:
     networks:
       - main_network
 
-  server1:
+  server:
     build:
       context: ./server
       dockerfile: Dockerfile.prod
-    container_name: server_app1
+    container_name: server_app
     restart: always
     env_file:
       - ./server/.env.production
-    environment:
-      NODE_ENV: production
-      SERVER_NAME: server_app1
-      PORT: 4400
-    expose:
-      - "4400"
+    ports:
+      - "4400:4400"
     volumes:
       - ./server/public/uploads:/app/public/uploads
+      - ./server:/app
     depends_on:
       - postgres
     networks:
       - main_network
-  server2:
-    build:
-      context: ./server
-      dockerfile: Dockerfile.prod
-    container_name: server_app2
-    restart: always
-    env_file:
-      - ./server/.env.production
-    environment:
-      NODE_ENV: production
-      SERVER_NAME: server_app2
-      PORT: 4300
-    expose:
-      - "4300"
-    volumes:
-      - ./server/public/uploads:/app/public/uploads
-    depends_on:
-      - postgres
-    networks:
-      - main_network
-  server3:
-    build:
-      context: ./server
-      dockerfile: Dockerfile.prod
-    container_name: server_app3
-    restart: always
-    env_file:
-      - ./server/.env.production
-    environment:
-      NODE_ENV: production
-      SERVER_NAME: server_app3
-      PORT: 4200
-    expose:
-      - "4200"
-    volumes:
-      - ./server/public/uploads:/app/public/uploads
-    depends_on:
-      - postgres
-    networks:
-      - main_network
-
   client:
     build:
       context: ./client
       dockerfile: Dockerfile.prod
     container_name: client_app
     restart: always
+    ports:
+      - "3000:3000"
     env_file:
-      - ./client/.env.production
+      - ./client/.env.local
     environment:
-      NODE_ENV: production
-    expose:
-      - "80"
+      - NEXTAUTH_TRUST_HOST=true
+    # expose:
+    #   - "80"
     depends_on:
-      - server1
-      - server2
-      - server3
+      - server
     networks:
       - main_network
 
@@ -114,31 +72,29 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "443:443"
+    # - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./server/public/uploads:/app/public/uploads
-      # - ./nginx/certbot/conf:/etc/letsencrypt
-      # - ./nginx/certbot/www:/var/www/certbot
+    # - ./nginx/certbot/conf:/etc/letsencrypt
+    # - ./nginx/certbot/www:/var/www/certbot
     depends_on:
       - client
-      - server1
-      - server2
-      - server3
+      - server
     networks:
       - main_network
 
-  # certbot:
-  #   image: certbot/certbot
-  #   container_name: inventory_certbot
-  #   volumes:
-  #     - ./nginx/certbot/conf:/etc/letsencrypt
-  #     - ./nginx/certbot/www:/var/www/certbot
-  #   # command: >
-  #   #   "sleep 10 &&
-  #   #    certbot certonly --webroot --webroot-path=/var/www/certbot
-  #   #    --email gowtam.semicolonit@gmail.com --agree-tos --no-eff-email
-  #   #    -d inventory.semicolonit.com -d www.inventory.semicolonit.com"
+# certbot:
+#   image: certbot/certbot
+#   container_name: inventory_certbot
+#   volumes:
+#     - ./nginx/certbot/conf:/etc/letsencrypt
+#     - ./nginx/certbot/www:/var/www/certbot
+#   # command: >
+#   #   "sleep 10 &&
+#   #    certbot certonly --webroot --webroot-path=/var/www/certbot
+#   #    --email gowtam.semicolonit@gmail.com --agree-tos --no-eff-email
+#   #    -d inventory.semicolonit.com -d www.inventory.semicolonit.com"
 
 networks:
   main_network:
