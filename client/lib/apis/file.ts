@@ -1,9 +1,7 @@
 "use server";
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "../authOption";
-import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 import appConfig from "@/appConfig";
 import { auth } from "@/auth";
+import { getAuthHeaders } from "../utils/commonFunctions";
 
 export async function saveFile(data: any) {
   const headers = await getAuthHeaders();
@@ -14,7 +12,7 @@ export async function saveFile(data: any) {
     body: JSON.stringify(data),
   });
 
-  return await handleResponse(res);
+  return res.json();
 }
 
 export async function uploadFile(data: any) {
@@ -28,32 +26,53 @@ export async function uploadFile(data: any) {
     body: data, // Assuming 'data' is a FormData object for file uploads
   });
 
-  return await handleResponse(res);
+  return res.json();
 }
 
 export async function fileDeleteWithPhoto(data: any) {
   const headers = await getAuthHeaders();
-  const res = await fetch(
-    `${appConfig.apiUrl}/files/delete-file-with-photo`,
-    {
-      method: "POST",
-      cache: "no-cache",
-      headers,
-      body: JSON.stringify(data),
-    }
-  );
+  const res = await fetch(`${appConfig.apiUrl}/files/delete-file-with-photo`, {
+    method: "POST",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
 
-  return await handleResponse(res);
+  return res.json();
 }
 
-export async function getFiles() {
+export async function deleteMultipleFilesWithPhoto(filenames: string[]) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/files`, {
+  const res = await fetch(`${appConfig.apiUrl}/files/delete-files-with-photo`, {
+    method: "POST",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify({ filenames }),
+  });
+
+  return res.json();
+}
+
+export async function getFiles(data: any) {
+  const { page = "1", limit = "30", search } = data || {};
+
+  let queryString = "";
+
+  if (search) {
+    queryString += `search=${search}&`;
+  }
+
+  if (page && limit) {
+    queryString += `page=${page}&limit=${limit}&`;
+  }
+
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/files?${queryString}`, {
     cache: "no-cache",
     headers,
   });
 
-  return await handleResponse(res);
+  return res.json();
 }
 
 export async function updateFile(data: any) {
@@ -65,7 +84,7 @@ export async function updateFile(data: any) {
     body: JSON.stringify(data),
   });
 
-  return await handleResponse(res);
+  return res.json();
 }
 
 export async function getFile(data: any) {
@@ -75,7 +94,7 @@ export async function getFile(data: any) {
     headers,
   });
 
-  return await handleResponse(res);
+  return res.json();
 }
 
 export async function deleteFile(id: string) {
@@ -86,5 +105,5 @@ export async function deleteFile(id: string) {
     headers,
   });
 
-  return await handleResponse(res);
+  return res.json();
 }
