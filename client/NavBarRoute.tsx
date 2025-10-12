@@ -15,6 +15,7 @@ import {
   MdDashboard,
   MdLocalShipping,
   MdOutlineDiscount,
+  MdOutlinePermMedia,
   MdOutlineSpatialTracking,
   MdPayment,
   MdViewModule
@@ -89,6 +90,12 @@ const navbarRoute = [
     ],
   },
 
+  {
+    key: "media",
+    icon: <MdOutlinePermMedia className="h-4 w-2 text-blue-500" />,
+    label: <Link href="/dashboard/media">Media</Link>,
+    route: "true",
+  },
   // {
   //   key: "size",
   //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
