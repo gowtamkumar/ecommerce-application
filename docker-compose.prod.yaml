@@ -17,7 +17,7 @@ services:
       - main_network
 
   pgadmin:
-    container_name: pgadmin
+    container_name: ecommerce_pgadmin
     image: dpage/pgadmin4:latest
     restart: always
     environment:
@@ -33,8 +33,8 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile.prod
-    container_name: server_app
+      dockerfile: dockerfile.prod
+    container_name: ecommerce_server_app
     restart: always
     env_file:
       - ./server/.env.production
@@ -42,7 +42,7 @@ services:
       - "4400:4400"
     volumes:
       - ./server/public/uploads:/app/public/uploads
-      - ./server:/app
+      # - ./server:/app
     depends_on:
       - postgres
     networks:
@@ -50,8 +50,8 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile.prod
-    container_name: client_app
+      dockerfile: dockerfile.prod
+    container_name: ecommerce_client_app
     restart: always
     ports:
       - "3000:3000"
@@ -68,7 +68,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx_proxy
+    container_name: ecommerce_nginx_proxy
     restart: always
     ports:
       - "80:80"

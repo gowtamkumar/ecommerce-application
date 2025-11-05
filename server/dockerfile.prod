@@ -6,7 +6,7 @@ RUN apk update && apk add --no-cache bash postgresql-client
 
 WORKDIR /app
 COPY package*.json ./
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY . .
 RUN yarn run build

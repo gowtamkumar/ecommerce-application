@@ -1,5 +1,4 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -10,18 +9,14 @@ import {
   UploadFile,
   UploadProps,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  selectGlobal,
-  setAction,
-  setSetting,
-} from "@/redux/features/global/globalSlice";
+import appConfig from "@/appConfig";
+import uploadButton from "@/components/website/uploadButton";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
-import appConfig from "@/appConfig";
 import {
   handlePreview,
   handlePreviewCancel,
@@ -30,8 +25,11 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
-import uploadButton from "@/components/website/uploadButton";
-
+import {
+  selectGlobal,
+  setAction,
+  setSetting,
+} from "@/redux/features/global/globalSlice";
 
 const FileUploadField = ({
   name,
