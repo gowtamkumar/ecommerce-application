@@ -443,6 +443,7 @@ export const forgotPassword = asyncHandler(
     }
     const connection = await getDBConnection();
     const userRepository = connection.getRepository(UserEntity);
+
     const findMail = await userRepository.findOne({
       where: { email: validation.data.email },
     });
@@ -516,6 +517,7 @@ export const resetPassword = asyncHandler(
     }
 
     const newPassword = await hashedPassword(validation.data.password);
+
     const user = await userRepository.findOne({
       where: { resetToken: token },
     });
