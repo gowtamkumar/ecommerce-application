@@ -7,31 +7,30 @@ import { useSelector } from "react-redux";
 export default function TopBar() {
   const global = useSelector(selectGlobal);
   const setting = global?.setting?.headerOption?.leftText || "";
-
   const session = useSession();
 
   return (
-    <div className="container flex justify-between items-center mx-auto">
-      <div className="text-sm flex gap-1 items-center p-2">
-        <span> {setting}</span>
-        <a href="tel:+01767-163576" className="text-blue-500">
-          +{global.setting?.phone}
+    <div className="container flex justify-between items-center mx-auto px-4">
+      <div className="text-[11px] md:text-xs flex gap-4 items-center opacity-80 hover:opacity-100 transition-opacity">
+        <span>{setting}</span>
+        <a href={`tel:${global.setting?.phone}`} className="hover:text-gray-300 transition-colors">
+          {global.setting?.phone}
         </a>
       </div>
 
-      <div className="flex gap-5 text-sm">
-        <Link href="/about">About</Link>
-        <Link href="/contact">Contact Us</Link>
-        <Link href="/profile?tab=my_account">My Account</Link>
+      <div className="flex gap-6 text-[11px] md:text-xs font-medium tracking-wide">
+        <Link href="/about" className="hover:text-gray-300 transition-colors">About</Link>
+        <Link href="/contact" className="hover:text-gray-300 transition-colors">Contact</Link>
+        <Link href="/profile?tab=my_account" className="hover:text-gray-300 transition-colors">My Account</Link>
         {session.status === "unauthenticated" && (
-          <>
-            <Link href="/login" className="flex gap-1 items-center">
-              <BiUser /> Login
+          <div className="flex gap-4 border-l border-gray-700 pl-4 ml-2">
+            <Link href="/login" className="flex gap-1 items-center hover:text-gray-300 transition-colors">
+              Login
             </Link>
-            <Link href="/register">
-              <span className="text-sm">Sign up</span>
+            <Link href="/register" className="hover:text-gray-300 transition-colors">
+              Sign up
             </Link>
-          </>
+          </div>
         )}
       </div>
     </div>

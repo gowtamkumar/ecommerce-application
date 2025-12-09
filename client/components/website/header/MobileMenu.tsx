@@ -9,7 +9,6 @@ import { selectGlobal } from "@/redux/features/global/globalSlice";
 export default function MobileMenu() {
   const [menu, setMenu] = useState([]);
   const [open, setOpen] = useState(false);
-
   const global = useSelector(selectGlobal);
 
   useEffect(() => {
@@ -20,37 +19,33 @@ export default function MobileMenu() {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <div className="border-b">
-        <button className="w-full flex justify-between items-center py-3 hover:bg-gray-200 text-left px-2 ">
+      <div className="border-b border-gray-100 last:border-none">
+        <div className="flex justify-between items-center py-4 px-4 hover:bg-gray-50 transition-colors">
           <Link
             href={`/products?categoryId=${item.key}`}
             onClick={onClose}
-            className="text-gray-500 w-full"
-            rel="noopener noreferrer"
+            className="text-gray-800 font-medium text-base flex-1"
           >
             {item.label}
           </Link>
           {item.children?.length > 0 && (
-            <svg
+            <button 
               onClick={() => setIsOpen(!isOpen)}
-              className={`w-5 h-5 transform transition-transform duration-100 ${isOpen ? "rotate-180" : ""
-                }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              className="p-2 text-gray-400 hover:text-black transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+              <svg
+                className={`w-5 h-5 transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           )}
-        </button>
+        </div>
         {isOpen && item?.children && (
-          <div className="ml-4">
+          <div className="bg-gray-50 px-4 py-2 space-y-2">
             {item.children.map((child: any) => (
               <AccordionItem key={child.id} item={child} onClose={onClose} />
             ))}
@@ -60,53 +55,44 @@ export default function MobileMenu() {
     );
   };
 
-  // Main Accordion component
-  const Accordion = ({ data, onClose }: any) => {
-    return (
-      <div className="w-full max-w-md mx-auto bg-white overflow-hidden">
-        {(data || []).map((item: any) => (
-          <AccordionItem key={item?.id} item={item} onClose={onClose} />
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div className="text-center px-2">
       <IoMdMenu
-        size={36}
-        className="font-medium cursor-pointer"
+        size={32}
+        className="text-black cursor-pointer hover:opacity-80 transition-opacity"
         onClick={() => setOpen(true)}
       />
       <Drawer
-        title={null}
+        title={<span className="font-bold text-xl">Menu</span>}
         open={open}
         placement="left"
         closable={true}
-        width={900}
+        width="85%"
         onClose={() => setOpen(false)}
-        footer={
-          <div className="flex gap-4 justify-center text-center">
-            <button
-              className="btn-primary-bioxin"
-              onClick={() => setOpen(false)}
-            >
-              <Link href={"/login"} className="text-white">
-                Login
-              </Link>
-            </button>
-            <button
-              className="btn-primary-bioxin"
-              onClick={() => setOpen(false)}
-            >
-              <Link href={"/signup"} className="text-white">
-                Register
-              </Link>
-            </button>
-          </div>
-        }
+        styles={{ header: { borderBottom: '1px solid #f3f4f6' }, body: { padding: 0 } }}
       >
-        <Accordion data={menu} onClose={() => setOpen(false)} />
+        <div className="flex flex-col h-full">
+          <div className="flex-1 overflow-y-auto">
+             {(menu || []).map((item: any) => (
+              <AccordionItem key={item?.id} item={item} onClose={() => setOpen(false)} />
+            ))}
+          </div>
+          
+          <div className="p-6 border-t border-gray-100 bg-gray-50">
+            <div className="grid grid-cols-2 gap-4">
+              <Link href="/login" onClick={() => setOpen(false)}>
+                <button className="w-full py-3 px-4 rounded-lg border border-gray-300 font-semibold text-gray-700 hover:bg-white hover:shadow-sm transition-all">
+                  Login
+                </button>
+              </Link>
+              <Link href="/register" onClick={() => setOpen(false)}>
+                <button className="w-full py-3 px-4 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition-all shadow-md">
+                  Sign Up
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </Drawer>
     </div>
   );

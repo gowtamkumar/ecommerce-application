@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import multer from 'multer';
 import path, { extname } from 'path';
 
@@ -9,13 +8,13 @@ const storage = multer.diskStorage({
     return callback(null, 'public/uploads');
   },
 
-  filename: (file: any, callback: any) => {
+  filename: (req: any, file: any, callback: any) => {
     if (file) {
-      const imagePattern = /(jpg|jpeg|png)/gi;
+      const imagePattern = /(jpg|jpeg|png|webp)/gi;
       const mathExt = extname(file.originalname).replace('.', '');
 
       if (!imagePattern.test(mathExt)) {
-        return callback(new Error('Error: Images only! (jpeg, jpg, png)'), null);
+        return callback(new Error('Error: Images only! (jpeg, jpg, png, webp)'), null);
       }
       const imageName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
       return callback(null, imageName);

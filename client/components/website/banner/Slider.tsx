@@ -16,89 +16,63 @@ import "swiper/css/thumbs";
 
 export default function Slider({ banners }: any) {
   return (
-    <div className="md:col-span-9">
-      <div className="relative w-full">
-        <Swiper
-          modules={[
-            // Navigation,
-            Pagination,
-            Scrollbar,
-            A11y,
-            EffectFade,
-            Autoplay,
-          ]}
-          spaceBetween={5}
-          slidesPerView={1}
-          pagination={{ clickable: true }}
-          autoplay={true}
-          loop
-          speed={1000}
-          // navigation={{
-          //   nextEl: ".hero-next",
-          //   prevEl: ".hero-prev",
-          // }}
-        >
-          {banners?.map(
-            ({
-              image,
-              title,
-              description,
-              url,
-            }: {
-              image: string;
-              title: string;
-              description: string;
-              url: string;
-            }) => (
-              <SwiperSlide key={image}>
-                <div
-                  className="bg-cover rounded-lg bg-center md:h-[57vh] flex flex-col justify-center items-start text-white p-4"
-                  style={{
-                    backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${image})`,
-                  }}
-                >
-                  <div className="grid md:grid-cols-2 grid-cols-1 items-center text-center">
-                    <div className="md:order-1 order-2 text-center md:text-start">
-                      <h1 className="md:text-4xl text-2xl font-bold text-black">
-                        {title.slice(0, 50)}
-                      </h1>
-                      <p className="my-3 font-medium text-black">
-                        {description?.slice(0, 100)}
-                      </p>
-                      <Button type="primary">
-                        <Link href={`${url ? url : "/products"}`}>Shop Now</Link>
-                      </Button>
-                    </div>
-                    {/* <div className="bg-slate-600 md:order-2 order-1">
-                      <Image
-                        src={
-                          image
-                            ? `${appConfig.baseApiUrl}/uploads/${image}`
-                            : "/pos_software.png"
-                        }
-                        alt={image}
-                        loading="lazy"
-                        width="0"
-                        height="0"
-                        sizes="100vw"
-                        className="w-full md:h-[57vh] h-[30vh] "
-                      />
-                    </div> */}
-                  </div>
+    <div className="w-full">
+      <Swiper
+        modules={[Pagination, Scrollbar, A11y, EffectFade, Autoplay]}
+        spaceBetween={0}
+        slidesPerView={1}
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        loop
+        effect="fade"
+        speed={1000}
+        className="w-full"
+      >
+        {banners?.map(
+          ({
+            image,
+            title,
+            description,
+            url,
+          }: {
+            image: string;
+            title: string;
+            description: string;
+            url: string;
+          }) => (
+            <SwiperSlide key={image}>
+              <div
+                className="relative w-full h-[60vh] md:h-[600px] bg-cover bg-center flex items-center justify-center"
+                style={{
+                  backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${image})`,
+                }}
+              >
+                {/* Dark Overlay */}
+                <div className="absolute inset-0 bg-black/40" />
+
+                {/* Content */}
+                <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+                  <h1 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4 tracking-tight drop-shadow-lg leading-tight">
+                    {title}
+                  </h1>
+                  <p className="text-base md:text-xl mb-6 md:mb-8 font-light text-gray-100 drop-shadow-md max-w-2xl mx-auto line-clamp-2 md:line-clamp-none">
+                    {description}
+                  </p>
+                  <Link href={`${url ? url : "/products"}`}>
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="h-10 md:h-12 px-6 md:px-8 text-base md:text-lg font-medium bg-white text-black border-none hover:!bg-gray-200 hover:!text-black transition-all transform hover:scale-105"
+                    >
+                      Shop Now
+                    </Button>
+                  </Link>
                 </div>
-              </SwiperSlide>
-            )
-          )}
-        </Swiper>
-
-        {/* <button className="hero-prev absolute z-[5] top-1/2 -left-0 transform -translate-y-1/2">
-          <CiCircleChevLeft size={30} />
-        </button>
-
-        <button className="hero-next absolute z-[5] top-1/2 -right-0 transform -translate-y-1/2">
-          <CiCircleChevRight size={30} />
-        </button> */}
-      </div>
+              </div>
+            </SwiperSlide>
+          )
+        )}
+      </Swiper>
     </div>
   );
 }

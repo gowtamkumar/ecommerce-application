@@ -15,52 +15,51 @@ import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
   const [mounted, setMounted] = useState(false);
-  // hook
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const session = useSession();
-
   const profileImage = session.data?.user?.image;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null; // 👈 important! don't render until mounted
+  if (!mounted) return null;
 
   const showLoading = () => {
     setDrawarCart(true);
     dispatch(setLoading({ drawerLoading: true }));
-    // Simple loading mock. You should add cleanup logic in real world.
     setTimeout(() => {
       dispatch(setLoading({}));
     }, 2000);
   };
 
   return (
-    <>
+    <div className="flex items-center gap-5">
       <Link
         href="/profile?tab=wishlist"
-        className="cursor-pointer md:inline hidden"
+        className="cursor-pointer md:inline hidden group relative"
       >
-        <CiHeart size={22} className="font-medium" />
+        <CiHeart size={26} className="text-gray-700 group-hover:text-black transition-colors" />
+        <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Wishlist</span>
       </Link>
 
       <div className="relative group">
-        <Badge
-          size="default"
-          count={cart?.carts?.cartSummary?.totalQty}
+        <div 
           onClick={showLoading}
-          className="px-4  font-semibold text-white rounded-md cursor-pointer"
+          className="cursor-pointer relative"
         >
-          <FiShoppingBag size={22} className="font-medium" />
-        </Badge>
+          <FiShoppingBag size={24} className="text-gray-700 group-hover:text-black transition-colors" />
+          <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">
+            {cart?.carts?.cartSummary?.totalQty || 0}
+          </span>
+        </div>
 
         <Drawer
           closable
           destroyOnClose
-          title={<p>Carts</p>}
+          title={<p className="font-bold text-lg">Shopping Cart</p>}
           placement="right"
           open={drawarCart}
           loading={global.loading.drawerLoading}
@@ -74,34 +73,23 @@ export default function HeaderRight() {
       {session.status === "authenticated" && (
         <Dropdown
           menu={{ items: userProfileRoute as any }}
-          placement="bottomLeft"
-        
+          placement="bottomRight"
           trigger={["click"]}
+          overlayClassName="pt-2"
         >
-          <Avatar
-            className="cursor-pointer h-10 w-10 rounded-full bg-slate-500"
-            size={25}
-            src={
-              profileImage
-                ? `${appConfig.baseApiUrl}/uploads/${profileImage}`
-                : "/pos_software.png"
-            }
-          />
+          <div className="cursor-pointer border-2 border-transparent hover:border-gray-200 rounded-full transition-all">
+            <Avatar
+              size={32}
+              src={
+                profileImage
+                  ? `${appConfig.baseApiUrl}/uploads/${profileImage}`
+                  : "/pos_software.png"
+              }
+              className="bg-gray-200"
+            />
+          </div>
         </Dropdown>
       )}
-      {/* : (
-        <div className="flex items-center justify-between px-2">
-          <div className="flex items-center justify-between">
-            <Link className="mx-2" href="/login">
-              <span className="text-sm">Login</span>
-            </Link>{" "}
-            |{" "}
-            <Link className="mx-2" href="/register">
-              <span className="text-sm">Sign up</span>
-            </Link>
-          </div>
-        </div>
-      ) */}
-    </>
+    </div>
   );
 }
