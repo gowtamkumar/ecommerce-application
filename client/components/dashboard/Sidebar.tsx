@@ -1,15 +1,15 @@
 "use client";
-import { Drawer, Layout, Menu, Button } from "antd";
-import { useSelector, useDispatch } from "react-redux";
-import { useLayoutEffect } from "react";
+import { navbarRoute } from "@/NavBarRoute";
 import {
   selectLayout,
   setCollapsed,
   setOpen,
   setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
-import { navbarRoute } from "@/NavBarRoute";
+import { Button, Drawer, Layout, Menu } from "antd";
 import { useRouter } from "next/navigation";
+import { useLayoutEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import HeaderLogo from "../website/header/Logo";
 
 const { Sider } = Layout;
@@ -84,7 +84,7 @@ const Sidebar = () => {
           defaultSelectedKeys={["1"]}
           mode="inline"
           onClick={onClose}
-          items={navbarRoute as NavbarItem[]}
+          items={navbarRoute as any}
         />
       </Drawer>
       <Sider

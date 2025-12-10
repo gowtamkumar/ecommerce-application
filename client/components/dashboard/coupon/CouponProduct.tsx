@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import appConfig from "@/appConfig";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { Table, TableColumnsType } from "antd";
@@ -20,7 +19,7 @@ export default function CouponProduct({ products }: any) {
               width={50}
               height={50}
               alt={value.product.name}
-              src={`${appConfig.baseApidockerUrl}/uploads/${value.product.thumbnailImage || "no-data.png"
+              src={`${appConfig.baseApiUrl}/uploads/${value.product.thumbnailImage || "no-data.png"
                 }`}
               className="w-10 h-10 rounded-lg"
             />

@@ -1,18 +1,18 @@
 # Stage 1: Build
-FROM node:22.16.0-alpine AS builder
+FROM node:22.15.0-alpine AS builder
 
 # Install PostgreSQL client tools for backup support
 RUN apk update && apk add --no-cache bash postgresql-client
 
 WORKDIR /app
 COPY package*.json ./
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY . .
 RUN yarn run build
 
 # Stage 2: Run
-FROM node:22.16.0-alpine
+FROM node:22.15.0-alpine
 
 # ✅ You need pg_dump here too!
 RUN apk add --no-cache postgresql-client

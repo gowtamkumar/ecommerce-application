@@ -171,62 +171,53 @@ export default function CheckoutSummary() {
   // };
 
   return (
-    <div className="bg-white rounded-md">
-      <div className="p-4 border-b">
-        <h2 className="text-xl font-semibold">Checkout Summary</h2>
-      </div>
-
-      <div className="p-4 rounded">
+    <div className="space-y-4">
+      <div className="space-y-3 text-sm text-gray-600">
         <div className="flex justify-between">
           <span>Total Quantity</span>
-          <span>{+totalQty || 0}</span>
+          <span className="font-medium text-gray-900">{+totalQty || 0}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="font-bold">Total</span>
-          <span className="font-bold text-2xl">৳{totalSalePrice}</span>
+          <span>Subtotal</span>
+          <span className="font-medium text-gray-900">৳{totalSalePrice}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Discount</span>
-          <span>{totalItemsDiscount}</span>
+          <span className="text-green-600">- ৳{totalItemsDiscount}</span>
         </div>
 
         {+couponDiscount > 0 && (
           <div className="flex justify-between">
             <span>Coupon Discount</span>
-            <span>{couponDiscount}</span>
+            <span className="text-green-600">- ৳{couponDiscount}</span>
           </div>
         )}
 
-        {/* 
-        <div className="flex justify-between">
-          <span>Total Tax</span>
-          <span>{totalTax}</span>
-        </div> */}
-
         <div className="flex justify-between">
           <span>Shipping Cost</span>
-          <span>{shippingCharge}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="font-bold">Total payable</span>
-          <span className="font-bold text-2xl">৳{grandTotal}</span>
+          <span className="font-medium text-gray-900">৳{shippingCharge}</span>
         </div>
       </div>
 
-      <Button
-        type="primary"
-        size="large"
-        className="w-full"
-        onClick={handleOrder}
-        loading={loading.save}
-        disabled={loading.save}
-      >
-        <span>Confirm Order</span>
-        {grandTotal} TK.
-      </Button>
+      <div className="pt-4 border-t border-gray-100">
+        <div className="flex justify-between items-end mb-6">
+          <span className="text-base font-bold text-gray-800">Total Payable</span>
+          <span className="text-2xl font-bold text-blue-600">৳{grandTotal}</span>
+        </div>
+
+        <Button
+          type="primary"
+          size="large"
+          className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 border-none shadow-md hover:shadow-lg transition-all rounded-xl"
+          onClick={handleOrder}
+          loading={loading.save}
+          disabled={loading.save}
+        >
+          Confirm Order
+        </Button>
+      </div>
     </div>
   );
 }

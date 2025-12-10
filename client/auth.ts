@@ -1,12 +1,13 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { authConfig } from "./config.auth";
-import appConfig from "./appConfig";
-import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import GoogleProvider from "next-auth/providers/google";
+import appConfig from "./appConfig";
+import { authConfig } from "./config.auth";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true,
   providers: [
     CredentialsProvider({
       name: "credentials",

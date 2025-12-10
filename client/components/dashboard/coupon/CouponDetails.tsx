@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionType } from "@/constants/constants";
 import { getCoupon } from "@/lib/apis/admin/coupon";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";

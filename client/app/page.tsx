@@ -98,11 +98,8 @@ export default async function Home() {
     <>
       <header>
         <Header />
-        <div className="container mx-auto py-4">
-          <div className="grid md:grid-cols-12 grid-cols-1 gap-2">
-            {sliderBanners?.length > 0 && <Slider banners={sliderBanners} />}
-            {discounts?.length > 0 && <HeaderDiscount discounts={discounts} />}
-          </div>
+        <div className="w-full">
+          {sliderBanners?.length > 0 && <Slider banners={sliderBanners} />}
         </div>
       </header>
 

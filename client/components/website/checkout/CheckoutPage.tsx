@@ -62,24 +62,65 @@ export default function CheckoutPage() {
   }, [dispatch]);
 
   return (
-    <>
-      <div className="container lg:p-0 p-2 mx-auto min-h-screen items-center bg-gray-100">
-        <div className="py-4 md:py-3 lg:grid lg:grid-cols-3 gap-4">
-          <div className="col-span-2 bg-white rounded-md content-between">
-            <OrderSummary />
-            <PaymentMethod />
+    <div className="min-h-screen bg-gray-50 py-8 lg:py-12">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column: Order Details */}
+          <div className="flex-1 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="p-6 border-b border-gray-100">
+                <h2 className="text-xl font-bold text-gray-800">Shipping Information</h2>
+              </div>
+              <div className="p-6">
+                 <CheckoutShippingAddress />
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+               <div className="p-6 border-b border-gray-100">
+                <h2 className="text-xl font-bold text-gray-800">Payment Method</h2>
+              </div>
+              <div className="p-6">
+                <PaymentMethod />
+              </div>
+            </div>
+
+             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+               <div className="p-6 border-b border-gray-100">
+                <h2 className="text-xl font-bold text-gray-800">Order Items</h2>
+              </div>
+              <div className="p-0">
+                <OrderSummary />
+              </div>
+            </div>
           </div>
 
-          <div className="col-span-1 gap-2 rounded-md">
-            <CheckoutShippingAddress />
-            <ApplyCoupon />
-            <CheckoutSummary />
-          </div>
-          <div className="text-blue-500 hover:underline lg:text-start text-center">
-            <Link href="/products">Back to Shopping</Link>
+          {/* Right Column: Order Summary (Sticky) */}
+          <div className="lg:w-[380px] flex-shrink-0">
+            <div className="sticky top-24 space-y-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-6">Order Summary</h2>
+                <CheckoutSummary />
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                   <ApplyCoupon />
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <Link 
+                  href="/products" 
+                  className="inline-flex items-center text-gray-500 hover:text-gray-800 transition-colors font-medium"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Continue Shopping
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

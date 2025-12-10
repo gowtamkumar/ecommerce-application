@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import appConfig from "@/appConfig";
 import { getAuthHeaders } from "@/lib/utils/commonFunctions";

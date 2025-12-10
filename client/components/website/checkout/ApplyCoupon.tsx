@@ -39,27 +39,29 @@ export default function ApplyCoupon() {
   };
 
   return (
-    <div className="bg-white rounded-md my-2">
-      <div className="p-4 md:flex items-center justify-end gap-4 ">
-        <div className="flex md:flex-row flex-col gap-2 w-full">
-          <Space.Compact block>
-            <Input
-              type="text"
-              placeholder="Enter Coupon"
-              className="border border-gray-300 p-3 rounded"
-              onChange={(value) => setData(value.target.value)}
-            />
-            <Button
-              type="primary"
-              onClick={handleCoupon}
-              loading={loading}
-              disabled={loading || !data}
-            >
-              Apply Coupon
-            </Button>
-          </Space.Compact>
-        </div>
-      </div>
+    <div className="w-full">
+      <Space.Compact block size="large" className="w-full">
+        <Input
+          type="text"
+          placeholder="Enter Coupon Code"
+          className="hover:border-blue-400 focus:border-blue-500 rounded-l-xl"
+          onChange={(value) => setData(value.target.value)}
+          prefix={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+          }
+        />
+        <Button
+          type="primary"
+          onClick={handleCoupon}
+          loading={loading}
+          disabled={loading || !data}
+          className="bg-gray-800 hover:bg-gray-900 border-gray-800 rounded-r-xl px-6"
+        >
+          Apply
+        </Button>
+      </Space.Compact>
     </div>
   );
 }

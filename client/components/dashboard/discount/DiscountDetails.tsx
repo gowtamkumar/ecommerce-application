@@ -46,7 +46,7 @@ export default function DiscountDetails() {
     setDiscount(res.data);
     setLoading(false);
   }, [value.id]);
-  
+
   useEffect(() => {
     featchData();
   }, [featchData]);
@@ -71,9 +71,8 @@ export default function DiscountDetails() {
                 className="rounded-lg"
                 style={{ objectFit: "cover" }}
                 alt={discount.name}
-                src={`${appConfig.baseApiUrl}/uploads/${
-                  discount.image || "no-data.png"
-                }`}
+                src={`${appConfig.baseApiUrl}/uploads/${discount.image || "no-data.png"
+                  }`}
               />
             </div>
             <div>

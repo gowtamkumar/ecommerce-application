@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { ActionType } from "@/constants/constants";
 import { deleteCoupon, getCoupons } from "@/lib/apis/admin/coupon";
