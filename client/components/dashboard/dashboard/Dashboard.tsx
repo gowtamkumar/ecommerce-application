@@ -87,11 +87,16 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="container">
-      <div className="grid pb-3">
-        <div className="col-span-4">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 font-global-primary-fontfamily">Dashboard Overview</h1>
+          <p className="text-gray-500 text-sm mt-1">Welcome back! Here's what's happening deeply today.</p>
+        </div>
+        <div className="w-full sm:w-auto">
           <RangePicker
-            style={{ background: "#fff" }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}
             defaultValue={[firstDateOfMonth, lastDateOfMonth]}
             onChange={async (value) => {
               const newDate = {} as { startDate: string; endDate: string };
@@ -100,18 +105,26 @@ const Dashboard = () => {
               const results = await getDashboardReports(newDate);
               setDashboardReports(results.data);
             }}
-            className="mx-2 w-100"
+            className="w-full sm:w-80 shadow-sm"
           />
         </div>
       </div>
-      <div className="py-2">
+
+      {/* Summary Cards */}
+      <div>
         <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
       </div>
 
-      <StockReport recentHistory={dashboardReports} />
+      {/* Stock Report */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Stock Overview</h2>
+        <StockReport recentHistory={dashboardReports} />
+      </div>
 
-      <div className="grid grid-cols-12 gap-2">
-        <div className="col-span-3 mb-3">
+      {/* Analytics Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Profit & Loss</h2>
           <LossProfit
             value={{
               saleAmount,
@@ -120,14 +133,21 @@ const Dashboard = () => {
             }}
           />
         </div>
-        <div className="col-span-4 mb-3">
+        <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Top Customers</h2>
           <TopCustomer topCustomers={top_customers} />
         </div>
-        <div className="col-span-5 mb-3">
+        <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Top Selling Products</h2>
           <TopSellingProduct topSellingProduct={top_selling_product} />
         </div>
       </div>
-      <StockAlert productAlertStockReport={product_alert_stock_report} />
+
+      {/* Alerts */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Stock Alerts</h2>
+        <StockAlert productAlertStockReport={product_alert_stock_report} />
+      </div>
     </div>
   );
 };

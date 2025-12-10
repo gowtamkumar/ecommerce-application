@@ -9,7 +9,7 @@ import {
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { Button, Divider, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -316,78 +316,121 @@ const AddProduct = ({
 
   return (
     <>
-      <Divider orientation="left">Create New Product</Divider>
-      <Form
-        layout="vertical"
-        form={form}
-        onValuesChange={(_v, values) => setFormValues(values)}
-        autoComplete="off"
-        scrollToFirstError={true}
-        initialValues={{
-          productVariants: [{}],
-          images: [],
-          fileList: [],
-          thumbnailImage: "",
-          fileThumbnailList: [],
-          hoverImage: "",
-          fileHoverList: [],
-        }}
-      >
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
-        <Form.Item name="variantId" hidden>
-          <Input />
-        </Form.Item>
-
-        <div className="grid md:grid-cols-3 gap-5">
-          <div className="col-span-2">
-            <ProductTopSecton form={form} />
-            <TaxDiscountSectoin discounts={discounts} taxs={taxs} />
-            <WithOutVariant form={form} />
+      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 font-global-primary-fontfamily">
+              {product?.id ? "Edit Product" : "Create Product"}
+            </h1>
+            <p className="text-gray-500 mt-1">Manage your product details, pricing, and media.</p>
           </div>
-
-          <div className="col-span-1">
-            <ProductRightTopSection
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              brands={brands}
-              categories={categories}
-              units={units}
-              tags={tags}
-              setTags={setTags}
-            />
-            {/* image upload section */}
-            <ImageUpload
-              formValues={formValues}
-              form={form}
-              setFormValues={setFormValues}
-            />
+          <div className="flex gap-3">
+            <Button
+              size="large"
+              onClick={() => resetFormData(product)}
+              className="!rounded-lg !border-gray-300 !text-gray-600 hover:!text-gray-900 hover:!border-gray-400"
+            >
+              Reset Changes
+            </Button>
+            <Button
+              size="large"
+              type="primary"
+              onClick={handleSubmit}
+              loading={global.loading.save}
+              disabled={global.loading.save}
+              className="!bg-black hover:!bg-gray-800 !border-none !rounded-lg !px-8 !font-medium"
+            >
+              {product?.id ? "Update Product" : "Save Product"}
+            </Button>
           </div>
         </div>
 
-        <ProductVariant
-          formValues={formValues}
+        <Form
+          layout="vertical"
           form={form}
-          sizes={sizes}
-          colors={colors}
-        />
+          onValuesChange={(_v, values) => setFormValues(values)}
+          autoComplete="off"
+          scrollToFirstError={true}
+          initialValues={{
+            productVariants: [{}],
+            images: [],
+            fileList: [],
+            thumbnailImage: "",
+            fileThumbnailList: [],
+            hoverImage: "",
+            fileHoverList: [],
+          }}
+          className="space-y-8"
+        >
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="variantId" hidden>
+            <Input />
+          </Form.Item>
 
-        <div className="flex gap-2 justify-end">
-          <Button size="small" onClick={() => resetFormData(product)}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            onClick={handleSubmit}
-            loading={global.loading.save}
-            disabled={global.loading.save}
-          >
-            {product?.id ? "Update" : "Save"}
-          </Button>
-        </div>
-      </Form>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Info */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Basic Details Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Basic Information</h2>
+                <ProductTopSecton form={form} />
+              </div>
+
+              {/* Pricing & Tax Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Pricing & Tax</h2>
+                <TaxDiscountSectoin discounts={discounts} taxs={taxs} />
+              </div>
+
+              {/* Inventory Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Inventory</h2>
+                <WithOutVariant form={form} />
+              </div>
+
+              {/* Variants Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Product Variants</h2>
+                <ProductVariant
+                  formValues={formValues}
+                  form={form}
+                  sizes={sizes}
+                  colors={colors}
+                />
+              </div>
+            </div>
+
+            {/* Right Column - Sidebar */}
+            <div className="lg:col-span-1 space-y-8">
+              {/* Organization Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Organization</h2>
+                <ProductRightTopSection
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                  brands={brands}
+                  categories={categories}
+                  units={units}
+                  tags={tags}
+                  setTags={setTags}
+                />
+              </div>
+
+              {/* Media Card */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Media</h2>
+                <ImageUpload
+                  formValues={formValues}
+                  form={form}
+                  setFormValues={setFormValues}
+                />
+              </div>
+            </div>
+          </div>
+        </Form>
+      </div>
     </>
   );
 };
