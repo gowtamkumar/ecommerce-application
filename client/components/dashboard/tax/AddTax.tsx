@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Switch } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
@@ -45,87 +46,94 @@ const AddTax = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Tax" : "Create Tax"}
-      width={600}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Tax" : "Create Tax"}
+        </span>
+      }
+      width={500}
       zIndex={1050}
       open={tax && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button
+            size="large"
+            onClick={() => resetFormData(global.action?.payload)}
+            className="!rounded-lg"
+          >
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "name is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter name" />
-        </Form.Item>
+        <div className="space-y-4">
+          <Form.Item
+            name="name"
+            label="Tax Name"
+            rules={[
+              {
+                required: true,
+                message: "Name is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <Input placeholder="Enter tax name (e.g., VAT, GST)" size="large" />
+          </Form.Item>
 
-        <Form.Item
-          name="value"
-          label="Value"
-          rules={[
-            {
-              required: true,
-              message: "value is required",
-            },
-          ]}
-        >
-          <InputNumber placeholder="Enter Value" style={{ width: "100%" }} />
-        </Form.Item>
+          <Form.Item
+            name="value"
+            label="Tax Value (%)"
+            rules={[
+              {
+                required: true,
+                message: "Value is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <InputNumber 
+              placeholder="Enter tax percentage" 
+              style={{ width: "100%" }} 
+              min={0}
+              max={100}
+              size="large"
+            />
+          </Form.Item>
 
-        <Form.Item name="status" label="Status">
-          <Select placeholder="Select">
-            <Select.Option value="Active">Active</Select.Option>
-            <Select.Option value="Inactive">Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button
-              size="small"
-              onClick={() => resetFormData(global.action?.payload)}
-            >
-              Reset
-            </Button>
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              loading={global.loading.save}
-              disabled={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
+          <Form.Item name="status" label="Status" valuePropName="checked" className="!mb-0">
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked
+            />
+          </Form.Item>
+        </div>
       </Form>
     </Modal>
   );

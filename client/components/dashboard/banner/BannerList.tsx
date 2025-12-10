@@ -1,8 +1,8 @@
-
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +13,6 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { deleteBanner, getBanners } from "@/lib/apis/banner";
 import appConfig from "@/appConfig";
@@ -55,10 +50,7 @@ const BannerList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
-
-
-
+  }, [fetchData, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -73,7 +65,6 @@ const BannerList: React.FC = () => {
       dispatch(setAction({}));
     }
   };
-
 
   const handleSearch = (
     selectedKeys: string[],
@@ -105,10 +96,9 @@ const BannerList: React.FC = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
-            setSearchInput(e.target.value)
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          }
+            setSearchInput(e.target.value);
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+          }}
           onPressEnter={() =>
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
@@ -132,26 +122,6 @@ const BannerList: React.FC = () => {
             style={{ width: 90 }}
           >
             Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
           </Button>
         </Space>
       </div>
@@ -189,6 +159,7 @@ const BannerList: React.FC = () => {
       key: "type",
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
+      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
     },
     {
       title: "Title",
@@ -196,37 +167,48 @@ const BannerList: React.FC = () => {
       key: "title",
       sorter: (a, b) => a.title.length - b.title.length,
       ...getColumnSearchProps("title"),
-    },
-    {
-      title: "URL",
-      dataIndex: "url",
-      key: "url",
+      render: (text) => <span className="font-medium">{text}</span>,
     },
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
+      width: 100,
       render: (value) => (
         <Image
           width={60}
+          height={40}
           alt={value}
           src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
+          className="rounded-lg object-cover border border-gray-200"
         />
       ),
+    },
+    {
+      title: "URL",
+      dataIndex: "url",
+      key: "url",
+      render: (text) => text ? (
+        <a href={text} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+          {text.length > 30 ? `${text.substring(0, 30)}...` : text}
+        </a>
+      ) : "-",
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      render: (text) => text ? (
+        <span className="text-gray-600">{text.length > 40 ? `${text.substring(0, 40)}...` : text}</span>
+      ) : "-",
     },
-
     {
       ...getColumnSearchProps("active"),
-      title: "Active",
+      title: "Status",
       key: "active",
       sortDirections: ["descend", "ascend"],
       render: (value) => (
-        <Tag color={value.active ? "green" : "red"}>
+        <Tag color={value.active ? "green" : "red"} className="font-medium">
           {value.active ? "Active" : "Inactive"}
         </Tag>
       ),
@@ -234,41 +216,41 @@ const BannerList: React.FC = () => {
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "8%",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() => {
-              const newData = { ...value };
-              if (newData.image) {
-                const file = {
-                  uid: Math.random() * 1000 + "",
-                  name: `image`,
-                  status: "done",
-                  fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
-                };
-                newData.fileList = [file];
-              }
-              dispatch(
-                setAction({
-                  banner: true,
-                  type: ActionType.UPDATE,
-                  payload: newData,
-                })
-              );
-            }}
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Banner">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() => {
+                const newData = { ...value };
+                if (newData.image) {
+                  const file = {
+                    uid: Math.random() * 1000 + "",
+                    name: `image`,
+                    status: "done",
+                    fileName: newData.image,
+                    url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"}`,
+                  };
+                  newData.fileList = [file];
+                }
+                dispatch(
+                  setAction({
+                    banner: true,
+                    type: ActionType.UPDATE,
+                    payload: newData,
+                  })
+                );
+              }}
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Banner?
               </span>
             }
@@ -279,12 +261,15 @@ const BannerList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Banner">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -297,9 +282,14 @@ const BannerList: React.FC = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={Banners}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

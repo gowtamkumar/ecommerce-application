@@ -39,7 +39,6 @@ const AddShippingAddress = () => {
         const division = await getDivisions();
         setDivision(division.data);
         if (type === ActionType.UPDATE) {
-          console.log("Fetching Districts, Upazilas, Unions...");
           const districts = await getDistricts({
             divisionId: payload.divisionId,
           });
@@ -61,10 +60,8 @@ const AddShippingAddress = () => {
 
     if (type) {
       fetchData();
-    } else {
-      console.log("No type detected, skipping fetch.");
     }
-  }, [dispatch, form, payload, type]); // Ensure payload is included if necessary
+  }, [dispatch, form, payload, type]);
 
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
@@ -93,220 +90,261 @@ const AddShippingAddress = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Address" : "Create Address"}
-      width={650}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Shipping Address" : "Create Shipping Address"}
+        </span>
+      }
+      width={700}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button
+            size="large"
+            onClick={resetFormData}
+            className="!rounded-lg"
+          >
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update Address" : "Save Address"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="type"
-          label="Type"
-          rules={[
-            {
-              required: true,
-              message: "Type is required",
-            },
-          ]}
-        >
-          <Select placeholder="Select">
-            <Select.Option value="Home">Home</Select.Option>
-            <Select.Option value="Office">Office</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "name is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item
-          name="phoneNo"
-          label="Phone No"
-          rules={[
-            {
-              required: true,
-              message: "Phone No is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              required: true,
-              message: "E-mail No is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item name="divisionId" label="Division" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select "
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-            onChange={async (value) => {
-              if (value) {
-                const districts = await getDistricts({ divisionId: value });
-                setDistricts(districts.data);
-              }
-            }}
-          >
-            {divisions.map((item: { name: string; id: number }) => (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item name="districtId" label="District" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select "
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-            onChange={async (value) => {
-              if (value) {
-                const upazila = await getUpazilas({ districtId: value });
-
-                setUpazilas(upazila.data);
-              }
-            }}
-          >
-            {districts.map((item: { name: string; id: number }) => (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item name="upazilaId" label="Upazila" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select "
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-            onChange={async (value) => {
-              if (value) {
-                const union = await getUnions({ upazilaId: value });
-                console.log("union", union);
-
-                setUnions(union.data);
-              }
-            }}
-          >
-            {upazilas.map((item: { name: string; id: number }) => (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item name="unionId" label="Union" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select "
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            {unions.map((item: { name: string; id: number }) => (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          name="address"
-          label="Address"
-          rules={[
-            {
-              required: true,
-              message: "address is required",
-            },
-          ]}
-        >
-          <Input.TextArea placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={resetFormData}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              htmlType="submit"
-              disabled={global.loading.save}
-              loading={global.loading.save}
+        {/* Basic Information */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Basic Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item
+              name="type"
+              label="Address Type"
+              rules={[
+                {
+                  required: true,
+                  message: "Type is required",
+                },
+              ]}
+              className="!mb-0"
             >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
+              <Select placeholder="Select type" size="large">
+                <Select.Option value="Home">Home</Select.Option>
+                <Select.Option value="Office">Office</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="name"
+              label="Contact Name"
+              rules={[
+                {
+                  required: true,
+                  message: "Name is required",
+                },
+              ]}
+              className="!mb-0"
+            >
+              <Input placeholder="Enter contact name" size="large" />
+            </Form.Item>
+
+            <Form.Item
+              name="phoneNo"
+              label="Phone Number"
+              rules={[
+                {
+                  required: true,
+                  message: "Phone number is required",
+                },
+              ]}
+              className="!mb-0"
+            >
+              <Input placeholder="Enter phone number" size="large" />
+            </Form.Item>
+
+            <Form.Item
+              name="email"
+              label="Email Address"
+              rules={[
+                {
+                  required: true,
+                  message: "Email is required",
+                },
+                {
+                  type: "email",
+                  message: "Please enter a valid email",
+                },
+              ]}
+              className="!mb-0"
+            >
+              <Input placeholder="Enter email address" size="large" />
+            </Form.Item>
           </div>
-        </Form.Item>
+        </div>
+
+        {/* Location */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Location Details
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item name="divisionId" label="Division" className="!mb-0">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select division"
+                size="large"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={async (value) => {
+                  if (value) {
+                    const districts = await getDistricts({ divisionId: value });
+                    setDistricts(districts.data);
+                    form.setFieldsValue({ districtId: undefined, upazilaId: undefined, unionId: undefined });
+                    setUpazilas([]);
+                    setUnions([]);
+                  }
+                }}
+              >
+                {divisions.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item name="districtId" label="District" className="!mb-0">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select district"
+                size="large"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={async (value) => {
+                  if (value) {
+                    const upazila = await getUpazilas({ districtId: value });
+                    setUpazilas(upazila.data);
+                    form.setFieldsValue({ upazilaId: undefined, unionId: undefined });
+                    setUnions([]);
+                  }
+                }}
+              >
+                {districts.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item name="upazilaId" label="Upazila" className="!mb-0">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select upazila"
+                size="large"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={async (value) => {
+                  if (value) {
+                    const union = await getUnions({ upazilaId: value });
+                    setUnions(union.data);
+                    form.setFieldsValue({ unionId: undefined });
+                  }
+                }}
+              >
+                {upazilas.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item name="unionId" label="Union" className="!mb-0">
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select union"
+                size="large"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {unions.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+        </div>
+
+        {/* Detailed Address */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Detailed Address
+          </h3>
+          <Form.Item
+            name="address"
+            label="Street Address"
+            rules={[
+              {
+                required: true,
+                message: "Address is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <Input.TextArea
+              placeholder="Enter full street address"
+              rows={3}
+              className="!rounded-lg"
+            />
+          </Form.Item>
+        </div>
       </Form>
     </Modal>
   );

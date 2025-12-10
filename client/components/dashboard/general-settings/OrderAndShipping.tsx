@@ -9,15 +9,11 @@ import {
   setAction,
   setSetting,
 } from "@/redux/features/global/globalSlice";
-import { Button, Divider, Form, Input, InputNumber } from "antd";
+import { Button, Card, Form, Input, InputNumber, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// Layout definition (static)
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 12 },
-};
+const { Title, Text } = Typography;
 
 const OrderAdnShhiping = () => {
   const dispatch = useDispatch();
@@ -60,34 +56,70 @@ const OrderAdnShhiping = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <Form
-        {...layout}
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError
-      >
-        {/* Hidden ID */}
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
-        <Divider orientation="left">Order</Divider>
-        <Form.Item
-          name="orderFreeShippingAmount"
-          label="Order Free Shipping amount"
-        >
-          <InputNumber placeholder="Enter" className="!w-100" />
-        </Form.Item>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          Order & Shipping Configuration
+        </Title>
+        <Text type="secondary">
+          Configure order processing and shipping settings
+        </Text>
+      </div>
 
-        {/* Submit Button */}
-        <Form.Item>
-          <Button size="small" htmlType="submit" loading={loading}>
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          autoComplete="off"
+          scrollToFirstError
+        >
+          {/* Hidden ID */}
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
+
+          <div className="space-y-4">
+            {/* Free Shipping Amount */}
+            <Form.Item
+              name="orderFreeShippingAmount"
+              label={
+                <span className="text-base font-medium">
+                  Free Shipping Threshold
+                </span>
+              }
+              extra="Orders above this amount will have free shipping"
+              className="!mb-0"
+            >
+              <InputNumber
+                size="large"
+                placeholder="Enter minimum amount"
+                className="!w-full max-w-xl"
+                min={0}
+                prefix="$"
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+              />
+            </Form.Item>
+          </div>
+
+          {/* Submit Button */}
+          <Form.Item className="!mb-0 !mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+            >
+              Save Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };

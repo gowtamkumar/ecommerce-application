@@ -13,9 +13,9 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Avatar, Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
@@ -61,7 +61,7 @@ const UserList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -134,26 +134,6 @@ const UserList = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -183,158 +163,201 @@ const UserList = () => {
       ),
   });
 
+  const getUserTypeColor = (type: string) => {
+    switch (type) {
+      case "Admin": return "purple";
+      case "Vendor": return "blue";
+      case "Delivery Man": return "orange";
+      default: return "green";
+    }
+  };
+
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Name",
+      title: "User",
       dataIndex: "name",
       key: "name",
+      width: 250,
+      fixed: "left",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
+      render: (text, record) => (
+        <div className="flex items-center gap-3">
+          <Avatar
+            size={40}
+            src={`${appConfig.baseApiUrl}/uploads/${record.image || "no-data.png"}`}
+            icon={<UserOutlined />}
+            className="border border-gray-200"
+          />
+          <div>
+            <div className="font-semibold text-gray-900">{text}</div>
+            <div className="text-sm text-gray-500">@{record.username}</div>
+          </div>
+        </div>
+      ),
     },
-
     {
-      title: "Username",
-      dataIndex: "username",
-      key: "username",
-      sorter: (a, b) => a.username.length - b.username.length,
-      ...getColumnSearchProps("username"),
-    },
-
-    {
-      title: "Type",
+      title: "User Type",
       dataIndex: "type",
       key: "type",
+      width: 130,
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
+      render: (type) => (
+        <Tag color={getUserTypeColor(type)} className="font-medium">
+          {type}
+        </Tag>
+      ),
     },
-
     {
-      title: "E-mail",
+      title: "Email",
       dataIndex: "email",
       key: "email",
       sorter: (a, b) => a.email.length - b.email.length,
       ...getColumnSearchProps("email"),
+      render: (text) => <span className="text-gray-600">{text}</span>,
     },
-
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      render: (text) => text || <span className="text-gray-400">-</span>,
     },
-
     {
-      ...getColumnSearchProps("dob"),
+      title: "Points",
+      dataIndex: "point",
+      key: "point",
+      width: 100,
+      ...getColumnSearchProps("point"),
+      render: (value) => (
+        <span className="font-semibold text-blue-600">{value || 0}</span>
+      ),
+    },
+    {
       title: "Date of Birth",
       dataIndex: "dob",
       key: "dob",
-      render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
-      ),
+      width: 140,
+      ...getColumnSearchProps("dob"),
+      render: (value) =>
+        value ? (
+          <span className="text-gray-600">{dayjs(value).format("DD MMM YYYY")}</span>
+        ) : (
+          <span className="text-gray-400">-</span>
+        ),
       sorter: (a, b) => a.dob?.length - b.dob?.length,
     },
     {
-      title: "Point",
-      dataIndex: "point",
-      key: "point",
-      // sorter: (a, b) => a.point.length - b.point.length,
-      ...getColumnSearchProps("point"),
-    },
-    {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
-      render: (value) => (
-        <Image
-          width={60}
-          alt={value}
-          src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
-        />
-      ),
-    },
-    {
-      ...getColumnSearchProps("lastLogin"),
-      title: "last Login",
+      title: "Last Login",
       dataIndex: "lastLogin",
       key: "lastLogin",
+      width: 160,
+      ...getColumnSearchProps("lastLogin"),
       sorter: (a, b) => a.lastLogin?.length - b.lastLogin?.length,
-      render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
-      ),
+      render: (value) =>
+        value ? (
+          <div className="text-sm">
+            <div className="text-gray-900">{dayjs(value).format("DD MMM YYYY")}</div>
+            <div className="text-gray-500">{dayjs(value).format("h:mm A")}</div>
+          </div>
+        ) : (
+          <span className="text-gray-400">Never</span>
+        ),
     },
     {
-      title: "last Logout",
+      title: "Last Logout",
       dataIndex: "lastLogout",
       key: "lastLogout",
+      width: 160,
       sorter: (a, b) => a.lastLogout?.length - b.lastLogout?.length,
       ...getColumnSearchProps("lastLogout"),
-      render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
-      ),
+      render: (value) =>
+        value ? (
+          <div className="text-sm">
+            <div className="text-gray-900">{dayjs(value).format("DD MMM YYYY")}</div>
+            <div className="text-gray-500">{dayjs(value).format("h:mm A")}</div>
+          </div>
+        ) : (
+          <span className="text-gray-400">Never</span>
+        ),
     },
-
     {
       title: "IP Address",
       dataIndex: "ipAddress",
       key: "ipAddress",
+      width: 140,
       sorter: (a, b) => a.ipAddress?.length - b.ipAddress?.length,
       ...getColumnSearchProps("ipAddress"),
+      render: (text) => text ? (
+        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{text}</code>
+      ) : (
+        <span className="text-gray-400">-</span>
+      ),
     },
     {
-      title: "Divice IP",
+      title: "Device ID",
       dataIndex: "diviceId",
       key: "diviceId",
+      width: 140,
       sorter: (a, b) => a.diviceId?.length - b.diviceId?.length,
       ...getColumnSearchProps("diviceId"),
+      render: (text) => text ? (
+        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{text}</code>
+      ) : (
+        <span className="text-gray-400">-</span>
+      ),
     },
     {
-      ...getColumnSearchProps("status"),
       title: "Status",
       key: "status",
+      width: 110,
+      fixed: "right",
+      ...getColumnSearchProps("status"),
       sortDirections: ["descend", "ascend"],
       sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
-        <Tag color={value.status === "Active" ? "green" : "red"}>
+        <Tag color={value.status === "Active" ? "green" : "red"} className="font-medium">
           {value.status}
         </Tag>
       ),
     },
-
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() => {
-              const newData = { ...value };
-              if (newData.image) {
-                const file = {
-                  uid: Math.random() * 1000 + "",
-                  name: `image`,
-                  status: "done",
-                  fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
-                };
-                newData.fileList = [file];
-              }
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  payload: newData,
-                })
-              );
-            }}
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit User">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() => {
+                const newData = { ...value };
+                if (newData.image) {
+                  const file = {
+                    uid: Math.random() * 1000 + "",
+                    name: `image`,
+                    status: "done",
+                    fileName: newData.image,
+                    url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"}`,
+                  };
+                  newData.fileList = [file];
+                }
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    payload: newData,
+                  })
+                );
+              }}
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this User?
               </span>
             }
@@ -345,12 +368,15 @@ const UserList = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete User">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -363,9 +389,14 @@ const UserList = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={user}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors"
     />
   );
 };

@@ -2,10 +2,12 @@
 import { ActionType } from "@/constants/constants";
 import { setAction } from "@/redux/features/global/globalSlice";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Tabs } from "antd";
+import { Button, Card, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+
+const { Title, Text } = Typography;
 
 const UserList = dynamic(() => import("@/components/dashboard/user/UserList"), {
   ssr: false,
@@ -20,33 +22,39 @@ export default function User() {
   const dispatch = useDispatch();
 
   return (
-    <div className="container-fluid bg-white p-3  ">
-      <Tabs
-        activeKey={tabKey}
-        onChange={(key) => setTabKey(key)}
-        items={[
-          {
-            label: "Users",
-            key: "user_list",
-            children: <UserList />,
-          },
-        ]}
-        tabBarExtraContent={
-          <Button
-            size="small"
-            className="capitalize"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                })
-              )
-            }
-          >
-            <PlusOutlined className="mx-1" /> New User
-          </Button>
-        }
-      />
+    <div className="py-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <Title level={3} className="!mb-1">
+            User Management
+          </Title>
+          <Text type="secondary">
+            Manage customers, vendors, delivery personnel, and administrators
+          </Text>
+        </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() =>
+            dispatch(
+              setAction({
+                type: ActionType.CREATE,
+              })
+            )
+          }
+          className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+        >
+          New User
+        </Button>
+      </div>
+
+      {/* Table Card */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <UserList />
+      </Card>
+
       <AddUser />
     </div>
   );

@@ -1,49 +1,53 @@
 "use client";
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { Button, Tabs } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
+import dynamic from "next/dynamic";
+import { useDispatch } from "react-redux";
+
+const { Title, Text } = Typography;
 
 const AddBrand = dynamic(() => import('@/components/dashboard/brand/AddBrand'), { ssr: false })
 const BrandList = dynamic(() => import('@/components/dashboard/brand/BrandList'), { ssr: false })
 
-
-
 export default function Brand() {
-  const [tabKey, setTabKey] = useState("brand_list");
   const dispatch = useDispatch();
 
   return (
-    <div className="container-fluid bg-white p-3  ">
-      <Tabs
-        activeKey={tabKey}
-        onChange={(key) => setTabKey(key)}
-        items={[
-          {
-            label: "Brands",
-            key: "brand_list",
-            children: <BrandList />,
-          },
-        ]}
-        tabBarExtraContent={
-          <Button
-            size="small"
-            className="capitalize"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                })
-              )
-            }
-          >
-            <PlusOutlined className="mx-1" /> New Brand
-          </Button>
-        }
-      />
+    <div className="py-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <Title level={3} className="!mb-1">
+            Product Brands
+          </Title>
+          <Text type="secondary">
+            Manage product brands and manufacturers
+          </Text>
+        </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() =>
+            dispatch(
+              setAction({
+                type: ActionType.CREATE,
+              })
+            )
+          }
+          className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+        >
+          New Brand
+        </Button>
+      </div>
+
+      {/* Table Card */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <BrandList />
+      </Card>
+
       <AddBrand />
     </div>
   );

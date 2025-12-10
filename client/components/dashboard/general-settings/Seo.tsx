@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Card,
   Divider,
   Form,
   Input,
   Select,
+  Typography,
   Upload,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,20 +35,13 @@ import {
 import { imageSetFile } from "@/lib/utils/imageSetFile";
 import uploadButton from "@/components/website/uploadButton";
 
-// Layout definition (static)
-const layout = {
-  labelCol: { span: 3 },
-  wrapperCol: { span: 10 },
-};
+const { Title, Text } = Typography;
 
 const Seo = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const global = useSelector(selectGlobal);
-
-  // Combine setting values
-
 
   const helpSupport = React.useMemo(() => ({
     id: global.setting.id,
@@ -152,88 +147,174 @@ const Seo = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <Form
-        {...layout}
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError
-      >
-        {/* Hidden ID */}
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          SEO Configuration
+        </Title>
+        <Text type="secondary">
+          Manage your website's search engine optimization and metadata
+        </Text>
+      </div>
 
-        {/* SEO Codes */}
-        <Form.Item name="headerCode" label="Header Code">
-          <Input.TextArea placeholder="Enter header code" />
-        </Form.Item>
-        <Form.Item name="bodyStartCode" label="Body Start Code">
-          <Input.TextArea placeholder="Enter body start code" />
-        </Form.Item>
-        <Form.Item name="bodyEndCode" label="Body End Code">
-          <Input.TextArea placeholder="Enter body end code" />
-        </Form.Item>
-
-        <Divider orientation="left">Home Page Meta Data</Divider>
-
-        {/* Meta Tags */}
-        <Form.Item name="metaTitle" label="Meta Title">
-          <Input.TextArea placeholder="Enter meta title" />
-        </Form.Item>
-        <Form.Item name="metaDescription" label="Meta Description">
-          <Input.TextArea placeholder="Enter meta description" />
-        </Form.Item>
-
-        {/* Meta Image Upload */}
-        <Form.Item
-          name="metaImagefileList"
-          label="Meta Image"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          autoComplete="off"
+          scrollToFirstError
         >
-          <ImgCrop rotationSlider showReset>
-            <Upload
-              name="metaImage"
-              listType="picture-card"
-              fileList={helpSupport?.metaImagefileList || []}
-              onRemove={handleImageRemove}
-              onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
-              maxCount={1}
-              className="avatar-uploader"
+          {/* Hidden ID */}
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
+
+          {/* SEO Code Injection Section */}
+          <div className="space-y-4">
+            <Title level={5} className="!mb-3">
+              Code Injection
+            </Title>
+
+            <Form.Item
+              name="headerCode"
+              label={<span className="text-base font-medium">Header Code</span>}
+              extra="Code will be injected in the <head> section (e.g., Google Analytics)"
+              className="!mb-0"
             >
-              {helpSupport?.metaImagefileList?.length >= 1 ? null : uploadButton}
-            </Upload>
-          </ImgCrop>
-        </Form.Item>
+              <Input.TextArea
+                placeholder="<!-- Google Analytics or other header scripts -->"
+                rows={4}
+                size="large"
+                className="max-w-2xl font-mono text-sm"
+              />
+            </Form.Item>
 
-        <Form.Item name="metaImage" hidden>
-          <Input />
-        </Form.Item>
+            <Form.Item
+              name="bodyStartCode"
+              label={<span className="text-base font-medium">Body Start Code</span>}
+              extra="Code will be injected right after the opening <body> tag"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="<!-- Facebook Pixel or other body start scripts -->"
+                rows={4}
+                size="large"
+                className="max-w-2xl font-mono text-sm"
+              />
+            </Form.Item>
 
-        <Form.Item name="metaKeywords" label="Meta Keywords">
-          <Select
-            mode="tags"
-            placeholder="Enter keywords and press Enter"
-            tokenSeparators={[","]}
-            style={{ width: "100%" }}
-          />
-        </Form.Item>
+            <Form.Item
+              name="bodyEndCode"
+              label={<span className="text-base font-medium">Body End Code</span>}
+              extra="Code will be injected right before the closing </body> tag"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="<!-- Chat widgets or other body end scripts -->"
+                rows={4}
+                size="large"
+                className="max-w-2xl font-mono text-sm"
+              />
+            </Form.Item>
+          </div>
 
-        {/* Submit Button */}
-        <Form.Item>
-          <Button
-            size="small"
-            htmlType="submit"
-            loading={loading}
-          >
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+          <Divider className="!my-8" />
+
+          {/* Home Page Meta Data Section */}
+          <div className="space-y-4">
+            <Title level={5} className="!mb-3">
+              Home Page Meta Data
+            </Title>
+
+            <Form.Item
+              name="metaTitle"
+              label={<span className="text-base font-medium">Meta Title</span>}
+              extra="The title that appears in search engine results (50-60 characters recommended)"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="Your Store Name - Best Products Online"
+                rows={2}
+                size="large"
+                className="max-w-2xl"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="metaDescription"
+              label={<span className="text-base font-medium">Meta Description</span>}
+              extra="Description shown in search results (150-160 characters recommended)"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="Shop the best products online. Free shipping, fast delivery, and great customer service."
+                rows={3}
+                size="large"
+                className="max-w-2xl"
+              />
+            </Form.Item>
+
+            {/* Meta Image Upload */}
+            <Form.Item
+              name="metaImagefileList"
+              label={<span className="text-base font-medium">Meta Image (Open Graph)</span>}
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+              extra="Image displayed when your site is shared on social media (1200x630px recommended)"
+              className="!mb-0"
+            >
+              <ImgCrop rotationSlider showReset aspect={1200 / 630}>
+                <Upload
+                  name="metaImage"
+                  listType="picture-card"
+                  fileList={helpSupport?.metaImagefileList || []}
+                  onRemove={handleImageRemove}
+                  onPreview={(file) => handlePreview(file, dispatch)}
+                  customRequest={customUploadRequest}
+                  maxCount={1}
+                  className="avatar-uploader"
+                >
+                  {helpSupport?.metaImagefileList?.length >= 1 ? null : uploadButton}
+                </Upload>
+              </ImgCrop>
+            </Form.Item>
+
+            <Form.Item name="metaImage" hidden>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="metaKeywords"
+              label={<span className="text-base font-medium">Meta Keywords</span>}
+              extra="Enter keywords and press Enter (comma-separated also works)"
+              className="!mb-0"
+            >
+              <Select
+                mode="tags"
+                size="large"
+                placeholder="e.g., online shopping, best deals, electronics"
+                tokenSeparators={[","]}
+                className="max-w-2xl"
+              />
+            </Form.Item>
+          </div>
+
+          {/* Submit Button */}
+          <Form.Item className="!mb-0 !mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+            >
+              Save SEO Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };

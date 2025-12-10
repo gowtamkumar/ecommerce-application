@@ -46,30 +46,42 @@ const AddUnit = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 12 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 12 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Unit" : "Create Unit"}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Unit" : "Create Unit"}
+        </span>
+      }
       width={500}
       zIndex={1050}
       open={unit && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={resetFormData} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
@@ -84,24 +96,9 @@ const AddUnit = () => {
               message: "Name is required",
             },
           ]}
+          className="!mb-0"
         >
-          <Input placeholder="Enter Name" />
-        </Form.Item>
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={resetFormData}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              htmlType="submit"
-              disabled={global.loading.save}
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
+          <Input placeholder="Enter unit name (e.g., kg, liter, piece)" size="large" />
         </Form.Item>
       </Form>
     </Modal>

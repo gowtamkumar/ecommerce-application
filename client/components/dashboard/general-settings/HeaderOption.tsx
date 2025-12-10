@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Card, Form, Input, Typography } from "antd";
 import {
   selectGlobal,
   setAction,
@@ -13,6 +13,8 @@ import {
   successNotification,
 } from "@/lib/utils/notification";
 
+const { Title, Text } = Typography;
+
 const HeaderOption = () => {
   const [loading, setLoading] = useState(false);
   const global = useSelector(selectGlobal);
@@ -20,7 +22,7 @@ const HeaderOption = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-    const helpSupport = {
+  const helpSupport = {
     id: global.setting.id,
     ...global.setting.headerOption,
   };
@@ -61,51 +63,65 @@ const HeaderOption = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 3 },
-    wrapperCol: { span: 10 },
-  };
-
-
-
   return (
-    <div className="container mx-auto">
-      <Form
-        {...layout}
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError={true}
-      >
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          Header Configuration
+        </Title>
+        <Text type="secondary">
+          Customize the text displayed in your website header
+        </Text>
+      </div>
 
-        <Form.Item
-          name="leftText"
-          label="Left Text"
-          rules={[
-            {
-              required: true,
-              message: "Left Text is required",
-            },
-          ]}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          autoComplete="off"
+          scrollToFirstError={true}
         >
-          <Input placeholder="Enter " />
-        </Form.Item>
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
 
-        <Form.Item>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            loading={loading}
-          >
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+          <div className="space-y-4">
+            {/* Left Text */}
+            <Form.Item
+              name="leftText"
+              label={<span className="text-base font-medium">Header Left Text</span>}
+              rules={[
+                {
+                  required: true,
+                  message: "Header text is required",
+                },
+              ]}
+              extra="This text will appear on the left side of your website header"
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="e.g., Welcome to our store!"
+                className="max-w-xl"
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item className="!mb-0 !mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+            >
+              Save Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };

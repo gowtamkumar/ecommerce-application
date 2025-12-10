@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,11 +12,6 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { deleteTax, getTaxs } from "@/lib/apis/tax";
 import {
@@ -53,7 +48,7 @@ const TaxList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -126,26 +121,6 @@ const TaxList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -177,21 +152,21 @@ const TaxList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Name",
+      title: "Tax Name",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
+      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
     },
-
     {
-      title: "Value",
+      title: "Tax Value (%)",
       dataIndex: "value",
       key: "value",
       sorter: (a, b) => a.value - b.value,
       ...getColumnSearchProps("value"),
+      render: (value) => <span className="font-medium text-blue-600">{value}%</span>,
     },
-
     {
       title: "Status",
       key: "status",
@@ -199,38 +174,38 @@ const TaxList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
-        <Tag color={value.status === "Active" ? "green" : "red"}>
+        <Tag color={value.status === "Active" ? "green" : "red"} className="font-medium">
           {value.status}
         </Tag>
       ),
     },
-
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "7%",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  tax: true,
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Tax">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    tax: true,
+                    type: ActionType.UPDATE,
+                    payload: value,
+                  })
+                )
+              }
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Tax?
               </span>
             }
@@ -241,12 +216,15 @@ const TaxList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Tax">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -259,9 +237,14 @@ const TaxList: React.FC = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={taxs}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

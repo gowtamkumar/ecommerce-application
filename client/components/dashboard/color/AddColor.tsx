@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import {
   Button,
@@ -79,79 +80,89 @@ const AddColor = () => {
     purple,
   });
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Color" : "Create Color"}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Color" : "Create Color"}
+        </span>
+      }
       width={500}
       zIndex={1050}
       open={color && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={resetFormData} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
         initialValues={{ color: "#b7eb8f" }}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item name="name" label="Name">
-          <Input
-            placeholder="Enter Name"
-            onChange={({ target }) => {
-              form.setFieldsValue({ color: target.value });
-            }}
-          />
-        </Form.Item>
+        <div className="space-y-4">
+          <Form.Item
+            name="name"
+            label="Color Name"
+            rules={[
+              {
+                required: true,
+                message: "Name is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <Input
+              placeholder="Enter color name (e.g., Red, Blue, Green)"
+              size="large"
+              onChange={({ target }) => {
+                form.setFieldsValue({ color: target.value });
+              }}
+            />
+          </Form.Item>
 
-        <Form.Item
-          name="color"
-          label="Code"
-          rules={[
-            {
-              required: true,
-              message: "color is required",
-            },
-          ]}
-        >
-          <ColorPicker
-            presets={presets}
-            showText
-            size="small"
-            onChange={(v) => form.setFieldsValue({ color: v.toHexString() })}
-          />
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={resetFormData}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              disabled={global.loading.save}
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
+          <Form.Item
+            name="color"
+            label="Color Code"
+            rules={[
+              {
+                required: true,
+                message: "Color is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <ColorPicker
+              presets={presets}
+              showText
+              size="large"
+              onChange={(v) => form.setFieldsValue({ color: v.toHexString() })}
+              className="!w-full"
+            />
+          </Form.Item>
+        </div>
       </Form>
     </Modal>
   );

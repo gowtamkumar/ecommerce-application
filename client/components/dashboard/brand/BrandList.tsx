@@ -1,7 +1,8 @@
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,11 +13,6 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { deleteBrand, getBrands } from "@/lib/apis/brand";
 import appConfig from "@/appConfig";
@@ -55,7 +51,7 @@ const BrandList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -128,26 +124,6 @@ const BrandList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -179,25 +155,28 @@ const BrandList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "name",
+      title: "Brand Name",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
+      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
     },
     {
-      title: "Image",
+      title: "Brand Logo",
       dataIndex: "image",
       key: "image",
+      width: 100,
       render: (value) => (
         <Image
           width={60}
+          height={40}
           alt={value}
           src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
+          className="rounded-lg object-contain border border-gray-200 bg-white p-1"
         />
       ),
     },
-
     {
       title: "Status",
       key: "status",
@@ -205,7 +184,7 @@ const BrandList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
-        <Tag color={value.status === "Active" ? "green" : "red"}>
+        <Tag color={value.status === "Active" ? "green" : "red"} className="font-medium">
           {value.status}
         </Tag>
       ),
@@ -213,42 +192,42 @@ const BrandList: React.FC = () => {
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "12%",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex items-center justify-center gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            className="me-1"
-            onClick={() => {
-              const newData = { ...value };
-              if (newData.image) {
-                const file = {
-                  uid: Math.random() * 1000 + "",
-                  name: `image`,
-                  status: "done",
-                  fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${
-                    newData.image || "no-data.png"
-                  }`,
-                };
-                newData.fileList = [file];
-              }
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  payload: newData,
-                })
-              );
-            }}
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Brand">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() => {
+                const newData = { ...value };
+                if (newData.image) {
+                  const file = {
+                    uid: Math.random() * 1000 + "",
+                    name: `image`,
+                    status: "done",
+                    fileName: newData.image,
+                    url: `${appConfig.baseApiUrl}/uploads/${
+                      newData.image || "no-data.png"
+                    }`,
+                  };
+                  newData.fileList = [file];
+                }
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    payload: newData,
+                  })
+                );
+              }}
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Brand?
               </span>
             }
@@ -259,12 +238,15 @@ const BrandList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Brand">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -277,9 +259,14 @@ const BrandList: React.FC = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={brands}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

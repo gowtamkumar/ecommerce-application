@@ -1,62 +1,63 @@
-import { getDistricts } from "@/lib/apis/geo-location/district";
-import {
-  saveShippingCharge,
-  updateShippingCharge,
-} from "@/lib/apis/shipping-charge";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
+"use client";
+import React, { useEffect, useState } from "react";
+import { Button, Form, Input, InputNumber, Modal, Select, Switch } from "antd";
+import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
-import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionType } from "../../../constants/constants";
+import {
+  saveShippingCharge,
+  updateShippingCharge,
+} from "@/lib/apis/shipping-charge";
+import { getDistricts } from "@/lib/apis/geo-location/district";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { errorNotification } from "@/lib/utils/notification";
 
 const AddShippingCharge = () => {
   const [districts, setDistricts] = useState([]);
-  const global = useSelector(selectGlobal);
-  const { payload, type } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-
-  const fetchData = useCallback(async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const newData = { ...payload };
-      const res = await getDistricts({});
-      setDistricts(res.data);
-      form.setFieldsValue(newData);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  }, [dispatch, form, payload]);
+  const global = useSelector(selectGlobal);
+  const { payload, type } = global.action;
 
   useEffect(() => {
-    fetchData();
-    return () => {
-      form.resetFields();
+    const fetchData = async () => {
+      dispatch(setLoading({ loading: true }));
+
+      try {
+        form.setFieldsValue(payload);
+        const districts = await getDistricts({});
+        setDistricts(districts.data);
+      } catch (err: any) {
+        errorNotification({ message: err.message });
+      } finally {
+        dispatch(setLoading({ loading: false }));
+      }
     };
-  }, [fetchData, form, global.action]);
+
+    if (type) {
+      fetchData();
+    }
+  }, [dispatch, form, payload, type]);
 
   const handleSubmit = async (values: any) => {
-    const newData = { ...values, shippingCharge: +values.shippingCharge };
+    let newData = { ...values };
 
     const result = newData.id
       ? () => updateShippingCharge(newData)
       : () => saveShippingCharge(newData);
-
     await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
+    setDistricts([]);
+    form.resetFields();
   };
 
   const resetFormData = () => {
@@ -67,112 +68,143 @@ const AddShippingCharge = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
       title={
-        type === ActionType.UPDATE
-          ? "Update Shipping Charge"
-          : "Create Shipping Charge"
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE
+            ? "Update Shipping Charge"
+            : "Create Shipping Charge"}
+        </span>
       }
       width={600}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={resetFormData} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
-      <Form {...layout} form={form} onFinish={handleSubmit} autoComplete="off">
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleSubmit}
+        autoComplete="off"
+        scrollToFirstError={true}
+        className="mt-6"
+      >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="districtId"
-          label="District"
-          rules={[
-            {
-              required: true,
-              message: "District is required",
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select "
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
+        {/* Location Section */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Location
+          </h3>
+          <Form.Item
+            name="districtId"
+            label="District"
+            rules={[
+              {
+                required: true,
+                message: "District is required",
+              },
+            ]}
+            className="!mb-0"
           >
-            {districts.map((item: { name: string; id: number }) => (
-              <Select.Option key={item.id} value={item.id}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          name="shippingCharge"
-          label="Shipping Amount"
-          rules={[
-            {
-              required: true,
-              message: "Shipping Amount is required",
-            },
-          ]}
-        >
-          <InputNumber placeholder="Enter" style={{ width: "100%" }} />
-        </Form.Item>
-
-        <Form.Item name="note" className="mb-1" label="Note">
-          <Input placeholder="Enter" style={{ width: "100%" }} />
-        </Form.Item>
-
-        <Form.Item name="status" label="Status" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select Status"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={resetFormData}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              htmlType="submit"
-              disabled={global.loading.save}
-              loading={global.loading.save}
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select district"
+              size="large"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children as any)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
             >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
+              {districts.map((item: { name: string; id: number }) => (
+                <Select.Option key={item.id} value={item.id}>
+                  {item.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </div>
+
+        {/* Charge Configuration */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Charge Configuration
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item
+              name="shippingCharge"
+              label="Shipping Charge (৳)"
+              rules={[
+                {
+                  required: true,
+                  message: "Shipping charge is required",
+                },
+              ]}
+              className="!mb-0"
+            >
+              <InputNumber
+                placeholder="Enter amount"
+                size="large"
+                min={0}
+                className="!w-full"
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="status"
+              label="Status"
+              valuePropName="checked"
+              className="!mb-0"
+            >
+              <Switch
+                checkedChildren="Active"
+                unCheckedChildren="Inactive"
+                defaultChecked
+              />
+            </Form.Item>
           </div>
-        </Form.Item>
+        </div>
+
+        {/* Additional Notes */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Additional Information
+          </h3>
+          <Form.Item name="note" label="Note" className="!mb-0">
+            <Input.TextArea
+              placeholder="Add any notes about this shipping charge"
+              rows={3}
+              className="!rounded-lg"
+            />
+          </Form.Item>
+        </div>
       </Form>
     </Modal>
   );

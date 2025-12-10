@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +13,6 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { deletePayment, getPayments } from "@/lib/apis/payment";
 import {
@@ -41,7 +36,7 @@ const PaymentList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-    const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getPayments();
@@ -52,12 +47,10 @@ const PaymentList: React.FC = () => {
       dispatch(setLoading({ loading: false }));
     }
   }, [dispatch]);
-  
+
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
-
-
+  }, [fetchData, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ save: true }));
@@ -130,20 +123,6 @@ const PaymentList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button type="link" size="small" onClick={() => close()}>
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -173,67 +152,112 @@ const PaymentList: React.FC = () => {
       ),
   });
 
+  const getPaymentMethodColor = (method: string) => {
+    switch (method?.toLowerCase()) {
+      case "credit card":
+      case "card":
+        return "blue";
+      case "paypal":
+        return "cyan";
+      case "cash":
+      case "cod":
+        return "green";
+      case "bank transfer":
+        return "purple";
+      default:
+        return "default";
+    }
+  };
+
   const columns: TableColumnsType<DataType> = [
     {
       title: "Customer Name",
       dataIndex: "user",
       key: "user",
-      render: (value) => <span>{value?.name}</span>,
+      width: 200,
+      render: (value) => (
+        <span className="font-semibold text-gray-900">{value?.name || "-"}</span>
+      ),
     },
     {
       ...getColumnSearchProps("paymentDate"),
-      title: "Pay Date",
+      title: "Payment Date",
       dataIndex: "paymentDate",
       key: "paymentDate",
-      render: (value) => value && dayjs(value).format("DD-MM-YYYY h:mm A"),
+      width: 180,
+      render: (value) =>
+        value ? (
+          <div className="text-sm">
+            <div className="text-gray-900">{dayjs(value).format("DD MMM YYYY")}</div>
+            <div className="text-gray-500">{dayjs(value).format("h:mm A")}</div>
+          </div>
+        ) : (
+          <span className="text-gray-400">-</span>
+        ),
     },
-
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      width: 150,
+      render: (value) => (
+        <span className="font-semibold text-green-600 text-base">
+          ${value?.toFixed(2) || "0.00"}
+        </span>
+      ),
     },
     {
       ...getColumnSearchProps("paymentMethod"),
-      title: "Pay Method",
+      title: "Payment Method",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
+      width: 180,
+      render: (value) => (
+        <Tag color={getPaymentMethodColor(value)} className="font-medium">
+          {value || "N/A"}
+        </Tag>
+      ),
     },
     {
       ...getColumnSearchProps("isSuccessfull"),
-      title: "Is Successfull",
+      title: "Status",
       dataIndex: "isSuccessfull",
       key: "isSuccessfull",
-      render: (value) => <span>{value ? "Yes" : "No"}</span>,
+      width: 130,
+      render: (value) => (
+        <Tag color={value ? "success" : "error"} className="font-medium">
+          {value ? "Successful" : "Failed"}
+        </Tag>
+      ),
     },
-
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "10%",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  payment: true,
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Payment">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    payment: true,
+                    type: ActionType.UPDATE,
+                    payload: value,
+                  })
+                )
+              }
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Status?
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
+                this Payment?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -243,12 +267,15 @@ const PaymentList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Payment">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -261,9 +288,14 @@ const PaymentList: React.FC = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={payments}
-      pagination={{ pageSize: 15 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 15,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors"
     />
   );
 };

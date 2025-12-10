@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Modal, Upload, Image as AntImage } from "antd";
+import { Button, Card, Form, Input, Modal, Upload, Image as AntImage, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import appConfig from "@/appConfig";
@@ -20,6 +20,8 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+
+const { Title, Text } = Typography;
 
 const uploadButton = (
   <div>
@@ -132,87 +134,158 @@ const FooterOption = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 3 },
-    wrapperCol: { span: 12 },
-  };
-
   return (
-    <div className="container mx-auto">
-      <Form
-        form={form}
-        layout="vertical"
-        {...layout}
-        onFinish={handleSubmit}
-        autoComplete="off"
-      >
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          Footer Configuration
+        </Title>
+        <Text type="secondary">
+          Manage your website footer content and social media links
+        </Text>
+      </div>
 
-        <Form.Item
-          name="copyRight"
-          label="Copy Right"
-          rules={[{ required: true, message: "Copy Right is required" }]}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          autoComplete="off"
         >
-          <Input placeholder="Enter copy right text" />
-        </Form.Item>
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
 
-        {["facebookUrl", "instagramUrl", "linkedinUrl", "twitterUrl"].map(
-          (field) => (
+          <div className="space-y-4">
+            {/* Copyright */}
             <Form.Item
-              key={field}
-              name={field}
-              label={`${field.replace("Url", "")} URL`}
+              name="copyRight"
+              label={<span className="text-base font-medium">Copyright Text</span>}
+              rules={[{ required: true, message: "Copyright text is required" }]}
+              extra="Text displayed in the footer (e.g., © 2024 Your Store. All rights reserved.)"
+              className="!mb-0"
             >
-              <Input placeholder={`Enter ${field.replace("Url", "")} URL`} />
+              <Input
+                size="large"
+                placeholder="© 2024 Your Store. All rights reserved."
+                className="max-w-xl"
+              />
             </Form.Item>
-          )
-        )}
 
-        <Form.Item
-          name="fileList"
-          label="Footer Payment Image"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <Upload
-            name="image"
-            listType="picture-card"
-            fileList={initialData.fileList?.length || []}
-            customRequest={customUploadRequest}
-            onPreview={(file) => handlePreview(file, dispatch)}
-            onRemove={handleRemoveImage}
-            maxCount={1}
+            {/* Social Media Links Section */}
+            <div className="pt-6 border-t mt-6">
+              <Title level={5} className="!mb-4">
+                Social Media Links
+              </Title>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Form.Item
+                  name="facebookUrl"
+                  label={<span className="text-base font-medium">Facebook URL</span>}
+                  className="!mb-0"
+                >
+                  <Input
+                    size="large"
+                    placeholder="https://facebook.com/yourpage"
+                    prefix={<span className="text-blue-600">𝑓</span>}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="instagramUrl"
+                  label={<span className="text-base font-medium">Instagram URL</span>}
+                  className="!mb-0"
+                >
+                  <Input
+                    size="large"
+                    placeholder="https://instagram.com/yourprofile"
+                    prefix={<span className="text-pink-600">📷</span>}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="linkedinUrl"
+                  label={<span className="text-base font-medium">LinkedIn URL</span>}
+                  className="!mb-0"
+                >
+                  <Input
+                    size="large"
+                    placeholder="https://linkedin.com/company/yourcompany"
+                    prefix={<span className="text-blue-700">in</span>}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="twitterUrl"
+                  label={<span className="text-base font-medium">Twitter URL</span>}
+                  className="!mb-0"
+                >
+                  <Input
+                    size="large"
+                    placeholder="https://twitter.com/yourhandle"
+                    prefix={<span className="text-sky-500">𝕏</span>}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+
+            {/* Payment Methods Image */}
+            <div className="pt-6 border-t mt-6">
+              <Form.Item
+                name="fileList"
+                label={<span className="text-base font-medium">Payment Methods Image</span>}
+                valuePropName="fileList"
+                getValueFromEvent={normFile}
+                extra="Upload an image showing accepted payment methods (e.g., Visa, Mastercard, PayPal)"
+                className="!mb-0"
+              >
+                <Upload
+                  name="image"
+                  listType="picture-card"
+                  fileList={initialData.fileList?.length || []}
+                  customRequest={customUploadRequest}
+                  onPreview={(file) => handlePreview(file, dispatch)}
+                  onRemove={handleRemoveImage}
+                  maxCount={1}
+                >
+                  {initialData.fileList?.length >= 1 ? null : uploadButton}
+                </Upload>
+              </Form.Item>
+
+              <Form.Item name="image" hidden>
+                <Input />
+              </Form.Item>
+            </div>
+          </div>
+
+          <Modal
+            open={global.previewOpen}
+            title={global.previewTitle}
+            footer={null}
+            onCancel={() => handlePreviewCancel(dispatch)}
           >
-            {initialData.fileList?.length >= 1 ? null : uploadButton}
-          </Upload>
-        </Form.Item>
+            <AntImage
+              alt="Preview"
+              style={{ width: "100%" }}
+              preview={false}
+              src={global.previewImage}
+            />
+          </Modal>
 
-        <Form.Item name="image" hidden>
-          <Input />
-        </Form.Item>
-
-        <Modal
-          open={global.previewOpen}
-          title={global.previewTitle}
-          footer={null}
-          onCancel={() => handlePreviewCancel(dispatch)}
-        >
-          <AntImage
-            alt="Preview"
-            style={{ width: "100%" }}
-            preview={false}
-            src={global.previewImage}
-          />
-        </Modal>
-
-        <Form.Item>
-          <Button htmlType="submit" loading={loading}>
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+          <Form.Item className="!mb-0 !mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+            >
+              Save Footer Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };

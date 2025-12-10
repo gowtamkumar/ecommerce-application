@@ -1,48 +1,56 @@
 "use client";
 import dynamic from 'next/dynamic'
 import React, { useState } from "react";
-import { Button, Tabs } from "antd";
+import { Button, Card, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
 
+const { Title, Text } = Typography;
+
 const AddStockAdjust = dynamic(()=> import('./AddStockAdjust'), {ssr: false})
 const StockAdjustList = dynamic(()=> import('./StockAdjustList'), {ssr: false})
-
 
 export default function StockAdjust() {
   const [tabKey, setTabKey] = useState("stock_adjust");
   const dispatch = useDispatch();
 
   return (
-    <div className="container bg-white p-3 ">
-      <Tabs
-        activeKey={tabKey}
-        onChange={(key) => setTabKey(key)}
-        items={[
-          {
-            label: "Stock Adjust",
-            key: "stock_adjust",
-            children: <StockAdjustList />,
-          },
-        ]}
-        tabBarExtraContent={
-          <Button
-            size="small"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  stockAdjust: true,
-                  type: ActionType.CREATE,
-                })
-              )
-            }
-          >
-            <PlusOutlined className="mx-1" /> Stock Adjust
-          </Button>
-        }
-      />
+    <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <Title level={2} className="!mb-1">
+            Stock Adjustments
+          </Title>
+          <Text type="secondary">
+            Manage inventory adjustments for product variants
+          </Text>
+        </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() =>
+            dispatch(
+              setAction({
+                stockAdjust: true,
+                type: ActionType.CREATE,
+              })
+            )
+          }
+          className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+        >
+          New Stock Adjustment
+        </Button>
+      </div>
+
+      {/* Table Card */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <StockAdjustList />
+      </Card>
+
       <AddStockAdjust />
     </div>
   );

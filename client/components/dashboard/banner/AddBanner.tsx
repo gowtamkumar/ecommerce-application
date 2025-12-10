@@ -1,5 +1,6 @@
+"use client";
 import React, { useEffect, useState } from "react";
-import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
+import { Button, Form, Image, Input, Modal, Select, Switch, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
@@ -42,7 +43,7 @@ const AddBanner = () => {
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
 
-    const result = newData.id
+   const result = newData.id
       ? () => updateBanner(newData)
       : () => saveBanner(newData);
 
@@ -101,141 +102,177 @@ const AddBanner = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Banner" : "Create Banner"}
-      // width={550}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Banner" : "Create Banner"}
+        </span>
+      }
+      width={700}
       zIndex={1050}
       open={
         global.action.banner &&
         (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={() => resetFormData(payload)} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="type"
-          label="Type"
-          rules={[
-            {
-              required: true,
-              message: "Type is required",
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
+        <div className="grid grid-cols-2 gap-4">
+          {/* Type */}
+          <Form.Item
+            name="type"
+            label="Banner Type"
+            rules={[
+              {
+                required: true,
+                message: "Type is required",
+              },
+            ]}
+            className="!mb-0"
           >
-            {["Slider", "Banner", "Slider Right", "Footer"].map(
-              (item: string) => (
-                <Select.Option key={item} value={item}>
-                  {item}
-                </Select.Option>
-              )
-            )}
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          name="title"
-          label="Title"
-          rules={[
-            {
-              required: true,
-              message: "title is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item name="url" label="URL">
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item name="description" label="Description">
-          <Input.TextArea placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item
-          name="fileList"
-          label="Image"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-          rules={[
-            {
-              required: true,
-              message: "Image is required",
-            },
-          ]}
-        >
-          <ImgCrop
-            // quality={1}
-            // fillColor="white"
-            // zoomSlider
-            rotationSlider
-            aspectSlider
-            showReset
-            // modalWidth={1000}
-            // aspect={18 / 6}
-            // minZoom={1}
-            // maxZoom={3}
-            // cropShape='rect'
-          >
-            <Upload
-              name="image"
-              listType="picture-card"
-              fileList={formValues?.fileList || []}
-              onRemove={async (v) => {
-                if (v.fileName) {
-                  form.setFieldsValue({ image: null, fileList: [] });
-                  setFormValues({ image: null, fileList: [] });
-                  const params = { filename: v.fileName };
-                  await fileDeleteWithPhoto(params);
-                }
-              }}
-              className="avatar-uploader"
-              onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
-              maxCount={1}
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select banner type"
+              size="large"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children as any)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
             >
-              {formValues?.fileList?.length >= 1 ? null : uploadButton}
-            </Upload>
-          </ImgCrop>
-        </Form.Item>
+              {["Slider", "Banner", "Slider Right", "Footer"].map(
+                (item: string) => (
+                  <Select.Option key={item} value={item}>
+                    {item}
+                  </Select.Option>
+                )
+              )}
+            </Select>
+          </Form.Item>
 
-        <Form.Item name="image" hidden>
-          <Input />
-        </Form.Item>
+          {/* Status */}
+          <Form.Item
+            name="status"
+            label="Status"
+            valuePropName="checked"
+            className="!mb-0"
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked
+            />
+          </Form.Item>
+        </div>
+
+        <div className="space-y-4 mt-4">
+          {/* Title */}
+          <Form.Item
+            name="title"
+            label="Banner Title"
+            rules={[
+              {
+                required: true,
+                message: "Title is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <Input placeholder="Enter banner title" size="large" />
+          </Form.Item>
+
+          {/* URL */}
+          <Form.Item name="url" label="Banner URL" className="!mb-0">
+            <Input placeholder="Enter link URL (optional)" size="large" />
+          </Form.Item>
+
+          {/* Description */}
+          <Form.Item name="description" label="Description" className="!mb-0">
+            <Input.TextArea 
+              placeholder="Enter banner description (optional)" 
+              rows={3}
+              size="large"
+            />
+          </Form.Item>
+
+          {/* Image Upload */}
+          <Form.Item
+            name="fileList"
+            label="Banner Image"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            rules={[
+              {
+                required: true,
+                message: "Image is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <ImgCrop
+              rotationSlider
+              aspectSlider
+              showReset
+              aspect={18 / 6}
+            >
+              <Upload
+                name="image"
+                listType="picture-card"
+                fileList={formValues?.fileList || []}
+                onRemove={async (v) => {
+                  if (v.fileName) {
+                    form.setFieldsValue({ image: null, fileList: [] });
+                    setFormValues({ image: null, fileList: [] });
+                    const params = { filename: v.fileName };
+                    await fileDeleteWithPhoto(params);
+                  }
+                }}
+                className="avatar-uploader"
+                onPreview={(file) => handlePreview(file, dispatch)}
+                customRequest={customUploadRequest}
+                maxCount={1}
+              >
+                {formValues?.fileList?.length >= 1 ? null : uploadButton}
+              </Upload>
+            </ImgCrop>
+          </Form.Item>
+
+          <Form.Item name="image" hidden>
+            <Input />
+          </Form.Item>
+        </div>
 
         <Modal
           open={global.previewOpen}
@@ -251,41 +288,6 @@ const AddBanner = () => {
             src={global.previewImage}
           />
         </Modal>
-
-        <Form.Item name="status" label="Status" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={() => resetFormData(payload)}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              className="capitalize"
-              disabled={global.loading.save}
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
       </Form>
     </Modal>
   );

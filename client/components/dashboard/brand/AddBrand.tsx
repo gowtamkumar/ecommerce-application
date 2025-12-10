@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 import React, { useEffect, useState } from "react";
-import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
+import { Button, Form, Image, Input, Modal, Switch, Upload } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
@@ -10,7 +11,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { saveBrand, updateBrand } from "@/lib/apis/brand";
 import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import appConfig from "@/appConfig";
 import {
@@ -106,98 +106,113 @@ const AddBrand = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Brand" : "Create Brand"}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Brand" : "Create Brand"}
+        </span>
+      }
       width={550}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={() => resetFormData(payload)} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "name is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item name="status" label="Status" className="mb-1">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select Status"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
+        <div className="space-y-4">
+          {/* Name */}
+          <Form.Item
+            name="name"
+            label="Brand Name"
+            rules={[
+              {
+                required: true,
+                message: "Name is required",
+              },
+            ]}
+            className="!mb-0"
           >
-            <Select.Option value="Active">Active</Select.Option>
-            <Select.Option value="Inactive">Inactive</Select.Option>
-          </Select>
-        </Form.Item>
+            <Input placeholder="Enter brand name" size="large" />
+          </Form.Item>
 
-        <Form.Item
-          name="fileList"
-          label="Image"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <ImgCrop rotationSlider showReset>
-            <Upload
-              name="image"
-              listType="picture-card"
-              fileList={formValues?.fileList || []}
-              onRemove={async (v) => {
-                if (v.fileName) {
-                  form.setFieldsValue({ image: null, fileList: [] });
-                  setFormValues({ image: null, fileList: [] });
-                  const params = { filename: v.fileName };
-                  await fileDeleteWithPhoto(params);
-                }
-              }}
-              className="avatar-uploader"
-              onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
-              maxCount={1}
-            >
-              {formValues?.fileList?.length >= 1 ? null : uploadButton}
-            </Upload>
-          </ImgCrop>
-        </Form.Item>
+          {/* Status */}
+          <Form.Item
+            name="status"
+            label="Status"
+            valuePropName="checked"
+            className="!mb-0"
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked
+            />
+          </Form.Item>
 
-        <Form.Item name="image" hidden>
-          <Input />
-        </Form.Item>
+          {/* Image Upload */}
+          <Form.Item
+            name="fileList"
+            label="Brand Logo"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            className="!mb-0"
+          >
+            <ImgCrop rotationSlider showReset aspect={16 / 9}>
+              <Upload
+                name="image"
+                listType="picture-card"
+                fileList={formValues?.fileList || []}
+                onRemove={async (v) => {
+                  if (v.fileName) {
+                    form.setFieldsValue({ image: null, fileList: [] });
+                    setFormValues({ image: null, fileList: [] });
+                    const params = { filename: v.fileName };
+                    await fileDeleteWithPhoto(params);
+                  }
+                }}
+                className="avatar-uploader"
+                onPreview={(file) => handlePreview(file, dispatch)}
+                customRequest={customUploadRequest}
+                maxCount={1}
+              >
+                {formValues?.fileList?.length >= 1 ? null : uploadButton}
+              </Upload>
+            </ImgCrop>
+          </Form.Item>
+
+          <Form.Item name="image" hidden>
+            <Input />
+          </Form.Item>
+        </div>
 
         <Modal
           open={global.previewOpen}
@@ -213,23 +228,6 @@ const AddBrand = () => {
             src={global.previewImage}
           />
         </Modal>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={() => resetFormData(payload)}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              disabled={global.loading.save}
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
       </Form>
     </Modal>
   );

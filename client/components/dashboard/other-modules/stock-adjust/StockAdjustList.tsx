@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,23 +45,10 @@ const StockAdjustList: React.FC = () => {
       dispatch(setLoading({ loading: false }));
     }
   }, [dispatch]);
+  
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      dispatch(setLoading({ delete: true }));
-      await deleteStockAdjust(id);
-      successNotification({ message: "Successfully deleted" });
-      fetchData();
-    } catch (error: any) {
-      errorNotification({ message: error.message });
-    } finally {
-      dispatch(setLoading({ delete: false }));
-      dispatch(setAction({}));
-    }
-  };
+  }, [fetchData, global.action]);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -120,26 +107,6 @@ const StockAdjustList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -171,27 +138,34 @@ const StockAdjustList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Type",
+      title: "Adjustment Type",
       dataIndex: "type",
       key: "type",
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
+      render: (value) => (
+        <Tag color={value === "Add" ? "green" : "red"} className="font-medium">
+          {value}
+        </Tag>
+      ),
     },
     {
-      title: "Name",
+      title: "Product Name",
       dataIndex: "product",
       key: "product",
       sorter: (a, b) => a.product.name.length - b.product.name.length,
       render: (value) => {
-        return <p>{value.name}</p>;
+        return <span className="font-semibold text-gray-900">{value.name}</span>;
       },
     },
-
     {
-      title: "Qty",
+      title: "Quantity Adjusted",
       dataIndex: "qty",
       key: "qty",
       sorter: (a, b) => a.qty - b.qty,
+      render: (value) => (
+        <span className="font-medium text-blue-600">{value}</span>
+      ),
     },
   ];
 
@@ -201,9 +175,14 @@ const StockAdjustList: React.FC = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={StockAdjusts}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

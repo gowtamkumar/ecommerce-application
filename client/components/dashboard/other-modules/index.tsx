@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { Tabs, Typography } from "antd";
 import dynamic from "next/dynamic";
-import { Tabs } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
-import StockAdjust from "./stock-adjust/StockAdjust";
+import { useEffect, useState } from "react";
 import Brand from "../brand/Brand";
+
+const { Title, Text } = Typography;
 
 const Size = dynamic(() => import("@/app/dashboard/size/page"), {
   ssr: false,
@@ -37,64 +38,71 @@ export default function Index() {
   }, [search]);
 
   return (
-    <Tabs
-      tabPosition="left"
-      defaultValue={tabKey}
-      activeKey={tabKey}
-      onChange={(key) => {
-        setTabKey(key);
-        route.push(`/dashboard/other-modules?tab=${key}`);
-      }}
-      type="card"
-      items={[
-        {
-          label: "Sizes",
-          key: "sizes",
-          children: <Size />,
-        },
-        {
-          label: "Units",
-          key: "units",
-          children: <Unit />,
-        },
-        {
-          label: "Taxs",
-          key: "taxs",
-          children: <Tax />,
-        },
+    <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="mb-6">
+        <Title level={2} className="!mb-1">
+          Other Modules
+        </Title>
+        <Text type="secondary">
+          Manage additional product attributes and settings
+        </Text>
+      </div>
 
-        {
-          label: "Colors",
-          key: "colors",
-          children: <Color />,
-        },
-        {
-          label: "Banner",
-          key: "banners",
-          children: <Banner />,
-        },
-        {
-          label: "Brands",
-          key: "brand",
-          children: <Brand />,
-        },
-        {
-          label: "Reviews",
-          key: "reviews",
-          children: <Review />,
-        },
-
-        {
-          label: "Leads",
-          key: "leads",
-          children: <Lead />,
-        },
-        {
-          label: "Stock Adjust",
-          key: "stock_adjust",
-          children: <StockAdjust />,
-        },
-      ]}
-    />
+      {/* Tabs */}
+      <Tabs
+        tabPosition="left"
+        defaultValue={tabKey}
+        activeKey={tabKey}
+        onChange={(key) => {
+          setTabKey(key);
+          route.push(`/dashboard/other-modules?tab=${key}`);
+        }}
+        type="card"
+        className="modern-tabs"
+        items={[
+          {
+            label: "Sizes",
+            key: "sizes",
+            children: <Size />,
+          },
+          {
+            label: "Units",
+            key: "units",
+            children: <Unit />,
+          },
+          {
+            label: "Taxs",
+            key: "taxs",
+            children: <Tax />,
+          },
+          {
+            label: "Colors",
+            key: "colors",
+            children: <Color />,
+          },
+          {
+            label: "Banner",
+            key: "banners",
+            children: <Banner />,
+          },
+          {
+            label: "Brands",
+            key: "brand",
+            children: <Brand />,
+          },
+          {
+            label: "Reviews",
+            key: "reviews",
+            children: <Review />,
+          },
+          {
+            label: "Leads",
+            key: "leads",
+            children: <Lead />,
+          },
+        ]}
+      />
+    </div>
   );
 }

@@ -7,13 +7,16 @@ import {
   setLoading,
   setSetting,
 } from "@/redux/features/global/globalSlice";
-import { Tabs } from "antd";
+import { Tabs, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "./Seo";
 import WhatsAppWidgetSetting from "./WhatsAppWidgetSetting";
+
+const { Title, Text } = Typography;
+
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
@@ -84,81 +87,76 @@ export default function Index() {
   }, [fetchData, global.action, search]);
 
   return (
-    <Tabs
-      tabPosition="left"
-      defaultValue={tabKey}
-      activeKey={tabKey}
-      onChange={(key) => {
-        setTabKey(key);
-        route.push(`/dashboard/general-setting?tab=${key}`);
-      }}
-      type="card"
-      items={[
-        {
-          label: "General Settings",
-          key: "site_settings",
-          children: <GeneralSettings />,
-        },
-        {
-          label: "Menu",
-          key: "menu",
-          children: <Menu />,
-        },
-        {
-          label: "Order and Shipping",
-          key: "order_and_shipping",
-          children: <OrderAdnShhiping />,
-        },
+    <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="mb-6">
+        <Title level={2} className="!mb-1">
+          General Settings
+        </Title>
+        <Text type="secondary">
+          Configure your store settings and preferences
+        </Text>
+      </div>
 
-        {
-          label: "Header Option",
-          key: "header_option",
-          children: <HeaderOption />,
-        },
-
-        {
-          label: "Help Support",
-          key: "help_Support",
-          children: <HelpSupport />,
-        },
-        {
-          label: "Whatsapp Widget",
-          key: "whatsApp_widget",
-          children: <WhatsAppWidgetSetting />,
-        },
-        // {
-        //   label: "Home Page",
-        //   key: "home_page",
-        //   children: <HomePage />,
-        // },
-
-        // {
-        //   label: "About Page",
-        //   key: "about_page",
-        //   children: <AboutPage />,
-        // },
-        // {
-        //   label: "Contact Page",
-        //   key: "contact_page",
-        //   children: <ContactPage />,
-        // },
-        {
-          label: "SEO",
-          key: "seo",
-          children: <Seo />,
-        },
-
-        {
-          label: "Footer Option",
-          key: "footer_option",
-          children: <FooterOption />,
-        },
-        {
-          label: "Sync Geo locaton",
-          key: "geo_locations",
-          children: <SyncGeoLocation />,
-        },
-      ]}
-    />
+      {/* Tabs */}
+      <Tabs
+        tabPosition="left"
+        defaultValue={tabKey}
+        activeKey={tabKey}
+        onChange={(key) => {
+          setTabKey(key);
+          route.push(`/dashboard/general-setting?tab=${key}`);
+        }}
+        type="card"
+        className="modern-tabs"
+        items={[
+          {
+            label: "General Settings",
+            key: "site_settings",
+            children: <GeneralSettings />,
+          },
+          {
+            label: "Menu",
+            key: "menu",
+            children: <Menu />,
+          },
+          {
+            label: "Order & Shipping",
+            key: "order_and_shipping",
+            children: <OrderAdnShhiping />,
+          },
+          {
+            label: "Header Option",
+            key: "header_option",
+            children: <HeaderOption />,
+          },
+          {
+            label: "Help & Support",
+            key: "help_Support",
+            children: <HelpSupport />,
+          },
+          {
+            label: "WhatsApp Widget",
+            key: "whatsApp_widget",
+            children: <WhatsAppWidgetSetting />,
+          },
+          {
+            label: "SEO",
+            key: "seo",
+            children: <Seo />,
+          },
+          {
+            label: "Footer Option",
+            key: "footer_option",
+            children: <FooterOption />,
+          },
+          {
+            label: "Sync Geo Location",
+            key: "geo_locations",
+            children: <SyncGeoLocation />,
+          },
+        ]}
+      />
+    </div>
   );
 }

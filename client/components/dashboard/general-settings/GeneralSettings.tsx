@@ -1,10 +1,12 @@
 "use client";
 import {
   Button,
+  Card,
   Form,
   Image,
   Input,
   Modal,
+  Typography,
   Upload,
   UploadFile,
   UploadProps,
@@ -30,6 +32,8 @@ import {
   setAction,
   setSetting,
 } from "@/redux/features/global/globalSlice";
+
+const { Title, Text } = Typography;
 
 const FileUploadField = ({
   name,
@@ -93,7 +97,7 @@ const FileUploadField = ({
     <>
       <Form.Item
         name={fileListKey}
-        label={label}
+        label={<span className="text-base font-medium">{label}</span>}
         valuePropName="fileList"
         getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
       >
@@ -156,67 +160,130 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError
-      >
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          Basic Information
+        </Title>
+        <Text type="secondary">
+          Configure your store's basic details and contact information
+        </Text>
+      </div>
 
-        <Form.Item
-          name="siteName"
-          label="Site name"
-          rules={[{ required: true, message: "Site name is required" }]}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          autoComplete="off"
+          scrollToFirstError
         >
-          <Input className="md:!w-1/2" placeholder="Enter site name" />
-        </Form.Item>
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
 
-        <Form.Item name="email" label="E-mail">
-          <Input className="md:!w-1/2" placeholder="Enter email" />
-        </Form.Item>
+          <div className="space-y-4">
+            {/* Site Name */}
+            <Form.Item
+              name="siteName"
+              label={<span className="text-base font-medium">Site Name</span>}
+              rules={[{ required: true, message: "Site name is required" }]}
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="Enter your store name"
+                className="max-w-xl"
+              />
+            </Form.Item>
 
-        <Form.Item name="phone" label="Phone No">
-          <Input className="md:!w-1/2" placeholder="Enter phone number" />
-        </Form.Item>
+            {/* Email */}
+            <Form.Item
+              name="email"
+              label={<span className="text-base font-medium">Email Address</span>}
+              rules={[
+                { type: "email", message: "Please enter a valid email" },
+              ]}
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="contact@yourstore.com"
+                className="max-w-xl"
+              />
+            </Form.Item>
 
-        <Form.Item name="address" label="Address">
-          <Input.TextArea className="md:!w-1/2" placeholder="Enter address" />
-        </Form.Item>
+            {/* Phone */}
+            <Form.Item
+              name="phone"
+              label={<span className="text-base font-medium">Phone Number</span>}
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="+1 (555) 123-4567"
+                className="max-w-xl"
+              />
+            </Form.Item>
 
-        <div className="flex gap-10">
-          <FileUploadField name="image" label="Logo" fileListKey="fileList" />
-          <FileUploadField
-            name="favicon"
-            label="Favicon"
-            fileListKey="faviconfileList"
-          />
-        </div>
+            {/* Address */}
+            <Form.Item
+              name="address"
+              label={<span className="text-base font-medium">Store Address</span>}
+              className="!mb-0"
+            >
+              <Input.TextArea
+                size="large"
+                placeholder="Enter your store address"
+                rows={3}
+                className="max-w-xl"
+              />
+            </Form.Item>
 
-        <Modal
-          open={global.previewOpen}
-          title={global.previewTitle}
-          footer={null}
-          onCancel={() => handlePreviewCancel(dispatch)}
-        >
-          <Image
-            alt="Preview"
-            style={{ width: "100%" }}
-            preview={false}
-            src={global.previewImage}
-          />
-        </Modal>
+            {/* Branding Section */}
+            <div className="pt-6 border-t mt-6">
+              <Title level={5} className="!mb-3">
+                Branding
+              </Title>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FileUploadField name="image" label="Store Logo" fileListKey="fileList" />
+                <FileUploadField
+                  name="favicon"
+                  label="Favicon"
+                  fileListKey="faviconfileList"
+                />
+              </div>
+            </div>
+          </div>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading}>
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+          <Modal
+            open={global.previewOpen}
+            title={global.previewTitle}
+            footer={null}
+            onCancel={() => handlePreviewCancel(dispatch)}
+          >
+            <Image
+              alt="Preview"
+              style={{ width: "100%" }}
+              preview={false}
+              src={global.previewImage}
+            />
+          </Modal>
+
+          <Form.Item className="!mb-0 !mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+            >
+              Save Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };

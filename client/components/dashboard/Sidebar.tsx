@@ -11,11 +11,11 @@ import { useRouter } from "next/navigation";
 import { useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import HeaderLogo from "../website/header/Logo";
+import { CloseOutlined } from "@ant-design/icons";
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
-  // const [setting, setSetting] = useState<{ logo: string }>({ logo: "" });
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const route = useRouter();
@@ -35,13 +35,6 @@ const Sidebar = () => {
       window.removeEventListener("resize", updateScreenWidth);
     };
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const setting = await getSettings();
-  //     dispatch(setSetting(setting.data));
-  //   })();
-  // }, []);
 
   const onClose = () => {
     dispatch(setOpen(false));
@@ -64,44 +57,93 @@ const Sidebar = () => {
       children: item?.children?.filter((child: any) => checkPermission(child)),
     }));
 
-  interface NavbarItem {
-    key: string;
-    label: string;
-  }
-
   return (
     <div className="bg-[#001529]">
+      {/* Mobile Drawer */}
       <Drawer
-        placement={"left"}
+        placement="left"
         onClose={onClose}
         open={layout.open}
-        styles={{ body: { margin: 0, padding: 0 } }}
-        extra={<Button onClick={onClose}>Close</Button>}
+        styles={{ 
+          body: { margin: 0, padding: 0 },
+          header: { 
+            borderBottom: '1px solid #f0f0f0',
+            padding: '16px 24px'
+          }
+        }}
+        width={280}
+        closeIcon={<CloseOutlined />}
+        title={
+          <div
+            className="cursor-pointer flex items-center"
+            onClick={() => {
+              route.push("/");
+              onClose();
+            }}
+          >
+            <HeaderLogo />
+          </div>
+        }
       >
         <Menu
-          style={{ margin: 0, padding: 0 }}
+          style={{ 
+            margin: 0, 
+            padding: 0,
+            border: 'none'
+          }}
           theme="light"
-          defaultSelectedKeys={["1"]}
           mode="inline"
           onClick={onClose}
-          items={navbarRoute as any}
+          items={filteredChildren as any}
+          className="sidebar-menu"
         />
       </Drawer>
+
+      {/* Desktop Sidebar */}
       <Sider
         collapsible
         collapsed={layout.collapsed}
         onCollapse={(value) => dispatch(setCollapsed(value))}
         hidden={layout.screenWidth <= 820}
+        width={260}
+        collapsedWidth={80}
+        style={{
+          overflow: "auto",
+          height: "100vh",
+          position: "fixed",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          boxShadow: "2px 0 8px rgba(0,0,0,0.15)",
+        }}
+        theme="dark"
       >
+        {/* Logo Section */}
         <div
-          className="bg-slate-300 flex justify-center items-center p-1 cursor-pointer"
+          className={`bg-white flex justify-center items-center cursor-pointer transition-all duration-300 ${
+            layout.collapsed ? "p-2 h-16" : "p-3 h-20"
+          }`}
           onClick={() => {
             route.push("/");
+          }}
+          style={{
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
           }}
         >
           <HeaderLogo />
         </div>
-        <Menu theme="dark" mode="inline" items={filteredChildren} />
+
+        {/* Navigation Menu */}
+        <Menu
+          theme="dark"
+          mode="inline"
+          items={filteredChildren}
+          className="sidebar-menu-dark"
+          style={{
+            borderRight: 0,
+            fontSize: '14px',
+          }}
+        />
       </Sider>
     </div>
   );

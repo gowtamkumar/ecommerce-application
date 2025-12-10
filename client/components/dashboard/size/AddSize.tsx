@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Switch } from "antd";
 import { ActionType } from "../../../constants/constants";
 import { saveSize, updateSize } from "@/lib/apis/size";
 import {
@@ -44,78 +44,76 @@ const AddSize = () => {
       form.resetFields();
     }
   };
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
 
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Size" : "Create Size"}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Size" : "Create Size"}
+        </span>
+      }
       width={500}
       zIndex={1050}
       open={size && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={resetFormData} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "Name is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter Name" />
-        </Form.Item>
-        <Form.Item
-          name="status"
-          label="Status"
-          rules={[
-            {
-              required: true,
-              message: "Status is required",
-            },
-          ]}
-        >
-          <Select placeholder="Select">
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item {...tailLayout}>
-         <div className="flex gap-2">
-           <Button size="small" onClick={resetFormData}>
-            Reset
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            disabled={global.loading.save}
-            loading={global.loading.save}
+        <div className="space-y-4">
+          <Form.Item
+            name="name"
+            label="Size Name"
+            rules={[
+              {
+                required: true,
+                message: "Name is required",
+              },
+            ]}
+            className="!mb-0"
           >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
-         </div>
-        </Form.Item>
+            <Input placeholder="Enter size name (e.g., S, M, L, XL)" size="large" />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label="Status"
+            valuePropName="checked"
+            className="!mb-0"
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked
+            />
+          </Form.Item>
+        </div>
       </Form>
     </Modal>
   );

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { deleteUnit, getUnits } from "@/lib/apis/unit";
@@ -13,11 +13,6 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import {
   errorNotification,
@@ -52,7 +47,7 @@ const UnitList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, global.action.type]);
+  }, [fetchData, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -78,7 +73,7 @@ const UnitList: React.FC = () => {
     dispatch(setSearchedColumn(dataIndex));
   };
 
-  const handleReset = (clearFilters: () => void) => {
+ const handleReset = (clearFilters: () => void) => {
     clearFilters();
     dispatch(setSearchText(""));
   };
@@ -125,26 +120,6 @@ const UnitList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -176,40 +151,40 @@ const UnitList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Name",
+      title: "Unit Name",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
+      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
     },
-
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "5%",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            className="me-1"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  unit: true,
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Unit">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    unit: true,
+                    type: ActionType.UPDATE,
+                    payload: value,
+                  })
+                )
+              }
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Unit?
               </span>
             }
@@ -220,12 +195,15 @@ const UnitList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Unit">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -238,9 +216,14 @@ const UnitList: React.FC = () => {
       loading={global.loading.loading}
       columns={columns}
       dataSource={units}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

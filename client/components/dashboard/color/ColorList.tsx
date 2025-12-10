@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,11 +12,6 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import {
-  FormOutlined,
-  RestOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 import { deleteColor, getColors } from "@/lib/apis/color";
 import {
@@ -52,12 +47,12 @@ const ColorList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, global.action.type]); // 👈 safer and cleaner
+  }, [fetchData, global.action.type]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
     try {
-     const res =  await deleteColor(id);
+      const res = await deleteColor(id);
       successNotification({ message: res.message });
       const newData = colors.filter((item: any) => item.id !== id);
       setColors(newData);
@@ -126,26 +121,6 @@ const ColorList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -177,50 +152,57 @@ const ColorList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Name",
+      title: "Color Name",
       dataIndex: "name",
       key: "name",
-      width: "30%",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
+      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
     },
-
     {
       ...getColumnSearchProps("color"),
-      title: "Code",
+      title: "Color Code",
       dataIndex: "color",
       key: "color",
-      width: "30%",
       render: (value) => (
-        <Tag style={{ backgroundColor: `${value}` }}>{value}</Tag>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-8 h-8 rounded-lg border border-gray-200"
+            style={{ backgroundColor: value }}
+          />
+          <Tag style={{ backgroundColor: `${value}`, color: "#fff", fontWeight: 500 }}>
+            {value}
+          </Tag>
+        </div>
       ),
     },
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
-      className: "text-end",
-      width: "5%",
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  color: true,
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Color">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    color: true,
+                    type: ActionType.UPDATE,
+                    payload: value,
+                  })
+                )
+              }
+            />
+          </Tooltip>
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Color?
               </span>
             }
@@ -231,11 +213,14 @@ const ColorList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Color">
+              <Button
+                size="small"
+                danger
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -248,9 +233,14 @@ const ColorList: React.FC = () => {
       loading={global.loading.color}
       columns={columns}
       dataSource={colors}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

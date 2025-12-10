@@ -22,6 +22,7 @@ import {
   Input,
   Modal,
   Select,
+  Switch,
   Upload,
 } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -29,7 +30,6 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
-
 
 const AddUser = () => {
   const [formValues, setFormValues] = useState({
@@ -115,170 +115,217 @@ const AddUser = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update User" : "Create User"}
-      width={650}
+      title={
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update User" : "Create User"}
+        </span>
+      }
+      width={700}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={() => resetFormData(payload)} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            loading={global.loading.save}
+            disabled={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "Name is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter name" />
-        </Form.Item>
-
-        <Form.Item
-          name="username"
-          label="Username"
-          rules={[
-            {
-              required: true,
-              message: "username is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter" disabled={payload?.id} />
-        </Form.Item>
-
-        {!payload?.id && (
+        <div className="grid grid-cols-2 gap-4">
+          {/* Name */}
           <Form.Item
-            hidden={payload?.id}
-            name="password"
-            label="Password"
+            name="name"
+            label="Full Name"
             rules={[
               {
                 required: true,
-                message: "password is required",
+                message: "Name is required",
               },
             ]}
+            className="!mb-0"
           >
-            <Input.Password placeholder="Enter password" />
+            <Input placeholder="John Doe" size="large" />
           </Form.Item>
+
+          {/* Username */}
+          <Form.Item
+            name="username"
+            label="Username"
+            rules={[
+              {
+                required: true,
+                message: "Username is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <Input placeholder="johndoe" size="large" disabled={payload?.id} />
+          </Form.Item>
+        </div>
+
+        {!payload?.id && (
+          <div className="mt-4">
+            <Form.Item
+              hidden={payload?.id}
+              name="password"
+              label="Password"
+              rules={[
+                {
+                  required: true,
+                  message: "Password is required",
+                },
+              ]}
+              className="!mb-0"
+            >
+              <Input.Password placeholder="Enter secure password" size="large" />
+            </Form.Item>
+          </div>
         )}
 
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              required: true,
-              message: "email is required",
-            },
-          ]}
-        >
-          <Input placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item name="type" label="Type">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          {/* Email */}
+          <Form.Item
+            name="email"
+            label="Email Address"
+            rules={[
+              {
+                required: true,
+                message: "Email is required",
+              },
+              {
+                type: "email",
+                message: "Please enter a valid email",
+              },
+            ]}
+            className="!mb-0"
           >
-            {["Customer", "Vendor", "Delivery Man", "Admin"].map(
-              (item, idx) => (
-                <Select.Option key={idx} value={item}>
-                  {item}
-                </Select.Option>
-              )
-            )}
-          </Select>
-        </Form.Item>
+            <Input placeholder="john@example.com" size="large" />
+          </Form.Item>
 
-        <Form.Item name="phone" label="Phone No">
-          <Input placeholder="Enter phone" />
-        </Form.Item>
-
-        <Form.Item name="dob" label="Date of Brith">
-          <DatePicker placeholder="Enter Birth day" />
-        </Form.Item>
-
-        <Form.Item name="status" label="Status">
-          <Select
-            showSearch
-            allowClear
-            placeholder="Select Status"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.children as any)
-                .toLowerCase()
-                .indexOf(input.toLowerCase()) >= 0
-            }
+          {/* Phone */}
+          <Form.Item
+            name="phone"
+            label="Phone Number"
+            className="!mb-0"
           >
-            <Select.Option value={"Active"}>Active</Select.Option>
-            <Select.Option value={"Inactive"}>Inactive</Select.Option>
-          </Select>
-        </Form.Item>
+            <Input placeholder="+1 (555) 123-4567" size="large" />
+          </Form.Item>
+        </div>
 
-        <Form.Item
-          name="fileList"
-          label="Image"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <ImgCrop rotationSlider showReset>
-            <Upload
-              name="image"
-              listType="picture-card"
-              fileList={formValues?.fileList || []}
-              onRemove={async (v) => {
-                if (v.fileName) {
-                  form.setFieldsValue({ image: null, fileList: [] });
-                  setFormValues({ image: null, fileList: [] });
-                  const params = { filename: v.fileName };
-                  await fileDeleteWithPhoto(params);
-                }
-              }}
-              className="avatar-uploader"
-              onPreview={() => handlePreview(fileDeleteWithPhoto, dispatch)}
-              customRequest={customUploadRequest}
-              maxCount={1}
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          {/* User Type */}
+          <Form.Item name="type" label="User Type" className="!mb-0">
+            <Select
+              showSearch
+              allowClear
+              size="large"
+              placeholder="Select user type"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.children as any)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
             >
-              {formValues?.fileList?.length >= 1 ? null : uploadButton}
-            </Upload>
-          </ImgCrop>
-        </Form.Item>
+              {["Customer", "Vendor", "Delivery Man", "Admin"].map(
+                (item, idx) => (
+                  <Select.Option key={idx} value={item}>
+                    {item}
+                  </Select.Option>
+                )
+              )}
+            </Select>
+          </Form.Item>
 
-        <Form.Item name="image" hidden>
-          <Input />
-        </Form.Item>
+          {/* Date of Birth */}
+          <Form.Item name="dob" label="Date of Birth" className="!mb-0">
+            <DatePicker 
+              placeholder="Select birth date" 
+              size="large" 
+              className="!w-full"
+              format="DD-MM-YYYY"
+            />
+          </Form.Item>
+        </div>
+
+        <div className="mt-4">
+          {/* Status */}
+          <Form.Item
+            name="status"
+            label="Account Status"
+            valuePropName="checked"
+            className="!mb-0"
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked
+            />
+          </Form.Item>
+        </div>
+
+        {/* Profile Image */}
+        <div className="mt-4">
+          <Form.Item
+            name="fileList"
+            label="Profile Image"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            className="!mb-0"
+          >
+            <ImgCrop rotationSlider showReset aspect={1}>
+              <Upload
+                name="image"
+                listType="picture-card"
+                fileList={formValues?.fileList || []}
+                onRemove={async (v) => {
+                  if (v.fileName) {
+                    form.setFieldsValue({ image: null, fileList: [] });
+                    setFormValues({ image: null, fileList: [] });
+                    const params = { filename: v.fileName };
+                    await fileDeleteWithPhoto(params);
+                  }
+                }}
+                className="avatar-uploader"
+                onPreview={(file) => handlePreview(file, dispatch)}
+                customRequest={customUploadRequest}
+                maxCount={1}
+              >
+                {formValues?.fileList?.length >= 1 ? null : uploadButton}
+              </Upload>
+            </ImgCrop>
+          </Form.Item>
+
+          <Form.Item name="image" hidden>
+            <Input />
+          </Form.Item>
+        </div>
 
         <Modal
           open={global.previewOpen}
@@ -294,23 +341,6 @@ const AddUser = () => {
             src={global.previewImage}
           />
         </Modal>
-
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={() => resetFormData(payload)}>
-              Reset
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              htmlType="submit"
-              loading={global.loading.save}
-              disabled={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
       </Form>
     </Modal>
   );

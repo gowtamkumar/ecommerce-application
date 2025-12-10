@@ -39,7 +39,6 @@ const AddLead = () => {
     form.resetFields();
   };
 
-
   const resetFormData = () => {
     if (payload?.id) {
       form.setFieldsValue(payload);
@@ -49,20 +48,12 @@ const AddLead = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
-
-
   return (
     <Modal
       title={
-        type === ActionType.UPDATE ? "Update Lead" : "Create Lead"
+        <span className="text-xl font-semibold">
+          {type === ActionType.UPDATE ? "Update Lead" : "Create Lead"}
+        </span>
       }
       width={500}
       zIndex={1050}
@@ -72,14 +63,31 @@ const AddLead = () => {
           type === ActionType.UPDATE)
       }
       onCancel={handleClose}
-      footer={null}
+      footer={
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button size="large" onClick={resetFormData} className="!rounded-lg">
+            Reset
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => form.submit()}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+          >
+            {payload?.id ? "Update" : "Save"}
+          </Button>
+        </div>
+      }
     >
       <Form
-        {...layout}
+        layout="vertical"
         form={form}
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        className="mt-6"
       >
         <Form.Item name="id" hidden>
           <Input />
@@ -87,34 +95,20 @@ const AddLead = () => {
 
         <Form.Item
           name="email"
-          label="E-mail"
+          label="Email Address"
           rules={[
             {
               required: true,
-              message: "E-mail is required",
+              message: "Email is required",
+            },
+            {
+              type: "email",
+              message: "Please enter a valid email",
             },
           ]}
+          className="!mb-0"
         >
-          <Input placeholder="Enter E-mail" />
-        </Form.Item>
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button
-            size="small"
-            onClick={resetFormData}
-          >
-            Reset
-          </Button>
-          <Button
-            size="small"
-            htmlType="submit"
-            type="primary"
-            loading={global.loading.save}
-            disabled={global.loading.save}
-          >
-            {payload?.id ? "Update" : "Save"}
-          </Button>
-          </div>
+          <Input placeholder="Enter email address" size="large" />
         </Form.Item>
       </Form>
     </Modal>

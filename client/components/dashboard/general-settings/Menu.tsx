@@ -1,11 +1,13 @@
 "use client";
-import { Form, Card, Input, Button, Select, Space, Checkbox } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { Form, Card, Input, Button, Select, Space, Checkbox, Typography } from "antd";
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { getDashboardMenus, saveMenu, updateMenu } from "@/lib/apis/admin/menu";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+
+const { Title, Text } = Typography;
 
 const Index = () => {
   const [menus, setMenus] = useState([]);
@@ -24,16 +26,12 @@ const Index = () => {
 
   const handelSave = async (value: any) => {
     const result = () => updateMenu(value);
-
     await handleAsyncAction(result, dispatch);
   };
 
   const createMenu = async () => {
     const result = () => saveMenu({ name: newMenu });
-
     const handleRes = await handleAsyncAction(result, dispatch);
-
-    console.log(handleRes);
 
     if (handleRes.success) {
       form.setFieldsValue({
@@ -53,37 +51,27 @@ const Index = () => {
   };
 
   const NestedList = ({ parentField }: any) => (
-    <Form.Item label="List">
+    <Form.Item label={<span className="text-sm font-medium">Sub Items</span>}>
       <Form.List name={[parentField.name, "children"]}>
         {(subFields, subOpt) => (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              rowGap: 20,
-            }}
-          >
+          <div className="space-y-3">
             {subFields.map((subField) => (
               <div
                 key={subField.key}
-                style={{
-                  color: "red",
-                  backgroundColor: "#F4F4F4",
-                  padding: "10px",
-                }}
+                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
               >
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-3">
                   <Form.Item
                     noStyle
                     name={[subField.name, "label"]}
                     rules={[
                       {
                         required: true,
-                        message: "label is required",
+                        message: "Label is required",
                       },
                     ]}
                   >
-                    <Input placeholder="Label" />
+                    <Input placeholder="Menu Label" size="large" className="flex-1" />
                   </Form.Item>
                   <Form.Item
                     noStyle
@@ -91,13 +79,16 @@ const Index = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Url is required",
+                        message: "URL is required",
                       },
                     ]}
                   >
-                    <Input placeholder="URL" />
+                    <Input placeholder="/page-url" size="large" className="flex-1" />
                   </Form.Item>
-                  <CloseOutlined
+                  <Button
+                    danger
+                    icon={<CloseOutlined />}
+                    size="large"
                     onClick={() => {
                       subOpt.remove(subField.name);
                     }}
@@ -109,12 +100,14 @@ const Index = () => {
               </div>
             ))}
             <Button
-              className="my-3"
               type="dashed"
               onClick={() => subOpt.add()}
+              icon={<PlusOutlined />}
+              size="large"
               block
+              className="!border-gray-300 hover:!border-blue-500 hover:!text-blue-500"
             >
-              + Add Sub Item
+              Add Sub Item
             </Button>
           </div>
         )}
@@ -123,177 +116,200 @@ const Index = () => {
   );
 
   return (
-    <div>
-      <div className="flex justify-between my-5">
-        <div>
-          <Space.Compact>
-            <Select
-              style={{ width: 170 }}
-              showSearch
-              allowClear
-              placeholder="Select "
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children as any)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              onChange={(value) => {
-                if (value) {
-                  const singlseMenu: any = menus.find(
-                    (item: { id: number }) => item.id === value
-                  );
-
-                  (singlseMenu.items = singlseMenu.items
-                    ? singlseMenu.items
-                    : [{}]),
-                    setSelectData(singlseMenu);
-                } else {
-                  form.resetFields();
-                }
-              }}
-            >
-              {menus.map((item: { name: string; id: number }) => (
-                <Select.Option key={item.id} value={item.id}>
-                  {`${item.name}`}
-                </Select.Option>
-              ))}
-            </Select>
-
-            <Button
-              type="primary"
-              loading={global.loading.selectMenu}
-              onClick={selectMenu}
-            >
-              Select
-            </Button>
-          </Space.Compact>
-        </div>
-        <div className="flex">
-          <Space.Compact>
-            <Input
-              placeholder="Enter Name"
-              value={newMenu}
-              onChange={(v) => setNewMenu(v.target.value)}
-            />
-            <Button
-              disabled={!newMenu || global.loading.save}
-              onClick={createMenu}
-              loading={global.loading.save}
-            >
-              Create Menu
-            </Button>
-          </Space.Compact>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          Menu Management
+        </Title>
+        <Text type="secondary">
+          Create and manage navigation menus for your website
+        </Text>
       </div>
 
+      {/* Menu Actions */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          {/* Select Menu */}
+          <div>
+            <Text className="block mb-2 text-sm font-medium">Select Existing Menu</Text>
+            <Space.Compact className="w-full sm:w-auto">
+              <Select
+                style={{ width: 200 }}
+                size="large"
+                showSearch
+                allowClear
+                placeholder="Choose a menu"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children as any)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                onChange={(value) => {
+                  if (value) {
+                    const singlseMenu: any = menus.find(
+                      (item: { id: number }) => item.id === value
+                    );
+
+                    (singlseMenu.items = singlseMenu.items
+                      ? singlseMenu.items
+                      : [{}]),
+                      setSelectData(singlseMenu);
+                  } else {
+                    form.resetFields();
+                  }
+                }}
+              >
+                {menus.map((item: { name: string; id: number }) => (
+                  <Select.Option key={item.id} value={item.id}>
+                    {`${item.name}`}
+                  </Select.Option>
+                ))}
+              </Select>
+
+              <Button
+                type="primary"
+                size="large"
+                loading={global.loading.selectMenu}
+                onClick={selectMenu}
+                className="!bg-blue-600 hover:!bg-blue-700"
+              >
+                Load Menu
+              </Button>
+            </Space.Compact>
+          </div>
+
+          {/* Create Menu */}
+          <div>
+            <Text className="block mb-2 text-sm font-medium">Create New Menu</Text>
+            <Space.Compact className="w-full sm:w-auto">
+              <Input
+                size="large"
+                placeholder="Enter menu name"
+                value={newMenu}
+                onChange={(v) => setNewMenu(v.target.value)}
+                onPressEnter={createMenu}
+              />
+              <Button
+                size="large"
+                disabled={!newMenu || global.loading.save}
+                onClick={createMenu}
+                loading={global.loading.save}
+                className="!bg-green-600 hover:!bg-green-700 !text-white"
+              >
+                Create
+              </Button>
+            </Space.Compact>
+          </div>
+        </div>
+      </Card>
+
+      {/* Menu Form */}
       <Form
-        // labelCol={{ span: 1 }}
-        // wrapperCol={{ span: 18 }}
         form={form}
         name="dynamic_form_complex"
+        layout="vertical"
         onFinish={handelSave}
-        // style={{ maxWidth: 900 }}
         autoComplete="off"
         initialValues={{ items: [{}] }}
       >
-        <Card size="small" title={`${form.getFieldValue("name") || ""}`}>
+        <Card
+          size="small"
+          title={
+            <span className="text-lg font-semibold">
+              {form.getFieldValue("name") ? `Editing: ${form.getFieldValue("name")}` : "Menu Editor"}
+            </span>
+          }
+          className="shadow-sm border border-gray-100 rounded-2xl"
+        >
           <Form.Item hidden name="id">
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Name"
+            label={<span className="text-base font-medium">Menu Name</span>}
             name="name"
             rules={[
               {
                 required: true,
-                message: "Name is required",
+                message: "Menu name is required",
               },
             ]}
           >
-            <Input />
+            <Input size="large" placeholder="E.g. Main Navigation, Footer Links" />
           </Form.Item>
-          <Form.List name="items">
-            {(fields, { add, remove }) => (
-              <div
-                style={{ display: "flex", rowGap: 16, flexDirection: "column" }}
-              >
-                {fields.map((field) => (
-                  <Card key={field.key}>
-                    <NestedList parentField={field} />
-                  </Card>
-                ))}
-                {/* 
-            <Button type="dashed" onClick={() => add()} block>
-              + Add Item
-            </Button> */}
-              </div>
-            )}
-          </Form.List>
 
-          <div className="flex justify-between items-center">
-            <div>
+          <div className="my-6">
+            <Text className="text-base font-medium block mb-3">Menu Items</Text>
+            <Form.List name="items">
+              {(fields, { add, remove }) => (
+                <div className="space-y-4">
+                  {fields.map((field) => (
+                    <Card key={field.key} className="bg-gray-50 border border-gray-200">
+                      <NestedList parentField={field} />
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </Form.List>
+          </div>
+
+          {/* Menu Placement */}
+          <div className="border-t pt-4 mt-6">
+            <Text className="text-base font-medium block mb-3">Menu Placement</Text>
+            <div className="flex flex-wrap gap-6">
               <Form.Item
-                // labelCol={{ span: 8 }}
-                // wrapperCol={{ span: 16 }}
                 name="topBarMenu"
                 valuePropName="checked"
                 label={null}
-                className="m-0 p-0"
+                className="!m-0"
               >
-                <Checkbox>Top Bar Menu</Checkbox>
+                <Checkbox className="text-base">Top Bar Menu</Checkbox>
               </Form.Item>
 
               <Form.Item
                 name="mainMenu"
                 valuePropName="checked"
                 label={null}
-                className="m-0 p-0"
+                className="!m-0"
               >
-                <Checkbox>Main Menu</Checkbox>
+                <Checkbox className="text-base">Main Menu</Checkbox>
               </Form.Item>
 
               <Form.Item
                 name="footerMenu"
                 valuePropName="checked"
                 label={null}
-                className="m-0 p-0"
+                className="!m-0"
               >
-                <Checkbox>Footer Menu</Checkbox>
+                <Checkbox className="text-base">Footer Menu</Checkbox>
               </Form.Item>
-            </div>
 
-            <div>
-              <Form.Item
-                name="active"
-                valuePropName="checked"
-                label={null}
-                className="m-0 p-0"
-              >
-                <Checkbox>Active</Checkbox>
-              </Form.Item>
+              <div className="ml-auto">
+                <Form.Item
+                  name="active"
+                  valuePropName="checked"
+                  label={null}
+                  className="!m-0"
+                >
+                  <Checkbox className="text-base font-medium">Active</Checkbox>
+                </Form.Item>
+              </div>
             </div>
           </div>
 
           <Button
-            size="small"
-            color="primary"
+            type="primary"
+            size="large"
             loading={global.loading.save}
             disabled={global.loading.save}
             htmlType="submit"
+            className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium mt-6"
           >
-            Save
+            Save Menu
           </Button>
         </Card>
-
-        {/* <Form.Item shouldUpdate>
-          {() => (
-            <Typography>
-              <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-            </Typography>
-          )}
-        </Form.Item> */}
       </Form>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Card, Form, Input, Typography } from "antd";
 import {
   selectGlobal,
   setAction,
@@ -12,6 +12,8 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+
+const { Title, Text } = Typography;
 
 const HelpSupport = () => {
   const [loading, setLoading] = useState(false);
@@ -66,52 +68,101 @@ const HelpSupport = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 3 },
-    wrapperCol: { span: 10 },
-  };
-
   return (
-    <div className="container mx-auto">
-      <Form
-        {...layout}
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        autoComplete="off"
-        scrollToFirstError={true}
-      >
-        <Form.Item name="id" hidden>
-          <Input />
-        </Form.Item>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <Title level={4} className="!mb-1">
+          Help & Support Features
+        </Title>
+        <Text type="secondary">
+          Configure customer service and support features displayed on your website
+        </Text>
+      </div>
 
-        <Form.Item name="cashDelivery" label="Cash Delivery">
-          <Input placeholder="Enter " />
-        </Form.Item>
+      <Card className="shadow-sm border border-gray-100 rounded-2xl">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          autoComplete="off"
+          scrollToFirstError={true}
+        >
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
 
-        <Form.Item name="returnSupport" label="Return Support">
-          <Input placeholder="Enter " />
-        </Form.Item>
-        <Form.Item name="originalProduct" label="Original Product">
-          <Input placeholder="Enter " />
-        </Form.Item>
+          <div className="space-y-4">
+            {/* Cash Delivery */}
+            <Form.Item
+              name="cashDelivery"
+              label={<span className="text-base font-medium">Cash on Delivery</span>}
+              extra="Text to display for cash on delivery option"
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="e.g., Pay when you receive"
+                className="max-w-xl"
+              />
+            </Form.Item>
 
-        <Form.Item name="guarantee" label="Guarantee">
-          <Input placeholder="Enter " />
-        </Form.Item>
+            {/* Return Support */}
+            <Form.Item
+              name="returnSupport"
+              label={<span className="text-base font-medium">Return Support</span>}
+              extra="Text to display for return policy"
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="e.g., 7-day return guarantee"
+                className="max-w-xl"
+              />
+            </Form.Item>
 
-        <Form.Item>
-          <Button
-            size="small"
-            color="primary"
-            htmlType="submit"
-            className="capitalize"
-            loading={loading}
-          >
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+            {/* Original Product */}
+            <Form.Item
+              name="originalProduct"
+              label={<span className="text-base font-medium">Product Authenticity</span>}
+              extra="Text to assure customers about product authenticity"
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="e.g., 100% Original Products"
+                className="max-w-xl"
+              />
+            </Form.Item>
+
+            {/* Guarantee */}
+            <Form.Item
+              name="guarantee"
+              label={<span className="text-base font-medium">Guarantee</span>}
+              extra="Text to display warranty/guarantee information"
+              className="!mb-0"
+            >
+              <Input
+                size="large"
+                placeholder="e.g., 1-year warranty"
+                className="max-w-xl"
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item className="!mb-0 !mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size="large"
+              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+            >
+              Save Settings
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </div>
   );
 };
