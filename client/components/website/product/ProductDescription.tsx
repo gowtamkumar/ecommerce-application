@@ -1,14 +1,18 @@
 import { selectProduct } from "@/redux/features/products/productSlice";
 import { useSelector } from "react-redux";
 
-const ProductDescription= () => {
+const ProductDescription = () => {
   const products = useSelector(selectProduct);
   return (
     <div className="text-start">
-      <h3 className="text-lg font-bold mb-4">Description</h3>
-      <div className="md:flex gap-16 bg-white p-4 items-center">
+      <h3 className="text-2xl font-bold mb-8 font-global-primary-fontfamily text-gray-900">Description</h3>
+      <div className="bg-white rounded-2xl p-0">
         <div
-          className="text-gray-700 mb-4 leading-6"
+          className="prose max-w-none text-gray-600 leading-relaxed font-global-secondary-fontfamily
+            prose-headings:font-bold prose-headings:text-gray-900 
+            prose-p:mb-4 prose-p:leading-7 
+            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+            prose-img:rounded-xl prose-img:shadow-sm"
           dangerouslySetInnerHTML={{
             __html: products.product.description,
           }}

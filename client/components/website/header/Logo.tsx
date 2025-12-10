@@ -9,6 +9,7 @@ export default function HeaderLogo() {
   const global = useSelector(selectGlobal);
   const data = global.setting;
   const route = useRouter();
+  console.log(data);
   return (
     <Image
       src={

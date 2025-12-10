@@ -152,45 +152,33 @@ export default function SingleProduct({ slug }: { slug: string }) {
   ];
 
   return (
-    <div className="container mx-auto">
-      {/* <NextSeo
-        title={name}
-        description={meta_description}
-        openGraph={{
-          type: "product",
-          url: `${appConfig.url}/product/${slug}`,
-          images: imageUrls,
-        }}
-        additionalMetaTags={[
-          { property: "product:price:amount", content: unit_price || "0.00" },
-          { property: "product:price:currency", content: "BDT" },
-        ]}
-      />
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 bg-white min-h-screen">
+      {/* Main Product Hero Section */}
+      <div className="mb-16 lg:mb-24">
+        <ProductDetails
+          setSelectVariant={setSelectVariant}
+          productRating={productRating}
+          checkStock={checkStock}
+          setCheckStock={setCheckStock}
         />
-      </Head> */}
+      </div>
 
-      {/* <BreadCrumb
-        containerClasses=""
-        path={newPath}
-      /> */}
+      {/* Product Description & Info */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-16 lg:mb-24">
+        <div className="lg:col-span-8 space-y-12">
+          <ProductDescription />
+          <div id="reviews" className="scroll-mt-24">
+            {product.reviews && <RatingProduct productRating={productRating} />}
+            <ReviewTable />
+          </div>
+        </div>
+      </div>
 
-      <ProductDetails
-        setSelectVariant={setSelectVariant}
-        productRating={productRating}
-        checkStock={checkStock}
-        setCheckStock={setCheckStock}
-      />
-
-      {product.reviews && <RatingProduct productRating={productRating} />}
-
-      <ReviewTable />
-      <ProductDescription />
-      <section className="py-5">
-        <h3 className="text-lg font-bold mb-4">Related Product</h3>
+      {/* Related Products */}
+      <section className="border-t border-gray-100 pt-16">
+        <h3 className="text-2xl lg:text-3xl font-bold mb-8 font-global-primary-fontfamily text-gray-900">
+          You Might Also Like
+        </h3>
         <ProductCard />
       </section>
     </div>

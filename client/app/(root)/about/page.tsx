@@ -16,69 +16,64 @@ export default function About() {
   return (
     <>
       <Header />
-      <div>
-        {/* <!-- Hero Section  */}
-        <section className="bg-[#F6F6F6]">
-          <div className="container mx-auto px-6 py-16 text-center">
-            <h1 className="text-4xl font-bold text-gray-800 md:text-5xl">
-              About Us
+      <div className="font-global-secondary-fontfamily text-gray-800">
+        {/* <!-- Hero / Intro  --> */}
+        <section className="bg-white py-20 lg:py-32 text-center">
+          <div className="container mx-auto px-6">
+            <h1 className="text-5xl lg:text-8xl font-bold font-global-primary-fontfamily text-black mb-8 tracking-tight">
+              Our Story
             </h1>
-            <p className="mt-4 text-gray-600">
-              Discover more about our journey and values.
+            <p className="text-xl lg:text-2xl text-gray-500 font-light max-w-3xl mx-auto leading-relaxed">
+              We started with a simple idea: to create a platform that brings premium quality and exceptional design to everyone.
             </p>
           </div>
         </section>
 
-        {/* <!-- Company Overview Section  */}
-        <section className="container mx-auto px-6 py-10">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2">
+        {/* <!-- Origin Story Section  --> */}
+        <section className="container mx-auto px-4 lg:px-8 pb-20 lg:pb-32">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
+            <div className="w-full lg:w-1/2 relative h-[500px] rounded-3xl overflow-hidden shadow-2xl shadow-gray-200">
               <img
-                src="https://via.placeholder.com/500"
-                alt="CompanyImage"
-                className="w-full h-full object-cover rounded-lg"
+                src="https://via.placeholder.com/800x1000"
+                alt="Our Workspace"
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
               />
             </div>
-            <div className="md:w-1/2 md:pl-10 mt-6 md:mt-0 ">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                Our Story
+            <div className="w-full lg:w-1/2 space-y-6">
+              <h2 className="text-3xl lg:text-4xl font-bold font-global-primary-fontfamily text-black">
+                How It All Began
               </h2>
-              <p className="mt-4 text-gray-600">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-                commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-                penatibus et magnis dis parturient montes.
-              </p>
-              <p className="mt-4 text-gray-600">
-                Nulla consequat massa quis enim. Donec pede justo, fringilla
-                vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus
-                ut, imperdiet a, venenatis vitae, justo.
-              </p>
+              <div className="space-y-4 text-lg text-gray-500 leading-relaxed">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
+                  commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+                  penatibus et magnis dis parturient montes.
+                </p>
+                <p>
+                  Nulla consequat massa quis enim. Donec pede justo, fringilla
+                  vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus
+                  ut, imperdiet a, venenatis vitae, justo.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* <!-- Mission and Vision Section  */}
-        <section className="bg-gray-50 py-16">
-          <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl font-semibold text-gray-800">
-              Our Mission & Vision
-            </h2>
-            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <div className="flex flex-col md:flex-row mt-10">
-              <div className="md:w-1/2 px-4 py-6">
-                <h3 className="text-xl font-semibold text-gray-800">Mission</h3>
-                <p className="mt-2 text-gray-600">
+        {/* <!-- Mission & Vision Grid --> */}
+        <section className="bg-black text-white py-24">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
+              <div>
+                <h3 className="text-3xl font-bold font-global-primary-fontfamily mb-6 text-white border-l-4 border-global-primary pl-6">Mission</h3>
+                <p className="text-gray-400 text-lg leading-relaxed pl-6">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   Phasellus imperdiet, nulla et dictum interdum, nisi lorem
                   egestas odio.
                 </p>
               </div>
-              <div className="md:w-1/2 px-4 py-6">
-                <h3 className="text-xl font-semibold text-gray-800">Vision</h3>
-                <p className="mt-2 text-gray-600">
+              <div>
+                <h3 className="text-3xl font-bold font-global-primary-fontfamily mb-6 text-white border-l-4 border-white pl-6">Vision</h3>
+                <p className="text-gray-400 text-lg leading-relaxed pl-6">
                   Quisque volutpat condimentum velit. Class aptent taciti
                   sociosqu ad litora torquent per conubia nostra, per inceptos
                   himenaeos.
@@ -88,43 +83,46 @@ export default function About() {
           </div>
         </section>
 
-        {/* <!-- Team Section  */}
-        <section className="container mx-auto px-6 py-16">
-          <h2 className="text-3xl font-semibold text-gray-800 text-center">
-            Meet the Team
-          </h2>
-          <div className="flex flex-wrap mt-10">
-            {/* <!-- Team Member 1  */}
-            <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-              <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Team Member"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800">
+        {/* <!-- Team Section  --> */}
+        <section className="container mx-auto px-4 lg:px-8 py-24 lg:py-32">
+          <div className="text-center mb-16">
+            <span className="uppercase tracking-widest text-sm font-bold text-gray-400 block mb-4">The People</span>
+            <h2 className="text-4xl font-bold font-global-primary-fontfamily text-black">
+              Meet the Team
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[1, 2, 3, 4].map((item) => (
+              <div key={item} className="group cursor-pointer">
+                <div className="relative overflow-hidden rounded-2xl mb-6 bg-gray-100 aspect-[3/4]">
+                  <img
+                    src={`https://via.placeholder.com/400x500?text=Member+${item}`}
+                    alt="Team Member"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                  />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-black mb-1 font-global-primary-fontfamily">
                     John Doe
                   </h3>
-                  <p className="text-gray-600">CEO & Founder</p>
+                  <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">Founder & CEO</p>
                 </div>
               </div>
-            </div>
-            {/* <!-- Repeat for other team members  */}
+            ))}
           </div>
         </section>
 
-        {/* <!-- Call to Action Section  */}
-        <section className="bg-blue-600 py-16 text-center text-white">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl font-semibold">Join Our Journey</h2>
-            <p className="mt-4 max-w-xl mx-auto">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-              commodo ligula eget dolor. Aenean massa.
+        {/* <!-- Call to Action --> */}
+        <section className="bg-gray-50 py-24 text-center">
+          <div className="container mx-auto px-6 max-w-2xl">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-6 font-global-primary-fontfamily text-black">Ready to Start?</h2>
+            <p className="text-gray-500 text-lg mb-10">
+              Join us on our journey and discover improvements in your life.
             </p>
-            <button className="mt-8 px-8 py-4 bg-blue-800 text-white rounded-full hover:bg-blue-700">
-              <Link href="/contact">Contact Us</Link>
-            </button>
+            <Link href="/contact" className="inline-block px-10 py-4 bg-black text-white rounded-full font-bold uppercase tracking-wider hover:bg-gray-800 hover:shadow-xl transition-all duration-300">
+              Get in Touch
+            </Link>
           </div>
         </section>
       </div>

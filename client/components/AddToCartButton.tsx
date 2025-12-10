@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 //   tax?: { value: number };
 // };
 
-export default function AddToCartButton({ item }: { item: any }) {
+export default function AddToCartButton({ item, className }: { item: any, className?: string }) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const session = useSession();
@@ -71,7 +71,7 @@ export default function AddToCartButton({ item }: { item: any }) {
 
   return (
     <Button
-      className="w-full"
+      className={`w-full ${className || ""}`}
       onClick={() => addToCart(item)}
       style={{ fontFamily: "unset" }}
       disabled={global.loading.productId === item.id}
