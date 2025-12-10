@@ -5,10 +5,9 @@ import {
   fileDeleteWithPhoto,
 } from "@/lib/apis/file";
 import { setAction, setLoading } from "@/redux/features/global/globalSlice";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Button, Empty, Popconfirm } from "antd";
+import { AppstoreOutlined, BarsOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Empty, Popconfirm, Segmented } from "antd";
 import { useEffect, useState } from "react";
-import { FaTh, FaThList } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import GridImage from "./GridImage";
 import MediaDetails from "./MediaDetails";
@@ -56,11 +55,9 @@ const MediaLibrary = ({ files }: any) => {
       setFiles((prevFile: any[]) =>
         prevFile.filter((file: { id: number | string }) => file.id !== img.id)
       );
-      // successNotification({ message: res.message });
     } catch (error: any) {
       console.log("error", error);
       alert(error.message);
-      // errorNotification({ message: error.message });
     } finally {
       dispatch(setLoading({ delete: false }));
       dispatch(setAction({}));
@@ -91,85 +88,73 @@ const MediaLibrary = ({ files }: any) => {
   };
 
   return (
-    <>
-      <div className="flex flex-col h-full">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between border-b px-4 py-1 bg-gray-200">
-          <div className="flex items-center  gap-3">
-            <div className="mt-5">
-              <MediaUpload setFiles={setFiles} />
-            </div>
-
-            {/* 
-          <select className="border px-2 py-1 rounded-md text-sm">
-            <option>সমস্ত তারিখ</option>
-            <option>অক্টোবর ২০২৫</option>
-          </select> */}
-
-            {selected?.length ? (
-              <>
-                <Popconfirm
-                  title={
-                    <span>
-                      Are you sure{" "}
-                      <span className="text-danger fw-bold">delete</span>{" "}
-                      {selected?.length ? selected?.length : ""} item?
-                    </span>
-                  }
-                  onConfirm={() => deleteMultipleFilesHandle(selected)}
-                  placement="left"
-                  okText="Yes"
-                  okType="danger"
-                  cancelText="No"
-                  icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-                >
-                  <Button size="small" danger>
-                    Bulk Delete {selected?.length}
-                  </Button>
-                </Popconfirm>
-
-                <Button
-                  size="small"
-                  onClick={() => {
-                    setSelected([]);
-                  }}
-                >
-                  Clear
-                </Button>
-              </>
-            ) : (
-              ""
-            )}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setViewMode("grid")}
-              className={`p-2 rounded-md cursor-pointer ${viewMode === "grid" ? "bg-gray-200" : ""
-                }`}
-            >
-              <FaTh />
-            </Button>
-            <Button
-              onClick={() => setViewMode("list")}
-              className={`p-2 rounded-md cursor-pointer ${viewMode === "list" ? "bg-gray-200" : ""
-                }`}
-            >
-              <FaThList />
-            </Button>
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6 h-[calc(100vh-100px)] flex flex-col">
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 font-global-primary-fontfamily">Media Library</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage your images and assets</p>
+        </div>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="hidden sm:block">
             <SearchEngine />
+          </div>
+          <MediaUpload setFiles={setFiles} />
+        </div>
+      </div>
 
-            {/*             
-            <Input
-              type="text"
-              placeholder="অনুসন্ধান"
-              className="border rounded-md px-3 py-1 text-sm"
-            /> */}
+      {/* Toolbar */}
+      <div className="bg-white p-2 rounded-xl border border-gray-100 flex flex-wrap gap-4 justify-between items-center shadow-sm">
+        <div className="flex items-center gap-2">
+          <Segmented
+            options={[
+              { value: 'grid', icon: <AppstoreOutlined /> },
+              { value: 'list', icon: <BarsOutlined /> },
+            ]}
+            value={viewMode}
+            onChange={(val) => setViewMode(val as "grid" | "list")}
+          />
+          <div className="sm:hidden">
+            <SearchEngine />
           </div>
         </div>
 
-        {/* Image Grid */}
-        <div className="flex-1 overflow-auto p-4 bg-white">
+        {selected?.length > 0 && (
+          <div className="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-lg animate-fade-in">
+            <span className="text-sm font-medium text-red-600">{selected.length} Selected</span>
+            <div className="h-4 w-[1px] bg-red-200 mx-1"></div>
+            <Button
+              type="text"
+              size="small"
+              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+              onClick={() => setSelected([])}
+            >
+              Clear
+            </Button>
+            <Popconfirm
+              title="Delete Images"
+              description={`Are you sure you want to delete ${selected.length} items?`}
+              onConfirm={() => deleteMultipleFilesHandle(selected)}
+              okText="Yes"
+              cancelText="No"
+              okButtonProps={{ danger: true }}
+            >
+              <Button
+                type="primary"
+                danger
+                size="small"
+                icon={<DeleteOutlined />}
+              >
+                Delete
+              </Button>
+            </Popconfirm>
+          </div>
+        )}
+      </div>
+
+      {/* Content Area */}
+      <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col min-h-0">
+        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           {viewMode === "grid" && files.data?.length ? (
             <GridImage
               images={file}
@@ -187,18 +172,25 @@ const MediaLibrary = ({ files }: any) => {
               selected={selected}
             />
           ) : (
-            <Empty description="No media" />
+            <div className="h-full flex flex-col items-center justify-center text-gray-400">
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={<span className="text-gray-500">No media files found</span>}
+              >
+                <MediaUpload setFiles={setFiles} />
+              </Empty>
+            </div>
           )}
         </div>
 
-        <MediaDetails />
-
-        {/* Footer */}
-        <div className="flex justify-center items-center border-t pb-10 py-4 bg-gray-50">
+        {/* Footer Pagination */}
+        <div className="border-t border-gray-100 p-4 bg-gray-50 flex justify-center">
           <MediaPagination files={files} />
         </div>
       </div>
-    </>
+
+      <MediaDetails />
+    </div>
   );
 };
 
