@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { getDashboardReports } from "@/lib/apis/reports";
 import { getSettings } from "@/lib/apis/setting";

@@ -13,57 +13,108 @@ export default function PaymentMethod() {
   const dispatch = useDispatch();
   const { checkoutFormData } = checkout || {};
   const { response } = global || {};
+
+  const paymentMethods = [
+    { value: "Cash", label: "Cash on Delivery", description: "Pay when you receive" },
+    { value: "SSLCOMMERZ", label: "Online Payment", description: "Cards, Mobile Banking, Net Banking" },
+  ];
+
   return (
-    <div className="mx-auto bg-white ">
-      <div className="p-4 border-b">
-        <h2 className="text-sm font-semibold">
-          Payment Method (Please select a payment method)
-        </h2>
-      </div>
-      <div className="mx-auto bg-white lg:p-6 py-2 rounded-lg">
-        <Radio.Group
-          name="paymentMethod"
-          onChange={({ target }) =>
-            dispatch(
-              setCheckoutFormData({
-                ...checkoutFormData,
-                paymentMethod: target.value,
-              })
-            )
-          }
-          value={checkoutFormData.paymentMethod}
-          size="large"
-        >
-          <div className="mb-4 font-semibold border p-5">
-            <Radio value="Cash">ক্যাশ অন ডেলিভারি</Radio>
-          </div>
-
-          <div className="mb-4 font-semibold border p-5">
-            <Radio value="SSLCOMMERZ">SSLCOMMERZ</Radio>
-          </div>
-        </Radio.Group>
-
-        {/* <!-- Terms and Conditions --> */}
-        <div className="mb-4">
-          <label className="flex items-center justify-between gap-x-2">
-            <span>
-              <Checkbox type="checkbox" />
-              <span className="ml-1">
-                রফকারির শর্তাবলীতো সম্মতি প্রদান করছি।{" "}
-                <a href="#" className="text-blue-500 underline">
-                  শর্তাবলী
-                </a>
-              </span>
-            </span>
-            {response.type && (
-              <Alert
-                className="p-0 m-0"
-                message={`${response.message}`}
-                type={response.type}
-              />
-            )}
-          </label>
+    <div className="space-y-6">
+      <Radio.Group
+        className="w-full"
+        onChange={({ target }) =>
+          dispatch(
+            setCheckoutFormData({
+              ...checkoutFormData,
+              paymentMethod: target.value,
+            })
+          )
+        }
+        value={checkoutFormData.paymentMethod}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {paymentMethods.map((method) => (
+            <label
+              key={method.value}
+              className={`
+                relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all
+                ${
+                  checkoutFormData.paymentMethod === method.value
+                    ? "border-blue-600 ring-1 ring-blue-600 bg-blue-50/50"
+                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                }
+              `}
+            >
+              <Radio value={method.value} className="sr-only" />
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center">
+                  <div className="text-sm">
+                    <p
+                      className={`font-medium ${
+                        checkoutFormData.paymentMethod === method.value
+                          ? "text-blue-900"
+                          : "text-gray-900"
+                      }`}
+                    >
+                      {method.label}
+                    </p>
+                    <p
+                      className={`text-xs ${
+                        checkoutFormData.paymentMethod === method.value
+                          ? "text-blue-700"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {method.description}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className={`h-5 w-5 rounded-full border flex items-center justify-center
+                    ${
+                      checkoutFormData.paymentMethod === method.value
+                        ? "border-blue-600 bg-blue-600"
+                        : "border-gray-300"
+                    }
+                  `}
+                >
+                  {checkoutFormData.paymentMethod === method.value && (
+                    <div className="h-2.5 w-2.5 rounded-full bg-white" />
+                  )}
+                </div>
+              </div>
+            </label>
+          ))}
         </div>
+      </Radio.Group>
+
+      {/* Terms and Conditions */}
+      <div className="pt-4 border-t border-gray-100">
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <Checkbox className="mt-1" />
+          <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+            I agree to the{" "}
+            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+              Terms and Conditions
+            </a>
+            {" "}and{" "}
+            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+              Return Policy
+            </a>
+          </span>
+        </label>
+        
+        {response?.message && (
+          <div className="mt-4">
+             <Alert
+              message={response.message}
+              type={response.type}
+              showIcon
+              className="rounded-lg border-0"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

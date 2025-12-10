@@ -96,59 +96,53 @@ export default function OrderSummary() {
   }
 
   return (
-    <>
-      <div className="p-4 border-b">
-        <h2 className="text-2xl font-semibold">Order summary</h2>
-      </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-medium">
+          <tr>
+            <th className="p-4 font-semibold">Product</th>
+            <th className="p-4 font-semibold text-center">Quantity</th>
+            <th className="p-4 font-semibold text-right">Price</th>
+            <th className="p-4 font-semibold text-right">Total</th>
+            <th className="p-4 font-semibold text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {cart?.carts?.cartList?.map((item: any, idx: number) => (
+            <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
+              <td className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
+                    <Image
+                      src={
+                        item.thumbnailImage
+                          ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
+                          : "/pos_software.png"
+                      }
+                      fill
+                      alt={item.name}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900 line-clamp-2">{item?.name}</h3>
+                    <div className="flex flex-wrap gap-2 mt-1 text-xs text-gray-500">
+                      {item?.size?.name && (
+                        <span className="bg-gray-100 px-2 py-0.5 rounded">Size: {item.size.name}</span>
+                      )}
+                      {item?.color?.name && (
+                        <span className="bg-gray-100 px-2 py-0.5 rounded">Color: {item.color.name}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </td>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm text-left border border-gray-200">
-          <thead className="bg-gray-100 text-xs uppercase">
-            <tr>
-              <th className="p-3">#</th>
-              <th className="p-3">Image</th>
-              <th className="p-3">Product</th>
-              <th className="p-3">Qty</th>
-              <th className="p-3">Unit Price</th>
-              {/* <th className="p-3">Tax</th> */}
-              <th className="p-3">Discount</th>
-              <th className="p-3">Subtotal</th>
-              <th className="p-3">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cart?.carts?.cartList?.map((item: any, idx: number) => (
-              <tr key={idx} className="border-t">
-                <td className="p-3">{idx + 1}</td>
-
-                <td className="p-3">
-                  <Image
-                    src={
-                      item.thumbnailImage
-                        ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
-                        : "/pos_software.png"
-                    }
-                    width={50}
-                    height={50}
-                    alt={item.name}
-                    className="w-14 h-14 object-cover"
-                  />
-                </td>
-
-                <td className="p-3">
-                  <div className="font-semibold">{item?.name}</div>
-                  {item?.size?.name && (
-                    <div className="text-xs">Size: {item.size.name}</div>
-                  )}
-                  {item?.color?.name && (
-                    <div className="text-xs">Color: {item.color.name}</div>
-                  )}
-                </td>
-
-                <td className="p-3">
-                  <div className="flex items-center space-x-2">
+              <td className="p-4">
+                <div className="flex items-center justify-center">
+                  <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                     <button
-                      className="px-2 py-1 bg-gray-200 rounded cursor-pointer"
+                      className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors disabled:opacity-50"
                       onClick={() =>
                         handleIncrementDecrement({
                           type: "Decrement",
@@ -160,9 +154,9 @@ export default function OrderSummary() {
                     >
                       -
                     </button>
-                    <span className="w-8 text-center">{item.qty}</span>
+                    <span className="w-10 text-center text-sm font-medium text-gray-900">{item.qty}</span>
                     <button
-                      className="px-2 py-1 bg-gray-200 rounded cursor-pointer"
+                      className="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors disabled:opacity-50"
                       onClick={() =>
                         handleIncrementDecrement({
                           type: "Increment",
@@ -175,35 +169,46 @@ export default function OrderSummary() {
                       +
                     </button>
                   </div>
-                </td>
+                </div>
+              </td>
 
-                <td className="p-3 text-green-600">৳ {item.salePrice}</td>
-                {/* <td className="p-3 text-green-600">৳ {item.taxAmount}</td> */}
-                <td className="p-3 text-green-600">
-                  ৳ {item.totalDiscountAmount}
-                </td>
-                <td className="p-3 font-semibold">৳ {+item.subTotal}</td>
+              <td className="p-4 text-right">
+                <div className="flex flex-col items-end">
+                   <span className="font-medium text-gray-900">৳ {item.salePrice}</span>
+                   {item.totalDiscountAmount > 0 && (
+                      <span className="text-xs text-green-600">Save ৳{item.totalDiscountAmount}</span>
+                   )}
+                </div>
+              </td>
 
-                <td className="p-3">
-                  <Popconfirm
-                    title="Delete Order item"
-                    description="Are you sure to delete this Order item?"
-                    onConfirm={() => removeItemCart(item.id)}
-                    okText="Yes"
-                    cancelText="No"
-                    okButtonProps={{ loading: global.loading.remove }}
-                    placement="left"
-                  >
-                    <button className="text-red-600 hover:text-red-800 cursor-pointer">
-                      <MdDelete size={20} />
-                    </button>
-                  </Popconfirm>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </>
+              <td className="p-4 text-right font-bold text-gray-900">
+                ৳ {+item.subTotal}
+              </td>
+
+              <td className="p-4 text-center">
+                <Popconfirm
+                  title="Remove Item"
+                  description="Are you sure you want to remove this item?"
+                  onConfirm={() => removeItemCart(item.id)}
+                  okText="Yes"
+                  cancelText="No"
+                  okButtonProps={{ loading: global.loading.remove, danger: true }}
+                  placement="left"
+                >
+                  <button className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
+                    <MdDelete size={20} />
+                  </button>
+                </Popconfirm>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {(!cart?.carts?.cartList || cart?.carts?.cartList.length === 0) && (
+          <div className="p-8 text-center text-gray-500">
+              Your cart is empty.
+          </div>
+      )}
+    </div>
   );
 }
