@@ -85,7 +85,7 @@ export default function Card({ item }: { item: any }) {
           />
           {/* Hover Image */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-white">
-             <Image
+            <Image
               src={hoverImage}
               alt={item.name}
               fill
@@ -121,11 +121,11 @@ export default function Card({ item }: { item: any }) {
       {/* Content area */}
       <div className="p-4 flex flex-col flex-1">
         <div className="mb-1">
-           <div className="flex items-center gap-1 mb-1">
-              <Rate disabled value={+item.avgRating || 0} className="text-xs" style={{ fontSize: 12 }} />
-              <span className="text-xs text-gray-400">({item.reviewsCount || 0})</span>
-           </div>
-           <h3 className="font-medium text-gray-900 text-sm leading-snug mb-1 h-10 overflow-hidden">
+          <div className="flex items-center gap-1 mb-1">
+            <Rate disabled value={+item.avgRating || 0} className="text-xs" style={{ fontSize: 12 }} />
+            <span className="text-xs text-gray-400">({item.reviewsCount || 0})</span>
+          </div>
+          <h3 className="font-medium text-gray-900 text-sm leading-snug mb-1 h-10 overflow-hidden">
             <Link href={`/products/${item.slug}`} className="hover:text-black transition-colors">
               {item.name}
             </Link>
@@ -134,14 +134,14 @@ export default function Card({ item }: { item: any }) {
 
         <div className="mt-auto pt-2 border-t border-gray-50">
           <div className="flex items-center justify-between mb-3">
-             <div className="flex flex-col">
-                {+item?.discountValue > 0 && (
-                  <span className="text-xs text-gray-400 line-through">৳ {item.salePrice}</span>
-                )}
-                <span className="text-base font-bold text-black">৳ {item.finalPrice}</span>
-             </div>
+            <div className="flex flex-col">
+              {+item?.discountValue > 0 && (
+                <span className="text-xs text-gray-400 line-through">৳ {item.salePrice}</span>
+              )}
+              <span className="text-base font-bold text-black">৳ {item.finalPrice}</span>
+            </div>
           </div>
-          
+
           <AddToCartButton item={{ ...item, qty: 1 }} />
         </div>
       </div>

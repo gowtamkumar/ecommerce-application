@@ -10,17 +10,17 @@ import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
   title: 'New Product',
-  description: 'New Product page',
+  description: 'Create a new product',
 };
 
 const AddProduct = dynamic(
   () => import("@/components/dashboard/product/AddProduct"),
   {
-    loading: () => "new product loadding............",
+    loading: () => "Loading...",
   }
 );
 
-export default async function Product() {
+export default async function NewProductPage() {
   const [
     resBrand,
     resSize,

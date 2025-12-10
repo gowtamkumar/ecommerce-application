@@ -53,6 +53,7 @@ const AddProduct = ({
   discounts,
   categories,
   taxs,
+  productId,
 }: any) => {
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
@@ -68,7 +69,7 @@ const AddProduct = ({
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const params = useParams<{ new: string }>();
+  // const params = useParams<{ new: string }>();
   const route = useRouter();
 
   const fetchData = useCallback(async () => {
@@ -81,14 +82,14 @@ const AddProduct = ({
     });
 
     try {
-      if (params.new === "new") {
+      if (!productId) {
         form.resetFields();
         setTags([]);
         return;
       }
 
-      if (params.new !== "new") {
-        const id = params.new.toString();
+      if (productId) {
+        const id = productId.toString();
         const result = await getProduct(id);
         const productData = { ...result.data };
 
@@ -141,7 +142,7 @@ const AddProduct = ({
     //  finally {
     //   dispatch(setLoading({}));
     // }
-  }, [form, params.new]);
+  }, [form, productId]);
 
   useEffect(() => {
     // dispatch(setLoading({ loading: true }));
@@ -149,7 +150,7 @@ const AddProduct = ({
     fetchData();
     // Cleanup function
     return () => {
-      if (params.new === "new") {
+      if (!productId) {
         form.resetFields();
         setTags([]);
       }

@@ -156,7 +156,7 @@ const ProductList = () => {
             className="hover:!text-blue-600 hover:bg-blue-50"
             onClick={(e) => {
               e.stopPropagation();
-              route.push(`/dashboard/product/${record.id}`);
+              route.push(`/dashboard/product/${record.id}/edit`);
             }}
           />
           <Popconfirm
