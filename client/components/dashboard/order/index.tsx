@@ -12,14 +12,19 @@ import {
 import {
   CheckOutlined,
   ClockCircleOutlined,
+  DeleteOutlined,
+  EnvironmentOutlined,
   QuestionCircleOutlined,
-  RestOutlined,
   SearchOutlined,
-  UserAddOutlined
+  UserAddOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
+  Badge,
   Button,
+  Card,
+  Descriptions,
   Divider,
   Input,
   Popconfirm,
@@ -28,6 +33,8 @@ import {
   Tabs,
   Tag,
   Timeline,
+  Tooltip,
+  Typography,
 } from "antd";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
@@ -38,6 +45,8 @@ import Highlighter from "react-highlight-words";
 import { FaAmazonPay } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+
+const { Title, Text } = Typography;
 
 const OrderStatusChange = dynamic(
   () => import("@/components/dashboard/order/OrderStatusUpdate"),
@@ -85,7 +94,7 @@ const Order = () => {
       await deleteOrder(id);
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
-        toast.success("Discount deleted successfully");
+        toast.success("Order deleted successfully");
         dispatch(setAction({}));
       }, 500);
     } catch (error: any) {
@@ -125,8 +134,7 @@ const Order = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          // ref={searchInput}
-          placeholder={`Search {dataIndex}`}
+          placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => {
             setSelectedKeys(e.target.value ? [e.target.value] : []);
@@ -155,26 +163,6 @@ const Order = () => {
             style={{ width: 90 }}
           >
             Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
           </Button>
         </Space>
       </div>
@@ -213,7 +201,7 @@ const Order = () => {
         if (element.paymentType === "Debit") acc.dabitTotal += +element.amount;
         return acc;
       },
-      { dabitTotal: 0, creditTotal: 0 } // Initial accumulator values
+      { dabitTotal: 0, creditTotal: 0 }
     );
 
     const paidAmount = dabitTotal - creditTotal;
@@ -223,182 +211,220 @@ const Order = () => {
         title: "Product",
         dataIndex: "product",
         key: "product",
-        render: (v: { name: string }) => <span>{v.name}</span>,
+        render: (v: { name: string }) => <span className="font-medium">{v.name}</span>,
       },
       {
         title: "Color",
         dataIndex: "productVariant",
         render: (v: any) => {
-          return <span>{v?.color?.name}</span>;
+          return v?.color?.name ? (
+            <Tag color="blue">{v.color.name}</Tag>
+          ) : (
+            <span className="text-gray-400">-</span>
+          );
         },
       },
       {
         title: "Size",
         dataIndex: "productVariant",
         render: (v: any) => {
-          return <span>{v?.size?.name}</span>;
+          return v?.size?.name ? (
+            <Tag>{v.size.name}</Tag>
+          ) : (
+            <span className="text-gray-400">-</span>
+          );
         },
       },
       {
         title: "Material",
         dataIndex: "material",
         key: "material",
+        render: (text: string) => text || <span className="text-gray-400">-</span>,
       },
       {
         title: "Purchase Price",
         dataIndex: "purchasePrice",
         key: "purchasePrice",
+        render: (text: number) => <span className="text-gray-600">৳{text}</span>,
       },
-      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
       {
-        title: "Tax Amount",
+        title: "Unit Price",
+        dataIndex: "unitPrice",
+        key: "unitPrice",
+        render: (text: number) => <span className="font-medium">৳{text}</span>,
+      },
+      {
+        title: "Tax",
         key: "taxAmount",
         dataIndex: "taxAmount",
+        render: (text: number) => <span className="text-gray-600">৳{text}</span>,
       },
       {
-        title: "Discount Amount",
+        title: "Discount",
         dataIndex: "totalDiscountAmount",
         key: "totalDiscountAmount",
+        render: (text: number) =>
+          text > 0 ? (
+            <span className="text-red-600">-৳{text}</span>
+          ) : (
+            <span className="text-gray-400">-</span>
+          ),
       },
       {
         title: "Sale Price",
-        // dataIndex: "salePrice",
         key: "salePrice",
         render: (v: any) => {
           return (
-            <span>
-              {(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(
-                2
-              )}
+            <span className="font-semibold text-green-600">
+              ৳{(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(2)}
             </span>
           );
         },
       },
-
-      { title: "Qty", dataIndex: "qty", key: "qty" },
+      {
+        title: "Qty",
+        dataIndex: "qty",
+        key: "qty",
+        render: (text: number) => <span className="font-medium">×{text}</span>,
+      },
       {
         title: "Sub Total",
         key: "subTotal",
         dataIndex: "subTotal",
+        render: (text: number) => <span className="font-bold">৳{text}</span>,
       },
     ];
 
     return (
-      <div className="grid grid-cols-4 p-2">
-        <div className="col-span-4">
-          {value.status === "Canceled" && (
-            <h2 className="bg-red-500">
-              <span className="font-bold">Order Resson: </span>
-              <code>{value.cancelResson}</code>
-            </h2>
-          )}
-          <h1>
-            <span className="font-bold">Order No: </span>
-            <code>{value.trackingNo}</code>
-          </h1>
-          {value.tranId && (
-            <h1>
-              <span className="font-bold">Transaction ID: </span>
-              <code>{value.tranId}</code>
-            </h1>
-          )}
-          <h1>
-            <span className="font-bold">Shipping Address: </span>
-            <code> {value.shippingAddress?.address}</code>
-          </h1>
-          <h1>
-            <span className="font-bold">Delivery Man: </span>
-            <code>{value?.deliveryMan?.name}</code>
-          </h1>
-          <Divider dashed />
-          <div className="p-4 bg-white">
-            <h1 className="font-semibold">Order Items</h1>
-            <Table
-              columns={childColumns}
-              size="small"
-              scroll={{ x: "auto" }}
-              dataSource={value.orderItems}
-              pagination={false}
-              bordered
-            />
+      <div className="p-6 bg-gray-50">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Order Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Order Details Card */}
+            <Card className="shadow-sm" bordered={false}>
+              <div className="space-y-3">
+                {value.status === "Canceled" && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                    <Text strong className="text-red-700">Cancellation Reason: </Text>
+                    <Text className="text-red-600">{value.cancelResson}</Text>
+                  </div>
+                )}
+                
+                <Descriptions column={1} size="small">
+                  <Descriptions.Item label={<Text strong>Order No</Text>}>
+                    <Tag color="green" className="font-mono">{value.trackingNo}</Tag>
+                  </Descriptions.Item>
+                  {value.tranId && (
+                    <Descriptions.Item label={<Text strong>Transaction ID</Text>}>
+                      <Text code>{value.tranId}</Text>
+                    </Descriptions.Item>
+                  )}
+                  <Descriptions.Item label={<Text strong><EnvironmentOutlined /> Shipping Address</Text>}>
+                    <Text>{value.shippingAddress?.address}</Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<Text strong><UserOutlined /> Delivery Man</Text>}>
+                    <Text>{value?.deliveryMan?.name || "Not assigned"}</Text>
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+            </Card>
+
+            {/* Order Items Card */}
+            <Card title={<Title level={5} className="!mb-0">Order Items</Title>} className="shadow-sm" bordered={false}>
+              <Table
+                columns={childColumns}
+                size="small"
+                scroll={{ x: "auto" }}
+                dataSource={value.orderItems}
+                pagination={false}
+                className="border border-gray-100 rounded-lg overflow-hidden"
+              />
+            </Card>
           </div>
-          <div className="grid grid-cols-8 mt-5">
-            <div className="col-span-5 p-2">
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Order Timeline Card */}
+            <Card title={<Title level={5} className="!mb-0">Order History</Title>} className="shadow-sm" bordered={false}>
               <Timeline
                 items={(value?.orderTrackings || []).map(
                   (timeline: any, idx: number) => ({
-                    dot: <ClockCircleOutlined />,
-                    color: "red",
+                    dot: <ClockCircleOutlined className="text-blue-500" />,
+                    color: "blue",
                     children: (
-                      <div key={idx}>
-                        <div> {timeline.status}</div>
-                        <div>
-                          {" "}
-                          {dayjs(timeline.createdAt).format(
-                            "MMMM D, YYYY h:mm A"
-                          )}
-                        </div>
-                        <div> {timeline.location}</div>
+                      <div key={idx} className="pb-2">
+                        <Text strong className="block">{timeline.status}</Text>
+                        <Text type="secondary" className="text-xs block">
+                          {dayjs(timeline.createdAt).format("MMMM D, YYYY h:mm A")}
+                        </Text>
+                        {timeline.location && (
+                          <Text type="secondary" className="text-xs block">
+                            <EnvironmentOutlined /> {timeline.location}
+                          </Text>
+                        )}
                       </div>
                     ),
                   })
                 )}
               />
-            </div>
+            </Card>
 
-            <div className="col-span-3">
-              <div className="flex justify-between">
-                <h1>Total Qty:</h1>
-                <h1 className="font-semibold">{value.totalQty}</h1>
-              </div>
-
-              <div className="flex justify-between">
-                <h1>Net Amount:</h1>
-                <h1 className="font-semibold">
-                  {(+value.subTotal).toFixed(2)}
-                </h1>
-              </div>
-
-              {+value.totalItemsDiscount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Discount Amount:</h1>
-                  <h1 className="font-semibold">{value.totalItemsDiscount}</h1>
+            {/* Payment Summary Card */}
+            <Card title={<Title level={5} className="!mb-0">Payment Summary</Title>} className="shadow-sm" bordered={false}>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Text type="secondary">Total Qty</Text>
+                  <Text strong>{value.totalQty}</Text>
                 </div>
-              )}
 
-              {+value.couponDiscount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Coupon Discount:</h1>
-                  <h1 className="font-semibold">{value.couponDiscount}</h1>
+                <div className="flex justify-between items-center">
+                  <Text type="secondary">Net Amount</Text>
+                  <Text strong>৳{(+value.subTotal).toFixed(2)}</Text>
                 </div>
-              )}
 
-              <div className="flex justify-between">
-                <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">{value.totalTax}</h1>
+                {+value.totalItemsDiscount > 0 && (
+                  <div className="flex justify-between items-center">
+                    <Text type="secondary">Discount</Text>
+                    <Text className="text-red-600">-৳{value.totalItemsDiscount}</Text>
+                  </div>
+                )}
+
+                {+value.couponDiscount > 0 && (
+                  <div className="flex justify-between items-center">
+                    <Text type="secondary">Coupon Discount</Text>
+                    <Text className="text-red-600">-৳{value.couponDiscount}</Text>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center">
+                  <Text type="secondary">Tax Amount</Text>
+                  <Text>৳{value.totalTax}</Text>
+                </div>
+
+                {paidAmount > 0 && (
+                  <div className="flex justify-between items-center">
+                    <Text type="secondary">Paid Amount</Text>
+                    <Text className="text-green-600">৳{paidAmount}</Text>
+                  </div>
+                )}
+
+                {+value.shippingCharge > 0 && (
+                  <div className="flex justify-between items-center">
+                    <Text type="secondary">Shipping</Text>
+                    <Text>৳{value.shippingCharge}</Text>
+                  </div>
+                )}
+
+                <Divider className="!my-3" />
+
+                <div className="flex justify-between items-center bg-gray-50 -mx-6 -mb-6 p-4 rounded-b-lg">
+                  <Text strong className="text-lg">Grand Total</Text>
+                  <Text strong className="text-lg text-green-600">
+                    ৳{(+value.grandTotal - paidAmount).toFixed(2)}
+                  </Text>
+                </div>
               </div>
-
-              {paidAmount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Paid Amount:</h1>
-                  <h1 className="font-semibold">{paidAmount}</h1>
-                </div>
-              )}
-
-              {+value.shippingCharge > 0 && (
-                <div className="flex justify-between">
-                  <h1>Shipping:</h1>
-                  <h1 className="font-semibold">+{value.shippingCharge}</h1>
-                </div>
-              )}
-
-              <div className="flex justify-between border-t-2">
-                <h1>Grand Total:</h1>
-                <h1 className="font-semibold">
-                  {(+value.grandTotal - paidAmount).toFixed(2)}
-                </h1>
-              </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -411,102 +437,124 @@ const Order = () => {
       title: "Tracking No",
       dataIndex: "trackingNo",
       key: "trackingNo",
-      render: (value) => <span className="bg-green-200">{value}</span>,
+      render: (value) => (
+        <Tag color="green" className="font-mono font-medium">
+          {value}
+        </Tag>
+      ),
     },
 
     {
       title: "Phone No",
       dataIndex: "phoneNo",
       key: "phoneNo",
-      render: (value) => <span>{value?.phoneNo}</span>,
+      render: (value) => <span className="text-gray-600">{value?.phoneNo}</span>,
     },
 
     {
       title: "Customer",
       dataIndex: "user",
       key: "user",
-      render: (customer) => <span>{customer?.name}</span>,
+      render: (customer) => (
+        <div className="flex items-center gap-2">
+          <UserOutlined className="text-gray-400" />
+          <span className="font-medium">{customer?.name}</span>
+        </div>
+      ),
     },
-    // {
-    //   title: "Shipping Address",
-    //   dataIndex: "shippingAddress",
-    //   key: "shippingAddress",
-    //   render: (value) => <span>{value.address}</span>,
-    // },
+
     {
       title: "Payment Method",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
-      // render: (value) => <span>{value.address}</span>,
+      render: (value) => <Tag color="blue">{value}</Tag>,
     },
 
     {
       title: "Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (date) => date && dayjs(date).format("DD-MM-YYYY h:mm A"),
+      render: (date) => (
+        <span className="text-gray-600">
+          {date && dayjs(date).format("DD-MM-YYYY h:mm A")}
+        </span>
+      ),
     },
     {
       title: "P. Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
+      render: (status) => (
+        <Tag color={status === "Paid" ? "green" : "orange"}>{status}</Tag>
+      ),
     },
     {
       title: "Status",
       key: "status",
       render: (orderStatus) => (
-        <Tag color={getStatus(orderStatus.status)}>{orderStatus.status}</Tag>
+        <Tag color={getStatus(orderStatus.status)} className="font-medium">
+          {orderStatus.status}
+        </Tag>
       ),
     },
     {
       title: "Action",
       key: "operation",
+      fixed: "right",
+      width: 200,
       render: (value) => (
         <div className="flex gap-2 justify-end">
-          <Button
-            size="small"
-            icon={<FaAmazonPay />}
-            title="Payment"
-            onClick={() => {
-              route.push("/dashboard/payments/new");
-            }}
-          />
+          <Tooltip title="Payment">
+            <Button
+              size="small"
+              icon={<FaAmazonPay />}
+              className="hover:!bg-blue-50 hover:!text-blue-600"
+              onClick={() => {
+                route.push("/dashboard/payments/new");
+              }}
+            />
+          </Tooltip>
 
-          <Button
-            size="small"
-            icon={<UserAddOutlined />}
-            title="Assign Delivery man"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  assign: true,
-                  payload: { id: value.id },
-                })
-              )
-            }
-          />
+          <Tooltip title="Assign Delivery Man">
+            <Button
+              size="small"
+              icon={<UserAddOutlined />}
+              className="hover:!bg-purple-50 hover:!text-purple-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    assign: true,
+                    payload: { id: value.id },
+                  })
+                )
+              }
+            />
+          </Tooltip>
 
-          <Button
-            size="small"
-            icon={<CheckOutlined />}
-            title="Order Status Change"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  orderStatusUpdate: true,
-                  payload: { id: value.id },
-                })
-              )
-            }
-            disabled={
-              value.status === "Completed" || value.status === "Returned"
-            }
-          />
+          <Tooltip title="Update Status">
+            <Button
+              size="small"
+              icon={<CheckOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    orderStatusUpdate: true,
+                    payload: { id: value.id },
+                  })
+                )
+              }
+              disabled={
+                value.status === "Completed" || value.status === "Returned"
+              }
+            />
+          </Tooltip>
+
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Order?
               </span>
             }
@@ -517,12 +565,15 @@ const Order = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Order">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -532,58 +583,108 @@ const Order = () => {
   const items: TabsProps["items"] = [
     {
       key: "Pending",
-      label: "Pending",
+      label: (
+        <span className="flex items-center gap-2">
+          Pending
+          <Badge count={tabKey === "Pending" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
     {
       key: "Approved",
-      label: "Approved",
+      label: (
+        <span className="flex items-center gap-2">
+          Approved
+          <Badge count={tabKey === "Approved" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
     {
       key: "Processing",
-      label: "Processing",
+      label: (
+        <span className="flex items-center gap-2">
+          Processing
+          <Badge count={tabKey === "Processing" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
     {
       key: "On Shipping",
-      label: "On Shipping",
+      label: (
+        <span className="flex items-center gap-2">
+          On Shipping
+          <Badge count={tabKey === "On Shipping" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
     {
       key: "Shipped",
-      label: "Shipped",
+      label: (
+        <span className="flex items-center gap-2">
+          Shipped
+          <Badge count={tabKey === "Shipped" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
     {
       key: "Canceled",
-      label: "Canceled",
+      label: (
+        <span className="flex items-center gap-2">
+          Canceled
+          <Badge count={tabKey === "Canceled" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
     {
       key: "Completed",
-      label: "Completed",
+      label: (
+        <span className="flex items-center gap-2">
+          Completed
+          <Badge count={tabKey === "Completed" ? orders.length : 0} showZero={false} />
+        </span>
+      ),
     },
-    // {
-    //   key: "Returned",
-    //   label: "Returned",
-    // },
   ];
 
   return (
-    <div className="p-3">
-      <Tabs
-        defaultActiveKey="1"
-        activeKey={tabKey}
-        items={items}
-        onChange={onChange}
-      />
-      <Table
-        scroll={{ x: "auto" }}
-        dataSource={orders}
-        columns={columns}
-        expandable={{ expandedRowRender }}
-        loading={global.loading.loading}
-        pagination={{ pageSize: 10 }}
-        bordered
-        size="large"
-      />
+    <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="mb-6">
+        <Title level={2} className="!mb-1">
+          Orders Management
+        </Title>
+        <Text type="secondary">
+          Manage and track all customer orders across different statuses
+        </Text>
+      </div>
+
+      {/* Tabs & Table Card */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <Tabs
+          defaultActiveKey="1"
+          activeKey={tabKey}
+          items={items}
+          onChange={onChange}
+          className="order-tabs"
+        />
+        <Table
+          scroll={{ x: "auto" }}
+          dataSource={orders}
+          columns={columns}
+          expandable={{ expandedRowRender }}
+          loading={global.loading.loading}
+          pagination={{
+            pageSize: 10,
+            position: ["bottomRight"],
+            showSizeChanger: true,
+          }}
+          size="middle"
+          className="modern-table"
+          rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
+        />
+      </Card>
+
       {global.action.orderStatusUpdate && <OrderStatusChange />}
-      {/* {global.action.payment && <AddPayment />} */}
       {global.action.assign && <AssignDeliveryMan />}
     </div>
   );

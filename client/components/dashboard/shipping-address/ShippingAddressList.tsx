@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +14,8 @@ import {
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  FormOutlined,
-  RestOutlined,
+  DeleteOutlined,
+  EditOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
@@ -46,7 +46,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ShippingAddressList: React.FC = () => {
-  const [address, setAddress] = useState([] as any);
+  const [addresses, setAddresses] = useState([] as any);
   const searchInput = React.useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -55,7 +55,7 @@ const ShippingAddressList: React.FC = () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getShippingAddress();
-      setAddress(res.data);
+      setAddresses(res.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -141,26 +141,6 @@ const ShippingAddressList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -195,10 +175,13 @@ const ShippingAddressList: React.FC = () => {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      // width: "15%",
-      // responsive: ['sm'],
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
+      render: (value) => (
+        <Tag color={value === "Home" ? "blue" : value === "Office" ? "purple" : "orange"}>
+          {value}
+        </Tag>
+      ),
     },
     {
       title: "Name",
@@ -206,66 +189,56 @@ const ShippingAddressList: React.FC = () => {
       key: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
+      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
     },
-
     {
       title: "Phone No",
       dataIndex: "phoneNo",
       key: "phoneNo",
       sorter: (a, b) => a.phoneNo.length - b.phoneNo.length,
       ...getColumnSearchProps("phoneNo"),
+      render: (text) => <span className="text-gray-600">{text}</span>,
     },
-
     {
-      title: "E-mail",
+      title: "Email",
       dataIndex: "email",
       key: "email",
       sorter: (a, b) => a.email.length - b.email.length,
       ...getColumnSearchProps("email"),
+      render: (text) => <span className="text-gray-600">{text}</span>,
     },
-
     {
       ...getColumnSearchProps("division"),
       title: "Division",
       dataIndex: "division",
       key: "division",
-      sorter: (a, b) => a.division.length - b.division.length,
-      render: (value) => <span>{value?.name}</span>,
+      render: (value) => <span className="text-gray-700">{value?.name}</span>,
     },
     {
       ...getColumnSearchProps("district"),
       title: "District",
       dataIndex: "district",
       key: "district",
-      sorter: (a, b) => a.district.length - b.district.length,
-      render: (value) => <span>{value?.name}</span>,
+      render: (value) => <span className="text-gray-700">{value?.name}</span>,
     },
-    {
-      ...getColumnSearchProps("upazila"),
-      title: "Upazila",
-      dataIndex: "upazila",
-      key: "upazila",
-      sorter: (a, b) => a.upazila.length - b.upazila.length,
-      render: (value) => <span>{value?.name}</span>,
-    },
-
     {
       ...getColumnSearchProps("address"),
       title: "Address",
       dataIndex: "address",
       key: "address",
-      sorter: (a, b) => a.address.length - b.address.length,
+      render: (text) => (
+        <span className="text-gray-600 text-sm">
+          {text?.length > 40 ? `${text.substring(0, 40)}...` : text}
+        </span>
+      ),
     },
-
     {
       ...getColumnSearchProps("user"),
       title: "User",
       dataIndex: "user",
       key: "user",
-      sorter: (a, b) => a.user - b.user,
-      render: (value) => <span>{value.name}</span>,
+      render: (value) => <span className="font-medium text-gray-700">{value?.name}</span>,
     },
-
     {
       title: "Status",
       key: "status",
@@ -273,36 +246,42 @@ const ShippingAddressList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       render: (value) => {
         return (
-          <Tag color={value.status ? "green" : "red"}>
+          <Tag
+            color={value.status ? "green" : "red"}
+            className="font-medium"
+          >
             {value.status ? "Active" : "Inactive"}
           </Tag>
         );
       },
     },
-
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
+      fixed: "right",
+      width: 120,
       render: (value) => (
-        <div className="flex items-center justify-center gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="Edit Address">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    type: ActionType.UPDATE,
+                    payload: value,
+                  })
+                )
+              }
+            />
+          </Tooltip>
+
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
                 this Address?
               </span>
             }
@@ -313,12 +292,15 @@ const ShippingAddressList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Address">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -330,10 +312,15 @@ const ShippingAddressList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={address}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      dataSource={addresses}
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };

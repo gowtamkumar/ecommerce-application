@@ -2,10 +2,12 @@
 import { ActionType } from "@/constants/constants";
 import { setAction } from "@/redux/features/global/globalSlice";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Tabs } from "antd";
+import { Button, Card, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+
+const { Title, Text } = Typography;
 
 const AddShippingAddress = dynamic(
   () => import("@/components/dashboard/shipping-address/AddShippingAddress"),
@@ -21,34 +23,39 @@ export default function ShippingAddress() {
   const dispatch = useDispatch();
 
   return (
-    <div className="container bg-white p-3">
-      <Tabs
-        activeKey={tabKey}
-        onChange={(key) => setTabKey(key)}
-        items={[
-          {
-            label: "Shipping Address List",
-            key: "shipping_address_list",
-            children: <ShippingAddressList />,
-          },
-        ]}
-        tabBarExtraContent={
-          <Button
-            size="small"
-            className="capitalize"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  // shippingAddress:true,
-                  type: ActionType.CREATE,
-                })
-              )
-            }
-          >
-            <PlusOutlined className="mx-1" /> New Address
-          </Button>
-        }
-      />
+    <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <Title level={2} className="!mb-1">
+            Shipping Addresses
+          </Title>
+          <Text type="secondary">
+            Manage customer shipping addresses and delivery locations
+          </Text>
+        </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() =>
+            dispatch(
+              setAction({
+                type: ActionType.CREATE,
+              })
+            )
+          }
+          className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+        >
+          New Address
+        </Button>
+      </div>
+
+      {/* Table Card */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <ShippingAddressList />
+      </Card>
+
       <AddShippingAddress />
     </div>
   );

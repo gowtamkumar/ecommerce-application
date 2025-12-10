@@ -13,19 +13,19 @@ import {
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  FormOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
   QuestionCircleOutlined,
-  RestOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { AiOutlineEye } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 
 interface DataType {
@@ -48,7 +48,7 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const CouponList: React.FC = () => {
-  const [address, setAddress] = useState([] as any);
+  const [coupons, setCoupons] = useState([] as any);
   const searchInput = React.useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ const CouponList: React.FC = () => {
     dispatch(setLoading({ loading: true }));
     try {
       const res = await getCoupons();
-      setAddress(res.data);
+      setCoupons(res.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -144,26 +144,6 @@ const CouponList: React.FC = () => {
           >
             Reset
           </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
         </Space>
       </div>
     ),
@@ -195,38 +175,47 @@ const CouponList: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      // width: "15%",
-      // responsive: ['sm'],
-      sorter: (a, b) => a.type.length - b.type.length,
-      ...getColumnSearchProps("type"),
-    },
-    {
-      title: "Code",
+      title: "Coupon Code",
       dataIndex: "code",
       key: "code",
       sorter: (a, b) => a.code.length - b.code.length,
       ...getColumnSearchProps("code"),
+      render: (text) => <span className="font-mono font-semibold text-gray-900 uppercase">{text}</span>,
     },
-
     {
-      title: "Discount Type",
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      sorter: (a, b) => a.type.length - b.type.length,
+      ...getColumnSearchProps("type"),
+      render: (value) => (
+        <Tag color={value === "Order" ? "purple" : "blue"}>{value}</Tag>
+      ),
+    },
+    {
+      title: "Disc. Type",
       dataIndex: "discountType",
       key: "discountType",
       sorter: (a, b) => a.discountType.length - b.discountType.length,
       ...getColumnSearchProps("discountType"),
+      render: (value) => (
+        <Tag color={value === "Percentage" ? "blue" : "green"}>
+          {value === "Percentage" ? "Percentage" : "Fixed"}
+        </Tag>
+      ),
     },
-
     {
       title: "Value",
       dataIndex: "value",
       key: "value",
       sorter: (a, b) => a.value.length - b.value.length,
       ...getColumnSearchProps("value"),
+      render: (value, record) => (
+        <span className="font-medium text-gray-700">
+          {record.discountType === "Percentage" ? `${value}%` : `৳${value}`}
+        </span>
+      ),
     },
-
     {
       ...getColumnSearchProps("startDate"),
       title: "Start Date",
@@ -234,7 +223,9 @@ const CouponList: React.FC = () => {
       key: "startDate",
       sorter: (a, b) => a.startDate.length - b.startDate.length,
       render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+        <span className="text-gray-600">
+          {value && dayjs(value).format("MMM DD, YYYY")}
+        </span>
       ),
     },
     {
@@ -244,55 +235,17 @@ const CouponList: React.FC = () => {
       key: "expiryDate",
       sorter: (a, b) => a.expiryDate.length - b.expiryDate.length,
       render: (value) => (
-        <p>{value && dayjs(value).format("DD-MM-YYYY h:mm A")}</p>
+        <span className="text-gray-600">
+          {value && dayjs(value).format("MMM DD, YYYY")}
+        </span>
       ),
-    },
-
-    {
-      ...getColumnSearchProps("minOrderAmount"),
-      title: "Min Order Amount",
-      dataIndex: "minOrderAmount",
-      key: "minOrderAmount",
-      sorter: (a, b) => a.minOrderAmount.length - b.minOrderAmount.length,
-    },
-
-    {
-      ...getColumnSearchProps("maxUser"),
-      title: "Max User",
-      dataIndex: "maxUser",
-      key: "maxUser",
-      // sorter: (a, b) => a.maxUser - b.maxUser,
-      // render: (value) => <span>{value.name}</span>,
-    },
-    {
-      ...getColumnSearchProps("mincartValue"),
-      title: "Min Cart Value",
-      dataIndex: "mincartValue",
-      key: "mincartValue",
-    },
-    {
-      ...getColumnSearchProps("maxDiscountValue"),
-      title: "Max Discount Value",
-      dataIndex: "maxDiscountValue",
-      key: "maxDiscountValue",
-      // sorter: (a, b) => a.maxUser - b.maxUser,
-      // render: (value) => <span>{value.name}</span>,
     },
     {
       ...getColumnSearchProps("usageLimit"),
       title: "Usage Limit",
       dataIndex: "usageLimit",
       key: "usageLimit",
-      // sorter: (a, b) => a.maxUser - b.maxUser,
-      // render: (value) => <span>{value.name}</span>,
-    },
-    {
-      ...getColumnSearchProps("usagePerUser"),
-      title: "Usage Per User",
-      dataIndex: "usagePerUser",
-      key: "usagePerUser",
-      // sorter: (a, b) => a.maxUser - b.maxUser,
-      // render: (value) => <span>{value.name}</span>,
+      render: (value) => <span className="text-gray-600">{value}</span>,
     },
     {
       title: "Status",
@@ -301,7 +254,10 @@ const CouponList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       render: (value) => {
         return (
-          <Tag color={value.active ? "green" : "red"}>
+          <Tag
+            color={value.active ? "green" : "red"}
+            className="font-medium"
+          >
             {value.active ? "Active" : "Inactive"}
           </Tag>
         );
@@ -310,34 +266,41 @@ const CouponList: React.FC = () => {
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
+      fixed: "right",
+      width: 150,
       render: (value) => (
-        <div className="flex items-center justify-center gap-2">
-          <Button
-            size="small"
-            icon={<AiOutlineEye />}
-            title="View"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  coupon: true,
-                  type: ActionType.VIEW,
-                  payload: value,
-                })
-              )
-            }
-          />
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() => route.push(`/dashboard/coupons/${value.id}`)}
-          />
+        <div className="flex gap-2 justify-end">
+          <Tooltip title="View Details">
+            <Button
+              size="small"
+              icon={<EyeOutlined />}
+              className="hover:!bg-blue-50 hover:!text-blue-600"
+              onClick={() =>
+                dispatch(
+                  setAction({
+                    coupon: true,
+                    type: ActionType.VIEW,
+                    payload: value,
+                  })
+                )
+              }
+            />
+          </Tooltip>
+
+          <Tooltip title="Edit Coupon">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              className="hover:!bg-green-50 hover:!text-green-600"
+              onClick={() => route.push(`/dashboard/coupons/${value.id}`)}
+            />
+          </Tooltip>
+
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Address?
+                Are you sure <span className="font-bold text-red-600">delete</span>{" "}
+                this Coupon?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -347,12 +310,15 @@ const CouponList: React.FC = () => {
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
           >
-            <Button
-              size="small"
-              danger
-              loading={global.loading?.delete}
-              icon={<RestOutlined />}
-            />
+            <Tooltip title="Delete Coupon">
+              <Button
+                size="small"
+                danger
+                loading={global.loading?.delete}
+                icon={<DeleteOutlined />}
+                className="hover:!bg-red-50"
+              />
+            </Tooltip>
           </Popconfirm>
         </div>
       ),
@@ -364,10 +330,15 @@ const CouponList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
-      dataSource={address}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      dataSource={coupons}
+      pagination={{
+        pageSize: 10,
+        position: ["bottomRight"],
+        showSizeChanger: true,
+      }}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
     />
   );
 };
