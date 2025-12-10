@@ -6,12 +6,12 @@ import {
   setOpen,
   setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
-import { Button, Drawer, Layout, Menu } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import { Drawer, Layout, Menu } from "antd";
 import { useRouter } from "next/navigation";
 import { useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import HeaderLogo from "../website/header/Logo";
-import { CloseOutlined } from "@ant-design/icons";
 
 const { Sider } = Layout;
 
@@ -64,9 +64,9 @@ const Sidebar = () => {
         placement="left"
         onClose={onClose}
         open={layout.open}
-        styles={{ 
+        styles={{
           body: { margin: 0, padding: 0 },
-          header: { 
+          header: {
             borderBottom: '1px solid #f0f0f0',
             padding: '16px 24px'
           }
@@ -86,8 +86,8 @@ const Sidebar = () => {
         }
       >
         <Menu
-          style={{ 
-            margin: 0, 
+          style={{
+            margin: 0,
             padding: 0,
             border: 'none'
           }}
@@ -120,9 +120,8 @@ const Sidebar = () => {
       >
         {/* Logo Section */}
         <div
-          className={`bg-white flex justify-center items-center cursor-pointer transition-all duration-300 ${
-            layout.collapsed ? "p-2 h-16" : "p-3 h-20"
-          }`}
+          className={`bg-white flex justify-center items-center cursor-pointer transition-all duration-300 ${layout.collapsed ? "p-2 h-16" : "p-3 h-20"
+            }`}
           onClick={() => {
             route.push("/");
           }}
