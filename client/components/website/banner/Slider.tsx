@@ -4,6 +4,7 @@ import { Button } from "antd";
 import Link from "next/link";
 import appConfig from "@/appConfig";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {
   A11y,
   Autoplay,
@@ -44,7 +45,7 @@ export default function Slider({ banners }: any) {
               <div
                 className="relative w-full h-[60vh] md:h-[600px] bg-cover bg-center flex items-center justify-center"
                 style={{
-                  backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${image})`,
+                  backgroundImage: `url(${getUploadImageUrl(image)})`,
                 }}
               >
                 {/* Dark Overlay */}

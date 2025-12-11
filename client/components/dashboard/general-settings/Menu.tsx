@@ -161,7 +161,7 @@ const Index = () => {
                   }
                 }}
               >
-                {menus.map((item: { name: string; id: number }) => (
+                {menus?.map((item: { name: string; id: number }) => (
                   <Select.Option key={item.id} value={item.id}>
                     {`${item.name}`}
                   </Select.Option>

@@ -1,7 +1,7 @@
 'use client'
-import appConfig from "@/appConfig";
 import { ActionType } from "@/constants/constants";
 import { deleteUser, getUsers } from "@/lib/apis/user";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {
   errorNotification,
   successNotification,
@@ -185,7 +185,7 @@ const UserList = () => {
         <div className="flex items-center gap-3">
           <Avatar
             size={40}
-            src={`${appConfig.baseApiUrl}/uploads/${record.image || "no-data.png"}`}
+            src={getUploadImageUrl(record.image)}
             icon={<UserOutlined />}
             className="border border-gray-200"
           />
@@ -341,7 +341,7 @@ const UserList = () => {
                     name: `image`,
                     status: "done",
                     fileName: newData.image,
-                    url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"}`,
+                    url: getUploadImageUrl(newData.image),
                   };
                   newData.fileList = [file];
                 }

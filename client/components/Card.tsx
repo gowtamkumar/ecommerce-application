@@ -1,5 +1,4 @@
 "use client";
-import appConfig from "@/appConfig";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import {
   errorNotification,
@@ -9,6 +8,7 @@ import {
   selectGlobal,
   setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
+import { getProductImageUrls } from "@/lib/utils/imageUrl";
 import { Rate } from "antd";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -63,13 +63,10 @@ export default function Card({ item }: { item: any }) {
     }
   }
 
-  const thumbnailImage = item?.thumbnailImage
-    ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
-    : "/default-placeholder.png";
-
-  const hoverImage = item?.hoverImage
-    ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
-    : "/default-placeholder.png";
+  const { thumbnailUrl, hoverUrl } = getProductImageUrls(
+    item?.thumbnailImage,
+    item?.hoverImage
+  );
 
   return (
     <div className="group relative bg-white rounded-xl border border-gray-100 hover:border-transparent hover:shadow-lg transition-all duration-300 flex flex-col h-full overflow-hidden">
@@ -77,7 +74,7 @@ export default function Card({ item }: { item: any }) {
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Link href={`/products/${item.slug}`}>
           <Image
-            src={thumbnailImage}
+            src={thumbnailUrl}
             alt={item.name}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -86,10 +83,11 @@ export default function Card({ item }: { item: any }) {
           {/* Hover Image */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-white">
             <Image
-              src={hoverImage}
+              src={hoverUrl}
               alt={item.name}
               fill
               className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         </Link>

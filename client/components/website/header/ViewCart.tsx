@@ -1,5 +1,5 @@
 "use client";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { deleteCart, getCartLists } from "@/lib/apis/cart";
 import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { Button } from "antd";
@@ -33,7 +33,7 @@ export default function ViewCart() {
             >
               <div>
                 <Image
-                  src={`${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`}
+                  src={getUploadImageUrl(item.thumbnailImage)}
                   alt={item.name}
                   width={100}
                   height={100}

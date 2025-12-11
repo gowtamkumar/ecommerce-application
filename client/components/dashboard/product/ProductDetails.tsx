@@ -1,7 +1,7 @@
 "use client";
-import appConfig from "@/appConfig";
 import { getProduct } from "@/lib/apis/admin/product";
 import { ProductType } from "@/lib/types/product";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Card, Descriptions, Image, Spin, Tag, Typography } from "antd";
 import { useRouter } from "next/navigation";
@@ -70,7 +70,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
         <div className="lg:col-span-1 space-y-4">
           <Card className="overflow-hidden">
             <Image
-              src={`${appConfig.baseApiClientUrl}/uploads/${product.singleImage || "no-data.png"}`}
+              src={getUploadImageUrl(product.singleImage)}
               alt={product.name}
               className="w-full object-cover rounded-lg"
             />
@@ -79,7 +79,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
             {product.images?.map((img, idx) => (
               <div key={idx} className="border rounded-lg overflow-hidden">
                 <Image
-                  src={`${appConfig.baseApiClientUrl}/uploads/${img}`}
+                  src={getUploadImageUrl(img)}
                   alt={`${product.name} - ${idx}`}
                   className="w-full h-full object-cover"
                 />
@@ -90,7 +90,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
 
         {/* Right Column - Details */}
         <div className="lg:col-span-2 space-y-6">
-          <Card title="Basic Information" bordered={false} className="shadow-sm">
+          <Card title="Basic Information" variant="borderless" className="shadow-sm">
             <Descriptions column={1} bordered>
               <Descriptions.Item label="Description">
                 <div dangerouslySetInnerHTML={{ __html: product.description }} />
@@ -107,7 +107,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
             </Descriptions>
           </Card>
 
-          <Card title="Pricing & Inventory" bordered={false} className="shadow-sm">
+          <Card title="Pricing & Inventory" variant="borderless" className="shadow-sm">
             <Descriptions column={2} bordered>
               <Descriptions.Item label="Unit Price">{product.productVariants?.[0]?.price}</Descriptions.Item>
               <Descriptions.Item label="Purchase Price">{product.productVariants?.[0]?.purchasePrice}</Descriptions.Item>
@@ -117,7 +117,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
             </Descriptions>
           </Card>
 
-          <Card title="Organization" bordered={false} className="shadow-sm">
+          <Card title="Organization" variant="borderless" className="shadow-sm">
             <Descriptions column={1} bordered>
               <Descriptions.Item label="Tags">
                 {product.tags?.map((tag) => (

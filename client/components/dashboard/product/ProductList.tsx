@@ -1,6 +1,7 @@
 "use client";
-import appConfig from "@/appConfig";
+import { ActionType } from "@/constants/constants";
 import { deleteProduct, getProducts } from "@/lib/apis/admin/product";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {
   errorNotification,
   successNotification,
@@ -93,7 +94,7 @@ const ProductList = () => {
             <Image
               width={48}
               height={48}
-              src={`${appConfig.baseApiClientUrl}/uploads/${record.thumbnailImage || "no-data.png"}`}
+              src={getUploadImageUrl(record.thumbnailImage)}
               alt={text}
               preview={false}
               className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"

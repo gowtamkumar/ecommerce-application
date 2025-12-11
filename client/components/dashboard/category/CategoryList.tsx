@@ -1,6 +1,7 @@
-import appConfig from "@/appConfig";
+'use client'
 import { ActionType } from "@/constants/constants";
 import { deleteCategory, getAntdCategories } from "@/lib/apis/categories";
+import { getImageUrl, getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {
   errorNotification,
   successNotification,
@@ -72,6 +73,7 @@ const CategoryList: React.FC = () => {
     item.label.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  
 
   const columns: TableColumnsType<DataType> = [
     {
@@ -79,15 +81,16 @@ const CategoryList: React.FC = () => {
       dataIndex: "label",
       key: "label",
       render: (text, record) => (
+        
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
-            <Image
-              width={40}
-              height={40}
+           <Image
+              width={48}
+              height={48}
+              src={getImageUrl(record.image)}
               alt={text}
-              src={`${appConfig.baseApiClientUrl}/uploads/${record.image || "no-data.png"}`}
-              preview={false}
-              className="object-cover w-full h-full"
+              // preview={false}
+              className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
             />
           </div>
           <span className="font-semibold text-gray-900">{text}</span>
@@ -141,8 +144,7 @@ const CategoryList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
+                  url: getUploadImageUrl(newData.image),
                 };
                 newData.fileList = [file];
               }

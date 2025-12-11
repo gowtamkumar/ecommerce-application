@@ -13,12 +13,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Card from "@/components/Card";
 import { getPublicProducts } from "@/lib/apis/product";
+import { getProductImageUrls } from "@/lib/utils/imageUrl";
 import Link from "next/link";
 import Image from "next/image";
 import { FaRegHeart } from "react-icons/fa";
 import { Rate } from "antd";
 import AddToCartButton from "@/components/AddToCartButton";
-import appConfig from "@/appConfig";
 import { AddToWishlist } from "@/lib/utils/addToWishList";
 import { useSession } from "next-auth/react";
 import Pagination from "@/components/Pagination";
@@ -123,13 +123,10 @@ const ProductCard: React.FC = () => {
       >
         {products?.map((item: any) => {
           const url = `/product/${item.slug}`;
-          const thumbnailImage = item?.thumbnailImage
-            ? `${appConfig.baseApiUrl}/uploads/${item?.thumbnailImage}`
-            : "/default-placeholder.png";
-
-          const hoverImage = item?.hoverImage
-            ? `${appConfig.baseApiUrl}/uploads/${item?.hoverImage}`
-            : "/default-placeholder.png";
+          const { thumbnailUrl, hoverUrl } = getProductImageUrls(
+            item?.thumbnailImage,
+            item?.hoverImage
+          );
           return (
             <div key={item.id}>
               {global.productView ? (
@@ -137,7 +134,7 @@ const ProductCard: React.FC = () => {
                   <div className="relative group text-center md:text-start h-[40vh] overflow-hidden col-span-1">
                     {/* Main Image */}
                     <Image
-                      src={thumbnailImage}
+                      src={thumbnailUrl}
                       alt={item.name}
                       loading="lazy"
                       width={1000}
@@ -148,7 +145,7 @@ const ProductCard: React.FC = () => {
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
                       <Image
-                        src={hoverImage}
+                        src={hoverUrl}
                         alt={item.name}
                         width={800}
                         height={800}

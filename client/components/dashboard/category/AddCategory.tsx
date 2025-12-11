@@ -1,4 +1,4 @@
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import uploadButton from "@/components/website/uploadButton";
 import {
   getAntdCategories,
@@ -125,7 +125,7 @@ const AddCategory = () => {
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
+        url: getUploadImageUrl(filename),
       };
       const newFileName = res.data.length ? filename : null;
       // Assuming you're updating form data here:

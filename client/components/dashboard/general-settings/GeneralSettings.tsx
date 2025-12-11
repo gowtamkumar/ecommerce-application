@@ -32,6 +32,7 @@ import {
   setAction,
   setSetting,
 } from "@/redux/features/global/globalSlice";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 const { Title, Text } = Typography;
 
@@ -76,7 +77,7 @@ const FileUploadField = ({
         uid: Date.now().toString(),
         name: `${filename}`,
         status: "done",
-        url: `${appConfig.baseApiUrl}/uploads/${uploaded.filename}`,
+        url: getUploadImageUrl(uploaded.filename),
         fileName: uploaded.filename,
       };
 

@@ -10,7 +10,7 @@ import {
   EffectFade,
   Autoplay,
 } from "swiper/modules";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 export default function CategoryCard({ categories }: any) {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function CategoryCard({ categories }: any) {
                     <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-black transition-all duration-300 shadow-sm group-hover:shadow-md bg-gray-50 flex items-center justify-center">
                       <Image
                         alt={item.name || "image"}
-                        src={`${appConfig.baseApiUrl}/uploads/${item.image}`}
+                        src={getUploadImageUrl(item.image)}
                         loading="lazy"
                         width={100}
                         height={100}

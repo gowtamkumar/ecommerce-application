@@ -20,6 +20,7 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 const { Title, Text } = Typography;
 
@@ -103,7 +104,7 @@ const FooterOption = () => {
         name: `footer-${filename}`,
         status: "done",
         fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename}`,
+        url: getUploadImageUrl(filename),
       };
 
       const newValues = {

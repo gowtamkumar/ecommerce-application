@@ -1,4 +1,4 @@
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { getPublicProducts } from "@/lib/apis/product";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { setOpen } from "@/redux/features/layout/layoutSlice";
@@ -82,9 +82,7 @@ export default function SearchEngine() {
         {global.loading.search
           ? "Loadding..."
           : results.map((product: any) => {
-            const thumbnailImage = product.thumbnailImage
-              ? `${appConfig.baseApiUrl}/uploads/${product.thumbnailImage}`
-              : "/product-default.png";
+            const thumbnailImage = getUploadImageUrl(product.thumbnailImage, "/product-default.png");
 
             return (
               <Link key={product.id} href={`/products/${product.slug}`}>

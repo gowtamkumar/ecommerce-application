@@ -17,6 +17,10 @@ const nextConfig = {
         hostname: "dev.ecomfixr.com",
       },
     ],
+    dangerouslyAllowSVG: true,
+    // Allow loading images from localhost and Docker internal IPs
+    // This is necessary for development with Docker
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
 

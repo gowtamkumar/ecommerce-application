@@ -1,4 +1,5 @@
-import appConfig from "@/appConfig";
+"use client";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { userProfileRoute } from "@/NavBarRoute";
 import {
   selectLayout,
@@ -22,7 +23,7 @@ export default function DashboardHeader() {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const session = useSession();
-  const profileImage = session.data?.user?.image || {};
+  const profileImage = session.data?.user?.image;
   const userName = session.data?.user?.name || "Admin User";
   const userRole = session.data?.user?.role || "Administrator";
 
@@ -175,11 +176,7 @@ export default function DashboardHeader() {
           >
             <Avatar
               size={44}
-              src={
-                profileImage
-                  ? `${appConfig.baseApiUrl}/uploads/${profileImage}`
-                  : undefined
-              }
+              src={getUploadImageUrl(profileImage)}
               icon={!profileImage && <UserOutlined />}
               style={{
                 backgroundColor: profileImage ? undefined : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",

@@ -10,7 +10,7 @@ import {
 import Image from "next/image";
 import { Button } from "antd";
 import { useRouter } from "next/navigation";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 export default function HeaderDiscount({ discounts }: any) {
   const router = useRouter();
@@ -30,11 +30,7 @@ export default function HeaderDiscount({ discounts }: any) {
               <div className="relative gap-3">
                 <Image
                   alt={item.type}
-                  src={
-                    item.image
-                      ? `${appConfig.baseApiUrl}/uploads/${item?.image}`
-                      : "/image-box-12.jpg"
-                  }
+                  src={getUploadImageUrl(item.image, "/image-box-12.jpg")}
                   loading="lazy"
                   width={0}
                   height={0}

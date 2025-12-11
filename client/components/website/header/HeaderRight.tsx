@@ -11,6 +11,7 @@ import { FiShoppingBag } from "react-icons/fi";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
@@ -80,11 +81,7 @@ export default function HeaderRight() {
           <div className="cursor-pointer border-2 border-transparent hover:border-gray-200 rounded-full transition-all">
             <Avatar
               size={32}
-              src={
-                profileImage
-                  ? `${appConfig.baseApiUrl}/uploads/${profileImage}`
-                  : "/pos_software.png"
-              }
+              src={getUploadImageUrl(profileImage)}
               className="bg-gray-200"
             />
           </div>

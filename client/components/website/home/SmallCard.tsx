@@ -10,7 +10,7 @@ import {
   EffectFade,
   Autoplay,
 } from "swiper/modules";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
 
 export default function SmallCard({ categories }: any) {
@@ -62,11 +62,7 @@ export default function SmallCard({ categories }: any) {
                     <div className="rounded-full border flex justify-center p-5 text-center">
                       <Image
                         alt={item.image}
-                        src={
-                          item.image
-                            ? `${appConfig.baseApiUrl}/uploads/${item.image}`
-                            : "/pos_software.png"
-                        }
+                        src={getUploadImageUrl(item.image, "/pos_software.png")}
                         loading="lazy"
                         // fill
                         width={70}

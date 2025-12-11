@@ -1,5 +1,5 @@
 "use client";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
 import { useState } from "react";
 import { CiSquareChevRight } from "react-icons/ci";
@@ -28,9 +28,7 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           }}
         >
           {(newimages || []).map((item: string, idx: number) => {
-            const image = item
-              ? `${appConfig.baseApiUrl}/uploads/${item}`
-              : "/pos_software.png";
+            const image = getUploadImageUrl(item, "/pos_software.png");
             return (
               <SwiperSlide key={idx} className="bg-white flex items-center justify-center">
                 <div className="relative w-full h-full">
@@ -75,9 +73,7 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           }}
         >
           {(newimages || []).map((item: string, idx: number) => {
-            const image = item
-              ? `${appConfig.baseApiUrl}/uploads/${item}`
-              : "/default-placeholder.png";
+            const image = getUploadImageUrl(item, "/default-placeholder.png");
             return (
               <SwiperSlide key={idx} className="cursor-pointer rounded-xl overflow-hidden border-2 border-transparent transition-all !h-24 bg-gray-50">
                 <div className="relative w-full h-full">

@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "./Seo";
 import WhatsAppWidgetSetting from "./WhatsAppWidgetSetting";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 const { Title, Text } = Typography;
 
@@ -47,7 +48,7 @@ export default function Index() {
       name: `image-${Math.floor(Math.random() * 10000)}`,
       status: "done",
       fileName: filename,
-      url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
+      url: getUploadImageUrl(filename || "no-data.png"),
     });
 
     try {

@@ -1,5 +1,5 @@
 "use client";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,11 +23,7 @@ export default function SocialIcon() {
       </span>
       <div className="w-full max-w-[900px] mx-auto">
         <Image
-          src={
-            settingData?.footerOption?.image
-              ? `${appConfig.baseApiUrl}/uploads/${settingData?.footerOption?.image}`
-              : "/banglargonji-payment-methods.png.webp"
-          }
+          src={getUploadImageUrl(settingData?.footerOption?.image, "/banglargonji-payment-methods.png.webp")}
           alt="Payment Gateway"
           width={900}
           height={100} // This helps Next.js set aspect ratio

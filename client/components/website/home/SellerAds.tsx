@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 const SellerAds = ({ banners }: any) => {
   return (
@@ -33,11 +33,7 @@ const SellerAds = ({ banners }: any) => {
                   <div className="relative md:my-20 my-10 md:w-[25vw] md:h-[50vh] w-[75vw] h-[30vh] items-center rounded-xl bg-red-300">
                     <div className="absolute md:w-[25vw] md:h-[50vh] w-[75vw] h-[30vh] top-[-35] right-[-30] rounded-xl bg-white">
                       <Image
-                        src={
-                          item.image
-                            ? `${appConfig.baseApiUrl}/uploads/${item.image}`
-                            : "/pos_software.png"
-                        }
+                        src={getUploadImageUrl(item.image, "/pos_software.png")}
                         alt={item.image}
                         loading="lazy"
                         width="0"

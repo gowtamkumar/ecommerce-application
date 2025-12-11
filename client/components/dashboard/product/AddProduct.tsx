@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import appConfig from "@/appConfig";
 import {
   getProduct,
   saveProduct,
@@ -8,6 +7,7 @@ import {
 } from "@/lib/apis/admin/product";
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button, Form, Input } from "antd";
 import dynamic from "next/dynamic";
@@ -78,7 +78,7 @@ const AddProduct = ({
       name: `photo ${identifier}`,
       status: "done",
       fileName,
-      url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
+      url: getUploadImageUrl(fileName),
     });
 
     try {
@@ -200,7 +200,7 @@ const AddProduct = ({
         name: `photo ${idx}`,
         status: "done",
         fileName: item,
-        url: `${appConfig.baseApiUrl}/uploads/${item || "no-data.png"}`,
+        url: getUploadImageUrl(item),
       }));
       newData.fileList = file;
     }
@@ -211,8 +211,7 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.thumbnailImage,
-        url: `${appConfig.baseApiUrl}/uploads/${newData.thumbnailImage || "no-data.png"
-          }`,
+        url: getUploadImageUrl(newData.thumbnailImage),
       };
       newData.fileThumbnailList = [newfileThumbnail];
     }
@@ -223,8 +222,7 @@ const AddProduct = ({
         name: `photo ${Math.random() * 10000 + ""}`,
         status: "done",
         fileName: newData.hoverImage,
-        url: `${appConfig.baseApiUrl}/uploads/${newData.hoverImage || "no-data.png"
-          }`,
+        url: getUploadImageUrl(newData.hoverImage),
       };
       newData.fileHoverList = [newfileHover];
     }
@@ -262,7 +260,7 @@ const AddProduct = ({
   //       name: `photo ${Math.random() * 10000 + ""}`,
   //       status: "done",
   //       fileName: item.filename,
-  //       url: `${appConfig.baseApiUrl}/uploads/${item.filename}`,
+  //       url: `${appConfig.baseApiClientUrl}/uploads/${item.filename}`,
   //     }));
 
   //     const newFileName = res.data.length ? res.data[0].filename : null;

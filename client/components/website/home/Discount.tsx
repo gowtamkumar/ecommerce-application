@@ -7,7 +7,7 @@ import { Button } from "antd";
 import { useDispatch } from "react-redux";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { useRouter } from "next/navigation";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 
 export default function Discount({ discounts }: any) {
@@ -45,11 +45,7 @@ export default function Discount({ discounts }: any) {
               <div className="relative gap-3">
                 <Image
                   alt={item?.type || 'discount'}
-                  src={
-                    item.image
-                      ? `${appConfig.baseApiUrl}/uploads/${item?.image}`
-                      : "/image-box-12.jpg"
-                  }
+                  src={getUploadImageUrl(item.image, "/image-box-12.jpg")}
 
                   loading="lazy"
                   // fill

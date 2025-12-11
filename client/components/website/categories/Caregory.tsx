@@ -1,8 +1,7 @@
 "use client";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
 
 export default function Caregory({ categories }: any) {
   const router = useRouter();
@@ -20,7 +19,7 @@ export default function Caregory({ categories }: any) {
             >
               <Image
                 alt={item.name || "image"}
-                src={`${appConfig.baseApiUrl}/uploads/${item.image}`}
+                src={getUploadImageUrl(item.image)}
                 loading="lazy"
                 width={70}
                 height={70}

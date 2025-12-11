@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../lib/authOption";
-import appConfig from "@/appConfig";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { getSettings } from "@/lib/apis/setting";
 import StoreProvider from "@/redux/storeProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
@@ -73,9 +73,7 @@ export default async function RootLayout({
   const session = await auth();
   const settingRes = await getSettings();
   const setting = settingRes?.data || {};
-  const favicon = setting?.favicon
-    ? `${appConfig.baseApiClientUrl}/uploads/${setting.favicon}`
-    : "";
+  const favicon = getImageUrl(setting?.favicon, "");
 
   return (
     <html lang="en">
