@@ -1,14 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../config/db';
-import { PaymentEntity } from '../model/payment.entity';
-import { paymentValidationSchema } from '../../../validation';
-import { logger } from '../../../middlewares/logger';
 import { CustomRequest } from '../../../enums/custom-request-type';
-import { OrderEntity } from '../../order/model/order.entity';
-import { PaymentMethod, PaymentStatus } from '../../order/enums';
-import { PaymentType } from '../enums/payment-type.enum';
+import { NotificationType } from '../../../enums/notification-type.enum';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
+import { paymentValidationSchema } from '../../../validation';
 import { dashboardPaymentValidationSchema } from '../../../validation/payment/dashboardPaymentValidation';
+import { RoleEnum } from '../../auth/enums/role.enum';
+import { UserEntity } from '../../auth/model/user.entity';
+import { PaymentMethod, PaymentStatus } from '../../order/enums';
+import { OrderEntity } from '../../order/model/order.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
+import { PaymentType } from '../enums/payment-type.enum';
+import { PaymentEntity } from '../model/payment.entity';
 
 // @desc Get all Payment
 // @route GET /api/v1/Payment
@@ -292,6 +296,24 @@ export const sslcommerzFailHandler = asyncHandler(async (req: Request, res: Resp
 
     order.paymentStatus = PaymentStatus.Failed;
     await orderRepo.save(order);
+
+    // Notify Admins about Payment Failure
+    const userRepository = connection.getRepository(UserEntity);
+    const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+    const notificationRepo = connection.getRepository(NotificationEntity);
+    
+    const adminNotifications = admins.map((admin: UserEntity) => ({
+      type: NotificationType.AdminPaymentFailed,
+      title: 'Order Payment Failed',
+      message: `Payment failed for Order #${order.id} (Transaction ID: ${tranId}).`,
+      userId: admin.id,
+      orderId: order.id,
+      isRead: false,
+    }));
+
+    if (adminNotifications.length > 0) {
+      await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+    }
 
     return res.redirect(`${process.env.FRONT_END_URL}/sslcommerz/fail/${tranId}`);
   } catch (error) {

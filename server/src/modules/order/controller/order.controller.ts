@@ -3,14 +3,16 @@ import { Repository } from 'typeorm';
 import { sendSms } from '../../../common/sendSms';
 import { getDBConnection } from '../../../config/db';
 import { CustomRequest } from '../../../enums/custom-request-type';
+import { NotificationType } from '../../../enums/notification-type.enum';
 import { asyncHandler } from '../../../middlewares/async.middleware';
 import { logger } from '../../../middlewares/logger';
 import {
-  onlineCreateOrderValidationSchema,
-  orderDeliveryManValidationSchema,
-  orderStatusUpdateValidationSchema,
-  orderUpdateValidationSchema,
+    onlineCreateOrderValidationSchema,
+    orderDeliveryManValidationSchema,
+    orderStatusUpdateValidationSchema,
+    orderUpdateValidationSchema,
 } from '../../../validation';
+import { RoleEnum } from '../../auth/enums/role.enum';
 import { UserEntity } from '../../auth/model/user.entity';
 import { CartEntity } from '../../cart/model/cart.entity';
 import { AppliedCouponEntity } from '../../coupon/model/applied-coupon.entity';
@@ -130,15 +132,42 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
         await couponRepo.save(newCouponApplied);
       }
 
-      // notification
+      // notification to User
       const notification: Notification = {
-        type: 'Order',
+        type: NotificationType.OrderPlaced,
         title: 'Order Placed',
         message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
         userId,
         orderId: savedOrder.id,
       };
       await sendOrderNotification(notification);
+
+      // Notification to Admins
+      const userRepository = queryRunner.manager.getRepository(UserEntity);
+      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+      const adminNotifications = admins.map((admin: any) => ({
+        type: NotificationType.AdminNewOrder,
+        title: 'New Order Received',
+        message: `New order #${savedOrder.id} received from User ${userId}. Tracking No: ${trackingNo}`,
+        userId: admin.id,
+        orderId: savedOrder.id,
+      }));
+      
+      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+      const createdNotifications = notificationRepo.create(adminNotifications as any); // Cast slightly to match if needed, or loop
+      await notificationRepo.save(createdNotifications);
+
+      // Check for High Value Order (e.g. > 10000)
+      if (savedOrder.grandTotal > 10000) {
+        const highValueNotifications = admins.map((admin: UserEntity) => ({
+          type: NotificationType.AdminHighValueOrder,
+          title: 'High Value Order Alert',
+          message: `High value order #${savedOrder.id} received. Total: ${savedOrder.grandTotal}`,
+          userId: admin.id,
+          orderId: savedOrder.id,
+        }));
+        await notificationRepo.save(notificationRepo.create(highValueNotifications as any));
+      }
     }
 
     if (queryRunner.isTransactionActive) {
@@ -689,8 +718,13 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
     const getuser = await userRepository.findOne({ where: { id: userId } });
     const ssmsRes = await sendSms(getuser.phone, message);
 
+    let notificationType = NotificationType.Order;
+    if (status === OrderStatus.Shipped) notificationType = NotificationType.OrderShipped;
+    if (status === OrderStatus.Delivered) notificationType = NotificationType.OrderDelivered;
+    if (status === OrderStatus.Canceled) notificationType = NotificationType.OrderCanceled;
+
     const notification: Notification = {
-      type: 'Order',
+      type: notificationType,
       title: status,
       message,
       userId,
@@ -709,6 +743,22 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
     await orderTracking(newOrderTracking, orderTrackingRepo);
 
     await sendOrderNotification(notification);
+
+    // Notify Admins if Order is Canceled
+    if (status === OrderStatus.Canceled) {
+       const userRepository = queryRunner.manager.getRepository(UserEntity);
+       const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+       const adminNotifications = admins.map((admin) => ({
+         type: NotificationType.AdminOrderCanceled,
+         title: 'Order Canceled',
+         message: `Order #${result.id} has been canceled.`,
+         userId: admin.id,
+         orderId: result.id,
+       }));
+       
+       const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+       await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+    }
 
     await queryRunner.commitTransaction();
 
@@ -756,6 +806,37 @@ async function adjustStock(
       id: findProductVariant.id,
       stockQty: newStockQty,
     });
+
+    // Check for Low Stock
+    if (newStockQty < 5) {
+       // We need a way to send notification here. Since this might be inside a transaction, 
+       // and we don't have direct access to queryRunner here easily without passing it, 
+       // or we can use a separate connection/repository if strictly needed, 
+       // but typically we should pass the manager or repository. 
+       // Ideally trigger an event or just do it here.
+       // Let's assume we can get connection or use the repo's manager if possible.
+       // For simplicity, we'll fetch admins and save notification using the repo's manager if available or get new connection.
+       // Note: productVariantRepo belongs to the transaction manager passed in.
+       
+       try {
+           const manager = productVariantRepo.manager;
+           const userRepository = manager.getRepository(UserEntity);
+           const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+           const notificationRepo = manager.getRepository(NotificationEntity);
+
+           const adminNotifications = admins.map((admin) => ({
+             type: NotificationType.AdminLowStock,
+             title: 'Low Stock Alert',
+             message: `Product Variant (ID: ${findProductVariant.id}) is running low. Current Stock: ${newStockQty}`,
+             userId: admin.id,
+            //  orderId: null, // Optional, might not be linked to specific order in schema directly if not nullable
+           }));
+           // Casting to any to avoid strict type checks if orderId is missing/nullable 
+           await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+       } catch (err) {
+           console.error("Failed to send low stock notification", err);
+       }
+    }
   }
 }
 
