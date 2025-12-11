@@ -89,6 +89,12 @@ export class UserEntity {
   @Column({ name: 'reset_token', nullable: true })
   resetToken?: string;
 
+  @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
+  failedLoginAttempts!: number;
+
+  @Column({ name: 'block_until', type: 'timestamp', nullable: true })
+  blockUntil?: Date;
+
   // @Column({ name: "reset_token_expire", type: "bigint", nullable: true })
   // resetTokenExpire?: number;
 

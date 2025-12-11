@@ -14,4 +14,7 @@ export enum NotificationType {
   ForgotPassword = 'ForgotPassword',
   NewsletterSubscription = 'NewsletterSubscription',
   Verification = 'Verification',
+  // Admin Notifications
+  AdminNewUser = 'ADMIN_NEW_USER',
+  AdminSecurityAlert = 'ADMIN_SECURITY_ALERT',
 }

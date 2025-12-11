@@ -23,6 +23,7 @@ import { resetPasswordValidationSchema } from '../../../validation/user/resetPas
 import { updatePasswordValidationSchema } from '../../../validation/user/updatePasswordValidation';
 import { FileEntity } from '../../other/file/model/file.entity';
 import { NotificationEntity } from '../../other/notification/model/notification.entity';
+import { RoleEnum } from '../enums/role.enum';
 import { UserActivityEntity } from '../model/user-activity.entity';
 import { UserEntity } from '../model/user.entity';
 
@@ -101,6 +102,21 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     isRead: false,
   });
   await notificationRepository.save(registerNotification);
+
+  // Notify Admins about New User
+  const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+  const adminNotifications = admins.map((admin: UserEntity) => {
+    return notificationRepository.create({
+      title: 'New User Registered',
+      message: `A new user ${user.name} (${user.email}) has registered.`,
+      type: NotificationType.AdminNewUser,
+      userId: admin.id,
+      isRead: false,
+    });
+  });
+  if (adminNotifications.length > 0) {
+    await notificationRepository.save(adminNotifications);
+  }
 
   const token = getSignJwtToken(user);
   const cookies = sendCookiesResponse(token, res);
@@ -282,12 +298,47 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     throw new Error(`Username ${username} not found`);
   }
 
+  // Check if account is locked
+  if (oldUser.blockUntil && oldUser.blockUntil > new Date()) {
+    res.status(403);
+    throw new Error('Account is temporarily locked due to multiple failed login attempts. Please try again later.');
+  }
+
   const isMatch = await matchPassword(password, oldUser);
 
   if (!isMatch) {
+    oldUser.failedLoginAttempts = (oldUser.failedLoginAttempts || 0) + 1;
+
+    if (oldUser.failedLoginAttempts >= 5) {
+      oldUser.blockUntil = new Date(Date.now() + 15 * 60 * 1000); // Lock for 15 minutes
+      
+      // Notify Admins about Security Alert
+      const notificationRepository = connection.getRepository(NotificationEntity);
+      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+      const adminNotifications = admins.map((admin: UserEntity) => {
+        return notificationRepository.create({
+          title: 'Security Alert: Failed Login Attempts',
+          message: `User ${oldUser.email} has failed to login 5 times. Account locked for 15 minutes.`,
+          type: NotificationType.AdminSecurityAlert,
+          userId: admin.id,
+          isRead: false,
+        });
+      });
+      if (adminNotifications.length > 0) {
+        await notificationRepository.save(adminNotifications);
+      }
+    }
+
+    await userRepository.save(oldUser);
+
     res.status(401);
     throw new Error('Authorization is not valid!');
   }
+
+  // Reset failed attempts on successful login
+  oldUser.failedLoginAttempts = 0;
+  oldUser.blockUntil = undefined;
+  // oldUser.lastLogin updated below...
 
   const token = getSignJwtToken(oldUser);
   const cookies = sendCookiesResponse(token, res);
