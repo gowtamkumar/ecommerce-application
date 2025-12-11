@@ -7,15 +7,15 @@ import {
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
 import {
-  BellOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   SettingOutlined,
   UserOutlined
 } from "@ant-design/icons";
-import { Avatar, Badge, Button, Dropdown, Layout } from "antd";
+import { Avatar, Button, Dropdown, Layout } from "antd";
 import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
+import NotificationDropdown from "./header/NotificationDropdown";
 
 export default function DashboardHeader() {
   const { Header } = Layout;
@@ -112,28 +112,7 @@ export default function DashboardHeader() {
         </div>
 
         {/* Notifications */}
-        <Badge
-          count={5}
-          size="small"
-          style={{
-            backgroundColor: "#ef4444",
-            boxShadow: "0 2px 4px rgba(239, 68, 68, 0.3)",
-          }}
-        >
-          <Button
-            type="text"
-            icon={<BellOutlined style={{ fontSize: "18px", color: "#6b7280" }} />}
-            style={{
-              width: 40,
-              height: 40,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "10px",
-            }}
-            className="hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50 transition-all duration-300"
-          />
-        </Badge>
+        <NotificationDropdown />
 
         {/* Divider */}
         <div

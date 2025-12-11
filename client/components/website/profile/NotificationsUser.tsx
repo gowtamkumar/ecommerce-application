@@ -2,15 +2,15 @@
 
 import { Button, Modal, Table } from "antd";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // import "./notification.css";
-import { useDispatch, useSelector } from "react-redux";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import {
-  clearAllNotifications,
+  clearNotifications,
   getNotifications,
   readNotification,
-} from "@/lib/apis/admin/notification";
+} from "@/lib/apis/notification";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const NotificationsUser = () => {
   const [notification, setNotification] = useState<any>({});
@@ -29,14 +29,14 @@ const NotificationsUser = () => {
   };
 
   const handleRowClick = async (value: any) => {
-    const notification = await readNotification({ id: value.id });
+    const notification = await readNotification({ id: value.id } as any);
     if (notification.success) {
       fetchData();
     }
   };
 
   const clearAll = async () => {
-    const notification = await clearAllNotifications();
+    const notification = await clearNotifications();
 
     if (notification.success) {
       fetchData();
