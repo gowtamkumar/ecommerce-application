@@ -3,7 +3,7 @@ FROM node:24-alpine
 
 
 # Install PostgreSQL client tools (includes pg_dump)
-RUN apk add --no-cache postgresql-client
+# RUN apk add --no-cache postgresql-client
 
 # Set working directory
 WORKDIR /app

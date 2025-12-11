@@ -3,8 +3,8 @@ import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { getHome } from "@/lib/apis/home";
 import { getImageUrl } from "@/lib/utils/imageUrl";
-import type { Metadata } from "next";
 import { Button } from "antd";
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -61,12 +61,12 @@ export async function generateMetadata(): Promise<Metadata> {
   // Build complete metadata object
   return {
     metadataBase: new URL(canonicalUrl),
-    
+
     // Primary metadata
     title: `${metaTitle} - Premium Skincare Products & Solutions - Buy Now | ecommerce`,
     description: metaDescription,
     keywords: Array.isArray(metaKeywords) ? metaKeywords : [],
-    
+
     // SEO directives
     robots: {
       index: true,
@@ -117,13 +117,13 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: "ecommerce" }],
     creator: "ecommerce",
     publisher: "ecommerce",
-    
+
     // Theme and manifest
-    themeColor: [
-      { media: "(prefers-color-scheme: light)", color: "#ff6600" },
-      { media: "(prefers-color-scheme: dark)", color: "#ff6600" },
-    ],
-    
+    // themeColor: [
+    //   { media: "(prefers-color-scheme: light)", color: "#ff6600" },
+    //   { media: "(prefers-color-scheme: dark)", color: "#ff6600" },
+    // ],
+
     // Verification (add your actual verification codes)
     // verification: {
     //   google: "your-google-verification-code",

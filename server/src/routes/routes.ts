@@ -35,6 +35,7 @@ import leadRoute from '../modules/lead/route/lead.route';
 import notificationRoute from '../modules/other/notification/route/notification.route';
 import homeRoute from '../modules/other/pages/home/route/home.route';
 import stockAdjust from '../modules/stock-adjust/route/stock-adjust.route';
+import auditLogRoute from '../modules/audit-log/route/audit-log.route';
 // import returnsRoute from "../modules/return/route/return.route";
 import { AuthGuard, isAuthorize } from '../middlewares/auth.middleware';
 
@@ -83,4 +84,5 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/upazilas', upazilaRoute);
   app.use('/api/v1/unions', unionsRoute);
   app.use('/api/v1/contacts', contactsRoute);
+  app.use('/api/v1/audit-logs', AuthGuard, isAuthorize(['Admin', 'SuperAdmin']), auditLogRoute);
 };

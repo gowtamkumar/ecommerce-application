@@ -16,13 +16,13 @@ import {
 import {
   MdCategory,
   MdDashboard,
+  MdHistory,
   MdLocalShipping,
   MdOutlineDiscount,
   MdOutlinePermMedia,
   MdOutlineSpatialTracking,
   MdPayment,
-  MdViewModule,
-  MdWarning,
+  MdViewModule
 } from "react-icons/md";
 import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
 import { SiWish } from "react-icons/si";
@@ -316,11 +316,12 @@ const navbarRoute = [
     route: "true",
   },
   {
-    key: "system_alerts",
-    icon: <MdWarning className="h-5 w-5 text-red-500" />,
-    label: <Link href="/dashboard/system-alerts">System Alerts</Link>,
+    key: "audit_logs",
+    icon: <MdHistory className="h-5 w-5 text-purple-500" />,
+    label: <Link href="/dashboard/audit-logs">Audit Logs</Link>,
     route: "true",
   },
+
   {
     key: "notifications",
     icon: <IoNotifications className="h-5 w-5 text-blue-500" />,

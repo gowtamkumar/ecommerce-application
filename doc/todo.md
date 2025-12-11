@@ -44,8 +44,3 @@ Current: Single Store.
 Future: Allow other sellers to register, upload products, and you take a commission. (Complex refactor).
 Audit Logs:
 Feature: Track who did what in the admin panel (e.g., "Admin X changed Price of Product Y"). Critical for security.
-
-💡 Immediate Action Plan
-Enhance Currency: Add exchangeRate to allow switching currencies (USD/BDT) on the storefront.
-SEO Dashboard: Build a UI to manage meta tags.
-Abandoned Cart: Simple cron job to notify users with items in cart > 24 hours.

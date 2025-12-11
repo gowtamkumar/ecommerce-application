@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import { AuditLogEntity } from '../modules/audit-log/model/audit-log.entity';
 import { UserActivityEntity } from '../modules/auth/model/user-activity.entity';
 import { UserEntity } from '../modules/auth/model/user.entity';
 import { BannerEntity } from '../modules/banner/model/banner.entity';
@@ -136,7 +137,8 @@ const dbConnection = new DataSource({
     ContactEntity,
     MenuEntity,
     NotificationEntity,
-    CurrencyEntity
+    CurrencyEntity,
+    AuditLogEntity,
   ],
   subscribers: [],
   migrations: [],
