@@ -3,6 +3,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { deleteCart, getCartLists } from "@/lib/apis/cart";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { Button, ConfigProvider } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function ViewCart() {
   const cart = useSelector(selectCart);
+  const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const router = useRouter();
   const { formatPrice } = useCurrency();
@@ -26,7 +28,9 @@ export default function ViewCart() {
 
   const cartList = cart?.carts?.cartList || [];
   const subTotal = cart?.carts?.cartSummary?.subTotal || 0;
-  const freeShippingThreshold = 5000;
+  
+  // Get free shipping threshold from settings (fallback to 5000 if not set)
+  const freeShippingThreshold = global.setting?.orderFreeShippingAmount || 5000;
   const progress = Math.min((subTotal / freeShippingThreshold) * 100, 100);
   const remainingForFreeShipping = freeShippingThreshold - subTotal;
 
