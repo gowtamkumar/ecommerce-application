@@ -19,6 +19,7 @@ import { rateLimit } from 'express-rate-limit';
 import path from 'path';
 import { setupRoutes } from './src/routes/routes';
 import { initCronJobs } from './src/services/cron.service';
+import { auditLogMiddleware } from './src/middlewares/audit-log.middleware';
 
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 
@@ -71,6 +72,9 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// Global audit logging middleware (before routes)
+app.use(auditLogMiddleware);
+
 //main route
 setupRoutes(app);
 // error Handler
@@ -93,27 +97,29 @@ const PORT = process.env.PORT || 3900;
 
 const server = app.listen(PORT, async () => {
   console.log(colors.magenta(`Server running in ${process.env.NODE_ENV} Mode on Port ${PORT}`));
-  
+
   // Notify Admins: Server Started / Restarted
   try {
-     const connection = await getDBConnection();
-     const userRepo = connection.getRepository(UserEntity);
-     const notificationRepo = connection.getRepository(NotificationEntity);
-     const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
+    const connection = await getDBConnection();
+    const userRepo = connection.getRepository(UserEntity);
+    const notificationRepo = connection.getRepository(NotificationEntity);
+    const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
 
-     const alerts = admins.map((admin: UserEntity) => notificationRepo.create({
-         type: NotificationType.ServerDown, // Using to indicate status change/recovery
-         title: 'Server Alert',
-         message: `Server successfully started/restarted.`,
-         userId: admin.id,
-         isRead: false
-     }));
+    const alerts = admins.map((admin: UserEntity) =>
+      notificationRepo.create({
+        type: NotificationType.ServerDown, // Using to indicate status change/recovery
+        title: 'Server Alert',
+        message: `Server successfully started/restarted.`,
+        userId: admin.id,
+        isRead: false,
+      }),
+    );
 
-     if (alerts.length > 0) {
-        await notificationRepo.save(alerts);
-     }
+    if (alerts.length > 0) {
+      await notificationRepo.save(alerts);
+    }
   } catch (error) {
-     console.error("Failed to send server startup alert", error);
+    console.error('Failed to send server startup alert', error);
   }
 });
 

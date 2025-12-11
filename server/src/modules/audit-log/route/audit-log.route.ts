@@ -6,28 +6,25 @@ import {
   getAuditStatistics,
   createAuditLog,
 } from '../controller/audit-log.controller';
-import { isAuthorize } from '../../../middlewares/auth.middleware';
-import { RoleEnum } from '../../auth/enums/role.enum';
 
 const router = express.Router();
 
+// Note: AuthGuard and isAuthorize are applied in routes.ts
+// These routes are already protected at the router level
+
 // Get all audit logs (Admin only)
-router.get('/', isAuthorize(RoleEnum.Admin), getAuditLogs);
+router.get('/', getAuditLogs);
 
 // Get audit history for a specific resource (Admin only)
-router.get(
-  '/resource/:resourceType/:resourceId',
-  isAuthorize(RoleEnum.Admin),
-  getResourceAuditHistory
-);
+router.get('/resource/:resourceType/:resourceId', getResourceAuditHistory);
 
 // Get current user's activity history
-router.get('/my-activity', isAuthorize(RoleEnum.Admin), getMyActivity);
+router.get('/my-activity', getMyActivity);
 
-// Get audit log statistics (SuperAdmin only)
-router.get('/statistics', isAuthorize(RoleEnum.Admin), getAuditStatistics);
+// Get audit log statistics (Admin only)
+router.get('/statistics', getAuditStatistics);
 
-// Create audit log (Internal use only - can be used by middleware)
-router.post('/', isAuthorize(RoleEnum.Admin), createAuditLog);
+// Create audit log (Internal use only)
+router.post('/', createAuditLog);
 
 export default router;

@@ -1,10 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../config/db';
-import { AuditLogEntity } from '../model/audit-log.entity';
-import { logger } from '../../../middlewares/logger';
-import { Between, Like } from 'typeorm';
 import { CustomRequest } from '../../../enums/custom-request-type';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
+import { AuditLogEntity } from '../model/audit-log.entity';
 
 // @desc Get all audit logs with filters
 // @route GET /api/v1/audit-logs
@@ -65,7 +64,7 @@ export const getAuditLogs = asyncHandler(
     if (search) {
       queryBuilder.andWhere(
         '(audit_log.userName ILIKE :search OR audit_log.resourceName ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -87,37 +86,35 @@ export const getAuditLogs = asyncHandler(
       limit: Number(limit),
       totalPages: Math.ceil(total / Number(limit)),
     });
-  }
+  },
 );
 
 // @desc Get audit history for a specific resource
 // @route GET /api/v1/audit-logs/resource/:resourceType/:resourceId
 // @access Private (Admin only)
-export const getResourceAuditHistory = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: getResourceAuditHistory ${req.method} ${req.url}`);
+export const getResourceAuditHistory = asyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Service: getResourceAuditHistory ${req.method} ${req.url}`);
 
-    const { resourceType, resourceId } = req.params;
-    const connection = await getDBConnection();
-    const repository = connection.getRepository(AuditLogEntity);
+  const { resourceType, resourceId } = req.params;
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(AuditLogEntity);
 
-    const data = await repository.find({
-      where: {
-        resourceType,
-        resourceId,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  const data = await repository.find({
+    where: {
+      resourceType,
+      resourceId,
+    },
+    order: {
+      createdAt: 'DESC',
+    },
+  });
 
-    return res.status(200).json({
-      success: true,
-      message: 'Get audit history for resource',
-      data,
-    });
-  }
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Get audit history for resource',
+    data,
+  });
+});
 
 // @desc Get current user's activity history
 // @route GET /api/v1/audit-logs/my-activity
@@ -144,7 +141,7 @@ export const getMyActivity = asyncHandler(
       message: 'Get my activity history',
       data,
     });
-  }
+  },
 );
 
 // @desc Get audit log statistics
@@ -190,7 +187,7 @@ export const getAuditStatistics = asyncHandler(
         period: `Last ${days} days`,
       },
     });
-  }
+  },
 );
 
 // @desc Create an audit log entry (used internally by middleware)
@@ -211,5 +208,5 @@ export const createAuditLog = asyncHandler(
       message: 'Audit log created',
       data: savedLog,
     });
-  }
+  },
 );
