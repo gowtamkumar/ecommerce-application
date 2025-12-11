@@ -1,24 +1,25 @@
 import express, { Router } from 'express';
-import passport from 'passport';
+import { AuthGuard } from '../../../middlewares/auth.middleware';
 import {
-  register,
-  login,
-  getUsers,
+  deleteUser,
+  forgotPassword,
   getMe,
   getUser,
-  updateUser,
-  deleteUser,
+  getUserByEmail,
+  getUsers,
+  login,
   logout,
-  forgotPassword,
+  register,
   resetPassword,
   updatePassword,
-  getUserByEmail,
+  updateUser,
+  verifyEmail,
 } from '../controller/auth.controller';
-import { AuthGuard } from '../../../middlewares/auth.middleware';
 
 const router: Router = express.Router();
 
 router.route('/register').post(register);
+router.route('/verify-email/:token').post(verifyEmail);
 router.route('/login').post(login);
 router.route('/me').get(AuthGuard, getMe);
 router.route('/update-password').patch(AuthGuard, updatePassword);

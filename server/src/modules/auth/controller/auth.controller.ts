@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { sendEmail } from '../../../common/sendMail';
 import { getDBConnection } from '../../../config/db';
 import { CustomRequest } from '../../../enums/custom-request-type';
+import { NotificationType } from '../../../enums/notification-type.enum';
 import { asyncHandler } from '../../../middlewares/async.middleware';
 import {
   getResetSignJwtToken,
@@ -21,8 +22,11 @@ import { loginValidationSchema } from '../../../validation/user/loginValidation'
 import { resetPasswordValidationSchema } from '../../../validation/user/resetPasswordValidation';
 import { updatePasswordValidationSchema } from '../../../validation/user/updatePasswordValidation';
 import { FileEntity } from '../../other/file/model/file.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
 import { UserActivityEntity } from '../model/user-activity.entity';
 import { UserEntity } from '../model/user.entity';
+
+
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -55,9 +59,13 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     throw new Error('User already registered');
   }
 
+  const verificationToken = getResetSignJwtToken(validation.data.email);
+
   const createUser = await userRepository.create({
     ...validation.data,
     password: await hashedPassword(validation.data.password),
+    verificationToken: verificationToken,
+    isVerified: false,
   });
 
   if (!createUser) {
@@ -65,6 +73,34 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   }
 
   const user = await userRepository.save(createUser);
+
+  // Send Verification Email
+  const verifyUrl = `${req.protocol}://${req.get('origin')}/verify-email/${verificationToken}`;
+  const mailOptions = {
+    to: user.email,
+    from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_ADDRESS}>`,
+    subject: 'Email Verification',
+    text: `Please verify your email by clicking the following link: ${verifyUrl}`,
+  };
+
+  try {
+    await sendEmail(mailOptions);
+  } catch (error) {
+    logger.error(`Email send failed: ${error}`);
+    // Don't block registration on email fail? Or distinct error?
+    // Proceeding for now.
+  }
+
+  // Create Register Notification
+  const notificationRepository = connection.getRepository(NotificationEntity);
+  const registerNotification = notificationRepository.create({
+    title: 'Welcome!',
+    message: 'User Registration Successful. Please verify your email.',
+    type: NotificationType.UserRegistration,
+    userId: user.id,
+    isRead: false,
+  });
+  await notificationRepository.save(registerNotification);
 
   const token = getSignJwtToken(user);
   const cookies = sendCookiesResponse(token, res);
@@ -76,7 +112,7 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   delete user.password;
   return res.status(200).json({
     success: true,
-    message: 'Create a new Register',
+    message: 'User Registered Successfully. Please check your email for verification.',
     data: user,
     accessToken: token,
   });
@@ -478,7 +514,21 @@ export const forgotPassword = asyncHandler(
 
     await sendEmail(mailOptions);
 
+    // Create Forgot Password Notification
+    const notificationRepository = connection.getRepository(NotificationEntity);
+    const forgotPasswordNotification = notificationRepository.create({
+      title: 'Password Reset Requested',
+      message: 'A password reset link has been sent to your email.',
+      type: NotificationType.ForgotPassword,
+      userId: findMail.id,
+      isRead: false,
+    });
+    await notificationRepository.save(forgotPasswordNotification);
+
+
+
     return res.status(200).json({
+
       success: true,
       message: 'Forget password successful. Please check your email address',
       data: {},
@@ -533,6 +583,17 @@ export const resetPassword = asyncHandler(
 
     await userRepository.save(updateData);
 
+    // Create Reset Password Notification
+    const notificationRepository = connection.getRepository(NotificationEntity);
+    const resetPasswordNotification = notificationRepository.create({
+      title: 'Password Reset Successful',
+      message: 'Your password has been successfully reset.',
+      type: NotificationType.PasswordChanged,
+      userId: user.id,
+      isRead: false,
+    });
+    await notificationRepository.save(resetPasswordNotification);
+
     return res.status(200).json({
       success: true,
       message: 'Reset password',
@@ -584,6 +645,17 @@ export const updatePassword = asyncHandler(
     });
 
     await userRepository.save(updateData);
+
+    // Create Update Password Notification
+    const notificationRepository = connection.getRepository(NotificationEntity);
+    const updatePasswordNotification = notificationRepository.create({
+      title: 'Password Changed',
+      message: 'Your password has been changed successfully.',
+      type: NotificationType.PasswordChanged,
+      userId: user.id,
+      isRead: false,
+    });
+    await notificationRepository.save(updatePasswordNotification);
 
     return res.status(200).json({
       success: true,
@@ -665,3 +737,49 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response, next:
     data: user,
   });
 });
+
+// @desc Verify Email
+// @route POST /api/v1/auth/verify-email/:token
+// @access Public
+export const verifyEmail = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Service: verifyEmail ${req.method} ${req.url}`);
+
+    const { token } = req.params;
+    const connection = await getDBConnection();
+    const userRepository = await connection.getRepository(UserEntity);
+
+    if (token) {
+      getResetVerifyJwtToken(token, res);
+    }
+
+    const user = await userRepository.findOne({
+      where: { verificationToken: token },
+    });
+
+    if (!user) {
+      throw new Error('Invalid or expired verification token');
+    }
+
+    user.isVerified = true;
+    user.verificationToken = null as any; // Clear the token
+
+    await userRepository.save(user);
+
+    // Create Verification Notification
+    const notificationRepository = connection.getRepository(NotificationEntity);
+    const verificationNotification = notificationRepository.create({
+      title: 'Email Verified',
+      message: 'Your email has been successfully verified.',
+      type: NotificationType.Verification,
+      userId: user.id,
+      isRead: false,
+    });
+    await notificationRepository.save(verificationNotification);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Email verified successfully',
+    });
+  },
+);

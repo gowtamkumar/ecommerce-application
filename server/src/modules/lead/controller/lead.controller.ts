@@ -1,10 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../config/db';
-import { LeadEntity } from '../model/lead.entity';
-import { leadValidationSchema } from '../../../validation';
-import { logger } from '../../../middlewares/logger';
 import { CustomRequest } from '../../../enums/custom-request-type';
+import { NotificationType } from '../../../enums/notification-type.enum';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
+import { leadValidationSchema } from '../../../validation';
+import { UserEntity } from '../../auth/model/user.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
+import { LeadEntity } from '../model/lead.entity';
 
 // @desc Get all Lead
 // @route GET /api/v1/Lead
@@ -77,6 +80,24 @@ export const createLead = asyncHandler(async (req: CustomRequest, res: Response)
 
   const newLead = repository.create(validation.data);
   const save = await repository.save(newLead);
+
+  // Check if user exists with this email
+  const userRepository = connection.getRepository(UserEntity);
+  const user = await userRepository.findOne({
+    where: { email: validation.data.email },
+  });
+
+  if (user) {
+    const notificationRepository = connection.getRepository(NotificationEntity);
+    const notification = notificationRepository.create({
+      title: 'Newsletter Subscription',
+      message: 'You have successfully subscribed to our newsletter.',
+      type: NotificationType.NewsletterSubscription,
+      userId: user.id,
+      isRead: false,
+    });
+    await notificationRepository.save(notification);
+  }
 
   return res.status(200).json({
     success: true,

@@ -6,4 +6,12 @@ export enum NotificationType {
   ReviewFeedback = 'ReviewFeedback',
   CustomerSupport = 'CustomerSupport',
   WishlistSubscription = 'WishlistSubscription',
+  
+  // Custom User Notifications
+  UserRegistration = 'UserRegistration',
+  UserLogin = 'UserLogin',
+  PasswordChanged = 'PasswordChanged',
+  ForgotPassword = 'ForgotPassword',
+  NewsletterSubscription = 'NewsletterSubscription',
+  Verification = 'Verification',
 }

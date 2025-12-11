@@ -80,6 +80,12 @@ export class UserEntity {
   @Column({ name: 'divice_id', nullable: true })
   diviceId?: string;
 
+  @Column({ name: 'is_verified', type: 'boolean', default: false })
+  isVerified!: boolean;
+
+  @Column({ name: 'verification_token', nullable: true })
+  verificationToken?: string;
+
   @Column({ name: 'reset_token', nullable: true })
   resetToken?: string;
 
