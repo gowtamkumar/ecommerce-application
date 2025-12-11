@@ -1,5 +1,4 @@
 "use client";
-import { ActionType } from "@/constants/constants";
 import { deleteProduct, getProducts } from "@/lib/apis/admin/product";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {

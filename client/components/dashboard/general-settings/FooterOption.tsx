@@ -1,26 +1,25 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Button, Card, Form, Input, Modal, Upload, Image as AntImage, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import appConfig from "@/appConfig";
-import {
-  selectGlobal,
-  setAction,
-  setSetting,
-} from "@/redux/features/global/globalSlice";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
 import {
   handlePreview,
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import {
+  selectGlobal,
+  setAction,
+  setSetting,
+} from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Image as AntImage, Button, Card, Form, Input, Modal, Typography, Upload } from "antd";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -30,6 +29,7 @@ const uploadButton = (
     <div style={{ marginTop: 8 }}>Upload</div>
   </div>
 );
+
 
 const FooterOption = () => {
   const [form] = Form.useForm();
@@ -90,34 +90,20 @@ const FooterOption = () => {
     }
   };
 
-  const customUploadRequest = async ({ file, onSuccess, onError }: any) => {
-    const formData = new FormData();
-    formData.append("image", file);
 
-    try {
-      const res = await uploadFile(formData);
-      const filename = res?.data?.[0]?.filename;
-      if (!filename) throw new Error("No filename returned");
 
-      const newFile = {
-        uid: Date.now().toString(),
-        name: `footer-${filename}`,
-        status: "done",
-        fileName: filename,
-        url: getUploadImageUrl(filename),
-      };
-
+  const customUploadRequest = async (options: any) => {
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       const newValues = {
         ...form.getFieldsValue(),
         fileList: [newFile],
-        image: filename,
+        image: newFileName,
       };
 
       form.setFieldsValue(newValues);
       dispatch(setSetting({ ...global.setting, footerOption: newValues }));
-      onSuccess("OK");
-    } catch (err) {
-      onError(err);
     }
   };
 

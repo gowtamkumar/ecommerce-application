@@ -1,16 +1,16 @@
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import uploadButton from "@/components/website/uploadButton";
 import {
   getAntdCategories,
   saveCategory,
   updateCategory,
 } from "@/lib/apis/categories";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
   handlePreview,
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   errorNotification,
   successNotification,
@@ -109,40 +109,20 @@ const AddCategory = () => {
     }
   };
 
+
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-
-    try {
-      const res = await uploadFile(formData);
-      if (!res || !res.data) {
-        throw new Error("Invalid response format");
-      }
-      const filename = res.data[0].filename;
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: filename,
-        url: getUploadImageUrl(filename),
-      };
-      const newFileName = res.data.length ? filename : null;
-      // Assuming you're updating form data here:
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       form.setFieldsValue({
-        fileList: [newfile],
+        fileList: [newFile],
         image: newFileName,
       });
-      setFormValues({
-        ...formValues,
-        fileList: [newfile],
+      setFormValues((prev: any) => ({
+        ...prev,
+        fileList: [newFile],
         image: newFileName,
-      });
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
+      }));
     }
   };
 

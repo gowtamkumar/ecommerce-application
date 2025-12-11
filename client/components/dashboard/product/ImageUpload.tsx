@@ -1,65 +1,49 @@
-import appConfig from '@/appConfig';
 import uploadButton from '@/components/website/uploadButton';
-import { fileDeleteWithPhoto, uploadFile } from '@/lib/apis/file';
+import { fileDeleteWithPhoto } from '@/lib/apis/file';
 import { handlePreview, handlePreviewCancel, normFile } from '@/lib/utils/commonFunctions';
-import { errorNotification } from '@/lib/utils/notification';
+import { handleGlobalUpload } from '@/lib/utils/handleGlobalUpload';
 import { selectGlobal } from '@/redux/features/global/globalSlice';
 import { Form, Image, Input, Modal, Upload } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useDispatch, useSelector } from 'react-redux';
 
+
 export default function ImageUpload({ formValues, form, setFormValues }: any) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
+
+
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-    console.log("options", options);
+    const { filename } = options;
+    const result = await handleGlobalUpload(options);
 
-    try {
-      const res = await uploadFile(formData);
+    if (result) {
+      const { newFile, newFileName } = result;
+      const newFiles = [newFile]; // Wrap in array to match existing logic
 
-      console.log("res", res);
-
-
-      if (!res || !res.data) {
-        errorNotification({ message: res.message });
-      }
-
-      const newfile = res.data.map((item: { filename: string }) => ({
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: item.filename,
-        url: `${appConfig.baseApiUrl}/uploads/${item.filename}`,
-      }));
-
-      const newFileName = res.data.length ? res.data[0].filename : null;
-      // Assuming you're updating form data here:
       if (filename === "images") {
         form.setFieldsValue({
           ...form.getFieldsValue(),
-          fileList: [...form.getFieldsValue().fileList, ...newfile],
-          images: [...form.getFieldsValue().images, newFileName],
+          fileList: [...(form.getFieldsValue().fileList || []), ...newFiles],
+          images: [...(form.getFieldsValue().images || []), newFileName],
         });
         setFormValues({
           ...formValues,
-          fileList: [...formValues.fileList, ...newfile],
-          images: [...formValues.images, newFileName],
+          fileList: [...(formValues.fileList || []), ...newFiles],
+          images: [...(formValues.images || []), newFileName],
         });
       }
 
       if (filename === "thumbnailImage") {
         form.setFieldsValue({
           ...form.getFieldsValue(),
-          fileThumbnailList: newfile,
+          fileThumbnailList: newFiles,
           thumbnailImage: newFileName,
         });
         setFormValues({
           ...formValues,
-          fileThumbnailList: newfile,
+          fileThumbnailList: newFiles,
           thumbnailImage: newFileName,
         });
       }
@@ -67,20 +51,15 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
       if (filename === "hoverImage") {
         form.setFieldsValue({
           ...form.getFieldsValue(),
-          fileHoverList: newfile,
+          fileHoverList: newFiles,
           hoverImage: newFileName,
         });
         setFormValues({
           ...formValues,
-          fileHoverList: newfile,
+          fileHoverList: newFiles,
           hoverImage: newFileName,
         });
       }
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
     }
   };
 

@@ -1,30 +1,23 @@
 "use client";
-import { uploadFile } from "@/lib/apis/file";
 import { normFile } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { Form, Upload } from "antd";
 import { FaUpload } from "react-icons/fa";
+
 
 export default function MediaUpload({ setFiles }: any) {
   const [form] = Form.useForm();
 
+
+
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-
-    try {
-      const res = await uploadFile(formData);
-
-      if (res.success) {
-        setFiles((prev: any) => [{ ...res.data[0] }, ...prev]);
-        alert(`"${res.message}"`);
-      }
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      alert(err);
-      onError({ err });
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile } = result;
+      setFiles((prev: any) => [newFile, ...prev]);
+      // alert is removed as handleGlobalUpload handles success/error notifications usually, 
+      // but if we want to keep the specific alert message from the original code we might lose it unless handleGlobalUpload returns message.
+      // However, handleGlobalUpload calls onSuccess.
     }
   };
 

@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -11,31 +10,31 @@ import {
   Typography,
   Upload,
 } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 import ImgCrop from "antd-img-crop";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import uploadButton from "@/components/website/uploadButton";
 import {
-  selectGlobal,
-  setAction,
-  setSetting,
-} from "@/redux/features/global/globalSlice";
+  fileDeleteWithPhoto
+} from "@/lib/apis/file";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
 import {
   handlePreview,
   normFile,
 } from "@/lib/utils/commonFunctions";
 import {
-  fileDeleteWithPhoto,
-  uploadFile,
-} from "@/lib/apis/file";
-import { imageSetFile } from "@/lib/utils/imageSetFile";
-import uploadButton from "@/components/website/uploadButton";
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
+import {
+  selectGlobal,
+  setAction,
+  setSetting,
+} from "@/redux/features/global/globalSlice";
 
 const { Title, Text } = Typography;
+
 
 const Seo = () => {
   const dispatch = useDispatch();
@@ -95,22 +94,16 @@ const Seo = () => {
     }
   };
 
+
+
   // Custom File Upload Handler
-  const customUploadRequest = async ({ file, filename, onSuccess, onError }: any) => {
-    try {
-      const formData = new FormData();
-      formData.append(filename, file);
-
-      const res = await uploadFile(formData);
-      const uploadedFilename = res?.data?.[0]?.filename;
-
-      if (!uploadedFilename) throw new Error("Invalid upload response");
-
-      const newfile = await imageSetFile(uploadedFilename);
-
+  const customUploadRequest = async (options: any) => {
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       const updatedData = {
-        metaImagefileList: [newfile],
-        metaImage: uploadedFilename,
+        metaImagefileList: [newFile],
+        metaImage: newFileName,
       };
 
       form.setFieldsValue(updatedData);
@@ -119,11 +112,6 @@ const Seo = () => {
         ...global.setting,
         homePage: updatedData,
       }));
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
     }
   };
 

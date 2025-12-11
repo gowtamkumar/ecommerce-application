@@ -6,10 +6,10 @@ import {
   setOpen,
   setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
-import { CloseOutlined } from "@ant-design/icons";
-import { Drawer, Layout, Menu } from "antd";
+import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
+import { Drawer, Input, Layout, Menu } from "antd";
 import { useRouter } from "next/navigation";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import HeaderLogo from "../website/header/Logo";
 
@@ -19,6 +19,8 @@ const Sidebar = () => {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const route = useRouter();
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   useLayoutEffect(() => {
     function updateScreenWidth() {
@@ -50,12 +52,43 @@ const Sidebar = () => {
     return access;
   };
 
+  const getLabelText = (label: any): string => {
+    if (typeof label === 'string') return label;
+    if (label?.props?.children) {
+      return typeof label.props.children === 'string'
+        ? label.props.children
+        : getLabelText(label.props.children);
+    }
+    return '';
+  };
+
   const filteredChildren = navbarRoute
     ?.filter((item: any) => checkPermission(item))
-    .map((item: any) => ({
-      ...item,
-      children: item?.children?.filter((child: any) => checkPermission(child)),
-    }));
+    .map((item: any) => {
+      const itemText = getLabelText(item.label);
+      const hasMatchingChild = item.children?.some((child: any) =>
+        getLabelText(child.label).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      const matchesSearch = itemText.toLowerCase().includes(searchTerm.toLowerCase());
+
+      if (searchTerm && !matchesSearch && !hasMatchingChild) return null;
+
+      return {
+        ...item,
+        children: item?.children?.filter((child: any) => {
+          const childText = getLabelText(child.label);
+          // If parent matches, show all kids? Or just matching kids?
+          // Usually showing matching kids is better, but if parent matches, maybe show all.
+          // Let's stick to strict matching for now: show child if it matches OR if parent matches.
+          // Actually, if parent matched (matchesSearch=true), we generally show all children logic often varies.
+          // Let's go with: Only show children that match, UNLESS the search term matches the parent strictly, then maybe show all?
+          // Let's Keep it simple: Filter children by search term too.
+          if (matchesSearch) return checkPermission(child); // If parent matches, return all permitted children
+          return checkPermission(child) && childText.toLowerCase().includes(searchTerm.toLowerCase());
+        }),
+      };
+    })
+    .filter(Boolean); // Remote nulls from map -> null return
 
   return (
     <div className="bg-[#001529]">
@@ -132,11 +165,27 @@ const Sidebar = () => {
           <HeaderLogo />
         </div>
 
+        {/* Search Input */}
+        {!layout.collapsed && (
+          <div className="px-4 py-4">
+            <Input
+              placeholder="Search menu..."
+              prefix={<SearchOutlined className="text-gray-400" />}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 hover:border-gray-600 focus:border-blue-500"
+              style={{
+                borderRadius: '8px',
+              }}
+            />
+          </div>
+        )}
+
         {/* Navigation Menu */}
         <Menu
           theme="dark"
           mode="inline"
-          items={filteredChildren}
+          items={filteredChildren as any}
           className="sidebar-menu-dark"
           style={{
             borderRight: 0,

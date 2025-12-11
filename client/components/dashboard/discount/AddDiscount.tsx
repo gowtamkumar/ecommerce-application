@@ -1,5 +1,18 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import uploadButton from "@/components/website/uploadButton";
+import { getProducts } from "@/lib/apis/admin/product";
+import { getBrands } from "@/lib/apis/brand";
+import { getCategories } from "@/lib/apis/categories";
+import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
+import {
+  handleAsyncAction,
+  handlePreview,
+  normFile,
+} from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
   Button,
   Card,
@@ -9,29 +22,17 @@ import {
   InputNumber,
   Select,
   Spin,
-  Upload,
   Typography,
+  Upload,
 } from "antd";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  handleAsyncAction,
-  handlePreview,
-  normFile,
-} from "@/lib/utils/commonFunctions";
 import ImgCrop from "antd-img-crop";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import appConfig from "@/appConfig";
-import { PlusOutlined } from "@ant-design/icons";
-import { getProducts } from "@/lib/apis/admin/product";
-import { getCategories } from "@/lib/apis/categories";
-import { getBrands } from "@/lib/apis/brand";
-import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
-import { useParams, useRouter } from "next/navigation";
 import dayjs from "dayjs";
-import uploadButton from "@/components/website/uploadButton";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Title, Text } = Typography;
+
 
 const AddDiscount = () => {
   const [loading, setLoading] = useState(false);
@@ -116,7 +117,7 @@ const AddDiscount = () => {
     name: `photo`,
     status: "done",
     fileName,
-    url: `${appConfig.baseApiUrl}/uploads/${fileName || "no-data.png"}`,
+    url: getUploadImageUrl(fileName),
   });
 
   const parseDateFields = (data: any) => ({
@@ -173,40 +174,21 @@ const AddDiscount = () => {
     }
   };
 
+
+
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-
-    try {
-      const res = await uploadFile(formData);
-      if (!res || !res.data) {
-        throw new Error("Invalid response format");
-      }
-      const filename = res.data[0].filename;
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
-      };
-      const newFileName = res.data.length ? filename : null;
-      // Assuming you're updating form data here:
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       form.setFieldsValue({
-        fileList: [newfile],
+        fileList: [newFile],
         image: newFileName,
       });
-      setFormValues({
-        ...formValues,
-        fileList: [newfile],
+      setFormValues((prev: any) => ({
+        ...prev,
+        fileList: [newFile],
         image: newFileName,
-      });
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
+      }));
     }
   };
 
@@ -447,113 +429,113 @@ const AddDiscount = () => {
         {(formValues?.scope === "Products" ||
           formValues?.scope === "Brand" ||
           formValues?.scope === "Category") && (
-          <Card
-            title={<Title level={4} className="!mb-0">Applicability</Title>}
-            className="shadow-sm border border-gray-100 rounded-2xl"
-          >
-            {formValues?.scope === "Products" && (
-              <Form.Item
-                name="applicableProducts"
-                label="Select Products"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least one product",
-                  },
-                ]}
-                className="!mb-0"
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Search and select products"
-                  mode="multiple"
-                  size="large"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.children as any)
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
+            <Card
+              title={<Title level={4} className="!mb-0">Applicability</Title>}
+              className="shadow-sm border border-gray-100 rounded-2xl"
+            >
+              {formValues?.scope === "Products" && (
+                <Form.Item
+                  name="applicableProducts"
+                  label="Select Products"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select at least one product",
+                    },
+                  ]}
+                  className="!mb-0"
                 >
-                  {(products || []).map((item: any) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
+                  <Select
+                    showSearch
+                    allowClear
+                    placeholder="Search and select products"
+                    mode="multiple"
+                    size="large"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.children as any)
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {(products || []).map((item: any) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              )}
 
-            {formValues?.scope === "Brand" && (
-              <Form.Item
-                name="applicableBrands"
-                label="Select Brands"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least one brand",
-                  },
-                ]}
-                className="!mb-0"
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Search and select brands"
-                  mode="multiple"
-                  size="large"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.children as any)
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
+              {formValues?.scope === "Brand" && (
+                <Form.Item
+                  name="applicableBrands"
+                  label="Select Brands"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select at least one brand",
+                    },
+                  ]}
+                  className="!mb-0"
                 >
-                  {(brands || []).map((item: any) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
+                  <Select
+                    showSearch
+                    allowClear
+                    placeholder="Search and select brands"
+                    mode="multiple"
+                    size="large"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.children as any)
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {(brands || []).map((item: any) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              )}
 
-            {formValues?.scope === "Category" && (
-              <Form.Item
-                name="applicableCategories"
-                label="Select Categories"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least one category",
-                  },
-                ]}
-                className="!mb-0"
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Search and select categories"
-                  mode="multiple"
-                  size="large"
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option?.children as any)
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
+              {formValues?.scope === "Category" && (
+                <Form.Item
+                  name="applicableCategories"
+                  label="Select Categories"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select at least one category",
+                    },
+                  ]}
+                  className="!mb-0"
                 >
-                  {(categories || []).map((item: any) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
-          </Card>
-        )}
+                  <Select
+                    showSearch
+                    allowClear
+                    placeholder="Search and select categories"
+                    mode="multiple"
+                    size="large"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.children as any)
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {(categories || []).map((item: any) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              )}
+            </Card>
+          )}
 
         {/* Media Card */}
         <Card

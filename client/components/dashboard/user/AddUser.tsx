@@ -1,7 +1,6 @@
 'use client'
-import appConfig from "@/appConfig";
 import uploadButton from "@/components/website/uploadButton";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { saveUser, updateUser } from "@/lib/apis/user";
 import {
   handleAsyncAction,
@@ -9,6 +8,7 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   selectGlobal,
   setAction,
@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
+
 
 const AddUser = () => {
   const [formValues, setFormValues] = useState({
@@ -78,40 +79,21 @@ const AddUser = () => {
     }
   };
 
+
+
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-
-    try {
-      const res = await uploadFile(formData);
-      if (!res || !res.data) {
-        throw new Error("Invalid response format");
-      }
-      const filename = res.data[0].filename;
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
-      };
-      const newFileName = res.data.length ? filename : null;
-      // Assuming you're updating form data here:
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       form.setFieldsValue({
-        fileList: [newfile],
+        fileList: [newFile],
         image: newFileName,
       });
-      setFormValues({
-        ...formValues,
-        fileList: [newfile],
+      setFormValues((prev: any) => ({
+        ...prev,
+        fileList: [newFile],
         image: newFileName,
-      });
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
+      }));
     }
   };
 
@@ -265,9 +247,9 @@ const AddUser = () => {
 
           {/* Date of Birth */}
           <Form.Item name="dob" label="Date of Birth" className="!mb-0">
-            <DatePicker 
-              placeholder="Select birth date" 
-              size="large" 
+            <DatePicker
+              placeholder="Select birth date"
+              size="large"
               className="!w-full"
               format="DD-MM-YYYY"
             />

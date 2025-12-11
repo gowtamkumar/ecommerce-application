@@ -6,21 +6,21 @@ import {
   setCollapsed,
   setOpen,
 } from "@/redux/features/layout/layoutSlice";
-import { 
-  MenuFoldOutlined, 
-  MenuUnfoldOutlined, 
+import {
   BellOutlined,
-  UserOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   SettingOutlined,
-  SearchOutlined,
+  UserOutlined
 } from "@ant-design/icons";
-import { Avatar, Badge, Button, Dropdown, Input, Layout } from "antd";
+import { Avatar, Badge, Button, Dropdown, Layout } from "antd";
 import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function DashboardHeader() {
   const { Header } = Layout;
   const layout = useSelector(selectLayout);
+
   const dispatch = useDispatch();
   const session = useSession();
   const profileImage = session.data?.user?.image;
@@ -90,22 +90,6 @@ export default function DashboardHeader() {
           />
         </div>
 
-        {/* Search Bar - Desktop */}
-        <div className="hidden lg:block">
-          <Input
-            prefix={<SearchOutlined style={{ color: "#9ca3af" }} />}
-            placeholder="Search anything..."
-            style={{
-              width: 320,
-              height: 40,
-              borderRadius: "12px",
-              border: "1px solid rgba(0, 0, 0, 0.08)",
-              backgroundColor: "#ffffff",
-              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.04)",
-            }}
-            className="search-input-premium"
-          />
-        </div>
       </div>
 
       {/* Right Section */}
@@ -128,8 +112,8 @@ export default function DashboardHeader() {
         </div>
 
         {/* Notifications */}
-        <Badge 
-          count={5} 
+        <Badge
+          count={5}
           size="small"
           style={{
             backgroundColor: "#ef4444",
@@ -152,7 +136,7 @@ export default function DashboardHeader() {
         </Badge>
 
         {/* Divider */}
-        <div 
+        <div
           style={{
             width: 1,
             height: 32,
@@ -167,12 +151,9 @@ export default function DashboardHeader() {
           placement="bottomRight"
           trigger={["click"]}
         >
-          <div 
-            className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl transition-all duration-300 hover:shadow-md"
-            style={{
-              background: "linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)",
-              border: "1px solid rgba(0, 0, 0, 0.06)",
-            }}
+          <div
+            className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl transition-all duration-300"
+
           >
             <Avatar
               size={44}
@@ -189,7 +170,7 @@ export default function DashboardHeader() {
                 {userName}
               </p>
               <div className="flex items-center gap-1 mt-0.5">
-                <div 
+                <div
                   style={{
                     width: 6,
                     height: 6,

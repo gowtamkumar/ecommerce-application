@@ -1,5 +1,17 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { getCategories } from "@/lib/apis/categories";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
+import { savePost, updatePost } from "@/lib/apis/posts";
+import {
+  handleAsyncAction,
+  handlePreview,
+  handlePreviewCancel,
+  normFile,
+} from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import { errorNotification } from "@/lib/utils/notification";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Divider,
@@ -11,21 +23,9 @@ import {
   Tag,
   Upload,
 } from "antd";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { savePost, updatePost } from "@/lib/apis/posts";
-import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import { getCategories } from "@/lib/apis/categories";
-import appConfig from "@/appConfig";
-import {
-  handleAsyncAction,
-  handlePreview,
-  handlePreviewCancel,
-  normFile,
-} from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const uploadButton = (
   <div>
@@ -122,40 +122,23 @@ const AddPost = () => {
     setTags([]);
   };
 
+
+
+
+
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-
-    try {
-      const res = await uploadFile(formData);
-      if (!res || !res.data) {
-        throw new Error("Invalid response format");
-      }
-      const filename = res.data[0].filename;
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
-      };
-      const newFileName = res.data.length ? filename : null;
-      // Assuming you're updating form data here:
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       form.setFieldsValue({
-        fileList: [newfile],
+        fileList: [newFile],
         image: newFileName,
       });
-      setFormValues({
-        ...formValues,
-        fileList: [newfile],
+      setFormValues((prev: any) => ({
+        ...prev,
+        fileList: [newFile],
         image: newFileName,
-      });
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
+      }));
     }
   };
 

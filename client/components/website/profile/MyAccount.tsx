@@ -1,30 +1,30 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import {
-  Alert,
   Button,
   DatePicker,
   Form,
   Input,
   Radio,
   Select,
-  Upload,
+  Upload
 } from "antd";
-import dayjs from "dayjs";
-import { useDispatch, useSelector } from "react-redux";
-import { EditOutlined, EyeOutlined, FundViewOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { getMe, updateUser } from "@/lib/apis/user";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import { imageSetFile } from "@/lib/utils/imageSetFile";
+import { imageUploadSizeFileValidation } from "@/lib/utils/imageUploadValidation";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
-import { imageUploadSizeFileValidation } from "@/lib/utils/imageUploadValidation";
-import { imageSetFile } from "@/lib/utils/imageSetFile";
-import uploadButton from "../uploadButton";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import uploadButton from "../uploadButton";
 
 export default function MyAccount() {
   const [edit, setEdit] = useState(false);
@@ -68,37 +68,28 @@ export default function MyAccount() {
     }
   };
 
-  const customUploadRequest = async ({
-    filename,
-    file,
-    onSuccess,
-    onError,
-  }: any) => {
+
+
+
+
+  const customUploadRequest = async (options: any) => {
+    const { file } = options;
     if (!imageUploadSizeFileValidation(file)) {
       form.setFieldsValue({ image: null, fileList: [] });
       setFormValues({ image: null, fileList: [] });
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append(filename, file);
-      const res = await uploadFile(formData);
-      const resFilename = res.data?.[0]?.filename;
-      if (!resFilename) throw new Error("Upload failed");
-
-      const newfile = await imageSetFile(resFilename);
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       const updatedValues = {
         ...formValues,
-        fileList: [newfile],
-        image: resFilename,
+        fileList: [newFile],
+        image: newFileName,
       };
       form.setFieldsValue(updatedValues);
       setFormValues(updatedValues);
-      onSuccess("Ok");
-    } catch (err) {
-      errorNotification({ message: "Image upload failed." });
-      onError(err);
     }
   };
 

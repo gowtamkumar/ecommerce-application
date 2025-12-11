@@ -1,24 +1,25 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button, Form, Image, Input, Modal, Select, Switch, Upload } from "antd";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
-import ImgCrop from "antd-img-crop";
+import uploadButton from "@/components/website/uploadButton";
 import { saveBanner, updateBanner } from "@/lib/apis/banner";
-import appConfig from "@/appConfig";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
   handleAsyncAction,
   handlePreview,
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
-import uploadButton from "@/components/website/uploadButton";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
+import { Button, Form, Image, Input, Modal, Select, Switch, Upload } from "antd";
+import ImgCrop from "antd-img-crop";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "../../../constants/constants";
+
 
 const AddBanner = () => {
   const [formValues, setFormValues] = useState({
@@ -43,7 +44,7 @@ const AddBanner = () => {
   const handleSubmit = async (values: any) => {
     let newData = { ...values };
 
-   const result = newData.id
+    const result = newData.id
       ? () => updateBanner(newData)
       : () => saveBanner(newData);
 
@@ -51,39 +52,18 @@ const AddBanner = () => {
   };
 
   const customUploadRequest = async (options: any) => {
-    const { filename, file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename, file);
-
-    try {
-      const res = await uploadFile(formData);
-      if (!res || !res.data) {
-        throw new Error("Invalid response format");
-      }
-      const filename = res.data[0].filename;
-      const newfile = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: filename,
-        url: `${appConfig.baseApiUrl}/uploads/${filename || "no-data.png"}`,
-      };
-      const newFileName = res.data.length ? filename : null;
-      // Assuming you're updating form data here:
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
       form.setFieldsValue({
-        fileList: [newfile],
+        fileList: [newFile],
         image: newFileName,
       });
-      setFormValues({
-        ...formValues,
-        fileList: [newfile],
+      setFormValues((prev: any) => ({
+        ...prev,
+        fileList: [newFile],
         image: newFileName,
-      });
-
-      onSuccess("Ok");
-    } catch (err) {
-      console.error("🚀 ~ Upload error:", err);
-      onError({ err });
+      }));
     }
   };
 
@@ -220,8 +200,8 @@ const AddBanner = () => {
 
           {/* Description */}
           <Form.Item name="description" label="Description" className="!mb-0">
-            <Input.TextArea 
-              placeholder="Enter banner description (optional)" 
+            <Input.TextArea
+              placeholder="Enter banner description (optional)"
               rows={3}
               size="large"
             />
