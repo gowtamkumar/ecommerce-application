@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductEntity } from '../../products/product/model/product.entity';
 import { UserEntity } from '../../auth/model/user.entity';
 import { ProductVariantEntity } from '../../products/product-variant/model/product-variant.entity';
+import { ProductEntity } from '../../products/product/model/product.entity';
 
 @Entity('carts')
 export class CartEntity {
@@ -37,6 +37,9 @@ export class CartEntity {
   @ManyToOne((_type) => UserEntity, (user) => user.reviews)
   @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
+
+  @Column({ name: 'abandoned_email_sent', default: false })
+  abandonedEmailSent!: boolean;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt?: string;

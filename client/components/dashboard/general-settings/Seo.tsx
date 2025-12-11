@@ -23,6 +23,7 @@ import {
   handlePreview,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   errorNotification,
   successNotification,

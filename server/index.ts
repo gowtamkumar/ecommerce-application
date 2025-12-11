@@ -18,6 +18,7 @@ import { NotificationEntity } from './src/modules/other/notification/model/notif
 import { rateLimit } from 'express-rate-limit';
 import path from 'path';
 import { setupRoutes } from './src/routes/routes';
+import { initCronJobs } from './src/services/cron.service';
 
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 
@@ -36,6 +37,7 @@ if (process.env.NODE_ENV === 'production') {
 // Connect to database
 if (process.env.NODE_ENV !== 'test') {
   getDBConnection();
+  initCronJobs();
 }
 
 const limiter = rateLimit({

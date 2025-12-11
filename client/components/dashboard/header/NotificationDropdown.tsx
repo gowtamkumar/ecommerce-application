@@ -100,7 +100,7 @@ const NotificationDropdown = () => {
 
       {notifications.length > 5 && (
         <div className="p-2 text-center border-t sticky bottom-0 bg-white">
-          <Link href="/profile?tab=notification" onClick={() => setOpen(false)}>
+          <Link href="/dashboard/notifications" onClick={() => setOpen(false)}>
             <Button type="text" size="small" className="text-xs">See all {notifications.length} notifications</Button>
           </Link>
         </div>
