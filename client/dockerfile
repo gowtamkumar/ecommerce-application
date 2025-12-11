@@ -1,5 +1,5 @@
 # pull the official base image
-FROM node:22.15.0-alpine
+FROM node:24-alpine
 ENV NODE_ENV development
 # set working direction
 WORKDIR /app

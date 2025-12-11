@@ -1,0 +1,35 @@
+# robots.txt - E-commerce SEO Configuration
+# This file controls web crawler access to your site
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /private/
+
+# Disallow search result pages to prevent duplicate content
+Disallow: /*?*search=
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+
+# Disallow checkout and cart pages
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+
+# Allow product images for Google Images
+Allow: /uploads/*.jpg
+Allow: /uploads/*.jpeg
+Allow: /uploads/*.png
+Allow: /uploads/*.webp
+
+# Sitemap location
+Sitemap: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://ecommerce.com'}/sitemap.xml
+
+# Crawl delay (optional - uncomment if needed)
+# Crawl-delay: 1

@@ -2,9 +2,13 @@ import appConfig from "@/appConfig";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { getHome } from "@/lib/apis/home";
+import { getImageUrl } from "@/lib/utils/imageUrl";
+import type { Metadata } from "next";
 import { Button } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+
+// Dynamically loaded components
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
@@ -14,73 +18,118 @@ const Slider = dynamic(() => import("@/components/website/banner/Slider"));
 const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
-const HeaderDiscount = dynamic(
-  () => import("@/components/website/banner/HeaderDiscount")
-);
-
 const Header = dynamic(() => import("@/components/website/header/Header"));
 
-export async function generateMetadata() {
-  const home = await getHome();
-  const { metaDescription, metaImage, metaTitle, metaKeywords } =
-    home.data?.homePage || {};
+// ============================================================================
+// SEO METADATA CONFIGURATION
+// ============================================================================
 
-  if (!home.data?.homePage) {
+/**
+ * Generates dynamic metadata for the home page
+ * Fetches SEO data from backend settings or uses fallback defaults
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const home = await getHome();
+  const homePageData = home.data?.homePage;
+
+  // Fallback metadata when no configuration is available
+  if (!homePageData) {
     return {
-      metadataBase: new URL(`${appConfig.baseUrl}`), // Replace with your actual domain
+      metadataBase: new URL(appConfig.baseUrl || "https://ecommerce.com"),
       title: "ecommerce - Premium Products",
       description:
-        "Explore ecommerce for high-quality Product. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
-      robots: "noindex, nofollow",
+        "Explore ecommerce for high-quality products. We offer a wide range of cosmeceutical products designed to enhance skin health. Shop now for healthier skin!",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
-  const canonicalUrl = appConfig.baseUrl;
-  const imageUrl = `${appConfig.baseApiUrl}/uploads/${metaImage}`;
+  // Extract metadata from backend settings
+  const {
+    metaTitle = "ecommerce - Premium Products",
+    metaDescription = "Discover premium products at ecommerce",
+    metaImage,
+    metaKeywords = [],
+  } = homePageData;
 
+  // Construct URLs (ensure they're always defined strings)
+  const canonicalUrl = appConfig.baseUrl || "https://ecommerce.com";
+  const imageUrl = getImageUrl(metaImage, `${canonicalUrl}/og-image.jpg`);
+
+  // Build complete metadata object
   return {
-    metadataBase: new URL(`${canonicalUrl}`), // Dynamically set base URL
+    metadataBase: new URL(canonicalUrl),
+    
+    // Primary metadata
     title: `${metaTitle} - Premium Skincare Products & Solutions - Buy Now | ecommerce`,
     description: metaDescription,
-    keywords: metaKeywords,
-    robots: "index, follow",
+    keywords: Array.isArray(metaKeywords) ? metaKeywords : [],
+    
+    // SEO directives
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+
+    // Open Graph (Facebook, LinkedIn, etc.)
     openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: canonicalUrl,
+      siteName: "ecommerce",
       title: metaTitle,
       description: metaDescription,
-      url: canonicalUrl,
-      type: "website",
       images: [
         {
           url: imageUrl,
-          width: 800,
-          height: 600,
+          width: 1200,
+          height: 630,
           alt: metaTitle,
+          type: "image/jpeg",
         },
       ],
     },
+
+    // Twitter Card
     twitter: {
       card: "summary_large_image",
       title: metaTitle,
       description: metaDescription,
-      images: imageUrl,
+      images: [imageUrl],
+      creator: "@ecommerce",
+      site: "@ecommerce",
     },
+
+    // Canonical URL
     alternates: {
       canonical: canonicalUrl,
     },
-    additionalMetaTags: [
-      {
-        name: "author",
-        content: "ecommerce",
-      },
-      {
-        name: "theme-color",
-        content: "#ff6600",
-      },
-      {
-        name: "canonical",
-        content: canonicalUrl,
-      },
+
+    // Additional meta tags
+    authors: [{ name: "ecommerce" }],
+    creator: "ecommerce",
+    publisher: "ecommerce",
+    
+    // Theme and manifest
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#ff6600" },
+      { media: "(prefers-color-scheme: dark)", color: "#ff6600" },
     ],
+    
+    // Verification (add your actual verification codes)
+    // verification: {
+    //   google: "your-google-verification-code",
+    //   yandex: "your-yandex-verification-code",
+    //   yahoo: "your-yahoo-verification-code",
+    // },
   };
 }
 

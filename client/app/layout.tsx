@@ -24,6 +24,10 @@ import "swiper/css/scrollbar";
 import "./globals.css";
 import "./style.css";
 
+// SEO Components
+import OrganizationSchema from "@/components/seo/OrganizationSchema";
+import WebSiteSchema from "@/components/seo/WebSiteSchema";
+
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
 const CookieBanner = dynamic(() => import("@/components/website/CookieBanner"));
@@ -80,6 +84,25 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         {favicon && <link rel="icon" href={favicon} />}
+        
+        {/* Structured Data for SEO */}
+        <OrganizationSchema 
+          name={setting?.name || "ecommerce"}
+          logo={getImageUrl(setting?.logo, "")}
+          description={setting?.description}
+          socialLinks={[
+            setting?.socialLink?.facebookUrl,
+            setting?.socialLink?.twitterUrl,
+            setting?.socialLink?.linkedinUrl,
+            setting?.socialLink?.instagramUrl,
+          ].filter(Boolean)}
+        />
+        <WebSiteSchema 
+          name={setting?.name || "ecommerce"}
+          description={setting?.description}
+        />
+        
+        {/* Custom header code (Analytics, etc.) */}
         {renderSeoCode(setting?.seo?.headerCode)}
       </head>
       <body suppressHydrationWarning className={poppinsFont.variable}>
