@@ -3,6 +3,7 @@ import { getDBConnection } from '../../../config/db';
 import { CouponType } from '../../../enums/coupon-type.enum';
 import { CustomRequest } from '../../../enums/custom-request-type';
 import { DiscountType } from '../../../enums/discount-type.enum';
+import { NotificationType } from '../../../enums/notification-type.enum';
 import { asyncHandler } from '../../../middlewares/async.middleware';
 import { logger } from '../../../middlewares/logger';
 import { cartValidationSchema } from '../../../validation';
@@ -10,6 +11,7 @@ import { cartIncrementDecrementValidationSchema } from '../../../validation/cart
 import { updateCartValidationSchema } from '../../../validation/cart/updateCartValidation';
 import { AppliedCouponEntity } from '../../coupon/model/applied-coupon.entity';
 import { CouponEntity } from '../../coupon/model/coupon.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
 import { SettingEntity } from '../../other/setting/model/setting.entity';
 import { ShippingChargeEntity } from '../../shipping-charge/model/shipping-charge.entity';
 import { incrementDecrementType } from '../enums/increment-decrement-type.enum';
@@ -211,6 +213,16 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
 
     if (!coupon) {
       message = 'Invalid or expired coupon';
+
+      // (Optional) Could Notify about Expired/Invalid coupon attempt
+      // const notificationRepo = connection.getRepository(NotificationEntity);
+      // await notificationRepo.save(notificationRepo.create({
+      //   type: NotificationType.CouponExpired,
+      //   title: 'Coupon Failed',
+      //   message: `The coupon ${couponCode} is invalid or expired.`,
+      //   userId,
+      //   isRead: false,
+      // }));
     }
 
     if (coupon) {
@@ -229,6 +241,19 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
       } else {
         message = 'Coupon applied successfully';
         validCoupon = coupon;
+
+        // Notification: Coupon Applied Successfully
+        const notificationRepo = connection.getRepository(NotificationEntity);
+        // Check if we already notified for this coupon application to avoid spam?
+        // Since this is a "check" logic often hit, let's limit it or just notify.
+        // For now, simple notification.
+        await notificationRepo.save(notificationRepo.create({
+          type: NotificationType.CouponApplied,
+          title: 'Coupon Applied',
+          message: `Coupon ${coupon.code} applied successfully! Discount: ${coupon.value}${coupon.discountType === DiscountType.Percentage ? '%' : ''}`,
+          userId,
+          isRead: false,
+        }));
       }
     }
   }

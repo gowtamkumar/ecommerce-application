@@ -1,10 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { NotificationEntity } from '../model/notification.entity';
-import { asyncHandler } from '../../../../middlewares/async.middleware';
-import { CustomRequest } from '../../../../enums/custom-request-type';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../../config/db';
+import { CustomRequest } from '../../../../enums/custom-request-type';
+import { NotificationType } from '../../../../enums/notification-type.enum';
+import { asyncHandler } from '../../../../middlewares/async.middleware';
 import { logger } from '../../../../middlewares/logger';
 import { notificationValidationSchema } from '../../../../validation';
+import { UserEntity } from '../../../auth/model/user.entity';
+import { NotificationEntity } from '../model/notification.entity';
 
 // @desc Get all Notification
 // @route GET /api/v1/Notification
@@ -176,5 +178,44 @@ export const clearNotification = asyncHandler(async (req: CustomRequest, res: Re
     success: true,
     message: `Clear Notification`,
     data: result,
+  });
+});
+
+// @desc Send Promotional Notification (Admin Only)
+// @route POST /api/v1/Notification/promote
+// @access Private (Admin)
+export const sendPromotionalNotification = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: sendPromotionalNotification ${req.method} ${req.url}`);
+
+  const { title, message, type } = req.body; // Expect title, message, and optionally type (default to NewOffer)
+
+  if (!title || !message) {
+    throw new Error('Title and Message are required');
+  }
+
+  const connection = await getDBConnection();
+  const userRepo = connection.getRepository(UserEntity);
+  const notificationRepo = connection.getRepository(NotificationEntity);
+
+  // 1. Get all users (or maybe filter by subscribers? For now, all users)
+  // Optimization: In a real large scale app, this should be a job. Here we do it inline for simplicity.
+  const users = await userRepo.find();
+
+  const notifications = users.map((user: UserEntity) => notificationRepo.create({
+    type: type || NotificationType.NewOffer, // Default to NewOffer
+    title: title,
+    message: message,
+    userId: user.id,
+    isRead: false,
+  }));
+
+  if (notifications.length > 0) {
+    // Save in chunks if necessary, but typeorm save handles array.
+    await notificationRepo.save(notifications);
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: `Promotional notification sent to ${users.length} users.`,
   });
 });

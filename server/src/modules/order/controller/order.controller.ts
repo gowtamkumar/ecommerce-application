@@ -7,10 +7,10 @@ import { NotificationType } from '../../../enums/notification-type.enum';
 import { asyncHandler } from '../../../middlewares/async.middleware';
 import { logger } from '../../../middlewares/logger';
 import {
-    onlineCreateOrderValidationSchema,
-    orderDeliveryManValidationSchema,
-    orderStatusUpdateValidationSchema,
-    orderUpdateValidationSchema,
+  onlineCreateOrderValidationSchema,
+  orderDeliveryManValidationSchema,
+  orderStatusUpdateValidationSchema,
+  orderUpdateValidationSchema,
 } from '../../../validation';
 import { RoleEnum } from '../../auth/enums/role.enum';
 import { UserEntity } from '../../auth/model/user.entity';
@@ -731,6 +731,19 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
       orderId: result.id,
     };
 
+    // Notification: Request Review on Delivery
+    if (status === OrderStatus.Delivered) {
+       const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+       await notificationRepo.save(notificationRepo.create({
+          type: NotificationType.ReviewRequest,
+          title: 'How was your order?',
+          message: `Your order #${result.id} has been delivered. We'd love to hear your feedback!`,
+          userId,
+          orderId: result.id,
+          isRead: false,
+       }));
+    }
+
     const newOrderTracking = {
       status: status,
       orderId: result.id,
@@ -748,7 +761,7 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
     if (status === OrderStatus.Canceled) {
        const userRepository = queryRunner.manager.getRepository(UserEntity);
        const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-       const adminNotifications = admins.map((admin) => ({
+       const adminNotifications = admins.map((admin: UserEntity) => ({
          type: NotificationType.AdminOrderCanceled,
          title: 'Order Canceled',
          message: `Order #${result.id} has been canceled.`,
@@ -824,7 +837,7 @@ async function adjustStock(
            const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
            const notificationRepo = manager.getRepository(NotificationEntity);
 
-           const adminNotifications = admins.map((admin) => ({
+           const adminNotifications = admins.map((admin: UserEntity) => ({
              type: NotificationType.AdminLowStock,
              title: 'Low Stock Alert',
              message: `Product Variant (ID: ${findProductVariant.id}) is running low. Current Stock: ${newStockQty}`,

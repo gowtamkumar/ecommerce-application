@@ -1,11 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../config/db';
-import { ReviewEntity } from '../model/review.entity';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { NotificationType } from '../../../enums/notification-type.enum';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
 import { reviewValidationSchema } from '../../../validation';
 import { updateReviewValidationSchema } from '../../../validation/review/updateReviewValidation';
-import { logger } from '../../../middlewares/logger';
-import { CustomRequest } from '../../../enums/custom-request-type';
+import { RoleEnum } from '../../auth/enums';
+import { UserEntity } from '../../auth/model/user.entity';
+import { NotificationEntity } from '../../other/notification/model/notification.entity';
+import { ReviewEntity } from '../model/review.entity';
 
 // @desc Get all Review
 // @route GET /api/v1/Review
@@ -86,6 +90,34 @@ export const createReview = asyncHandler(async (req: CustomRequest, res: Respons
   const newReview = repository.create(validation.data);
 
   const save = await repository.save(newReview);
+
+  const notificationRepo = connection.getRepository(NotificationEntity);
+  const userRepo = connection.getRepository(UserEntity);
+
+  // 1. Notify User: Thank You for Review
+  await notificationRepo.save(notificationRepo.create({
+    type: NotificationType.ReviewSubmitted,
+    title: 'Review Submitted',
+    message: `Thank you for reviewing the product!`,
+    userId: req.id,
+    isRead: false,
+    orderId: save.id,
+  }));
+
+  // 2. Notify Admins: New Review Submitted
+  const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
+  const adminNotifications = admins.map((admin: UserEntity) => ({
+    type: NotificationType.AdminReviewCreated,
+    title: 'New Review Received',
+    message: `A new review has been submitted by user #${req.id}.`,
+    userId: admin.id,
+    isRead: false,
+    orderId: save.id,
+  }));
+
+  if (adminNotifications.length > 0) {
+    await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+  }
 
   return res.status(200).json({
     success: true,

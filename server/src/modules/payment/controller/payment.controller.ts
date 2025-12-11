@@ -260,6 +260,18 @@ export const sslcommerzSuccessHandler = asyncHandler(async (req: CustomRequest, 
 
     const save = await paymentRepo.save(newPayment);
 
+    // Notification to User (Payment Success)
+    const notificationRepo = connection.getRepository(NotificationEntity);
+    const notification: NotificationEntity = notificationRepo.create({
+      type: NotificationType.PaymentSuccess,
+      title: 'Payment Successful',
+      message: `Your payment of ${order.grandTotal} for Order #${order.id} was successful. Transaction ID: ${tranId}`,
+      userId: order.userId,
+      orderId: order.id,
+      isRead: false,
+    });
+    await notificationRepo.save(notification);
+
     if (save) {
       return res.redirect(`${process.env.FRONT_END_URL}/sslcommerz/success/${tranId}`);
     }
@@ -297,12 +309,24 @@ export const sslcommerzFailHandler = asyncHandler(async (req: Request, res: Resp
     order.paymentStatus = PaymentStatus.Failed;
     await orderRepo.save(order);
 
+    const notificationRepo = connection.getRepository(NotificationEntity);
+
+    // Notification to User (Payment Failed)
+    const userNotification: NotificationEntity = notificationRepo.create({
+      type: NotificationType.PaymentFailed,
+      title: 'Payment Failed',
+      message: `Payment failed for Order #${order.id}. Please try again.`,
+      userId: order.userId,
+      orderId: order.id,
+      isRead: false,
+    });
+    await notificationRepo.save(userNotification);
+
     // Notify Admins about Payment Failure
     const userRepository = connection.getRepository(UserEntity);
     const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-    const notificationRepo = connection.getRepository(NotificationEntity);
     
-    const adminNotifications = admins.map((admin: UserEntity) => ({
+    const adminNotifications: NotificationEntity[] = admins.map((admin: UserEntity) => ({
       type: NotificationType.AdminPaymentFailed,
       title: 'Order Payment Failed',
       message: `Payment failed for Order #${order.id} (Transaction ID: ${tranId}).`,
@@ -312,7 +336,7 @@ export const sslcommerzFailHandler = asyncHandler(async (req: Request, res: Resp
     }));
 
     if (adminNotifications.length > 0) {
-      await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+      await notificationRepo.save(adminNotifications);
     }
 
     return res.redirect(`${process.env.FRONT_END_URL}/sslcommerz/fail/${tranId}`);
