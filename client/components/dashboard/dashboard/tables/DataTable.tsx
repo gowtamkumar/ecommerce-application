@@ -1,11 +1,11 @@
 "use client";
-import { ClockCircleOutlined } from "@ant-design/icons";
 import { Avatar, Divider, Table, Tag, Timeline } from "antd";
 import dayjs from "dayjs";
-import React from "react";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const DataTable = ({ orderData }: any) => {
-  const columns = [
+    const { formatPrice } = useCurrency();
+    const columns = [
     {
       title: "Tracking No",
       dataIndex: "trackingNo",
@@ -102,8 +102,8 @@ const DataTable = ({ orderData }: any) => {
         render: (v: any) => {
           return (
             <span>
-              {(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(
-                2
+              {formatPrice(
+                +v.unitPrice - +v.totalDiscountAmount + +v.taxAmount
               )}
             </span>
           );
@@ -115,6 +115,9 @@ const DataTable = ({ orderData }: any) => {
         title: "Sub Total",
         key: "subTotal",
         dataIndex: "subTotal",
+        render: (v: any) => {
+          return <span>{formatPrice(v)}</span>;
+        },
       },
     ];
 
@@ -176,40 +179,46 @@ const DataTable = ({ orderData }: any) => {
               {+value.totalItemsDiscount > 0 && (
                 <div className="flex justify-between">
                   <h1>Discount Amount:</h1>
-                  <h1 className="font-semibold">{value.totalItemsDiscount}</h1>
+                  <h1 className="font-semibold">
+                    {formatPrice(value.totalItemsDiscount)}
+                  </h1>
                 </div>
               )}
 
               {+value.couponDiscount > 0 && (
                 <div className="flex justify-between">
                   <h1>Coupon Discount:</h1>
-                  <h1 className="font-semibold">{value.couponDiscount}</h1>
+                  <h1 className="font-semibold">
+                    {formatPrice(value.couponDiscount)}
+                  </h1>
                 </div>
               )}
 
               <div className="flex justify-between">
                 <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">{value.totalTax}</h1>
+                <h1 className="font-semibold">{formatPrice(value.totalTax)}</h1>
               </div>
 
               {paidAmount > 0 && (
                 <div className="flex justify-between">
                   <h1>Paid Amount:</h1>
-                  <h1 className="font-semibold">{paidAmount}</h1>
+                  <h1 className="font-semibold">{formatPrice(paidAmount)}</h1>
                 </div>
               )}
 
               {+value.shippingCharge > 0 && (
                 <div className="flex justify-between">
                   <h1>Shipping:</h1>
-                  <h1 className="font-semibold">+{value.shippingCharge}</h1>
+                  <h1 className="font-semibold">
+                    +{formatPrice(value.shippingCharge)}
+                  </h1>
                 </div>
               )}
 
               <div className="flex justify-between border-t-2">
                 <h1>Grand Total:</h1>
                 <h1 className="font-semibold">
-                  {(+value.grandTotal - paidAmount).toFixed(2)}
+                  {formatPrice(+value.grandTotal - paidAmount)}
                 </h1>
               </div>
             </div>

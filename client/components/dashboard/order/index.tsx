@@ -1,5 +1,6 @@
 "use client";
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { getStatus } from "@/lib/utils/getStatus";
 import {
@@ -74,6 +75,7 @@ const Order = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
+  const {formatPrice} = useCurrency();
 
   useEffect(() => {
     (async () => {
@@ -245,27 +247,27 @@ const Order = () => {
         title: "Purchase Price",
         dataIndex: "purchasePrice",
         key: "purchasePrice",
-        render: (text: number) => <span className="text-gray-600">৳{text}</span>,
+        render: (value: number) => <span className="text-gray-600">{formatPrice(value)}</span>,
       },
       {
         title: "Unit Price",
         dataIndex: "unitPrice",
         key: "unitPrice",
-        render: (text: number) => <span className="font-medium">৳{text}</span>,
+        render: (value: number) => <span className="font-medium">{formatPrice(value)}</span>,
       },
       {
         title: "Tax",
         key: "taxAmount",
         dataIndex: "taxAmount",
-        render: (text: number) => <span className="text-gray-600">৳{text}</span>,
+        render: (value: number) => <span className="text-gray-600">{formatPrice(value)}</span>,
       },
       {
         title: "Discount",
         dataIndex: "totalDiscountAmount",
         key: "totalDiscountAmount",
-        render: (text: number) =>
-          text > 0 ? (
-            <span className="text-red-600">-৳{text}</span>
+        render: (value: number) =>
+          value > 0 ? (
+            <span className="text-red-600">-{formatPrice(value)}</span>
           ) : (
             <span className="text-gray-400">-</span>
           ),
@@ -276,7 +278,7 @@ const Order = () => {
         render: (v: any) => {
           return (
             <span className="font-semibold text-green-600">
-              ৳{(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(2)}
+              {formatPrice(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount)}
             </span>
           );
         },
@@ -291,7 +293,7 @@ const Order = () => {
         title: "Sub Total",
         key: "subTotal",
         dataIndex: "subTotal",
-        render: (text: number) => <span className="font-bold">৳{text}</span>,
+        render: (value: number) => <span className="font-bold">{formatPrice(value)}</span>,
       },
     ];
 
@@ -301,7 +303,7 @@ const Order = () => {
           {/* Left Column - Order Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Order Details Card */}
-            <Card className="shadow-sm" bordered={false}>
+            <Card className="shadow-sm" variant="borderless">
               <div className="space-y-3">
                 {value.status === "Canceled" && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
@@ -330,7 +332,7 @@ const Order = () => {
             </Card>
 
             {/* Order Items Card */}
-            <Card title={<Title level={5} className="!mb-0">Order Items</Title>} className="shadow-sm" bordered={false}>
+            <Card title={<Title level={5} className="!mb-0">Order Items</Title>} className="shadow-sm" variant="borderless">
               <Table
                 columns={childColumns}
                 size="small"
@@ -345,7 +347,7 @@ const Order = () => {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Order Timeline Card */}
-            <Card title={<Title level={5} className="!mb-0">Order History</Title>} className="shadow-sm" bordered={false}>
+            <Card title={<Title level={5} className="!mb-0">Order History</Title>} className="shadow-sm" variant="borderless">
               <Timeline
                 items={(value?.orderTrackings || []).map(
                   (timeline: any, idx: number) => ({
@@ -370,7 +372,7 @@ const Order = () => {
             </Card>
 
             {/* Payment Summary Card */}
-            <Card title={<Title level={5} className="!mb-0">Payment Summary</Title>} className="shadow-sm" bordered={false}>
+            <Card title={<Title level={5} className="!mb-0">Payment Summary</Title>} className="shadow-sm" variant="borderless">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Text type="secondary">Total Qty</Text>
@@ -379,39 +381,39 @@ const Order = () => {
 
                 <div className="flex justify-between items-center">
                   <Text type="secondary">Net Amount</Text>
-                  <Text strong>৳{(+value.subTotal).toFixed(2)}</Text>
+                  <Text strong>{formatPrice(+value.subTotal)}</Text>
                 </div>
 
                 {+value.totalItemsDiscount > 0 && (
                   <div className="flex justify-between items-center">
                     <Text type="secondary">Discount</Text>
-                    <Text className="text-red-600">-৳{value.totalItemsDiscount}</Text>
+                    <Text className="text-red-600">-{formatPrice(value.totalItemsDiscount)}</Text>
                   </div>
                 )}
 
                 {+value.couponDiscount > 0 && (
                   <div className="flex justify-between items-center">
                     <Text type="secondary">Coupon Discount</Text>
-                    <Text className="text-red-600">-৳{value.couponDiscount}</Text>
+                    <Text className="text-red-600">-{formatPrice(value.couponDiscount)}</Text>
                   </div>
                 )}
 
                 <div className="flex justify-between items-center">
                   <Text type="secondary">Tax Amount</Text>
-                  <Text>৳{value.totalTax}</Text>
+                  <Text>{formatPrice(value.totalTax)}</Text>
                 </div>
 
                 {paidAmount > 0 && (
                   <div className="flex justify-between items-center">
                     <Text type="secondary">Paid Amount</Text>
-                    <Text className="text-green-600">৳{paidAmount}</Text>
+                    <Text className="text-green-600">{formatPrice(paidAmount)}</Text>
                   </div>
                 )}
 
                 {+value.shippingCharge > 0 && (
                   <div className="flex justify-between items-center">
                     <Text type="secondary">Shipping</Text>
-                    <Text>৳{value.shippingCharge}</Text>
+                    <Text>{formatPrice(value.shippingCharge)}</Text>
                   </div>
                 )}
 
@@ -420,7 +422,7 @@ const Order = () => {
                 <div className="flex justify-between items-center bg-gray-50 -mx-6 -mb-6 p-4 rounded-b-lg">
                   <Text strong className="text-lg">Grand Total</Text>
                   <Text strong className="text-lg text-green-600">
-                    ৳{(+value.grandTotal - paidAmount).toFixed(2)}
+                    {formatPrice(+value.grandTotal - paidAmount)}
                   </Text>
                 </div>
               </div>

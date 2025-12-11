@@ -1,4 +1,7 @@
 "use client";
+
+import { useCurrency } from "@/context/CurrencyContext";
+
 const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
   const {
     total_delivered_product_count,
@@ -22,6 +25,8 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
     total_processing_order_count,
     payments,
   }: any = dashboardReports || {};
+
+  const { formatPrice } = useCurrency();
 
   return (
     <>
@@ -95,25 +100,25 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>Pending</span>
-              <span>{(+total_pending_order_amount || 0).toFixed(2)}</span>
+              <span>{formatPrice(total_pending_order_amount || 0)}</span>
             </div>
             <div className="flex justify-between">
               <span>Processing</span>
-              <span>{(+total_processing_order_amount || 0).toFixed(2)}</span>
+              <span>{formatPrice(total_processing_order_amount || 0)}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipped</span>
-              <span>{(+total_shipped_order_amount || 0).toFixed(2)}</span>
+              <span>{formatPrice(total_shipped_order_amount || 0)}</span>
             </div>
 
             <div className="flex justify-between">
               <span>Cancelled</span>
-              <span>{(+total_canceled_order_amount || 0).toFixed(2)}</span>
+              <span>{formatPrice(total_canceled_order_amount || 0)}</span>
             </div>
 
             <div className="flex justify-between">
               <span>Delivered</span>
-              <span>{(+total_delivered_order_amount || 0).toFixed(2)}</span>
+              <span>{formatPrice(total_delivered_order_amount || 0)}</span>
             </div>
           </div>
         </div>
@@ -126,11 +131,11 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>COD Order Amount</span>
-              <span>{payments?.cash_debit_amount || "0.00"}</span>
+              <span>{formatPrice(payments?.cash_debit_amount || 0)}</span>
             </div>
             <div className="flex justify-between">
               <span>SSL Order Amount</span>
-              <span>{payments?.ssl_debit_amount || "0.00"}</span>
+              <span>{formatPrice(payments?.ssl_debit_amount || 0)}</span>
             </div>
           </div>
         </div>

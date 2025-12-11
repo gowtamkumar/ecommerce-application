@@ -1,5 +1,6 @@
 "use client";
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import {
   deleteShippingCharge,
   getShippingCharges,
@@ -44,6 +45,7 @@ const ShippingChargeList: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const {formatPrice} = useCurrency();
 
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -177,7 +179,7 @@ const ShippingChargeList: React.FC = () => {
       sorter: (a, b) => a.shippingCharge - b.shippingCharge,
       ...getColumnSearchProps("shippingCharge"),
       render: (value) => (
-        <span className="font-medium text-green-600">৳{value}</span>
+        <span className="font-medium text-green-600">{formatPrice(value)}</span>
       ),
     },
     {

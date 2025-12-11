@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Form, Input, InputNumber, Modal, Select, Switch } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
@@ -156,7 +156,7 @@ const AddShippingCharge = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
               name="shippingCharge"
-              label="Shipping Charge (৳)"
+              label="Shipping Charge"
               rules={[
                 {
                   required: true,

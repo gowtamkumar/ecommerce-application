@@ -1,4 +1,5 @@
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getDashboardProducts } from "@/lib/apis/product";
 import { saveStockAdjust } from "@/lib/apis/stock-adjust";
 import {
@@ -22,6 +23,7 @@ const AddStockAdjust = () => {
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const {formatPrice} = useCurrency();
 
   useEffect(() => {
     fetchData();
@@ -229,11 +231,11 @@ const AddStockAdjust = () => {
                           <td className="p-3 border-b">
                             <Form.Item {...restField} name={[name, "unitPrice"]} className="!mb-0">
                               <span className="text-gray-600">
-                                ৳{form.getFieldValue([
+                                {formatPrice(form.getFieldValue([
                                   "productVariants",
                                   name,
                                   "unitPrice",
-                                ]) ?? "-"}
+                                ])) ?? "-"}
                               </span>
                             </Form.Item>
                           </td>
@@ -245,11 +247,11 @@ const AddStockAdjust = () => {
                               className="!mb-0"
                             >
                               <span className="text-gray-600">
-                                ৳{form.getFieldValue([
+                                {formatPrice(form.getFieldValue([
                                   "productVariants",
                                   name,
                                   "purchasePrice",
-                                ]) ?? "-"}
+                                ])) ?? "-"}
                               </span>
                             </Form.Item>
                           </td>
@@ -257,11 +259,11 @@ const AddStockAdjust = () => {
                           <td className="p-3 border-b">
                             <Form.Item {...restField} name={[name, "stockQty"]} className="!mb-0">
                               <span className="font-semibold text-blue-600">
-                                {form.getFieldValue([
+                                {formatPrice(form.getFieldValue([
                                   "productVariants",
                                   name,
                                   "stockQty",
-                                ]) ?? "-"}
+                                ])) ?? "-"}
                               </span>
                             </Form.Item>
                           </td>

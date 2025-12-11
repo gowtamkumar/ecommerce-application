@@ -46,31 +46,30 @@ export default function ReportPage() {
       {/* Statistics Cards */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title="Total Revenue"
               value={stats.totalRevenue}
               precision={2}
               valueStyle={{ color: '#3f8600' }}
               prefix={<DollarOutlined />}
-              suffix="$"
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title="Total Profit"
               value={stats.totalProfit}
               precision={2}
               valueStyle={{ color: stats.totalProfit >= 0 ? '#3f8600' : '#cf1322' }}
               prefix={stats.totalProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-              suffix="$"
+              
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title="Total Sales"
               value={stats.totalSales}
@@ -79,7 +78,7 @@ export default function ReportPage() {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title="Total Customers"
               value={stats.totalCustomers}
@@ -88,7 +87,7 @@ export default function ReportPage() {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm hover:shadow-md transition-shadow">
+          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
             <Statistic
               title="Low Stock Alert"
               value={stats.lowStockCount}
@@ -102,7 +101,7 @@ export default function ReportPage() {
       {/* Charts Section */}
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={16}>
-          <Card title="Sales Trend (Last 7 Days)" bordered={false} className="shadow-sm">
+          <Card title="Sales Trend (Last 7 Days)" variant='borderless' className="shadow-sm">
             <div style={{ height: 400 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart

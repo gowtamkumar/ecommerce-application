@@ -105,7 +105,7 @@ export default async function RootLayout({
         {/* Custom header code (Analytics, etc.) */}
         {renderSeoCode(setting?.seo?.headerCode)}
       </head>
-      <body suppressHydrationWarning className={poppinsFont.variable}>
+      <body className={`${poppinsFont.variable} antialiased`}>
         {/* Google Tag Manager (noscript) */}
         {setting?.seo?.bodyStartCode && (
           <noscript>
@@ -120,15 +120,26 @@ export default async function RootLayout({
 
         <AuthProvider session={session}>
           <StoreProvider>
-            <WhatsAppWidget />
-            <CurrencyProvider>
-              <AntdRegistry>
-                {children}
+            <AntdRegistry>
+              <CurrencyProvider>
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme="colored"
+                />
                 <ScrollToTop />
+                <WhatsAppWidget />
+                {children}
                 <CookieBanner />
-                <ToastContainer />
-              </AntdRegistry>
-            </CurrencyProvider>
+              </CurrencyProvider>
+            </AntdRegistry>
           </StoreProvider>
         </AuthProvider>
 

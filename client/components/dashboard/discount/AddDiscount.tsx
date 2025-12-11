@@ -400,7 +400,7 @@ const AddDiscount = () => {
                 size="large"
               >
                 <Select.Option value="Percentage">Percentage (%)</Select.Option>
-                <Select.Option value="Fixed">Fixed Amount (৳)</Select.Option>
+                <Select.Option value="Fixed">Fixed Amount</Select.Option>
               </Select>
             </Form.Item>
 

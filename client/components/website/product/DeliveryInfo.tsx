@@ -1,6 +1,8 @@
 import { Divider } from "antd";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const DeliveryInfo = ({ delivery }: any) => {
+  const {formatPrice} = useCurrency();
   return (
     <div className="bg-gray-200 p-4">
       <h2 className="text-sm text-gray-600 font-semibold ">Delivery</h2>
@@ -10,7 +12,7 @@ const DeliveryInfo = ({ delivery }: any) => {
       </div>
       <hr />
       <span className="text-gray-700 text-sm">
-        Shipping Cost: ৳ {delivery.unitPrice}
+        Shipping Cost: {formatPrice(delivery.unitPrice)}
       </span>
       <Divider />
       <h2 className="text-sm text-gray-600 font-semibold">Service</h2>

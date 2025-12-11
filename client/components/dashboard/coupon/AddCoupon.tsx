@@ -263,7 +263,7 @@ const AddCoupon = () => {
             >
               <Select placeholder="Select type" size="large">
                 <Select.Option value="Percentage">Percentage (%)</Select.Option>
-                <Select.Option value="Fixed">Fixed Amount (৳)</Select.Option>
+                <Select.Option value="Fixed">Fixed Amount</Select.Option>
               </Select>
             </Form.Item>
 
@@ -327,7 +327,7 @@ const AddCoupon = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
               name="minOrderAmount"
-              label="Min Order Amount (৳)"
+              label="Min Order Amount"
               rules={[
                 {
                   required: true,
@@ -357,7 +357,7 @@ const AddCoupon = () => {
 
             <Form.Item
               name="mincartValue"
-              label="Min Cart Value (৳)"
+              label="Min Cart Value"
               rules={[
                 {
                   required: true,
@@ -372,7 +372,7 @@ const AddCoupon = () => {
 
             <Form.Item
               name="maxDiscountValue"
-              label="Max Discount Value (৳)"
+              label="Max Discount Value"
               rules={[
                 {
                   required: true,

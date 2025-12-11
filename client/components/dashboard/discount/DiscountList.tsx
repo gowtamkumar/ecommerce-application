@@ -27,6 +27,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { TbStatusChange } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface DataType {
   key: string;
@@ -49,6 +50,7 @@ const DiscountList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
+  const {formatPrice} = useCurrency();
   
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -215,7 +217,7 @@ const DiscountList: React.FC = () => {
       ...getColumnSearchProps("value"),
       render: (value, record) => (
         <span className="font-medium text-gray-700">
-          {record.discountStrategy === "Percentage" ? `${value}%` : `৳${value}`}
+          {record.discountStrategy === "Percentage" ? `${value}%` : formatPrice(value)}
         </span>
       ),
     },

@@ -1,9 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import {  Button, Card, Table } from "antd";
+import { useCurrency } from "@/context/CurrencyContext";
+import { Button, Card, Table } from "antd";
 
 const TopSellingProduct = ({ topSellingProduct }: any) => {
-  const [tableParams, setTableParams] = useState({
+    const { formatPrice } = useCurrency();
+    const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 5,
   });
@@ -18,6 +20,9 @@ const TopSellingProduct = ({ topSellingProduct }: any) => {
       dataIndex: "total_sale_amount",
       key: "total_sale_amount",
       width: 150,
+      render: (v: any) => {
+        return <span>{formatPrice(v)}</span>;
+      },
     },
     {
       title: "Total Qty",

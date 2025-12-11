@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { useCurrency } from "@/context/CurrencyContext";
 
 // Define the interface for the customer data
 interface Customer {
@@ -14,6 +15,7 @@ interface TopCustomerProps {
 }
 
 const TopCustomer: React.FC<TopCustomerProps> = ({ topCustomers }) => {
+  const { formatPrice } = useCurrency();
   const theme = "light-bg";
   const text = "text-dark";
 
@@ -28,6 +30,9 @@ const TopCustomer: React.FC<TopCustomerProps> = ({ topCustomers }) => {
       title: "Total Sale Amount",
       dataIndex: "total_sale_amount",
       key: "total_sale_amount",
+      render: (v: any) => {
+        return <span>{formatPrice(v)}</span>;
+      },
     },
     {
       title: "Total Qty",

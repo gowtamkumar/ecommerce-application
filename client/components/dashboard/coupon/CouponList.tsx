@@ -1,5 +1,6 @@
 "use client";
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import { deleteCoupon, getCoupons } from "@/lib/apis/admin/coupon";
 import {
   errorNotification,
@@ -53,6 +54,7 @@ const CouponList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
+  const {formatPrice} = useCurrency();
 
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -212,7 +214,7 @@ const CouponList: React.FC = () => {
       ...getColumnSearchProps("value"),
       render: (value, record) => (
         <span className="font-medium text-gray-700">
-          {record.discountType === "Percentage" ? `${value}%` : `৳${value}`}
+          {record.discountType === "Percentage" ? `${value}%` : formatPrice(value)}
         </span>
       ),
     },
