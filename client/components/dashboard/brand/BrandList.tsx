@@ -20,6 +20,7 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 
 interface DataType {
   key: string;
@@ -172,7 +173,7 @@ const BrandList: React.FC = () => {
           width={60}
           height={40}
           alt={value}
-          src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
+          src={getImageUrl(value)}
           className="rounded-lg object-contain border border-gray-200 bg-white p-1"
         />
       ),
@@ -209,9 +210,7 @@ const BrandList: React.FC = () => {
                     name: `image`,
                     status: "done",
                     fileName: newData.image,
-                    url: `${appConfig.baseApiUrl}/uploads/${
-                      newData.image || "no-data.png"
-                    }`,
+                    url: getImageUrl(newData.image),
                   };
                   newData.fileList = [file];
                 }
@@ -219,6 +218,7 @@ const BrandList: React.FC = () => {
                   setAction({
                     type: ActionType.UPDATE,
                     payload: newData,
+                    brand:true
                   })
                 );
               }}

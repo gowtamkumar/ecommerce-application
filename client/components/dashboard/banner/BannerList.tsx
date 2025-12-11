@@ -17,6 +17,7 @@ import { ActionType } from "@/constants/constants";
 import { deleteBanner, getBanners } from "@/lib/apis/banner";
 import appConfig from "@/appConfig";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 
 interface DataType {
   key: string;
@@ -179,7 +180,7 @@ const BannerList: React.FC = () => {
           width={60}
           height={40}
           alt={value}
-          src={`${appConfig.baseApiUrl}/uploads/${value || "no-data.png"}`}
+          src={getImageUrl(value)}
           className="rounded-lg object-cover border border-gray-200"
         />
       ),
@@ -233,7 +234,7 @@ const BannerList: React.FC = () => {
                     name: `image`,
                     status: "done",
                     fileName: newData.image,
-                    url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"}`,
+                    url: getImageUrl(newData.image),
                   };
                   newData.fileList = [file];
                 }

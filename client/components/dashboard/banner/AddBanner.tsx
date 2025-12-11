@@ -26,7 +26,7 @@ const AddBanner = () => {
     fileList: [],
   }) as any;
   const global = useSelector(selectGlobal);
-  const { payload, type } = global.action;
+  const { payload, type, banner } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -92,7 +92,7 @@ const AddBanner = () => {
       width={700}
       zIndex={1050}
       open={
-        global.action.banner &&
+        banner &&
         (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}

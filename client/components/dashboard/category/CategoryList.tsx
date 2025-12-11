@@ -89,7 +89,7 @@ const CategoryList: React.FC = () => {
               height={48}
               src={getImageUrl(record.image)}
               alt={text}
-              // preview={false}
+        
               className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
             />
           </div>
@@ -120,8 +120,10 @@ const CategoryList: React.FC = () => {
       dataIndex: "isFeatured",
       render: (value: boolean) => (
         value ? (
-          <Tag color="cyan" className="rounded-full px-2 border-0 bg-cyan-50 text-cyan-700">Featured</Tag>
-        ) : <span className="text-gray-400 text-xs">Standard</span>
+          <Tag color="cyan" className="rounded-full px-2 border-0 bg-cyan-50 text-cyan-700">Yes</Tag>
+        ) : (
+          <Tag color="red" className="rounded-full px-2 border-0 bg-red-50 text-red-700">No</Tag>
+        )
       ),
     },
     {

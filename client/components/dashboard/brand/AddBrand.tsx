@@ -13,7 +13,7 @@ import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   selectGlobal,
   setAction,
-  setLoading,
+  setLoading, 
 } from "@/redux/features/global/globalSlice";
 import { Button, Form, Image, Input, Modal, Switch, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -95,7 +95,7 @@ const AddBrand = () => {
       }
       width={550}
       zIndex={1050}
-      open={type === ActionType.CREATE || type === ActionType.UPDATE}
+      open={type && global?.action?.brand && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
       footer={
         <div className="flex justify-end gap-3 pt-4 border-t">
