@@ -69,6 +69,7 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/colors', colorRoute);
   app.use('/api/v1/reports', AuthGuard, reportRoute);
   app.use('/api/v1/notifications', AuthGuard, notificationRoute);
+  app.use('/api/v1/reports', reportRoute);
   app.use('/api/v1/coupons', couponRoute);
   app.use('/api/v1/stock-adjusts', AuthGuard, stockAdjust);
   // app.use("/api/v1/returns", AuthGuard, returnsRoute);
