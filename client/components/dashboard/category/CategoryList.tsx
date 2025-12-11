@@ -73,7 +73,7 @@ const CategoryList: React.FC = () => {
     item.label.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  
+
 
   const columns: TableColumnsType<DataType> = [
     {
@@ -81,10 +81,10 @@ const CategoryList: React.FC = () => {
       dataIndex: "label",
       key: "label",
       render: (text, record) => (
-        
+
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
-           <Image
+            <Image
               width={48}
               height={48}
               src={getImageUrl(record.image)}

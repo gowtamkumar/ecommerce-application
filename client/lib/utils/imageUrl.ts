@@ -13,7 +13,12 @@ export const getImageUrl = (
   if (!filename || filename === "null" || filename === "undefined") {
     return fallback;
   }
-  return `${appConfig.baseApiClientUrl}/uploads/${filename}`;
+  if (filename.startsWith("http") || filename.startsWith("https") || filename.startsWith("blob:")) {
+    return filename;
+  }
+  
+  const baseUrl = appConfig.baseApiClientUrl || "";
+  return `${baseUrl}/uploads/${filename}`;
 };
 
 /**

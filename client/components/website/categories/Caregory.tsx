@@ -1,5 +1,5 @@
 "use client";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,7 @@ export default function Caregory({ categories }: any) {
         {(categories || []).map((item: any) => {
           return (
             <div
-            key={item.id}
+              key={item.id}
               className="py-5 flex flex-col items-center gap-2 justify-center bg-gray-100 cursor-pointer rounded-lg"
               onClick={() => {
                 router.push(`/products?categoryId=${item.id}&`);
@@ -19,7 +19,7 @@ export default function Caregory({ categories }: any) {
             >
               <Image
                 alt={item.name || "image"}
-                src={getUploadImageUrl(item.image)}
+                src={getImageUrl(item.image)}
                 loading="lazy"
                 width={70}
                 height={70}
