@@ -18,7 +18,8 @@ import {
   MdOutlinePermMedia,
   MdOutlineSpatialTracking,
   MdPayment,
-  MdViewModule
+  MdViewModule,
+  MdWarning,
 } from "react-icons/md";
 import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
 import { SiWish } from "react-icons/si";
@@ -309,6 +310,12 @@ const navbarRoute = [
     key: "report",
     icon: <TbReport className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/report">Report</Link>,
+    route: "true",
+  },
+  {
+    key: "system_alerts",
+    icon: <MdWarning className="h-5 w-5 text-red-500" />,
+    label: <Link href="/dashboard/system-alerts">System Alerts</Link>,
     route: "true",
   },
   // {

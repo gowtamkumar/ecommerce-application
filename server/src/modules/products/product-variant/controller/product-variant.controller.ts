@@ -120,7 +120,7 @@ export const updateProductVariant = asyncHandler(async (req: Request, res: Respo
 
   // Check for Price Drop or Back in Stock
   const oldPrice = parseFloat(result.unitPrice.toString());
-  const newPrice = validation.data.unitPrice ? parseFloat(validation.data.unitPrice.toString()) : oldPrice;
+  const newPrice = validation.data.price ? parseFloat(validation.data.price.toString()) : oldPrice;
   
   const oldStock = result.stockQty || 0;
   const newStock = validation.data.stockQty !== undefined ? validation.data.stockQty : oldStock;

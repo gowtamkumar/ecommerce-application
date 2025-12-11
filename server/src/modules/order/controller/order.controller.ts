@@ -318,10 +318,29 @@ export const onlinePayment = async (req: CustomRequest, res: Response, savedOrde
     // ship_add2: "Dhaka",
     // ship_state: "Dhaka",
   };
-  const apiResponse = await sslcz.init(paymentPayload);
-  console.log('apiResponse', apiResponse);
+  try {
+    const apiResponse = await sslcz.init(paymentPayload);
+    console.log('apiResponse', apiResponse);
+    return apiResponse.GatewayPageURL;
+  } catch (error: any) {
+      // System Alert: Payment Gateway Error
+      const notificationRepo = connection.getRepository(NotificationEntity);
+      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+      
+      const alerts = admins.map((admin: UserEntity) => notificationRepo.create({
+          type: NotificationType.PaymentGatewayError,
+          title: 'Payment Gateway Error',
+          message: `Failed to initialize SSLCommerz payment for Order #${savedOrder.id}. Error: ${error.message}`,
+          userId: admin.id,
+          isRead: false
+      }));
+      
+      if (alerts.length > 0) {
+        await notificationRepo.save(alerts);
+      }
 
-  return apiResponse.GatewayPageURL;
+      throw error;
+  }
 };
 
 // @desc Get all Order

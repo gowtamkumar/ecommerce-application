@@ -8,7 +8,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import 'reflect-metadata';
 import { getDBConnection } from './src/config/db';
+import { NotificationType } from './src/enums/notification-type.enum';
 import { errorHandler } from './src/middlewares/errorHandler';
+import { trafficMonitor } from './src/middlewares/traffic-monitor.middleware';
+import { RoleEnum } from './src/modules/auth/enums/role.enum';
+import { UserEntity } from './src/modules/auth/model/user.entity';
+import { NotificationEntity } from './src/modules/other/notification/model/notification.entity';
 // all routes
 import { rateLimit } from 'express-rate-limit';
 import path from 'path';
@@ -42,6 +47,7 @@ const limiter = rateLimit({
 });
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
+app.use(trafficMonitor);
 
 // middleware
 app.use(cookieParser()); // cookie parser when we needed the cookies value then we simply get and set
@@ -83,8 +89,30 @@ app.get('*', (req, res) => {
 // Port
 const PORT = process.env.PORT || 3900;
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
   console.log(colors.magenta(`Server running in ${process.env.NODE_ENV} Mode on Port ${PORT}`));
+  
+  // Notify Admins: Server Started / Restarted
+  try {
+     const connection = await getDBConnection();
+     const userRepo = connection.getRepository(UserEntity);
+     const notificationRepo = connection.getRepository(NotificationEntity);
+     const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
+
+     const alerts = admins.map((admin: UserEntity) => notificationRepo.create({
+         type: NotificationType.ServerDown, // Using to indicate status change/recovery
+         title: 'Server Alert',
+         message: `Server successfully started/restarted.`,
+         userId: admin.id,
+         isRead: false
+     }));
+
+     if (alerts.length > 0) {
+        await notificationRepo.save(alerts);
+     }
+  } catch (error) {
+     console.error("Failed to send server startup alert", error);
+  }
 });
 
 //handle and unhandle promise rejections
