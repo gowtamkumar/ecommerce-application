@@ -12,6 +12,16 @@ export async function getNotifications() {
   return await handleResponse(res);
 }
 
+// Get all notifications for the current user
+export async function getNotificationsForAdmin() {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/notifications/admin`, {
+    cache: "no-cache",
+    headers,
+  });
+  return await handleResponse(res);
+}
+
 // Get single notification
 export async function getNotification(id: string) {
   const headers = await getAuthHeaders();
@@ -51,6 +61,18 @@ export async function deleteNotification(id: string) {
     method: "DELETE",
     cache: "no-cache",
     headers,
+  });
+  return await handleResponse(res);
+}
+
+// Send Promotional Notification (Admin)
+export async function sendPromotionalNotification(data: { title: string; message: string; type?: string }) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/notifications/promote`, {
+    method: "POST",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
   });
   return await handleResponse(res);
 }

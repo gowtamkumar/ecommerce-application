@@ -1,5 +1,5 @@
 'use client'
-import { getNotifications, readNotification } from "@/lib/apis/notification";
+import { getNotificationsForAdmin, readNotification } from "@/lib/apis/notification";
 import { BellOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { Badge, Button, Empty, List, Popover, Spin, Typography } from "antd";
 import dayjs from "dayjs";
@@ -19,7 +19,7 @@ const NotificationDropdown = () => {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const res = await getNotifications();
+      const res = await getNotificationsForAdmin();
       if (res?.data) {
         setNotifications(res.data);
       }
@@ -53,7 +53,7 @@ const NotificationDropdown = () => {
     <div className="w-80 max-h-[400px] overflow-y-auto">
       <div className="p-3 border-b flex justify-between items-center bg-gray-50 sticky top-0 z-10">
         <Text strong>Notifications</Text>
-        <Link href="/profile?tab=notification" onClick={() => setOpen(false)}>
+        <Link href="/dashboard/notifications" onClick={() => setOpen(false)}>
           <Text type="secondary" className="text-xs hover:text-blue-500 cursor-pointer">View All</Text>
         </Link>
       </div>

@@ -7,6 +7,7 @@ import {
   deleteNotification,
   getNotification,
   getNotifications,
+  getNotificationsForAdmin,
   readNotification,
   sendPromotionalNotification,
   updateNotification
@@ -18,6 +19,7 @@ router.route('/read/:id').get(readNotification);
 router.route('/clear').get(clearNotification);
 router.route('/promote').post(AuthGuard, isAuthorize(RoleEnum.Admin), sendPromotionalNotification);
 router.route('/').get(getNotifications).post(createNotification);
+router.route('/admin').get(getNotificationsForAdmin);
 
 router.route('/:id').get(getNotification).put(updateNotification).delete(deleteNotification);
 

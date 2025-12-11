@@ -1,28 +1,24 @@
 'use client'
-import { deleteNotification, getNotifications, readNotification } from "@/lib/apis/notification";
+import { NOTIFICATION_TYPES } from "@/constants/constants";
+import { deleteNotification, getNotificationsForAdmin, readNotification } from "@/lib/apis/notification";
+import { getUsers } from "@/lib/apis/user";
 import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
 import {
   selectGlobal,
-  setLoading,
+  setLoading
 } from "@/redux/features/global/globalSlice";
 import { DeleteOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import { Button, Popconfirm, Table, Tag, Tooltip } from "antd";
+import { Button, Popconfirm, Select, Space, Table, Tag, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const SYSTEM_ALERT_TYPES = [
-  'SystemAlert',
-  'ServerDown',
-  'HighTraffic',
-  'PaymentGatewayError',
-  'SmsEmailFailed',
-  'CronJobFailed'
-];
+
+
 
 interface DataType {
   id: string;
@@ -34,18 +30,29 @@ interface DataType {
   createdAt: string;
 }
 
-const SystemAlertList = () => {
-  const [alerts, setAlerts] = useState([] as any);
+const NotificationList = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [filteredNotifications, setFilteredNotifications] = useState<any[]>([]);
+
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+
 
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
-      const res = await getNotifications();
-      // Filter only system alerts
-      const systemAlerts = res?.data?.filter((n: any) => SYSTEM_ALERT_TYPES.includes(n.type));
-      setAlerts(systemAlerts || []);
+      const [resNotifs, resUsers] = await Promise.all([
+        getNotificationsForAdmin(),
+        getUsers()
+      ]);
+
+      setNotifications(resNotifs.data || []);
+      setFilteredNotifications(resNotifs.data || []);
+      setUsers(resUsers.data || []);
+
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -56,6 +63,21 @@ const SystemAlertList = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Handle Filtering
+  useEffect(() => {
+    let filtered = [...notifications];
+
+    if (selectedUser) {
+      filtered = filtered.filter((n: any) => n.userId === selectedUser);
+    }
+
+    if (selectedType) {
+      filtered = filtered.filter((n: any) => n.type === selectedType);
+    }
+
+    setFilteredNotifications(filtered);
+  }, [selectedUser, selectedType, notifications]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
@@ -79,12 +101,13 @@ const SystemAlertList = () => {
     }
   };
 
-  const getAlertColor = (type: string) => {
+  const getNotificationColor = (type: string) => {
     switch (type) {
       case 'ServerDown': return 'red';
       case 'HighTraffic': return 'orange';
       case 'PaymentGatewayError': return 'volcano';
       case 'SmsEmailFailed': return 'magenta';
+      case 'CronJobFailed': return 'magenta';
       default: return 'blue';
     }
   };
@@ -96,7 +119,7 @@ const SystemAlertList = () => {
       key: "type",
       width: 150,
       render: (type) => (
-        <Tag color={getAlertColor(type)} className="font-medium">
+        <Tag color={getNotificationColor(type)} className="font-medium">
           {type}
         </Tag>
       ),
@@ -169,15 +192,43 @@ const SystemAlertList = () => {
 
   return (
     <div className="p-4 bg-white rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">System Alerts</h2>
-        <Button onClick={fetchData} icon={<SearchOutlined />}>Refresh</Button>
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+        <h2 className="text-xl font-semibold">Notifications History</h2>
+
+        <Space wrap>
+          <Select
+            placeholder="Filter by Type"
+            allowClear
+            style={{ width: 200 }}
+            onChange={setSelectedType}
+            showSearch
+          >
+            {NOTIFICATION_TYPES.map(type => (
+              <Select.Option key={type} value={type}>{type}</Select.Option>
+            ))}
+          </Select>
+
+          <Select
+            placeholder="Filter by User"
+            allowClear
+            style={{ width: 200 }}
+            onChange={setSelectedUser}
+            showSearch
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            options={users.map(u => ({ label: u.name || u.email, value: u.id }))}
+          />
+
+          <Button onClick={fetchData} icon={<SearchOutlined />}>Refresh</Button>
+        </Space>
       </div>
       <Table
         scroll={{ x: "auto" }}
         loading={global.loading.loading}
         columns={columns}
-        dataSource={alerts}
+        dataSource={filteredNotifications}
         rowKey="id"
         pagination={{
           pageSize: 10,
@@ -187,4 +238,4 @@ const SystemAlertList = () => {
   );
 };
 
-export default SystemAlertList;
+export default NotificationList;

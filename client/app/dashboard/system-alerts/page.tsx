@@ -1,4 +1,4 @@
-import SystemAlertList from "@/components/dashboard/system-alerts/SystemAlertList";
+import NotificationList from "@/components/dashboard/notification/NotificationList";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function page() {
-  return <SystemAlertList />;
+  return <NotificationList />;
 }

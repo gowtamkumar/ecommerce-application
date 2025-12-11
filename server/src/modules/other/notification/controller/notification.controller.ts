@@ -29,6 +29,27 @@ export const getNotifications = asyncHandler(async (req: CustomRequest, res: Res
   });
 });
 
+// @desc Get all Notification
+// @route GET /api/v1/Notification
+// @access Public
+export const getNotificationsForAdmin = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: getNotifications ${req.method} ${req.url}`);
+
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(NotificationEntity);
+
+  const result = await repository.find({
+    order: { createdAt: 'DESC' },
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: 'Get all Notification',
+    data: result,
+  });
+});
+
+
 // @desc Get a single Notification
 // @route GET /api/v1/Notification/:id
 // @access Public

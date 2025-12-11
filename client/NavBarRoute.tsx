@@ -9,7 +9,10 @@ import {
   FaRegUser,
   FaUser,
 } from "react-icons/fa";
-import { IoReorderFour } from "react-icons/io5";
+import {
+  IoNotifications,
+  IoReorderFour
+} from "react-icons/io5";
 import {
   MdCategory,
   MdDashboard,
@@ -316,6 +319,12 @@ const navbarRoute = [
     key: "system_alerts",
     icon: <MdWarning className="h-5 w-5 text-red-500" />,
     label: <Link href="/dashboard/system-alerts">System Alerts</Link>,
+    route: "true",
+  },
+  {
+    key: "notifications",
+    icon: <IoNotifications className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/notifications">Notifications</Link>,
     route: "true",
   },
   // {

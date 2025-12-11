@@ -6,3 +6,13 @@ export const ActionType = {
   APPROVE: 'APPROVE',
   CLOSE: 'CLOSE',
 }
+
+
+// We will use the strings directly since sharing enums might be tricky if not set up
+export const NOTIFICATION_TYPES = [
+  'Order', 'OrderPlaced', 'OrderShipped', 'OrderDelivered', 'OrderCanceled',
+  'AdminNewOrder', 'AdminPaymentFailed', 'AdminOrderCanceled', 'AdminLowStock', 'AdminHighValueOrder',
+  'PromotionalMarketing', 'NewOffer', 'ReviewRequest', 'ReviewSubmitted',
+  'SystemAlert', 'ServerDown', 'HighTraffic', 'PaymentGatewayError', 'SmsEmailFailed', 'CronJobFailed',
+  'UserAccount', 'UserRegistration', 'UserLogin'
+];
