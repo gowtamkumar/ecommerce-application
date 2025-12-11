@@ -1,4 +1,11 @@
 "use client";
+import AddToCartButton from "@/components/AddToCartButton";
+import Card from "@/components/Card";
+import Pagination from "@/components/Pagination";
+import { useCurrency } from "@/context/CurrencyContext";
+import { getPublicProducts } from "@/lib/apis/product";
+import { AddToWishlist } from "@/lib/utils/addToWishList";
+import { getProductImageUrls } from "@/lib/utils/imageUrl";
 import {
   selectGlobal,
   setUnAuthorize,
@@ -7,21 +14,15 @@ import {
   selectProduct,
   setProducts,
 } from "@/redux/features/products/productSlice";
+import { AppDispatch } from "@/redux/store";
+import { Rate } from "antd";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import Card from "@/components/Card";
-import { getPublicProducts } from "@/lib/apis/product";
-import { getProductImageUrls } from "@/lib/utils/imageUrl";
-import Link from "next/link";
-import Image from "next/image";
 import { FaRegHeart } from "react-icons/fa";
-import { Rate } from "antd";
-import AddToCartButton from "@/components/AddToCartButton";
-import { AddToWishlist } from "@/lib/utils/addToWishList";
-import { useSession } from "next-auth/react";
-import Pagination from "@/components/Pagination";
+import { useDispatch, useSelector } from "react-redux";
 
 interface PaginationProps {
   currentPage: number;
@@ -45,7 +46,9 @@ const ProductCard: React.FC = () => {
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
   const session = useSession();
+  const session = useSession();
   const params = useParams();
+  const { formatPrice, selectedCurrency } = useCurrency();
 
   const {
     categoryId: categoryIds,
@@ -117,9 +120,8 @@ const ProductCard: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div
-        className={`grid gap-1 ${
-          global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
-        }`}
+        className={`grid gap-1 ${global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
+          }`}
       >
         {products?.map((item: any) => {
           const url = `/product/${item.slug}`;
@@ -179,7 +181,7 @@ const ProductCard: React.FC = () => {
                         </Link>
                       </p>
                       <div className="flex gap-3">
-                        <code>৳{item.finalPrice}</code>
+                        <code>{formatPrice(item.finalPrice)}</code>
                         <span className="flex gap-1 items-center">
                           <Rate disabled value={+item.avgRating || 0} />
                           {item.reviewsCount && item.reviewsCount}
@@ -189,13 +191,13 @@ const ProductCard: React.FC = () => {
                         {item?.discountId && (
                           <div className="text-xs">
                             <span className="line-through text-gray-500">
-                              ৳ {item.salePrice}
+                              {formatPrice(item.salePrice)}
                             </span>
                             <span className="text-red-600 ml-2">
                               - {item.discountValue}
                               {item?.discountStrategy === "Percentage"
                                 ? "%"
-                                : "BDT"}
+                                : selectedCurrency?.symbol}
                             </span>
                           </div>
                         )}

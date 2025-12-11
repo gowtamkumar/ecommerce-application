@@ -12,6 +12,9 @@ export class CurrencyEntity {
   @Column()
   symbol!: string;
 
+  @Column({ name: 'exchange_rate', type: 'float', default: 1 })
+  exchangeRate!: number;
+
   @Column({ name: 'user_id' })
   userId!: number;
 }

@@ -7,6 +7,9 @@ export const currencyValidationSchema = z.object({
   symbol: z.string({
     required_error: 'symbol is required',
   }),
+  exchangeRate: z.number({
+    required_error: 'exchangeRate is required',
+  }),
   userId: z.number({
     required_error: 'user is required',
   }),

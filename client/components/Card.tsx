@@ -1,5 +1,7 @@
 "use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { saveWishlist } from "@/lib/apis/wishlist";
+import { getProductImageUrls } from "@/lib/utils/imageUrl";
 import {
   errorNotification,
   successNotification,
@@ -8,7 +10,6 @@ import {
   selectGlobal,
   setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
-import { getProductImageUrls } from "@/lib/utils/imageUrl";
 import { Rate } from "antd";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -44,6 +45,7 @@ export default function Card({ item }: { item: any }) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const session = useSession();
+  const { formatPrice, selectedCurrency } = useCurrency();
 
   async function AddToWishlist(productId: number) {
     try {
@@ -95,7 +97,7 @@ export default function Card({ item }: { item: any }) {
         {/* Badges */}
         {+item.discountAmount > 0 && (
           <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full z-10">
-            -{item.discountValue}{item.discountStrategy === "Percentage" ? "%" : " BDT"}
+            -{item.discountValue}{item.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
           </div>
         )}
 
@@ -134,9 +136,9 @@ export default function Card({ item }: { item: any }) {
           <div className="flex items-center justify-between mb-3">
             <div className="flex flex-col">
               {+item?.discountValue > 0 && (
-                <span className="text-xs text-gray-400 line-through">৳ {item.salePrice}</span>
+                <span className="text-xs text-gray-400 line-through">{formatPrice(item.salePrice)}</span>
               )}
-              <span className="text-base font-bold text-black">৳ {item.finalPrice}</span>
+              <span className="text-base font-bold text-black">{formatPrice(item.finalPrice)}</span>
             </div>
           </div>
 

@@ -1,20 +1,20 @@
 import express from 'express';
+import { AuthGuard } from '../../../middlewares/auth.middleware';
 import {
   createCurrency,
   deleteCurrency,
-  getCurrency,
   getCurrencies,
+  getCurrency,
   updateCurrency,
 } from '../controller/currency.controller';
-import { AuthGuard } from '../../../middlewares/auth.middleware';
 
 const router = express.Router();
 
-router.route('/').get(AuthGuard, getCurrencies).post(AuthGuard, createCurrency);
+router.route('/').get(getCurrencies).post(AuthGuard, createCurrency);
 
 router
   .route('/:id')
-  .get(AuthGuard, getCurrency)
+  .get(getCurrency)
   .patch(AuthGuard, updateCurrency)
   .delete(AuthGuard, deleteCurrency);
 

@@ -7,4 +7,7 @@ export const updateCurrencyValidationSchema = z.object({
   symbol: z.string({
     required_error: 'symbol is required',
   }),
+  exchangeRate: z.number({
+    required_error: 'exchangeRate is required',
+  }),
 });

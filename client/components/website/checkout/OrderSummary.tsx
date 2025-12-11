@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import appConfig from "@/appConfig";
+import { useCurrency } from "@/context/CurrencyContext";
 import {
   deleteCart,
   getCartLists,
@@ -24,6 +25,7 @@ export default function OrderSummary() {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const cart = useSelector(selectCart);
+  const { formatPrice } = useCurrency();
   // Inside your component or hook
   const debouncedSyncRef = useRef<any>(null);
 
@@ -174,15 +176,15 @@ export default function OrderSummary() {
 
               <td className="p-4 text-right">
                 <div className="flex flex-col items-end">
-                   <span className="font-medium text-gray-900">৳ {item.salePrice}</span>
-                   {item.totalDiscountAmount > 0 && (
-                      <span className="text-xs text-green-600">Save ৳{item.totalDiscountAmount}</span>
-                   )}
+                  <span className="font-medium text-gray-900">{formatPrice(item.salePrice)}</span>
+                  {item.totalDiscountAmount > 0 && (
+                    <span className="text-xs text-green-600">Save {formatPrice(item.totalDiscountAmount)}</span>
+                  )}
                 </div>
               </td>
 
               <td className="p-4 text-right font-bold text-gray-900">
-                ৳ {+item.subTotal}
+                {formatPrice(item.subTotal)}
               </td>
 
               <td className="p-4 text-center">
@@ -205,9 +207,9 @@ export default function OrderSummary() {
         </tbody>
       </table>
       {(!cart?.carts?.cartList || cart?.carts?.cartList.length === 0) && (
-          <div className="p-8 text-center text-gray-500">
-              Your cart is empty.
-          </div>
+        <div className="p-8 text-center text-gray-500">
+          Your cart is empty.
+        </div>
       )}
     </div>
   );

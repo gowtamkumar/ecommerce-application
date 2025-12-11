@@ -2,8 +2,9 @@ import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../lib/authOption";
-import { getImageUrl } from "@/lib/utils/imageUrl";
+import { CurrencyProvider } from "@/context/CurrencyContext";
 import { getSettings } from "@/lib/apis/setting";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import StoreProvider from "@/redux/storeProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ToastContainer } from "react-toastify";
@@ -97,12 +98,14 @@ export default async function RootLayout({
         <AuthProvider session={session}>
           <StoreProvider>
             <WhatsAppWidget />
-            <AntdRegistry>
-              {children}
-              <ScrollToTop />
-              <CookieBanner />
-              <ToastContainer />
-            </AntdRegistry>
+            <CurrencyProvider>
+              <AntdRegistry>
+                {children}
+                <ScrollToTop />
+                <CookieBanner />
+                <ToastContainer />
+              </AntdRegistry>
+            </CurrencyProvider>
           </StoreProvider>
         </AuthProvider>
 

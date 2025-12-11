@@ -16,6 +16,7 @@ import { ContactEntity } from '../modules/contact/model/contact.entity';
 import { AppliedCouponEntity } from '../modules/coupon/model/applied-coupon.entity';
 import { CouponProductEntity } from '../modules/coupon/model/coupon-product.entity';
 import { CouponEntity } from '../modules/coupon/model/coupon.entity';
+import { CurrencyEntity } from '../modules/currency/model/currency.entity';
 import { ApplicableBrandEntity } from '../modules/discount/model/applicable-brand.entity';
 import { ApplicableCategoryEntity } from '../modules/discount/model/applicable-category.entity';
 import { ApplicableProductEntity } from '../modules/discount/model/applicable-products.entity';
@@ -125,7 +126,6 @@ const dbConnection = new DataSource({
     UnionEntity,
     StockAdjustEntity,
     // VisitorEntity,
-    // CurrencyEntity,
     BannerEntity,
     SettingEntity,
     LeadEntity,
@@ -136,6 +136,7 @@ const dbConnection = new DataSource({
     ContactEntity,
     MenuEntity,
     NotificationEntity,
+    CurrencyEntity
   ],
   subscribers: [],
   migrations: [],

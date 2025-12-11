@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Brand from "../brand/Brand";
+import Currency from "../currency/Currency";
 
 const { Title, Text } = Typography;
 
@@ -100,6 +101,11 @@ export default function Index() {
             label: "Leads",
             key: "leads",
             children: <Lead />,
+          },
+          {
+            label: "Currencies",
+            key: "currencies",
+            children: <Currency />,
           },
         ]}
       />

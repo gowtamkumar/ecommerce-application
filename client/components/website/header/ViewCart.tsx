@@ -1,4 +1,5 @@
 "use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { deleteCart, getCartLists } from "@/lib/apis/cart";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
@@ -12,6 +13,7 @@ export default function ViewCart() {
   const cart = useSelector(selectCart);
   const dispatch = useDispatch();
   const router = useRouter();
+  const { formatPrice } = useCurrency();
 
   const handleRemove = async (item: any) => {
     const cartId = item.id;
@@ -68,7 +70,7 @@ export default function ViewCart() {
         <div className="px-6 py-4 bg-white/70 backdrop-blur-md border-b border-gray-100 shadow-sm sticky top-0 z-10">
           <div className="flex justify-between items-center text-xs font-medium mb-2">
             <span className="text-gray-900">
-              {progress === 100 ? "You've unlocked free shipping!" : `Spend ৳ ${remainingForFreeShipping.toLocaleString()} more for free shipping`}
+              {progress === 100 ? "You've unlocked free shipping!" : `Spend ${formatPrice(remainingForFreeShipping)} more for free shipping`}
             </span>
             <span className="text-gray-500">{Math.round(progress)}%</span>
           </div>
@@ -124,7 +126,7 @@ export default function ViewCart() {
                     {/* Unit price could go here if needed */}
                   </div>
                   <p className="text-base font-semibold text-gray-900 tracking-tight">
-                    ৳ {item.subTotal.toLocaleString()}
+                    {formatPrice(item.subTotal)}
                   </p>
                 </div>
               </div>
@@ -138,7 +140,7 @@ export default function ViewCart() {
             <div className="flex justify-between items-center text-sm">
               <p className="text-gray-500">Subtotal</p>
               <p className="font-semibold text-gray-900">
-                ৳ {subTotal.toLocaleString()}
+                {formatPrice(subTotal)}
               </p>
             </div>
             {/* Can add styling/discount breakdown here */}

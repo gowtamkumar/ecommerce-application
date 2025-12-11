@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import HeaderRight from "./HeaderRight";
 import SearchEngine from "./SearchEngine";
 const Logo = dynamic(() => import("./Logo"));
+const CurrencySwitcher = dynamic(() => import("./CurrencySwitcher"));
 
 const TopBar = dynamic(() => import("./TopBar"));
 const MainMenu = dynamic(() => import("./Menu"));
@@ -68,8 +69,8 @@ export default function Header() {
 
       <header
         className={`${isScrolled
-            ? "fixed top-0 left-0 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100/50"
-            : "relative bg-white border-b border-gray-100"
+          ? "fixed top-0 left-0 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100/50"
+          : "relative bg-white border-b border-gray-100"
           } w-full transition-all duration-300 z-40 transition-all ease-in-out`}
       >
         {!global.mobile ? (
@@ -92,6 +93,9 @@ export default function Header() {
 
               {/* Right Icons */}
               <div className="flex items-center gap-6">
+                <div className="hidden md:block">
+                  <CurrencySwitcher />
+                </div>
                 <div className="xl:hidden">
                   <SearchEngine />
                 </div>

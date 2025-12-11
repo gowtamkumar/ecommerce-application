@@ -1,5 +1,6 @@
 "use client";
 import AddToCartButton from "@/components/AddToCartButton";
+import { useCurrency } from "@/context/CurrencyContext";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import {
   errorNotification,
@@ -25,7 +26,6 @@ import { useDispatch, useSelector } from "react-redux";
 import ModalLogin from "../login/ModalLogin";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductShare from "./ProductShare";
-
 interface ProductColor {
   colorId: number;
   color: { name: string };
@@ -56,6 +56,7 @@ const ProductDetails = ({
   const cart = useSelector(selectCart);
 
   const { product } = products;
+  const { formatPrice, selectedCurrency } = useCurrency();
 
   const {
     id,
@@ -157,13 +158,13 @@ const ProductDetails = ({
           <div className="mb-8">
             <div className="flex items-baseline gap-4">
               <p className="text-4xl font-bold text-gray-900 font-global-primary-fontfamily">
-                {product.finalPrice} <span className="text-lg font-normal text-gray-500">BDT</span>
+                {formatPrice(product.finalPrice)}
               </p>
               {+discountValue > 0 && (
                 <div className="flex flex-col">
-                  <span className="line-through text-gray-400 text-lg">৳ {salePrice}</span>
+                  <span className="line-through text-gray-400 text-lg">{formatPrice(salePrice)}</span>
                   <span className="text-red-500 text-sm font-medium">
-                    Save {discountValue}{discountStrategy === "Percentage" ? "%" : "BDT"}
+                    Save {discountValue}{discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
                   </span>
                 </div>
               )}

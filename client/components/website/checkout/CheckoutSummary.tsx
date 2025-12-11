@@ -1,4 +1,5 @@
 "use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { saveOrder } from "@/lib/apis/orders";
 import {
   errorNotification,
@@ -25,6 +26,7 @@ export default function CheckoutSummary() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const checkout = useSelector(selectCheckout);
+  const { formatPrice } = useCurrency();
 
   const {
     shippingCharge,
@@ -180,31 +182,31 @@ export default function CheckoutSummary() {
 
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span className="font-medium text-gray-900">৳{totalSalePrice}</span>
+          <span className="font-medium text-gray-900">{formatPrice(totalSalePrice)}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Discount</span>
-          <span className="text-green-600">- ৳{totalItemsDiscount}</span>
+          <span className="text-green-600">- {formatPrice(totalItemsDiscount)}</span>
         </div>
 
         {+couponDiscount > 0 && (
           <div className="flex justify-between">
             <span>Coupon Discount</span>
-            <span className="text-green-600">- ৳{couponDiscount}</span>
+            <span className="text-green-600">- {formatPrice(couponDiscount)}</span>
           </div>
         )}
 
         <div className="flex justify-between">
           <span>Shipping Cost</span>
-          <span className="font-medium text-gray-900">৳{shippingCharge}</span>
+          <span className="font-medium text-gray-900">{formatPrice(shippingCharge)}</span>
         </div>
       </div>
 
       <div className="pt-4 border-t border-gray-100">
         <div className="flex justify-between items-end mb-6">
           <span className="text-base font-bold text-gray-800">Total Payable</span>
-          <span className="text-2xl font-bold text-blue-600">৳{grandTotal}</span>
+          <span className="text-2xl font-bold text-blue-600">{formatPrice(grandTotal)}</span>
         </div>
 
         <Button
