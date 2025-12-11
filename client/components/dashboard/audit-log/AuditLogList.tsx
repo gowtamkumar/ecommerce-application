@@ -274,8 +274,18 @@ const AuditLogList: React.FC = () => {
               <Descriptions.Item label="Resource Name" span={2}>
                 {selectedLog.resourceName || "-"}
               </Descriptions.Item>
+              <Descriptions.Item label="API Endpoint" span={2}>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                  {selectedLog.metadata?.method || 'N/A'} {selectedLog.metadata?.path || '-'}
+                </code>
+              </Descriptions.Item>
               <Descriptions.Item label="IP Address" span={2}>
                 {selectedLog.metadata?.ip || "-"}
+              </Descriptions.Item>
+              <Descriptions.Item label="User Agent" span={2}>
+                <span className="text-xs break-all">
+                  {selectedLog.metadata?.userAgent || "-"}
+                </span>
               </Descriptions.Item>
             </Descriptions>
 

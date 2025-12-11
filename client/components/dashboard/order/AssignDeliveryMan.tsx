@@ -7,7 +7,6 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveDashboardPayment, updatePayment } from "@/lib/apis/payment";
 import { getUsers } from "@/lib/apis/user";
 import { assignDeliveryMan } from "@/lib/apis/orders";
 
@@ -22,7 +21,6 @@ const AssignDeliveryMan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // let newData = { ...payload };
         form.setFieldsValue(payload);
         const response = await getUsers();
         const newUserDtata = (response?.data || []).filter(

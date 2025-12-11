@@ -71,8 +71,6 @@ async function createAuditLog(req: CustomRequest, responseBody: any) {
     // Extract resource info from URL
     // Example: /api/v1/categories/123 -> resourceType: "categories", resourceId: "123"
     const pathParts = req.path.split('/').filter(Boolean);
-    console.log('pathParts', pathParts);
-
     const resourceType = pathParts[2] || 'Unknown'; // api/v1/[resourceType]
     const resourceId = req.params.id || pathParts[3] || undefined;
 
@@ -107,7 +105,7 @@ async function createAuditLog(req: CustomRequest, responseBody: any) {
         ip: req?.ip || (req?.headers['x-forwarded-for'] as string),
         userAgent: req?.headers['user-agent'],
         method: req?.method,
-        path: req?.path,
+        path: req.originalUrl, // Full URL including query params and ID
       },
     });
 

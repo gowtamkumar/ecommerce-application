@@ -1,4 +1,5 @@
 import appConfig from "@/appConfig";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
 import ReactAudioPlayer from "react-audio-player";
 import ReactPlayer from "react-player";
@@ -27,7 +28,7 @@ export default function FileViewer({ file }: any) {
         />
       ) : (
         <Image
-          src={`${appConfig.baseApiUrl}/uploads/${imageData?.filename}`}
+          src={getImageUrl(imageData?.filename)}
           width={imgStyle.width}
           height={imgStyle.height}
           alt={imageData?.originalname}

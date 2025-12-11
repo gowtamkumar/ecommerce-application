@@ -1,4 +1,3 @@
-import uploadButton from "@/components/website/uploadButton";
 import {
   getAntdCategories,
   saveCategory,
@@ -20,16 +19,19 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { FolderOutlined, IeOutlined, SaveOutlined, UndoOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
+  Divider,
   Form,
   Image,
   Input,
   Modal,
   Select,
+  Tag,
   TreeSelect,
-  Upload,
+  Upload
 } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useCallback, useEffect, useState } from "react";
@@ -41,7 +43,7 @@ const AddCategory = () => {
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
-  // hook
+
   const global = useSelector(selectGlobal);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -64,7 +66,7 @@ const AddCategory = () => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, global.action]); // 👈 safer and cleaner
+  }, [fetchData, global.action]);
 
   const handleSubmit = async (values: any) => {
     dispatch(setLoading({ save: true }));
@@ -109,7 +111,6 @@ const AddCategory = () => {
     }
   };
 
-
   const customUploadRequest = async (options: any) => {
     const result = await handleGlobalUpload(options);
     if (result) {
@@ -126,142 +127,243 @@ const AddCategory = () => {
     }
   };
 
-  const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const tailLayout = {
-    wrapperCol: { offset: 6, span: 14 },
-  };
+  const isEditMode = type === ActionType.UPDATE;
 
   return (
     <Modal
-      title={type === ActionType.UPDATE ? "Update Category" : "Create Category"}
-      // width={650}
+      title={
+        <div className="flex items-center gap-3 pb-4 border-b">
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isEditMode ? 'bg-blue-50' : 'bg-green-50'}`}>
+            <FolderOutlined className={`text-xl ${isEditMode ? 'text-blue-600' : 'text-green-600'}`} />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 m-0">
+              {isEditMode ? "Edit Category" : "Create New Category"}
+            </h3>
+            <p className="text-sm text-gray-500 m-0">
+              {isEditMode ? "Update category information" : "Add a new category to your store"}
+            </p>
+          </div>
+        </div>
+      }
+      width={700}
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
       footer={null}
+      className="modern-modal"
+      styles={{
+        header: { borderBottom: 'none', paddingBottom: 0 },
+        body: { paddingTop: 24 }
+      }}
     >
       <Form
-        {...layout}
         form={form}
         onFinish={handleSubmit}
         onValuesChange={(_v, values) => setFormValues(values)}
+        layout="vertical"
         autoComplete="off"
         scrollToFirstError={true}
+        className="modern-form"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
+        {/* Category Name */}
         <Form.Item
           name="name"
-          label="Name"
+          label={<span className="font-semibold text-gray-700">Category Name</span>}
           rules={[
             {
               required: true,
-              message: "name is required",
+              message: "Please enter category name",
             },
           ]}
         >
-          <Input placeholder="Enter " />
+          <Input
+            placeholder="e.g., Electronics, Fashion, Home & Garden"
+            size="large"
+            className="rounded-lg"
+          />
         </Form.Item>
 
-        <Form.Item name="parentId" label="Parent">
+        {/* Parent Category */}
+        <Form.Item
+          name="parentId"
+          label={<span className="font-semibold text-gray-700">Parent Category (Optional)</span>}
+          extra="Leave empty for top-level category"
+        >
           <TreeSelect
             showSearch
+            size="large"
             style={{ width: "100%" }}
             dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-            placeholder="Please select"
+            placeholder="Select parent category"
             allowClear
             treeDefaultExpandAll
             treeData={categories}
+            className="rounded-lg"
           />
         </Form.Item>
 
-        <Form.Item name="description" label="Note">
-          <Input.TextArea placeholder="Enter " />
-        </Form.Item>
-
-        <Form.Item name="active" label="Status" className="mb-1">
-          <Select placeholder="Select">
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item name="isFeatured" valuePropName="checked" label={null}>
-          <Checkbox>Is Featured</Checkbox>
-        </Form.Item>
-
+        {/* Description */}
         <Form.Item
-          name="fileList"
-          label="Image"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
+          name="description"
+          label={<span className="font-semibold text-gray-700">Description</span>}
         >
-          <ImgCrop rotationSlider showReset>
-            <Upload
-              name="image"
-              listType="picture-card"
-              fileList={formValues?.fileList || []}
-              onRemove={async (v) => {
-                if (v.fileName) {
-                  form.setFieldsValue({ image: null, fileList: [] });
-                  setFormValues({ image: null, fileList: [] });
-                  const params = { filename: v.fileName };
-                  await fileDeleteWithPhoto(params);
-                }
-              }}
-              className="avatar-uploader"
-              onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
-              maxCount={1}
-            >
-              {formValues?.fileList?.length >= 1 ? null : uploadButton}
-            </Upload>
-          </ImgCrop>
-        </Form.Item>
-        <Form.Item name="image" hidden>
-          <Input />
+          <Input.TextArea
+            placeholder="Brief description of this category..."
+            rows={3}
+            className="rounded-lg"
+          />
         </Form.Item>
 
+        {/* Status & Featured in One Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Form.Item
+            name="active"
+            label={<span className="font-semibold text-gray-700">Status</span>}
+          >
+            <Select placeholder="Select status" size="large" className="rounded-lg">
+              <Select.Option value={true}>
+                <Tag color="success">Active</Tag>
+              </Select.Option>
+              <Select.Option value={false}>
+                <Tag color="default">Inactive</Tag>
+              </Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="isFeatured"
+            valuePropName="checked"
+            label={<span className="font-semibold text-gray-700">Featured</span>}
+          >
+            <Checkbox className="mt-2">
+              <span className="text-sm">Display in featured section</span>
+            </Checkbox>
+          </Form.Item>
+        </div>
+
+        <Divider />
+
+        {/* Image Upload Section */}
+        <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="flex items-center gap-2 mb-4">
+            <IeOutlined className="text-lg text-gray-600" />
+            <span className="font-semibold text-gray-700">Category Image</span>
+          </div>
+
+          <Form.Item
+            name="fileList"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            className="mb-0"
+          >
+            <ImgCrop rotationSlider showReset aspect={1} quality={1}>
+              <Upload
+                name="image"
+                listType="picture-card"
+                fileList={formValues?.fileList || []}
+                onRemove={async (v) => {
+                  if (v.fileName) {
+                    form.setFieldsValue({ image: null, fileList: [] });
+                    setFormValues({ image: null, fileList: [] });
+                    const params = { filename: v.fileName };
+                    await fileDeleteWithPhoto(params);
+                  }
+                }}
+                className="category-uploader"
+                onPreview={(file) => handlePreview(file, dispatch)}
+                customRequest={customUploadRequest}
+                maxCount={1}
+              >
+                {formValues?.fileList?.length >= 1 ? null : (
+                  <div className="flex flex-col items-center justify-center p-4">
+                    <IeOutlined className="text-3xl text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">Upload Image</span>
+                    <span className="text-xs text-gray-400 mt-1">Square format recommended</span>
+                  </div>
+                )}
+              </Upload>
+            </ImgCrop>
+          </Form.Item>
+          <Form.Item name="image" hidden>
+            <Input />
+          </Form.Item>
+        </div>
+
+        {/* Preview Modal */}
         <Modal
           open={global.previewOpen}
-          title={global.previewTitle}
+          title="Image Preview"
           footer={null}
           onCancel={() => handlePreviewCancel(dispatch)}
+          centered
         >
           <Image
-            alt="example"
+            alt="preview"
             preview={false}
-            style={{
-              width: "100%",
-            }}
+            style={{ width: "100%" }}
             src={global.previewImage}
+            className="rounded-lg"
           />
         </Modal>
 
-        <Form.Item {...tailLayout}>
-          <div className="flex gap-2">
-            <Button size="small" onClick={() => resetFormData(payload)}>
-              Reset
-            </Button>
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t">
+          <Button
+            size="large"
+            icon={<UndoOutlined />}
+            onClick={() => resetFormData(payload)}
+            className="rounded-lg"
+          >
+            Reset
+          </Button>
 
-            <Button
-              size="small"
-              type="primary"
-              htmlType="submit"
-              disabled={global.loading.save}
-              loading={global.loading.save}
-            >
-              {payload?.id ? "Update" : "Save"}
-            </Button>
-          </div>
-        </Form.Item>
+          <Button
+            size="large"
+            type="primary"
+            htmlType="submit"
+            icon={<SaveOutlined />}
+            disabled={global.loading.save}
+            loading={global.loading.save}
+            className="rounded-lg min-w-[120px]"
+          >
+            {payload?.id ? "Update" : "Create"} Category
+          </Button>
+        </div>
       </Form>
+
+      <style jsx global>{`
+        .category-uploader .ant-upload-select {
+          width: 200px !important;
+          height: 200px !important;
+          border-radius: 12px !important;
+          border: 2px dashed #d9d9d9 !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        .category-uploader .ant-upload-select:hover {
+          border-color: #1890ff !important;
+          background: #fafafa !important;
+        }
+        
+        .category-uploader .ant-upload-list-item-container {
+          width: 200px !important;
+          height: 200px !important;
+          border-radius: 12px !important;
+        }
+
+        .modern-modal .ant-modal-header {
+          padding: 24px 24px 0 !important;
+        }
+
+        .modern-form .ant-form-item-label > label {
+          height: auto !important;
+        }
+      `}</style>
     </Modal>
   );
 };
