@@ -6,6 +6,7 @@ import Link from "next/link";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { useCallback, useMemo } from "react";
 import { CiMenuFries } from "react-icons/ci";
+import { HiChevronDown } from "react-icons/hi";
 import { useSelector } from "react-redux";
 
 const MainMenu = () => {
@@ -31,6 +32,7 @@ const MainMenu = () => {
           <Link
             href={`/products?categoryId=${node.id}&`}
             rel="noopener noreferrer"
+            className="block px-3 py-2 hover:text-global-primary transition-colors"
           >
             {node.name}
           </Link>
@@ -54,14 +56,23 @@ const MainMenu = () => {
       <Dropdown
         menu={{
           items: optimizeCategory,
-          className: "min-w-[200px] p-2 rounded-xl shadow-xl border border-gray-100"
+          className: "min-w-[220px] p-2 rounded-xl shadow-2xl border border-gray-100/50 backdrop-blur-sm"
         }}
         trigger={["click"]}
         overlayClassName="pt-2"
       >
-        <div className="cursor-pointer flex items-center gap-2.5 px-5 py-2.5 bg-black hover:bg-gray-800 text-white rounded-full transition-all duration-300 shadow-md hover:shadow-lg group">
-          <CiMenuFries className="text-lg group-hover:scale-110 transition-transform" />
-          <span className="font-medium tracking-wide text-sm font-global-primary-fontfamily">Categories</span>
+        <div className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
+                      bg-gradient-to-r from-gray-900 to-black 
+                      hover:from-gray-800 hover:to-gray-900
+                      text-white rounded-full transition-all duration-300 
+                      shadow-lg hover:shadow-xl 
+                      hover:scale-105 group
+                      border border-white/10">
+          <CiMenuFries className="text-lg group-hover:rotate-90 transition-transform duration-300" />
+          <span className="font-semibold tracking-wide text-sm font-global-primary-fontfamily">
+            Categories
+          </span>
+          <HiChevronDown className="text-sm group-hover:translate-y-0.5 transition-transform duration-300" />
         </div>
       </Dropdown>
     </div>

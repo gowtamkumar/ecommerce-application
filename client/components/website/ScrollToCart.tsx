@@ -23,7 +23,7 @@ const ScrollToCart: React.FC = () => {
 
   return (
     <button
-      className="z-50 fixed bottom-1/2 -right-8 transform -translate-x-1/2 shadow-lg transition-all"
+      className="z-50 fixed bottom-1/2 -right-1/2 transform -translate-x-1/2 shadow-lg transition-all"
       aria-label="Scroll to Cart"
     >
       <div className="flex flex-col gap-1 rounded-sm items-center justify-center text-black bg-gray-200 ">

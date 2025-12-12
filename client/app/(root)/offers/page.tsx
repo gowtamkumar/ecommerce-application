@@ -59,9 +59,9 @@ export default async function Offers() {
     <>
       <Header />
       <div>
-        {offers.data.length > 0 ? (
+        {offers?.data?.length > 0 ? (
           <section className="container mx-auto grid md:grid-cols-4 gap-8 py-3">
-            {offers.data.map((item: any, index: number) => (
+            {offers?.data?.map((item: any, index: number) => (
               <Link
                 key={index}
                 className="bottom-auto"
