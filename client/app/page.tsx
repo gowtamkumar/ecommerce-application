@@ -15,6 +15,9 @@ const CategoryCard = dynamic(
 );
 const SellerAds = dynamic(() => import("@/components/website/home/SellerAds"));
 const Slider = dynamic(() => import("@/components/website/banner/Slider"));
+const PromoBanners = dynamic(
+  () => import("@/components/website/banner/PromoBanners")
+);
 const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
@@ -139,9 +142,13 @@ export default async function Home() {
 
   const sliderBanners =
     banners?.filter((item: { type: string }) => item.type === "Slider") || [];
-  const discounts =
-    banners?.filter((item: { type: string }) => item.type === "Slider Right") ||
-    [];
+
+  const HomeBanners =
+    banners?.filter((item: { type: string }) => item.type === "Banner") || [];
+
+  const FooterBanners = (banners || []).filter(
+    (item: { type: string }) => item.type === "Footer"
+  );
 
   return (
     <>
@@ -165,27 +172,7 @@ export default async function Home() {
             <CategoryCard categories={categories} />
           </div>
         )}
-        {banners?.length > 0 && (
-          <section className="container mx-auto grid md:grid-cols-3 gap-8 py-3">
-            {banners
-              ?.filter((item: { type: string }) => item.type === "Banner")
-              .map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className="bg-cover bg-center rounded-lg h-56 flex flex-col justify-center items-start text-white p-4 text-start"
-                  style={{
-                    backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,
-                  }}
-                >
-                  <h3 className="text-xl font-bold text-black">{item.title}</h3>
-                  <p className="text-sm mb-2 text-black">{item.description}</p>
-                  <Link className="bottom-auto" href={`/offers${item.url}`}>
-                    <Button type="primary">Shop Now</Button>
-                  </Link>
-                </div>
-              ))}
-          </section>
-        )}
+        {HomeBanners?.length > 0 && <PromoBanners banners={HomeBanners} />}
 
         {/* Featured Products */}
         {products?.data && (
@@ -224,11 +211,9 @@ export default async function Home() {
           </section>
         )}
         {/* product banner */}
-        {banners?.length > 0 && (
+        {FooterBanners?.length > 0 && (
           <SellerAds
-            banners={(banners || []).filter(
-              (item: { type: string }) => item.type === "Footer"
-            )}
+            banners={FooterBanners}
           />
         )}
 
