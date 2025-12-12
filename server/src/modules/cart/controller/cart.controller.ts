@@ -469,7 +469,7 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
       validCoupon = null;
     }
 
-    if (+validCoupon.usageCount === +validCoupon.usageLimit) {
+    if (+validCoupon?.usageCount === +validCoupon.usageLimit) {
       message = `Coupon usage limit reached`;
       validCoupon = null;
     }

@@ -59,7 +59,6 @@ export default function HeaderRight() {
 
         <Drawer
           closable
-          destroyOnClose
           title={<p className="font-bold text-lg">Shopping Cart</p>}
           placement="right"
           open={drawarCart}

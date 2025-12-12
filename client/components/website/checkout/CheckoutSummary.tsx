@@ -35,7 +35,7 @@ export default function CheckoutSummary() {
     totalQty,
     totalTax,
     subTotal,
-    totalSalePrice,
+    totalDiscount,
     grandTotal,
     couponId,
   } = cart?.carts?.cartSummary || {};
@@ -182,7 +182,7 @@ export default function CheckoutSummary() {
 
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span className="font-medium text-gray-900">{formatPrice(totalSalePrice)}</span>
+          <span className="font-medium text-gray-900">{formatPrice(+subTotal + +totalDiscount)}</span>
         </div>
 
         <div className="flex justify-between">

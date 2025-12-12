@@ -97,7 +97,6 @@ const OrderAdnShhiping = () => {
                 placeholder="Enter minimum amount"
                 className="!w-full max-w-xl"
                 min={0}
-                prefix="$"
                 formatter={(value) =>
                   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }

@@ -116,7 +116,7 @@ const NotificationDropdown = () => {
       arrow={false}
       open={open}
       onOpenChange={setOpen}
-      overlayInnerStyle={{ padding: 0 }}
+      // overlayInnerStyle={{ padding: 0 }}
     >
       <Badge
         count={unreadCount}

@@ -29,6 +29,7 @@ import {
   Divider,
   Input,
   Popconfirm,
+  Select,
   Space,
   Table,
   Tabs,
@@ -662,13 +663,22 @@ const Order = () => {
 
       {/* Tabs & Table Card */}
       <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
-        <Tabs
-          defaultActiveKey="1"
-          activeKey={tabKey}
-          items={items}
-          onChange={onChange}
-          className="order-tabs"
-        />
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white">
+          <Title level={5} className="!mb-0">Order List</Title>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500 text-sm">Filter by Status:</span>
+            <Select
+              defaultValue="Pending"
+              value={tabKey}
+              onChange={onChange}
+              style={{ width: 200 }}
+              options={items.map((item: any) => ({
+                label: item.label,
+                value: item.key,
+              }))}
+            />
+          </div>
+        </div>
         <Table
           scroll={{ x: "auto" }}
           dataSource={orders}

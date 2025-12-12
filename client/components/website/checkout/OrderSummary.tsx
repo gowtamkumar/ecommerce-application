@@ -7,6 +7,7 @@ import {
   getCartLists,
   incrementDecrementCart,
 } from "@/lib/apis/cart";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
 import {
   decrementCart,
@@ -28,6 +29,7 @@ export default function OrderSummary() {
   const { formatPrice } = useCurrency();
   // Inside your component or hook
   const debouncedSyncRef = useRef<any>(null);
+console.log('cart', cart);
 
   // Debounce utility
   const debounce = (func: Function, delay: number) => {
@@ -117,9 +119,7 @@ export default function OrderSummary() {
                   <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
                     <Image
                       src={
-                        item.thumbnailImage
-                          ? `${appConfig.baseApiUrl}/uploads/${item.thumbnailImage}`
-                          : "/pos_software.png"
+                       getImageUrl(item.thumbnailImage)
                       }
                       fill
                       alt={item.name}
@@ -184,7 +184,7 @@ export default function OrderSummary() {
               </td>
 
               <td className="p-4 text-right font-bold text-gray-900">
-                {formatPrice(item.subTotal)}
+                {formatPrice(item?.subTotal)}
               </td>
 
               <td className="p-4 text-center">

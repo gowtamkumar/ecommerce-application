@@ -23,9 +23,9 @@ export default function CheckoutShippingAddress() {
   const checkout = useSelector(selectCheckout);
   const { shippingAddress, checkoutFormData } = checkout || {};
 
-  const findAddress = shippingAddress?.find(
-    (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
-  );
+  // const findAddress = shippingAddress?.find(
+  //   (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
+  // );
 
   return (
     <div className="space-y-6">

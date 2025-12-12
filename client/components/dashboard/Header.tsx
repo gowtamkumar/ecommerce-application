@@ -16,11 +16,12 @@ import { Avatar, Button, Dropdown, Layout } from "antd";
 import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationDropdown from "./header/NotificationDropdown";
+import { useRouter } from "next/navigation";
 
 export default function DashboardHeader() {
   const { Header } = Layout;
   const layout = useSelector(selectLayout);
-
+  const router = useRouter();
   const dispatch = useDispatch();
   const session = useSession();
   const profileImage = session.data?.user?.image;
@@ -98,6 +99,10 @@ export default function DashboardHeader() {
         <div className="hidden xl:block">
           <Button
             type="text"
+            onClick={() => 
+              router.push("/dashboard/general-setting?tab=site_settings")
+
+            }
             icon={<SettingOutlined style={{ fontSize: "18px", color: "#6b7280" }} />}
             style={{
               width: 40,

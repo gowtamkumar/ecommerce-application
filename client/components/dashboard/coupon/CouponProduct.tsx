@@ -1,4 +1,5 @@
 import appConfig from "@/appConfig";
+import { getImageUrl, getProductImageUrls } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import { Table, TableColumnsType } from "antd";
 import Image from "next/image";
@@ -19,8 +20,7 @@ export default function CouponProduct({ products }: any) {
               width={50}
               height={50}
               alt={value.product.name}
-              src={`${appConfig.baseApiUrl}/uploads/${value.product.thumbnailImage || "no-data.png"
-                }`}
+              src={getImageUrl(value.product.thumbnailImage)}
               className="w-10 h-10 rounded-lg"
             />
             <span>{value.product.name}</span>

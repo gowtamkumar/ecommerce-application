@@ -174,10 +174,15 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
       await queryRunner.commitTransaction();
     }
 
+    console.log("savedOrder.paymentMethod", savedOrder);
+    
     // ssl ecommerce intregration
     let paymentUrl = null;
     if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
+  ;
       const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
+      console.log("onlinePaymentRes", onlinePaymentRes)
+      console.log("savedOrder.paymentMethod", savedOrder)
       paymentUrl = onlinePaymentRes;
     }
 

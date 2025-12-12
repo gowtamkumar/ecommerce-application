@@ -1,5 +1,5 @@
 "use client";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,10 +9,9 @@ export default function HeaderLogo() {
   const global = useSelector(selectGlobal);
   const data = global.setting;
   const route = useRouter();
-  console.log(data);
   return (
     <Image
-      src={getUploadImageUrl(data?.image, "/pos_software.png")}
+      src={getImageUrl(data?.image)}
       alt="logo"
       loading="lazy"
       width={80}

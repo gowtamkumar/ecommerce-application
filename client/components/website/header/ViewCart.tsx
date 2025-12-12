@@ -74,6 +74,7 @@ export default function ViewCart() {
         <div className="px-6 py-4 bg-white/70 backdrop-blur-md border-b border-gray-100 shadow-sm sticky top-0 z-10">
           <div className="flex justify-between items-center text-xs font-medium mb-2">
             <span className="text-gray-900">
+              
               {progress === 100 ? "You've unlocked free shipping!" : `Spend ${formatPrice(remainingForFreeShipping)} more for free shipping`}
             </span>
             <span className="text-gray-500">{Math.round(progress)}%</span>
@@ -159,10 +160,10 @@ export default function ViewCart() {
             <span>Proceed to Checkout</span>
             <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
           </Button>
-
-          <p className="text-[10px] text-gray-400 text-center font-medium uppercase tracking-wider">
+{/* 
+          <p className="text-[10px] mt-2 text-gray-400 text-center font-medium uppercase tracking-wider">
             Secure Checkout
-          </p>
+          </p> */}
         </div>
       </div>
     </ConfigProvider>
