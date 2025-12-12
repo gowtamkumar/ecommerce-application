@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import { join } from 'path';
 import { getDBConnection } from '../../../config/db';
-import { CategoriesEntity } from '../model/categories.entity';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
 import { categoriesValidationSchema } from '../../../validation/categories/categoriesValidation';
 import { FileEntity } from '../../other/file/model/file.entity';
-import { join } from 'path';
-import fs from 'fs';
-import { logger } from '../../../middlewares/logger';
-import { CustomRequest } from '../../../enums/custom-request-type';
+import { CategoriesEntity } from '../model/categories.entity';
 
 // @desc Get all Categorys
 // @route GET /api/v1/categories/all
@@ -172,7 +172,7 @@ export const createCategory = asyncHandler(async (req: CustomRequest, res: Respo
     });
   }
 
-  const { name, image, userId, parentId, description } = validation.data;
+  const { name, image, userId, parentId, description, isFeatured } = validation.data;
   const categoriesRepository = connection.getRepository(CategoriesEntity);
 
   const slug = name.toLowerCase().trim().split(' ').join('-');
@@ -210,6 +210,7 @@ export const createCategory = asyncHandler(async (req: CustomRequest, res: Respo
     level,
     description,
     parent,
+    isFeatured,
   });
 
   // Save the category
@@ -229,7 +230,7 @@ export const updateCategory = asyncHandler(async (req: Request, res: Response) =
   logger.info(`Service: updateCategory ${req.method} ${req.url}`);
   const connection = await getDBConnection();
   const { id } = req.params;
-  const { parentId, name, image, slug, description, active } = req.body;
+  const { parentId, name, image, slug, description, active, isFeatured } = req.body;
 
   const categoriesRepository = connection.getRepository(CategoriesEntity);
 
@@ -265,10 +266,11 @@ export const updateCategory = asyncHandler(async (req: Request, res: Response) =
       level: parentCategory.level,
       parent: parentCategory,
       active,
+      isFeatured,
     });
   } else {
     // Merge the new data without changing the parent
-    Object.assign(category, { name, image, slug, description, active });
+    Object.assign(category, { name, image, slug, description, active, isFeatured });
   }
 
   // Save the updated category

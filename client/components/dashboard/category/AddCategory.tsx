@@ -19,7 +19,12 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { FolderOutlined, IeOutlined, SaveOutlined, UndoOutlined } from "@ant-design/icons";
+import {
+  FolderOutlined,
+  SaveOutlined,
+  UndoOutlined,
+  UploadOutlined
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -31,7 +36,7 @@ import {
   Select,
   Tag,
   TreeSelect,
-  Upload
+  Upload,
 } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useCallback, useEffect, useState } from "react";
@@ -82,6 +87,7 @@ const AddCategory = () => {
       }
 
       dispatch(setAction({}));
+      form.resetFields();
       successNotification({ message: res.message });
       return res;
     } catch (error: any) {
@@ -99,6 +105,7 @@ const AddCategory = () => {
   const handleClose = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
+    form.resetFields();
   };
 
   const resetFormData = (value: any) => {
@@ -133,15 +140,23 @@ const AddCategory = () => {
     <Modal
       title={
         <div className="flex items-center gap-3 pb-4 border-b">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isEditMode ? 'bg-blue-50' : 'bg-green-50'}`}>
-            <FolderOutlined className={`text-xl ${isEditMode ? 'text-blue-600' : 'text-green-600'}`} />
+          <div
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${isEditMode ? "bg-blue-50" : "bg-green-50"
+              }`}
+          >
+            <FolderOutlined
+              className={`text-xl ${isEditMode ? "text-blue-600" : "text-green-600"
+                }`}
+            />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 m-0">
               {isEditMode ? "Edit Category" : "Create New Category"}
             </h3>
             <p className="text-sm text-gray-500 m-0">
-              {isEditMode ? "Update category information" : "Add a new category to your store"}
+              {isEditMode
+                ? "Update category information"
+                : "Add a new category to your store"}
             </p>
           </div>
         </div>
@@ -153,8 +168,8 @@ const AddCategory = () => {
       footer={null}
       className="modern-modal"
       styles={{
-        header: { borderBottom: 'none', paddingBottom: 0 },
-        body: { paddingTop: 24 }
+        header: { borderBottom: "none", paddingBottom: 0 },
+        body: { paddingTop: 24 },
       }}
     >
       <Form
@@ -173,7 +188,9 @@ const AddCategory = () => {
         {/* Category Name */}
         <Form.Item
           name="name"
-          label={<span className="font-semibold text-gray-700">Category Name</span>}
+          label={
+            <span className="font-semibold text-gray-700">Category Name</span>
+          }
           rules={[
             {
               required: true,
@@ -191,7 +208,11 @@ const AddCategory = () => {
         {/* Parent Category */}
         <Form.Item
           name="parentId"
-          label={<span className="font-semibold text-gray-700">Parent Category (Optional)</span>}
+          label={
+            <span className="font-semibold text-gray-700">
+              Parent Category (Optional)
+            </span>
+          }
           extra="Leave empty for top-level category"
         >
           <TreeSelect
@@ -210,7 +231,9 @@ const AddCategory = () => {
         {/* Description */}
         <Form.Item
           name="description"
-          label={<span className="font-semibold text-gray-700">Description</span>}
+          label={
+            <span className="font-semibold text-gray-700">Description</span>
+          }
         >
           <Input.TextArea
             placeholder="Brief description of this category..."
@@ -225,7 +248,11 @@ const AddCategory = () => {
             name="active"
             label={<span className="font-semibold text-gray-700">Status</span>}
           >
-            <Select placeholder="Select status" size="large" className="rounded-lg">
+            <Select
+              placeholder="Select status"
+              size="large"
+              className="rounded-lg"
+            >
               <Select.Option value={true}>
                 <Tag color="success">Active</Tag>
               </Select.Option>
@@ -238,7 +265,9 @@ const AddCategory = () => {
           <Form.Item
             name="isFeatured"
             valuePropName="checked"
-            label={<span className="font-semibold text-gray-700">Featured</span>}
+            label={
+              <span className="font-semibold text-gray-700">Featured</span>
+            }
           >
             <Checkbox className="mt-2">
               <span className="text-sm">Display in featured section</span>
@@ -251,7 +280,7 @@ const AddCategory = () => {
         {/* Image Upload Section */}
         <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
           <div className="flex items-center gap-2 mb-4">
-            <IeOutlined className="text-lg text-gray-600" />
+            <UploadOutlined className="text-lg text-gray-600" />
             <span className="font-semibold text-gray-700">Category Image</span>
           </div>
 
@@ -281,9 +310,11 @@ const AddCategory = () => {
               >
                 {formValues?.fileList?.length >= 1 ? null : (
                   <div className="flex flex-col items-center justify-center p-4">
-                    <IeOutlined className="text-3xl text-gray-400 mb-2" />
+                    <UploadOutlined className="text-3xl text-gray-400 mb-2" />
                     <span className="text-sm text-gray-500">Upload Image</span>
-                    <span className="text-xs text-gray-400 mt-1">Square format recommended</span>
+                    <span className="text-xs text-gray-400 mt-1">
+                      Square format recommended
+                    </span>
                   </div>
                 )}
               </Upload>
@@ -344,12 +375,12 @@ const AddCategory = () => {
           border: 2px dashed #d9d9d9 !important;
           transition: all 0.3s ease !important;
         }
-        
+
         .category-uploader .ant-upload-select:hover {
           border-color: #1890ff !important;
           background: #fafafa !important;
         }
-        
+
         .category-uploader .ant-upload-list-item-container {
           width: 200px !important;
           height: 200px !important;

@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../config/db';
-import { StockAdjustEntity } from '../model/stock-adjust.entity';
-import { logger } from '../../../middlewares/logger';
 import { CustomRequest } from '../../../enums/custom-request-type';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
 import { createStockAdjustValidation } from '../../../validation/stock-adjust/stockAdjustValidation';
-import { StockAdjustTypeEnum } from '../enum/stock-adjust-type.status.enum';
 import { ProductVariantEntity } from '../../products/product-variant/model/product-variant.entity';
+import { StockAdjustTypeEnum } from '../enum/stock-adjust-type.status.enum';
+import { StockAdjustEntity } from '../model/stock-adjust.entity';
 
 // @desc Get all StockAdjust
 // @route GET /api/v1/stock-adjust
@@ -66,7 +66,7 @@ export const getStockAdjust = asyncHandler(
 // @access Public
 export const createStockAdjust = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createStockAdjust ${req.method} ${req.url}`);
-
+  console.log('req.body.data', req.body);
   const validation = createStockAdjustValidation.safeParse({
     ...req.body,
     userId: req.id,
@@ -102,6 +102,8 @@ export const createStockAdjust = asyncHandler(async (req: CustomRequest, res: Re
       const productVariant = await productVariantRepo.findOne({
         where: { id: item.id, productId },
       });
+
+      console.log('productVariant', productVariant);
 
       if (!productVariant) {
         await queryRunner.rollbackTransaction();

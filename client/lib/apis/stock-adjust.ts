@@ -4,6 +4,8 @@ import appConfig from "@/appConfig";
 import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 export async function saveStockAdjust(data: any) {
+  console.log("data", data);
+
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/stock-adjusts`, {
     method: "POST",

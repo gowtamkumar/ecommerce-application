@@ -89,7 +89,7 @@ const CategoryList: React.FC = () => {
               height={48}
               src={getImageUrl(record.image)}
               alt={text}
-        
+
               className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
             />
           </div>

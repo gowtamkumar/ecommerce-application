@@ -23,11 +23,14 @@ const AddStockAdjust = () => {
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const {formatPrice} = useCurrency();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     fetchData();
   }, [global.action]);
+
+  console.log("form", form.getFieldsValue());
+
 
   const fetchData = async () => {
     const products = await getDashboardProducts();
@@ -109,6 +112,7 @@ const AddStockAdjust = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+
         className="mt-6"
       >
         {/* Basic Settings */}
@@ -172,136 +176,136 @@ const AddStockAdjust = () => {
         </div>
 
         {/* Product Variants Table */}
-        {form.getFieldsValue().productVariants && (
-          <Form.List name="productVariants">
-            {(fields, { add, remove }) => (
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-                  Product Variants
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">Color</th>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">Size</th>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">Unit Price</th>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">Purchase Price</th>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">Stock Qty</th>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">
-                          <span className="text-red-500">* </span>Qty
-                        </th>
-                        <th className="text-left p-3 border-b font-semibold text-gray-700">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <tr key={key} className="hover:bg-gray-50 transition-colors">
-                          <td className="p-3 border-b" hidden>
-                            <Form.Item {...restField} name={[name, "id"]} className="!mb-0">
-                              <Input />
-                            </Form.Item>
-                          </td>
+        {/* {form.getFieldsValue().productVariants && ( */}
+        <Form.List name="productVariants">
+          {(fields, { add, remove }) => (
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+                Product Variants
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Color</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Size</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Unit Price</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Purchase Price</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Stock Qty</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">
+                        <span className="text-red-500">* </span>Qty
+                      </th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <tr key={key} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-3 border-b" hidden>
+                          <Form.Item {...restField} name={[name, "id"]} className="!mb-0">
+                            <Input />
+                          </Form.Item>
+                        </td>
 
-                          {/* Read-only display values */}
-                          <td className="p-3 border-b">
-                            <Form.Item {...restField} name={[name, "color"]} className="!mb-0">
-                              <span className="text-gray-600">
-                                {form.getFieldValue([
-                                  "productVariants",
-                                  name,
-                                  "color",
-                                ])?.name ?? "-"}
-                              </span>
-                            </Form.Item>
-                          </td>
-                          
-                          <td className="p-3 border-b">
-                            <Form.Item {...restField} name={[name, "size"]} className="!mb-0">
-                              <span className="text-gray-600">
-                                {form.getFieldValue([
-                                  "productVariants",
-                                  name,
-                                  "size",
-                                ])?.name ?? "-"}
-                              </span>
-                            </Form.Item>
-                          </td>
+                        {/* Read-only display values */}
+                        <td className="p-3 border-b">
+                          <Form.Item {...restField} name={[name, "color"]} className="!mb-0">
+                            <span className="text-gray-600">
+                              {form.getFieldValue([
+                                "productVariants",
+                                name,
+                                "color",
+                              ])?.name ?? "-"}
+                            </span>
+                          </Form.Item>
+                        </td>
 
-                          <td className="p-3 border-b">
-                            <Form.Item {...restField} name={[name, "unitPrice"]} className="!mb-0">
-                              <span className="text-gray-600">
-                                {formatPrice(form.getFieldValue([
-                                  "productVariants",
-                                  name,
-                                  "unitPrice",
-                                ])) ?? "-"}
-                              </span>
-                            </Form.Item>
-                          </td>
+                        <td className="p-3 border-b">
+                          <Form.Item {...restField} name={[name, "size"]} className="!mb-0">
+                            <span className="text-gray-600">
+                              {form.getFieldValue([
+                                "productVariants",
+                                name,
+                                "size",
+                              ])?.name ?? "-"}
+                            </span>
+                          </Form.Item>
+                        </td>
 
-                          <td className="p-3 border-b">
-                            <Form.Item
-                              {...restField}
-                              name={[name, "purchasePrice"]}
-                              className="!mb-0"
-                            >
-                              <span className="text-gray-600">
-                                {formatPrice(form.getFieldValue([
-                                  "productVariants",
-                                  name,
-                                  "purchasePrice",
-                                ])) ?? "-"}
-                              </span>
-                            </Form.Item>
-                          </td>
+                        <td className="p-3 border-b">
+                          <Form.Item {...restField} name={[name, "unitPrice"]} className="!mb-0">
+                            <span className="text-gray-600">
+                              {formatPrice(form.getFieldValue([
+                                "productVariants",
+                                name,
+                                "unitPrice",
+                              ])) ?? "-"}
+                            </span>
+                          </Form.Item>
+                        </td>
 
-                          <td className="p-3 border-b">
-                            <Form.Item {...restField} name={[name, "stockQty"]} className="!mb-0">
-                              <span className="font-semibold text-blue-600">
-                                {formatPrice(form.getFieldValue([
-                                  "productVariants",
-                                  name,
-                                  "stockQty",
-                                ])) ?? "-"}
-                              </span>
-                            </Form.Item>
-                          </td>
+                        <td className="p-3 border-b">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "purchasePrice"]}
+                            className="!mb-0"
+                          >
+                            <span className="text-gray-600">
+                              {formatPrice(form.getFieldValue([
+                                "productVariants",
+                                name,
+                                "purchasePrice",
+                              ])) ?? "-"}
+                            </span>
+                          </Form.Item>
+                        </td>
 
-                          {/* Editable input for qty */}
-                          <td className="p-3 border-b">
-                            <Form.Item
-                              {...restField}
-                              name={[name, "qty"]}
-                              rules={[
-                                { required: true, message: "Qty is required" },
-                              ]}
-                              className="!mb-0"
-                            >
-                              <InputNumber 
-                                placeholder="Enter Qty" 
-                                min={1} 
-                                className="!w-full"
-                                size="large"
-                              />
-                            </Form.Item>
-                          </td>
-                          
-                          <td className="p-3 border-b text-center">
-                            <MinusCircleOutlined 
-                              onClick={() => remove(name)} 
-                              className="text-red-500 hover:text-red-700 cursor-pointer text-lg"
+                        <td className="p-3 border-b">
+                          <Form.Item {...restField} name={[name, "stockQty"]} className="!mb-0">
+                            <span className="font-semibold text-blue-600">
+                              {formatPrice(form.getFieldValue([
+                                "productVariants",
+                                name,
+                                "stockQty",
+                              ])) ?? "-"}
+                            </span>
+                          </Form.Item>
+                        </td>
+
+                        {/* Editable input for qty */}
+                        <td className="p-3 border-b">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "qty"]}
+                            rules={[
+                              { required: true, message: "Qty is required" },
+                            ]}
+                            className="!mb-0"
+                          >
+                            <InputNumber
+                              placeholder="Enter Qty"
+                              min={1}
+                              className="!w-full"
+                              size="large"
                             />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          </Form.Item>
+                        </td>
+
+                        <td className="p-3 border-b text-center">
+                          <MinusCircleOutlined
+                            onClick={() => remove(name)}
+                            className="text-red-500 hover:text-red-700 cursor-pointer text-lg"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
-          </Form.List>
-        )}
+            </div>
+          )}
+        </Form.List>
+        {/* )} */}
       </Form>
     </Modal>
   );

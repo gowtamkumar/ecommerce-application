@@ -1,4 +1,5 @@
 "use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getProduct } from "@/lib/apis/admin/product";
 import { ProductType } from "@/lib/types/product";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
@@ -17,6 +18,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
   const [product, setProduct] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -90,43 +92,120 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
 
         {/* Right Column - Details */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Basic Information */}
           <Card title="Basic Information" variant="borderless" className="shadow-sm">
-            <Descriptions column={1} bordered>
-              <Descriptions.Item label="Description">
-                <div dangerouslySetInnerHTML={{ __html: product.description }} />
-              </Descriptions.Item>
-              <Descriptions.Item label="Short Description">{product.shortDescription}</Descriptions.Item>
-              <Descriptions.Item label="Status">
+            <Descriptions column={2} bordered>
+              <Descriptions.Item label="Product Type" span={2}>{product.type || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Brand ID">{product.brandId || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Unit ID">{product.unitId || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Tax ID">{product.taxId || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Discount ID">{product.discountId || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Status" span={2}>
                 <Tag color={product.status === "Active" ? "green" : "red"}>
                   {product.status}
                 </Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Enable Reviews">
-                {product.enableReview ? "Yes" : "No"}
+              <Descriptions.Item label="Enable Reviews" span={2}>
+                <Tag color={product.enableReview ? "blue" : "default"}>
+                  {product.enableReview ? "Enabled" : "Disabled"}
+                </Tag>
               </Descriptions.Item>
             </Descriptions>
           </Card>
 
-          <Card title="Pricing & Inventory" variant="borderless" className="shadow-sm">
-            <Descriptions column={2} bordered>
-              <Descriptions.Item label="Unit Price">{product.productVariants?.[0]?.price}</Descriptions.Item>
-              <Descriptions.Item label="Purchase Price">{product.productVariants?.[0]?.purchasePrice}</Descriptions.Item>
-              <Descriptions.Item label="Stock Quantity">{product.productVariants?.[0]?.stockQty}</Descriptions.Item>
-              <Descriptions.Item label="Alert Quantity">{product.alertQty}</Descriptions.Item>
-              <Descriptions.Item label="Purchase Limit">{product.limitPurchaseQty}</Descriptions.Item>
+          {/* Description */}
+          <Card title="Description" variant="borderless" className="shadow-sm">
+            <Descriptions column={1} bordered>
+              <Descriptions.Item label="Full Description">
+                <div dangerouslySetInnerHTML={{ __html: product.description }} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Short Description">
+                {product.shortDescription || "N/A"}
+              </Descriptions.Item>
             </Descriptions>
           </Card>
 
-          <Card title="Organization" variant="borderless" className="shadow-sm">
-            <Descriptions column={1} bordered>
-              <Descriptions.Item label="Tags">
-                {product.tags?.map((tag) => (
+          {/* Inventory Settings */}
+          <Card title="Inventory Settings" variant="borderless" className="shadow-sm">
+            <Descriptions column={2} bordered>
+              <Descriptions.Item label="Alert Quantity">
+                <Tag color="orange">{product.alertQty || 0}</Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Purchase Limit">
+                <Tag color="purple">{product.limitPurchaseQty || "Unlimited"}</Tag>
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+
+          {/* Categories */}
+          {product.productCategories && product.productCategories.length > 0 && (
+            <Card title="Categories" variant="borderless" className="shadow-sm">
+              <Descriptions column={1} bordered>
+                <Descriptions.Item label="Category IDs">
+                  {product.productCategories.map((cat) => (
+                    <Tag key={cat.categoryId} color="cyan">{cat.categoryId}</Tag>
+                  ))}
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
+          )}
+
+          {/* Tags */}
+          {product.tags && product.tags.length > 0 && (
+            <Card title="Tags" variant="borderless" className="shadow-sm">
+              <div className="flex flex-wrap gap-2">
+                {product.tags.map((tag) => (
                   <Tag key={tag} color="blue">{tag}</Tag>
                 ))}
-              </Descriptions.Item>
-              {/* Add Brand and Category if available in the response structure */}
-            </Descriptions>
-          </Card>
+              </div>
+            </Card>
+          )}
+
+          {/* Product Variants */}
+          {product.productVariants && product.productVariants.length > 0 && (
+            <Card title="Product Variants" variant="borderless" className="shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">ID</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Size ID</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Unit Price</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Purchase Price</th>
+                      <th className="text-left p-3 border-b font-semibold text-gray-700">Stock Qty</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {product.productVariants.map((variant) => (
+                      <tr key={variant.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-3 border-b">
+                          <Tag color="geekblue">{variant.id}</Tag>
+                        </td>
+                        <td className="p-3 border-b">
+                          <Tag>{variant.sizeId || "N/A"}</Tag>
+                        </td>
+                        <td className="p-3 border-b">
+                          <span className="font-semibold text-green-600">
+                            {formatPrice(variant.price)}
+                          </span>
+                        </td>
+                        <td className="p-3 border-b">
+                          <span className="text-gray-600">
+                            {formatPrice(variant.purchasePrice)}
+                          </span>
+                        </td>
+                        <td className="p-3 border-b">
+                          <Tag color={variant.stockQty > product.alertQty ? "green" : "red"}>
+                            {variant.stockQty || 0} units
+                          </Tag>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </div>
