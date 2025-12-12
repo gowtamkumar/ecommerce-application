@@ -55,7 +55,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
       <div className="flex justify-between items-center">
         <div>
           <Title level={2} className="!mb-0">{product.name}</Title>
-          <Text type="secondary">Product ID: {product.id}</Text>
+          <Text type="secondary">Product Slug: {product.slug}</Text>
         </div>
         <Button
           type="primary"
@@ -72,7 +72,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
         <div className="lg:col-span-1 space-y-4">
           <Card className="overflow-hidden">
             <Image
-              src={getUploadImageUrl(product.singleImage)}
+              src={getUploadImageUrl(product.thumbnailImage)}
               alt={product.name}
               className="w-full object-cover rounded-lg"
             />
@@ -96,9 +96,9 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
           <Card title="Basic Information" variant="borderless" className="shadow-sm">
             <Descriptions column={2} bordered>
               <Descriptions.Item label="Product Type" span={2}>{product.type || "N/A"}</Descriptions.Item>
-              <Descriptions.Item label="Brand ID">{product.brandId || "N/A"}</Descriptions.Item>
-              <Descriptions.Item label="Unit ID">{product.unitId || "N/A"}</Descriptions.Item>
-              <Descriptions.Item label="Tax ID">{product.taxId || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Brand ID">{product.brand?.name || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Unit ID">{product.unit?.name || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Tax ID">{product.tax?.name || "N/A"}</Descriptions.Item>
               <Descriptions.Item label="Discount ID">{product.discountId || "N/A"}</Descriptions.Item>
               <Descriptions.Item label="Status" span={2}>
                 <Tag color={product.status === "Active" ? "green" : "red"}>
@@ -142,8 +142,8 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
             <Card title="Categories" variant="borderless" className="shadow-sm">
               <Descriptions column={1} bordered>
                 <Descriptions.Item label="Category IDs">
-                  {product.productCategories.map((cat) => (
-                    <Tag key={cat.categoryId} color="cyan">{cat.categoryId}</Tag>
+                  {product.productCategories.map((cat, idx) => (
+                    <Tag key={idx} color="cyan">{cat.category?.name}</Tag>
                   ))}
                 </Descriptions.Item>
               </Descriptions>
@@ -169,6 +169,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="text-left p-3 border-b font-semibold text-gray-700">ID</th>
+
                       <th className="text-left p-3 border-b font-semibold text-gray-700">Size ID</th>
                       <th className="text-left p-3 border-b font-semibold text-gray-700">Unit Price</th>
                       <th className="text-left p-3 border-b font-semibold text-gray-700">Purchase Price</th>
@@ -186,7 +187,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
                         </td>
                         <td className="p-3 border-b">
                           <span className="font-semibold text-green-600">
-                            {formatPrice(variant.price)}
+                            {formatPrice(variant.unitPrice)}
                           </span>
                         </td>
                         <td className="p-3 border-b">

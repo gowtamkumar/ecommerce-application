@@ -1,13 +1,13 @@
 export interface ProductCategory {
-  categoryId: number;
+  category: { name: string };
 }
-
 
 export interface ProductVariant {
   id: number;
-  price: number;
+  unitPrice: number;
   purchasePrice: number;
   productId: number;
+
   sizeId: number;
   stockQty: number;
 }
@@ -15,12 +15,13 @@ export interface ProductVariant {
 export interface ProductType {
   id: number;
   name: string;
+  slug: string;
   type: string;
-  taxId: number;
-  unitId: number;
+  tax: { name: string };
+  unit: { name: string };
   images: string[]; // Assuming this is an array of image URLs
-  singleImage: string;
-  brandId: number;
+  thumbnailImage: string;
+  brand: { name: string };
   discountId: number;
   alertQty: number;
   limitPurchaseQty: number;

@@ -46,7 +46,6 @@ const ProductCard: React.FC = () => {
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
   const session = useSession();
-  const session = useSession();
   const params = useParams();
   const { formatPrice, selectedCurrency } = useCurrency();
 
