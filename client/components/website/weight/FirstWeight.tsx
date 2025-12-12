@@ -1,31 +1,70 @@
 "use client";
-import appConfig from "@/appConfig";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import { HiLocationMarker, HiMail, HiPhone } from "react-icons/hi";
 
 export default function FirstWeight() {
   const global = useSelector(selectGlobal);
   const data = global.setting;
 
   return (
-    <div className="flex flex-col justify-center items-center md:justify-start md:items-start text-gray-300">
-      <Image
-        src={
-          data?.image
-            ? `${appConfig.baseApiUrl}/uploads/${data?.image}`
-            : "/pos_software.png"
-        }
-        alt={data?.image || "weight-image"}
-        width="100"
-        height="50"
-        className="h-[50]"
-      />
-      <div className="mt-3 ">
-        <address>{data?.address}</address>
-        <p>Mobile: {data?.phone}</p>
-        <Link href={`mailto:${data?.email}`}>E-mail: {data?.email}</Link>
+    <div className="flex flex-col gap-6">
+      {/* Logo */}
+      <div className="flex items-center">
+        <Image
+          src={getUploadImageUrl(data?.image, "/pos_software.png")}
+          alt={data?.siteName || "Company Logo"}
+          width={150}
+          height={60}
+          className="h-auto max-h-[60px] w-auto object-contain"
+        />
+      </div>
+      
+      {/* Company Description */}
+      <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
+        Your trusted e-commerce partner offering quality products and exceptional service.
+      </p>
+
+      {/* Contact Information */}
+      <div className="space-y-3 text-sm">
+        {data?.address && (
+          <div className="flex items-start gap-3 group">
+            <HiLocationMarker className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 
+                                       group-hover:scale-110 transition-transform duration-300" />
+            <address className="not-italic text-gray-300 group-hover:text-white transition-colors duration-300">
+              {data.address}
+            </address>
+          </div>
+        )}
+        
+        {data?.phone && (
+          <div className="flex items-center gap-3 group">
+            <HiPhone className="w-5 h-5 text-green-400 flex-shrink-0
+                              group-hover:scale-110 transition-transform duration-300" />
+            <Link 
+              href={`tel:${data.phone}`}
+              className="text-gray-300 hover:text-white transition-colors duration-300"
+            >
+              {data.phone}
+            </Link>
+          </div>
+        )}
+        
+        {data?.email && (
+          <div className="flex items-center gap-3 group">
+            <HiMail className="w-5 h-5 text-purple-400 flex-shrink-0
+                             group-hover:scale-110 transition-transform duration-300" />
+            <Link 
+              href={`mailto:${data.email}`}
+              className="text-gray-300 hover:text-white transition-colors duration-300"
+            >
+              {data.email}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

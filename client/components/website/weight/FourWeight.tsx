@@ -1,15 +1,34 @@
-import dynamic from "next/dynamic";
 import Subscribe from "../footer/Subscribe";
+import { HiMail } from "react-icons/hi";
 
 export default function FourWeight() {
   return (
-    <div className="relative z-10 max-w-3xl mx-auto text-gray-300">
-      <h2 className="text-2xl font-bold mb-4">Stay in the loop!</h2>
-      <p className="my-4 text-gray-200">
-        Subscribe to our newsletter and never miss exclusive offers, updates,
-        and more.
-      </p>
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 
+                        border border-blue-400/30">
+            <HiMail className="w-6 h-6 text-blue-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white">
+            Newsletter
+          </h2>
+        </div>
+        
+        <p className="text-sm text-gray-400 leading-relaxed">
+          Subscribe to our newsletter and never miss exclusive offers, updates, and more.
+        </p>
+      </div>
+      
       <Subscribe />
+      
+      {/* Trust indicator */}
+      <p className="text-xs text-gray-500 flex items-center gap-2">
+        <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+        </svg>
+        We respect your privacy
+      </p>
     </div>
   );
 }

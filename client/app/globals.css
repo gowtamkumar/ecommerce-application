@@ -1,5 +1,74 @@
 @import "tailwindcss";
 
+/* CSS Custom Properties for Footer & Global Design System */
+:root {
+  /* Footer Background Colors */
+  --footer-bg-primary: #0f172a;
+  --footer-bg-secondary: #1e293b;
+  --footer-bg-accent: #334155;
+  
+  /* Footer Text Colors */
+  --footer-text-primary: #f9fafb;
+  --footer-text-secondary: #d1d5db;
+  --footer-text-muted: #9ca3af;
+  --footer-text-subtle: #6b7280;
+  
+  /* Footer Borders */
+  --footer-border-light: rgba(255, 255, 255, 0.1);
+  --footer-border-medium: rgba(255, 255, 255, 0.2);
+  --footer-border-heavy: rgba(255, 255, 255, 0.3);
+  
+  /* Footer Accent Colors */
+  --footer-accent-blue: #3b82f6;
+  --footer-accent-purple: #a855f7;
+  --footer-accent-green: #22c55e;
+  --footer-accent-orange: #f97316;
+  --footer-accent-pink: #ec4899;
+  
+  /* Glassmorphism */
+  --footer-glass-bg: rgba(255, 255, 255, 0.05);
+  --footer-glass-border: rgba(255, 255, 255, 0.1);
+  --footer-glass-hover: rgba(255, 255, 255, 0.15);
+  
+  /* Social Media Brand Colors */
+  --social-facebook: #1877f2;
+  --social-twitter: #000000;
+  --social-instagram-start: #f58529;
+  --social-instagram-middle: #dd2a7b;
+  --social-instagram-end: #8134af;
+  --social-linkedin: #0a66c2;
+  --social-youtube: #ff0000;
+  --social-whatsapp: #25d366;
+  
+  /* Global Colors */
+  --global-primary: #F7AA0E;
+  --global-secondary: #000000;
+  --global-accent: #F2F2F2;
+  
+  /* Transitions & Animations */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  
+  /* Spacing (for consistent gaps) */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  
+  /* Shadows */
+  --shadow-glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+  --shadow-glow-purple: 0 0 20px rgba(168, 85, 247, 0.3);
+  --shadow-glow-white: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
 
 
 /* View Transition Animations (keep this outside Tailwind) */

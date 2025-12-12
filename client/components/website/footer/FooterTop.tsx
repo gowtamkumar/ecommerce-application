@@ -10,25 +10,67 @@ import { useSelector } from "react-redux";
 export default function FooterTop() {
   const global = useSelector(selectGlobal);
   const setting = global?.setting?.helpSupport || {};
+  
+  const features = [
+    {
+      icon: <FaTruckPickup size={36} />,
+      text: setting?.cashDelivery || "Fast Delivery",
+      gradient: "from-blue-500/20 to-cyan-500/20"
+    },
+    {
+      icon: <IoIosCall size={36} />,
+      text: setting?.returnSupport || "24/7 Support",
+      gradient: "from-purple-500/20 to-pink-500/20"
+    },
+    {
+      icon: <MdOutlinePayment size={36} />,
+      text: setting?.originalProduct || "Secure Payment",
+      gradient: "from-green-500/20 to-emerald-500/20"
+    },
+    {
+      icon: <CiGift size={36} />,
+      text: setting?.guarantee || "Gift Cards",
+      gradient: "from-orange-500/20 to-red-500/20"
+    }
+  ];
+
   return (
-    <div className="border-b-[1] border-gray-300">
-      <div className="grid md:grid-cols-4 text-center items-center justify-center py-6">
-        <div className="md:border-r-2 flex items-center justify-center gap-1 text-gray-300">
-          <FaTruckPickup size={30} />
-          <span>{setting?.cashDelivery}</span>
-        </div>
-        <div className="md:border-r-2 flex items-center justify-center gap-1 text-gray-300">
-          <IoIosCall size={30} />
-          <span>{setting?.returnSupport}</span>
-        </div>
-        <div className="md:border-r-2 flex items-center justify-center gap-1 text-gray-300">
-          <MdOutlinePayment size={30} />
-          <span>{setting?.originalProduct}</span>
-        </div>
-        <div className="md:border-r-2 flex items-center justify-center gap-1 text-gray-300">
-          <CiGift size={30} />
-          <span>{setting?.guarantee}</span>
-        </div>
+    <div className="py-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {features.map((feature, index) => (
+          <div 
+            key={index}
+            className="group relative flex flex-col items-center justify-center gap-3 p-6 rounded-xl
+                       transition-all duration-300 hover:scale-105
+                       before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br 
+                       before:opacity-0 before:transition-opacity before:duration-300
+                       hover:before:opacity-100 cursor-pointer"
+            style={{
+              '--tw-gradient-stops': `var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0))`
+            } as React.CSSProperties}
+          >
+            {/* Background gradient on hover */}
+            <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${feature.gradient} opacity-0 
+                           group-hover:opacity-100 transition-opacity duration-300 -z-10`}></div>
+            
+            {/* Icon with glow effect */}
+            <div className="relative text-gray-300 group-hover:text-white transition-colors duration-300
+                          drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              {feature.icon}
+            </div>
+            
+            {/* Text */}
+            <span className="text-sm font-medium text-gray-300 group-hover:text-white 
+                           transition-colors duration-300 text-center">
+              {feature.text}
+            </span>
+            
+            {/* Decorative border */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 
+                          bg-gradient-to-r from-transparent via-white to-transparent
+                          group-hover:w-3/4 transition-all duration-300"></div>
+          </div>
+        ))}
       </div>
     </div>
   );

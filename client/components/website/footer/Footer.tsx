@@ -8,17 +8,31 @@ const SocialIcon = dynamic(() => import("./SocialIcon"));
 
 export default function WebFooter() {
   return (
-    <footer className="bg-[#050505] text-gray-300 font-sans">
+    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-100 font-sans overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Top Wave Decoration */}
+      <div className="absolute top-0 left-0 w-full overflow-hidden leading-none">
+        <svg className="relative block w-full h-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" 
+                className="fill-white/5"></path>
+        </svg>
+      </div>
+
       {/* Top Features */}
-      <div className="border-b border-gray-900">
+      <div className="relative border-b border-white/10 backdrop-blur-sm">
         <div className="container mx-auto">
           <FooterTop />
         </div>
       </div>
 
       {/* Main Footer Content */}
-      <div className="container mx-auto py-12 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="relative container mx-auto py-16 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div className="flex flex-col gap-4">
             <FirstWeight />
           </div>
@@ -34,30 +48,22 @@ export default function WebFooter() {
         </div>
       </div>
 
-      {/* Social Icons & Newsletter */}
-      <div className="bg-white py-8 border-t border-gray-900">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <h3 className="text-black font-semibold mb-2">Connect with us</h3>
-            <SocialIcon />
-          </div>
-          <div className="text-center md:text-right">
-            <p className="text-sm text-gray-400">Stay updated with our latest offers</p>
-          </div>
+      {/* Divider with gradient */}
+      <div className="relative w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+      {/* Social Icons Section */}
+      <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm py-10 border-t border-white/5">
+        <div className="container mx-auto px-4">
+          <SocialIcon />
         </div>
       </div>
 
-      {/* Copyright & Payments */}
-      <div className="bg-white py-6 border-t border-gray-900">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>&copy; {new Date().getFullYear()} E-Commerce. All rights reserved.</p>
-          <div className="flex gap-3">
-            {/* Payment Icons Placeholders */}
-            <div className="w-10 h-6 bg-gray-900 rounded flex items-center justify-center text-[8px] text-gray-400">VISA</div>
-            <div className="w-10 h-6 bg-gray-900 rounded flex items-center justify-center text-[8px] text-gray-400">MC</div>
-            <div className="w-10 h-6 bg-gray-900 rounded flex items-center justify-center text-[8px] text-gray-400">PAYPAL</div>
-          </div>
-        </div>
+      {/* Bottom Wave Decoration */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none rotate-180 opacity-30">
+        <svg className="relative block w-full h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" 
+                className="fill-white/5"></path>
+        </svg>
       </div>
     </footer>
   );
