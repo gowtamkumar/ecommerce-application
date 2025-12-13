@@ -34,10 +34,14 @@ export class SettingEntity {
   email!: string;
 
   @Column({ nullable: true })
-  currencyId!: number;
+  description!: string;
+
+  // @Column({ nullable: true })
+  // currencyId!: number;
 
   @Column({ name: 'social_link', type: 'simple-json', nullable: true })
   socialLink!: string;
+
   @Column({ type: 'simple-json', nullable: true })
   seo!: string;
 

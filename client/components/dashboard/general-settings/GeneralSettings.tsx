@@ -33,6 +33,8 @@ import {
   setSetting,
 } from "@/redux/features/global/globalSlice";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import TextArea from "antd/es/input/TextArea";
 
 const { Title, Text } = Typography;
 
@@ -63,35 +65,25 @@ const FileUploadField = ({
   };
 
   const customRequest: UploadProps["customRequest"] = async (options) => {
-    const { file, filename, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append(filename!, file as Blob);
+    const result = await handleGlobalUpload(options);
+    const { newFile, newFileName }: any = result;
 
-    try {
-      const res = await uploadFile(formData);
-      const uploaded = res?.data?.[0];
-
-      if (!uploaded?.filename) throw new Error("Upload failed");
-
-      const uploadedFile: UploadFile = {
-        uid: Date.now().toString(),
-        name: `${filename}`,
-        status: "done",
-        url: getUploadImageUrl(uploaded.filename),
-        fileName: uploaded.filename,
+    const uploadedFile = {
+      uid: Date.now().toString(),
+      name: `${newFileName}`,
+      status: "done",
+      url: getUploadImageUrl(newFileName),
+      fileName: newFileName,
       };
 
       const updatedFields = {
         [fileListKey]: [uploadedFile],
-        [name]: uploaded.filename,
+        [name]: newFileName,
       };
 
       form.setFieldsValue(updatedFields);
       dispatch(setSetting({ ...global.setting, ...updatedFields }));
-      onSuccess?.("Ok");
-    } catch (err: any) {
-      onError?.(err);
-    }
+    
   };
 
   return (
@@ -199,6 +191,9 @@ const GeneralSettings = () => {
               />
             </Form.Item>
 
+
+
+
             {/* Email */}
             <Form.Item
               name="email"
@@ -211,7 +206,7 @@ const GeneralSettings = () => {
               <Input
                 size="large"
                 placeholder="contact@yourstore.com"
-                className="max-w-xl"
+                // className="max-w-xl"
               />
             </Form.Item>
 
@@ -225,6 +220,16 @@ const GeneralSettings = () => {
                 size="large"
                 placeholder="+1 (555) 123-4567"
                 className="max-w-xl"
+              />
+            </Form.Item>
+            <Form.Item
+                name="description"
+                label={<span className="text-base font-medium">Description</span>}
+                className="!mb-0"
+              >
+              <TextArea
+                size="large"
+                placeholder="Enter your store description"
               />
             </Form.Item>
 
@@ -241,6 +246,8 @@ const GeneralSettings = () => {
                 className="max-w-xl"
               />
             </Form.Item>
+
+
 
             {/* Branding Section */}
             <div className="pt-6 border-t mt-6">

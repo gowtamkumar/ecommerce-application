@@ -6,6 +6,7 @@ export const updateSettingValidationSchema = z.object({
   image: z.string().optional(),
   url: z.string().optional(),
   address: z.string().optional(),
+  description: z.string().optional(),
   email: z.string().optional(),
   phone: z.string().optional(),
   currencyId: z.number().optional(),

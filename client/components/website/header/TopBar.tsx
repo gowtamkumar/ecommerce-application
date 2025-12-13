@@ -58,26 +58,8 @@ export default function TopBar() {
         {/* Right Section */}
         <div className="flex items-center gap-3 sm:gap-5 text-[10px] sm:text-[11px] font-medium tracking-wider uppercase text-gray-300 mt-2 sm:mt-0">
           {/* Navigation Links */}
-          <Link 
-            href="/about" 
-            className="hover:text-white transition-all duration-300 relative group"
-          >
-            <span>About</span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </Link>
           
-          <span className="w-px h-3 bg-gray-700"></span>
-          
-          <Link 
-            href="/contact" 
-            className="hover:text-white transition-all duration-300 relative group"
-          >
-            <span>Contact</span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          
-          <span className="w-px h-3 bg-gray-700"></span>
-          
+
           <Link 
             href="/profile?tab=my_account" 
             className="hover:text-white transition-all duration-300 flex items-center gap-1.5 group"

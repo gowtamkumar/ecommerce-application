@@ -22,12 +22,12 @@ const HeaderOption = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
-  const helpSupport = {
+  const headerOption = {
     id: global.setting.id,
     ...global.setting.headerOption,
   };
 
-  form.setFieldsValue(helpSupport);
+  form.setFieldsValue(headerOption);
 
   const handleSubmit = async (values: any) => {
     setLoading(true);

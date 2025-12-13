@@ -3,10 +3,10 @@ import { HiArrowRight } from "react-icons/hi";
 
 export default function SecondWeight() {
   const links = [
+    { href: "/blog", label: "Blog" },
     { href: "/about", label: "About Us" },
     { href: "/support-and-help", label: "Support & Help" },
-    { href: "/privacy-policy", label: "Privacy Policy" },
-    { href: "/faq", label: "FAQ" }
+    { href: "/faq", label: "FAQ" },
   ];
 
   return (

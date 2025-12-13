@@ -18,18 +18,13 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   const { page = 1, perPage = 16 } = req.query;
 
-  const repository = connection.getRepository(SettingEntity);
+  const result = await connection.getRepository(SettingEntity).find();
 
-  const result = await repository.find();
-
-  const bannerRepository = connection.getRepository(BannerEntity);
-
-  const banners = await bannerRepository.find({
+  const banners = await connection.getRepository(BannerEntity).find({
     where: { active: true },
   });
 
   const categories = await connection.getRepository(CategoriesEntity).find({
-    // where: { active: true, isFeatured: true },
     where: {
       active: true,
       isFeatured: true, // BOTH must be true
@@ -70,7 +65,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: 'Get Home page successfully',
+    message: 'Get successfully',
     data: {
       products: {
         total,

@@ -1,5 +1,5 @@
 "use client";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { getImageUrl, getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +15,7 @@ export default function FirstWeight() {
       {/* Logo */}
       <div className="flex items-center">
         <Image
-          src={getUploadImageUrl(data?.image, "/pos_software.png")}
+          src={getImageUrl(data?.image)}
           alt={data?.siteName || "Company Logo"}
           width={150}
           height={60}
@@ -25,7 +25,7 @@ export default function FirstWeight() {
       
       {/* Company Description */}
       <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
-        Your trusted e-commerce partner offering quality products and exceptional service.
+        {data?.description}
       </p>
 
       {/* Contact Information */}
