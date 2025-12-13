@@ -131,85 +131,104 @@ const ProductCard: React.FC = () => {
           return (
             <div key={item.id}>
               {global.productView ? (
-                <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-100 p-3 h-full">
-                  <div className="relative group text-center md:text-start h-[40vh] overflow-hidden col-span-1">
-                    {/* Main Image */}
-                    <Image
-                      src={thumbnailUrl}
-                      alt={item.name}
-                      loading="lazy"
-                      width={1000}
-                      height={1000}
-                      className="w-full h-full object-fill"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer bg-fixed flex justify-end items-start">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 h-full">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-0 h-full">
+                    {/* Image Section */}
+                    <div className="relative group overflow-hidden bg-gray-50 h-64 md:h-full">
+                      {/* Discount Badge */}
+                      {item?.discountId && (
+                        <div className="absolute top-3 left-3 z-10 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                          -{item.discountValue}
+                          {item?.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
+                        </div>
+                      )}
+
+                      {/* Main Image */}
                       <Image
-                        src={hoverUrl}
+                        src={thumbnailUrl}
                         alt={item.name}
-                        width={800}
-                        height={800}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="relative"
+                        loading="lazy"
+                        width={1000}
+                        height={1000}
+                        className="w-full h-full object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                       />
 
-                      {/* <div className="p-4 border absolute z-20 bg-white text-black rounded-full transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"> */}
-                      <div className="p-1 absolute z-20 bg-white text-black rounded-lg transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-500 flex flex-col gap-2 items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <button
-                          className="cursor-pointer"
-                          onClick={() => {
-                            if (session.status === "unauthenticated") {
-                              dispatch(setUnAuthorize(true));
-                            } else {
-                              AddToWishlist(item.id);
-                            }
-                          }}
-                        >
-                          <FaRegHeart size={22} />
-                        </button>
+                      {/* Hover Image Overlay */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <Image
+                          src={hoverUrl}
+                          alt={item.name}
+                          width={1000}
+                          height={1000}
+                          className="w-full h-full object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-rows-[auto_1fr_auto] h-full text-center md:text-start col-span-2">
-                    <div className="py-4 border-b">
-                      <p className="text-bioxin-p font-semibold">
-                        <Link href={url} className="text-black hover:underline">
-                          {item.name}
-                        </Link>
-                      </p>
-                      <div className="flex gap-3">
-                        <code>{formatPrice(item.finalPrice)}</code>
-                        <span className="flex gap-1 items-center">
-                          <Rate disabled value={+item.avgRating || 0} />
-                          {item.reviewsCount && item.reviewsCount}
-                        </span>
-                      </div>
-                      <div>
-                        {item?.discountId && (
-                          <div className="text-xs">
-                            <span className="line-through text-gray-500">
-                              {formatPrice(item.salePrice)}
-                            </span>
-                            <span className="text-red-600 ml-2">
-                              - {item.discountValue}
-                              {item?.discountStrategy === "Percentage"
-                                ? "%"
-                                : selectedCurrency?.symbol}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      {/* Wishlist Button */}
+                      <button
+                        onClick={() => {
+                          if (session.status === "unauthenticated") {
+                            dispatch(setUnAuthorize(true));
+                          } else {
+                            AddToWishlist(item.id);
+                          }
+                        }}
+                        className="absolute top-3 right-3 z-10 bg-white p-2.5 rounded-full shadow-md hover:bg-gray-50 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        title="Add to Wishlist"
+                      >
+                        <FaRegHeart size={18} className="text-gray-700" />
+                      </button>
                     </div>
-                    <p
-                      className="text-bioxin-p text-gray-500 prose max-w-none"
-                      dangerouslySetInnerHTML={{
-                        __html: item?.shortDescription,
-                      }}
-                    />
-                    <div>
-                      <AddToCartButton item={{ ...item, qty: 1 }} />
+
+                    {/* Product Details Section */}
+                    <div className="md:col-span-2 p-5 md:p-6 flex flex-col h-full">
+                      <div className="flex-1">
+                        {/* Product Name */}
+                        <Link href={url} className="block mb-3 group">
+                          <h3 className="text-lg md:text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            {item.name}
+                          </h3>
+                        </Link>
+
+                        {/* Rating and Reviews */}
+                        <div className="flex items-center gap-3 mb-4">
+                          <Rate disabled value={+item.avgRating || 0} className="text-sm" />
+                          {item.reviewsCount > 0 && (
+                            <span className="text-sm text-gray-500">
+                              ({item.reviewsCount} {item.reviewsCount === 1 ? 'review' : 'reviews'})
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Price Section */}
+                        <div className="mb-4">
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                              {formatPrice(item.finalPrice)}
+                            </span>
+                            {item?.discountId && (
+                              <span className="text-lg text-gray-400 line-through">
+                                {formatPrice(item.salePrice)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Description */}
+                        <div
+                          className="text-sm text-gray-600 prose prose-sm max-w-none line-clamp-3 mb-4"
+                          dangerouslySetInnerHTML={{
+                            __html: item?.shortDescription,
+                          }}
+                        />
+                      </div>
+
+                      {/* Add to Cart Button */}
+                      <div className="mt-auto pt-4 border-t border-gray-100">
+                        <AddToCartButton item={{ ...item, qty: 1 }} />
+                      </div>
                     </div>
                   </div>
                 </div>
