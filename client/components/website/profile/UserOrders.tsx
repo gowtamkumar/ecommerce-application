@@ -1,47 +1,77 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
-import {
-  Input,
-  Space,
-  Table,
-  Button,
-  Tag,
-  Timeline,
-  Divider,
-  Tabs,
-} from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import { FilterDropdownProps } from "antd/es/table/interface";
-import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "@/constants/constants";
+import { getUserOrders } from "@/lib/apis/orders";
+import { getStatus } from "@/lib/utils/getStatus";
+import { getImageUrl } from "@/lib/utils/imageUrl";
+import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
   setLoading,
-  setSearchedColumn,
-  setSearchText,
 } from "@/redux/features/global/globalSlice";
-import Highlighter from "react-highlight-words";
+import {
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  ShoppingOutlined,
+  SyncOutlined
+} from "@ant-design/icons";
+import type { TabsProps } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Empty,
+  Modal,
+  Row,
+  Space,
+  Table,
+  Tabs,
+  Tag,
+  Timeline,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
-import { getStatus } from "@/lib/utils/getStatus";
-import { ActionType } from "@/constants/constants";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CancelOrder from "./CancelOrder";
-import { getUserOrders } from "@/lib/apis/orders";
-import { errorNotification } from "@/lib/utils/notification";
-import ReturnRequestOrderItem from "./ReturnRequestOrderItem";
+
+const { Text, Title } = Typography;
 
 interface DataType {
-  key: React.Key;
-  name: string;
+  id: string;
   trackingNo: string;
+  status: string;
+  createdAt: string;
+  grandTotal: number;
+  paymentStatus: string;
+  paymentMethod: string;
+  shippingAddress?: {
+    address: string;
+  };
+  deliveryMan?: {
+    name: string;
+  };
+  orderTrackings?: any[];
+  orderItems: any[];
+  subTotal: number;
+  totalItemsDiscount: number;
+  couponDiscount: number;
+  shippingCharge: number;
+  payments: any[];
+  totalQty: number;
 }
-
-type DataIndex = keyof DataType;
 
 const UserOrders = () => {
   const [tabKey, setTabKey] = useState("Pending");
-  const [orders, setOrders] = useState([]);
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [orders, setOrders] = useState<DataType[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<DataType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
@@ -49,18 +79,12 @@ const UserOrders = () => {
     async (status: string) => {
       dispatch(setLoading({ loading: true }));
       try {
-        const res = await getUserOrders(status);
+        const res = await getUserOrders(status === "All" ? "" : status);
         if (!res.success) {
-          console.log("Error fetching orders");
           errorNotification({ message: res.message });
           return;
         }
-        const newOrders = res.data?.map((items: any, idx: number) => ({
-          ...items,
-          key: idx.toString(),
-        }));
-
-        setOrders(newOrders);
+        setOrders(res.data || []);
       } catch (error: any) {
         errorNotification({ message: error?.message });
       } finally {
@@ -78,429 +102,323 @@ const UserOrders = () => {
     setTabKey(key);
   };
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: FilterDropdownProps["confirm"],
-    dataIndex: DataIndex
-  ) => {
-    confirm();
-    dispatch(setSearchText(selectedKeys[0]));
-    dispatch(setSearchedColumn(dataIndex));
+  const handleOpenDetails = (order: DataType) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
   };
 
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
-    dispatch(setSearchText(""));
-  };
-
-  const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): TableColumnType<DataType> => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          placeholder={`Search {dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) => {
-            setSearchInput(e.target.value);
-            setSelectedKeys(e.target.value ? [e.target.value] : []);
-          }}
-          onPressEnter={() =>
-            handleSearch(selectedKeys as string[], confirm, dataIndex)
-          }
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(selectedKeys as string[], confirm, dataIndex)
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
-    },
-    render: (text) =>
-      global?.searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[global.searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
-
-  const expandedRowRender = (value: any) => {
-    const { dabitTotal, creditTotal } = value.payments.reduce(
-      (acc: any, element: any) => {
-        if (element.paymentType === "Credit")
-          acc.creditTotal += +element.amount;
-        if (element.paymentType === "Debit") acc.dabitTotal += +element.amount;
-        return acc;
-      },
-      { dabitTotal: 0, creditTotal: 0 } // Initial accumulator values
-    );
-
-    const paidAmount = dabitTotal - creditTotal;
-
-    const childColumns: any = [
-      {
-        title: "Product",
-        dataIndex: "product",
-        key: "product",
-        render: (v: { name: string }) => <span>{v.name}</span>,
-      },
-      {
-        title: "Material",
-        dataIndex: "material",
-        key: "material",
-      },
-      {
-        title: "Color",
-        dataIndex: "productVariant",
-        render: (v: any) => {
-          return <span>{v?.color?.name}</span>;
-        },
-      },
-      {
-        title: "Size",
-        dataIndex: "productVariant",
-        render: (v: any) => {
-          return <span>{v?.size?.name}</span>;
-        },
-      },
-
-      {
-        title: "Unit Price",
-        key: "unitPrice",
-        render: (v: any) => {
-          return <span>{(+v.unitPrice + +v.taxAmount).toFixed(2)}</span>;
-        },
-      },
-
-      {
-        title: "Discount Amount",
-        dataIndex: "totalDiscountAmount",
-        key: "totalDiscountAmount",
-      },
-
-      { title: "Qty", dataIndex: "qty", key: "qty" },
-
-      {
-        title: "Sub Total",
-        key: "subTotal",
-        dataIndex: "subTotal",
-      },
-    ];
-
-    return (
-      <div className="grid grid-cols-4 p-2">
-        <div className="col-span-1 p-2">
-          <h1>
-            <span className="font-bold">Order No: </span>
-            <code>{value.trackingNo}</code>
-          </h1>
-          <h1>
-            <span className="font-bold">Delivery Man: </span>
-            <code>{value?.deliveryMan?.name}</code>
-          </h1>
-          <h1>
-            <span className="font-bold">Shipping Address: </span>
-            <code> {value.shippingAddress?.address}</code>
-          </h1>
-
-          <Divider dashed />
-          <Timeline
-            items={(value?.orderTrackings || []).map(
-              (timeline: any, idx: number) => ({
-                // dot: <ClockCircleOutlined className="timeline-clock-icon" />,
-                // color: "red",
-                children: (
-                  <div key={idx}>
-                    <div> {timeline.status}</div>
-                    <div>
-                      {" "}
-                      {dayjs(timeline.createdAt).format("MMMM D, YYYY h:mm A")}
-                    </div>
-                    <div> {timeline.location}</div>
-                  </div>
-                ),
-              })
-            )}
-          />
-        </div>
-        <div className="col-span-3">
-          <div className="p-4 bg-white">
-            <h1 className="font-semibold">Order Items</h1>
-            <Table
-              columns={childColumns}
-              size="small"
-              scroll={{ x: "auto" }}
-              dataSource={value.orderItems}
-              pagination={false}
-              bordered
-            />
-          </div>
-          <div className="grid grid-cols-8 mt-5">
-            <div className="col-span-5">dasdf</div>
-            <div className="col-span-3">
-              <div className="flex justify-between">
-                <h1>Total Qty:</h1>
-                <h1 className="font-semibold">{value.totalQty}</h1>
-              </div>
-
-              <div className="flex justify-between">
-                <h1>Net Amount:</h1>
-                <h1 className="font-semibold">
-                  {(
-                    +value.subTotal +
-                    +value.totalItemsDiscount +
-                    +value.couponDiscount
-                  ).toFixed(2)}
-                </h1>
-              </div>
-
-              {+value.totalItemsDiscount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Discount Amount:</h1>
-                  <h1 className="font-semibold">{value.totalItemsDiscount}</h1>
-                </div>
-              )}
-
-              {+value.couponDiscount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Coupon Discount:</h1>
-                  <h1 className="font-semibold">{value.couponDiscount}</h1>
-                </div>
-              )}
-
-              {paidAmount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Paid Amount:</h1>
-                  <h1 className="font-semibold">{paidAmount}</h1>
-                </div>
-              )}
-
-              {+value.shippingCharge > 0 && (
-                <div className="flex justify-between">
-                  <h1>Shipping:</h1>
-                  <h1 className="font-semibold">+{value.shippingCharge}</h1>
-                </div>
-              )}
-
-              <div className="flex justify-between border-t-2">
-                <h1>Grand Total:</h1>
-                <h1 className="font-semibold">
-                  {(+value.grandTotal - paidAmount).toFixed(2)}
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  const handleCancelOrder = (orderId: string) => {
+    dispatch(
+      setAction({
+        type: ActionType.UPDATE,
+        cancelOrder: true,
+        payload: { id: orderId, status: "Canceled" },
+      })
     );
   };
 
-  const columns: TableColumnsType<DataType> = [
-    {
-      title: "Tracking No",
-      dataIndex: "trackingNo",
-      key: "trackingNo",
-      render: (value) => <span className="bg-green-200">{value}</span>,
-      ...getColumnSearchProps("trackingNo"),
-    },
-    { title: "Phone No", dataIndex: "phoneNo", key: "phoneNo" },
-    {
-      title: "Shipping Address",
-      dataIndex: "shippingAddress",
-      key: "shippingAddress",
-      render: (value) => <span>{value?.address}</span>,
-    },
-    {
-      title: "Payment Method",
-      dataIndex: "paymentMethod",
-      key: "paymentMethod",
-    },
-    // {
-    //   title: "Delivered Man",
-    //   dataIndex: "deliveryMan",
-    //   key: "deliveryMan",
-    //   render: (deliveryMan) => <span>{deliveryMan?.name}</span>,
-    // },
-    {
-      title: "Date",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (date) => date && dayjs(date).format("DD-MM-YYYY h:mm A"),
-    },
-    {
-      title: "Payment",
-      dataIndex: "paymentStatus",
-      key: "paymentStatus",
-    },
-    {
-      title: "Status",
-      key: "status",
-      render: (orderStatus) => (
-        <Tag color={getStatus(orderStatus.status)}>{orderStatus.status}</Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (value) => {
-        if (["Pending", "Approved", "Processing"].includes(value.status))
-          return (
-            <Button
-              size="small"
-              title="Cancel Order"
-              className="me-1"
-              onClick={() => {
-                dispatch(
-                  setAction({
-                    type: ActionType.UPDATE,
-                    cancelOrder: true,
-                    payload: { id: value.id, status: "Canceled" },
-                  })
-                );
-              }}
-              disabled={value.status === "Completed"}
-            >
-              Cancel Order
-            </Button>
-          );
-
-        // if (["Completed"].includes(value.status))
-        //   return (
-        //     <Button
-        //       size="small"
-        //       title="Return Request Order"
-        //       className="me-1"
-        //       disabled={value.status === "Requested"}
-        //       onClick={() => {
-        //         dispatch(
-        //           setAction({
-        //             type: ActionType.UPDATE,
-        //             returnAllOrder: true,
-        //             payload: { orderId: value.id },
-        //           })
-        //         );
-        //       }}
-        //     >
-        //      All Order Return
-        //     </Button>
-        //   );
-      },
-    },
-  ];
   const items: TabsProps["items"] = [
-    {
-      key: "Pending",
-      label: "Pending",
-    },
-    {
-      key: "Approved",
-      label: "Approved",
-    },
-    {
-      key: "Processing",
-      label: "Processing",
-    },
-    {
-      key: "On Shipping",
-      label: "On Shipping",
-    },
-    {
-      key: "Shipped",
-      label: "Shipped",
-    },
-    {
-      key: "Canceled",
-      label: "Canceled",
-    },
-    {
-      key: "Completed",
-      label: "Completed",
-    },
-  ];
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Canceled",
+  ].map((status) => ({
+    key: status,
+    label: (
+      <span>
+        {status === "Pending" && <ClockCircleOutlined />}
+        {status === "Processing" && <SyncOutlined spin />}
+        {status === "Shipped" && <ShoppingOutlined />}
+        {status === "Delivered" && <CheckCircleOutlined />}
+        {status === "Canceled" && <CloseCircleOutlined />}
+        {status}
+      </span>
+    ),
+  }));
+
+  // Helper to render status badge
+  const renderStatusBadge = (status: string) => {
+    const color = getStatus(status);
+    return (
+      <Tag color={color} className="uppercase font-bold px-2 py-0.5 rounded-md">
+        {status}
+      </Tag>
+    );
+  };
 
   return (
-    <div className="p-3">
+    <div className="p-2 md:p-4 bg-gray-50/50 min-h-[600px] rounded-xl">
       <Tabs
-        defaultActiveKey="1"
+        defaultActiveKey="Pending"
         activeKey={tabKey}
         items={items}
         onChange={onChange}
+        className="custom-tabs mb-6"
+        type="card"
       />
-      <Table
-        scroll={{ x: "auto" }}
-        dataSource={orders.map((items: any, idx: number) => ({
-          ...items,
-          key: idx.toString(),
-        }))}
-        columns={columns}
-        expandable={{ expandedRowRender }}
-        loading={global.loading.loading}
-        pagination={{ pageSize: 10 }}
-        bordered
-        size="large"
-      />
+
+      {global.loading.loading ? (
+        <div className="flex flex-col gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} loading variant="borderless" className="shadow-sm" />
+          ))}
+        </div>
+      ) : orders.length === 0 ? (
+        <Empty
+          description="No orders found"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          className="bg-white p-10 rounded-xl shadow-sm"
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {orders.map((order) => (
+            <Card
+              key={order.id}
+              variant="borderless"
+              className="shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
+              bodyStyle={{ padding: 0 }}
+            >
+              <div className="p-4 md:p-6">
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4 border-b border-gray-100 pb-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                      <Text className="text-gray-500">Order ID:</Text>
+                      <Text strong copyable className="text-lg">
+                        {order.trackingNo}
+                      </Text>
+                      {renderStatusBadge(order.status)}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-500 text-sm">
+                      <CalendarOutlined />
+                      {dayjs(order.createdAt).format("MMMM D, YYYY h:mm A")}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <Text type="secondary" className="block text-xs">Total Amount</Text>
+                      <Text strong className="text-xl md:text-2xl text-blue-600">
+                        {Number(order.grandTotal).toFixed(2)}
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Product Thumbnails */}
+                  <div className="flex-1 overflow-x-auto pb-2 scrollbar-hide">
+                    <div className="flex gap-3">
+                      {order.orderItems.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="relative w-24 h-24 flex-shrink-0 border border-gray-200 rounded-lg overflow-hidden bg-gray-50 group"
+                        >
+                          <Image
+                            src={getImageUrl(item.product?.thumbnail)}
+                            alt={item.product?.name || "Product"}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-110"
+                          />
+                          <div className="absolute bottom-0 right-0 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded-tl-md">
+                            x{item.qty}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-row lg:flex-col justify-end gap-3 mt-4 lg:mt-0 min-w-[150px]">
+                    <Button
+                      type="primary"
+                      onClick={() => handleOpenDetails(order)}
+                    >
+                      View Details
+                    </Button>
+                    {["Pending", "Processing"].includes(order.status) && (
+                      <Button
+                        danger
+                        onClick={() => handleCancelOrder(order.id)}
+                      >
+                        Cancel Order
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Order Details Modal */}
+      <Modal
+        title={
+          <div className="flex items-center justify-between mr-8">
+            <span className="text-xl font-bold">Order Details</span>
+            {selectedOrder && renderStatusBadge(selectedOrder.status)}
+          </div>
+        }
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsModalOpen(false)}>
+            Close
+          </Button>,
+          selectedOrder && ["Pending", "Processing"].includes(selectedOrder.status) && (
+            <Button key="cancel" danger onClick={() => {
+              handleCancelOrder(selectedOrder.id);
+              setIsModalOpen(false);
+            }}>
+              Cancel Order
+            </Button>
+          )
+        ]}
+        width={900}
+        centered
+      >
+        {selectedOrder && (
+          <div className="mt-4">
+            {/* Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 bg-gray-50 p-4 rounded-lg">
+              <div>
+                <Descriptions title="Delivery Info" column={1} size="small">
+                  <Descriptions.Item label={<span className="text-gray-500">Receiver</span>}>
+                    <span className="font-semibold">{selectedOrder.deliveryMan?.name || "Not Assigned"}</span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<span className="text-gray-500">Address</span>}>
+                    {selectedOrder.shippingAddress?.address}
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<span className="text-gray-500">Phone</span>}>
+                    {/* Assuming phone is available or reusing mock */}
+                    N/A
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+              <div>
+                <Descriptions title="Order Info" column={1} size="small">
+                  <Descriptions.Item label={<span className="text-gray-500">Order ID</span>}>
+                    <Text copyable>{selectedOrder.trackingNo}</Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<span className="text-gray-500">Payment</span>}>
+                    <Space>
+                      <Tag>{selectedOrder.paymentMethod}</Tag>
+                      <Tag color={selectedOrder.paymentStatus === 'Paid' ? 'success' : 'warning'}>{selectedOrder.paymentStatus}</Tag>
+                    </Space>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<span className="text-gray-500">Date</span>}>
+                    {dayjs(selectedOrder.createdAt).format("MMM D, YYYY h:mm A")}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+            </div>
+
+            {/* Items Table */}
+            <Table
+              dataSource={selectedOrder.orderItems}
+              pagination={false}
+              rowKey="id"
+              scroll={{ x: 600 }}
+              className="mb-8 border rounded-lg overflow-hidden"
+              columns={[
+                {
+                  title: "Product",
+                  dataIndex: "product",
+                  key: "product",
+                  width: 250,
+                  render: (_, item: any) => (
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-12 h-12 rounded border flex-shrink-0 bg-gray-100">
+                        <Image
+                          src={getImageUrl(item.product?.thumbnail)}
+                          alt="Product"
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm line-clamp-2">{item.product?.name}</span>
+                        <span className="text-xs text-gray-400">{item.productVariant?.size?.name}, {item.productVariant?.color?.name}</span>
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "Price",
+                  align: 'right',
+                  render: (_, item: any) => <span>{(Number(item.unitPrice) + Number(item.taxAmount)).toFixed(2)}</span>
+                },
+                {
+                  title: "Qty",
+                  dataIndex: "qty",
+                  align: "center",
+                },
+                {
+                  title: "Total",
+                  align: "right",
+                  render: (_, item: any) => <span className="font-medium">{Number(item.subTotal).toFixed(2)}</span>
+                }
+              ]}
+            />
+
+            {/* Summary & Timeline */}
+            <Row gutter={[24, 24]}>
+              <Col xs={24} md={12}>
+                <Title level={5}>Order Timeline</Title>
+                <div className="mt-4 pl-2">
+                  <Timeline
+                    items={(selectedOrder.orderTrackings || []).map((t: any) => ({
+                      color: t.status === selectedOrder.status ? "blue" : "gray",
+                      children: (
+                        <>
+                          <Text strong>{t.status}</Text>
+                          <br />
+                          <Text type="secondary" className="text-xs">{dayjs(t.createdAt).format("MMM D, h:mm A")}</Text>
+                        </>
+                      )
+                    }))}
+                  />
+                </div>
+              </Col>
+              <Col xs={24} md={12}>
+                <div className="bg-blue-50/50 p-6 rounded-lg">
+                  <div className="flex justify-between mb-2">
+                    <Text type="secondary">Subtotal</Text>
+                    <Text>{Number(selectedOrder.subTotal).toFixed(2)}</Text>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <Text type="secondary">Tax / VAT</Text>
+                    <Text>Included</Text>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <Text type="secondary">Shipping</Text>
+                    <Text>+{Number(selectedOrder.shippingCharge).toFixed(2)}</Text>
+                  </div>
+                  {Number(selectedOrder.totalItemsDiscount) > 0 && (
+                    <div className="flex justify-between mb-2 text-green-600">
+                      <Text type="success">Discount</Text>
+                      <Text type="success">-{Number(selectedOrder.totalItemsDiscount).toFixed(2)}</Text>
+                    </div>
+                  )}
+                  <Divider className="my-3" />
+                  <div className="flex justify-between items-center">
+                    <Text strong className="text-lg">Grand Total</Text>
+                    <Text strong className="text-xl text-blue-600">{Number(selectedOrder.grandTotal).toFixed(2)}</Text>
+                  </div>
+                  {(selectedOrder.payments?.reduce((acc: number, p: any) => p.paymentType === 'Debit' ? acc + Number(p.amount) : acc - Number(p.amount), 0) || 0) < Number(selectedOrder.grandTotal) && (
+                    <div className="mt-2 text-right">
+                      <Tag color="warning">Payment Pending</Tag>
+                    </div>
+                  )}
+                </div>
+              </Col>
+            </Row>
+
+          </div>
+        )}
+      </Modal>
+
       <CancelOrder />
-      {/* <ReturnRequestAllOrder /> */}
     </div>
   );
 };

@@ -141,7 +141,9 @@ export default function Profile() {
                     <span className={`${tabKey === item.key ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}>
                       {item.icon}
                     </span>
-                    {item.label}
+                    <span className={`${tabKey === item.key ? "text-white" : "text-gray-400 group-hover:text-gray-600"}`}>
+                      {item.label}
+                    </span>
                   </button>
                 ))}
               </nav>
