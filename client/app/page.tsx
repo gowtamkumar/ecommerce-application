@@ -245,23 +245,19 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Subscribe - Premium dark section */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/90 z-0"></div>
-          <div className="absolute inset-0 bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat opacity-20 z-0 mix-blend-overlay"></div>
-          <div className="relative z-10 py-24 px-6 md:px-12 text-center text-white">
-            <div className="max-w-3xl mx-auto space-y-6">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                Join Our Community
-              </h2>
-              <p className="text-lg md:text-xl text-gray-300 font-light mb-8 max-w-2xl mx-auto">
-                Subscribe to our exclusive newsletter for early access to new collections,
-                premium offers, and style inspiration.
-              </p>
-              <div className="bg-white/10 backdrop-blur-md p-2 rounded-xl inline-block w-full max-w-lg">
-                <Subscribe />
-              </div>
-            </div>
+        {/* Subscribe */}
+        <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
+          <div className="absolute inset-0 z-0" />
+          <div className="relative z-10 max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Stay in the loop!
+            </h2>
+            <p className="text-base md:text-lg mb-8 text-gray-200">
+              Subscribe to our newsletter and never miss exclusive offers,
+              updates, and more.
+            </p>
+
+            <Subscribe />
           </div>
         </section>
       </main>
