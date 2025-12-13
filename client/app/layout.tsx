@@ -27,6 +27,7 @@ import "./style.css";
 // SEO Components
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
+import { renderSeoCode } from "@/components/seo/renderSeoCode";
 
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
@@ -67,8 +68,7 @@ const poppinsFont = localFont({
 // Metadata (can be overridden per page)
 
 // Helper to inject custom SEO code
-const renderSeoCode = (code?: string) =>
-  code ? <script dangerouslySetInnerHTML={{ __html: code }} /> : null;
+
 
 export default async function RootLayout({
   children,
@@ -84,9 +84,9 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         {favicon && <link rel="icon" href={favicon} />}
-        
+
         {/* Structured Data for SEO */}
-        <OrganizationSchema 
+        <OrganizationSchema
           name={setting?.name || "ecommerce"}
           logo={getImageUrl(setting?.logo, "")}
           description={setting?.description}
@@ -97,11 +97,11 @@ export default async function RootLayout({
             setting?.socialLink?.instagramUrl,
           ].filter(Boolean)}
         />
-        <WebSiteSchema 
+        <WebSiteSchema
           name={setting?.name || "ecommerce"}
           description={setting?.description}
         />
-        
+
         {/* Custom header code (Analytics, etc.) */}
         {renderSeoCode(setting?.seo?.headerCode)}
       </head>

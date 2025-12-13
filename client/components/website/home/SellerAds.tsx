@@ -1,14 +1,14 @@
 "use client";
-import { Button } from "antd";
-import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
-import Image from "next/image";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import Image from "next/image";
+import Link from "next/link";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
+import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const SellerAds = ({ banners }: any) => {
   if (!banners?.length) return null;
@@ -29,7 +29,7 @@ const SellerAds = ({ banners }: any) => {
           speed={1000}
           effect="fade"
           fadeEffect={{ crossFade: true }}
-          pagination={{ 
+          pagination={{
             clickable: true,
             bulletActiveClass: "!bg-white !opacity-100 !w-8 !rounded-full",
             bulletClass: "swiper-pagination-bullet !bg-white/20 !opacity-100 !w-2.5 !h-2.5 !transition-all !duration-300"
@@ -48,19 +48,19 @@ const SellerAds = ({ banners }: any) => {
                         Limited Edition
                       </span>
                     </div>
-                    
+
                     <h2 className="text-4xl lg:text-6xl font-bold text-white leading-tight tracking-tight drop-shadow-2xl">
                       {item.title}
                     </h2>
-                    
+
                     <p className="text-lg text-gray-400 leading-relaxed font-light border-l-2 border-white/10 pl-6">
                       {item.description}
                     </p>
                   </div>
-                  
+
                   <Link href="/products">
-                    <Button 
-                      type="primary" 
+                    <Button
+                      type="primary"
                       size="large"
                       className="!h-14 !px-12 !text-lg !font-medium !bg-white !text-black !border-none !rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:!shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
                     >
@@ -75,10 +75,10 @@ const SellerAds = ({ banners }: any) => {
                     {/* Glowing Ring */}
                     <div className="absolute inset-0 border border-white/10 rounded-full scale-90 animate-[spin_10s_linear_infinite]" />
                     <div className="absolute inset-0 border border-white/5 rounded-full scale-110 animate-[spin_15s_linear_infinite_reverse]" />
-                    
+
                     {/* Center Glow */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/30 to-purple-500/30 rounded-full blur-3xl group-hover:blur-[100px] transition-all duration-700" />
-                    
+
                     {/* Image */}
                     <div className="relative h-full w-full transform transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3">
                       <Image

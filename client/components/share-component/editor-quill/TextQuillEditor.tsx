@@ -1,13 +1,16 @@
 "use client";
+import dynamic from 'next/dynamic';
 import React from 'react';
-import ReactQuill from 'react-quill';
-// Importing from 'quill' directly because 'react-quill/dist/quill.snow.css' is not resolving correctly
-import "quill/dist/quill.snow.css";
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
 
 interface TextQuillEditorProps {
   editorContent: string;
   setEditorContent: any;
 }
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+});
 
 const TextQuillEditor: React.FC<TextQuillEditorProps> = ({ editorContent, setEditorContent }) => {
   const handleEditorChange = (content: string) => {

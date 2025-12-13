@@ -1,4 +1,5 @@
 "use client";
+import TextReactMdEditor from "@/components/share-component/react-md-editor/TextReactMdEditor";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { savePost, updatePost } from "@/lib/apis/posts";
 import {
@@ -11,16 +12,7 @@ import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { errorNotification } from "@/lib/utils/notification";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { PlusOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Form,
-  Image,
-  Input,
-  Modal,
-  Select,
-  Tag,
-  Upload,
-} from "antd";
+import { Button, Form, Image, Input, Modal, Select, Tag, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -105,13 +97,13 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
       ? () => updatePost(newData)
       : () => savePost(newData);
 
-    await handleAsyncAction(asyncFn, dispatch);
+    const res = await handleAsyncAction(asyncFn, dispatch);
 
     // Redirect or clear after save? The original didn't seem to redirect explicitly but maybe it should.
     // The previous implementation used global action state, which suggests it might be a modal or tied to state.
     // Given the task is to redesign the page at /dashboard/post/new, redirection makes sense.
-    if (!newData.id) {
-      router.push('/dashboard/post');
+    if (res.success) {
+      router.push("/dashboard/post");
     }
   };
 
@@ -148,7 +140,6 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
     setEditorContent("");
   };
 
-
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
@@ -156,7 +147,9 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
           <h1 className="text-3xl font-bold text-gray-900 font-global-primary-fontfamily">
             {payload?.id ? "Edit Post" : "Create Post"}
           </h1>
-          <p className="text-gray-500 mt-1">Manage your blog content and media.</p>
+          <p className="text-gray-500 mt-1">
+            Manage your blog content and media.
+          </p>
         </div>
         <div className="flex gap-3">
           <Button
@@ -205,14 +198,38 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
                 label="Post Title"
                 rules={[{ required: true, message: "Title is required" }]}
               >
-                <Input placeholder="Enter post title" size="large" />
+                <Input
+                  placeholder="Enter post title"
+                  size="large"
+                  onChange={(value) => {
+                    const slug = value.target.value
+                      .toLowerCase()
+                      .trim()
+                      .split(" ")
+                      .join("-");
+                    form.setFieldsValue({ slug });
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="slug"
+                label="Slug"
+                rules={[
+                  {
+                    required: true,
+                    message: "Slug is required",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter" />
               </Form.Item>
 
               <label className="mb-2 block mt-4">Content</label>
-              {/* <TextQuillEditor
-                editorContent={editorContent}
-                setEditorContent={setEditorContent}
-              /> */}
+              <TextReactMdEditor
+                value={editorContent}
+                setValue={setEditorContent}
+              />
             </div>
           </div>
 
@@ -250,7 +267,9 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
               </Form.Item>
 
               <div className="mb-4">
-                <label htmlFor="tags" className="mb-2 block">Tags</label>
+                <label htmlFor="tags" className="mb-2 block">
+                  Tags
+                </label>
                 <Input
                   type="text"
                   id="tags"
@@ -261,7 +280,13 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
                 />
                 <div className="flex flex-wrap gap-2 mt-2">
                   {(tags || []).map((item, index) => (
-                    <Tag key={index} closable onClose={() => setTags(tags.filter((_, i) => i !== index))}>
+                    <Tag
+                      key={index}
+                      closable
+                      onClose={() =>
+                        setTags(tags.filter((_, i) => i !== index))
+                      }
+                    >
                       {item}
                     </Tag>
                   ))}

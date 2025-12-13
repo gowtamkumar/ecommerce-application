@@ -1,4 +1,4 @@
-import appConfig from "@/appConfig";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 import Meta from "antd/es/card/Meta";
@@ -28,11 +28,7 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
               <div className="h-48 overflow-hidden relative">
                 <Image
                   alt={post.title}
-                  src={
-                    post.image
-                      ? `${appConfig.apiUrl}/uploads/${post.image}`
-                      : "https://placehold.co/600x400?text=No+Image"
-                  }
+                  src={getImageUrl(post.image)}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

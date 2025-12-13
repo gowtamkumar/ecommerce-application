@@ -1,19 +1,17 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
-import { setAction } from "@/redux/features/global/globalSlice";
+import { Button, Tabs } from "antd";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-const AddPost = dynamic(() => import('./AddPost'), {ssr: false})
-const PostList = dynamic(() => import('./PostList'),{ssr: false})
+const AddPost = dynamic(() => import('./AddPost'), { ssr: false })
+const PostList = dynamic(() => import('./PostList'), { ssr: false })
 
 
 export default function Post() {
   const [tabKey, setTabKey] = useState("post_list");
-  const dispatch = useDispatch();
+  const router = useRouter()
 
   return (
     <div className="container bg-white p-3">
@@ -31,12 +29,7 @@ export default function Post() {
           <Button
             size="small"
             onClick={() =>
-              dispatch(
-                setAction({
-                  post: true,
-                  type: ActionType.CREATE,
-                })
-              )
+              router.push("/dashboard/post/new")
             }
           >
             <PlusOutlined className="mx-1" /> New Post

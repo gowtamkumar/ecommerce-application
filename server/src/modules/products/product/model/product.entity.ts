@@ -42,7 +42,7 @@ export class ProductEntity {
   isReturnable?: boolean;
 
   @Column({ name: 'is_new_arrival', type: 'boolean', default: false })
-  isNewArrival?: boolean;
+  isNewArrival!: boolean;
 
   @Column({ type: 'boolean', default: false })
   featured?: boolean;

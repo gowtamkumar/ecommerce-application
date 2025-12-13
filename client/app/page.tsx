@@ -3,9 +3,7 @@ import Subscribe from "@/components/website/footer/Subscribe";
 import Header from "@/components/website/header/Header";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
-import { getPublicCategories } from "@/lib/apis/categories";
 import { getHome } from "@/lib/apis/home";
-import { getPosts } from "@/lib/apis/posts";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -105,7 +103,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: canonicalUrl,
-
     },
     authors: [{ name: "ecommerce" }],
     creator: "ecommerce",
@@ -114,13 +111,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [home, publicCategories, posts] = await Promise.all([
+  const [home] = await Promise.all([
     getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
-    getPublicCategories(),
-    getPosts(),
   ]);
 
-  const { banners, categories, products, topSellingProducts } = home.data || {};
+  const { banners, posts, categories, products, topSellingProducts } = home.data || {};
 
   const sliderBanners =
     banners?.filter((item: { type: string }) => item.type === "Slider") || [];
@@ -224,16 +219,14 @@ export default async function Home() {
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Browse by Category" link="/products" />
-            <CategoryTab categories={publicCategories?.data || []} />
+            <CategoryTab categories={categories} />
           </div>
         </section>
 
         {/* Footer Banner */}
         {FooterBanners?.length > 0 && (
           <section className="py-10 overflow-hidden">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <SellerAds banners={FooterBanners} />
-            </div>
+            <SellerAds banners={FooterBanners} />
           </section>
         )}
 
@@ -241,7 +234,7 @@ export default async function Home() {
         <section className="py-24 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Latest from our Blog" link="/blog" />
-            <BlogTab posts={posts?.data?.slice(0, 3) || []} />
+            <BlogTab posts={posts || []} />
           </div>
         </section>
 

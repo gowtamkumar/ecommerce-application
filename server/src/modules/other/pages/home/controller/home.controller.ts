@@ -4,6 +4,8 @@ import { asyncHandler } from '../../../../../middlewares/async.middleware';
 import { logger } from '../../../../../middlewares/logger';
 import { productsQuery, topSellingProductQuery } from '../../../../../sqlQuery';
 import { BannerEntity } from '../../../../banner/model/banner.entity';
+import { PostStatus } from '../../../../blog/post/enums';
+import { PostEntity } from '../../../../blog/post/model/post.entity';
 import { CategoriesEntity } from '../../../../categories/model/categories.entity';
 import { SettingEntity } from '../../../setting/model/setting.entity';
 
@@ -26,16 +28,34 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
     where: { active: true },
   });
 
-  const categoriesRepository = connection.getRepository(CategoriesEntity);
-  const categories = await categoriesRepository.find({
-    where: { active: true },
+  const categories = await connection.getRepository(CategoriesEntity).find({
+    // where: { active: true, isFeatured: true },
+    where: {
+      active: true,
+      isFeatured: true, // BOTH must be true
+    },
     select: {
       id: true,
       name: true,
       slug: true,
       image: true,
-      description: true,
+      isFeatured: true,
       active: true,
+    },
+  });
+
+  const posts = await connection.getRepository(PostEntity).find({
+    where: { status: PostStatus.Published },
+    order: {
+      createdAt: 'DESC', // latest first
+    },
+    take: 3,
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      image: true,
+      status: true,
     },
   });
 
@@ -64,6 +84,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
       topSellingProducts,
       banners,
       categories,
+      posts,
     },
   });
 });
