@@ -1,82 +1,58 @@
-import { Alert, Button, Divider, Form, Input } from "antd";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+"use client";
+import { updatePassword } from "@/lib/apis/user";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setLoading,
-  setResponse,
 } from "@/redux/features/global/globalSlice";
-import { updatePassword } from "@/lib/apis/user";
-import { EditOutlined } from "@ant-design/icons";
+import { KeyOutlined, LockOutlined } from "@ant-design/icons";
+import { Button, Card, Form, Input, Typography } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+
+const { Title, Text } = Typography;
 
 export default function ChangePassword() {
-  const [changePassword, setChangePassword] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
   const handleSubmit = async (values: any) => {
     try {
-      let newData = { ...values };
-      // return console.log("newData:", newData);
       dispatch(setLoading({ savePassword: true }));
-      const res = await updatePassword(newData);
+      const res = await updatePassword(values);
       if (res.success) {
-        dispatch(
-          setResponse({
-            type: "success",
-            message: "Password update successfully",
-          })
-        );
-        dispatch(setLoading({ savePassword: false }));
+        successNotification({ message: "Password updated successfully" });
+        form.resetFields();
       } else {
-        dispatch(setResponse({ type: "error", message: res.message }));
-        dispatch(setLoading({ savePassword: false }));
+        errorNotification({ message: res.message || "Failed to update password" });
       }
-
-      setTimeout(async () => {
-        dispatch(setResponse({}));
-      }, 5000);
     } catch (err: any) {
-      console.log(err);
+      errorNotification({ message: err.message || "Something went wrong" });
+    } finally {
+      dispatch(setLoading({ savePassword: false }));
     }
   };
 
-  const resetFormData = () => {
-    form.resetFields();
-    setChangePassword(false);
-  };
-
   return (
-    <div className="container">
-      <div className="flex justify-between items-center gap-2">
-        <Divider orientation="left" className="flex justify-between">
-          <h3>Change Password</h3>
-          {global.response.type && (
-            <Alert
-              className="p-0 m-0"
-              message={`${global.response.message}`}
-              type={global.response.type}
-            />
-          )}
-        </Divider>
-
-        <div hidden={changePassword}>
-          <Button
-            onClick={() => setChangePassword(true)}
-            icon={<EditOutlined />}
-            size="small"
-          />
+    <div className="flex justify-center items-start pt-6">
+      <Card
+        className="w-full max-w-lg shadow-sm"
+        bordered={false}
+      >
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 text-blue-500 mb-4">
+            <LockOutlined className="text-xl" />
+          </div>
+          <Title level={4}>Change Password</Title>
+          <Text type="secondary">Ensure your account is using a long, random password to stay secure.</Text>
         </div>
-      </div>
 
-      <div className="md:w-1/2">
         <Form
           form={form}
           layout="vertical"
-          onFinish={(values) => handleSubmit(values)}
+          onFinish={handleSubmit}
           autoComplete="off"
-          scrollToFirstError={true}
+          requiredMark={false}
         >
           <Form.Item
             name="currentPassword"
@@ -84,13 +60,14 @@ export default function ChangePassword() {
             rules={[
               {
                 required: true,
-                message: "Current Password is required",
+                message: "Please enter your current password",
               },
             ]}
           >
             <Input.Password
-              placeholder="Enter Current Password"
-              disabled={!changePassword}
+              prefix={<KeyOutlined className="text-gray-400" />}
+              placeholder="Current Password"
+              size="large"
             />
           </Form.Item>
 
@@ -100,62 +77,60 @@ export default function ChangePassword() {
             rules={[
               {
                 required: true,
-                message: "New Password is required",
+                message: "Please enter a new password",
               },
+              {
+                min: 8,
+                message: "Password must be at least 8 characters"
+              }
             ]}
           >
             <Input.Password
-              placeholder="Enter New Password"
-              disabled={!changePassword}
+              prefix={<LockOutlined className="text-gray-400" />}
+              placeholder="New Password"
+              size="large"
             />
           </Form.Item>
 
           <Form.Item
             name="confirmPassword"
             label="Confirm Password"
+            dependencies={['newPassword']}
             rules={[
               {
                 required: true,
-                message: "Confirm Password is required",
+                message: "Please confirm your new password",
               },
               ({ getFieldValue }) => ({
-                validator(rule, value) {
-                  if (getFieldValue("newPassword") === value) {
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve();
-                  } else if (getFieldValue("newPassword").length < 8) {
-                    return Promise.reject(
-                      "Password must contain at least 8 characters"
-                    );
-                  } else {
-                    return Promise.reject("Password's does not match");
                   }
+                  return Promise.reject(new Error('The two passwords that you entered do not match!'));
                 },
               }),
             ]}
           >
             <Input.Password
-              placeholder="Enter Confirm Password"
-              disabled={!changePassword}
+              prefix={<LockOutlined className="text-gray-400" />}
+              placeholder="Confirm New Password"
+              size="large"
             />
           </Form.Item>
 
-          <Form.Item>
-            <div className="flex gap-2">
-              <Button size="small" onClick={resetFormData} className="me-2">
-                Reset
-              </Button>
-              <Button
-                size="small"
-                type="primary"
-                htmlType="submit"
-                loading={global.loading.savePassword}
-              >
-                Save
-              </Button>
-            </div>
+          <Form.Item className="mb-0 mt-6">
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              size="large"
+              loading={global.loading.savePassword}
+            >
+              Update Password
+            </Button>
           </Form.Item>
         </Form>
-      </div>
+      </Card>
     </div>
   );
 }

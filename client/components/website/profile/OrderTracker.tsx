@@ -1,295 +1,285 @@
 "use client";
-import React, { useState } from "react";
+import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
+import { getOrderQuery } from "@/lib/apis/orders";
+import {
+  setProductRating
+} from "@/redux/features/global/globalSlice";
+import {
+  CheckCircleOutlined,
+  EnvironmentOutlined,
+  FileTextOutlined,
+  SearchOutlined,
+  SyncOutlined,
+  TruckOutlined
+} from "@ant-design/icons";
 import {
   Button,
+  Card,
+  Col,
+  Descriptions,
   Divider,
   Empty,
   Form,
   Input,
-  Rate,
+  Row,
   Space,
+  Steps,
   Table,
-  Timeline,
+  Tag,
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
-import { CiLocationOn } from "react-icons/ci";
-import { useDispatch } from "react-redux";
-import {
-  setAction,
-  setProductRating,
-} from "@/redux/features/global/globalSlice";
-import { ActionType } from "@/constants/constants";
 import dynamic from "next/dynamic";
-import { getOrderQuery } from "@/lib/apis/orders";
-import ReturnRequestOrderItem from "./ReturnRequestOrderItem";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
   ssr: false,
 });
+
+const { Title, Text } = Typography;
 
 export default function OrderTracker() {
   const [order, setOrder] = useState({} as any);
   const [tracker, setTracker] = useState({} as { trackingNo: string });
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
   const [form] = Form.useForm();
+  const { formatPrice } = useCurrency();
 
-  async function handleOrderTracking() {
+  async function handleOrderTracking(values: any) {
+    if (!values.trackingNo) return;
     setLoading(true);
-    const result = await getOrderQuery(tracker);
+    setTracker({ trackingNo: values.trackingNo });
 
-    if (!result.success) {
+    try {
+      const result = await getOrderQuery({ trackingNo: values.trackingNo });
+      if (result.success) {
+        // Simulate a brief delay for UI smoothness or real fetch
+        setTimeout(() => {
+          setOrder(result.data);
+          setLoading(false);
+        }, 800);
+      } else {
+        // Handle not found or error
+        setOrder({});
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
       setLoading(false);
-      return;
     }
-
-    setTimeout(() => {
-      setOrder(result.data);
-      setLoading(false);
-    }, 2000);
   }
 
-  // if (!wishlists?.length) {
-  //   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-  //   return;
-  // }
-
-  const childColumns: any = [
+  const columns = [
     {
       title: "Product",
       dataIndex: "product",
       key: "product",
-      render: (v: { name: string }) => <span>{v.name}</span>,
+      render: (v: { name: string }) => <Text strong>{v.name}</Text>,
     },
     {
-      title: "Material",
-      dataIndex: "material",
-      key: "material",
+      title: "Variant",
+      key: "variant",
+      render: (_: any, record: any) => (
+        <div className="text-xs text-gray-500">
+          {record?.productVariant?.color && <div>Color: {record.productVariant.color.name}</div>}
+          {record?.productVariant?.size && <div>Size: {record.productVariant.size.name}</div>}
+        </div>
+      ),
     },
     {
-      title: "Color",
-      dataIndex: "productVariant",
-      render: (v: any) => {
-        return <span>{v?.color?.name}</span>;
-      },
-    },
-    {
-      title: "Size",
-      dataIndex: "productVariant",
-      render: (v: any) => {
-        return <span>{v?.size?.name}</span>;
-      },
-    },
-
-    {
-      title: "Unit Price",
+      title: "Price",
+      dataIndex: "unitPrice",
       key: "unitPrice",
-      render: (v: any) => {
-        return <span>{(+v.unitPrice + +v.taxAmount).toFixed(2)}</span>;
-      },
+      render: (val: any, record: any) => formatPrice((+val + +record.taxAmount)),
     },
-
     {
-      title: "Discount Amount",
-      dataIndex: "totalDiscountAmount",
-      key: "totalDiscountAmount",
+      title: "Qty",
+      dataIndex: "qty",
+      key: "qty",
+      align: "center" as const
     },
-
-    { title: "Qty", dataIndex: "qty", key: "qty" },
-
     {
-      title: "Sub Total",
-      key: "subTotal",
+      title: "Total",
       dataIndex: "subTotal",
+      key: "subTotal",
+      align: "right" as const,
+      render: (val: any) => <Text strong>{formatPrice(val)}</Text>,
     },
   ];
 
+  // Helper to map statuses to steps (simplified)
+  const getStepStatus = (status: string) => {
+    switch (status) {
+      case "Pending": return 0;
+      case "Processing": return 1;
+      case "Shipped": return 2;
+      case "Delivered": return 3;
+      case "Canceled": return -1;
+      default: return 0;
+    }
+  };
+
+  const currentStep = order?.orderTrackings ? order.orderTrackings.length - 1 : 0; // Using tracking length as proxy, simplified
+
   return (
-    <div className="mt-2">
-      <Form
-        form={form}
-        onFinish={handleOrderTracking}
-        scrollToFirstError={true}
-      >
-        <Space.Compact block size="small">
-          <Form.Item name="name" label="Tracking No">
+    <div className="max-w-5xl mx-auto">
+      {/* Search Section */}
+      <div className="text-center mb-10">
+        <Title level={3}>Track Your Order</Title>
+        <Text type="secondary" className="mb-6 block">Enter your order tracking number to see current status.</Text>
+
+        <Form
+          form={form}
+          onFinish={handleOrderTracking}
+          layout="inline"
+          className="justify-center"
+        >
+          <Form.Item name="trackingNo" rules={[{ required: true, message: 'Please enter tracking number' }]}>
             <Input
-              id="trackingNo"
-              size="middle"
-              placeholder="Input Your tracking No"
-              onChange={({ target }) => {
-                setTracker({ trackingNo: target.value });
-                setOrder({});
-              }}
+              prefix={<SearchOutlined className="text-gray-400" />}
+              placeholder="e.g. ORD-2023-1234"
+              size="large"
+              style={{ minWidth: 300 }}
+              allowClear
             />
           </Form.Item>
           <Form.Item>
-            <Button
-              size="middle"
-              disabled={!tracker?.trackingNo}
-              type="primary"
-              loading={loading}
-              htmlType="submit"
-            >
-              Query
+            <Button type="primary" size="large" htmlType="submit" loading={loading} icon={<TruckOutlined />}>
+              Track Order
             </Button>
           </Form.Item>
-        </Space.Compact>
-      </Form>
-      {order.trackingNo ? (
-        <>
-          <div className="grid grid-cols-3">
-            <div className="col-span-1 p-2">
-              <h1>
-                <span className="font-bold">Order No: </span>
-                <code>{order.trackingNo}</code>
-              </h1>
-              <h1>
-                <span className="font-bold">Delivery Man: </span>
-                <code>{order?.deliveryMan?.name}</code>
-              </h1>
-              <h1>
-                <span className="font-bold">Shipping Address: </span>
-                <code> {order.shippingAddress?.address}</code>
-              </h1>
-              {order?.returnedStatus && (
-                <h1>
-                  <span className="font-bold">Return Status: </span>
-                  <code>{order?.returnedStatus}</code>
-                </h1>
-              )}
-            </div>
-            <div className="col-span-1 p-2 flex gap-2">
-              <div>
-                <CiLocationOn className="size-8" />
-              </div>
-              <div>
-                <h1 className="font-bold">Delivery Address</h1>
-                <p> {order?.shippingAddress?.type}:</p>
-                <p>{order?.shippingAddress?.address}</p>
+        </Form>
+      </div>
 
-                <p>Phone No: {order?.shippingAddress?.phoneNo}</p>
-              </div>
-            </div>
-            <div className="col-span-1 p-2 flex gap-2">
-              <div className="basis-1/3">
-                <p>Rate this product</p>
-                <Rate defaultValue={2.5} disabled />
-                <br />
-                <Button
-                  type="primary"
-                  size="small"
-                  onClick={() =>
-                    dispatch(
-                      setProductRating({
-                        type: ActionType.CREATE,
-                        productRating: true,
-                        payload: { orderItems: order.orderItems },
-                      })
-                    )
-                  }
-                >
-                  Write a Review
-                </Button>
-                <NewReview />
-              </div>
-            </div>
-          </div>
+      {loading ? (
+        <Card loading bordered={false} />
+      ) : order.trackingNo ? (
+        <div className="animate-fade-in space-y-6">
 
-          <div className="p-4">
-            <div className="p-4 bg-white">
-              <h2 className="font-semibold">Order Items</h2>
-              <Table
-                columns={childColumns}
-                size="small"
-                scroll={{ x: "auto" }}
-                dataSource={order.orderItems}
-                pagination={false}
-                bordered
+          {/* Status Steps */}
+          <Card bordered={false} className="shadow-sm">
+            <div className="py-4">
+              {/* Simplified Status Map - In real app, map exact statuses from enum */}
+              <Steps
+                current={order.orderTrackings?.length || 0}
+                items={[
+                  { title: 'Order Placed', icon: <FileTextOutlined /> },
+                  { title: 'Processing', icon: <SyncOutlined spin={order.orderStatus === 'Processing'} /> },
+                  { title: 'Shipped', icon: <TruckOutlined /> },
+                  { title: 'Delivered', icon: <CheckCircleOutlined /> },
+                ]}
+                status={order.orderStatus === 'Canceled' ? 'error' : 'process'}
               />
             </div>
-            <div className="grid grid-cols-8 mt-5">
-              <div className="col-span-6">
-                <h2 className="font-semibold">Order Trackings</h2>
-                <Timeline
-                  items={(order?.orderTrackings || []).map(
-                    (timeline: any, idx: number) => ({
-                      children: (
-                        <div key={idx}>
-                          <div> {timeline.status}</div>
-                          <div>
-                            {" "}
-                            {dayjs(timeline.createdAt).format(
-                              "MMMM D, YYYY h:mm A"
-                            )}
-                          </div>
-                          <div> {timeline.location}</div>
-                        </div>
-                      ),
-                    })
-                  )}
-                />
-              </div>
-              <div className="grid gap-y-3 col-span-2">
-                <div className="col-span-3">
-                  <div className="flex justify-between">
-                    <h1>Total Qty:</h1>
-                    <h1 className="font-semibold">{order.totalQty}</h1>
-                  </div>
+          </Card>
 
-                  <div className="flex justify-between">
-                    <h1>Net Amount:</h1>
-                    <h1 className="font-semibold">
-                      {(
-                        +order.subTotal +
-                        +order.totalItemsDiscount +
-                        +order.couponDiscount
-                      ).toFixed(2)}
-                    </h1>
-                  </div>
+          <Row gutter={[24, 24]}>
+            {/* Left: Info */}
+            <Col xs={24} md={16}>
+              <Card title="Order Details" bordered={false} className="shadow-sm h-full">
+                <Descriptions column={1} bordered size="small">
+                  <Descriptions.Item label="Order ID">{order.trackingNo}</Descriptions.Item>
+                  <Descriptions.Item label="Order Date">{dayjs(order.createdAt).format("MMMM D, YYYY h:mm A")}</Descriptions.Item>
+                  <Descriptions.Item label="Payment Status">
+                    <Tag color={order.paymentStatus === 'Paid' ? 'green' : 'orange'}>{order.paymentStatus || 'Unpaid'}</Tag>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Delivery Address">
+                    <Space align="start">
+                      <EnvironmentOutlined className="mt-1 text-gray-400" />
+                      <div>
+                        <div className="font-medium">{order.shippingAddress?.name} ({order.shippingAddress?.type})</div>
+                        <div className="text-gray-500">{order.shippingAddress?.address}</div>
+                        <div className="text-gray-500">{order.shippingAddress?.phoneNo}</div>
+                      </div>
+                    </Space>
+                  </Descriptions.Item>
+                </Descriptions>
 
+                <div className="mt-6">
+                  <Title level={5}>Items</Title>
+                  <Table
+                    columns={columns}
+                    dataSource={order.orderItems}
+                    pagination={false}
+                    size="small"
+                    rowKey="id"
+                  />
+                </div>
+              </Card>
+            </Col>
+
+            {/* Right: Timeline & Reviews */}
+            <Col xs={24} md={8}>
+              <Card title="Order History" bordered={false} className="shadow-sm mb-6">
+                {/* Using a custom timeline mapping */}
+                <div className="relative border-l border-gray-200 ml-3 space-y-6 pb-2">
+                  {(order.orderTrackings || []).map((track: any, idx: number) => (
+                    <div key={idx} className="ml-6 relative">
+                      <div className="absolute -left-[31px] bg-blue-500 h-2.5 w-2.5 rounded-full border-2 border-white ring-2 ring-gray-100"></div>
+                      <div className="text-sm font-semibold">{track.status}</div>
+                      <div className="text-xs text-gray-500">{dayjs(track.createdAt).format("MMM D, h:mm A")}</div>
+                      {track.location && <div className="text-xs text-gray-400 mt-1"><EnvironmentOutlined /> {track.location}</div>}
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card title="Payment Summary" bordered={false} className="shadow-sm">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(order.subTotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Shipping</span>
+                    <span>+{formatPrice(order.shippingCharge)}</span>
+                  </div>
                   {+order.totalItemsDiscount > 0 && (
-                    <div className="flex justify-between">
-                      <h1>Discount Amount:</h1>
-                      <h1 className="font-semibold">
-                        {order.totalItemsDiscount}
-                      </h1>
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount</span>
+                      <span>-{formatPrice(order.totalItemsDiscount)}</span>
                     </div>
                   )}
-
-                  {+order.couponDiscount > 0 && (
-                    <div className="flex justify-between">
-                      <h1>Coupon Discount:</h1>
-                      <h1 className="font-semibold">{order.couponDiscount}</h1>
-                    </div>
-                  )}
-
-                  {+order.shippingCharge > 0 && (
-                    <div className="flex justify-between">
-                      <h1>Shipping:</h1>
-                      <h1 className="font-semibold">+{order.shippingCharge}</h1>
-                    </div>
-                  )}
-
-                  {order.paid > 0 && (
-                    <div className="flex justify-between">
-                      <h1>Paid Amount:</h1>
-                      <h1 className="font-semibold">{order.paid}</h1>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between border-t-2">
-                    <h1>Grand Total:</h1>
-                    <h1 className="font-semibold">{order.due}</h1>
+                  <Divider className="my-3" />
+                  <div className="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>{formatPrice(order.due || order.grandTotal)}</span>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </>
+              </Card>
+
+              {/* Action Area */}
+              {(order.orderStatus === 'Delivered' || order.orderStatus === 'Completed') && (
+                <div className="mt-6 text-center">
+                  <Button
+                    block
+                    type="default"
+                    icon={<CheckCircleOutlined />}
+                    onClick={() =>
+                      dispatch(
+                        setProductRating({
+                          type: ActionType.CREATE,
+                          productRating: true,
+                          payload: { orderItems: order.orderItems },
+                        })
+                      )
+                    }
+                  >
+                    Write a Review
+                  </Button>
+                  <NewReview />
+                </div>
+              )}
+            </Col>
+          </Row>
+        </div>
       ) : (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        tracker.trackingNo && !loading && (
+          <Empty description="No order found with this tracking number." className="mt-10" />
+        )
       )}
     </div>
   );

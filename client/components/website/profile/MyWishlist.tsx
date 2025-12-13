@@ -1,16 +1,14 @@
 "use client";
-import { Button, Empty, Spin } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import Card from "@/components/Card";
+import { deleteWishlist, getUserWishlists } from "@/lib/apis/wishlist";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { addCart } from "@/redux/features/cart/cartSlice";
-import { productDiscountCalculation } from "@/lib/utils";
-import { deleteWishlist, getUserWishlists } from "@/lib/apis/wishlist";
+import { Button, Empty } from "antd";
 import { useEffect, useState } from "react";
-import Card from "@/components/Card";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function MyWishlist() {
   const [wishlists, setWishlists] = useState([]);
