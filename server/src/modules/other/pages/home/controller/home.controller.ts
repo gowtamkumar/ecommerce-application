@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
+import { getDBConnection } from '../../../../../config/db';
 import { asyncHandler } from '../../../../../middlewares/async.middleware';
 import { logger } from '../../../../../middlewares/logger';
-import { getDBConnection } from '../../../../../config/db';
-import { CategoriesEntity } from '../../../../categories/model/categories.entity';
 import { productsQuery, topSellingProductQuery } from '../../../../../sqlQuery';
 import { BannerEntity } from '../../../../banner/model/banner.entity';
+import { CategoriesEntity } from '../../../../categories/model/categories.entity';
 import { SettingEntity } from '../../../setting/model/setting.entity';
 
 // @desc Get getHome data
@@ -14,7 +14,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getHome ${req.method} ${req.url}`);
   const connection = await getDBConnection();
 
-  const { page = 1, perPage = 12 } = req.query;
+  const { page = 1, perPage = 16 } = req.query;
 
   const repository = connection.getRepository(SettingEntity);
 
@@ -60,7 +60,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
         currentPage: +page,
         data: products,
       },
-      homePage: result.length ? result[0]?.homePage : {},
+      homePage: result.length ?? result[0]?.homePage,
       topSellingProducts,
       banners,
       categories,

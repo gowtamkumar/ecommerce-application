@@ -1,9 +1,9 @@
 import appConfig from "@/appConfig";
+import Subscribe from "@/components/website/footer/Subscribe";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { getHome } from "@/lib/apis/home";
 import { getImageUrl } from "@/lib/utils/imageUrl";
-import { Button } from "antd";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -32,7 +32,7 @@ const Header = dynamic(() => import("@/components/website/header/Header"));
  * Fetches SEO data from backend settings or uses fallback defaults
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const home = await getHome();
+  const home = await getHome({ page: 1, perPage: 10, featured: true, isNewArrival: true });
   const homePageData = home.data?.homePage;
 
   // Fallback metadata when no configuration is available
@@ -137,7 +137,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const home = await getHome();
+  const home = await getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true });
   const { banners, categories, products, topSellingProducts } = home.data || {};
 
   const sliderBanners =
@@ -150,17 +150,29 @@ export default async function Home() {
     (item: { type: string }) => item.type === "Footer"
   );
 
+  const featuredProducts = products?.data?.filter(
+    (item: { featured: boolean }) => item.featured
+  );
+
+  const isNewArrivalProducts = products?.data?.filter(
+    (item: { isNewArrival: boolean }) => item.isNewArrival
+  );
+
+
   return (
     <>
+
       <header>
+        {/* Header section */}
         <Header />
+        {/* Hero / Banner Section */}
         <div className="w-full">
           {sliderBanners?.length > 0 && <Slider banners={sliderBanners} />}
         </div>
       </header>
 
       <main>
-        {/* all category show */}
+        {/* Categories Section */}
         {categories && (
           <div className="container mx-auto py-4">
             <div className="flex justify-between">
@@ -172,7 +184,8 @@ export default async function Home() {
             <CategoryCard categories={categories} />
           </div>
         )}
-        {HomeBanners?.length > 0 && <PromoBanners banners={HomeBanners} />}
+
+
 
         {/* Featured Products */}
         {products?.data && (
@@ -183,22 +196,12 @@ export default async function Home() {
                 View all
               </Link>
             </div>
-            <FeaturedProduct products={products?.data} />
+            <FeaturedProduct products={featuredProducts} />
           </section>
         )}
-
-        {/* Featured Products */}
-        <section className="container mx-auto">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">Category Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <CategoryTab />
-        </section>
-
-        {/* Top Selling Product */}
+        {/* Flash Sale / Offers */}
+        {HomeBanners?.length > 0 && <PromoBanners banners={HomeBanners} />}
+        {/* Best Sellers / Popular Products */}
         {topSellingProducts?.length > 0 && (
           <section className="container mx-auto py-5">
             <div className="flex justify-between">
@@ -210,6 +213,32 @@ export default async function Home() {
             <FeaturedProduct products={topSellingProducts} />
           </section>
         )}
+
+        {/* New Arrivals */}
+        {products?.data && (
+          <section className="container mx-auto">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold">New Arrivals</h2>
+              <Link href={"/products"} className="hover:underline">
+                View all
+              </Link>
+            </div>
+            <FeaturedProduct products={isNewArrivalProducts} />
+          </section>
+        )}
+
+        {/* Category Products */}
+        <section className="container mx-auto">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold">Category Products</h2>
+            <Link href={"/products"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <CategoryTab />
+        </section>
+
+
         {/* product banner */}
         {FooterBanners?.length > 0 && (
           <SellerAds
@@ -217,16 +246,16 @@ export default async function Home() {
           />
         )}
 
-        {/* More discount */}
-        {/* {discounts && (
-          <section className="md:py-5 p-3 text-center bg-[#F6F6F6]">
-            <Discount discounts={discounts} />
-          </section>
-        )} */}
+        {/* Brand Showcase */}
+        {/* need to add this section */}
 
-        {/* More Discover */}
-        {/* <MoreDiscover /> */}
-        {/* <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
+
+        {/* Customer Reviews / Ratings */}
+        {/* need to add this section */}
+
+
+        {/* Subscribe */}
+        <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
           <div className="absolute inset-0 z-0" />
           <div className="relative z-10 max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -239,10 +268,23 @@ export default async function Home() {
 
             <Subscribe />
           </div>
-        </section> */}
+        </section>
+
+        {/* Blog / Tips Section */}
+        <section className="container mx-auto">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold">Blog / Tips</h2>
+            <Link href={"/blog"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          {/* <BlogTab /> */}
+        </section>
       </main>
       <ScrollToCart />
       <WebFooter />
     </>
   );
 }
+
+

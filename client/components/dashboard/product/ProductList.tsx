@@ -144,6 +144,34 @@ const ProductList = () => {
       },
     },
     {
+      title: "Featured",
+      dataIndex: "featured",
+      key: "featured",
+      render: (featured) => {
+        const isActive = featured === true;
+        return (
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+            {featured ? "Featured" : "Not Featured"}
+          </div>
+        )
+      },
+    },
+    {
+      title: "New Arrival",
+      dataIndex: "isNewArrival",
+      key: "isNewArrival",
+      render: (isNewArrival) => {
+        const isActive = isNewArrival === true;
+        return (
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+            {isNewArrival ? "New Arrival" : "Not New Arrival"}
+          </div>
+        )
+      },
+    },
+    {
       title: "Action",
       key: "action",
       width: 100,

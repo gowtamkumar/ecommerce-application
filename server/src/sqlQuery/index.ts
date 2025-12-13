@@ -229,6 +229,7 @@ export const productsQuery = async (queryData: any) => {
     discountId,
     discountSlug,
     featured,
+    isNewArrival
   } = queryData;
 
   // Helper function to parse filters
@@ -257,6 +258,7 @@ export const productsQuery = async (queryData: any) => {
           p.hover_image,
           p.variant,
           p.featured,
+          p.is_new_arrival,
           p.tax_id,
           p.brand_id,
           p.short_description,
@@ -277,7 +279,12 @@ export const productsQuery = async (queryData: any) => {
           ORDER BY 
               pv.default DESC, pv.id
           LIMIT 1
-      ) pv ON true ${featured ? `WHERE p.featured = ${featured}` : ''}
+      ) pv ON true 
+        WHERE 1=1
+        ${featured !== undefined ? `OR p.featured = ${featured}` : ''}
+        ${isNewArrival !== undefined ? `OR p.is_new_arrival = ${isNewArrival}` : ''}
+        
+        
   ),
   reviewsTable AS (
       SELECT 
@@ -355,6 +362,7 @@ export const productsQuery = async (queryData: any) => {
           sd.scope,
           sd.promotion_type AS "promotionType",
           p.featured,
+          p.is_new_arrival as "isNewArrival",
           p.unit_price AS "unitPrice",
           p.purchase_price AS "purchasePrice",
           p.product_variant_id as "productVariantId",
@@ -442,8 +450,7 @@ export const productsQuery = async (queryData: any) => {
           reviewsTable rt ON rt.product_id = p.product_id
       LEFT JOIN 
           taxs ON taxs.id = p.tax_id
-      LEFT JOIN 
-          product_categories pc ON pc.product_id = p.product_id
+     
       LEFT JOIN 
           brands b ON b.id = p.brand_id
   )

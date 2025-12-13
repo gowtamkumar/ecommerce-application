@@ -197,26 +197,26 @@ const navbarRoute = [
   //   route: "true",
   // },
 
-  // {
-  //   key: "blog",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: "Blog Manage",
-  //   route: "true",
-  //   children: [
-  //     {
-  //       key: "new_post",
-  //       icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //       label: <Link href="/dashboard/post/new">New Post</Link>,
-  //       route: "true",
-  //     },
-  //     {
-  //       key: "posts",
-  //       icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //       label: <Link href="/dashboard/post">Posts</Link>,
-  //       route: "true",
-  //     },
-  //   ],
-  // },
+  {
+    key: "blog",
+    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    label: "Blog Manage",
+    route: "true",
+    children: [
+      {
+        key: "new_post",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/post/new">New Post</Link>,
+        route: "true",
+      },
+      {
+        key: "posts",
+        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/post">Posts</Link>,
+        route: "true",
+      },
+    ],
+  },
 
   {
     key: "discount_manage",

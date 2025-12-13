@@ -21,7 +21,7 @@ export default function ProductRightTopSection({
   return (
     <>
       <div className="grid grid-cols-2  gap-3 items-center">
-        <div className="col-span-1">
+        <div className="col-span-2">
           <Form.Item
             name="status"
             label="Status"
@@ -42,6 +42,11 @@ export default function ProductRightTopSection({
         <div className="col-span-1 self-end">
           <Form.Item name="featured" valuePropName="checked" label={null}>
             <Checkbox>Featured</Checkbox>
+          </Form.Item>
+        </div>
+        <div className="col-span-1 self-end">
+          <Form.Item name="isNewArrival" valuePropName="checked" label={null}>
+            <Checkbox>New Arrival</Checkbox>
           </Form.Item>
         </div>
       </div>

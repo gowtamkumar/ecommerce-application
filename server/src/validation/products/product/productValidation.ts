@@ -36,6 +36,7 @@ export const productValidationSchema = z.object({
     required_error: 'Short Description is required',
   }),
   enableReview: z.boolean().optional(),
+  isNewArrival: z.boolean().optional(),
   variant: z.boolean().optional(),
   featured: z.boolean().optional(),
   alertQty: z.number({

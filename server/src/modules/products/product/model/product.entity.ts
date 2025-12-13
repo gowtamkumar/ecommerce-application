@@ -9,20 +9,20 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '../../../auth/model/user.entity';
-import { ReviewEntity } from '../../../review/model/review.entity';
-import { ProductVariantEntity } from '../../product-variant/model/product-variant.entity';
-import { TaxEntity } from '../../../tax/model/tax.entity';
-import { BrandEntity } from '../../../brand/model/brand.entity';
-import { ProductCategoryEntity } from '../../product-category/model/product-category.entity';
-import { WishListEntity } from '../../../wishlist/model/wishlist.entity';
-import { OrderItemEntity } from '../../../order/model/order-item.entity';
-import { UnitEntity } from '../../../unit/model/unit.entity';
-import { DiscountEntity } from '../../../discount/model/discount.entity';
 import { Status } from '../../../../enums/status.enum';
+import { UserEntity } from '../../../auth/model/user.entity';
+import { BrandEntity } from '../../../brand/model/brand.entity';
 import { CouponProductEntity } from '../../../coupon/model/coupon-product.entity';
 import { ApplicableProductEntity } from '../../../discount/model/applicable-products.entity';
+import { DiscountEntity } from '../../../discount/model/discount.entity';
+import { OrderItemEntity } from '../../../order/model/order-item.entity';
+import { ReviewEntity } from '../../../review/model/review.entity';
 import { StockAdjustEntity } from '../../../stock-adjust/model/stock-adjust.entity';
+import { TaxEntity } from '../../../tax/model/tax.entity';
+import { UnitEntity } from '../../../unit/model/unit.entity';
+import { WishListEntity } from '../../../wishlist/model/wishlist.entity';
+import { ProductCategoryEntity } from '../../product-category/model/product-category.entity';
+import { ProductVariantEntity } from '../../product-variant/model/product-variant.entity';
 
 @Entity('products')
 export class ProductEntity {
@@ -40,6 +40,9 @@ export class ProductEntity {
 
   @Column({ name: 'is_returnable', type: 'boolean', default: true })
   isReturnable?: boolean;
+
+  @Column({ name: 'is_new_arrival', type: 'boolean', default: false })
+  isNewArrival?: boolean;
 
   @Column({ type: 'boolean', default: false })
   featured?: boolean;
