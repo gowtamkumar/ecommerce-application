@@ -194,7 +194,12 @@ const AddBanner = () => {
           </Form.Item>
 
           {/* URL */}
-          <Form.Item name="url" label="Banner URL" className="!mb-0">
+          <Form.Item name="url" label="Banner URL" rules={[
+            {
+              required: true,
+              message: "Url is required",
+            },
+          ]} className="!mb-0">
             <Input placeholder="Enter link URL (optional)" size="large" />
           </Form.Item>
 

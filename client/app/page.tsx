@@ -28,15 +28,10 @@ const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 // SEO METADATA CONFIGURATION
 // ============================================================================
 
-/**
- * Generates dynamic metadata for the home page
- * Fetches SEO data from backend settings or uses fallback defaults
- */
 export async function generateMetadata(): Promise<Metadata> {
   const home = await getHome({ page: 1, perPage: 10, featured: true, isNewArrival: true });
   const homePageData = home.data?.homePage;
 
-  // Fallback metadata when no configuration is available
   if (!homePageData) {
     return {
       metadataBase: new URL(appConfig.baseUrl || "https://ecommerce.com"),
@@ -50,7 +45,6 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   }
 
-  // Extract metadata from backend settings
   const {
     metaTitle = "ecommerce - Premium Products",
     metaDescription = "Discover premium products at ecommerce",
@@ -58,20 +52,14 @@ export async function generateMetadata(): Promise<Metadata> {
     metaKeywords = [],
   } = homePageData;
 
-  // Construct URLs (ensure they're always defined strings)
   const canonicalUrl = appConfig.baseUrl || "https://ecommerce.com";
   const imageUrl = getImageUrl(metaImage, `${canonicalUrl}/og-image.jpg`);
 
-  // Build complete metadata object
   return {
     metadataBase: new URL(canonicalUrl),
-
-    // Primary metadata
     title: `${metaTitle} - Premium Skincare Products & Solutions - Buy Now | ecommerce`,
     description: metaDescription,
     keywords: Array.isArray(metaKeywords) ? metaKeywords : [],
-
-    // SEO directives
     robots: {
       index: true,
       follow: true,
@@ -82,8 +70,6 @@ export async function generateMetadata(): Promise<Metadata> {
         "max-snippet": -1,
       },
     },
-
-    // Open Graph (Facebook, LinkedIn, etc.)
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -101,8 +87,6 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       ],
     },
-
-    // Twitter Card
     twitter: {
       card: "summary_large_image",
       title: metaTitle,
@@ -111,29 +95,12 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: "@ecommerce",
       site: "@ecommerce",
     },
-
-    // Canonical URL
     alternates: {
       canonical: canonicalUrl,
     },
-
-    // Additional meta tags
     authors: [{ name: "ecommerce" }],
     creator: "ecommerce",
     publisher: "ecommerce",
-
-    // Theme and manifest
-    // themeColor: [
-    //   { media: "(prefers-color-scheme: light)", color: "#ff6600" },
-    //   { media: "(prefers-color-scheme: dark)", color: "#ff6600" },
-    // ],
-
-    // Verification (add your actual verification codes)
-    // verification: {
-    //   google: "your-google-verification-code",
-    //   yandex: "your-yandex-verification-code",
-    //   yahoo: "your-yahoo-verification-code",
-    // },
   };
 }
 
@@ -159,134 +126,132 @@ export default async function Home() {
     (item: { isNewArrival: boolean }) => item.isNewArrival
   );
 
+  // Common Section Title Component for consistency
+  const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
+    <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4 border-b border-gray-100 pb-4">
+      <div>
+        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">{title}</h2>
+        <div className="h-1 w-20 bg-black mt-2 rounded-full"></div>
+      </div>
+      {link && (
+        <Link
+          href={link}
+          className="group flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500 hover:text-black transition-colors duration-300"
+        >
+          View All Collection
+          <span className="block h-[1px] w-4 bg-gray-400 transition-all duration-300 group-hover:w-8 group-hover:bg-black"></span>
+        </Link>
+      )}
+    </div>
+  );
 
   return (
     <>
-
-      <header>
-        {/* Header section */}
+      <header className="relative z-50">
         <Header />
-        {/* Hero / Banner Section */}
         <div className="w-full">
           {sliderBanners?.length > 0 && <Slider banners={sliderBanners} />}
         </div>
       </header>
 
-      <main>
-        {/* Categories Section */}
+      <main className="bg-white">
+        {/* Categories Section - Clean white background */}
         {categories && (
-          <div className="container mx-auto py-4">
-            <div className="flex justify-between">
-              <h2 className="text-xl font-semibold">Shop by Category</h2>
-              <Link href={"/categories"} className="hover:underline">
-                View all
-              </Link>
+          <section className="py-20 bg-white">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <SectionHeader title="Shop by Category" link="/categories" />
+              <CategoryCard categories={categories} />
             </div>
-            <CategoryCard categories={categories} />
-          </div>
-        )}
-
-
-
-        {/* Featured Products */}
-        {products?.data && (
-          <section className="container mx-auto">
-            <div className="flex justify-between">
-              <h2 className="text-xl font-semibold">Featured Products</h2>
-              <Link href={"/products"} className="hover:underline">
-                View all
-              </Link>
-            </div>
-            <FeaturedProduct products={featuredProducts} />
           </section>
         )}
+
+        {/* Featured Products - Subtle gray background for separation */}
+        {products?.data && (
+          <section className="py-20 bg-gray-50">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <SectionHeader title="Featured Collections" link="/products" />
+              <FeaturedProduct products={featuredProducts} />
+            </div>
+          </section>
+        )}
+
         {/* Flash Sale / Offers */}
-        {HomeBanners?.length > 0 && <PromoBanners banners={HomeBanners} />}
-        {/* Best Sellers / Popular Products */}
-        {topSellingProducts?.length > 0 && (
-          <section className="container mx-auto py-5">
-            <div className="flex justify-between">
-              <h2 className="text-xl font-semibold">Top Selling Products</h2>
-              <Link href={"/products"} className="hover:underline">
-                View all
-              </Link>
+        {HomeBanners?.length > 0 && (
+          <section className="py-10">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <PromoBanners banners={HomeBanners} />
             </div>
-            <FeaturedProduct products={topSellingProducts} />
           </section>
         )}
 
-        {/* New Arrivals */}
-        {products?.data && (
-          <section className="container mx-auto">
-            <div className="flex justify-between">
-              <h2 className="text-xl font-semibold">New Arrivals</h2>
-              <Link href={"/products"} className="hover:underline">
-                View all
-              </Link>
+        {/* Top Selling - White background */}
+        {topSellingProducts?.length > 0 && (
+          <section className="py-20 bg-white">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <SectionHeader title="Best Sellers" link="/products" />
+              <FeaturedProduct products={topSellingProducts} />
             </div>
-            <FeaturedProduct products={isNewArrivalProducts} />
+          </section>
+        )}
+
+        {/* New Arrivals - Gray background */}
+        {products?.data && (
+          <section className="py-20 bg-gray-50">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <SectionHeader title="New Arrivals" link="/products" />
+              <FeaturedProduct products={isNewArrivalProducts} />
+            </div>
           </section>
         )}
 
         {/* Category Products */}
-        <section className="container mx-auto">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">Category Products</h2>
-            <Link href={"/products"} className="hover:underline">
-              View all
-            </Link>
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader title="Browse by Category" link="/products" />
+            <CategoryTab />
           </div>
-          <CategoryTab />
         </section>
 
-
-        {/* product banner */}
+        {/* Footer Banner */}
         {FooterBanners?.length > 0 && (
-          <SellerAds
-            banners={FooterBanners}
-          />
+          <section className="py-10 overflow-hidden">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <SellerAds banners={FooterBanners} />
+            </div>
+          </section>
         )}
 
-        {/* Brand Showcase */}
-        {/* need to add this section */}
-
-
-        {/* Customer Reviews / Ratings */}
-        {/* need to add this section */}
-
-        {/* Blog / Tips Section */}
-        <section className="container mx-auto">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">Blog / Tips</h2>
-            <Link href={"/blog"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          <BlogTab />
-        </section>
-
-        {/* Subscribe */}
-        <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
-          <div className="absolute inset-0 z-0" />
-          <div className="relative z-10 max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Stay in the loop!
-            </h2>
-            <p className="text-base md:text-lg mb-8 text-gray-200">
-              Subscribe to our newsletter and never miss exclusive offers,
-              updates, and more.
-            </p>
-
-            <Subscribe />
+        {/* Blog / Tips Section - Slight accent background */}
+        <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader title="Latest from our Blog" link="/blog" />
+            <BlogTab />
           </div>
         </section>
 
-
+        {/* Subscribe - Premium dark section */}
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/90 z-0"></div>
+          <div className="absolute inset-0 bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat opacity-20 z-0 mix-blend-overlay"></div>
+          <div className="relative z-10 py-24 px-6 md:px-12 text-center text-white">
+            <div className="max-w-3xl mx-auto space-y-6">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+                Join Our Community
+              </h2>
+              <p className="text-lg md:text-xl text-gray-300 font-light mb-8 max-w-2xl mx-auto">
+                Subscribe to our exclusive newsletter for early access to new collections,
+                premium offers, and style inspiration.
+              </p>
+              <div className="bg-white/10 backdrop-blur-md p-2 rounded-xl inline-block w-full max-w-lg">
+                <Subscribe />
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
       <ScrollToCart />
       <WebFooter />
     </>
   );
 }
-
-
