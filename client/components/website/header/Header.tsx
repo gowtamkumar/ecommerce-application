@@ -1,6 +1,4 @@
 "use client";
-import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
 import { getCategoriesForMenu } from "@/lib/apis/categories";
 import { getSettings } from "@/lib/apis/setting";
 import {
@@ -10,11 +8,13 @@ import {
   setSetting,
 } from "@/redux/features/global/globalSlice";
 import { Button } from "antd";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { HiSparkles } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import HeaderRight from "./HeaderRight";
 import SearchEngine from "./SearchEngine";
-import { HiSparkles } from "react-icons/hi";
 
 const Logo = dynamic(() => import("./Logo"));
 const CurrencySwitcher = dynamic(() => import("./CurrencySwitcher"));
@@ -70,17 +70,15 @@ export default function Header() {
 
       {/* Main Header */}
       <header
-        className={`${
-          isScrolled
-            ? "fixed top-0 left-0 bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50"
-            : "relative bg-white border-b border-gray-100"
-        } w-full transition-all duration-500 ease-in-out z-40`}
+        className={`${isScrolled
+          ? "fixed top-0 left-0 bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50"
+          : "relative bg-white border-b border-gray-100"
+          } w-full transition-all duration-500 ease-in-out z-40`}
       >
         {!global.mobile ? (
           <div
-            className={`container mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
-              isScrolled ? "py-3" : "py-5"
-            }`}
+            className={`container mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? "py-3" : "py-5"
+              }`}
           >
             <div className="flex items-center justify-between gap-8">
               {/* Logo */}
