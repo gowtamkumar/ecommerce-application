@@ -130,6 +130,7 @@ const Dashboard = () => {
             }}
           />
         </div>
+
         <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Top Customers</h2>
           <TopCustomer topCustomers={top_customers} />

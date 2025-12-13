@@ -22,6 +22,7 @@ const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
 const Header = dynamic(() => import("@/components/website/header/Header"));
+const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
 // ============================================================================
 // SEO METADATA CONFIGURATION
@@ -253,6 +254,16 @@ export default async function Home() {
         {/* Customer Reviews / Ratings */}
         {/* need to add this section */}
 
+        {/* Blog / Tips Section */}
+        <section className="container mx-auto">
+          <div className="flex justify-between">
+            <h2 className="text-xl font-semibold">Blog / Tips</h2>
+            <Link href={"/blog"} className="hover:underline">
+              View all
+            </Link>
+          </div>
+          <BlogTab />
+        </section>
 
         {/* Subscribe */}
         <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
@@ -270,16 +281,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Blog / Tips Section */}
-        <section className="container mx-auto">
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">Blog / Tips</h2>
-            <Link href={"/blog"} className="hover:underline">
-              View all
-            </Link>
-          </div>
-          {/* <BlogTab /> */}
-        </section>
+
       </main>
       <ScrollToCart />
       <WebFooter />
