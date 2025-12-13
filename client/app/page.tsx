@@ -239,7 +239,7 @@ export default async function Home() {
         </section>
 
         {/* Subscribe */}
-        <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
+        {/* <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
           <div className="absolute inset-0 z-0" />
           <div className="relative z-10 max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -252,7 +252,7 @@ export default async function Home() {
 
             <Subscribe />
           </div>
-        </section>
+        </section> */}
       </main>
 
       <ScrollToCart />

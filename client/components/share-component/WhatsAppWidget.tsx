@@ -10,7 +10,7 @@ const WhatsAppWidget = () => {
 
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="z-50 fixed cursor-pointer bottom-5 right-10 bg-gray-700 rounded-full shadow-lg hover:bg-gray-900 transition-all">
       <a
         href={`https://wa.me/${setting.phone}?text=${encodeURIComponent(
           setting.message
