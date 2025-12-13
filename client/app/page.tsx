@@ -1,8 +1,11 @@
 import appConfig from "@/appConfig";
 import Subscribe from "@/components/website/footer/Subscribe";
+import Header from "@/components/website/header/Header";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import ScrollToCart from "@/components/website/ScrollToCart";
+import { getPublicCategories } from "@/lib/apis/categories";
 import { getHome } from "@/lib/apis/home";
+import { getPosts } from "@/lib/apis/posts";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -21,7 +24,7 @@ const PromoBanners = dynamic(
 const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
-const Header = dynamic(() => import("@/components/website/header/Header"));
+
 const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
 // ============================================================================
@@ -29,7 +32,12 @@ const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 // ============================================================================
 
 export async function generateMetadata(): Promise<Metadata> {
-  const home = await getHome({ page: 1, perPage: 10, featured: true, isNewArrival: true });
+  const home = await getHome({
+    page: 1,
+    perPage: 10,
+    featured: true,
+    isNewArrival: true,
+  });
   const homePageData = home.data?.homePage;
 
   if (!homePageData) {
@@ -97,6 +105,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: canonicalUrl,
+
     },
     authors: [{ name: "ecommerce" }],
     creator: "ecommerce",
@@ -105,7 +114,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const home = await getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true });
+  const [home, publicCategories, posts] = await Promise.all([
+    getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
+    getPublicCategories(),
+    getPosts(),
+  ]);
+
   const { banners, categories, products, topSellingProducts } = home.data || {};
 
   const sliderBanners =
@@ -130,7 +144,9 @@ export default async function Home() {
   const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
     <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4 border-b border-gray-100 pb-4">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">{title}</h2>
+        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+          {title}
+        </h2>
         <div className="h-1 w-20 bg-black mt-2 rounded-full"></div>
       </div>
       {link && (
@@ -208,7 +224,7 @@ export default async function Home() {
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Browse by Category" link="/products" />
-            <CategoryTab />
+            <CategoryTab categories={publicCategories?.data || []} />
           </div>
         </section>
 
@@ -225,7 +241,7 @@ export default async function Home() {
         <section className="py-24 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Latest from our Blog" link="/blog" />
-            <BlogTab />
+            <BlogTab posts={posts?.data?.slice(0, 3) || []} />
           </div>
         </section>
 
