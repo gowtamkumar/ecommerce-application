@@ -30,7 +30,7 @@ export default function Products() {
         </div>
       </section>
       <ScrollToCart />
-    
+
       <WebFooter />
     </>
   );

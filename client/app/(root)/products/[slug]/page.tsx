@@ -29,7 +29,7 @@ interface GenerateMetadataParams {
 }
 
 export async function generateMetadata({ params }: any) {
-  const slug = params.slug;
+  const slug = await params.slug;
   const product = await getProductBySlug({
     slug,
   });

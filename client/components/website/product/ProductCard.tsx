@@ -214,6 +214,7 @@ const ProductCard: React.FC = () => {
                   </div>
                 </div>
               ) : (
+
                 <Card item={item} />
               )}
             </div>

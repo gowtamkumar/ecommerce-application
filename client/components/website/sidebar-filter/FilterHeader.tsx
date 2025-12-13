@@ -4,11 +4,15 @@ import {
   setProductFilter,
   setProductView,
 } from "@/redux/features/global/globalSlice";
-import { selectProduct } from "@/redux/features/products/productSlice";
-import { Button, Modal, Select } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { CiFilter } from "react-icons/ci";
 import { selectLayout, setOpen } from "@/redux/features/layout/layoutSlice";
+import { selectProduct } from "@/redux/features/products/productSlice";
+import {
+  AppstoreOutlined,
+  BarsOutlined,
+  FilterOutlined
+} from "@ant-design/icons";
+import { Badge, Button, Modal, Select } from "antd";
+import { useDispatch, useSelector } from "react-redux";
 import FilterSidebar from "./FilterSidebar";
 
 
@@ -39,83 +43,87 @@ export default function FilterHeader() {
   };
 
   return (
-    <div>
-      <div className="flex flex-col md:flex-row justify-between md:items-center p-4 bg-white  rounded-md">
-        {/* Item Count and Filter */}
-        <div className="text-sm text-gray-600 flex items-center justify-center py-2">
-          {products?.length || 0} items found
-        </div>
+    <div className="mb-5">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
 
-        {/* Sorting and View Options */}
-        <div className="flex items-center justify-between md:space-x-4">
-          <div className="md:flex items-center md:space-x-4">
-            <span className="text-sm text-gray-600">Sort By:</span>
-            <Select
-              defaultValue={"Select One"}
-              style={{ width: 150 }}
-              onChange={(value) => handleSort(value)}
-            >
-              <Select.Option value="lowPrice">Price Low to High</Select.Option>
-              <Select.Option value="highPrice">Price High to Low</Select.Option>
-            </Select>
+          {/* Left: Results Count */}
+          <div className="flex items-center gap-2">
+            <Badge
+              count={products?.length || 0}
+              showZero
+              style={{ backgroundColor: '#3b82f6' }}
+              className="[&_.ant-badge-count]:px-2 [&_.ant-badge-count]:h-6 [&_.ant-badge-count]:leading-6"
+            />
+            <span className="text-gray-600 font-medium">Products</span>
           </div>
-          {global.mobile ? (
-            <div
-              className="rounded-lg p-3 bg-gray-100"
-              onClick={() => dispatch(setOpen(true))}
-            >
-              <CiFilter />
+
+          {/* Right: Controls */}
+          <div className="flex items-center gap-4 flex-wrap">
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 font-medium">Sort:</span>
+              <Select
+                defaultValue="default"
+                style={{ width: 160 }}
+                onChange={(value) => handleSort(value)}
+                options={[
+                  { value: 'default', label: 'Default' },
+                  { value: 'lowPrice', label: 'Price: Low to High' },
+                  { value: 'highPrice', label: 'Price: High to Low' },
+                ]}
+              />
             </div>
-          ) : (
-            <div className="flex items-center ">
-              <span className="text-sm text-gray-600">View:</span>
+
+            {/* Mobile: Filter Button */}
+            {global.mobile ? (
               <Button
-                onClick={() => dispatch(setProductView(false))}
-                className="ml-2 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                icon={<FilterOutlined />}
+                onClick={() => dispatch(setOpen(true))}
+                className="flex items-center gap-1"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                  />
-                </svg>
+                Filters
               </Button>
-              <Button
-                onClick={() => dispatch(setProductView(true))}
-                className="ml-2 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h7M4 10h7M4 14h7M4 18h7"
-                  />
-                </svg>
-              </Button>
-            </div>
-          )}
+            ) : (
+              /* Desktop: View Toggle */
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 font-medium">View:</span>
+                <div className="flex border border-gray-300 rounded-md overflow-hidden">
+                  <button
+                    onClick={() => dispatch(setProductView(false))}
+                    className={`p-2 transition-colors ${!global.productView
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    title="List View"
+                  >
+                    <BarsOutlined className="text-base" />
+                  </button>
+                  <button
+                    onClick={() => dispatch(setProductView(true))}
+                    className={`p-2 border-l border-gray-300 transition-colors ${global.productView
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    title="Grid View"
+                  >
+                    <AppstoreOutlined className="text-base" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Mobile Filter Modal */}
       <Modal
+        title="Filters"
         open={layout.open}
         onCancel={() => dispatch(setOpen(false))}
         footer={null}
+        width={400}
       >
         <FilterSidebar />
       </Modal>
