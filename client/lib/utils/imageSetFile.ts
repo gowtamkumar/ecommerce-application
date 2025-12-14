@@ -1,12 +1,12 @@
-import appConfig from "@/appConfig";
 import { UploadFile } from "antd";
+import { getImageUrl } from "./imageUrl";
 
 export function imageSetFile(filename: string) {
   const uploadedFile: UploadFile = {
     uid: Date.now().toString(),
     name: `${filename}`,
     status: "done",
-    url: `${appConfig.baseApiUrl}/uploads/${filename}`,
+    url: getImageUrl(filename),
     fileName: filename,
   };
 

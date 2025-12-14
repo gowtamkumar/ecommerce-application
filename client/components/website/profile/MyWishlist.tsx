@@ -179,11 +179,11 @@ export default function MyWishlist() {
                 <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between gap-3">
                   <div className="flex flex-col">
                     <span className="text-lg font-bold text-gray-900">
-                      {formatPrice(item.salePrice)}
+                      {formatPrice(item.finalPrice)}
                     </span>
                     {item?.discountId && (
                       <span className="text-xs text-gray-400 line-through">
-                        {formatPrice(item.finalPrice)}
+                        {formatPrice(item.salePrice)}
                       </span>
                     )}
                   </div>

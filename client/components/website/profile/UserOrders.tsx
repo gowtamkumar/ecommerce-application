@@ -127,11 +127,11 @@ const UserOrders = () => {
     key: status,
     label: (
       <span>
-        {status === "Pending" && <ClockCircleOutlined />}
-        {status === "Processing" && <SyncOutlined spin />}
-        {status === "Shipped" && <ShoppingOutlined />}
-        {status === "Delivered" && <CheckCircleOutlined />}
-        {status === "Canceled" && <CloseCircleOutlined />}
+        {status === "Pending" && <ClockCircleOutlined className="mr-2" />}
+        {status === "Processing" && <SyncOutlined spin className="mr-2" />}
+        {status === "Shipped" && <ShoppingOutlined className="mr-2" />}
+        {status === "Delivered" && <CheckCircleOutlined className="mr-2" />}
+        {status === "Canceled" && <CloseCircleOutlined className="mr-2" />}
         {status}
       </span>
     ),
@@ -154,7 +154,7 @@ const UserOrders = () => {
         activeKey={tabKey}
         items={items}
         onChange={onChange}
-        className="custom-tabs mb-6"
+        className="custom-tabs mb-6 "
         type="card"
       />
 
@@ -177,7 +177,7 @@ const UserOrders = () => {
               key={order.id}
               variant="borderless"
               className="shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
-              bodyStyle={{ padding: 0 }}
+              style={{ padding: 0 }}
             >
               <div className="p-4 md:p-6">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4 border-b border-gray-100 pb-4">
