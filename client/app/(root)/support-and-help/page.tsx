@@ -2,6 +2,7 @@ import ContactForm from "@/components/website/contact/ContactForm";
 import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import { getPageBySlug } from "@/lib/apis/page";
+import { getSettings } from "@/lib/apis/setting";
 import { Metadata } from "next";
 import Link from "next/link";
 import { FiChevronDown, FiHelpCircle, FiMail, FiMessageCircle, FiPhone } from "react-icons/fi";
@@ -41,22 +42,35 @@ export default async function Support() {
     },
   ];
 
-  const faqs = [
+
+  // Fetch FAQs from settings
+  let apiFaqs = [];
+  try {
+    const settingsRes = await getSettings();
+    if (settingsRes?.data?.faq && Array.isArray(settingsRes.data.faq)) {
+      apiFaqs = settingsRes.data.faq;
+    }
+  } catch (error) {
+    console.error("Failed to fetch FAQs:", error);
+  }
+
+  // Use API FAQs if available, otherwise fallback to static list or empty
+  const displayFaqs = apiFaqs.length > 0 ? apiFaqs : [
     {
-      q: "How do I track my order?",
-      a: "You can track your order using the tracking link sent to your email after shipping. You can also view it in your dashboard under Orders."
+      question: "How do I track my order?",
+      answer: "You can track your order using the tracking link sent to your email after shipping. You can also view it in your dashboard under Orders."
     },
     {
-      q: "Can I return a product?",
-      a: "Yes, returns are accepted within 7 days of delivery. Please ensure the product is unused and in original packaging. Check our return policy for more details."
+      question: "Can I return a product?",
+      answer: "Yes, returns are accepted within 7 days of delivery. Please ensure the product is unused and in original packaging. Check our return policy for more details."
     },
     {
-      q: "Do you offer customer support on weekends?",
-      a: "Yes, we provide 24/7 support including weekends and holidays to ensure you have the best shopping experience."
+      question: "Do you offer customer support on weekends?",
+      answer: "Yes, we provide 24/7 support including weekends and holidays to ensure you have the best shopping experience."
     },
     {
-      q: "What payment methods do you accept?",
-      a: "We accept all major credit cards, PayPal, and various secure payment gateways to make your checkout process smooth."
+      question: "What payment methods do you accept?",
+      answer: "We accept all major credit cards, PayPal, and various secure payment gateways to make your checkout process smooth."
     }
   ];
 
@@ -65,7 +79,8 @@ export default async function Support() {
       <Header />
 
       <main className="flex-grow">
-        {/* Hero Section */}
+        {/* ... Hero Section ... */}
+        {/* (Keeping existing Hero Section code unchanged) */}
         <section className="relative h-[40vh] min-h-[400px] flex items-center justify-center overflow-hidden">
           {/* Background Gradients */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900">
@@ -137,16 +152,16 @@ export default async function Support() {
             </div>
 
             <div className="space-y-4">
-              {faqs.map((item, idx) => (
+              {displayFaqs.map((item: any, idx: number) => (
                 <details key={idx} className="group bg-white rounded-2xl shadow-sm border border-gray-100 [&_summary::-webkit-details-marker]:hidden overflow-hidden transition-all duration-300 open:shadow-md">
                   <summary className="flex items-center justify-between p-6 cursor-pointer list-none text-lg font-semibold text-gray-800 hover:text-indigo-600 transition-colors">
-                    {item.q}
+                    {item.question || item.q}
                     <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-open:bg-indigo-50 group-open:text-indigo-600 transition-colors">
                       <FiChevronDown className="w-5 h-5 transition-transform duration-300 group-open:rotate-180" />
                     </div>
                   </summary>
                   <div className="px-6 pb-6 pt-0 text-gray-600 leading-relaxed border-t border-transparent group-open:border-gray-50 animate-in slide-in-from-top-2 fade-in duration-300">
-                    <p>{item.a}</p>
+                    <p>{item.answer || item.a}</p>
                   </div>
                 </details>
               ))}
