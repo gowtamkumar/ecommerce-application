@@ -1,3 +1,4 @@
+import { orderStatusUpdateApi } from "@/lib/apis/orders";
 import {
   errorNotification,
   successNotification,
@@ -8,17 +9,18 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, ShoppingOutlined, TruckOutlined } from "@ant-design/icons";
-import { Button, Form, Modal, Radio, Select, Space, Tag, Timeline } from "antd";
+import { Button, Form, Modal, Radio, Space, Tag, Timeline } from "antd";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
-import { orderStatusUpdateApi } from "@/lib/apis/orders";
 
 const OrderStatusUpdate = () => {
   const global = useSelector(selectGlobal);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { payload, type } = global.action;
+
+  console.log(payload);
 
   const fetchData = useCallback(async () => {
     try {
@@ -64,37 +66,37 @@ const OrderStatusUpdate = () => {
   };
 
   const orderStatuses = [
-    { 
-      value: "Pending", 
-      label: "Pending", 
+    {
+      value: "Pending",
+      label: "Pending",
       color: "orange",
       icon: <ClockCircleOutlined />,
       description: "Order received, awaiting processing"
     },
-    { 
-      value: "Processing", 
-      label: "Processing", 
+    {
+      value: "Processing",
+      label: "Processing",
       color: "blue",
       icon: <ShoppingOutlined />,
       description: "Order is being prepared"
     },
-    { 
-      value: "Shipped", 
-      label: "Shipped", 
+    {
+      value: "Shipped",
+      label: "Shipped",
       color: "cyan",
       icon: <TruckOutlined />,
       description: "Order has been dispatched"
     },
-    { 
-      value: "Delivered", 
-      label: "Delivered", 
+    {
+      value: "Delivered",
+      label: "Delivered",
       color: "green",
       icon: <CheckCircleOutlined />,
       description: "Order successfully delivered"
     },
-    { 
-      value: "Cancelled", 
-      label: "Cancelled", 
+    {
+      value: "Cancelled",
+      label: "Cancelled",
       color: "red",
       icon: <CloseCircleOutlined />,
       description: "Order has been cancelled"
@@ -102,6 +104,9 @@ const OrderStatusUpdate = () => {
   ];
 
   const currentStatus = Form.useWatch('status', form);
+
+
+  console.log(currentStatus);
 
   return (
     <Modal
@@ -174,8 +179,8 @@ const OrderStatusUpdate = () => {
           <Radio.Group className="w-full">
             <Space direction="vertical" className="w-full" size="middle">
               {orderStatuses.map((status) => (
-                <Radio 
-                  key={status.value} 
+                <Radio
+                  key={status.value}
                   value={status.value}
                   className="w-full"
                 >
@@ -206,7 +211,7 @@ const OrderStatusUpdate = () => {
                 const currentIndex = orderStatuses.findIndex(s => s.value === currentStatus);
                 const isCompleted = index <= currentIndex;
                 const isCurrent = status.value === currentStatus;
-                
+
                 return {
                   color: isCurrent ? status.color : (isCompleted ? 'green' : 'gray'),
                   dot: status.icon,

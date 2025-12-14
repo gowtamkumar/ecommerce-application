@@ -543,12 +543,12 @@ const Order = () => {
                   setAction({
                     type: ActionType.UPDATE,
                     orderStatusUpdate: true,
-                    payload: { id: value.id },
+                    payload: value,
                   })
                 )
               }
               disabled={
-                value.status === "Completed" || value.status === "Returned"
+                value.status === "Delivered"
               }
             />
           </Tooltip>
