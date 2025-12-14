@@ -1,6 +1,6 @@
 "use client";
-import appConfig from "@/appConfig";
 import { getSettings } from "@/lib/apis/setting";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
@@ -14,7 +14,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "./Seo";
 import WhatsAppWidgetSetting from "./WhatsAppWidgetSetting";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 const { Title, Text } = Typography;
 
@@ -22,6 +21,7 @@ const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
 const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
 const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false });
+const FaqSettings = dynamic(() => import("./FaqSettings"), { ssr: false });
 const OrderAdnShhiping = dynamic(() => import("./OrderAndShipping"), {
   ssr: false,
 });
@@ -135,6 +135,11 @@ export default function Index() {
             label: "Help & Support",
             key: "help_Support",
             children: <HelpSupport />,
+          },
+          {
+            label: "FAQ",
+            key: "faq",
+            children: <FaqSettings />,
           },
           {
             label: "WhatsApp Widget",

@@ -19,4 +19,5 @@ export const updateSettingValidationSchema = z.object({
   termPolicyPage: z.any().optional(),
   footerOption: z.any().optional(),
   headerOption: z.any().optional(),
+  faq: z.any().optional(),
 });
