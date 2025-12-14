@@ -36,9 +36,6 @@ export class SettingEntity {
   @Column({ nullable: true })
   description!: string;
 
-  // @Column({ nullable: true })
-  // currencyId!: number;
-
   @Column({ name: 'social_link', type: 'simple-json', nullable: true })
   socialLink!: string;
 

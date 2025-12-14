@@ -1453,7 +1453,6 @@ CREATE TABLE public.settings (
     address character varying,
     phone character varying,
     email character varying,
-    "currencyId" integer,
     social_link text,
     seo text,
     email_config text,
@@ -2578,7 +2577,7 @@ COPY public.reviews (id, product_id, rating, comment, "like", dis_like, status, 
 -- Data for Name: settings; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.settings (id, site_name, image, favicon, address, phone, email, "currencyId", social_link, seo, email_config, payment_account, home_page, about_page, contact_page, term_policy_page, footer_option, header_option, help_support, updated_at, order_free_shipping_amount) FROM stdin;
+COPY public.settings (id, site_name, image, favicon, address, phone, email, social_link, seo, email_config, payment_account, home_page, about_page, contact_page, term_policy_page, footer_option, header_option, help_support, updated_at, order_free_shipping_amount) FROM stdin;
 1	Arko store	image-1754624609987.png	favicon-1754624633867.png	Monoharpur,kayemkola bazar, Jhikargacha, Jashore	01767163576	arko@gmail.com	\N	{"facebookUrl":"/","instagramUrl":"/","linkedinUrl":"/","twitterUrl":"/"}	{}	\N	\N	{"metaKeywords":["hello","hello\\\\","new account"]}	\N	\N	\N	{"copyRight":"Copyright in e-commerce"}	\N	{"returnSupport":"Return Support","originalProduct":"Original Product","guarantee":"100% Guarantee","cashDelivery":"Cash Delivery"}	2025-08-08 04:00:52.097169	3000.00
 \.
 

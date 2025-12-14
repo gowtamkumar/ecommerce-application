@@ -3,6 +3,7 @@ import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import ScrollToCart from "@/components/website/ScrollToCart";
 import { getDiscounts } from "@/lib/apis/discount";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { Empty } from "antd";
 import Link from "next/link";
 
@@ -70,7 +71,7 @@ export default async function Offers() {
                 <div
                   className="bg-cover  bg-center rounded-lg h-56 flex flex-col justify-center items-start text-white p-4 text-start"
                   style={{
-                    backgroundImage: `url(${appConfig.baseApiUrl}/uploads/${item.image})`,
+                    backgroundImage: `url(${getImageUrl(item.image)})`,
                   }}
                 ></div>
               </Link>

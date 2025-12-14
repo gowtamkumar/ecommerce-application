@@ -285,6 +285,7 @@ createdAt?: string;
 updatedAt?: string;
 
 ## logs
+
 id,
 error:boolean,
 user_id,
@@ -304,11 +305,13 @@ createdAt
 updatedAt
 
 ## currency
+
 id,
 name,
 symble
 
 ## setting
+
 id!: number;
 siteName!: string;
 image!: string;
@@ -316,7 +319,6 @@ favicon!: string;
 address!: string;
 phone!: string;
 email!: string;
-currencyId!: number;
 socialLink!: string;
 seo!: string;
 emailConfig!: string;
@@ -377,6 +379,7 @@ created_at,
 updated_at,
 
 ## menu
+
 id!: number;
 name!: string;
 items!: string;
@@ -476,7 +479,7 @@ userId?: number;
 createdAt?: string;
 updatedAt?: string;
 
-## applicable_products 
+## applicable_products
 
 id!: number;
 productId!: number;
@@ -484,7 +487,7 @@ discountId?: number;
 createdAt?: string;
 updatedAt?: string;
 
-## applicable_categories 
+## applicable_categories
 
 id!: number;
 categoryId!: number;
@@ -492,7 +495,7 @@ discountId?: number;
 createdAt?: string;
 updatedAt?: string;
 
-## applicable_brands 
+## applicable_brands
 
 id!: number;
 brandId!: number;
@@ -501,6 +504,7 @@ createdAt?: string;
 updatedAt?: string;
 
 ## stock_adjusts
+
 id!: number;
 productId!: number;
 type!: enum;
