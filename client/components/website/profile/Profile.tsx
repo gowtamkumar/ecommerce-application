@@ -88,7 +88,7 @@ export default function Profile() {
     },
     {
       key: "track_order",
-      label: "Track Order",
+      label: "Track Order & Payment",
       icon: <EnvironmentFilled />, // Or Antd equivalent
       component: <OrderTracker />,
     },

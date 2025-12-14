@@ -1,11 +1,14 @@
 "use client";
-import { ActionType } from "@/constants/constants";
+import { ActionType, paymentMethods } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getOrderQuery } from "@/lib/apis/orders";
+import { savePayment } from "@/lib/apis/payment";
+import { errorNotification } from "@/lib/utils/notification";
 import {
   setProductRating
 } from "@/redux/features/global/globalSlice";
 import {
+  BankOutlined,
   CheckCircleOutlined,
   EnvironmentOutlined,
   FileTextOutlined,
@@ -70,6 +73,21 @@ export default function OrderTracker() {
       console.error(error);
       setLoading(false);
     }
+  }
+
+  async function handleOnlinePayment() {
+    setLoading(true);
+    const result = (await savePayment({
+      orderId: order.id,
+      amount: order.due > 0 ? order.due : order.grandTotal,
+      paymentMethod: paymentMethods[0].value,
+    })) as any;
+    if (result?.success) {
+      window.location.href = result.data?.paymentUrl;
+    } else {
+      errorNotification(result?.message);
+    }
+    setLoading(false);
   }
 
   const columns = [
@@ -248,6 +266,22 @@ export default function OrderTracker() {
                     <span>Total</span>
                     <span>{formatPrice(order.due || order.grandTotal)}</span>
                   </div>
+                  {
+                    order.due > 0 &&
+                    order.paymentStatus !== "Paid" &&
+                    order.status !== "Canceled" &&
+                    order.paymentMethod === "SSLCOMMERZ" && (
+                      <Button
+                        type="primary"
+                        block
+                        icon={<BankOutlined />}
+                        onClick={handleOnlinePayment}
+                        className="mt-4 bg-green-600 hover:bg-green-700"
+                      >
+                        Note: Pay {formatPrice(order.due)} Now
+                      </Button>
+                    )
+                  }
                 </div>
               </Card>
 
