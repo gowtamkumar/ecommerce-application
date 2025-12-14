@@ -2,12 +2,15 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.9
--- Dumped by pg_dump version 16.9
+\restrict Wxwad785ceWoquj8jfiqLQVxaB3WbQUpZTMUWGEfXa49tzrWgn1WCJA7bDZCxam
+
+-- Dumped from database version 17.7
+-- Dumped by pg_dump version 17.7
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -15,6 +18,36 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
+--
+-- Name: audit_logs_action_enum; Type: TYPE; Schema: public; Owner: admin
+--
+
+CREATE TYPE public.audit_logs_action_enum AS ENUM (
+    'CREATE',
+    'UPDATE',
+    'DELETE',
+    'LOGIN',
+    'LOGOUT',
+    'FAILED_LOGIN'
+);
+
+
+ALTER TYPE public.audit_logs_action_enum OWNER TO admin;
 
 --
 -- Name: banners_type_enum; Type: TYPE; Schema: public; Owner: admin
@@ -41,6 +74,19 @@ CREATE TYPE public.brands_status_enum AS ENUM (
 
 
 ALTER TYPE public.brands_status_enum OWNER TO admin;
+
+--
+-- Name: comments_status_enum; Type: TYPE; Schema: public; Owner: admin
+--
+
+CREATE TYPE public.comments_status_enum AS ENUM (
+    'Rejected',
+    'Approved',
+    'Pending'
+);
+
+
+ALTER TYPE public.comments_status_enum OWNER TO admin;
 
 --
 -- Name: coupons_discount_type_enum; Type: TYPE; Schema: public; Owner: admin
@@ -173,18 +219,39 @@ ALTER TYPE public.orders_payment_status_enum OWNER TO admin;
 --
 
 CREATE TYPE public.orders_status_enum AS ENUM (
+    'Pending',
     'Processing',
-    'Approved',
-    'On Shipping',
     'Shipped',
     'Canceled',
-    'Completed',
-    'Pending',
-    'Returned'
+    'Delivered'
 );
 
 
 ALTER TYPE public.orders_status_enum OWNER TO admin;
+
+--
+-- Name: pages_content_type_enum; Type: TYPE; Schema: public; Owner: admin
+--
+
+CREATE TYPE public.pages_content_type_enum AS ENUM (
+    'html',
+    'markdown'
+);
+
+
+ALTER TYPE public.pages_content_type_enum OWNER TO admin;
+
+--
+-- Name: pages_status_enum; Type: TYPE; Schema: public; Owner: admin
+--
+
+CREATE TYPE public.pages_status_enum AS ENUM (
+    'draft',
+    'published'
+);
+
+
+ALTER TYPE public.pages_status_enum OWNER TO admin;
 
 --
 -- Name: payments_payment_method_enum; Type: TYPE; Schema: public; Owner: admin
@@ -210,6 +277,19 @@ CREATE TYPE public.payments_payment_type_enum AS ENUM (
 
 
 ALTER TYPE public.payments_payment_type_enum OWNER TO admin;
+
+--
+-- Name: posts_status_enum; Type: TYPE; Schema: public; Owner: admin
+--
+
+CREATE TYPE public.posts_status_enum AS ENUM (
+    'Draft',
+    'Published',
+    'Archived'
+);
+
+
+ALTER TYPE public.posts_status_enum OWNER TO admin;
 
 --
 -- Name: products_status_enum; Type: TYPE; Schema: public; Owner: admin
@@ -477,6 +557,29 @@ ALTER SEQUENCE public.applied_coupons_id_seq OWNED BY public.applied_coupons.id;
 
 
 --
+-- Name: audit_logs; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.audit_logs (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "userId" character varying,
+    "userName" character varying,
+    "userEmail" character varying,
+    "userRole" character varying,
+    action public.audit_logs_action_enum NOT NULL,
+    "resourceType" character varying NOT NULL,
+    "resourceId" character varying,
+    "resourceName" character varying,
+    "oldValues" jsonb,
+    "newValues" jsonb,
+    metadata jsonb,
+    "createdAt" timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.audit_logs OWNER TO admin;
+
+--
 -- Name: banners; Type: TABLE; Schema: public; Owner: admin
 --
 
@@ -568,7 +671,8 @@ CREATE TABLE public.carts (
     qty integer NOT NULL,
     user_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    abandoned_email_sent boolean DEFAULT false NOT NULL
 );
 
 
@@ -612,7 +716,8 @@ CREATE TABLE public.categories (
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     mpath character varying DEFAULT ''::character varying,
-    "parentId" integer
+    "parentId" integer,
+    is_featured boolean DEFAULT false NOT NULL
 );
 
 
@@ -674,6 +779,45 @@ ALTER SEQUENCE public.colors_id_seq OWNER TO admin;
 --
 
 ALTER SEQUENCE public.colors_id_seq OWNED BY public.colors.id;
+
+
+--
+-- Name: comments; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.comments (
+    id integer NOT NULL,
+    post_id integer NOT NULL,
+    content character varying,
+    status public.comments_status_enum DEFAULT 'Pending'::public.comments_status_enum NOT NULL,
+    user_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.comments OWNER TO admin;
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.comments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.comments_id_seq OWNER TO admin;
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.comments_id_seq OWNED BY public.comments.id;
 
 
 --
@@ -800,6 +944,43 @@ ALTER SEQUENCE public.coupons_id_seq OWNER TO admin;
 --
 
 ALTER SEQUENCE public.coupons_id_seq OWNED BY public.coupons.id;
+
+
+--
+-- Name: currencies; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.currencies (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    symbol character varying NOT NULL,
+    exchange_rate double precision DEFAULT '1'::double precision NOT NULL,
+    user_id integer NOT NULL
+);
+
+
+ALTER TABLE public.currencies OWNER TO admin;
+
+--
+-- Name: currencies_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.currencies_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.currencies_id_seq OWNER TO admin;
+
+--
+-- Name: currencies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.currencies_id_seq OWNED BY public.currencies.id;
 
 
 --
@@ -941,7 +1122,9 @@ CREATE TABLE public.files (
     destination character varying,
     filename character varying,
     path character varying,
-    size integer
+    size integer,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -1225,6 +1408,48 @@ ALTER SEQUENCE public.orders_id_seq OWNED BY public.orders.id;
 
 
 --
+-- Name: pages; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.pages (
+    id integer NOT NULL,
+    title character varying NOT NULL,
+    slug character varying NOT NULL,
+    content text NOT NULL,
+    content_type public.pages_content_type_enum DEFAULT 'markdown'::public.pages_content_type_enum NOT NULL,
+    meta_description text,
+    status public.pages_status_enum DEFAULT 'draft'::public.pages_status_enum NOT NULL,
+    user_id integer,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.pages OWNER TO admin;
+
+--
+-- Name: pages_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.pages_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pages_id_seq OWNER TO admin;
+
+--
+-- Name: pages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.pages_id_seq OWNED BY public.pages.id;
+
+
+--
 -- Name: payments; Type: TABLE; Schema: public; Owner: admin
 --
 
@@ -1264,6 +1489,83 @@ ALTER SEQUENCE public.payments_id_seq OWNER TO admin;
 --
 
 ALTER SEQUENCE public.payments_id_seq OWNED BY public.payments.id;
+
+
+--
+-- Name: post_categories; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.post_categories (
+    id integer NOT NULL,
+    post_id integer NOT NULL,
+    category_id integer NOT NULL
+);
+
+
+ALTER TABLE public.post_categories OWNER TO admin;
+
+--
+-- Name: post_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.post_categories_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.post_categories_id_seq OWNER TO admin;
+
+--
+-- Name: post_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.post_categories_id_seq OWNED BY public.post_categories.id;
+
+
+--
+-- Name: posts; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.posts (
+    id integer NOT NULL,
+    slug character varying NOT NULL,
+    title character varying NOT NULL,
+    image character varying NOT NULL,
+    tags text,
+    content character varying NOT NULL,
+    user_id integer NOT NULL,
+    status public.posts_status_enum DEFAULT 'Draft'::public.posts_status_enum NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.posts OWNER TO admin;
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.posts_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.posts_id_seq OWNER TO admin;
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
 
 
 --
@@ -1371,7 +1673,8 @@ CREATE TABLE public.products (
     images text NOT NULL,
     user_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    is_new_arrival boolean DEFAULT false NOT NULL
 );
 
 
@@ -1465,7 +1768,10 @@ CREATE TABLE public.settings (
     header_option text,
     help_support text,
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
-    order_free_shipping_amount numeric(10,2)
+    order_free_shipping_amount numeric(10,2),
+    whats_app_widget text,
+    description character varying,
+    faq text
 );
 
 
@@ -1856,7 +2162,11 @@ CREATE TABLE public.users (
     divice_id character varying,
     reset_token character varying,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    is_verified boolean DEFAULT false NOT NULL,
+    verification_token character varying,
+    failed_login_attempts integer DEFAULT 0 NOT NULL,
+    block_until timestamp without time zone
 );
 
 
@@ -1985,6 +2295,13 @@ ALTER TABLE ONLY public.colors ALTER COLUMN id SET DEFAULT nextval('public.color
 
 
 --
+-- Name: comments id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.comments ALTER COLUMN id SET DEFAULT nextval('public.comments_id_seq'::regclass);
+
+
+--
 -- Name: contacts id; Type: DEFAULT; Schema: public; Owner: admin
 --
 
@@ -2003,6 +2320,13 @@ ALTER TABLE ONLY public.coupon_products ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.coupons ALTER COLUMN id SET DEFAULT nextval('public.coupons_id_seq'::regclass);
+
+
+--
+-- Name: currencies id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.currencies ALTER COLUMN id SET DEFAULT nextval('public.currencies_id_seq'::regclass);
 
 
 --
@@ -2076,10 +2400,31 @@ ALTER TABLE ONLY public.orders ALTER COLUMN id SET DEFAULT nextval('public.order
 
 
 --
+-- Name: pages id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.pages ALTER COLUMN id SET DEFAULT nextval('public.pages_id_seq'::regclass);
+
+
+--
 -- Name: payments id; Type: DEFAULT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.payments ALTER COLUMN id SET DEFAULT nextval('public.payments_id_seq'::regclass);
+
+
+--
+-- Name: post_categories id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.post_categories ALTER COLUMN id SET DEFAULT nextval('public.post_categories_id_seq'::regclass);
+
+
+--
+-- Name: posts id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN id SET DEFAULT nextval('public.posts_id_seq'::regclass);
 
 
 --
@@ -2227,10 +2572,70 @@ COPY public.applied_coupons (id, coupon_id, order_id, discount_amount, user_id, 
 
 
 --
+-- Data for Name: audit_logs; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.audit_logs (id, "userId", "userName", "userEmail", "userRole", action, "resourceType", "resourceId", "resourceName", "oldValues", "newValues", metadata, "createdAt") FROM stdin;
+5429f212-50e4-47f4-a004-396464a2c69d	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	hello test 	\N	{"name": "hello test ", "image": "image-1765475745065.jpg", "active": true, "fileList": [{"uid": "137.61798272053727", "url": "http://localhost:3900/uploads/image-1765475745065.jpg", "name": "photo 6588.456048921696", "status": "done", "fileName": "image-1765475745065.jpg"}], "isFeatured": true, "description": "dasf"}	{"ip": "::ffff:172.19.0.5", "path": "/", "method": "POST", "userAgent": "node"}	2025-12-11 17:55:46.172243
+6fc79cc4-0cf1-425e-bdc3-aa7c49378b86	1	gowtam kumar	Unknown	Admin	DELETE	Unknown	4	hello test 	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/4", "method": "DELETE", "userAgent": "node"}	2025-12-11 17:57:49.4934
+4efca277-3794-4da7-90ca-4d52d9fd437e	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	3	new testging category	\N	{"id": 3, "name": "new testging category", "image": "image-1765474918003.jpg", "active": true, "fileList": [{"uid": "431.4354152517599", "url": "http://localhost:3900/uploads/image-1765474918003.jpg", "name": "image", "status": "done", "fileName": "image-1765474918003.jpg"}], "isFeatured": false, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/3", "method": "PUT", "userAgent": "node"}	2025-12-11 18:01:51.609432
+50fd5e93-9c79-4ade-aafe-c8d6972378bb	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	3	new testging	\N	{"id": 3, "name": "new testging", "image": "image-1765474918003.jpg", "active": true, "fileList": [{"uid": "255.2301659629498", "url": "http://localhost:3900/uploads/image-1765474918003.jpg", "name": "image", "status": "done", "fileName": "image-1765474918003.jpg"}], "isFeatured": false, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/3", "method": "PUT", "userAgent": "node"}	2025-12-11 18:04:57.687406
+718d3bd0-90b7-4d34-b9c3-58d9398f2359	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	3	new testging gg	\N	{"id": 3, "name": "new testging gg", "image": "image-1765474918003.jpg", "active": true, "fileList": [{"uid": "785.9901849727007", "url": "http://localhost:3900/uploads/image-1765474918003.jpg", "name": "image", "status": "done", "fileName": "image-1765474918003.jpg"}], "isFeatured": false, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/3", "method": "PUT", "userAgent": "node"}	2025-12-11 18:07:19.859091
+7d0aff0a-27d4-4f90-8122-48caef1f7793	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 1, "qty": 1, "name": "(FP-M-20) Smart Executive office chair China mesh /premium quality/1 years warranty/original China chair/ gaming chair /Furniture Plus", "slug": "(fp-m-20)-smart-executive-office-chair-china-mesh-/premium-quality/1-years-warranty/original-china-chair/-gaming-chair-/furniture-plus", "scope": null, "total": "1", "brandId": 1, "variant": false, "featured": false, "avgRating": null, "productId": 1, "salePrice": "220.00", "taxAmount": "20.00", "unitPrice": "200.00", "discountId": null, "finalPrice": "220.00", "hoverImage": "hoverImage-1765415833283.jpg", "discountSlug": null, "reviewsCount": null, "discountValue": null, "promotionType": null, "purchasePrice": "100.00", "discountAmount": null, "thumbnailImage": "thumbnailImage-1765415824708.jpg", "discountedPrice": "200.00", "discountStrategy": null, "productVariantId": 1, "shortDescription": "🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\\n\\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\\n\\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\\n\\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\\n\\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\\n\\n✅ প্রতিটি পণ্যে থাকছে:\\n\\n১ বছরের ওয়ারেন্টি\\n\\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\\n\\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\\n\\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\\n\\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\\n\\nক্যাশ অন ডেলিভারি সুবিধা 🥰\\n\\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\\n\\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\\n\\nFurniture Plus আপনার পাশে আছি সবসময়"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-11 18:35:49.521213
+ea36d1b6-1ee6-4364-ad0c-c8df2555aeda	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	testing banner	\N	{"url": "asdf", "type": "Slider", "image": "image-1765480188042.jpg", "title": "testing banner", "fileList": [{"uid": "257.2115731921042", "url": "http://localhost:3900/uploads/image-1765480188042.jpg", "name": "photo 5406.6968768433635", "status": "done", "fileName": "image-1765480188042.jpg"}], "description": "adsf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/banners", "method": "POST", "userAgent": "node"}	2025-12-11 19:09:54.65314
+0d85fec4-cd48-47c7-8767-4b6352ca5c1b	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	second banner	\N	{"url": "d", "type": "Slider", "image": "image-1765480234563.jpg", "title": "second banner", "fileList": [{"uid": "278.9620415972551", "url": "http://localhost:3900/uploads/image-1765480234563.jpg", "name": "photo 1069.1601783363647", "status": "done", "fileName": "image-1765480234563.jpg"}], "description": "asdfasdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/banners", "method": "POST", "userAgent": "node"}	2025-12-11 19:10:35.863224
+daff4bc2-8aae-415b-8586-e00aa5039568	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Fashin	\N	{"name": "Fashin", "image": "image-1765480785022.jpg", "active": true, "fileList": [{"uid": "461.3595688828733", "url": "http://localhost:3900/uploads/image-1765480785022.jpg", "name": "photo 9740.837669828106", "status": "done", "fileName": "image-1765480785022.jpg"}], "isFeatured": true, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-11 19:19:46.437326
+1410568f-8f4c-4b63-804b-fc31fa2052ce	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	5	Fashion	\N	{"id": 5, "name": "Fashion", "image": "image-1765480785022.jpg", "active": true, "fileList": [{"uid": "435.813747503657", "url": "http://localhost:3900/uploads/image-1765480785022.jpg", "name": "image", "status": "done", "fileName": "image-1765480785022.jpg"}], "isFeatured": false, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/5", "method": "PUT", "userAgent": "node"}	2025-12-11 19:20:03.785034
+3fd2b32d-9875-4a93-9bc3-95e1986d1890	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	high school	\N	{"name": "high school", "image": "image-1765501980012.png", "active": true, "fileList": [{"uid": "685.7758040140052", "url": "http://localhost:3900/uploads/image-1765501980012.png", "name": "photo 4924.495463238104", "status": "done", "fileName": "image-1765501980012.png"}], "isFeatured": true, "description": "high school  high school"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-12 01:13:04.007052
+615bcc2f-8def-4959-a292-4eff04d8a207	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	6	high school	\N	{"id": 6, "name": "high school", "image": "image-1765501980012.png", "active": true, "fileList": [{"uid": "962.6469599575053", "url": "http://localhost:3900/uploads/image-1765501980012.png", "name": "image", "status": "done", "fileName": "image-1765501980012.png"}], "isFeatured": true, "description": "high school  high school"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/6", "method": "PUT", "userAgent": "node"}	2025-12-12 01:17:16.349738
+e0c10811-7063-4860-a339-d893a54b0d45	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	5	Fashion	\N	{"id": 5, "name": "Fashion", "image": "image-1765480785022.jpg", "active": true, "fileList": [{"uid": "631.2572935863176", "url": "http://localhost:3900/uploads/image-1765480785022.jpg", "name": "image", "status": "done", "fileName": "image-1765480785022.jpg"}], "isFeatured": true, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/5", "method": "PUT", "userAgent": "node"}	2025-12-12 01:17:22.56655
+f6d8a64c-448d-4c29-90d3-bc3256296aad	1	gowtam kumar	Unknown	Admin	DELETE	Unknown	10	\N	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts/10", "method": "DELETE", "userAgent": "node"}	2025-12-13 15:53:58.970482
+545733d0-ef86-4634-abab-6d1dd94a92ff	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	warmers sterilizers	\N	{"name": "warmers sterilizers", "image": "image-1765502328220.png", "active": true, "fileList": [{"uid": "839.9100883862387", "url": "http://localhost:3900/uploads/image-1765502328220.png", "name": "photo 8090.4795940859385", "status": "done", "fileName": "image-1765502328220.png"}], "isFeatured": true, "description": "warmers sterilizers\\n"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-12 01:18:49.730638
+06a5e25b-77b2-4466-8829-6a6a5ba76296	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	monoculars	\N	{"name": "monoculars", "image": "image-1765502425785.png", "active": true, "fileList": [{"uid": "935.3101101479588", "url": "http://localhost:3900/uploads/image-1765502425785.png", "name": "photo 9840.844202058513", "status": "done", "fileName": "image-1765502425785.png"}], "isFeatured": true, "description": "monoculars"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-12 01:20:27.832838
+a179c157-35ec-4a9b-8b99-1ea955656ef8	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	projector accessories	\N	{"name": "projector accessories", "image": "image-1765502482603.png", "active": true, "fileList": [{"uid": "986.4324331355153", "url": "http://localhost:3900/uploads/image-1765502482603.png", "name": "photo 8010.948141592356", "status": "done", "fileName": "image-1765502482603.png"}], "isFeatured": true, "description": "projector accessories\\nprojector accessories"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-12 01:21:25.668378
+95fbda46-a478-4d58-a7bb-bae3396ab069	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Kitchen Fittings	\N	{"name": "Kitchen Fittings", "image": "image-1765502539709.jpg", "active": true, "fileList": [{"uid": "864.4691847851208", "url": "http://localhost:3900/uploads/image-1765502539709.jpg", "name": "photo 5125.679265595731", "status": "done", "fileName": "image-1765502539709.jpg"}], "isFeatured": true, "description": "Kitchen Fittings"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-12 01:22:20.900155
+d1f4d074-b55a-4802-b748-a74338d69509	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Kitchen Fittings	\N	{"name": "Kitchen Fittings", "image": "image-1765502893950.jpg", "active": true, "fileList": [{"uid": "641.5952807691062", "url": "http://localhost:3900/uploads/image-1765502893950.jpg", "name": "photo 7141.22075421701", "status": "done", "fileName": "image-1765502893950.jpg"}], "isFeatured": true, "description": "Kitchen Fittings\\nKitchen Fittings"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories", "method": "POST", "userAgent": "node"}	2025-12-12 01:28:15.867556
+9aeee85c-96fa-43bf-9432-65c6a74b1abe	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	3	New Category	\N	{"id": 3, "name": "New Category", "image": "image-1765474918003.jpg", "active": true, "fileList": [{"uid": "174.35720483905436", "url": "http://localhost:3900/uploads/image-1765474918003.jpg", "name": "image", "status": "done", "fileName": "image-1765474918003.jpg"}], "isFeatured": false, "description": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/3", "method": "PUT", "userAgent": "node"}	2025-12-12 01:29:19.554301
+369fe6f2-08a9-4904-a93f-9ccf9829c0c0	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Comforter | King Size Winter Comforter (86" x 84") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print	\N	{"name": "Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print", "slug": "comforter-|-king-size-winter-comforter-(86\\"-x-84\\")-|-lightweight-&-cozy-with-poly-filler-[micro-fiber-padding]-|-ash-blue-and-white-floral-print", "tags": ["new tag", " new product"], "taxId": 1, "images": ["images-1765503096896.jpg"], "status": "Active", "unitId": 2, "brandId": 1, "alertQty": 10, "featured": true, "stockQty": 1000, "unitPrice": 300, "hoverImage": "hoverImage-1765503092000.png", "description": "\\"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n- Material: Cotton\\n- Poly Filler Inside\\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\\n- Package: Comes with Plastic Packed Box.\\n- Machine Washable\\"\\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n\\n\\n\\nQuality Material:\\n\\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\\n\\n\\nUnique Design:\\n\\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\\n\\n\\nPerfect Size:\\n\\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\\n\\n\\nColor may be slightly differ for Photo shoot or your computer resolution.\\n\\nSpecifications of Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain", "enableReview": true, "purchasePrice": 200, "thumbnailImage": "thumbnailImage-1765503085981.jpg", "productVariants": [{"stockQty": 1000, "unitPrice": 300, "purchasePrice": 200}], "limitPurchaseQty": 10, "shortDescription": "\\"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n- Material: Cotton\\n- Poly Filler Inside\\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\\n- Package: Comes with Plastic Packed Box.\\n- Machine Washable\\"\\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n\\n\\n\\nQuality Material:\\n\\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\\n\\n\\nUnique Design:\\n\\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\\n\\n\\nPerfect Size:\\n\\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\\n\\n\\nColor may be slightly differ for Photo shoot or your computer resolution.\\n\\nSpecifications of Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain", "productCategories": [7, 1, 6, 5]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/products", "method": "POST", "userAgent": "node"}	2025-12-12 01:31:40.639925
+61d35c8d-e49f-4742-b1e4-8f1e9157b31a	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"note": "sdafasdf", "districtId": 20, "shippingCharge": 100}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/shipping-charges", "method": "POST", "userAgent": "node"}	2025-12-12 01:34:57.194892
+18f9e07a-77c5-4b24-899d-d556690fca31	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print", "slug": "comforter-|-king-size-winter-comforter-(86\\"-x-84\\")-|-lightweight-&-cozy-with-poly-filler-[micro-fiber-padding]-|-ash-blue-and-white-floral-print", "scope": null, "total": "5", "brandId": 1, "variant": false, "featured": true, "avgRating": null, "productId": 2, "salePrice": "330.00", "taxAmount": "30.00", "unitPrice": "300.00", "discountId": null, "finalPrice": "330.00", "hoverImage": "hoverImage-1765503092000.png", "discountSlug": null, "reviewsCount": null, "discountValue": null, "promotionType": null, "purchasePrice": "200.00", "discountAmount": null, "thumbnailImage": "thumbnailImage-1765503085981.jpg", "discountedPrice": "300.00", "discountStrategy": null, "productVariantId": 2, "shortDescription": "\\"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n- Material: Cotton\\n- Poly Filler Inside\\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\\n- Package: Comes with Plastic Packed Box.\\n- Machine Washable\\"\\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n\\n\\n\\nQuality Material:\\n\\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\\n\\n\\nUnique Design:\\n\\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\\n\\n\\nPerfect Size:\\n\\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\\n\\n\\nColor may be slightly differ for Photo shoot or your computer resolution.\\n\\nSpecifications of Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-12 01:47:28.780132
+0eb0ee92-5f5d-4f43-900c-fda4d244a373	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "Add", "productId": 2, "productVariants": [{"id": 2, "qty": 100, "sku": null, "size": null, "color": null, "image": null, "sizeId": null, "colorId": null, "default": false, "material": null, "stockQty": 1000, "productId": 2, "unitPrice": "300.00", "purchasePrice": "200.00"}]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/stock-adjusts", "method": "POST", "userAgent": "node"}	2025-12-12 02:01:57.347312
+9b2299a5-6338-47ee-a221-a19353abee84	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "Add", "productId": 2, "productVariants": [{"id": 2, "qty": 10, "sku": null, "size": null, "color": null, "image": null, "sizeId": null, "colorId": null, "default": false, "material": null, "stockQty": 1100, "productId": 2, "unitPrice": "300.00", "purchasePrice": "200.00"}]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/stock-adjusts", "method": "POST", "userAgent": "node"}	2025-12-12 02:02:49.686428
+5fe7e83f-bfb9-44a4-995b-e93b350ef399	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "Add", "productId": 2, "productVariants": [{"id": 2, "qty": 10, "sku": null, "size": null, "color": null, "image": null, "sizeId": null, "colorId": null, "default": false, "material": null, "stockQty": 1110, "productId": 2, "unitPrice": "300.00", "purchasePrice": "200.00"}]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/stock-adjusts", "method": "POST", "userAgent": "node"}	2025-12-12 02:03:14.68038
+7562a5c7-7f44-4dce-9578-dedf662b379d	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Winter sale	\N	{"name": "Winter sale", "image": "image-1765510885665.jpg", "scope": "Global", "value": 10, "status": "Active", "endDate": "2025-12-24T18:00:00.000Z", "fileList": [{"uid": "584.6683432281706", "url": "http://localhost:3900/uploads/image-1765510885665.jpg", "name": "photo 3867.539559320896", "status": "done", "fileName": "image-1765510885665.jpg"}], "startDate": "2025-12-10T18:00:00.000Z", "description": "asdfasdf dasfasdf", "promotionType": "Seasonal", "discountStrategy": "Percentage"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/discounts", "method": "POST", "userAgent": "node"}	2025-12-12 03:41:32.117791
+3fdcbdc8-134a-4926-9568-5d5d57dba23e	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"code": "gowtamkumar", "type": "Order", "value": 10, "maxUser": "1000", "startDate": "2025-12-10T18:00:00.000Z", "expiryDate": "2025-12-18T18:00:00.000Z", "usageLimit": "10", "discountType": "Fixed", "mincartValue": "50", "usagePerUser": "2", "minOrderAmount": "50", "maxDiscountValue": "500"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/coupons", "method": "POST", "userAgent": "node"}	2025-12-12 03:50:48.596624
+d5dd738d-0f4f-4b5f-bad7-f5e7f417ca95	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	main	\N	{"name": "main"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/menus", "method": "POST", "userAgent": "node"}	2025-12-12 04:08:18.45882
+31f693e9-177a-4dc8-94d8-62f85c8d7af5	1	gowtam kumar	Unknown	Admin	DELETE	Unknown	1	\N	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders/1", "method": "DELETE", "userAgent": "node"}	2025-12-12 04:10:57.064406
+00614e1c-4f20-486b-9c84-2aac64e4d590	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "495.00", "totalQty": 2, "totalTax": "45.00", "grandTotal": "495.00", "orderItems": [{"qty": 1, "subTotal": "198.00", "productId": 1, "taxAmount": "18.00", "unitPrice": "200.00", "purchasePrice": "100.00", "productVariantId": 1, "discountedUnitPrice": "180.00", "totalDiscountAmount": "20.00", "totalDiscountedPrice": "180.00", "discountAmountPerUnit": "20.00"}, {"qty": 1, "subTotal": "297.00", "productId": 2, "taxAmount": "27.00", "unitPrice": "300.00", "purchasePrice": "200.00", "productVariantId": 2, "discountedUnitPrice": "270.00", "totalDiscountAmount": "30.00", "totalDiscountedPrice": "270.00", "discountAmountPerUnit": "30.00"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 1, "totalItemsDiscount": "50.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-12 04:32:31.206724
+e63a2281-1e0a-4f76-89c6-ee5983ab2ae3	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 1, "qty": 1, "name": "(FP-M-20) Smart Executive office chair China mesh /premium quality/1 years warranty/original China chair/ gaming chair /Furniture Plus", "slug": "(fp-m-20)-smart-executive-office-chair-china-mesh-/premium-quality/1-years-warranty/original-china-chair/-gaming-chair-/furniture-plus", "scope": "Global", "total": "5", "brandId": 1, "variant": false, "featured": false, "avgRating": null, "productId": 1, "salePrice": "218.00", "taxAmount": "18.00", "unitPrice": "200.00", "discountId": 1, "finalPrice": "198.00", "hoverImage": "hoverImage-1765415833283.jpg", "discountSlug": "winter-sale", "reviewsCount": null, "discountValue": "10.00", "promotionType": "Seasonal", "purchasePrice": "100.00", "discountAmount": "20.00", "thumbnailImage": "thumbnailImage-1765415824708.jpg", "discountedPrice": "180.00", "discountStrategy": "Percentage", "productVariantId": 1, "shortDescription": "🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\\n\\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\\n\\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\\n\\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\\n\\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\\n\\n✅ প্রতিটি পণ্যে থাকছে:\\n\\n১ বছরের ওয়ারেন্টি\\n\\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\\n\\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\\n\\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\\n\\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\\n\\nক্যাশ অন ডেলিভারি সুবিধা 🥰\\n\\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\\n\\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\\n\\nFurniture Plus আপনার পাশে আছি সবসময়"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-12 04:37:33.46654
+a9f7247f-bf81-4876-94a2-12115ec0f961	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "198.00", "totalQty": 1, "totalTax": "18.00", "grandTotal": "198.00", "orderItems": [{"qty": 1, "subTotal": "198.00", "productId": 1, "taxAmount": "18.00", "unitPrice": "200.00", "purchasePrice": "100.00", "productVariantId": 1, "discountedUnitPrice": "180.00", "totalDiscountAmount": "20.00", "totalDiscountedPrice": "180.00", "discountAmountPerUnit": "20.00"}], "paymentMethod": "SSLCOMMERZ", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 1, "totalItemsDiscount": "20.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-12 04:37:48.704804
+967920ce-48e9-4588-b218-05978b003281	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 1, "qty": 1, "name": "(FP-M-20) Smart Executive office chair China mesh /premium quality/1 years warranty/original China chair/ gaming chair /Furniture Plus", "slug": "(fp-m-20)-smart-executive-office-chair-china-mesh-/premium-quality/1-years-warranty/original-china-chair/-gaming-chair-/furniture-plus", "scope": "Global", "total": "5", "brandId": 1, "variant": false, "featured": false, "avgRating": null, "productId": 1, "salePrice": "218.00", "taxAmount": "18.00", "unitPrice": "200.00", "discountId": 1, "finalPrice": "198.00", "hoverImage": "hoverImage-1765415833283.jpg", "discountSlug": "winter-sale", "reviewsCount": null, "discountValue": "10.00", "promotionType": "Seasonal", "purchasePrice": "100.00", "discountAmount": "20.00", "thumbnailImage": "thumbnailImage-1765415824708.jpg", "discountedPrice": "180.00", "discountStrategy": "Percentage", "productVariantId": 1, "shortDescription": "🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\\n\\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\\n\\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\\n\\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\\n\\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\\n\\n✅ প্রতিটি পণ্যে থাকছে:\\n\\n১ বছরের ওয়ারেন্টি\\n\\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\\n\\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\\n\\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\\n\\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\\n\\nক্যাশ অন ডেলিভারি সুবিধা 🥰\\n\\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\\n\\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\\n\\nFurniture Plus আপনার পাশে আছি সবসময়"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-12 04:40:38.118316
+9a2d91d4-959e-4ab4-8553-3aea585de50d	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "198.00", "totalQty": 1, "totalTax": "18.00", "grandTotal": "198.00", "orderItems": [{"qty": 1, "subTotal": "198.00", "productId": 1, "taxAmount": "18.00", "unitPrice": "200.00", "purchasePrice": "100.00", "productVariantId": 1, "discountedUnitPrice": "180.00", "totalDiscountAmount": "20.00", "totalDiscountedPrice": "180.00", "discountAmountPerUnit": "20.00"}], "paymentMethod": "SSLCOMMERZ", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 1, "totalItemsDiscount": "20.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-12 04:41:02.346701
+2771b34c-8b0e-4ba4-b3ce-4b6e42d15bce	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print", "slug": "comforter-|-king-size-winter-comforter-(86\\"-x-84\\")-|-lightweight-&-cozy-with-poly-filler-[micro-fiber-padding]-|-ash-blue-and-white-floral-print", "scope": "Global", "total": "5", "brandId": 1, "variant": false, "featured": true, "avgRating": null, "productId": 2, "salePrice": "327.00", "taxAmount": "27.00", "unitPrice": "300.00", "discountId": 1, "finalPrice": "297.00", "hoverImage": "hoverImage-1765503092000.png", "discountSlug": "winter-sale", "reviewsCount": null, "discountValue": "10.00", "promotionType": "Seasonal", "purchasePrice": "200.00", "discountAmount": "30.00", "thumbnailImage": "thumbnailImage-1765503085981.jpg", "discountedPrice": "270.00", "discountStrategy": "Percentage", "productVariantId": 2, "shortDescription": "\\"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n- Material: Cotton\\n- Poly Filler Inside\\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\\n- Package: Comes with Plastic Packed Box.\\n- Machine Washable\\"\\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n\\n\\n\\nQuality Material:\\n\\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\\n\\n\\nUnique Design:\\n\\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\\n\\n\\nPerfect Size:\\n\\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\\n\\n\\nColor may be slightly differ for Photo shoot or your computer resolution.\\n\\nSpecifications of Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-12 06:43:30.035259
+0c8b7fff-8e7b-4d71-84ca-d1b7357bd00d	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"productId": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/wishlists", "method": "POST", "userAgent": "node"}	2025-12-12 08:32:51.896843
+aac2f661-6a73-4231-a4dc-eff926ce4e18	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	New Offer	\N	{"url": "/", "type": "Banner", "image": "image-1765528504746.png", "title": "New Offer", "fileList": [{"uid": "432.45751803133805", "url": "http://localhost:3900/uploads/image-1765528504746.png", "name": "photo 6179.190420014552", "status": "done", "fileName": "image-1765528504746.png"}], "description": "dddde"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/banners", "method": "POST", "userAgent": "node"}	2025-12-12 08:35:06.603249
+a37f3f84-c1da-46c8-926b-262c9ee917e7	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Sessnal offer today	\N	{"url": "/", "type": "Banner", "image": "image-1765528590808.jpg", "title": "Sessnal offer today", "fileList": [{"uid": "384.24865343898904", "url": "http://localhost:3900/uploads/image-1765528590808.jpg", "name": "photo 1059.0150453989954", "status": "done", "fileName": "image-1765528590808.jpg"}], "description": "eeeeee"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/banners", "method": "POST", "userAgent": "node"}	2025-12-12 08:36:32.11785
+61743ae5-cbca-45bf-af9a-c092e791ba6c	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Weekly Offer	\N	{"url": "/", "type": "Banner", "image": "image-1765528756827.webp", "title": "Weekly Offer", "fileList": [{"uid": "639.0071997000382", "url": "http://localhost:3900/uploads/image-1765528756827.webp", "name": "photo 946.8935551810265", "status": "done", "fileName": "image-1765528756827.webp"}], "description": "Weekly Offer Weekly Offer"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/banners", "method": "POST", "userAgent": "node"}	2025-12-12 08:39:18.950605
+f5facad1-af17-4d54-99ea-05d0dd3b526a	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	Footer Offer	\N	{"url": "/", "type": "Footer", "image": "image-1765528885403.webp", "title": "Footer Offer", "fileList": [{"uid": "69.78553318060577", "url": "http://localhost:3900/uploads/image-1765528885403.webp", "name": "photo 587.492168243472", "status": "done", "fileName": "image-1765528885403.webp"}], "description": "Footer Offer"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/banners", "method": "POST", "userAgent": "node"}	2025-12-12 08:41:28.85279
+b2c06ff5-9f6d-47ba-99ae-dc57091fe953	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	1	Honda	\N	{"id": 1, "name": "Honda", "image": "image-1765475165379.jpg", "active": true, "fileList": [{"uid": "50.65175154500634", "url": "http://localhost:3900/uploads/image-1765475165379.jpg", "name": "image", "status": "done", "fileName": "image-1765475165379.jpg"}], "isFeatured": true, "description": null}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/1", "method": "PUT", "userAgent": "node"}	2025-12-13 12:38:02.409495
+ab527862-3a30-4d83-9df0-034d72d692ab	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	6	high school	\N	{"id": 6, "name": "high school", "image": "image-1765501980012.png", "active": true, "fileList": [{"uid": "25.123199129641115", "url": "http://localhost:3900/uploads/image-1765501980012.png", "name": "image", "status": "done", "fileName": "image-1765501980012.png"}], "isFeatured": false, "description": "high school  high school"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/6", "method": "PUT", "userAgent": "node"}	2025-12-13 12:53:15.781027
+bdefcdbf-0a0c-4c57-8ff2-64efa18c61ae	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	React Labs: What We've Been Working On – June 2022	\N	{"slug": "react-labs:-what-we've-been-working-on-–-june-2022", "tags": ["dsaf"], "image": "image-1765631920959.jpg", "title": "React Labs: What We've Been Working On – June 2022", "status": "Published", "content": "React 18 was years in the making, and with it brought valuable lessons for the React team. Its release was the result of many years of research and exploring many paths. Some of those paths were successful; many more were dead-ends that led to new insights. One lesson we’ve learned is that it’s frustrating for the community to wait for new features without having insight into these paths that we’re exploring.\\n\\nWe typically have a number of projects being worked on at any time, ranging from the more experimental to the clearly defined. Looking ahead, we’d like to start regularly sharing more about what we’ve been working on with the community across these projects.\\n\\nTo set expectations, this is not a roadmap with clear timelines. Many of these projects are under active research and are difficult to put concrete ship dates on. They may possibly never even ship in their current iteration depending on what we learn. Instead, we want to share with you the problem spaces we’re actively thinking about, and what we’ve learned so far.", "fileList": [{"uid": "996.6910365334099", "url": "http://localhost:3900/uploads/image-1765631920959.jpg", "name": "photo 6900.968738935385", "status": "done", "fileName": "image-1765631920959.jpg"}], "postCategories": [2]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/posts", "method": "POST", "userAgent": "node"}	2025-12-13 13:18:43.168315
+ab397a46-d4bb-4e14-ab9a-f195969b55f5	\N	Unknown	Unknown	Unknown	CREATE	Unknown	\N	\N	\N	{"email": "helo@gamil.com"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/leads", "method": "POST", "userAgent": "node"}	2025-12-13 13:33:14.150127
+edf2597a-5250-4140-85ad-bbf29424e8d2	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print", "slug": "comforter-|-king-size-winter-comforter-(86\\"-x-84\\")-|-lightweight-&-cozy-with-poly-filler-[micro-fiber-padding]-|-ash-blue-and-white-floral-print", "scope": "Global", "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": null, "productId": 2, "salePrice": "327.00", "taxAmount": "27.00", "unitPrice": "300.00", "discountId": 1, "finalPrice": "297.00", "hoverImage": "hoverImage-1765503092000.png", "discountSlug": "winter-sale", "isNewArrival": false, "reviewsCount": null, "discountValue": "10.00", "promotionType": "Seasonal", "purchasePrice": "200.00", "discountAmount": "30.00", "thumbnailImage": "thumbnailImage-1765503085981.jpg", "discountedPrice": "270.00", "discountStrategy": "Percentage", "productVariantId": 2, "shortDescription": "\\"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n- Material: Cotton\\n- Poly Filler Inside\\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\\n- Package: Comes with Plastic Packed Box.\\n- Machine Washable\\"\\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\\n\\n\\n\\nQuality Material:\\n\\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\\n\\n\\nUnique Design:\\n\\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\\n\\n\\nPerfect Size:\\n\\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\\n\\n\\nColor may be slightly differ for Photo shoot or your computer resolution.\\n\\nSpecifications of Comforter | King Size Winter Comforter (86\\" x 84\\") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-13 15:54:02.683211
+\.
+
+
+--
 -- Data for Name: banners; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
 COPY public.banners (id, title, type, image, url, description, active, user_id) FROM stdin;
+1	testing banner	Slider	image-1765480188042.jpg	asdf	adsf	t	1
+2	second banner	Slider	image-1765480234563.jpg	d	asdfasdf	t	1
+3	New Offer	Banner	image-1765528504746.png	/	dddde	t	1
+4	Sessnal offer today	Banner	image-1765528590808.jpg	/	eeeeee	t	1
+5	Weekly Offer	Banner	image-1765528756827.webp	/	Weekly Offer Weekly Offer	t	1
+6	Footer Offer	Footer	image-1765528885403.webp	/	Footer Offer	t	1
 \.
 
 
@@ -2239,7 +2644,7 @@ COPY public.banners (id, title, type, image, url, description, active, user_id) 
 --
 
 COPY public.brands (id, name, slug, image, description, status, user_id, created_at, updated_at) FROM stdin;
-1	Honda	honda	image-1750902782332.png	\N	Active	1	2025-06-26 01:53:09.52051	2025-06-26 01:53:09.52051
+1	Honda	honda	image-1765480724497.jpg	\N	Active	1	2025-06-26 01:53:09.52051	2025-12-11 19:18:46.112887
 \.
 
 
@@ -2247,7 +2652,8 @@ COPY public.brands (id, name, slug, image, description, status, user_id, created
 -- Data for Name: carts; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.carts (id, product_id, product_variant_id, qty, user_id, created_at, updated_at) FROM stdin;
+COPY public.carts (id, product_id, product_variant_id, qty, user_id, created_at, updated_at, abandoned_email_sent) FROM stdin;
+43	2	2	1	1	2025-12-13 15:54:01.843029	2025-12-13 15:54:01.843029	f
 \.
 
 
@@ -2255,9 +2661,17 @@ COPY public.carts (id, product_id, product_variant_id, qty, user_id, created_at,
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.categories (id, name, slug, image, level, description, active, user_id, created_at, updated_at, mpath, "parentId") FROM stdin;
-1	Honda	honda	image-1754625777853.png	1	\N	t	1	2025-08-08 04:02:59.000581	2025-08-08 04:02:59.000581	1.	\N
-2	Yahama	yahama	\N	1	\N	t	1	2025-08-08 04:05:10.266491	2025-08-08 04:05:10.266491	2.	\N
+COPY public.categories (id, name, slug, image, level, description, active, user_id, created_at, updated_at, mpath, "parentId", is_featured) FROM stdin;
+2	Yahama	yahama	\N	1	\N	t	1	2025-08-08 04:05:10.266491	2025-08-08 04:05:10.266491	2.	\N	f
+5	Fashion	fashin	image-1765480785022.jpg	1	asdf	t	1	2025-12-11 19:19:46.421698	2025-12-12 01:17:22.532523	5.	\N	t
+7	warmers sterilizers	warmers-sterilizers	image-1765502328220.png	1	warmers sterilizers\n	t	1	2025-12-12 01:18:49.714467	2025-12-12 01:18:49.714467	7.	\N	t
+8	monoculars	monoculars	image-1765502425785.png	1	monoculars	t	1	2025-12-12 01:20:27.827678	2025-12-12 01:20:27.827678	8.	\N	t
+9	projector accessories	projector-accessories	image-1765502482603.png	1	projector accessories\nprojector accessories	t	1	2025-12-12 01:21:25.642479	2025-12-12 01:21:25.642479	9.	\N	t
+10	Kitchen Fittings	kitchen-fittings	image-1765502539709.jpg	1	Kitchen Fittings	t	1	2025-12-12 01:22:20.874119	2025-12-12 01:22:20.874119	10.	\N	t
+11	Kitchen Fittings	kitchen-fittings	image-1765502893950.jpg	1	Kitchen Fittings\nKitchen Fittings	t	1	2025-12-12 01:28:15.857391	2025-12-12 01:28:15.857391	11.	\N	t
+3	New Category	test-category	image-1765474918003.jpg	1	asdf	t	1	2025-12-11 17:41:59.131506	2025-12-12 01:29:19.544406	3.	\N	f
+1	Honda	honda	image-1765475165379.jpg	1	\N	t	1	2025-08-08 04:02:59.000581	2025-12-13 12:38:02.394426	1.	\N	t
+6	high school	high-school	image-1765501980012.png	1	high school  high school	t	1	2025-12-12 01:13:03.997073	2025-12-13 12:53:15.774597	6.	\N	f
 \.
 
 
@@ -2266,7 +2680,15 @@ COPY public.categories (id, name, slug, image, level, description, active, user_
 --
 
 COPY public.colors (id, name, color, user_id) FROM stdin;
-1	red	red	1
+1	red	#52c41a	1
+\.
+
+
+--
+-- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.comments (id, post_id, content, status, user_id, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -2291,6 +2713,17 @@ COPY public.coupon_products (id, product_id, coupon_id, created_at, updated_at) 
 --
 
 COPY public.coupons (id, type, code, discount_type, value, start_date, expiry_date, min_order_amount, min_cart_value, max_user, max_discount_value, usage_count, usage_limit, usage_per_user, image, active, user_id, created_at, updated_at) FROM stdin;
+1	Order	gowtamkumar	Fixed	10	2025-12-10 18:00:00+00	2025-12-18 18:00:00+00	50	50	1000	500	\N	10	2	\N	t	1	2025-12-12 03:50:48.57776	2025-12-12 03:50:48.57776
+\.
+
+
+--
+-- Data for Name: currencies; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.currencies (id, name, symbol, exchange_rate, user_id) FROM stdin;
+1	USD	$	122.17	1
+2	BDT	৳	1	1
 \.
 
 
@@ -2299,6 +2732,7 @@ COPY public.coupons (id, type, code, discount_type, value, start_date, expiry_da
 --
 
 COPY public.discounts (id, name, key, scope, slug, promotion_type, discount_strategy, offer_details, value, start_date, end_date, priority, stackable, status, image, description, user_id, created_at, updated_at) FROM stdin;
+1	Winter sale	DISC-0.P7J6JQWB7KD	Global	winter-sale	Seasonal	Percentage	\N	10.00	2025-12-10 18:00:00+00	2025-12-24 18:00:00+00	1	f	Active	image-1765510885665.jpg	asdfasdf dasfasdf	1	2025-12-12 03:41:32.110711	2025-12-12 03:41:32.110711
 \.
 
 
@@ -2466,14 +2900,46 @@ COPY public.divisions (id, name, bn_name, url) FROM stdin;
 -- Data for Name: files; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.files (id, fieldname, originalname, encoding, mimetype, destination, filename, path, size) FROM stdin;
-1	image	Honda.png	7bit	image/png	public/uploads	image-1750902782332.png	public/uploads/image-1750902782332.png	148600
-3	image	Honda.png	7bit	image/png	public/uploads	image-1754624609987.png	public/uploads/image-1754624609987.png	80835
-4	favicon	Honda.png	7bit	image/png	public/uploads	favicon-1754624633867.png	public/uploads/favicon-1754624633867.png	217079
-5	image	Honda.png	7bit	image/png	public/uploads	image-1754625777853.png	public/uploads/image-1754625777853.png	163138
-6	thumbnailImage	grocery-banner.png	7bit	image/png	public/uploads	thumbnailImage-1754626649285.png	public/uploads/thumbnailImage-1754626649285.png	222311
-7	hoverImage	grocery-banner-2.jpg	7bit	image/jpeg	public/uploads	hoverImage-1754626695286.jpg	public/uploads/hoverImage-1754626695286.jpg	9172
-8	images	product-single-img-1.jpg	7bit	image/jpeg	public/uploads	images-1754626713844.jpg	public/uploads/images-1754626713844.jpg	21855
+COPY public.files (id, fieldname, originalname, encoding, mimetype, destination, filename, path, size, created_at, updated_at) FROM stdin;
+9	thumbnailImage	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	thumbnailImage-1765415824708.jpg	public/uploads/thumbnailImage-1765415824708.jpg	72685	2025-12-11 01:17:04.711998+00	2025-12-11 01:17:04.711998+00
+10	hoverImage	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	hoverImage-1765415833283.jpg	public/uploads/hoverImage-1765415833283.jpg	72685	2025-12-11 01:17:13.284911+00	2025-12-11 01:17:13.284911+00
+11	images	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	images-1765415838674.jpg	public/uploads/images-1765415838674.jpg	72685	2025-12-11 01:17:18.677548+00	2025-12-11 01:17:18.677548+00
+12	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765416420880.jpg	public/uploads/image-1765416420880.jpg	72685	2025-12-11 01:27:00.883087+00	2025-12-11 01:27:00.883087+00
+14	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765418573917.jpg	public/uploads/image-1765418573917.jpg	7944	2025-12-11 02:02:53.923123+00	2025-12-11 02:02:53.923123+00
+15	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765474918003.jpg	public/uploads/image-1765474918003.jpg	9971	2025-12-11 17:41:58.01119+00	2025-12-11 17:41:58.01119+00
+16	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765475165379.jpg	public/uploads/image-1765475165379.jpg	72685	2025-12-11 17:46:05.382577+00	2025-12-11 17:46:05.382577+00
+18	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765476549606.jpg	public/uploads/image-1765476549606.jpg	169609	2025-12-11 18:09:09.61115+00	2025-12-11 18:09:09.61115+00
+19	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765476757190.jpg	public/uploads/image-1765476757190.jpg	169609	2025-12-11 18:12:37.19843+00	2025-12-11 18:12:37.19843+00
+20	image	d5f7b2a799d63bc1e695fb6ae31dfdc693938e2f.jpg	7bit	image/jpeg	public/uploads	image-1765480188042.jpg	public/uploads/image-1765480188042.jpg	345621	2025-12-11 19:09:48.051746+00	2025-12-11 19:09:48.051746+00
+21	image	e9164aecb80fea19ebf031d585b34289fe655cd3.jpg	7bit	image/jpeg	public/uploads	image-1765480234563.jpg	public/uploads/image-1765480234563.jpg	7466	2025-12-11 19:10:34.569678+00	2025-12-11 19:10:34.569678+00
+22	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765480724497.jpg	public/uploads/image-1765480724497.jpg	42501	2025-12-11 19:18:44.499076+00	2025-12-11 19:18:44.499076+00
+23	image	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	image-1765480785022.jpg	public/uploads/image-1765480785022.jpg	82465	2025-12-11 19:19:45.029456+00	2025-12-11 19:19:45.029456+00
+24	image	Screenshot from 2025-12-04 20-46-04.png	7bit	image/png	public/uploads	image-1765501980012.png	public/uploads/image-1765501980012.png	4667	2025-12-12 01:13:00.02507+00	2025-12-12 01:13:00.02507+00
+25	image	d6363a621b143fdd4113ceff36cbcefe.jpg_200x200q80.png	7bit	image/png	public/uploads	image-1765502328220.png	public/uploads/image-1765502328220.png	75043	2025-12-12 01:18:48.233902+00	2025-12-12 01:18:48.233902+00
+26	image	34624cd55a78074f89e9b1fb7515f158.png_200x200q80.png	7bit	image/png	public/uploads	image-1765502425785.png	public/uploads/image-1765502425785.png	69418	2025-12-12 01:20:25.793599+00	2025-12-12 01:20:25.793599+00
+27	image	30aeeeb6ca71c2e311a225f02e613827.jpg_200x200q80.png	7bit	image/png	public/uploads	image-1765502482603.png	public/uploads/image-1765502482603.png	31383	2025-12-12 01:21:22.610336+00	2025-12-12 01:21:22.610336+00
+28	image	c1ce4f7a627c4759fc7037fa6f7cb11d.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	image-1765502539709.jpg	public/uploads/image-1765502539709.jpg	48772	2025-12-12 01:22:19.715966+00	2025-12-12 01:22:19.715966+00
+29	image	Sbf7298547a8a48539d367de5792f6ab2I.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	image-1765502893950.jpg	public/uploads/image-1765502893950.jpg	23683	2025-12-12 01:28:13.951316+00	2025-12-12 01:28:13.951316+00
+30	thumbnailImage	c1ce4f7a627c4759fc7037fa6f7cb11d.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	thumbnailImage-1765503085981.jpg	public/uploads/thumbnailImage-1765503085981.jpg	5839	2025-12-12 01:31:25.983133+00	2025-12-12 01:31:25.983133+00
+31	hoverImage	30aeeeb6ca71c2e311a225f02e613827.jpg_200x200q80.png	7bit	image/png	public/uploads	hoverImage-1765503092000.png	public/uploads/hoverImage-1765503092000.png	31383	2025-12-12 01:31:32.001108+00	2025-12-12 01:31:32.001108+00
+32	images	Sbf7298547a8a48539d367de5792f6ab2I.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	images-1765503096896.jpg	public/uploads/images-1765503096896.jpg	4164	2025-12-12 01:31:36.897064+00	2025-12-12 01:31:36.897064+00
+33	image	d5f7b2a799d63bc1e695fb6ae31dfdc693938e2f.jpg	7bit	image/jpeg	public/uploads	image-1765510885665.jpg	public/uploads/image-1765510885665.jpg	330073	2025-12-12 03:41:25.675128+00	2025-12-12 03:41:25.675128+00
+35	image	banglargonji-payment-methods.png.png	7bit	image/png	public/uploads	image-1765512284558.png	public/uploads/image-1765512284558.png	11400	2025-12-12 04:04:44.564879+00	2025-12-12 04:04:44.564879+00
+36	image	grocery-banner.png	7bit	image/png	public/uploads	image-1765528504746.png	public/uploads/image-1765528504746.png	319500	2025-12-12 08:35:04.755561+00	2025-12-12 08:35:04.755561+00
+37	image	e9164aecb80fea19ebf031d585b34289fe655cd3.jpg	7bit	image/jpeg	public/uploads	image-1765528590808.jpg	public/uploads/image-1765528590808.jpg	7631	2025-12-12 08:36:30.814668+00	2025-12-12 08:36:30.814668+00
+38	image	images-1745804129901.webp	7bit	image/webp	public/uploads	image-1765528756827.webp	public/uploads/image-1765528756827.webp	8340	2025-12-12 08:39:16.834161+00	2025-12-12 08:39:16.834161+00
+39	image	images-1745804129901 (1).webp	7bit	image/webp	public/uploads	image-1765528885403.webp	public/uploads/image-1765528885403.webp	6784	2025-12-12 08:41:25.404735+00	2025-12-12 08:41:25.404735+00
+40	image	c1ce4f7a627c4759fc7037fa6f7cb11d.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	image-1765631422756.jpg	public/uploads/image-1765631422756.jpg	5839	2025-12-13 13:10:22.76377+00	2025-12-13 13:10:22.76377+00
+41	image	Sbf7298547a8a48539d367de5792f6ab2I.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	image-1765631549074.jpg	public/uploads/image-1765631549074.jpg	4164	2025-12-13 13:12:29.081315+00	2025-12-13 13:12:29.081315+00
+42	image	Sbf7298547a8a48539d367de5792f6ab2I.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	image-1765631920959.jpg	public/uploads/image-1765631920959.jpg	4164	2025-12-13 13:18:40.967509+00	2025-12-13 13:18:40.967509+00
+43	favicon	banglargonji-payment-methods.png.png	7bit	image/png	public/uploads	favicon-1765639747311.png	public/uploads/favicon-1765639747311.png	1699	2025-12-13 15:29:07.314148+00	2025-12-13 15:29:07.314148+00
+1	image	Honda.png	7bit	image/png	public/uploads	image-1750902782332.png	public/uploads/image-1750902782332.png	148600	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
+3	image	Honda.png	7bit	image/png	public/uploads	image-1754624609987.png	public/uploads/image-1754624609987.png	80835	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
+4	favicon	Honda.png	7bit	image/png	public/uploads	favicon-1754624633867.png	public/uploads/favicon-1754624633867.png	217079	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
+5	image	Honda.png	7bit	image/png	public/uploads	image-1754625777853.png	public/uploads/image-1754625777853.png	163138	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
+6	thumbnailImage	grocery-banner.png	7bit	image/png	public/uploads	thumbnailImage-1754626649285.png	public/uploads/thumbnailImage-1754626649285.png	222311	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
+7	hoverImage	grocery-banner-2.jpg	7bit	image/jpeg	public/uploads	hoverImage-1754626695286.jpg	public/uploads/hoverImage-1754626695286.jpg	9172	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
+8	images	product-single-img-1.jpg	7bit	image/jpeg	public/uploads	images-1754626713844.jpg	public/uploads/images-1754626713844.jpg	21855	2025-12-14 13:16:31.798365+00	2025-12-14 13:16:31.798365+00
 \.
 
 
@@ -2483,6 +2949,7 @@ COPY public.files (id, fieldname, originalname, encoding, mimetype, destination,
 
 COPY public.leads (id, email, created_at, updated_at) FROM stdin;
 1	gowtamkumar2019@gmail.com	2025-08-08 04:07:33.464106+00	2025-08-08 04:07:33.464106+00
+2	helo@gamil.com	2025-12-13 13:33:14.143279+00	2025-12-13 13:33:14.143279+00
 \.
 
 
@@ -2491,6 +2958,7 @@ COPY public.leads (id, email, created_at, updated_at) FROM stdin;
 --
 
 COPY public.menus (id, name, items, footer_menu, top_bar_menu, main_menu, active, user_id, created_at, updated_at) FROM stdin;
+1	main	\N	f	f	f	t	1	2025-12-12 04:08:18.453258	2025-12-12 04:08:18.453258
 \.
 
 
@@ -2500,6 +2968,128 @@ COPY public.menus (id, name, items, footer_menu, top_bar_menu, main_menu, active
 
 COPY public.notifications (id, title, type, message, is_read, user_id, order_id, created_at, updated_at) FROM stdin;
 1	Order Placed	Order	Your order has been placed successfully. Order Tracking No: TRK-0000000001	f	1	1	2025-08-08 04:28:05.078824+00	2025-08-08 04:28:05.078824+00
+2	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:16:21.035852+00	2025-12-11 16:16:21.035852+00
+3	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:46:57.484943+00	2025-12-11 16:46:57.484943+00
+4	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:54:07.147833+00	2025-12-11 16:54:07.147833+00
+5	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:54:23.747207+00	2025-12-11 16:54:23.747207+00
+6	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:54:49.995428+00	2025-12-11 16:54:49.995428+00
+7	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:54:59.877604+00	2025-12-11 16:54:59.877604+00
+8	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:55:07.797015+00	2025-12-11 16:55:07.797015+00
+9	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:57:43.510179+00	2025-12-11 16:57:43.510179+00
+10	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:57:55.179731+00	2025-12-11 16:57:55.179731+00
+11	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:58:07.683123+00	2025-12-11 16:58:07.683123+00
+12	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:58:46.860056+00	2025-12-11 16:58:46.860056+00
+13	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 16:59:59.668439+00	2025-12-11 16:59:59.668439+00
+14	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:00:58.585077+00	2025-12-11 17:00:58.585077+00
+15	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:09:19.067661+00	2025-12-11 17:09:19.067661+00
+16	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:09:41.880975+00	2025-12-11 17:09:41.880975+00
+17	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:09:50.977361+00	2025-12-11 17:09:50.977361+00
+18	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:10:08.206382+00	2025-12-11 17:10:08.206382+00
+19	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:10:21.746324+00	2025-12-11 17:10:21.746324+00
+20	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:11:28.07438+00	2025-12-11 17:11:28.07438+00
+21	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:11:33.866213+00	2025-12-11 17:11:33.866213+00
+22	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:14:44.30981+00	2025-12-11 17:14:44.30981+00
+23	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:21:24.46244+00	2025-12-11 17:21:24.46244+00
+27	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2025-12-11 17:39:46.220875+00	2025-12-11 17:40:26.413205+00
+26	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2025-12-11 17:38:04.913984+00	2025-12-11 17:40:30.277623+00
+25	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2025-12-11 17:35:49.954359+00	2025-12-11 17:40:31.695077+00
+24	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2025-12-11 17:28:11.808721+00	2025-12-11 17:40:32.54682+00
+28	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:43:50.110353+00	2025-12-11 17:43:50.110353+00
+29	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:43:56.101+00	2025-12-11 17:43:56.101+00
+30	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:45:18.351488+00	2025-12-11 17:45:18.351488+00
+31	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:45:34.789801+00	2025-12-11 17:45:34.789801+00
+32	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:47:08.57632+00	2025-12-11 17:47:08.57632+00
+33	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:47:16.81087+00	2025-12-11 17:47:16.81087+00
+34	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:47:31.992375+00	2025-12-11 17:47:31.992375+00
+35	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:48:07.654031+00	2025-12-11 17:48:07.654031+00
+36	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:48:15.663176+00	2025-12-11 17:48:15.663176+00
+37	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:50:02.568872+00	2025-12-11 17:50:02.568872+00
+38	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:51:01.005032+00	2025-12-11 17:51:01.005032+00
+39	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:51:52.102016+00	2025-12-11 17:51:52.102016+00
+40	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:51:56.810029+00	2025-12-11 17:51:56.810029+00
+41	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:52:05.795544+00	2025-12-11 17:52:05.795544+00
+42	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:54:25.90102+00	2025-12-11 17:54:25.90102+00
+43	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:54:47.05901+00	2025-12-11 17:54:47.05901+00
+44	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:56:52.086401+00	2025-12-11 17:56:52.086401+00
+45	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 17:57:24.742299+00	2025-12-11 17:57:24.742299+00
+46	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 18:01:07.703845+00	2025-12-11 18:01:07.703845+00
+47	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 18:01:32.640101+00	2025-12-11 18:01:32.640101+00
+48	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 18:02:29.966788+00	2025-12-11 18:02:29.966788+00
+49	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 18:06:44.634946+00	2025-12-11 18:06:44.634946+00
+50	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 18:07:04.705697+00	2025-12-11 18:07:04.705697+00
+51	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 19:07:09.418202+00	2025-12-11 19:07:09.418202+00
+52	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-11 19:21:43.176709+00	2025-12-11 19:21:43.176709+00
+53	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:10:12.414151+00	2025-12-12 01:10:12.414151+00
+54	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:16:30.196106+00	2025-12-12 01:16:30.196106+00
+55	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:16:46.633271+00	2025-12-12 01:16:46.633271+00
+56	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:17:01.148622+00	2025-12-12 01:17:01.148622+00
+57	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:17:09.010931+00	2025-12-12 01:17:09.010931+00
+58	Processing	Order	Your order has been Processing. Order Tracking No: TRK-0000000001	f	1	1	2025-12-12 01:33:04.926112+00	2025-12-12 01:33:04.926112+00
+59	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:38:29.476163+00	2025-12-12 01:38:29.476163+00
+60	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:39:26.469061+00	2025-12-12 01:39:26.469061+00
+61	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:39:45.919854+00	2025-12-12 01:39:45.919854+00
+62	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 01:40:29.52527+00	2025-12-12 01:40:29.52527+00
+63	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 02:47:52.361049+00	2025-12-12 02:47:52.361049+00
+64	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 02:53:29.095892+00	2025-12-12 02:53:29.095892+00
+65	Coupon Applied	CouponApplied	Coupon gowtamkumar applied successfully! Discount: 10	f	1	\N	2025-12-12 04:17:35.702825+00	2025-12-12 04:17:35.702825+00
+66	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:19:15.652934+00	2025-12-12 04:19:15.652934+00
+67	Coupon Applied	CouponApplied	Coupon gowtamkumar applied successfully! Discount: 10	f	1	\N	2025-12-12 04:19:21.714383+00	2025-12-12 04:19:21.714383+00
+68	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:21:14.980439+00	2025-12-12 04:21:14.980439+00
+69	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:21:55.1923+00	2025-12-12 04:21:55.1923+00
+70	Coupon Applied	CouponApplied	Coupon gowtamkumar applied successfully! Discount: 10	f	1	\N	2025-12-12 04:22:36.066315+00	2025-12-12 04:22:36.066315+00
+71	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:23:06.548544+00	2025-12-12 04:23:06.548544+00
+72	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000001	f	1	2	2025-12-12 04:32:31.197179+00	2025-12-12 04:32:31.197179+00
+73	New Order Received	ADMIN_NEW_ORDER	New order #2 received from User 1. Tracking No: TRK-0000000001	f	1	2	2025-12-12 04:32:31.182957+00	2025-12-12 04:32:31.182957+00
+74	Processing	Order	Your order has been Processing. Order Tracking No: TRK-0000000001	f	1	2	2025-12-12 04:34:21.977451+00	2025-12-12 04:34:21.977451+00
+75	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000002	f	1	3	2025-12-12 04:37:48.550665+00	2025-12-12 04:37:48.550665+00
+76	New Order Received	ADMIN_NEW_ORDER	New order #3 received from User 1. Tracking No: TRK-0000000002	f	1	3	2025-12-12 04:37:48.543585+00	2025-12-12 04:37:48.543585+00
+77	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:39:34.686533+00	2025-12-12 04:39:34.686533+00
+78	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:39:44.939813+00	2025-12-12 04:39:44.939813+00
+79	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 04:40:13.366997+00	2025-12-12 04:40:13.366997+00
+80	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000003	f	1	4	2025-12-12 04:40:57.303174+00	2025-12-12 04:40:57.303174+00
+81	New Order Received	ADMIN_NEW_ORDER	New order #4 received from User 1. Tracking No: TRK-0000000003	f	1	4	2025-12-12 04:40:57.283657+00	2025-12-12 04:40:57.283657+00
+82	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 06:07:42.348853+00	2025-12-12 06:07:42.348853+00
+83	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 06:44:15.894428+00	2025-12-12 06:44:15.894428+00
+84	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 06:48:56.346081+00	2025-12-12 06:48:56.346081+00
+85	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-12 08:21:09.529265+00	2025-12-12 08:21:09.529265+00
+86	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:27:03.801769+00	2025-12-13 12:27:03.801769+00
+87	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:36:18.906625+00	2025-12-13 12:36:18.906625+00
+88	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:40:20.082208+00	2025-12-13 12:40:20.082208+00
+89	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:43:01.653186+00	2025-12-13 12:43:01.653186+00
+90	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:44:40.634309+00	2025-12-13 12:44:40.634309+00
+91	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:45:05.100927+00	2025-12-13 12:45:05.100927+00
+92	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:45:11.620212+00	2025-12-13 12:45:11.620212+00
+93	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:45:46.714851+00	2025-12-13 12:45:46.714851+00
+94	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:46:48.902784+00	2025-12-13 12:46:48.902784+00
+95	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:46:56.786441+00	2025-12-13 12:46:56.786441+00
+96	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 12:51:54.078611+00	2025-12-13 12:51:54.078611+00
+97	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:23:37.824862+00	2025-12-13 13:23:37.824862+00
+98	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:24:02.130658+00	2025-12-13 13:24:02.130658+00
+99	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:24:17.876691+00	2025-12-13 13:24:17.876691+00
+100	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:24:50.880283+00	2025-12-13 13:24:50.880283+00
+101	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:25:02.030392+00	2025-12-13 13:25:02.030392+00
+102	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:26:27.335847+00	2025-12-13 13:26:27.335847+00
+103	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:26:56.896325+00	2025-12-13 13:26:56.896325+00
+104	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:28:07.28852+00	2025-12-13 13:28:07.28852+00
+105	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:28:36.666251+00	2025-12-13 13:28:36.666251+00
+106	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 13:28:49.05861+00	2025-12-13 13:28:49.05861+00
+107	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:07:11.927935+00	2025-12-13 15:07:11.927935+00
+108	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:11:46.287092+00	2025-12-13 15:11:46.287092+00
+109	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:15:05.036383+00	2025-12-13 15:15:05.036383+00
+110	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:15:19.592506+00	2025-12-13 15:15:19.592506+00
+111	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:16:02.706596+00	2025-12-13 15:16:02.706596+00
+112	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:17:39.39761+00	2025-12-13 15:17:39.39761+00
+113	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:18:29.235196+00	2025-12-13 15:18:29.235196+00
+114	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:18:34.05207+00	2025-12-13 15:18:34.05207+00
+115	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:19:00.124297+00	2025-12-13 15:19:00.124297+00
+116	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:20:01.626031+00	2025-12-13 15:20:01.626031+00
+117	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:20:11.486772+00	2025-12-13 15:20:11.486772+00
+118	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:20:43.211015+00	2025-12-13 15:20:43.211015+00
+119	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:21:38.460164+00	2025-12-13 15:21:38.460164+00
+120	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:21:47.751636+00	2025-12-13 15:21:47.751636+00
+121	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:21:54.668939+00	2025-12-13 15:21:54.668939+00
+122	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:42:04.356324+00	2025-12-13 15:42:04.356324+00
+123	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-13 15:47:39.795245+00	2025-12-13 15:47:39.795245+00
 \.
 
 
@@ -2508,7 +3098,10 @@ COPY public.notifications (id, title, type, message, is_read, user_id, order_id,
 --
 
 COPY public.order_items (id, order_id, unit_price, purchase_price, qty, tax_amount, discounted_unit_pice, total_discounted_price, discount_amount_per_unit, total_discount_amount, sub_total, product_id, product_variant_id) FROM stdin;
-1	1	200.00	100.00	1	20.00	200.00	200.00	0.00	0.00	220.00	1	1
+2	2	200.00	100.00	1	18.00	180.00	180.00	20.00	20.00	198.00	1	1
+3	2	300.00	200.00	1	27.00	270.00	270.00	30.00	30.00	297.00	2	2
+4	3	200.00	100.00	1	18.00	180.00	180.00	20.00	20.00	198.00	1	1
+5	4	200.00	100.00	1	18.00	180.00	180.00	20.00	20.00	198.00	1	1
 \.
 
 
@@ -2517,7 +3110,10 @@ COPY public.order_items (id, order_id, unit_price, purchase_price, qty, tax_amou
 --
 
 COPY public.order_trackings (id, order_id, user_id, location, status, created_at, updated_at) FROM stdin;
-1	1	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-08-08 04:28:05.047495	2025-08-08 04:28:05.047495
+3	2	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-12-12 04:32:31.182957	2025-12-12 04:32:31.182957
+4	2	1	\N	Order is Being Processed	2025-12-12 04:34:21.614663	2025-12-12 04:34:21.614663
+5	3	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-12-12 04:37:48.543585	2025-12-12 04:37:48.543585
+6	4	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-12-12 04:40:57.283657	2025-12-12 04:40:57.283657
 \.
 
 
@@ -2526,7 +3122,18 @@ COPY public.order_trackings (id, order_id, user_id, location, status, created_at
 --
 
 COPY public.orders (id, tracking_no, total_qty, sub_total, total_items_discount, coupon_discount, total_tax, shipping_charge, grand_total, shipping_address_id, coupon_id, cancel_resson, payment_status, payment_method, status, tran_id, user_id, delivery_id, created_at, updated_at) FROM stdin;
+2	TRK-0000000001	2	495.00	50.00	0.00	45.00	0.00	495.00	1	\N	\N	Not Paid	Cash	Processing	1765513951181	1	\N	2025-12-12 04:32:31.182957+00	2025-12-12 04:34:21.614663+00
+3	TRK-0000000002	1	198.00	20.00	0.00	18.00	0.00	198.00	1	\N	\N	Not Paid	SSLCOMMERZ	Pending	1765514268543	1	\N	2025-12-12 04:37:48.543585+00	2025-12-12 04:37:48.543585+00
+4	TRK-0000000003	1	198.00	20.00	0.00	18.00	0.00	198.00	1	\N	\N	Not Paid	SSLCOMMERZ	Pending	1765514457275	1	\N	2025-12-12 04:40:57.283657+00	2025-12-12 04:40:57.283657+00
 1	TRK-0000000001	1	220.00	0.00	0.00	20.00	0.00	220.00	1	\N	\N	Not Paid	Cash	Pending	1754627285034	1	\N	2025-08-08 04:28:05.047495+00	2025-08-08 04:28:05.047495+00
+\.
+
+
+--
+-- Data for Name: pages; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.pages (id, title, slug, content, content_type, meta_description, status, user_id, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -2539,10 +3146,33 @@ COPY public.payments (id, order_id, payment_date, payment_type, payment_method, 
 
 
 --
+-- Data for Name: post_categories; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.post_categories (id, post_id, category_id) FROM stdin;
+1	1	2
+\.
+
+
+--
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.posts (id, slug, title, image, tags, content, user_id, status, created_at, updated_at) FROM stdin;
+1	react-labs:-what-we've-been-working-on-–-june-2022	React Labs: What We've Been Working On – June 2022	image-1765631920959.jpg	dsaf	React 18 was years in the making, and with it brought valuable lessons for the React team. Its release was the result of many years of research and exploring many paths. Some of those paths were successful; many more were dead-ends that led to new insights. One lesson we’ve learned is that it’s frustrating for the community to wait for new features without having insight into these paths that we’re exploring.\n\nWe typically have a number of projects being worked on at any time, ranging from the more experimental to the clearly defined. Looking ahead, we’d like to start regularly sharing more about what we’ve been working on with the community across these projects.\n\nTo set expectations, this is not a roadmap with clear timelines. Many of these projects are under active research and are difficult to put concrete ship dates on. They may possibly never even ship in their current iteration depending on what we learn. Instead, we want to share with you the problem spaces we’re actively thinking about, and what we’ve learned so far.	1	Published	2025-12-13 13:18:43.158081+00	2025-12-13 13:18:43.158081+00
+\.
+
+
+--
 -- Data for Name: product_categories; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
 COPY public.product_categories (id, category_id, product_id) FROM stdin;
+4	7	2
+5	1	2
+6	6	2
+7	5	2
+8	1	1
 2	1	1
 \.
 
@@ -2552,6 +3182,7 @@ COPY public.product_categories (id, category_id, product_id) FROM stdin;
 --
 
 COPY public.product_variants (id, sku, unit_price, purchase_price, product_id, size_id, color_id, material, image, "default", stock_qty) FROM stdin;
+2	\N	300.00	200.00	2	\N	\N	\N	\N	f	1120
 1	\N	200.00	100.00	1	\N	\N	\N	\N	f	200
 \.
 
@@ -2560,8 +3191,9 @@ COPY public.product_variants (id, sku, unit_price, purchase_price, product_id, s
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.products (id, name, slug, variant, is_returnable, featured, description, short_description, tax_id, discount_id, enable_review, limit_purchase_qty, alert_qty, status, brand_id, unit_id, tags, thumbnail_image, hover_image, images, user_id, created_at, updated_at) FROM stdin;
-1	(FP-M-20) Smart Executive office chair China mesh /premium quality/1 years warranty/original China chair/ gaming chair /Furniture Plus	(fp-m-20)-smart-executive-office-chair-china-mesh-/premium-quality/1-years-warranty/original-china-chair/-gaming-chair-/furniture-plus	f	t	f	🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\n\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\n\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\n\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\n\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\n\n✅ প্রতিটি পণ্যে থাকছে:\n\n১ বছরের ওয়ারেন্টি\n\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\n\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\n\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\n\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\n\nক্যাশ অন ডেলিভারি সুবিধা 🥰\n\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\n\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\n\nFurniture Plus আপনার পাশে আছি সবসময়\n\n🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\n\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\n\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\n\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\n\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\n\n✅ প্রতিটি পণ্যে থাকছে:\n\n১ বছরের ওয়ারেন্টি \n\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\n\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\n\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\n\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা \n\nক্যাশ অন ডেলিভারি সুবিধা 🥰\n\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\n\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\n\nFurniture Plus আপনার পাশে আছি সবসময়।	🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\n\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\n\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\n\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\n\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\n\n✅ প্রতিটি পণ্যে থাকছে:\n\n১ বছরের ওয়ারেন্টি\n\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\n\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\n\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\n\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\n\nক্যাশ অন ডেলিভারি সুবিধা 🥰\n\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\n\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\n\nFurniture Plus আপনার পাশে আছি সবসময়	1	\N	t	10	100	Active	1	1	new product, hello, nice product	thumbnailImage-1754626649285.png	hoverImage-1754626695286.jpg	images-1754626713844.jpg	1	2025-08-08 04:18:53.669065	2025-08-08 04:52:24.096934
+COPY public.products (id, name, slug, variant, is_returnable, featured, description, short_description, tax_id, discount_id, enable_review, limit_purchase_qty, alert_qty, status, brand_id, unit_id, tags, thumbnail_image, hover_image, images, user_id, created_at, updated_at, is_new_arrival) FROM stdin;
+2	Comforter | King Size Winter Comforter (86" x 84") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print	comforter-|-king-size-winter-comforter-(86"-x-84")-|-lightweight-&-cozy-with-poly-filler-[micro-fiber-padding]-|-ash-blue-and-white-floral-print	f	t	t	"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\n- Material: Cotton\n- Poly Filler Inside\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\n- Package: Comes with Plastic Packed Box.\n- Machine Washable"\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\n\n\n\nQuality Material:\n\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\n\n\nUnique Design:\n\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\n\n\nPerfect Size:\n\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\n\n\nColor may be slightly differ for Photo shoot or your computer resolution.\n\nSpecifications of Comforter | King Size Winter Comforter (86" x 84") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain	"King Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\n- Material: Cotton\n- Poly Filler Inside\n- Size: Double Size: 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft\n- Package: Comes with Plastic Packed Box.\n- Machine Washable"\nKing Size Comforter_ Poly Filler Inside Feather Like Comforter_White with Red Small Floral Print_Lightweight Comforter Comes With Box Perfect For winter\n\n\n\nQuality Material:\n\nMade of 100% High-Quality Fabric that makes the Comforter really soft and comfortable for your body. Even with the best fabric, the Comforter is really light-weighted.\n\n\nUnique Design:\n\nAll the Comforters are purely manufactured from scratch to provide our customers with uniquely designed and high-quality Comforters. You also can check out our All Collection for Comforter section.\n\n\nPerfect Size:\n\nThe Comforter that measures 86 X 84 inch (+- 2 inch) or 7.16 X 7 ft which is the perfect fit for your bed.\n\n\nColor may be slightly differ for Photo shoot or your computer resolution.\n\nSpecifications of Comforter | King Size Winter Comforter (86" x 84") | Lightweight & Cozy with Poly Filler [Micro-fiber Padding] | Ash Blue and White Floral Print\nBrandNo BrandSKU458401545_BD-2197936228FillingMicrofiberPatternPlain	1	\N	t	10	10	Active	1	2	new tag, new product	thumbnailImage-1765503085981.jpg	hoverImage-1765503092000.png	images-1765503096896.jpg	1	2025-12-12 01:31:40.616001	2025-12-12 01:31:40.616001	f
+1	(FP-M-20) Smart Executive office chair China mesh /premium quality/1 years warranty/original China chair/ gaming chair /Furniture Plus	(fp-m-20)-smart-executive-office-chair-china-mesh-/premium-quality/1-years-warranty/original-china-chair/-gaming-chair-/furniture-plus	f	t	f	🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\n\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\n\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\n\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\n\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\n\n✅ প্রতিটি পণ্যে থাকছে:\n\n১ বছরের ওয়ারেন্টি\n\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\n\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\n\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\n\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\n\nক্যাশ অন ডেলিভারি সুবিধা 🥰\n\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\n\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\n\nFurniture Plus আপনার পাশে আছি সবসময়\n\n🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\n\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\n\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\n\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\n\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\n\n✅ প্রতিটি পণ্যে থাকছে:\n\n১ বছরের ওয়ারেন্টি \n\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\n\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\n\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\n\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা \n\nক্যাশ অন ডেলিভারি সুবিধা 🥰\n\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\n\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\n\nFurniture Plus আপনার পাশে আছি সবসময়।	🌟 কেন হাজারো কাস্টমার Furniture Plus-কে বেছে নিয়েছে?\n\nFurniture Plus® — শুধু পণ্য নয়, আমরা দিচ্ছি আপনার বিশ্বাসের গ্যারান্টি।\n\n🔹 আমাদের থেকে যারা একবার কিনেছেন, তারা পরবর্তীবারও আমাদের কাছেই ফিরেছেন।\n\n🔹 ৯৭% পজিটিভ রেটিং আর হাজারো সন্তুষ্ট কাস্টমারই আমাদের শক্তি।\n\n🔹 আমরা কম দামে নয়, মান ও সার্ভিসে সেরা হতে চাই।\n\n✅ প্রতিটি পণ্যে থাকছে:\n\n১ বছরের ওয়ারেন্টি\n\nAfter-Sales সার্ভিস ও ফ্রি গাইডলাইন\n\nসঠিক কোয়ালিটি, নিখুঁত ফিনিশিং\n\nসরাসরি আমাদের Verified Store থেকে ডেলিভারি\n\n🇧🇩 সারাদেশে হোম ডেলিভারি সুবিধা\n\nক্যাশ অন ডেলিভারি সুবিধা 🥰\n\n⚠️ বাজারে অনেকে অল্প দামে পণ্য দেয়, কিন্তু মান নিয়ে করে আপস।\n\nআমরা করি না। কারণ আমরা জানি – সস্তার জিনিস বারবার কিনতে হয়, ভালো জিনিস একবারই যথেষ্ট।\n\nFurniture Plus আপনার পাশে আছি সবসময়	1	\N	t	10	100	Active	1	1	new product, hello, nice product	thumbnailImage-1765415824708.jpg	hoverImage-1765415833283.jpg	images-1765415838674.jpg	1	2025-08-08 04:18:53.669065	2025-12-13 12:34:17.523741	t
 \.
 
 
@@ -2577,8 +3209,8 @@ COPY public.reviews (id, product_id, rating, comment, "like", dis_like, status, 
 -- Data for Name: settings; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.settings (id, site_name, image, favicon, address, phone, email, social_link, seo, email_config, payment_account, home_page, about_page, contact_page, term_policy_page, footer_option, header_option, help_support, updated_at, order_free_shipping_amount) FROM stdin;
-1	Arko store	image-1754624609987.png	favicon-1754624633867.png	Monoharpur,kayemkola bazar, Jhikargacha, Jashore	01767163576	arko@gmail.com	\N	{"facebookUrl":"/","instagramUrl":"/","linkedinUrl":"/","twitterUrl":"/"}	{}	\N	\N	{"metaKeywords":["hello","hello\\\\","new account"]}	\N	\N	\N	{"copyRight":"Copyright in e-commerce"}	\N	{"returnSupport":"Return Support","originalProduct":"Original Product","guarantee":"100% Guarantee","cashDelivery":"Cash Delivery"}	2025-08-08 04:00:52.097169	3000.00
+COPY public.settings (id, site_name, image, favicon, address, phone, email, social_link, seo, email_config, payment_account, home_page, about_page, contact_page, term_policy_page, footer_option, header_option, help_support, updated_at, order_free_shipping_amount, whats_app_widget, description, faq) FROM stdin;
+1	Arko store	image-1765418573917.jpg	favicon-1765639747311.png	Monoharpur, Kayemkola Bazar, Jhikargacha, Jashore	01767163576	arko@gmail.com	{"facebookUrl":"/","instagramUrl":"/","linkedinUrl":"/","twitterUrl":"/"}	{}	\N	\N	{"metaKeywords":["hello","hello\\\\","new account"]}	\N	\N	\N	{"copyRight":"Copyright in E-Commerce","image":"image-1765512284558.png"}	{"leftText":"Welcome to our Store"}	{"returnSupport":"Return Support","originalProduct":"Original Product","guarantee":"100% Guarantee","cashDelivery":"Cash Delivery"}	2025-12-13 15:33:10.012288	3000.00	{"message":"Hello! How can you help me?","phone":"01767163576"}	test descripiton	\N
 \.
 
 
@@ -2596,6 +3228,7 @@ COPY public.shipping_addresses (id, type, name, phone_no, email, alternative_pho
 --
 
 COPY public.shipping_charges (id, district_id, shipping_amount, note, user_id, status) FROM stdin;
+1	20	100.00	sdafasdf	1	t
 \.
 
 
@@ -2614,6 +3247,9 @@ COPY public.sizes (id, name, status, user_id) FROM stdin;
 --
 
 COPY public.stock_adjusts (id, product_id, type, product_variant_id, qty, user_id) FROM stdin;
+1	2	Add	2	100	1
+2	2	Add	2	10	1
+3	2	Add	2	10	1
 \.
 
 
@@ -13065,6 +13701,10 @@ COPY public.user_activities (id, user_id, "timestamp") FROM stdin;
 6	1	2025-08-08T03:39:34.983+00:00
 7	1	2025-08-08T03:42:09.482+00:00
 8	1	2025-08-08T04:05:38.239+00:00
+9	1	2025-12-10T02:06:18.127+00:00
+10	1	2025-12-11T02:12:36.846+00:00
+11	1	2025-12-12T01:41:40.592+00:00
+12	1	2025-12-13T12:33:50.213+00:00
 \.
 
 
@@ -13072,8 +13712,8 @@ COPY public.user_activities (id, user_id, "timestamp") FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.users (id, name, username, password, email, type, phone, dob, gender, point, address, image, role, status, last_login, last_logout, ip_address, divice_id, reset_token, created_at, updated_at) FROM stdin;
-1	gowtam kumar	gowtamkumar	$2a$10$KZkB1lyQePSqsXC.YzPd1Op7txHtdZ.NPTV85mF.cowLK289lv/Xq	gowtampaul0@gmail.com	Admin	\N	\N	\N	\N	\N	\N	Admin	Active	2025-08-08 04:05:38.232	\N	::ffff:172.20.0.5	\N	\N	2025-06-26 01:29:52.362724	2025-08-08 04:05:38.234388
+COPY public.users (id, name, username, password, email, type, phone, dob, gender, point, address, image, role, status, last_login, last_logout, ip_address, divice_id, reset_token, created_at, updated_at, is_verified, verification_token, failed_login_attempts, block_until) FROM stdin;
+1	gowtam kumar	gowtamkumar	$2a$10$KZkB1lyQePSqsXC.YzPd1Op7txHtdZ.NPTV85mF.cowLK289lv/Xq	gowtampaul0@gmail.com	Admin	\N	\N	\N	\N	\N	\N	Admin	Active	2025-12-13 12:33:50.18	\N	::ffff:172.19.0.5	\N	\N	2025-06-26 01:29:52.362724	2025-12-13 12:33:50.182612	f	\N	0	\N
 \.
 
 
@@ -13082,6 +13722,7 @@ COPY public.users (id, name, username, password, email, type, phone, dob, gender
 --
 
 COPY public.wishlists (id, product_id, user_id, created_at, updated_at) FROM stdin;
+1	2	1	2025-12-12 08:32:51.887369	2025-12-12 08:32:51.887369
 \.
 
 
@@ -13149,6 +13790,13 @@ SELECT pg_catalog.setval('public.colors_id_seq', 1, true);
 
 
 --
+-- Name: comments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.comments_id_seq', 1, false);
+
+
+--
 -- Name: contacts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
@@ -13167,6 +13815,13 @@ SELECT pg_catalog.setval('public.coupon_products_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.coupons_id_seq', 1, false);
+
+
+--
+-- Name: currencies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.currencies_id_seq', 2, true);
 
 
 --
@@ -13215,7 +13870,7 @@ SELECT pg_catalog.setval('public.menus_id_seq', 1, false);
 -- Name: notifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.notifications_id_seq', 1, true);
+SELECT pg_catalog.setval('public.notifications_id_seq', 2, true);
 
 
 --
@@ -13240,10 +13895,31 @@ SELECT pg_catalog.setval('public.orders_id_seq', 1, true);
 
 
 --
+-- Name: pages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.pages_id_seq', 1, false);
+
+
+--
 -- Name: payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
 SELECT pg_catalog.setval('public.payments_id_seq', 1, false);
+
+
+--
+-- Name: post_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.post_categories_id_seq', 1, true);
+
+
+--
+-- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.posts_id_seq', 1, true);
 
 
 --
@@ -13407,6 +14083,14 @@ ALTER TABLE ONLY public.payments
 
 
 --
+-- Name: audit_logs PK_1bb179d048bbc581caa3b013439; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.audit_logs
+    ADD CONSTRAINT "PK_1bb179d048bbc581caa3b013439" PRIMARY KEY (id);
+
+
+--
 -- Name: reviews PK_231ae565c273ee700b283f15c1d; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -13428,6 +14112,14 @@ ALTER TABLE ONLY public.categories
 
 ALTER TABLE ONLY public.product_variants
     ADD CONSTRAINT "PK_281e3f2c55652d6a22c0aa59fd7" PRIMARY KEY (id);
+
+
+--
+-- Name: posts PK_2829ac61eff60fcec60d7274b9e; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT "PK_2829ac61eff60fcec60d7274b9e" PRIMARY KEY (id);
 
 
 --
@@ -13543,6 +14235,22 @@ ALTER TABLE ONLY public.coupon_products
 
 
 --
+-- Name: comments PK_8bf68bc960f2b69e818bdb90dcb; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT "PK_8bf68bc960f2b69e818bdb90dcb" PRIMARY KEY (id);
+
+
+--
+-- Name: pages PK_8f21ed625aa34c8391d636b7d3b; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT "PK_8f21ed625aa34c8391d636b7d3b" PRIMARY KEY (id);
+
+
+--
 -- Name: order_trackings PK_93a04602a708829cd28ad158495; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -13564,6 +14272,14 @@ ALTER TABLE ONLY public.districts
 
 ALTER TABLE ONLY public.unions
     ADD CONSTRAINT "PK_97b35789dd5101a3e05e4f4eced" PRIMARY KEY (id);
+
+
+--
+-- Name: post_categories PK_9c45c4e9fb6ebf296990e1d3972; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.post_categories
+    ADD CONSTRAINT "PK_9c45c4e9fb6ebf296990e1d3972" PRIMARY KEY (id);
 
 
 --
@@ -13644,6 +14360,14 @@ ALTER TABLE ONLY public.wishlists
 
 ALTER TABLE ONLY public.shipping_charges
     ADD CONSTRAINT "PK_d1779603e8652656b27b3f1a53c" PRIMARY KEY (id);
+
+
+--
+-- Name: currencies PK_d528c54860c4182db13548e08c4; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.currencies
+    ADD CONSTRAINT "PK_d528c54860c4182db13548e08c4" PRIMARY KEY (id);
 
 
 --
@@ -13735,6 +14459,35 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: pages UQ_fe66ca6a86dc94233e5d7789535; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.pages
+    ADD CONSTRAINT "UQ_fe66ca6a86dc94233e5d7789535" UNIQUE (slug);
+
+
+--
+-- Name: IDX_8e229d453b21312155c6ab8cfd; Type: INDEX; Schema: public; Owner: admin
+--
+
+CREATE INDEX "IDX_8e229d453b21312155c6ab8cfd" ON public.audit_logs USING btree ("resourceType", "resourceId");
+
+
+--
+-- Name: IDX_99e589da8f9e9326ee0d01a028; Type: INDEX; Schema: public; Owner: admin
+--
+
+CREATE INDEX "IDX_99e589da8f9e9326ee0d01a028" ON public.audit_logs USING btree ("userId", "createdAt");
+
+
+--
+-- Name: IDX_c69efb19bf127c97e6740ad530; Type: INDEX; Schema: public; Owner: admin
+--
+
+CREATE INDEX "IDX_c69efb19bf127c97e6740ad530" ON public.audit_logs USING btree ("createdAt");
+
+
+--
 -- Name: applicable_categories FK_02d53e156421918f336ec1ef2fc; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -13815,6 +14568,14 @@ ALTER TABLE ONLY public.products
 
 
 --
+-- Name: comments FK_259bf9825d9d198608d1b46b0b5; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT "FK_259bf9825d9d198608d1b46b0b5" FOREIGN KEY (post_id) REFERENCES public.posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: wishlists FK_2662acbb3868b1f0077fda61dd2; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -13876,6 +14637,14 @@ ALTER TABLE ONLY public.stock_adjusts
 
 ALTER TABLE ONLY public.coupon_products
     ADD CONSTRAINT "FK_4897e96fb4b70bd6ac1d4735bae" FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comments FK_4c675567d2a58f0b07cef09c13d; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT "FK_4c675567d2a58f0b07cef09c13d" FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -14071,11 +14840,27 @@ ALTER TABLE ONLY public.shipping_charges
 
 
 --
+-- Name: post_categories FK_becbe37977577e3eeb089b69fe1; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.post_categories
+    ADD CONSTRAINT "FK_becbe37977577e3eeb089b69fe1" FOREIGN KEY (post_id) REFERENCES public.posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: product_variants FK_bf3e96b7fc720a0ea3a81953373; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.product_variants
     ADD CONSTRAINT "FK_bf3e96b7fc720a0ea3a81953373" FOREIGN KEY (size_id) REFERENCES public.sizes(id) ON DELETE SET NULL;
+
+
+--
+-- Name: posts FK_c4f9a7bd77b489e711277ee5986; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT "FK_c4f9a7bd77b489e711277ee5986" FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -14111,6 +14896,14 @@ ALTER TABLE ONLY public.coupon_products
 
 
 --
+-- Name: post_categories FK_f6e2655c798334198182db6399b; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.post_categories
+    ADD CONSTRAINT "FK_f6e2655c798334198182db6399b" FOREIGN KEY (category_id) REFERENCES public.categories(id) ON DELETE CASCADE;
+
+
+--
 -- Name: applied_coupons FK_f8b3212295815e14c6fb72baf5b; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -14129,4 +14922,6 @@ ALTER TABLE ONLY public.unions
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict Wxwad785ceWoquj8jfiqLQVxaB3WbQUpZTMUWGEfXa49tzrWgn1WCJA7bDZCxam
 
