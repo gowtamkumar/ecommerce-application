@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import appConfig from "@/appConfig";
 import { useCurrency } from "@/context/CurrencyContext";
 import {
   deleteCart,
@@ -29,7 +28,6 @@ export default function OrderSummary() {
   const { formatPrice } = useCurrency();
   // Inside your component or hook
   const debouncedSyncRef = useRef<any>(null);
-console.log('cart', cart);
 
   // Debounce utility
   const debounce = (func: Function, delay: number) => {
@@ -119,7 +117,7 @@ console.log('cart', cart);
                   <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
                     <Image
                       src={
-                       getImageUrl(item.thumbnailImage)
+                        getImageUrl(item.thumbnailImage)
                       }
                       fill
                       alt={item.name}

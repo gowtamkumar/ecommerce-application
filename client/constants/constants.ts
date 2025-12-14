@@ -16,3 +16,9 @@ export const NOTIFICATION_TYPES = [
   'SystemAlert', 'ServerDown', 'HighTraffic', 'PaymentGatewayError', 'SmsEmailFailed', 'CronJobFailed',
   'UserAccount', 'UserRegistration', 'UserLogin'
 ];
+
+// Payment method
+export const paymentMethods = [
+    { value: "Cash", label: "Cash on Delivery", description: "Pay when you receive" },
+    { value: "SSLCOMMERZ", label: "Online Payment", description: "Cards, Mobile Banking, Net Banking" },
+  ];

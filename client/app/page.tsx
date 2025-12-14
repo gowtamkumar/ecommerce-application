@@ -1,5 +1,6 @@
 import appConfig from "@/appConfig";
 import ScrollToCart from "@/components/share-component/ScrollToCart";
+import WhatsAppWidget from "@/components/share-component/WhatsAppWidget";
 import Header from "@/components/website/header/Header";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import { getHome } from "@/lib/apis/home";
@@ -253,7 +254,7 @@ export default async function Home() {
           </div>
         </section> */}
       </main>
-
+      <WhatsAppWidget />
       <ScrollToCart />
       <WebFooter />
     </>

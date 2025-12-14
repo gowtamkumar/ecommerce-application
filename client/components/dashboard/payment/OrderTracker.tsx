@@ -1,4 +1,5 @@
 "use client";
+import { paymentMethods } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getOrderQuery } from "@/lib/apis/orders";
 import { saveDashboardPayment } from "@/lib/apis/payment";
@@ -27,6 +28,7 @@ import {
   Form,
   Input,
   Row,
+  Select,
   Space,
   Table,
   Tag,
@@ -91,7 +93,7 @@ export default function OrderTracker() {
       orderId: order.id,
       paymentDate: dayjs(),
       paymentType: "Debit",
-      paymentMethod: "Cash",
+      paymentMethod: value.paymentMethod || "Cash",
       userId: order.userId,
       amount: +value.amount,
       due: +order.due,
@@ -108,8 +110,9 @@ export default function OrderTracker() {
       dispatch(setLoading({ payment: false }));
       successNotification({ message: result.message });
       // Refresh order data
+      // Refresh order data
       handleOrderTracking(order.trackingNo);
-      form.setFieldsValue({ amount: "" });
+      form.setFieldsValue({ amount: "", paymentMethod: "Cash" });
     }, 1000);
   }
 
@@ -122,8 +125,8 @@ export default function OrderTracker() {
         <Space direction="vertical" size={0}>
           <Text strong>{v.name}</Text>
           <Space size="small" className="text-xs text-gray-500">
-            {record?.productVariant?.color && <Tag bordered={false} className="text-xs mr-0">Color: {record.productVariant.color.name}</Tag>}
-            {record?.productVariant?.size && <Tag bordered={false} className="text-xs">Size: {record.productVariant.size.name}</Tag>}
+            {record?.productVariant?.color && <Tag className="text-xs mr-0">Color: {record.productVariant.color.name}</Tag>}
+            {record?.productVariant?.size && <Tag className="text-xs">Size: {record.productVariant.size.name}</Tag>}
           </Space>
         </Space>
       ),
@@ -169,7 +172,7 @@ export default function OrderTracker() {
       </div>
 
       {/* Search Card */}
-      <Card bordered={false} className="shadow-sm mb-6 rounded-xl">
+      <Card variant="borderless" className="shadow-sm mb-6 rounded-xl">
         <Space.Compact block size="large">
           <Input
             prefix={<SearchOutlined className="text-gray-400" />}
@@ -199,7 +202,7 @@ export default function OrderTracker() {
                 <Space direction="vertical" size="large" className="w-full">
 
                   {/* Order & Customer Info */}
-                  <Card bordered={false} className="shadow-sm rounded-xl">
+                  <Card variant="borderless" className="shadow-sm rounded-xl">
                     <Row gutter={[24, 24]}>
                       <Col xs={24} md={12}>
                         <Title level={5} className="mb-4"><FileTextOutlined /> Order Information</Title>
@@ -238,7 +241,7 @@ export default function OrderTracker() {
                   </Card>
 
                   {/* Order Items */}
-                  <Card title={<span className="font-semibold">Order Items</span>} bordered={false} className="shadow-sm rounded-xl">
+                  <Card title={<span className="font-semibold">Order Items</span>} variant="borderless" className="shadow-sm rounded-xl">
                     <Table
                       columns={columns}
                       dataSource={order.orderItems}
@@ -250,7 +253,7 @@ export default function OrderTracker() {
                   </Card>
 
                   {/* Timeline */}
-                  <Card title={<span className="font-semibold">Order Status History</span>} bordered={false} className="shadow-sm rounded-xl">
+                  <Card title={<span className="font-semibold">Order Status History</span>} variant="borderless" className="shadow-sm rounded-xl">
                     <div className="pt-2">
                       <Timeline
                         mode="left"
@@ -273,7 +276,7 @@ export default function OrderTracker() {
               {/* Right Column: Payment */}
               <Col xs={24} lg={8}>
                 <div className="sticky top-6">
-                  <Card title={<span className="font-semibold"><DollarCircleOutlined /> Payment Summary</span>} bordered={false} className="shadow-sm rounded-xl mb-6">
+                  <Card title={<span className="font-semibold"><DollarCircleOutlined /> Payment Summary</span>} variant="borderless" className="shadow-sm rounded-xl mb-6">
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <Text type="secondary">Subtotal</Text>
@@ -313,12 +316,45 @@ export default function OrderTracker() {
                     </div>
                   </Card>
 
-                  <Card title={<span className="font-semibold">Receive Payment</span>} bordered={false} className="shadow-sm rounded-xl border-t-4 border-t-blue-500">
+                  <Card title={<span className="font-semibold">Receive Payment</span>} variant="borderless" className="shadow-sm rounded-xl border-t-4 border-t-blue-500">
                     <div className="space-y-4">
+                      <Form.Item
+                        label="Payment Method"
+                        name="paymentMethod"
+                        initialValue="Cash"
+                        rules={[{ required: true, message: "Please select payment method" }]}
+                      >
+                        <Select size="large">
+                          {
+                            paymentMethods.map((method: any) => (
+                              <Select.Option key={method.value} value={method.value}>
+                                {method.label}
+                              </Select.Option>
+                            ))
+                          }
+                        </Select>
+                      </Form.Item>
+
                       <Form.Item
                         label="Amount to Receive"
                         name="amount"
-                        rules={[{ required: true, message: "Please enter amount" }]}
+                        rules={[
+                          { required: true, message: "Please enter amount" },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              if (!value) {
+                                return Promise.resolve();
+                              }
+                              if (+value <= 0) {
+                                return Promise.reject(new Error("Amount must be greater than 0"));
+                              }
+                              if (+value > order.due) {
+                                return Promise.reject(new Error(`Amount cannot exceed ${order.due}`));
+                              }
+                              return Promise.resolve();
+                            },
+                          }),
+                        ]}
                         className="mb-2"
                       >
                         <Input

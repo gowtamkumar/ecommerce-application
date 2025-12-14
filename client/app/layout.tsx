@@ -12,7 +12,6 @@ import AuthProvider from "../lib/SessionProvider";
 
 // Global styles
 import { auth } from "@/auth";
-import WhatsAppWidget from "@/components/share-component/WhatsAppWidget";
 import "@ant-design/v5-patch-for-react-19";
 import "antd/dist/reset.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -135,7 +134,7 @@ export default async function RootLayout({
                   theme="colored"
                 />
                 <ScrollToTop />
-                <WhatsAppWidget />
+
                 {children}
                 <CookieBanner />
               </CurrencyProvider>
