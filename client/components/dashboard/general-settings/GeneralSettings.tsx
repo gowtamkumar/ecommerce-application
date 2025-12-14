@@ -8,21 +8,21 @@ import {
   Modal,
   Typography,
   Upload,
-  UploadFile,
-  UploadProps,
+  UploadProps
 } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import appConfig from "@/appConfig";
-import uploadButton from "@/components/website/uploadButton";
-import { fileDeleteWithPhoto, uploadFile } from "@/lib/apis/file";
+import uploadButton from "@/components/share-component/uploadButton";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import {
   handlePreview,
   handlePreviewCancel,
 } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {
   errorNotification,
   successNotification,
@@ -32,8 +32,6 @@ import {
   setAction,
   setSetting,
 } from "@/redux/features/global/globalSlice";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
-import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import TextArea from "antd/es/input/TextArea";
 
 const { Title, Text } = Typography;
@@ -74,16 +72,16 @@ const FileUploadField = ({
       status: "done",
       url: getUploadImageUrl(newFileName),
       fileName: newFileName,
-      };
+    };
 
-      const updatedFields = {
-        [fileListKey]: [uploadedFile],
-        [name]: newFileName,
-      };
+    const updatedFields = {
+      [fileListKey]: [uploadedFile],
+      [name]: newFileName,
+    };
 
-      form.setFieldsValue(updatedFields);
-      dispatch(setSetting({ ...global.setting, ...updatedFields }));
-    
+    form.setFieldsValue(updatedFields);
+    dispatch(setSetting({ ...global.setting, ...updatedFields }));
+
   };
 
   return (
@@ -206,7 +204,7 @@ const GeneralSettings = () => {
               <Input
                 size="large"
                 placeholder="contact@yourstore.com"
-                // className="max-w-xl"
+              // className="max-w-xl"
               />
             </Form.Item>
 
@@ -223,10 +221,10 @@ const GeneralSettings = () => {
               />
             </Form.Item>
             <Form.Item
-                name="description"
-                label={<span className="text-base font-medium">Description</span>}
-                className="!mb-0"
-              >
+              name="description"
+              label={<span className="text-base font-medium">Description</span>}
+              className="!mb-0"
+            >
               <TextArea
                 size="large"
                 placeholder="Enter your store description"

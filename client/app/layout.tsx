@@ -30,8 +30,8 @@ import WebSiteSchema from "@/components/seo/WebSiteSchema";
 import { renderSeoCode } from "@/components/seo/renderSeoCode";
 
 // Dynamically loaded components
-const ScrollToTop = dynamic(() => import("@/components/website/ScrollToTop"));
-const CookieBanner = dynamic(() => import("@/components/website/CookieBanner"));
+const ScrollToTop = dynamic(() => import("@/components/share-component/ScrollToTop"));
+const CookieBanner = dynamic(() => import("@/components/share-component/CookieBanner"));
 
 // Custom font (Poppins)
 const poppinsFont = localFont({

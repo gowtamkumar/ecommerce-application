@@ -1,5 +1,5 @@
 'use client'
-import uploadButton from "@/components/website/uploadButton";
+import uploadButton from "@/components/share-component/uploadButton";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { saveUser, updateUser } from "@/lib/apis/user";
 import {

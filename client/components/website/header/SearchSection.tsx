@@ -1,9 +1,8 @@
-import React from "react";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import dynamic from "next/dynamic";
+import { useSelector } from "react-redux";
 import HeaderRight from "./HeaderRight";
 import SearchEngine from "./SearchEngine";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
-import { useSelector } from "react-redux";
 const Logo = dynamic(() => import("./Logo"));
 
 export default function SearchSection() {

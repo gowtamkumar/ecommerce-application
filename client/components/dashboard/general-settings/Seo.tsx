@@ -14,7 +14,7 @@ import ImgCrop from "antd-img-crop";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import uploadButton from "@/components/website/uploadButton";
+import uploadButton from "@/components/share-component/uploadButton";
 import {
   fileDeleteWithPhoto
 } from "@/lib/apis/file";

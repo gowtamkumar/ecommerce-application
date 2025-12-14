@@ -1,5 +1,5 @@
 "use client";
-import uploadButton from "@/components/website/uploadButton";
+import uploadButton from "@/components/share-component/uploadButton";
 import { getProducts } from "@/lib/apis/admin/product";
 import { getBrands } from "@/lib/apis/brand";
 import { getCategories } from "@/lib/apis/categories";

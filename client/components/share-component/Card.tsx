@@ -16,8 +16,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaRegHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import ModalLogin from "../website/login/ModalLogin";
 import AddToCartButton from "./AddToCartButton";
-import ModalLogin from "./website/login/ModalLogin";
 interface CardItems {
   id: number;
   name: string;

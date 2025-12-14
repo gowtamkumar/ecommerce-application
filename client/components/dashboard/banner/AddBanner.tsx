@@ -1,5 +1,5 @@
 "use client";
-import uploadButton from "@/components/website/uploadButton";
+import uploadButton from "@/components/share-component/uploadButton";
 import { saveBanner, updateBanner } from "@/lib/apis/banner";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {

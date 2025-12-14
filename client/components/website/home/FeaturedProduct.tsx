@@ -1,5 +1,5 @@
 "use client";
-import { Swiper, SwiperSlide } from "swiper/react";
+import Card from "@/components/share-component/Card";
 import {
   A11y,
   EffectFade,
@@ -7,7 +7,7 @@ import {
   Pagination,
   Scrollbar,
 } from "swiper/modules";
-import Card from "@/components/Card";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const FeaturedProduct = ({ products }: any) => {
   return (
@@ -41,7 +41,7 @@ const FeaturedProduct = ({ products }: any) => {
     >
       {products?.map((item: any, index: number) => (
         <SwiperSlide key={index} className="!h-auto">
-            <Card item={item} />
+          <Card item={item} />
         </SwiperSlide>
       ))}
     </Swiper>

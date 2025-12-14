@@ -33,16 +33,15 @@ interface PageProps {
 }
 
 export default async function page({ params }: any) {
-  const { id } = params;
+  const { id } = await params;
   const { data: post } = await getPost(id);
   return (
     <>
       <div
         className="bg-cover bg-center h-64"
         style={{
-          backgroundImage: `url('${appConfig.baseApiUrl}/uploads/${
-            post?.image || "no-data.png"
-          }')`,
+          backgroundImage: `url('${appConfig.baseApiUrl}/uploads/${post?.image || "no-data.png"
+            }')`,
         }}
       >
         <div className="flex items-center justify-center h-full bg-gray-900 bg-opacity-50">

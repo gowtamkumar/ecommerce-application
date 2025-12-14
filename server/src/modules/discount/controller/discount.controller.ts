@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
+import { In, Repository } from 'typeorm';
 import { getDBConnection } from '../../../config/db';
-import { DiscountEntity } from '../model/discount.entity';
+import { CustomRequest } from '../../../enums/custom-request-type';
+import { asyncHandler } from '../../../middlewares/async.middleware';
+import { logger } from '../../../middlewares/logger';
+import { singleDiscountQuery } from '../../../sqlQuery';
 import { discountValidation } from '../../../validation';
 import { updateDiscountValidation } from '../../../validation/discount/updateDiscountValidation';
-import { logger } from '../../../middlewares/logger';
-import { CustomRequest } from '../../../enums/custom-request-type';
-import { ApplicableProductEntity } from '../model/applicable-products.entity';
+import { updateStatusDiscountValidation } from '../../../validation/discount/updateStatusDiscountValidation';
+import { ScopeEnum } from '../enum';
 import { ApplicableBrandEntity } from '../model/applicable-brand.entity';
 import { ApplicableCategoryEntity } from '../model/applicable-category.entity';
-import { In, Repository } from 'typeorm';
-import { ScopeEnum } from '../enum';
-import { singleDiscountQuery } from '../../../sqlQuery';
-import { updateStatusDiscountValidation } from '../../../validation/discount/updateStatusDiscountValidation';
+import { ApplicableProductEntity } from '../model/applicable-products.entity';
+import { DiscountEntity } from '../model/discount.entity';
 
 // @desc Get all Discounts
 // @route GET /api/v1/Discounts
@@ -91,7 +91,8 @@ export const getDiscountDetails = asyncHandler(
 export const getDiscountBySlug = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     logger.info(`Service: getDiscountBySlug ${req.method} ${req.url}`);
-    const { slug } = req.params;
+    const { slug } = await req.params;
+    
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
 

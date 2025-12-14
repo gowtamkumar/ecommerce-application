@@ -1,4 +1,3 @@
-import React from 'react'
 import HeaderLogo from '@/components/website/header/Logo'
 
 const Loading = () => {
@@ -9,7 +8,7 @@ const Loading = () => {
         <div className='animate-pulse scale-110 duration-1000'>
           <HeaderLogo />
         </div>
-        
+
         {/* Custom Spinner */}
         <div className='relative h-12 w-12'>
           {/* Background Ring */}

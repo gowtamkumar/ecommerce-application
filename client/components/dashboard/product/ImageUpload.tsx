@@ -1,4 +1,4 @@
-import uploadButton from '@/components/website/uploadButton';
+import uploadButton from '@/components/share-component/uploadButton';
 import { fileDeleteWithPhoto } from '@/lib/apis/file';
 import { handlePreview, handlePreviewCancel, normFile } from '@/lib/utils/commonFunctions';
 import { handleGlobalUpload } from '@/lib/utils/handleGlobalUpload';

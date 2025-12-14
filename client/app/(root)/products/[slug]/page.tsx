@@ -1,7 +1,7 @@
 import appConfig from "@/appConfig";
 import { getProductBySlug } from "@/lib/apis/product";
 import dynamic from "next/dynamic";
-const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
+const ScrollToCart = dynamic(() => import("@/components/share-component/ScrollToCart"));
 const Header = dynamic(() => import("@/components/website/header/Header"));
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const SingleProduct = dynamic(

@@ -20,9 +20,9 @@ const CurrencySwitcher = () => {
   }));
 
   return (
-    <Dropdown 
-      menu={{ items }} 
-      trigger={['click']} 
+    <Dropdown
+      menu={{ items }}
+      trigger={['click']}
       placement="bottomRight"
       overlayClassName="currency-dropdown"
     >

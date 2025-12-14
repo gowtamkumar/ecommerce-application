@@ -1,8 +1,8 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import Card from "@/components/share-component/Card";
 import { getPublicProducts } from "@/lib/apis/product";
-import Card from "@/components/Card";
 import { Empty, Spin } from "antd";
+import { useCallback, useEffect, useState } from "react";
 
 export default function CategoryProduct({ id }: { id: string }) {
   const [products, setProducts] = useState([]);

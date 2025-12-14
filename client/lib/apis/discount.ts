@@ -42,13 +42,15 @@ export async function getDiscount(id: string) {
 }
 
 export async function getDiscountBySlug(slug: string) {
-  const headers = await getAuthHeaders();
+  console.log("slug auth", slug);
+  
+  // const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/discounts/slug/${slug}`, {
     method: "GET",
     cache: "no-cache",
-    headers,
+    // headers,
   });
-  return await handleResponse(res);
+  return handleResponse(res);
 }
 
 export async function getDiscountDetails(id: string) {

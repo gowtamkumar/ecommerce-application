@@ -1,8 +1,7 @@
 import appConfig from "@/appConfig";
-import Subscribe from "@/components/website/footer/Subscribe";
+import ScrollToCart from "@/components/share-component/ScrollToCart";
 import Header from "@/components/website/header/Header";
 import CategoryTab from "@/components/website/home/CategoryTab";
-import ScrollToCart from "@/components/website/ScrollToCart";
 import { getHome } from "@/lib/apis/home";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import type { Metadata } from "next";

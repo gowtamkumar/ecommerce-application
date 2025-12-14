@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import uploadButton from "@/components/website/uploadButton";
+import uploadButton from "@/components/share-component/uploadButton";
 import { saveBrand, updateBrand } from "@/lib/apis/brand";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
@@ -13,7 +13,7 @@ import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   selectGlobal,
   setAction,
-  setLoading, 
+  setLoading,
 } from "@/redux/features/global/globalSlice";
 import { Button, Form, Image, Input, Modal, Switch, Upload } from "antd";
 import ImgCrop from "antd-img-crop";

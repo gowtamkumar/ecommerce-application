@@ -1,7 +1,7 @@
 "use client";
-import AddToCartButton from "@/components/AddToCartButton";
-import Card from "@/components/Card";
-import Pagination from "@/components/Pagination";
+import AddToCartButton from "@/components/share-component/AddToCartButton";
+import Card from "@/components/share-component/Card";
+import Pagination from "@/components/share-component/Pagination";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getPublicProducts } from "@/lib/apis/product";
 import { AddToWishlist } from "@/lib/utils/addToWishList";

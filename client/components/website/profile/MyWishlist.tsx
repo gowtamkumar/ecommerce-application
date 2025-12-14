@@ -1,5 +1,5 @@
 "use client";
-import AddToCartButton from "@/components/AddToCartButton";
+import AddToCartButton from "@/components/share-component/AddToCartButton";
 import { useCurrency } from "@/context/CurrencyContext";
 import { deleteWishlist, getUserWishlists } from "@/lib/apis/wishlist";
 import { getImageUrl } from "@/lib/utils/imageUrl";

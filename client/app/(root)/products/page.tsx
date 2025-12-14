@@ -11,7 +11,7 @@ const ProductCard = dynamic(
 const FilterSidebar = dynamic(
   () => import("@/components/website/sidebar-filter/Index")
 );
-const ScrollToCart = dynamic(() => import("@/components/website/ScrollToCart"));
+const ScrollToCart = dynamic(() => import("@/components/share-component/ScrollToCart"));
 
 export default function Products() {
   return (
