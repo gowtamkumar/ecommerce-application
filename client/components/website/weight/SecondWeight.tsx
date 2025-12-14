@@ -6,7 +6,7 @@ export default function SecondWeight() {
     { href: "/blog", label: "Blog" },
     { href: "/about", label: "About Us" },
     { href: "/support-and-help", label: "Support & Help" },
-    { href: "/faq", label: "FAQ" },
+    { href: "/support-and-help", label: "FAQ" },
   ];
 
   return (
@@ -17,11 +17,11 @@ export default function SecondWeight() {
                    after:from-blue-400 after:to-purple-400 pb-2">
         Help Center
       </h2>
-      
+
       <ul className="space-y-3">
         {links.map((link, index) => (
           <li key={index}>
-            <Link 
+            <Link
               href={link.href}
               className="group flex items-center gap-2 text-gray-300 hover:text-white 
                        transition-all duration-300"
