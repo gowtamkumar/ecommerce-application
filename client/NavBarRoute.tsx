@@ -217,6 +217,12 @@ const navbarRoute = [
       },
     ],
   },
+  {
+    key: "pages",
+    icon: <MdOutlinePermMedia className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/pages">Pages</Link>,
+    route: "true",
+  },
 
   {
     key: "discount_manage",

@@ -34,6 +34,7 @@ import { UnionEntity } from '../modules/other/geo-location/unions/model/union.en
 import { UpazilaEntity } from '../modules/other/geo-location/upazilas/model/upazila.entity';
 import { NotificationEntity } from '../modules/other/notification/model/notification.entity';
 import { SettingEntity } from '../modules/other/setting/model/setting.entity';
+import { PageEntity } from '../modules/page/model/page.entity';
 import { PaymentEntity } from '../modules/payment/model/payment.entity';
 import { ProductCategoryEntity } from '../modules/products/product-category/model/product-category.entity';
 import { ProductVariantEntity } from '../modules/products/product-variant/model/product-variant.entity';
@@ -139,6 +140,7 @@ const dbConnection = new DataSource({
     NotificationEntity,
     CurrencyEntity,
     AuditLogEntity,
+    PageEntity
   ],
   subscribers: [],
   migrations: [],

@@ -28,14 +28,15 @@ import taxRoute from '../modules/tax/route/tax.route';
 import unitRoute from '../modules/unit/route/unit.route';
 import wishlistRoutes from '../modules/wishlist/route/wishlist.route';
 // import visitorRoute from "../modules/visitor/route/visitor.route";
+import auditLogRoute from '../modules/audit-log/route/audit-log.route';
 import postRoute from '../modules/blog/post/route/post.route';
 import contactsRoute from '../modules/contact/route/contact.route';
 import couponRoute from '../modules/coupon/route/coupon.route';
 import leadRoute from '../modules/lead/route/lead.route';
 import notificationRoute from '../modules/other/notification/route/notification.route';
 import homeRoute from '../modules/other/pages/home/route/home.route';
+import pageRoute from '../modules/page/route/page.route';
 import stockAdjust from '../modules/stock-adjust/route/stock-adjust.route';
-import auditLogRoute from '../modules/audit-log/route/audit-log.route';
 // import returnsRoute from "../modules/return/route/return.route";
 import { AuthGuard, isAuthorize } from '../middlewares/auth.middleware';
 
@@ -84,5 +85,6 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/upazilas', upazilaRoute);
   app.use('/api/v1/unions', unionsRoute);
   app.use('/api/v1/contacts', contactsRoute);
+  app.use('/api/v1/pages', pageRoute);
   app.use('/api/v1/audit-logs', AuthGuard, isAuthorize(['Admin', 'SuperAdmin']), auditLogRoute);
 };
