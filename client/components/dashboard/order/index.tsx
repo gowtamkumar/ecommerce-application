@@ -298,7 +298,7 @@ const Order = () => {
     ];
 
     return (
-      <div className="p-6 bg-gray-50">
+      <div className="p-2 bg-gray-50">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Order Info */}
           <div className="lg:col-span-2 space-y-6">
@@ -512,7 +512,7 @@ const Order = () => {
               icon={<FaAmazonPay />}
               className="hover:!bg-blue-50 hover:!text-blue-600"
               onClick={() => {
-                route.push("/dashboard/payments/new");
+                route.push(`/dashboard/payments/new?trackingNo=${value.trackingNo}`);
               }}
             />
           </Tooltip>

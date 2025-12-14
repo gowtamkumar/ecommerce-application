@@ -1,4 +1,4 @@
-import OrderTracker from "@/components/dashboard/payment";
+import OrderTracker from "@/components/dashboard/payment/OrderTracker";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
