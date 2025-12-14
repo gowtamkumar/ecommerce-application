@@ -1,13 +1,13 @@
 import fs from 'fs';
 
-import { Request, Response, NextFunction } from 'express';
-import { DivisionEntity } from '../model/division.entity';
-import { DistrictEntity } from '../../districts/model/district.entity';
-import { UpazilaEntity } from '../../upazilas/model/upazila.entity';
-import { UnionEntity } from '../../unions/model/union.entity';
-import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '../../../../../config/db';
 import { CustomRequest } from '../../../../../enums/custom-request-type';
+import { asyncHandler } from '../../../../../middlewares/async.middleware';
+import { DistrictEntity } from '../../districts/model/district.entity';
+import { UnionEntity } from '../../unions/model/union.entity';
+import { UpazilaEntity } from '../../upazilas/model/upazila.entity';
+import { DivisionEntity } from '../model/division.entity';
 
 // @desc Get all Division
 // @route GET /api/v1/Division
@@ -86,6 +86,7 @@ export const syncGeoLocation = asyncHandler(
         process.cwd() + '/database/fack-data/divisions.json',
         'utf8',
       );
+      
       const jsonDataDivisions = JSON.parse(fileDivisions);
 
       const repositoryDivisions = dbconnection.getRepository(DivisionEntity);

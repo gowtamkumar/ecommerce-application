@@ -32,11 +32,10 @@ import {
   Select,
   Space,
   Table,
-  Tabs,
   Tag,
   Timeline,
   Tooltip,
-  Typography,
+  Typography
 } from "antd";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
@@ -76,7 +75,7 @@ const Order = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
-  const {formatPrice} = useCurrency();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     (async () => {
@@ -312,7 +311,7 @@ const Order = () => {
                     <Text className="text-red-600">{value.cancelResson}</Text>
                   </div>
                 )}
-                
+
                 <Descriptions column={1} size="small">
                   <Descriptions.Item label={<Text strong>Order No</Text>}>
                     <Tag color="green" className="font-mono">{value.trackingNo}</Tag>
@@ -594,29 +593,11 @@ const Order = () => {
       ),
     },
     {
-      key: "Approved",
-      label: (
-        <span className="flex items-center gap-2">
-          Approved
-          <Badge count={tabKey === "Approved" ? orders.length : 0} showZero={false} />
-        </span>
-      ),
-    },
-    {
       key: "Processing",
       label: (
         <span className="flex items-center gap-2">
           Processing
           <Badge count={tabKey === "Processing" ? orders.length : 0} showZero={false} />
-        </span>
-      ),
-    },
-    {
-      key: "On Shipping",
-      label: (
-        <span className="flex items-center gap-2">
-          On Shipping
-          <Badge count={tabKey === "On Shipping" ? orders.length : 0} showZero={false} />
         </span>
       ),
     },
@@ -638,12 +619,15 @@ const Order = () => {
         </span>
       ),
     },
+
+
+
     {
-      key: "Completed",
+      key: "Delivered",
       label: (
         <span className="flex items-center gap-2">
-          Completed
-          <Badge count={tabKey === "Completed" ? orders.length : 0} showZero={false} />
+          Delivered
+          <Badge count={tabKey === "Delivered" ? orders.length : 0} showZero={false} />
         </span>
       ),
     },
