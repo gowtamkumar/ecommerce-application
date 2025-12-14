@@ -3,12 +3,12 @@ import {
   assignDeliveryMan,
   createOrder,
   deleteOrder,
+  getOrderQuery,
   getOrders,
   getUserOrders,
   orderReview,
   orderStatusUpdate,
   updateOrder,
-  getOrderQuery,
 } from '../controller/order.controller';
 
 const router = express.Router();

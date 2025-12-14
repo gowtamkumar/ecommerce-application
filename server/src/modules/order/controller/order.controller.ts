@@ -152,7 +152,7 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
         userId: admin.id,
         orderId: savedOrder.id,
       }));
-      
+
       const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
       const createdNotifications = notificationRepo.create(adminNotifications as any); // Cast slightly to match if needed, or loop
       await notificationRepo.save(createdNotifications);
@@ -174,14 +174,14 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
       await queryRunner.commitTransaction();
     }
 
-    console.log("savedOrder.paymentMethod", savedOrder);
-    
+    console.log('savedOrder.paymentMethod', savedOrder);
+
     // ssl ecommerce intregration
     let paymentUrl = null;
     if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
       const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
-      console.log("onlinePaymentRes", onlinePaymentRes)
-      console.log("savedOrder.paymentMethod", savedOrder)
+      console.log('onlinePaymentRes', onlinePaymentRes);
+      console.log('savedOrder.paymentMethod', savedOrder);
       paymentUrl = onlinePaymentRes;
     }
 
@@ -327,23 +327,25 @@ export const onlinePayment = async (req: CustomRequest, res: Response, savedOrde
     console.log('apiResponse', apiResponse);
     return apiResponse.GatewayPageURL;
   } catch (error: any) {
-      // System Alert: Payment Gateway Error
-      const notificationRepo = connection.getRepository(NotificationEntity);
-      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-      
-      const alerts = admins.map((admin: UserEntity) => notificationRepo.create({
-          type: NotificationType.PaymentGatewayError,
-          title: 'Payment Gateway Error',
-          message: `Failed to initialize SSLCommerz payment for Order #${savedOrder.id}. Error: ${error.message}`,
-          userId: admin.id,
-          isRead: false
-      }));
-      
-      if (alerts.length > 0) {
-        await notificationRepo.save(alerts);
-      }
+    // System Alert: Payment Gateway Error
+    const notificationRepo = connection.getRepository(NotificationEntity);
+    const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
 
-      throw error;
+    const alerts = admins.map((admin: UserEntity) =>
+      notificationRepo.create({
+        type: NotificationType.PaymentGatewayError,
+        title: 'Payment Gateway Error',
+        message: `Failed to initialize SSLCommerz payment for Order #${savedOrder.id}. Error: ${error.message}`,
+        userId: admin.id,
+        isRead: false,
+      }),
+    );
+
+    if (alerts.length > 0) {
+      await notificationRepo.save(alerts);
+    }
+
+    throw error;
   }
 };
 
@@ -756,15 +758,17 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
 
     // Notification: Request Review on Delivery
     if (status === OrderStatus.Delivered) {
-       const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
-       await notificationRepo.save(notificationRepo.create({
+      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+      await notificationRepo.save(
+        notificationRepo.create({
           type: NotificationType.ReviewRequest,
           title: 'How was your order?',
           message: `Your order #${result.id} has been delivered. We'd love to hear your feedback!`,
           userId,
           orderId: result.id,
           isRead: false,
-       }));
+        }),
+      );
     }
 
     const newOrderTracking = {
@@ -782,18 +786,18 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
 
     // Notify Admins if Order is Canceled
     if (status === OrderStatus.Canceled) {
-       const userRepository = queryRunner.manager.getRepository(UserEntity);
-       const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-       const adminNotifications = admins.map((admin: UserEntity) => ({
-         type: NotificationType.AdminOrderCanceled,
-         title: 'Order Canceled',
-         message: `Order #${result.id} has been canceled.`,
-         userId: admin.id,
-         orderId: result.id,
-       }));
-       
-       const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
-       await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+      const userRepository = queryRunner.manager.getRepository(UserEntity);
+      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+      const adminNotifications = admins.map((admin: UserEntity) => ({
+        type: NotificationType.AdminOrderCanceled,
+        title: 'Order Canceled',
+        message: `Order #${result.id} has been canceled.`,
+        userId: admin.id,
+        orderId: result.id,
+      }));
+
+      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+      await notificationRepo.save(notificationRepo.create(adminNotifications as any));
     }
 
     await queryRunner.commitTransaction();
@@ -845,33 +849,33 @@ async function adjustStock(
 
     // Check for Low Stock
     if (newStockQty < 5) {
-       // We need a way to send notification here. Since this might be inside a transaction, 
-       // and we don't have direct access to queryRunner here easily without passing it, 
-       // or we can use a separate connection/repository if strictly needed, 
-       // but typically we should pass the manager or repository. 
-       // Ideally trigger an event or just do it here.
-       // Let's assume we can get connection or use the repo's manager if possible.
-       // For simplicity, we'll fetch admins and save notification using the repo's manager if available or get new connection.
-       // Note: productVariantRepo belongs to the transaction manager passed in.
-       
-       try {
-           const manager = productVariantRepo.manager;
-           const userRepository = manager.getRepository(UserEntity);
-           const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-           const notificationRepo = manager.getRepository(NotificationEntity);
+      // We need a way to send notification here. Since this might be inside a transaction,
+      // and we don't have direct access to queryRunner here easily without passing it,
+      // or we can use a separate connection/repository if strictly needed,
+      // but typically we should pass the manager or repository.
+      // Ideally trigger an event or just do it here.
+      // Let's assume we can get connection or use the repo's manager if possible.
+      // For simplicity, we'll fetch admins and save notification using the repo's manager if available or get new connection.
+      // Note: productVariantRepo belongs to the transaction manager passed in.
 
-           const adminNotifications = admins.map((admin: UserEntity) => ({
-             type: NotificationType.AdminLowStock,
-             title: 'Low Stock Alert',
-             message: `Product Variant (ID: ${findProductVariant.id}) is running low. Current Stock: ${newStockQty}`,
-             userId: admin.id,
-            //  orderId: null, // Optional, might not be linked to specific order in schema directly if not nullable
-           }));
-           // Casting to any to avoid strict type checks if orderId is missing/nullable 
-           await notificationRepo.save(notificationRepo.create(adminNotifications as any));
-       } catch (err) {
-           console.error("Failed to send low stock notification", err);
-       }
+      try {
+        const manager = productVariantRepo.manager;
+        const userRepository = manager.getRepository(UserEntity);
+        const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+        const notificationRepo = manager.getRepository(NotificationEntity);
+
+        const adminNotifications = admins.map((admin: UserEntity) => ({
+          type: NotificationType.AdminLowStock,
+          title: 'Low Stock Alert',
+          message: `Product Variant (ID: ${findProductVariant.id}) is running low. Current Stock: ${newStockQty}`,
+          userId: admin.id,
+          //  orderId: null, // Optional, might not be linked to specific order in schema directly if not nullable
+        }));
+        // Casting to any to avoid strict type checks if orderId is missing/nullable
+        await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+      } catch (err) {
+        console.error('Failed to send low stock notification', err);
+      }
     }
   }
 }

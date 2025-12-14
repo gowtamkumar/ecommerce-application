@@ -4,9 +4,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { getOrderQuery } from "@/lib/apis/orders";
 import { savePayment } from "@/lib/apis/payment";
 import { errorNotification } from "@/lib/utils/notification";
-import {
-  setProductRating
-} from "@/redux/features/global/globalSlice";
+import { setProductRating } from "@/redux/features/global/globalSlice";
 import {
   BankOutlined,
   CheckCircleOutlined,
@@ -14,7 +12,7 @@ import {
   FileTextOutlined,
   SearchOutlined,
   SyncOutlined,
-  TruckOutlined
+  TruckOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -26,6 +24,7 @@ import {
   Form,
   Input,
   Row,
+  Select,
   Space,
   Steps,
   Table,
@@ -45,6 +44,7 @@ const { Title, Text } = Typography;
 
 export default function OrderTracker() {
   const [order, setOrder] = useState({} as any);
+  const [payMethod, setpayMethod] = useState("");
   const [tracker, setTracker] = useState({} as { trackingNo: string });
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -76,6 +76,9 @@ export default function OrderTracker() {
   }
 
   async function handleOnlinePayment() {
+
+    console.log("payMethod", payMethod);
+
     setLoading(true);
     const result = (await savePayment({
       orderId: order.id,
@@ -102,8 +105,12 @@ export default function OrderTracker() {
       key: "variant",
       render: (_: any, record: any) => (
         <div className="text-xs text-gray-500">
-          {record?.productVariant?.color && <div>Color: {record.productVariant.color.name}</div>}
-          {record?.productVariant?.size && <div>Size: {record.productVariant.size.name}</div>}
+          {record?.productVariant?.color && (
+            <div>Color: {record.productVariant.color.name}</div>
+          )}
+          {record?.productVariant?.size && (
+            <div>Size: {record.productVariant.size.name}</div>
+          )}
         </div>
       ),
     },
@@ -111,13 +118,13 @@ export default function OrderTracker() {
       title: "Price",
       dataIndex: "unitPrice",
       key: "unitPrice",
-      render: (val: any, record: any) => formatPrice((+val + +record.taxAmount)),
+      render: (val: any, record: any) => formatPrice(+val + +record.taxAmount),
     },
     {
       title: "Qty",
       dataIndex: "qty",
       key: "qty",
-      align: "center" as const
+      align: "center" as const,
     },
     {
       title: "Total",
@@ -131,23 +138,33 @@ export default function OrderTracker() {
   // Helper to map statuses to steps (simplified)
   const getStepStatus = (status: string) => {
     switch (status) {
-      case "Pending": return 0;
-      case "Processing": return 1;
-      case "Shipped": return 2;
-      case "Delivered": return 3;
-      case "Canceled": return -1;
-      default: return 0;
+      case "Pending":
+        return 0;
+      case "Processing":
+        return 1;
+      case "Shipped":
+        return 2;
+      case "Delivered":
+        return 3;
+      case "Canceled":
+        return -1;
+      default:
+        return 0;
     }
   };
 
-  const currentStep = order?.orderTrackings ? order.orderTrackings.length - 1 : 0; // Using tracking length as proxy, simplified
+  const currentStep = order?.orderTrackings
+    ? order.orderTrackings.length - 1
+    : 0; // Using tracking length as proxy, simplified
 
   return (
     <div className="max-w-5xl mx-auto">
       {/* Search Section */}
       <div className="text-center mb-10">
         <Title level={3}>Track Your Order</Title>
-        <Text type="secondary" className="mb-6 block">Enter your order tracking number to see current status.</Text>
+        <Text type="secondary" className="mb-6 block">
+          Enter your order tracking number to see current status.
+        </Text>
 
         <Form
           form={form}
@@ -155,7 +172,12 @@ export default function OrderTracker() {
           layout="inline"
           className="justify-center"
         >
-          <Form.Item name="trackingNo" rules={[{ required: true, message: 'Please enter tracking number' }]}>
+          <Form.Item
+            name="trackingNo"
+            rules={[
+              { required: true, message: "Please enter tracking number" },
+            ]}
+          >
             <Input
               prefix={<SearchOutlined className="text-gray-400" />}
               placeholder="e.g. ORD-2023-1234"
@@ -165,7 +187,13 @@ export default function OrderTracker() {
             />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" size="large" htmlType="submit" loading={loading} icon={<TruckOutlined />}>
+            <Button
+              type="primary"
+              size="large"
+              htmlType="submit"
+              loading={loading}
+              icon={<TruckOutlined />}
+            >
               Track Order
             </Button>
           </Form.Item>
@@ -173,23 +201,27 @@ export default function OrderTracker() {
       </div>
 
       {loading ? (
-        <Card loading bordered={false} />
+        <Card loading variant="borderless" />
       ) : order.trackingNo ? (
         <div className="animate-fade-in space-y-6">
-
           {/* Status Steps */}
-          <Card bordered={false} className="shadow-sm">
+          <Card variant="borderless" className="shadow-sm">
             <div className="py-4">
               {/* Simplified Status Map - In real app, map exact statuses from enum */}
               <Steps
                 current={order.orderTrackings?.length || 0}
                 items={[
-                  { title: 'Order Placed', icon: <FileTextOutlined /> },
-                  { title: 'Processing', icon: <SyncOutlined spin={order.orderStatus === 'Processing'} /> },
-                  { title: 'Shipped', icon: <TruckOutlined /> },
-                  { title: 'Delivered', icon: <CheckCircleOutlined /> },
+                  { title: "Order Placed", icon: <FileTextOutlined /> },
+                  {
+                    title: "Processing",
+                    icon: (
+                      <SyncOutlined spin={order.orderStatus === "Processing"} />
+                    ),
+                  },
+                  { title: "Shipped", icon: <TruckOutlined /> },
+                  { title: "Delivered", icon: <CheckCircleOutlined /> },
                 ]}
-                status={order.orderStatus === 'Canceled' ? 'error' : 'process'}
+                status={order.orderStatus === "Canceled" ? "error" : "process"}
               />
             </div>
           </Card>
@@ -197,20 +229,41 @@ export default function OrderTracker() {
           <Row gutter={[24, 24]}>
             {/* Left: Info */}
             <Col xs={24} md={16}>
-              <Card title="Order Details" bordered={false} className="shadow-sm h-full">
+              <Card
+                title="Order Details"
+                variant="borderless"
+                className="shadow-sm h-full"
+              >
                 <Descriptions column={1} bordered size="small">
-                  <Descriptions.Item label="Order ID">{order.trackingNo}</Descriptions.Item>
-                  <Descriptions.Item label="Order Date">{dayjs(order.createdAt).format("MMMM D, YYYY h:mm A")}</Descriptions.Item>
+                  <Descriptions.Item label="Order ID">
+                    {order.trackingNo}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Order Date">
+                    {dayjs(order.createdAt).format("MMMM D, YYYY h:mm A")}
+                  </Descriptions.Item>
                   <Descriptions.Item label="Payment Status">
-                    <Tag color={order.paymentStatus === 'Paid' ? 'green' : 'orange'}>{order.paymentStatus || 'Unpaid'}</Tag>
+                    <Tag
+                      color={
+                        order.paymentStatus === "Paid" ? "green" : "orange"
+                      }
+                    >
+                      {order.paymentStatus || "Unpaid"}
+                    </Tag>
                   </Descriptions.Item>
                   <Descriptions.Item label="Delivery Address">
                     <Space align="start">
                       <EnvironmentOutlined className="mt-1 text-gray-400" />
                       <div>
-                        <div className="font-medium">{order.shippingAddress?.name} ({order.shippingAddress?.type})</div>
-                        <div className="text-gray-500">{order.shippingAddress?.address}</div>
-                        <div className="text-gray-500">{order.shippingAddress?.phoneNo}</div>
+                        <div className="font-medium">
+                          {order.shippingAddress?.name} (
+                          {order.shippingAddress?.type})
+                        </div>
+                        <div className="text-gray-500">
+                          {order.shippingAddress?.address}
+                        </div>
+                        <div className="text-gray-500">
+                          {order.shippingAddress?.phoneNo}
+                        </div>
                       </div>
                     </Space>
                   </Descriptions.Item>
@@ -231,21 +284,39 @@ export default function OrderTracker() {
 
             {/* Right: Timeline & Reviews */}
             <Col xs={24} md={8}>
-              <Card title="Order History" bordered={false} className="shadow-sm mb-6">
+              <Card
+                title="Order History"
+                variant="borderless"
+                className="shadow-sm mb-6"
+              >
                 {/* Using a custom timeline mapping */}
                 <div className="relative border-l border-gray-200 ml-3 space-y-6 pb-2">
-                  {(order.orderTrackings || []).map((track: any, idx: number) => (
-                    <div key={idx} className="ml-6 relative">
-                      <div className="absolute -left-[31px] bg-blue-500 h-2.5 w-2.5 rounded-full border-2 border-white ring-2 ring-gray-100"></div>
-                      <div className="text-sm font-semibold">{track.status}</div>
-                      <div className="text-xs text-gray-500">{dayjs(track.createdAt).format("MMM D, h:mm A")}</div>
-                      {track.location && <div className="text-xs text-gray-400 mt-1"><EnvironmentOutlined /> {track.location}</div>}
-                    </div>
-                  ))}
+                  {(order.orderTrackings || []).map(
+                    (track: any, idx: number) => (
+                      <div key={idx} className="ml-6 relative">
+                        <div className="absolute -left-[31px] bg-blue-500 h-2.5 w-2.5 rounded-full border-2 border-white ring-2 ring-gray-100"></div>
+                        <div className="text-sm font-semibold">
+                          {track.status}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {dayjs(track.createdAt).format("MMM D, h:mm A")}
+                        </div>
+                        {track.location && (
+                          <div className="text-xs text-gray-400 mt-1">
+                            <EnvironmentOutlined /> {track.location}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  )}
                 </div>
               </Card>
 
-              <Card title="Payment Summary" bordered={false} className="shadow-sm">
+              <Card
+                title="Payment Summary"
+                variant="borderless"
+                className="shadow-sm"
+              >
                 <div className="space-y-2">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
@@ -266,27 +337,44 @@ export default function OrderTracker() {
                     <span>Total</span>
                     <span>{formatPrice(order.due || order.grandTotal)}</span>
                   </div>
-                  {
-                    order.due > 0 &&
+                  {order.due > 0 &&
                     order.paymentStatus !== "Paid" &&
                     order.status !== "Canceled" &&
-                    order.paymentMethod === "SSLCOMMERZ" && (
-                      <Button
-                        type="primary"
-                        block
-                        icon={<BankOutlined />}
-                        onClick={handleOnlinePayment}
-                        className="mt-4 bg-green-600 hover:bg-green-700"
-                      >
-                        Note: Pay {formatPrice(order.due)} Now
-                      </Button>
-                    )
-                  }
+                    order.paymentMethod !== paymentMethods[0].value && (
+                      <div className="w-full">
+                        <Select
+                          size="large"
+                          className="w-full"
+                          onChange={(value) => {
+                            setpayMethod(value);
+                          }}
+                        >
+                          {paymentMethods.map((method: any) => (
+                            <Select.Option
+                              key={method.value}
+                              value={method.value}
+                            >
+                              {method.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                        {/* </Form.Item> */}
+                        <Button
+                          type="primary"
+                          block
+                          icon={<BankOutlined />}
+                          onClick={handleOnlinePayment}
+                          className="mt-4 bg-green-600 hover:bg-green-700"
+                        >
+                          Note: Pay {formatPrice(order.due)} Now
+                        </Button>
+                      </div>
+                    )}
                 </div>
               </Card>
 
               {/* Action Area */}
-              {(order.orderStatus === 'Delivered' || order.orderStatus === 'Completed') && (
+              {order.orderStatus === "Delivered" && (
                 <div className="mt-6 text-center">
                   <Button
                     block
@@ -311,8 +399,12 @@ export default function OrderTracker() {
           </Row>
         </div>
       ) : (
-        tracker.trackingNo && !loading && (
-          <Empty description="No order found with this tracking number." className="mt-10" />
+        tracker.trackingNo &&
+        !loading && (
+          <Empty
+            description="No order found with this tracking number."
+            className="mt-10"
+          />
         )
       )}
     </div>

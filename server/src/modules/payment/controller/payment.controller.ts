@@ -325,7 +325,7 @@ export const sslcommerzFailHandler = asyncHandler(async (req: Request, res: Resp
     // Notify Admins about Payment Failure
     const userRepository = connection.getRepository(UserEntity);
     const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-    
+
     const adminNotifications: NotificationEntity[] = admins.map((admin: UserEntity) => ({
       type: NotificationType.AdminPaymentFailed,
       title: 'Order Payment Failed',

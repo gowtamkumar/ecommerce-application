@@ -1,4 +1,5 @@
 import express from 'express';
+import { AuthGuard } from '../../../middlewares/auth.middleware';
 import {
   createDashboardPayment,
   createPayment,
@@ -10,11 +11,11 @@ import {
   sslcommerzSuccessHandler,
   updatePayment,
 } from '../controller/payment.controller';
-import { AuthGuard } from '../../../middlewares/auth.middleware';
 
 const router = express.Router();
 
 router.route('/').get(getPayments).post(AuthGuard, createPayment);
+router.route('/online').post(AuthGuard, createPayment);
 router.route('/dashboard').post(AuthGuard, createDashboardPayment);
 router.route('/success/:tranId').post(sslcommerzSuccessHandler);
 router.route('/fail/:tranId').post(sslcommerzFailHandler);
