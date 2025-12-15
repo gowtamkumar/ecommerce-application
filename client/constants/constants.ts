@@ -43,8 +43,7 @@ export const paymentMethods = [
   },
   {
     value: "SSLCOMMERZ",
-    label: "Online Payment",
+    label: "SSLCOMMERZ",
     description: "Cards, Mobile Banking, Net Banking",
   },
-  { value: "OTHER", label: "Other", description: "....." },
 ];

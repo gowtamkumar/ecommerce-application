@@ -147,7 +147,7 @@ export default function Profile() {
                     <button
                       key={item.key}
                       onClick={() => handleTabChange(item.key)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${tabKey === item.key ? "bg-black !text-white shadow-md lg:w-full" : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900 lg:w-full border border-gray-100 lg:border-transparent"}`}
+                      className={`flex items-center cursor-pointer gap-3 px-4 py-3 rounded-xl text-sm font-medium ${tabKey === item.key ? "bg-black !text-white shadow-md lg:w-full" : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900 lg:w-full border border-gray-100 lg:border-transparent"}`}
                     >
                       <span className="text-lg">{item.icon}</span>
                       <span>{item.label}</span>

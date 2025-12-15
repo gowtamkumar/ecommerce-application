@@ -16,7 +16,7 @@ import { Avatar, Button, Dropdown, Layout } from "antd";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import NotificationDropdown from "./header/NotificationDropdown";
+import NotificationDropdown from "../share-component/NotificationDropdown";
 
 export default function DashboardHeader() {
   const { Header } = Layout;

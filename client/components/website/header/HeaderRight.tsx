@@ -1,5 +1,5 @@
 "use client";
-import NotificationDropdown from "@/components/dashboard/header/NotificationDropdown";
+import NotificationDropdown from "@/components/share-component/NotificationDropdown";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { userProfileRoute } from "@/NavBarRoute";
 import { selectCart } from "@/redux/features/cart/cartSlice";

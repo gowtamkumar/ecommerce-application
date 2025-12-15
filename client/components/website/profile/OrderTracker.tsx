@@ -334,12 +334,17 @@ export default function OrderTracker() {
                             setpayMethod(value);
                           }}
                         >
-                          {paymentMethods.map((method: any) => (
-                            <Select.Option
-                              key={method.value}
-                              value={method.value}
-                            >
-                              {method.label}
+                          {paymentMethods
+                            .filter(
+                              (method) =>
+                                method.value !== paymentMethods[0].value
+                            )
+                            .map((method: any) => (
+                              <Select.Option
+                                key={method.value}
+                                value={method.value}
+                              >
+                                {method.label}
                             </Select.Option>
                           ))}
                         </Select>
