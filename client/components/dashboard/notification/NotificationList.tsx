@@ -83,7 +83,7 @@ const NotificationList = () => {
     dispatch(setLoading({ delete: true }));
     try {
       await deleteNotification(id);
-      successNotification({ message: "Alert deleted" });
+      successNotification({ message: "Notification deleted" });
       fetchData();
     } catch (error: any) {
       errorNotification({ message: error.message });
@@ -94,7 +94,7 @@ const NotificationList = () => {
 
   const handleRead = async (id: string) => {
     try {
-      await readNotification(id);
+      await readNotification({ id });
       fetchData(); // Refresh to update status
     } catch (error: any) {
       errorNotification({ message: error.message });

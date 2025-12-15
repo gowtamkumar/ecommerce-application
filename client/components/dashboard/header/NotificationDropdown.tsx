@@ -55,6 +55,7 @@ const NotificationDropdown = () => {
     }
   };
 
+
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const content = (
@@ -129,7 +130,7 @@ const NotificationDropdown = () => {
         <div className="p-2 text-center border-t sticky bottom-0 bg-white">
           <Link
             href={
-              session.data?.user.role === "admin"
+              session.data?.user.role === "Admin"
                 ? "/dashboard/notifications"
                 : "/profile?tab=notification"
             }
