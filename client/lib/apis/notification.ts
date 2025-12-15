@@ -33,7 +33,7 @@ export async function getNotification(id: string) {
 }
 
 // Mark notification as read
-export async function readNotification(id: string) {
+export async function readNotification({ id }: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/notifications/read/${id}`, {
     method: "GET",
@@ -66,7 +66,11 @@ export async function deleteNotification(id: string) {
 }
 
 // Send Promotional Notification (Admin)
-export async function sendPromotionalNotification(data: { title: string; message: string; type?: string }) {
+export async function sendPromotionalNotification(data: {
+  title: string;
+  message: string;
+  type?: string;
+}) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/notifications/promote`, {
     method: "POST",

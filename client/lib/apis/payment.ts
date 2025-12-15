@@ -13,6 +13,16 @@ export async function savePayment(data: any) {
   return await handleResponse(res);
 }
 
+export async function onlinePayment(data: any) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/payments/online`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(data),
+  });
+  return await handleResponse(res);
+}
+
 export async function saveDashboardPayment(data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/payments/dashboard`, {

@@ -4,6 +4,7 @@ import { CustomRequest } from '../../../enums/custom-request-type';
 import { NotificationType } from '../../../enums/notification-type.enum';
 import { asyncHandler } from '../../../middlewares/async.middleware';
 import { logger } from '../../../middlewares/logger';
+import { initiateSSLCommerzPayment } from '../../../utils/sslcommerz.utils';
 import { paymentValidationSchema } from '../../../validation';
 import { dashboardPaymentValidationSchema } from '../../../validation/payment/dashboardPaymentValidation';
 import { RoleEnum } from '../../auth/enums/role.enum';
@@ -104,91 +105,42 @@ export const onlinePayment = async (req: CustomRequest, res: Response) => {
   logger.info(`Service: onlinePayment ${req.method} ${req.url}`);
   const { tranId, grandTotal } = req.body;
   const userId = req.id as number | string;
-  // const tranId = savedOrder.tranId;
-  const connection = await getDBConnection();
-  // SSLCOMMERZ payment gateway
-  const store_id = process.env.STORE_ID;
-  const store_passwd = process.env.STORE_PASSWD;
-  const BACK_END_URL = process.env.BACK_END_URL;
-  const is_live = process.env.IS_LIVE;
 
+  const connection = await getDBConnection();
   const userRepository = connection.getRepository(UserEntity);
-  const customer = await userRepository.findOne({
+  const user = await userRepository.findOne({
     where: { id: userId },
   });
 
-  const paymentPayload = {
-    store_id,
-    store_passwd,
-    total_amount: grandTotal,
-    currency: 'BDT',
-    tran_id: tranId,
-    success_url: `${BACK_END_URL}/payments/success/${tranId}`,
-    fail_url: `${BACK_END_URL}/payments/fail/${tranId}`,
-    cancel_url: `${BACK_END_URL}/payments/cancel/${tranId}`,
-    ipn_url: `${BACK_END_URL}/payment-ipn/${tranId}`,
-
-    shipping_method: 'Courier',
-    product_name: 'productNames',
-    product_category: 'General',
-    product_profile: 'general',
-
-    cus_name: customer.name,
-    cus_email: customer.email,
-    cus_add1: customer.address || 'Dhaka',
-    cus_city: customer.city || 'Dhaka',
-    cus_postcode: customer.postcode || '1000',
-    cus_country: 'Bangladesh',
-    cus_phone: customer.phone || '01711111111',
-
-    ship_name: customer.name,
-    ship_add1: customer.address || 'Dhaka',
-    ship_city: customer.city || 'Dhaka',
-    ship_postcode: customer.postcode || 1000,
-    ship_country: 'Bangladesh',
-  };
-
-  const apiUrl = is_live
-    ? 'https://securepay.sslcommerz.com/gwprocess/v4/api.php'
-    : 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
-
-  // Form data for SSLCommerz
-  // const formData = new URLSearchParams();
-  // Object.entries(initData).forEach(([key, value]) => {
-  //   formData.append(key, value as string);
-  // });
-
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    body: paymentPayload,
-  });
-
-  const result = await response.json();
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found',
+    });
+  }
 
   try {
-    if (result.status === 'SUCCESS') {
-      return result.GatewayPageURL;
-    }
+    const paymentUrl = await initiateSSLCommerzPayment({
+      tranId,
+      amount: grandTotal,
+      user,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Payment initiated successfully',
+      url: paymentUrl,
+    });
   } catch (error: any) {
-    // System Alert: Payment Gateway Error
-    const notificationRepo = connection.getRepository(NotificationEntity);
-    const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-
-    const alerts = admins.map((admin: UserEntity) =>
-      notificationRepo.create({
-        type: NotificationType.PaymentGatewayError,
-        title: 'Payment Gateway Error',
-        message: `Failed to initialize SSLCommerz payment for Order #${savedOrder.id}. Error: ${error.message}`,
-        userId: admin.id,
-        isRead: false,
-      }),
-    );
-
-    if (alerts.length > 0) {
-      await notificationRepo.save(alerts);
-    }
-
-    throw error;
+    logger.error('Payment initialization failed', error);
+    // Note: We might want to send admin notification here too, like before
+    // but the previous code relied on 'savedOrder' which wasn't available in this scope.
+    // So sticking to basic error response for now.
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to initiate payment',
+      error: error.message,
+    });
   }
 };
 

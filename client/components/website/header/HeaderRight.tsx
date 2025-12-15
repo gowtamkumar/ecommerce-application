@@ -1,16 +1,17 @@
 "use client";
+import NotificationDropdown from "@/components/dashboard/header/NotificationDropdown";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { userProfileRoute } from "@/NavBarRoute";
-import { Avatar, Badge, Drawer, Dropdown } from "antd";
+import { selectCart } from "@/redux/features/cart/cartSlice";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { Avatar, Drawer, Dropdown } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
-import ViewCart from "./ViewCart";
 import { FiShoppingBag } from "react-icons/fi";
-import { selectCart } from "@/redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import ViewCart from "./ViewCart";
 
 export default function HeaderRight() {
   const [drawarCart, setDrawarCart] = useState(false);
@@ -45,12 +46,12 @@ export default function HeaderRight() {
         className="cursor-pointer md:inline hidden group relative"
       >
         <div className="relative p-2 rounded-full hover:bg-gray-100 transition-all duration-300">
-          <CiHeart 
-            size={26} 
+          <CiHeart
+            size={26}
             className="text-gray-700 group-hover:text-red-500 transition-all duration-300 
-                     group-hover:scale-110" 
+                     group-hover:scale-110"
           />
-          
+
           {/* Tooltip */}
           <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium bg-gray-900 text-white px-2 py-1 rounded
@@ -61,18 +62,19 @@ export default function HeaderRight() {
         </div>
       </Link>
 
+
       {/* Shopping Cart Icon */}
       <div className="relative group">
-        <div 
+        <div
           onClick={showLoading}
           className="cursor-pointer relative p-2 rounded-full hover:bg-gray-100 transition-all duration-300"
         >
-          <FiShoppingBag 
-            size={24} 
+          <FiShoppingBag
+            size={24}
             className="text-gray-700 group-hover:text-global-primary transition-all duration-300
-                     group-hover:scale-110" 
+                     group-hover:scale-110"
           />
-          
+
           {/* Cart Badge */}
           {cartCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-gradient-to-br from-global-primary to-orange-500 
@@ -82,7 +84,7 @@ export default function HeaderRight() {
               {cartCount > 99 ? '99+' : cartCount}
             </span>
           )}
-          
+
           {/* Tooltip */}
           <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium bg-gray-900 text-white px-2 py-1 rounded
@@ -117,37 +119,40 @@ export default function HeaderRight() {
 
       {/* User Profile */}
       {session.status === "authenticated" && (
-        <Dropdown
-          menu={{ items: userProfileRoute as any }}
-          placement="bottomRight"
-          trigger={["click"]}
-          overlayClassName="pt-2"
-        >
-          <div className="cursor-pointer group relative">
-            <div className="p-0.5 rounded-full border-2 border-transparent 
+        <>
+          <NotificationDropdown />
+          <Dropdown
+            menu={{ items: userProfileRoute as any }}
+            placement="bottomRight"
+            trigger={["click"]}
+            overlayClassName="pt-2"
+          >
+            <div className="cursor-pointer group relative">
+              <div className="p-0.5 rounded-full border-2 border-transparent 
                           hover:border-global-primary/30 transition-all duration-300
                           hover:shadow-[0_0_12px_rgba(247,170,14,0.3)]">
-              <Avatar
-                size={36}
-                src={getUploadImageUrl(profileImage)}
-                className="bg-gradient-to-br from-gray-200 to-gray-300 
+                <Avatar
+                  size={36}
+                  src={getUploadImageUrl(profileImage)}
+                  className="bg-gradient-to-br from-gray-200 to-gray-300 
                          group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            
-            {/* Online Indicator */}
-            <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 
+                />
+              </div>
+
+              {/* Online Indicator */}
+              <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 
                            border-2 border-white rounded-full"></span>
-            
-            {/* Tooltip */}
-            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
+
+              {/* Tooltip */}
+              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                            text-[10px] font-medium bg-gray-900 text-white px-2 py-1 rounded
                            opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
                            pointer-events-none z-10">
-              My Account
-            </span>
-          </div>
-        </Dropdown>
+                My Account
+              </span>
+            </div>
+          </Dropdown>
+        </>
       )}
     </div>
   );

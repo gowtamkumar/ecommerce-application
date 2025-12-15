@@ -54,8 +54,6 @@ export default function Profile() {
 
   const userImage = session.data?.user.image;
 
-  console.log("session", userImage);
-
 
   useEffect(() => {
     setTabKey(categoryIdParams ?? "my_account");

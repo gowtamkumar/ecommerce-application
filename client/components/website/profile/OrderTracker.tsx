@@ -2,7 +2,7 @@
 import { ActionType, paymentMethods } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getOrderQuery } from "@/lib/apis/orders";
-import { savePayment } from "@/lib/apis/payment";
+import { onlinePayment } from "@/lib/apis/payment";
 import { errorNotification } from "@/lib/utils/notification";
 import { setProductRating } from "@/redux/features/global/globalSlice";
 import {
@@ -75,22 +75,19 @@ export default function OrderTracker() {
     }
   }
 
-  async function handleOnlinePayment() {
+  const handleOnlinePayment = async () => {
+    const tranId = order.tranId
+    const result = await onlinePayment({
+      tranId,
+      grandTotal: order.due > 0 ? order.due : +order.grandTotal,
+      paymentMethod: payMethod,
+    })
 
-    console.log("payMethod", payMethod);
-
-    setLoading(true);
-    const result = (await savePayment({
-      orderId: order.id,
-      amount: order.due > 0 ? order.due : order.grandTotal,
-      paymentMethod: paymentMethods[0].value,
-    })) as any;
     if (result?.success) {
-      window.location.href = result.data?.paymentUrl;
+      window.location.href = result.url;
     } else {
       errorNotification(result?.message);
     }
-    setLoading(false);
   }
 
   const columns = [
@@ -120,6 +117,15 @@ export default function OrderTracker() {
       key: "unitPrice",
       render: (val: any, record: any) => formatPrice(+val + +record.taxAmount),
     },
+
+    {
+      title: "Discount",
+      dataIndex: "totalDiscountAmount",
+      key: "totalDiscountAmount",
+      render: (val: any) => formatPrice(+val),
+    },
+
+
     {
       title: "Qty",
       dataIndex: "qty",
@@ -136,26 +142,26 @@ export default function OrderTracker() {
   ];
 
   // Helper to map statuses to steps (simplified)
-  const getStepStatus = (status: string) => {
-    switch (status) {
-      case "Pending":
-        return 0;
-      case "Processing":
-        return 1;
-      case "Shipped":
-        return 2;
-      case "Delivered":
-        return 3;
-      case "Canceled":
-        return -1;
-      default:
-        return 0;
-    }
-  };
+  // const getStepStatus = (status: string) => {
+  //   switch (status) {
+  //     case "Pending":
+  //       return 0;
+  //     case "Processing":
+  //       return 1;
+  //     case "Shipped":
+  //       return 2;
+  //     case "Delivered":
+  //       return 3;
+  //     case "Canceled":
+  //       return -1;
+  //     default:
+  //       return 0;
+  //   }
+  // };
 
-  const currentStep = order?.orderTrackings
-    ? order.orderTrackings.length - 1
-    : 0; // Using tracking length as proxy, simplified
+  // const currentStep = order?.orderTrackings
+  //   ? order.orderTrackings.length - 1
+  //   : 0; // Using tracking length as proxy, simplified
 
   return (
     <div className="max-w-5xl mx-auto">

@@ -1,5 +1,6 @@
 "use client";
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getUserOrders } from "@/lib/apis/orders";
 import { getStatus } from "@/lib/utils/getStatus";
 import { getImageUrl } from "@/lib/utils/imageUrl";
@@ -74,6 +75,7 @@ const UserOrders = () => {
 
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const { formatPrice } = useCurrency()
 
   const fetchData = useCallback(
     async (status: string) => {
@@ -147,6 +149,9 @@ const UserOrders = () => {
     );
   };
 
+  console.log("orders", orders);
+
+
   return (
     <div className="p-2 md:p-4 bg-gray-50/50 min-h-[600px] rounded-xl">
       <Tabs
@@ -198,7 +203,7 @@ const UserOrders = () => {
                     <div className="text-right">
                       <Text type="secondary" className="block text-xs">Total Amount</Text>
                       <Text strong className="text-xl md:text-2xl text-blue-600">
-                        {Number(order.grandTotal).toFixed(2)}
+                        {formatPrice(order.grandTotal)}
                       </Text>
                     </div>
                   </div>
@@ -214,7 +219,7 @@ const UserOrders = () => {
                           className="relative w-24 h-24 flex-shrink-0 border border-gray-200 rounded-lg overflow-hidden bg-gray-50 group"
                         >
                           <Image
-                            src={getImageUrl(item.product?.thumbnail)}
+                            src={getImageUrl(item.product?.thumbnailImage)}
                             alt={item.product?.name || "Product"}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -330,7 +335,7 @@ const UserOrders = () => {
                     <div className="flex items-center gap-3">
                       <div className="relative w-12 h-12 rounded border flex-shrink-0 bg-gray-100">
                         <Image
-                          src={getImageUrl(item.product?.thumbnail)}
+                          src={getImageUrl(item.product?.thumbnailImage)}
                           alt="Product"
                           fill
                           className="object-cover rounded"
@@ -346,7 +351,7 @@ const UserOrders = () => {
                 {
                   title: "Price",
                   align: 'right',
-                  render: (_, item: any) => <span>{(Number(item.unitPrice) + Number(item.taxAmount)).toFixed(2)}</span>
+                  render: (_, item: any) => <span>{formatPrice(Number(item.unitPrice) + Number(item.taxAmount))}</span>
                 },
                 {
                   title: "Qty",
@@ -356,7 +361,7 @@ const UserOrders = () => {
                 {
                   title: "Total",
                   align: "right",
-                  render: (_, item: any) => <span className="font-medium">{Number(item.subTotal).toFixed(2)}</span>
+                  render: (_, item: any) => <span className="font-medium">{formatPrice(Number(item.subTotal))}</span>
                 }
               ]}
             />
@@ -384,7 +389,7 @@ const UserOrders = () => {
                 <div className="bg-blue-50/50 p-6 rounded-lg">
                   <div className="flex justify-between mb-2">
                     <Text type="secondary">Subtotal</Text>
-                    <Text>{Number(selectedOrder.subTotal).toFixed(2)}</Text>
+                    <Text>{formatPrice(Number(selectedOrder.subTotal))}</Text>
                   </div>
                   <div className="flex justify-between mb-2">
                     <Text type="secondary">Tax / VAT</Text>
@@ -392,18 +397,18 @@ const UserOrders = () => {
                   </div>
                   <div className="flex justify-between mb-2">
                     <Text type="secondary">Shipping</Text>
-                    <Text>+{Number(selectedOrder.shippingCharge).toFixed(2)}</Text>
+                    <Text>+{formatPrice(Number(selectedOrder.shippingCharge))}</Text>
                   </div>
                   {Number(selectedOrder.totalItemsDiscount) > 0 && (
                     <div className="flex justify-between mb-2 text-green-600">
                       <Text type="success">Discount</Text>
-                      <Text type="success">-{Number(selectedOrder.totalItemsDiscount).toFixed(2)}</Text>
+                      <Text type="success">-{formatPrice(Number(selectedOrder.totalItemsDiscount))}</Text>
                     </div>
                   )}
                   <Divider className="my-3" />
                   <div className="flex justify-between items-center">
                     <Text strong className="text-lg">Grand Total</Text>
-                    <Text strong className="text-xl text-blue-600">{Number(selectedOrder.grandTotal).toFixed(2)}</Text>
+                    <Text strong className="text-xl text-blue-600">{formatPrice(Number(selectedOrder.grandTotal))}</Text>
                   </div>
                   {(selectedOrder.payments?.reduce((acc: number, p: any) => p.paymentType === 'Debit' ? acc + Number(p.amount) : acc - Number(p.amount), 0) || 0) < Number(selectedOrder.grandTotal) && (
                     <div className="mt-2 text-right">
