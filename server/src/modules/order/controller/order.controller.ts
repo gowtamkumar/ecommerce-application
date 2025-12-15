@@ -24,7 +24,6 @@ import { ProductVariantEntity } from '../../products/product-variant/model/produ
 import { OrderStatus, PaymentMethod, PaymentStatus } from '../enums';
 import { OrderItemEntity } from '../model/order-item.entity';
 import { OrderEntity } from '../model/order.entity';
-const SSLCommerzPayment = require('sslcommerz-lts');
 
 interface Notification {
   type: string;
@@ -174,8 +173,6 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
     if (queryRunner.isTransactionActive) {
       await queryRunner.commitTransaction();
     }
-
-    console.log('savedOrder.paymentMethod', savedOrder);
 
     // ssl ecommerce intregration
     let paymentUrl = null;

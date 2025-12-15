@@ -134,7 +134,7 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
               <span>{formatPrice(payments?.cash_debit_amount || 0)}</span>
             </div>
             <div className="flex justify-between">
-              <span>SSL Order Amount</span>
+              <span>SSLcommerz Order Amount</span>
               <span>{formatPrice(payments?.ssl_debit_amount || 0)}</span>
             </div>
           </div>
