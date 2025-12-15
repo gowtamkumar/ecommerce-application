@@ -177,12 +177,19 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
     console.log('savedOrder.paymentMethod', savedOrder);
 
     // ssl ecommerce intregration
-    let paymentUrl = null;
+    const paymentUrl = null;
     if (savedOrder.paymentMethod === PaymentMethod.SSLCOMMERZ) {
-      const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
-      console.log('onlinePaymentRes', onlinePaymentRes);
-      console.log('savedOrder.paymentMethod', savedOrder);
-      paymentUrl = onlinePaymentRes;
+      const response = await fetch(`${process.env.BACK_END_URL}/payments/online`, {
+        method: 'POST',
+        body: JSON.stringify({ tranId, grandTotal: savedOrder.grandTotal }),
+      });
+
+      console.log('res payment', response);
+
+      // const onlinePaymentRes = await onlinePayment(req, res, savedOrder);
+      // console.log('onlinePaymentRes', onlinePaymentRes);
+      // console.log('savedOrder.paymentMethod', savedOrder);
+      // paymentUrl = response;
     }
 
     return res.status(200).json({

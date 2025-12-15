@@ -6,6 +6,7 @@ import {
   deletePayment,
   getPayment,
   getPayments,
+  onlinePayment,
   sslcommerzCancelHandler,
   sslcommerzFailHandler,
   sslcommerzSuccessHandler,
@@ -15,7 +16,7 @@ import {
 const router = express.Router();
 
 router.route('/').get(getPayments).post(AuthGuard, createPayment);
-router.route('/online').post(AuthGuard, createPayment);
+router.route('/online').post(AuthGuard, onlinePayment);
 router.route('/dashboard').post(AuthGuard, createDashboardPayment);
 router.route('/success/:tranId').post(sslcommerzSuccessHandler);
 router.route('/fail/:tranId').post(sslcommerzFailHandler);
