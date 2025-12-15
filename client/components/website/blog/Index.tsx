@@ -11,7 +11,7 @@ const RecentPostSection = dynamic(() => import("./RecentPostSection"));
 const Pagination = dynamic(() => import("./Pagination"));
 const PostHeader = dynamic(() => import("./PostHeader"));
 
-export default function Index({ posts }: any) {
+export default function Index({ posts, searchParams }: any) {
   return (
     <>
       <PostHeader />
@@ -77,7 +77,7 @@ export default function Index({ posts }: any) {
           {/* <!-- Search --> */}
           <PostSearchSection />
           {/* <!-- Categories --> */}
-          <PostCategory />
+          <PostCategory searchParams={searchParams} />
           {/* <!-- Recent Posts --> */}
           <RecentPostSection />
           {/* <!-- Tags --> */}
