@@ -1,6 +1,4 @@
 import { auth } from "@/auth";
-// import { authOptions } from "@/lib/authOption";
-// import { getServerSession } from "next-auth";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";

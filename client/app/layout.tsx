@@ -1,12 +1,10 @@
-import dynamic from "next/dynamic";
-import localFont from "next/font/local";
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "../lib/authOption";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import StoreProvider from "@/redux/storeProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import dynamic from "next/dynamic";
+import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "../lib/SessionProvider";
 
@@ -63,11 +61,6 @@ const poppinsFont = localFont({
   ],
   variable: "--font-poppins",
 });
-
-// Metadata (can be overridden per page)
-
-// Helper to inject custom SEO code
-
 
 export default async function RootLayout({
   children,

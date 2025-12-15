@@ -1,7 +1,4 @@
 import { auth } from "@/auth";
-// import ScrollToCart from "@/components/website/ScrollToCart";
-// import { authOptions } from "@/lib/authOption";
-// import { getServerSession } from "next-auth";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
@@ -18,10 +15,6 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckOut() {
-  // const session: any = useSession();
-  // if (session.status === "unauthenticated") {
-  //   redirect("/login");
-  // }
 
   const session: any = await auth();
 

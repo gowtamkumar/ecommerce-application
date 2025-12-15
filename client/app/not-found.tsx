@@ -1,11 +1,9 @@
-'use client';
+// 'use client';
 
 import { Button, Result } from 'antd';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export default function NotFound() {
-  const router = useRouter();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
@@ -25,13 +23,13 @@ export default function NotFound() {
                   Back Home
                 </Button>
               </Link>
-              <Button
+              {/* <Button
                 size="large"
                 onClick={() => router.back()}
                 className="min-w-[140px] h-11 rounded-lg border-gray-300 hover:border-gray-400 hover:text-gray-700"
               >
                 Go Back
-              </Button>
+              </Button> */}
             </div>
           }
         />
