@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Card, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
 import dynamic from "next/dynamic";
+import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -18,7 +17,6 @@ const SizeList = dynamic(() => import("@/components/dashboard/size/SizeList"), {
 });
 
 export default function Size() {
-  const [tabKey, setTabKey] = useState("size_list");
   const dispatch = useDispatch();
 
   return (
@@ -29,9 +27,7 @@ export default function Size() {
           <Title level={3} className="!mb-1">
             Product Sizes
           </Title>
-          <Text type="secondary">
-            Manage available product sizes
-          </Text>
+          <Text type="secondary">Manage available product sizes</Text>
         </div>
         <Button
           type="primary"

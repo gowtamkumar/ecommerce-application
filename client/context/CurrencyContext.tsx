@@ -17,13 +17,21 @@ interface CurrencyContextType {
   formatPrice: (price: number) => string;
 }
 
-const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
+const CurrencyContext = createContext<CurrencyContextType | undefined>(
+  undefined
+);
 
-export const CurrencyProvider = ({ children }: { children: React.ReactNode }) => {
+export const CurrencyProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [currencies, setCurrencies] = useState<Currency[]>([]);
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(
+    null
+  );
 
-  // Persist choice in local storage or cookie. 
+  // Persist choice in local storage or cookie.
   // Simple approach: LocalStorage or Default to first one found.
 
   useEffect(() => {
@@ -42,9 +50,14 @@ export const CurrencyProvider = ({ children }: { children: React.ReactNode }) =>
           const parsed = JSON.parse(saved);
           // Verify it exists in new list
           const found = res.data.find((c: Currency) => c.id === parsed.id);
-          setSelectedCurrency(found || res.data.find((c: Currency) => c.exchangeRate === 1) || res.data[0]);
+          setSelectedCurrency(
+            found ||
+            res.data.find((c: Currency) => c.exchangeRate === 1) ||
+            res.data[0]
+          );
         } else {
-          const defaultCyp = res.data.find((c: Currency) => c.exchangeRate === 1) || res.data[0];
+          const defaultCyp =
+            res.data.find((c: Currency) => c.exchangeRate === 1) || res.data[0];
           setSelectedCurrency(defaultCyp);
         }
       }
@@ -73,7 +86,15 @@ export const CurrencyProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   return (
-    <CurrencyContext.Provider value={{ currencies, selectedCurrency, changeCurrency, convertPrice, formatPrice }}>
+    <CurrencyContext.Provider
+      value={{
+        currencies,
+        selectedCurrency,
+        changeCurrency,
+        convertPrice,
+        formatPrice,
+      }}
+    >
       {children}
     </CurrencyContext.Provider>
   );

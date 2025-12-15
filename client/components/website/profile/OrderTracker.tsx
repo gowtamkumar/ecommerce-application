@@ -141,27 +141,6 @@ export default function OrderTracker() {
     },
   ];
 
-  // Helper to map statuses to steps (simplified)
-  // const getStepStatus = (status: string) => {
-  //   switch (status) {
-  //     case "Pending":
-  //       return 0;
-  //     case "Processing":
-  //       return 1;
-  //     case "Shipped":
-  //       return 2;
-  //     case "Delivered":
-  //       return 3;
-  //     case "Canceled":
-  //       return -1;
-  //     default:
-  //       return 0;
-  //   }
-  // };
-
-  // const currentStep = order?.orderTrackings
-  //   ? order.orderTrackings.length - 1
-  //   : 0; // Using tracking length as proxy, simplified
 
   return (
     <div className="max-w-5xl mx-auto">

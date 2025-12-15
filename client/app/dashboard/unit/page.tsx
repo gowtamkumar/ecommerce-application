@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Card, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
 import dynamic from "next/dynamic";
+import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -17,7 +16,6 @@ const UnitList = dynamic(() => import("@/components/dashboard/unit/UnitList"), {
 });
 
 export default function Unit() {
- const [tabKey, setTabKey] = useState("unit_list");
   const dispatch = useDispatch();
 
   return (
@@ -28,9 +26,7 @@ export default function Unit() {
           <Title level={3} className="!mb-1">
             Product Units
           </Title>
-          <Text type="secondary">
-            Manage measurement units for products
-          </Text>
+          <Text type="secondary">Manage measurement units for products</Text>
         </div>
         <Button
           type="primary"

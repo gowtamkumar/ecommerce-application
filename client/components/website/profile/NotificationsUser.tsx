@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   clearNotifications,
   getNotifications,
@@ -10,7 +9,7 @@ import {
   BellOutlined,
   ClockCircleOutlined,
   DeleteOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { Button, Card, Empty, Modal, Skeleton, Tag, Typography } from "antd";
 import dayjs from "dayjs";
@@ -88,7 +87,9 @@ const NotificationsUser = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <Title level={4} className="!mb-0">Notifications</Title>
+          <Title level={4} className="!mb-0">
+            Notifications
+          </Title>
           <Text type="secondary">Stay updated with your latest activities</Text>
         </div>
         {notifications.length > 0 && (
@@ -117,23 +118,37 @@ const NotificationsUser = () => {
               onClick={() => handleRowClick(item)}
               className={`
                         group relative p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md
-                        ${item.isRead ? 'bg-white border-gray-100' : 'bg-blue-50 border-blue-100'}
+                        ${item.isRead
+                  ? "bg-white border-gray-100"
+                  : "bg-blue-50 border-blue-100"
+                }
                     `}
             >
               <div className="flex gap-4 items-start">
-                <div className={`
+                <div
+                  className={`
                              mt-1 p-2 rounded-full shrink-0
-                             ${item.isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500'}
-                          `}>
+                             ${item.isRead
+                      ? "bg-gray-100 text-gray-400"
+                      : "bg-blue-100 text-blue-500"
+                    }
+                          `}
+                >
                   <BellOutlined />
                 </div>
 
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <Text strong={!item.isRead} className="text-base mb-1 block">
+                    <Text
+                      strong={!item.isRead}
+                      className="text-base mb-1 block"
+                    >
                       {item.title}
                     </Text>
-                    <Text type="secondary" className="text-xs whitespace-nowrap ml-2">
+                    <Text
+                      type="secondary"
+                      className="text-xs whitespace-nowrap ml-2"
+                    >
                       {dayjs(item.createdAt).fromNow()}
                     </Text>
                   </div>
@@ -165,18 +180,24 @@ const NotificationsUser = () => {
         onOk={handleOk}
         onCancel={handleOk}
         footer={[
-          <Button key="close" onClick={handleOk}>Close</Button>
+          <Button key="close" onClick={handleOk}>
+            Close
+          </Button>,
         ]}
         centered
       >
         <div className="space-y-4 py-2">
           <div>
-            <Text type="secondary" className="text-xs uppercase tracking-wide">Title</Text>
+            <Text type="secondary" className="text-xs uppercase tracking-wide">
+              Title
+            </Text>
             <div className="font-medium text-lg">{notification.title}</div>
           </div>
 
           <div>
-            <Text type="secondary" className="text-xs uppercase tracking-wide">Date</Text>
+            <Text type="secondary" className="text-xs uppercase tracking-wide">
+              Date
+            </Text>
             <div className="flex items-center gap-2 text-gray-600">
               <ClockCircleOutlined />
               {dayjs(notification.createdAt).format("MMMM D, YYYY h:mm A")}
@@ -184,7 +205,12 @@ const NotificationsUser = () => {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-md border border-gray-100">
-            <Text type="secondary" className="text-xs uppercase tracking-wide block mb-2">Message</Text>
+            <Text
+              type="secondary"
+              className="text-xs uppercase tracking-wide block mb-2"
+            >
+              Message
+            </Text>
             <Paragraph className="!mb-0 text-gray-800">
               {notification.message}
             </Paragraph>

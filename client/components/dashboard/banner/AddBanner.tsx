@@ -14,12 +14,20 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Image, Input, Modal, Select, Switch, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Select,
+  Switch,
+  Upload,
+} from "antd";
 import ImgCrop from "antd-img-crop";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
-
 
 const AddBanner = () => {
   const [formValues, setFormValues] = useState({
@@ -92,13 +100,16 @@ const AddBanner = () => {
       width={700}
       zIndex={1050}
       open={
-        banner &&
-        (type === ActionType.CREATE || type === ActionType.UPDATE)
+        banner && (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
       footer={
         <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button size="large" onClick={() => resetFormData(payload)} className="!rounded-lg">
+          <Button
+            size="large"
+            onClick={() => resetFormData(payload)}
+            className="!rounded-lg"
+          >
             Reset
           </Button>
           <Button
@@ -194,12 +205,17 @@ const AddBanner = () => {
           </Form.Item>
 
           {/* URL */}
-          <Form.Item name="url" label="Banner URL" rules={[
-            {
-              required: true,
-              message: "Url is required",
-            },
-          ]} className="!mb-0">
+          <Form.Item
+            name="url"
+            label="Banner URL"
+            rules={[
+              {
+                required: true,
+                message: "Url is required",
+              },
+            ]}
+            className="!mb-0"
+          >
             <Input placeholder="Enter link URL (optional)" size="large" />
           </Form.Item>
 
@@ -226,12 +242,7 @@ const AddBanner = () => {
             ]}
             className="!mb-0"
           >
-            <ImgCrop
-              rotationSlider
-              aspectSlider
-              showReset
-              aspect={18 / 6}
-            >
+            <ImgCrop rotationSlider aspectSlider showReset aspect={18 / 6}>
               <Upload
                 name="image"
                 listType="picture-card"

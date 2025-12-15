@@ -244,8 +244,8 @@ export default function FilterSidebar() {
                       <button
                         onClick={() => handleColorSelect(item.id.toString())}
                         className={`w-10 h-10 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${isSelected
-                            ? 'border-gray-900 shadow-md'
-                            : 'border-gray-300 hover:border-gray-400'
+                          ? 'border-gray-900 shadow-md'
+                          : 'border-gray-300 hover:border-gray-400'
                           }`}
                         style={{ backgroundColor: item.color }}
                         title={item.name}
@@ -253,8 +253,8 @@ export default function FilterSidebar() {
                         {isSelected && (
                           <CheckOutlined
                             className={`text-xs ${['white', '#ffffff', '#fff'].includes(item.color.toLowerCase())
-                                ? 'text-gray-900'
-                                : 'text-white'
+                              ? 'text-gray-900'
+                              : 'text-white'
                               }`}
                           />
                         )}

@@ -1,236 +1,50 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   Button,
-//   DatePicker,
-//   Form,
-//   Input,
-//   InputNumber,
-//   Modal,
-//   Select,
-// } from "antd";
-// import { ActionType } from "../../../constants/constants";
-// import {
-//   selectGlobal,
-//   setAction,
-//   setLoading,
-// } from "@/redux/features/global/globalSlice";
-// import { useDispatch, useSelector } from "react-redux";
-// import { saveDashboardPayment, updatePayment } from "@/lib/apis/payment";
-// import { getUsers } from "@/lib/apis/user";
-// import dayjs from "dayjs";
-// import { errorNotification } from "@/lib/utils/notification";
-// import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+"use client";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-// const AddPayment = () => {
-//   const [users, setUsers] = useState([] as any);
-//   const global = useSelector(selectGlobal);
-//   const { payload, payment, type } = global.action;
-//   // hook
-//   const [form] = Form.useForm();
-//   const dispatch = useDispatch();
+const { Title, Text } = Typography;
 
-//   useEffect(() => {
-//     fetchData();
-//     return () => {
-//       form.resetFields();
-//     };
-//   }, [global.action]);
+const PaymentList = dynamic(
+  () => import("@/components/dashboard/payment/PaymentList"),
+  { ssr: false }
+);
 
-//   const fetchData = async () => {
-//     dispatch(setLoading({ loading: true }));
-//     try {
-//       const newData = {
-//         ...payload,
-//         paymentDate: payload?.paymentDate
-//           ? dayjs(payload.paymentDate)
-//           : dayjs(), // Optional chaining
-//       };
-//       form.setFieldsValue(newData);
-//       const response = await getUsers();
-//       setUsers(response.data);
-//     } catch (err: any) {
-//       errorNotification({ message: err.message });
-//     } finally {
-//       dispatch(setLoading({ loading: false }));
-//     }
-//   };
+export default function Payment() {
+  const [tabKey, setTabKey] = useState("payment");
+  const route = useRouter();
 
-//   const handleSubmit = async (values: any) => {
-//     let newData = { ...values };
+  return (
+    <div className="py-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <Title level={3} className="!mb-1">
+            Payment Management
+          </Title>
+          <Text type="secondary">
+            View and manage all payment transactions
+          </Text>
+        </div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() => {
+            route.push("/dashboard/payments/new");
+          }}
+          className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+        >
+          New Payment
+        </Button>
+      </div>
 
-//     const result = newData.id
-//       ? () => updatePayment(newData)
-//       : () => saveDashboardPayment(newData);
-
-//     const messageData = newData.id
-//       ? "Successfully Updated"
-//       : "Successfully Added";
-
-//     await handleAsyncAction(result, messageData, dispatch);
-//   };
-
-//   const handleClose = () => {
-//     dispatch(setAction({}));
-//     dispatch(setLoading({}));
-//   };
-
-//   const resetFormData = () => {
-//     if (payload?.id) {
-//       form.setFieldsValue(global.action?.payload);
-//     } else {
-//       form.resetFields();
-//     }
-//   };
-
-//   const layout = {
-//     labelCol: { span: 6 },
-//     wrapperCol: { span: 16 },
-//   };
-
-//   const tailLayout = {
-//     wrapperCol: { offset: 6, span: 16 },
-//   };
-
-//   return (
-//     <Modal
-//       title={type === ActionType.UPDATE ? "Update Payment" : "Create Payment"}
-//       width={600}
-//       zIndex={1050}
-//       open={
-//         payment && (type === ActionType.CREATE || type === ActionType.UPDATE)
-//       }
-//       onCancel={handleClose}
-//       footer={null}
-//     >
-//       <Form
-//         {...layout}
-//         form={form}
-//         onFinish={handleSubmit}
-//         autoComplete="off"
-//         scrollToFirstError={true}
-//         initialValues={{ paymentType: "Debit", paymentDate: dayjs() }}
-//       >
-//         <Form.Item name="id" hidden>
-//           <Input />
-//         </Form.Item>
-
-//         <Form.Item name="orderId" hidden>
-//           <Input />
-//         </Form.Item>
-
-//         <Form.Item
-//           name="paymentDate"
-//           label="Payment Date"
-//           rules={[
-//             {
-//               required: true,
-//               message: "Date is required",
-//             },
-//           ]}
-//         >
-//           <DatePicker />
-//         </Form.Item>
-
-//         <Form.Item
-//           name="userId"
-//           label="Customer"
-//           className="mb-1"
-//           rules={[
-//             {
-//               required: true,
-//               message: "Customer is required",
-//             },
-//           ]}
-//         >
-//           <Select
-//             showSearch
-//             allowClear
-//             placeholder="Select"
-//             optionFilterProp="children"
-//             filterOption={(input, option) =>
-//               (option?.children as any)
-//                 .toLowerCase()
-//                 .indexOf(input.toLowerCase()) >= 0
-//             }
-//           >
-//             {(users || []).map((item: { name: string; id: number }) => (
-//               <Select.Option key={item.id} value={item.id}>
-//                 {item.name}
-//               </Select.Option>
-//             ))}
-//           </Select>
-//         </Form.Item>
-
-//         <Form.Item
-//           name="amount"
-//           label="Amount"
-//           rules={[
-//             {
-//               required: true,
-//               message: "Name is required",
-//             },
-//           ]}
-//         >
-//           <InputNumber placeholder="Enter Amount" />
-//         </Form.Item>
-
-//         <Form.Item
-//           name="paymentType"
-//           label="Payment Type"
-//           className="mb-1"
-//           rules={[
-//             {
-//               required: true,
-//               message: "Payment Type is required",
-//             },
-//           ]}
-//         >
-//           <Select placeholder="Select">
-//             <Select.Option value="Debit"> Debit </Select.Option>
-//             <Select.Option value="Credit"> Credit </Select.Option>
-//           </Select>
-//         </Form.Item>
-
-//         <Form.Item
-//           name="paymentMethod"
-//           label="Payment Method"
-//           className="mb-1"
-//           rules={[
-//             {
-//               required: true,
-//               message: "Payment Method is required",
-//             },
-//           ]}
-//         >
-//           <Select placeholder="Select">
-//             <Select.Option value="Cash"> Cash </Select.Option>
-//             <Select.Option value="SSLCOMMERZ"> SSLCOMMERZ </Select.Option>
-//             <Select.Option value="Stripe"> Stripe </Select.Option>
-//           </Select>
-//         </Form.Item>
-
-//         <Form.Item {...tailLayout}>
-//           <Button
-//             className="me-1"
-//             size="small"
-//             onClick={resetFormData}
-//           >
-//             Reset
-//           </Button>
-//           <Button
-//             size="small"
-//             color="primary"
-//             htmlType="submit"
-
-//             disabled={global.loading.save}
-//             loading={global.loading.save}
-//           >
-//             {payload?.id ? "Update" : "Save"}
-//           </Button>
-//         </Form.Item>
-//       </Form>
-//     </Modal>
-//   );
-// };
-
-// export default AddPayment;
+      {/* Table Card */}
+      <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <PaymentList />
+      </Card>
+    </div>
+  );
+}

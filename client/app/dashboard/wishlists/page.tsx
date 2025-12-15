@@ -1,15 +1,20 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Tabs } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Tabs } from "antd";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
-const AddWishlist = dynamic(() => import('@/components/dashboard/wishlist/AddWishlist'), { ssr: false })
-const WishlistsList = dynamic(() => import('@/components/dashboard/wishlist/WishlistsList'), { ssr: false })
-
+const AddWishlist = dynamic(
+  () => import("@/components/dashboard/wishlist/AddWishlist"),
+  { ssr: false }
+);
+const WishlistsList = dynamic(
+  () => import("@/components/dashboard/wishlist/WishlistsList"),
+  { ssr: false }
+);
 
 export default function Wishlists() {
   const [tabKey, setTabKey] = useState("wishlists_list");

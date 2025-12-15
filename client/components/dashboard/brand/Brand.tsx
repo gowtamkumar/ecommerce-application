@@ -6,17 +6,17 @@ import { Button, Card, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useDispatch } from "react-redux";
 
-const { Title, Text } = Typography;
+
 
 const AddBrand = dynamic(() => import('@/components/dashboard/brand/AddBrand'), { ssr: false })
 const BrandList = dynamic(() => import('@/components/dashboard/brand/BrandList'), { ssr: false })
 
 export default function Brand() {
   const dispatch = useDispatch();
+  const { Title, Text } = Typography;
 
   return (
     <div className="py-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <Title level={3} className="!mb-1">

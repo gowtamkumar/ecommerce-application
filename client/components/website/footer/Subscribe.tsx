@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
 import { saveLead } from "@/lib/apis/leads";
-import { Form, Input, message } from "antd";
 import {
   successNotification,
   warningNotification,
 } from "@/lib/utils/notification";
+import { Form, Input } from "antd";
+import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi";
 
 export default function Subscribe() {
@@ -63,7 +63,7 @@ export default function Subscribe() {
                      transition-all duration-300"
           />
         </Form.Item>
-        
+
         <button
           type="submit"
           disabled={loading}
@@ -88,8 +88,8 @@ export default function Subscribe() {
           )}
         </button>
       </div>
-      
-      <style jsx global>{`
+
+      {/* <style jsx global>{`
         .subscribe-form .ant-form-item-explain-error {
           color: #fca5a5;
           font-size: 12px;
@@ -103,7 +103,7 @@ export default function Subscribe() {
         .subscribe-form .ant-input:focus {
           outline: none;
         }
-      `}</style>
+      `}</style> */}
     </Form>
   );
 }

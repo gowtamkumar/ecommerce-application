@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { Button, Card, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
+import dynamic from "next/dynamic";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -19,11 +18,10 @@ const AddColor = dynamic(
 );
 
 export default function Color() {
-  const [tabKey, setTabKey] = useState("Color_list");
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const { action } = global;
-  
+
   return (
     <div className="py-6">
       {/* Header */}
@@ -32,9 +30,7 @@ export default function Color() {
           <Title level={3} className="!mb-1">
             Product Colors
           </Title>
-          <Text type="secondary">
-            Manage color options for products
-          </Text>
+          <Text type="secondary">Manage color options for products</Text>
         </div>
         <Button
           type="primary"

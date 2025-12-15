@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import uploadButton from "@/components/share-component/uploadButton";
 import { saveBrand, updateBrand } from "@/lib/apis/brand";
@@ -20,7 +19,6 @@ import ImgCrop from "antd-img-crop";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
-
 
 const AddBrand = () => {
   const [formValues, setFormValues] = useState({
@@ -95,11 +93,19 @@ const AddBrand = () => {
       }
       width={550}
       zIndex={1050}
-      open={type && global?.action?.brand && (type === ActionType.CREATE || type === ActionType.UPDATE)}
+      open={
+        type &&
+        global?.action?.brand &&
+        (type === ActionType.CREATE || type === ActionType.UPDATE)
+      }
       onCancel={handleClose}
       footer={
         <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button size="large" onClick={() => resetFormData(payload)} className="!rounded-lg">
+          <Button
+            size="large"
+            onClick={() => resetFormData(payload)}
+            className="!rounded-lg"
+          >
             Reset
           </Button>
           <Button

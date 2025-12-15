@@ -70,7 +70,7 @@ export default async function RootLayout({
   const session = await auth();
   const settingRes = await getSettings();
   const setting = settingRes?.data || {};
-  const favicon = getImageUrl(setting?.favicon, "");
+  const favicon = getImageUrl(setting?.favicon);
 
   return (
     <html lang="en">

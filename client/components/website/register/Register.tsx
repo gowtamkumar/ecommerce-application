@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
-import { Button, Form, Input } from "antd";
-import { useRouter } from "next/navigation";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { getSession } from "next-auth/react";
 import { saveUser } from "@/lib/apis/user";
+import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input } from "antd";
+import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const Register = () => {
   const global = useSelector(selectGlobal);

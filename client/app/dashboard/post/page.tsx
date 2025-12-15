@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Tabs } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Tabs } from "antd";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
-const PostList = dynamic(() => import("@/components/dashboard/post/PostList"), {ssr: false});
+const PostList = dynamic(() => import("@/components/dashboard/post/PostList"), { ssr: false });
 
 export default function Page() {
   const [tabKey, setTabKey] = useState("post_list");

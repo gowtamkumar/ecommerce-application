@@ -15,15 +15,12 @@ import {
 import {
   Button,
   Tooltip,
-  Typography,
   message
 } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const { Title, Text } = Typography;
 
 export default function MyWishlist() {
   const [wishlists, setWishlists] = useState([]);

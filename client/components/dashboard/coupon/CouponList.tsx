@@ -54,7 +54,7 @@ const CouponList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
-  const {formatPrice} = useCurrency();
+  const { formatPrice } = useCurrency();
 
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));

@@ -1,11 +1,11 @@
-"use client";
+'use client'
+import { selectLayout } from "@/redux/features/layout/layoutSlice";
+import { Layout } from "antd";
+import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
-import { Layout } from "antd";
 import React, { Suspense } from "react";
-import { useSession } from "next-auth/react";
 import { useSelector } from "react-redux";
-import { selectLayout } from "@/redux/features/layout/layoutSlice";
 
 const { Content } = Layout;
 
@@ -29,30 +29,30 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const session: any = useSession();
-  const layout = useSelector(selectLayout);
+  const layoutSite = useSelector(selectLayout);
 
   if (session.data?.user?.role !== "Admin") {
     redirect("/");
   }
 
   // Calculate marginLeft based on sidebar state
-  const marginLeft = layout.screenWidth > 820 
-    ? (layout.collapsed ? 80 : 260) 
+  const marginLeft = layoutSite.screenWidth > 820
+    ? (layoutSite.collapsed ? 80 : 260)
     : 0;
 
   return (
     <Suspense fallback={<Loading />}>
       <Layout style={{ minHeight: "100vh" }}>
         <Sidebar />
-        <Layout 
-          style={{ 
+        <Layout
+          style={{
             marginLeft: `${marginLeft}px`,
             transition: 'margin-left 0.2s',
           }}
         >
           <DashboardHeader />
-          <Content 
-            style={{ 
+          <Content
+            style={{
               padding: "0 24px",
               minHeight: "calc(100vh - 64px - 70px)", // viewport - header - footer
             }}

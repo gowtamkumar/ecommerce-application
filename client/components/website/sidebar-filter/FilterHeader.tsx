@@ -93,8 +93,8 @@ export default function FilterHeader() {
                   <button
                     onClick={() => dispatch(setProductView(false))}
                     className={`p-2 transition-colors ${!global.productView
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-white text-gray-600 hover:bg-gray-50'
                       }`}
                     title="List View"
                   >
@@ -103,8 +103,8 @@ export default function FilterHeader() {
                   <button
                     onClick={() => dispatch(setProductView(true))}
                     className={`p-2 border-l border-gray-300 transition-colors ${global.productView
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-white text-gray-600 hover:bg-gray-50'
                       }`}
                     title="Grid View"
                   >

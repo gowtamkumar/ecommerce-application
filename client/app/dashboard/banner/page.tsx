@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Card, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
 import dynamic from "next/dynamic";
+import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 
@@ -13,7 +12,6 @@ const AddBanner = dynamic(() => import('@/components/dashboard/banner/AddBanner'
 const BannerList = dynamic(() => import('@/components/dashboard/banner/BannerList'), { ssr: false })
 
 export default function Banner() {
-  const [tabKey, setTabKey] = useState("banner_list");
   const dispatch = useDispatch();
 
   return (

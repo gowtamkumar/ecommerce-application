@@ -1,6 +1,5 @@
 "use client";
 import { getImageUrl } from "@/lib/utils/imageUrl";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
   BellOutlined,
   EnvironmentFilled,
@@ -15,7 +14,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import "./notification.css";
 import NotificationsUser from "./NotificationsUser";
 import ChangePassword from "./PasswordChange";
@@ -45,7 +43,6 @@ const OrderTracker = dynamic(() => import("./OrderTracker"), {
 
 export default function Profile() {
   const [tabKey, setTabKey] = useState("my_account");
-  const global = useSelector(selectGlobal);
   const searchQuery = useSearchParams();
   const categoryIdParams = searchQuery.get("tab");
   const route = useRouter();

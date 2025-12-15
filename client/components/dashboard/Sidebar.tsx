@@ -53,13 +53,13 @@ const Sidebar = () => {
   };
 
   const getLabelText = (label: any): string => {
-    if (typeof label === 'string') return label;
+    if (typeof label === "string") return label;
     if (label?.props?.children) {
-      return typeof label.props.children === 'string'
+      return typeof label.props.children === "string"
         ? label.props.children
         : getLabelText(label.props.children);
     }
-    return '';
+    return "";
   };
 
   const filteredChildren = navbarRoute
@@ -67,9 +67,13 @@ const Sidebar = () => {
     .map((item: any) => {
       const itemText = getLabelText(item.label);
       const hasMatchingChild = item.children?.some((child: any) =>
-        getLabelText(child.label).toLowerCase().includes(searchTerm.toLowerCase())
+        getLabelText(child.label)
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
       );
-      const matchesSearch = itemText.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = itemText
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
       if (searchTerm && !matchesSearch && !hasMatchingChild) return null;
 
@@ -84,7 +88,10 @@ const Sidebar = () => {
           // Let's go with: Only show children that match, UNLESS the search term matches the parent strictly, then maybe show all?
           // Let's Keep it simple: Filter children by search term too.
           if (matchesSearch) return checkPermission(child); // If parent matches, return all permitted children
-          return checkPermission(child) && childText.toLowerCase().includes(searchTerm.toLowerCase());
+          return (
+            checkPermission(child) &&
+            childText.toLowerCase().includes(searchTerm.toLowerCase())
+          );
         }),
       };
     })
@@ -100,9 +107,9 @@ const Sidebar = () => {
         styles={{
           body: { margin: 0, padding: 0 },
           header: {
-            borderBottom: '1px solid #f0f0f0',
-            padding: '16px 24px'
-          }
+            borderBottom: "1px solid #f0f0f0",
+            padding: "16px 24px",
+          },
         }}
         width={280}
         closeIcon={<CloseOutlined />}
@@ -122,7 +129,7 @@ const Sidebar = () => {
           style={{
             margin: 0,
             padding: 0,
-            border: 'none'
+            border: "none",
           }}
           theme="light"
           mode="inline"
@@ -175,7 +182,7 @@ const Sidebar = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 hover:border-gray-600 focus:border-blue-500"
               style={{
-                borderRadius: '8px',
+                borderRadius: "8px",
               }}
             />
           </div>
@@ -189,7 +196,7 @@ const Sidebar = () => {
           className="sidebar-menu-dark"
           style={{
             borderRight: 0,
-            fontSize: '14px',
+            fontSize: "14px",
           }}
         />
       </Sider>

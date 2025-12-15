@@ -1,5 +1,20 @@
 "use client";
-import React, { useEffect } from "react";
+import { saveColor, updateColor } from "@/lib/apis/color";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import {
+  selectGlobal,
+  setAction,
+  setLoading,
+} from "@/redux/features/global/globalSlice";
+import {
+  cyan,
+  gold,
+  green,
+  grey,
+  presetPalettes,
+  purple,
+  red,
+} from "@ant-design/colors";
 import {
   Button,
   ColorPicker,
@@ -8,24 +23,9 @@ import {
   Input,
   Modal,
 } from "antd";
-import {
-  green,
-  presetPalettes,
-  red,
-  gold,
-  cyan,
-  purple,
-  grey,
-} from "@ant-design/colors";
-import { saveColor, updateColor } from "@/lib/apis/color";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { ActionType } from "../../../constants/constants";
 
 type Presets = Required<ColorPickerProps>["presets"][number];
 

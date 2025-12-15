@@ -105,9 +105,6 @@ const OrderStatusUpdate = () => {
 
   const currentStatus = Form.useWatch('status', form);
 
-
-  console.log(currentStatus);
-
   return (
     <Modal
       title={

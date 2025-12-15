@@ -5,7 +5,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import dynamic from "next/dynamic";
 import { useDispatch } from "react-redux";
 
-const PageList = dynamic(() => import("@/components/dashboard/page/PageList"), { ssr: false });
+const PageList = dynamic(() => import("@/components/dashboard/page/PageList"), {
+  ssr: false,
+});
 
 export default function PagesPage() {
   const dispatch = useDispatch();

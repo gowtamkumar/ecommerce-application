@@ -4,11 +4,20 @@ import type { IAuditLog } from "@/lib/types/audit-log";
 import { errorNotification } from "@/lib/utils/notification";
 import { EyeOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
-import { Button, Card, DatePicker, Descriptions, Input, Modal, Select, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Descriptions,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from "antd";
 import dayjs from "dayjs";
 import React, { useCallback, useEffect, useState } from "react";
-
-
 
 const AuditLogList: React.FC = () => {
   const [logs, setLogs] = useState<IAuditLog[]>([]);
@@ -18,7 +27,6 @@ const AuditLogList: React.FC = () => {
   const [limit, setLimit] = useState(20);
   const [selectedLog, setSelectedLog] = useState<IAuditLog | null>(null);
   const [detailsVisible, setDetailsVisible] = useState(false);
-
 
   const { RangePicker } = DatePicker;
   const { Option } = Select;
@@ -43,7 +51,9 @@ const AuditLogList: React.FC = () => {
       setLogs(response.data || []);
       setTotal(response.total || 0);
     } catch (error: any) {
-      errorNotification({ message: error.message || "Failed to fetch audit logs" });
+      errorNotification({
+        message: error.message || "Failed to fetch audit logs",
+      });
     } finally {
       setLoading(false);
     }
@@ -100,8 +110,12 @@ const AuditLogList: React.FC = () => {
       width: 180,
       render: (date: string) => (
         <div className="flex flex-col">
-          <span className="font-medium">{dayjs(date).format("MMM DD, YYYY")}</span>
-          <span className="text-xs text-gray-500">{dayjs(date).format("HH:mm:ss")}</span>
+          <span className="font-medium">
+            {dayjs(date).format("MMM DD, YYYY")}
+          </span>
+          <span className="text-xs text-gray-500">
+            {dayjs(date).format("HH:mm:ss")}
+          </span>
         </div>
       ),
     },
@@ -134,7 +148,9 @@ const AuditLogList: React.FC = () => {
       width: 250,
       render: (_, record: IAuditLog) => (
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900">{record.resourceType}</span>
+          <span className="font-medium text-gray-900">
+            {record.resourceType}
+          </span>
           {record.resourceName && (
             <span className="text-sm text-gray-600">{record.resourceName}</span>
           )}
@@ -166,7 +182,9 @@ const AuditLogList: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Audit Logs</h1>
-          <p className="text-gray-500 text-sm mt-1">Track all admin actions and system events</p>
+          <p className="text-gray-500 text-sm mt-1">
+            Track all admin actions and system events
+          </p>
         </div>
       </div>
 
@@ -265,18 +283,29 @@ const AuditLogList: React.FC = () => {
                 {dayjs(selectedLog.createdAt).format("YYYY-MM-DD HH:mm:ss")}
               </Descriptions.Item>
               <Descriptions.Item label="Action">
-                <Tag color={getActionColor(selectedLog.action)}>{selectedLog.action}</Tag>
+                <Tag color={getActionColor(selectedLog.action)}>
+                  {selectedLog.action}
+                </Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="User">{selectedLog.userName}</Descriptions.Item>
-              <Descriptions.Item label="Role">{selectedLog.userRole}</Descriptions.Item>
-              <Descriptions.Item label="Resource Type">{selectedLog.resourceType}</Descriptions.Item>
-              <Descriptions.Item label="Resource ID">{selectedLog.resourceId || "-"}</Descriptions.Item>
+              <Descriptions.Item label="User">
+                {selectedLog.userName}
+              </Descriptions.Item>
+              <Descriptions.Item label="Role">
+                {selectedLog.userRole}
+              </Descriptions.Item>
+              <Descriptions.Item label="Resource Type">
+                {selectedLog.resourceType}
+              </Descriptions.Item>
+              <Descriptions.Item label="Resource ID">
+                {selectedLog.resourceId || "-"}
+              </Descriptions.Item>
               <Descriptions.Item label="Resource Name" span={2}>
                 {selectedLog.resourceName || "-"}
               </Descriptions.Item>
               <Descriptions.Item label="API Endpoint" span={2}>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                  {selectedLog.metadata?.method || 'N/A'} {selectedLog.metadata?.path || '-'}
+                  {selectedLog.metadata?.method || "N/A"}{" "}
+                  {selectedLog.metadata?.path || "-"}
                 </code>
               </Descriptions.Item>
               <Descriptions.Item label="IP Address" span={2}>

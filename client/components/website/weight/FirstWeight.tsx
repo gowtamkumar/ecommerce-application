@@ -1,10 +1,10 @@
 "use client";
-import { getImageUrl, getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import Image from "next/image";
 import Link from "next/link";
-import { useSelector } from "react-redux";
 import { HiLocationMarker, HiMail, HiPhone } from "react-icons/hi";
+import { useSelector } from "react-redux";
 
 export default function FirstWeight() {
   const global = useSelector(selectGlobal);
@@ -22,7 +22,7 @@ export default function FirstWeight() {
           className="h-auto max-h-[60px] w-auto object-contain"
         />
       </div>
-      
+
       {/* Company Description */}
       <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
         {data?.description}
@@ -32,19 +32,23 @@ export default function FirstWeight() {
       <div className="space-y-3 text-sm">
         {data?.address && (
           <div className="flex items-start gap-3 group">
-            <HiLocationMarker className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 
-                                       group-hover:scale-110 transition-transform duration-300" />
+            <HiLocationMarker
+              className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 
+                                       group-hover:scale-110 transition-transform duration-300"
+            />
             <address className="not-italic text-gray-300 group-hover:text-white transition-colors duration-300">
               {data.address}
             </address>
           </div>
         )}
-        
+
         {data?.phone && (
           <div className="flex items-center gap-3 group">
-            <HiPhone className="w-5 h-5 text-green-400 flex-shrink-0
-                              group-hover:scale-110 transition-transform duration-300" />
-            <Link 
+            <HiPhone
+              className="w-5 h-5 text-green-400 flex-shrink-0
+                              group-hover:scale-110 transition-transform duration-300"
+            />
+            <Link
               href={`tel:${data.phone}`}
               className="text-gray-300 hover:text-white transition-colors duration-300"
             >
@@ -52,12 +56,14 @@ export default function FirstWeight() {
             </Link>
           </div>
         )}
-        
+
         {data?.email && (
           <div className="flex items-center gap-3 group">
-            <HiMail className="w-5 h-5 text-purple-400 flex-shrink-0
-                             group-hover:scale-110 transition-transform duration-300" />
-            <Link 
+            <HiMail
+              className="w-5 h-5 text-purple-400 flex-shrink-0
+                             group-hover:scale-110 transition-transform duration-300"
+            />
+            <Link
               href={`mailto:${data.email}`}
               className="text-gray-300 hover:text-white transition-colors duration-300"
             >
