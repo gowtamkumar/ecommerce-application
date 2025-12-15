@@ -12,8 +12,9 @@ export async function savePost(data: any) {
   return await handleResponse(res);
 }
 
-export async function getPosts() {
-  const res = await fetch(`${appConfig.apiUrl}/posts`, {
+export async function getPosts(query: any = {}) {
+  const queryString = new URLSearchParams(query).toString();
+  const res = await fetch(`${appConfig.apiUrl}/posts?${queryString}`, {
     method: "GET",
     cache: "no-cache",
   });

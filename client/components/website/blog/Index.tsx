@@ -70,7 +70,7 @@ export default function Index({ posts }: any) {
           {/* <!-- Add more post articles as needed --> */}
 
           {/* <!-- Pagination --> */}
-          <Pagination />
+          <Pagination meta={posts?.meta} />
         </section>
         {/* <!-- Sidebar Section --> */}wq
         <aside className="w-full lg:w-1/3">
