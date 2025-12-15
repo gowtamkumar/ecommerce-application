@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import { join } from 'path';
 import 'reflect-metadata';
-import { sendEmail } from '../../../common/sendMail';
 import { getDBConnection } from '../../../config/db';
 import { CustomRequest } from '../../../enums/custom-request-type';
 import { NotificationType } from '../../../enums/notification-type.enum';
@@ -16,6 +15,7 @@ import {
   sendCookiesResponse,
 } from '../../../middlewares/auth.middleware';
 import { logger } from '../../../middlewares/logger';
+import { sendEmail } from '../../../utils/sendMail';
 import { updateUserValidationSchema, userValidationSchema } from '../../../validation';
 import { forgotPasswordValidationSchema } from '../../../validation/user/forgotPasswordValidation';
 import { loginValidationSchema } from '../../../validation/user/loginValidation';

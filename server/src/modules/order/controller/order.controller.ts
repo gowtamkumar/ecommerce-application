@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
-import { sendSms } from '../../../common/sendSms';
 import { getDBConnection } from '../../../config/db';
 import { CustomRequest } from '../../../enums/custom-request-type';
 import { NotificationType } from '../../../enums/notification-type.enum';
 import { asyncHandler } from '../../../middlewares/async.middleware';
 import { logger } from '../../../middlewares/logger';
+import { sendSms } from '../../../utils/sendSms';
 import { initiateSSLCommerzPayment } from '../../../utils/sslcommerz.utils';
 import {
   onlineCreateOrderValidationSchema,
