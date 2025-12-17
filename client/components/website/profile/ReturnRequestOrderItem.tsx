@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
-import { ActionType } from "../../../constants/constants";
+import { saveReturn } from "@/lib/apis/return";
+import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, InputNumber, Modal } from "antd";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { saveReturn } from "@/lib/apis/return";
-import { errorNotification } from "@/lib/utils/notification";
+import { ActionType } from "../../../constants/constants";
 
 const ReturnRequestOrderItem = () => {
   const global = useSelector(selectGlobal);
@@ -29,11 +29,12 @@ const ReturnRequestOrderItem = () => {
 
   const handleSubmit = async (values: any) => {
     console.log("asdf", values);
-    
+
     const result = await saveReturn(values);
     if (!result.success) {
       errorNotification({ message: result.message });
     }
+    handleClose();
   };
 
   const handleClose = () => {

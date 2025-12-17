@@ -12,8 +12,10 @@ export const handleGlobalUpload = async ({
 
   try {
     const res = await uploadFile(formData);
+    console.log("res", res);
+
     if (!res || !res.data) {
-      throw new Error("Invalid response format");
+      throw new Error(res?.message || res?.error || "Invalid response format");
     }
     const uploadedFilename = res.data[0].filename;
     const newFile = {
@@ -33,6 +35,6 @@ export const handleGlobalUpload = async ({
     if (onError) onError({ err });
     /* Return null or rethrow based on preference, rethrowing allows catch block in component to handle specific UI logic if needed, 
        but here we already handled onError. returning null is safer for awaiters. */
-    return null; 
+    return null;
   }
 };

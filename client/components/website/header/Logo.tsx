@@ -9,9 +9,9 @@ export default function HeaderLogo() {
   const global = useSelector(selectGlobal);
   const data = global.setting;
   const route = useRouter();
-  
+
   return (
-    <div 
+    <div
       className="cursor-pointer group relative"
       onClick={() => route.push("/")}
     >
@@ -27,7 +27,7 @@ export default function HeaderLogo() {
                  group-hover:scale-105 
                  group-hover:drop-shadow-[0_0_8px_rgba(247,170,14,0.3)]"
       />
-      
+
       {/* Subtle glow effect on hover */}
       <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 
                     bg-gradient-to-r from-global-primary/10 via-transparent to-global-primary/10 

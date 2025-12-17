@@ -1,513 +1,389 @@
-## users
+# Ecommerce Database Schema
 
-id,
-name,
-username:,
-password,
-email,
-type:[Customer, Vendor, Delivery Man, Admin]
-phone,
-dob,
-gender,
-point:number
-status(Active/Inactive/Block)
-image,
-last_login: date with time zone
-last_logout: date with time zone
-ip_address(optional),
-divice_id(optional),
-resetToken
-createdAt
-updatedAt
+## users
+- id: integer (PK, Auto Increment)
+- name: varchar
+- username: varchar (unique, nullable)
+- password: varchar (nullable)
+- email: varchar (unique)
+- type: enum ('Customer', 'Vendor', 'Delivery Man', 'Admin') (default: 'Customer')
+- phone: varchar (unique, nullable)
+- dob: varchar (nullable)
+- gender: enum ('Male', 'Female', 'Other') (nullable)
+- point: varchar (nullable)
+- address: varchar (nullable)
+- image: varchar (nullable)
+- role: enum ('user', 'admin') (default: 'user')
+- status: enum ('Active', 'Inactive', 'Block') (default: 'Active')
+- last_login: timestamp (nullable)
+- last_logout: timestamp (nullable)
+- ip_address: varchar (nullable)
+- device_id: varchar (nullable)
+- is_verified: boolean (default: false)
+- verification_token: varchar (nullable)
+- reset_token: varchar (nullable)
+- failed_login_attempts: int (default: 0)
+- block_until: timestamp (nullable)
+- created_at: timestamp
+- updated_at: timestamp
 
 ## user_activity
+- id: integer (PK)
+- type: varchar
+- timestamp: timestamp
 
-id,
-type,
-timestamp
-
-## shipping_address
-
-id,
-type:[Home/Office]
-name:
-phone_no,
-email,
-alternative_phone_no,
-user_id,
-divisionId,
-districtId
-upazilaId,
-unionId,
-address,
-status,
-
-## shipping_charge
-
-id,
-district_id,
-weight
-shippingCharge,
-note,
-status,
+## shipping_addresses
+- id: integer (PK)
+- type: enum ('Home', 'Office')
+- name: varchar
+- phone_no: varchar
+- email: varchar (nullable)
+- alternative_phone_no: varchar (nullable)
+- division_id: integer (FK -> divisions.id, nullable)
+- district_id: integer (FK -> districts.id, nullable)
+- upazila_id: integer (FK -> upazilas.id, nullable)
+- union_id: integer (FK -> unions.id, nullable)
+- address: varchar
+- user_id: integer (FK -> users.id)
+- status: boolean (default: true)
 
 ## products
+- id: integer (PK)
+- name: varchar
+- slug: varchar
+- variant: boolean (default: false)
+- is_returnable: boolean (default: true)
+- is_new_arrival: boolean (default: false)
+- featured: boolean (default: false)
+- description: varchar
+- short_description: varchar
+- tax_id: integer (FK -> taxs.id, nullable)
+- discount_id: integer (FK -> discounts.id, nullable)
+- enable_review: boolean (default: true)
+- limit_purchase_qty: integer (nullable)
+- alert_qty: integer
+- status: enum ('Active', 'Inactive') (default: 'Active')
+- brand_id: integer (FK -> brands.id, nullable)
+- unit_id: integer (FK -> units.id)
+- tags: simple-array (nullable)
+- thumbnail_image: varchar
+- hover_image: varchar
+- images: simple-array
+- user_id: integer (FK -> users.id)
+- created_at: timestamp
+- updated_at: timestamp
 
-id!: number;
-name!: string;
-slug!: string;
-variant?: boolean;
-isReturnable?: boolean;
-featured?: boolean;
-description?: string;
-shortDescription?: string;
-taxId?: number;
-discountId?: number;
-enableReview?: boolean;
-limitPurchaseQty?: number;
-alertQty!: number;
-status!: Status;
-brandId?: number;
-unitId!: number;
-tags!: string[];
-thumbnailImage!: string;
-hoverImage!: string;
-images!: string[];
-userId!: number;
-createdAt?: string;
-updatedAt?: string;
-
-## product variants
-
-id!: number;
-sku!: string;
-unitPrice!: number;
-purchasePrice!: number;
-productId!: number;
-sizeId?: number;
-colorId?: number;
-material!: string;
-image!: string;
-default?: boolean;
-stockQty?: number;
-
-## product_category
-
-id,
-category_id,
-product_id
-
-## size
-
-id,
-name,
-status,
-userId
-
-## color
-
-id,
-name,
-color,
-
-## unit
-
-id,
-name,
-
-## coupon
-
-id,
-type:['order', 'product', "FreeShipping"]'free_gift', 'bogo', 'cashback',
-code,
-discountType:(Percentage, Fixed, FreeShipping).
-value,
-image
-start_date,
-expiry_Date
-min_order_amount,
-minimum_cart_value
-max_discount_value
-max_user,
-usage_count,
-usage_limit,
-usage_per_user,
-user_id,
-active:boolean
-createdAt
-updatedAt
-
-## coupon_products
-
-id,
-product_id,
-coupon_id
-createdAt
-updatedAt
-
-## applied_coupon
-
-id,
-user_id,
-coupon_id,
-order_id,
-discount_amount,
-applied_at:
+## product_variants
+- id: integer (PK)
+- sku: varchar (nullable)
+- unit_price: numeric(15, 2)
+- purchase_price: numeric(15, 2)
+- product_id: integer (FK -> products.id)
+- size_id: integer (FK -> sizes.id, nullable)
+- color_id: integer (FK -> colors.id, nullable)
+- material: varchar (nullable)
+- image: varchar (nullable)
+- default: boolean (default: false)
+- stock_qty: integer
 
 ## categories
-
-id,
-name,
-slug,
-user_id,
-description
-image;
-status:(Active/Inactive)
-tags:[""] (need to add)
-createdAt
-updatedAt
-
-## wishlists
-
-id,
-product_id,
-user_id,
-createdAt,
-updatedAt
-
-## carts
-
-id,
-product_id,
-product_variant_id,
-user_id,
-qty,
-createdAt,
-updatedAt
+- id: integer (PK)
+- name: varchar (nullable)
+- slug: varchar
+- image: varchar (nullable)
+- level: integer (nullable)
+- description: varchar (nullable)
+- active: boolean (default: true)
+- is_featured: boolean (default: false)
+- parent_id: integer (FK -> categories.id, nullable)
+- user_id: integer
+- created_at: timestamp
+- updated_at: timestamp
 
 ## brands
+- id: integer (PK)
+- name: varchar (unique)
+- slug: varchar (nullable)
+- image: varchar (nullable)
+- description: varchar (nullable)
+- status: enum ('Active', 'Inactive') (default: 'Active')
+- user_id: integer
+- created_at: timestamp
+- updated_at: timestamp
 
-id,
-name,
-slug,
-image,
-description
-status:(Active/Inactive),,
-userId,
-createdAt
-updatedAt
+## units
+- id: integer (PK)
+- name: varchar
+- user_id: integer
+
+## sizes
+- id: integer (PK)
+- name: varchar
+- status: boolean (default: true)
+- user_id: integer
+
+## colors
+- id: integer (PK)
+- name: varchar
+- color: varchar
+- user_id: integer
+
+## taxs
+- id: integer (PK)
+- name: varchar
+- value: numeric
+- user_id: integer
+- status: enum ('Active', 'Inactive') (default: 'Active')
 
 ## orders
-
-id!: number;
-trackingNo!: string;
-totalQty!: number
-subTotal!: number;
-totalItemsDiscount!: number;
-couponDiscount!: number;
-totalTax!: number;
-shippingCharge?: number;
-grandTotal!: number;
-shippingAddressId?: number;
-couponId?: number;
-cancelResson!: string;
-paymentStatus!: enum;
-paymentMethod!: enum;
-status!: enum;
-tranId?: string;
-userId?: number;
-deliveryId?: number;
-createdAt?: string;
-updatedAt?: string;
+- id: integer (PK)
+- tracking_no: varchar
+- total_qty: integer
+- sub_total: numeric(15, 2)
+- total_items_discount: numeric(10, 2) (nullable)
+- coupon_discount: numeric(10, 2) (nullable)
+- total_tax: numeric(15, 2) (nullable)
+- shipping_charge: numeric(15, 2)
+- grand_total: numeric(10, 2)
+- shipping_address_id: integer (FK -> shipping_addresses.id)
+- coupon_id: integer (nullable)
+- cancel_resson: varchar (nullable)
+- payment_status: enum ('Pending', 'Paid', 'Failed')
+- payment_method: enum ('COD', 'Online', 'Card', 'MobileBanking')
+- status: enum ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned') (default: 'Pending')
+- tran_id: varchar (nullable)
+- user_id: integer (FK -> users.id)
+- delivery_id: integer (FK -> users.id, nullable)
+- created_at: timestamp with time zone
+- updated_at: timestamp with time zone
 
 ## order_items
+- id: integer (PK)
+- order_id: integer (FK -> orders.id)
+- unit_price: numeric(10, 2)
+- purchase_price: numeric(10, 2)
+- qty: integer
+- tax_amount: numeric(10, 2) (nullable)
+- discounted_unit_pice: numeric(10, 2) (nullable)
+- total_discounted_price: numeric(10, 2) (nullable)
+- discount_amount_per_unit: numeric(10, 2) (nullable)
+- total_discount_amount: numeric(10, 2) (nullable)
+- sub_total: numeric(10, 2)
+- product_id: integer (FK -> products.id)
+- product_variant_id: integer (FK -> product_variants.id)
 
-id!: number;
-orderId!: number;
-unitPrice!: string;
-purchasePrice!: string;
-qty!: number;
-taxAmount!: string;
-discountedUnitPrice!: string;
-totalDiscountedPrice!: string;
-discountAmountPerUnit!: string;
-totalDiscountAmount!: string;
-subTotal!: string; //need to remove nullable
-productId!: number;
-productVariantId!: number;
+## order_trackings
+- id: integer (PK)
+- order_id: integer (FK -> orders.id)
+- user_id: integer (nullable)
+- location: varchar (nullable)
+- status: enum ('OrderPlaced', 'Processing', 'Shipped', 'OutForDelivery', 'Delivered', 'Cancelled', 'Returned') (default: 'OrderPlaced')
+- created_at: timestamp
+- updated_at: timestamp
 
-## order_status
+## carts
+- id: integer (PK)
+- product_id: integer (FK -> products.id)
+- product_variant_id: integer (FK -> product_variants.id)
+- qty: integer
+- user_id: integer (FK -> users.id)
+- abandoned_email_sent: boolean (default: false)
+- created_at: timestamp
+- updated_at: timestamp
 
-id,
-status:string,
+## wishlists
+- id: integer (PK)
+- product_id: integer (FK -> products.id)
+- user_id: integer (FK -> users.id)
+- created_at: timestamp
+- updated_at: timestamp
 
-## order_tracking
-
-id!: number;
-orderId!: number;
-userId!: number;
-location!: string;
-status!: emum;
-createdAt?: string;
-updatedAt?: string;
-
-## tax
-
-id,
-name
-value,
-status:boolean
-
-## reviews
-
-id,
-product_id,
-user_id,
-rating,
-comment,
-status:(Reject/Approved, Pending),
-like:number,
-dislike:number
-createdAt
-updatedAt
-
-## payments
-
-id!: number;
-orderId!: number;
-paymentDate!: string;
-paymentType!: enum;
-paymentMethod!: enum;
-amount!: number;
-userId!: number;
-tranId!: string;
-createdAt?: string;
-updatedAt?: string;
-
-## logs
-
-id,
-error:boolean,
-user_id,
-product_id,
-order_id,
-order_item_id,
-category_id,
-wishlist_id,
-discount_id,
-review_id,
-shiping_cart_id,
-brand_id,
-payment_id,
-variant_id,
-message/descripiton,
-createdAt
-updatedAt
-
-## currency
-
-id,
-name,
-symble
-
-## setting
-
-id!: number;
-siteName!: string;
-image!: string;
-favicon!: string;
-address!: string;
-phone!: string;
-email!: string;
-socialLink!: string;
-seo!: string;
-emailConfig!: string;
-paymentAccount!: string;
-homePage!: string;
-aboutPage!: string;
-contactPage!: string;
-termPolicyPage!: string;
-footerOption!: string;
-headerOption!: string;
-helpSupport!: string;
-updatedAt?: string;
-
-## banner
-
-title,
-type:["Slider", "Middle", 'Left', 'Right', 'Footer'],
-image,
-description,
-url,
-status: boolean,
-
-## leads
-
-id,
-email,
-created_at,
-updated_at,
-
-## post(back end done)
-
-title,
-user_id,
-image,
-tags:[]
-
-<!-- slug(UNIQUE), -->
-
-content,
-status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
-createdAt
-updatedAt
-
-## blog_category(done back end)
-
-id
-post_id,
-category_id,
-
-## Comments(back end done)
-
-id,
-post_id,
-user_id,
-content TEXT NOT NULL,
-status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
-created_at,
-updated_at,
-
-## menu
-
-id!: number;
-name!: string;
-items!: string;
-footerMenu!: boolean;
-topBarMenu!: boolean;
-mainMenu!: boolean;
-active!: boolean;
-userId!: number;
-createdAt?: string;
-updatedAt?: string;
-
-# notification
-
-id,
-user_id: nmber,
-order_id: nmber,
-type: string,
-title: string,,
-message:stirng,
-is_read: boolean,
-created_at,
-updated_at
-
-## stock adjustment
-
-type:[add, subtract]
-productId,
-variantId,
-qty
-
-## contacts
-
-name,
-email,
-phone,
-subject,
-message
-
-## coupons // offer
-
-id!: number;
-type!: CouponType;
-code!: string;
-discountType!: DiscountType;
-value!: number;
-startDate!: string;
-expiryDate!: string;
-minOrderAmount!: number;
-mincartValue!: number;
-maxUser!: number;
-maxDiscountValue!: number;
-usageCount!: number;
-usageLimit!: number;
-usagePerUser!: number;
-image!: string;
-active!: boolean;
-userId?: number;
-createdAt?: string;
-updatedAt?: string;
+## coupons
+- id: integer (PK)
+- type: enum ('order', 'product', 'category', 'shipping')
+- code: varchar (unique)
+- discount_type: enum ('Percentage', 'Fixed', 'FreeShipping', 'BOGO')
+- value: numeric
+- start_date: timestamp with time zone (nullable)
+- expiry_date: timestamp with time zone (nullable)
+- min_order_amount: numeric (nullable)
+- min_cart_value: numeric (nullable)
+- max_user: integer (nullable)
+- max_discount_value: numeric (nullable)
+- usage_count: integer (nullable)
+- usage_limit: integer (nullable)
+- usage_per_user: integer (nullable)
+- image: varchar (nullable)
+- active: boolean (default: true)
+- user_id: integer
+- created_at: timestamp
+- updated_at: timestamp
 
 ## coupon_products
-
-id!: number;
-productId!: number;
-couponId?: number;
-createdAt?: string;
-updatedAt?: string;
+- id: integer (PK)
+- product_id: integer (FK -> products.id)
+- coupon_id: integer (FK -> coupons.id)
+- created_at: timestamp
+- updated_at: timestamp
 
 ## applied_coupons
+- id: integer (PK)
+- user_id: integer
+- coupon_id: integer
+- order_id: integer
+- discount_amount: numeric
+- applied_at: timestamp
 
-id!: number;
-couponId!: number;
-orderId!: number;
-discountAmount!: string;
-userId!: number;
-appliedAt?: string;
-
-## discount
-
-id!: number;
-name!: string;
-key!: string;
-scope!: enum;
-slug!: string;
-promotionType!: enum;
-discountStrategy!: enum;
-offerDetails!: object;
-value!: number;
-startDate!: string;
-endDate!: string;
-priority!: number; // Higher number = Higher priority for applied first
-stackable!: boolean; // If true, this discount can be combined with others
-status!: Status;
-image!: string;
-description!: string;
-userId?: number;
-createdAt?: string;
-updatedAt?: string;
+## discounts
+- id: integer (PK)
+- name: varchar
+- key: varchar (length: 50, unique, nullable)
+- scope: enum ('Order', 'Product', 'Category', 'Brand')
+- slug: varchar (nullable)
+- promotion_type: enum ('Couple', 'FlashSale', 'Seasonal', 'Clearance', 'BuyMoreSaveMore')
+- discount_strategy: enum ('Percentage', 'FixedAmount', 'FreeShipping', 'BuyOneGetOne', 'Tiered')
+- offer_details: jsonb (nullable)
+- value: decimal(10, 2) (nullable)
+- start_date: timestamp with time zone (nullable)
+- end_date: timestamp with time zone (nullable)
+- priority: integer (default: 1)
+- stackable: boolean (default: false)
+- status: enum ('Active', 'Inactive') (default: 'Active')
+- image: varchar (nullable)
+- description: varchar (nullable)
+- user_id: integer
+- created_at: timestamp
+- updated_at: timestamp
 
 ## applicable_products
-
-id!: number;
-productId!: number;
-discountId?: number;
-createdAt?: string;
-updatedAt?: string;
+- id: integer (PK)
+- product_id: integer
+- discount_id: integer (FK -> discounts.id)
+- created_at: timestamp
+- updated_at: timestamp
 
 ## applicable_categories
-
-id!: number;
-categoryId!: number;
-discountId?: number;
-createdAt?: string;
-updatedAt?: string;
+- id: integer (PK)
+- category_id: integer
+- discount_id: integer (FK -> discounts.id)
+- created_at: timestamp
+- updated_at: timestamp
 
 ## applicable_brands
+- id: integer (PK)
+- brand_id: integer
+- discount_id: integer (FK -> discounts.id)
+- created_at: timestamp
+- updated_at: timestamp
 
-id!: number;
-brandId!: number;
-discountId!: number;
-createdAt?: string;
-updatedAt?: string;
+## payments
+- id: integer (PK)
+- order_id: integer (FK -> orders.id, nullable)
+- payment_date: timestamp with time zone
+- payment_type: enum ('Credit', 'Debit')
+- payment_method: enum ('COD', 'Online', 'Card', 'MobileBanking')
+- amount: numeric(15, 2)
+- user_id: integer (FK -> users.id, nullable)
+- tran_id: varchar (nullable)
+- created_at: timestamp with time zone
+- updated_at: timestamp with time zone
+
+## settings
+- id: integer (PK)
+- site_name: varchar
+- image: varchar (nullable)
+- order_free_shipping_amount: numeric(10, 2) (nullable)
+- favicon: varchar (nullable)
+- address: varchar (nullable)
+- phone: varchar (nullable)
+- email: varchar (nullable)
+- description: varchar (nullable)
+- social_link: simple-json (nullable)
+- seo: simple-json (nullable)
+- email_config: simple-json (nullable)
+- whats_app_widget: simple-json (nullable)
+- payment_account: simple-json (nullable)
+- home_page: simple-json (nullable)
+- about_page: simple-json (nullable)
+- contact_page: simple-json (nullable)
+- term_policy_page: simple-json (nullable)
+- footer_option: simple-json (nullable)
+- header_option: simple-json (nullable)
+- faq: simple-json (nullable)
+- help_support: simple-json (nullable)
+- updated_at: timestamp
+
+## banners
+- id: integer (PK)
+- title: varchar
+- type: enum ('Slider', 'Mid', 'Bottom') (default: 'Slider')
+- image: varchar
+- url: varchar (nullable)
+- description: varchar (nullable)
+- active: boolean (default: true)
+- user_id: integer
+
+## posts
+- id: integer (PK)
+- slug: varchar
+- title: varchar
+- image: varchar
+- tags: simple-array (nullable)
+- content: varchar
+- user_id: integer (FK -> users.id)
+- status: enum ('Published', 'Draft', 'Archived') (default: 'Draft')
+- created_at: timestamp with time zone
+- updated_at: timestamp with time zone
+
+## comments
+- id: integer (PK)
+- post_id: integer (FK -> posts.id)
+- content: varchar (nullable)
+- status: enum ('Pending', 'Approved', 'Rejected') (default: 'Pending')
+- user_id: integer (FK -> users.id)
+- created_at: timestamp
+- updated_at: timestamp
+
+## menus
+- id: integer (PK)
+- name: varchar
+- items: simple-json (nullable)
+- footer_menu: boolean (default: false)
+- top_bar_menu: boolean (default: false)
+- main_menu: boolean (default: false)
+- active: boolean (default: true)
+- user_id: integer
+- created_at: timestamp
+- updated_at: timestamp
+
+## notifications
+- id: integer (PK)
+- title: varchar
+- type: varchar
+- message: varchar
+- is_read: boolean (default: false)
+- user_id: integer (FK -> users.id)
+- order_id: integer (nullable)
+- created_at: timestamp with time zone
+- updated_at: timestamp with time zone
 
 ## stock_adjusts
-
-id!: number;
-productId!: number;
-type!: enum;
-productVariantId!: number;
-qty!: number;
-userId!: number;
+- id: integer (PK)
+- product_id: integer (FK -> products.id)
+- type: enum ('Increment', 'Decrement')
+- product_variant_id: integer
+- qty: integer
+- user_id: integer
+## returns
+- id: integer (PK, Auto Increment)
+- order_id: integer (FK -> orders.id)
+- order_item_id: integer (FK -> order_items.id)
+- reason: varchar (nullable)
+- requested_qty: integer (default: 0)
+- approved_qty: integer (default: 0)
+- phone: varchar (nullable)
+- image: varchar (nullable)
+- status: enum ('Requested', 'Processing', 'Approved', 'Rejected', 'Completed', 'Refunded') (default: 'Requested')
+- user_id: integer (FK -> users.id)
+- requested_at: timestamp
+- updated_at: timestamp

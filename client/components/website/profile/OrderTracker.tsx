@@ -4,7 +4,10 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { getOrderQuery } from "@/lib/apis/orders";
 import { onlinePayment } from "@/lib/apis/payment";
 import { errorNotification } from "@/lib/utils/notification";
-import { setProductRating } from "@/redux/features/global/globalSlice";
+import {
+  setAction,
+  setProductRating,
+} from "@/redux/features/global/globalSlice";
 import {
   BankOutlined,
   CheckCircleOutlined,
@@ -13,6 +16,7 @@ import {
   SearchOutlined,
   SyncOutlined,
   TruckOutlined,
+  UndoOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -35,6 +39,8 @@ import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import ReturnRequestAllOrder from "./ReturnRequestAllOrder";
+import ReturnRequestOrderItem from "./ReturnRequestOrderItem";
 
 const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
   ssr: false,
@@ -117,15 +123,12 @@ export default function OrderTracker() {
       key: "unitPrice",
       render: (val: any, record: any) => formatPrice(+val + +record.taxAmount),
     },
-
     {
       title: "Discount",
       dataIndex: "totalDiscountAmount",
       key: "totalDiscountAmount",
       render: (val: any) => formatPrice(+val),
     },
-
-
     {
       title: "Qty",
       dataIndex: "qty",
@@ -138,6 +141,34 @@ export default function OrderTracker() {
       key: "subTotal",
       align: "right" as const,
       render: (val: any) => <Text strong>{formatPrice(val)}</Text>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      align: "center" as const,
+      render: (_: any, record: any) => (
+        order.status === "Delivered" && record.product.isReturnable && (
+          <Button
+            size="small"
+            icon={<UndoOutlined />}
+            onClick={() => {
+              dispatch(
+                setAction({
+                  type: ActionType.UPDATE,
+                  returnOrderItem: true,
+                  payload: {
+                    orderId: order.id,
+                    orderItemId: record.id,
+                    qty: record.qty,
+                  },
+                })
+              );
+            }}
+          >
+            Return
+          </Button>
+        )
+      ),
     },
   ];
 
@@ -194,19 +225,28 @@ export default function OrderTracker() {
             <div className="py-4">
               {/* Simplified Status Map - In real app, map exact statuses from enum */}
               <Steps
-                current={order.orderTrackings?.length || 0}
+                current={
+                  [
+                    "Pending",
+                    "Processing",
+                    "Shipped",
+                    "Delivered",
+                    "Returned",
+                  ].indexOf(order.status) || 0
+                }
                 items={[
                   { title: "Order Placed", icon: <FileTextOutlined /> },
                   {
                     title: "Processing",
                     icon: (
-                      <SyncOutlined spin={order.orderStatus === "Processing"} />
+                      <SyncOutlined spin={order.status === "Processing"} />
                     ),
                   },
                   { title: "Shipped", icon: <TruckOutlined /> },
                   { title: "Delivered", icon: <CheckCircleOutlined /> },
+                  { title: "Returned", icon: <UndoOutlined /> },
                 ]}
-                status={order.orderStatus === "Canceled" ? "error" : "process"}
+                status={order.status === "Canceled" ? "error" : "process"}
               />
             </div>
           </Card>
@@ -345,8 +385,8 @@ export default function OrderTracker() {
                                 value={method.value}
                               >
                                 {method.label}
-                            </Select.Option>
-                          ))}
+                              </Select.Option>
+                            ))}
                         </Select>
                         {/* </Form.Item> */}
                         <Button
@@ -364,8 +404,8 @@ export default function OrderTracker() {
               </Card>
 
               {/* Action Area */}
-              {order.orderStatus === "Delivered" && (
-                <div className="mt-6 text-center">
+              {order.status === "Delivered" && (
+                <div className="mt-6 text-center space-y-3">
                   <Button
                     block
                     type="default"
@@ -382,6 +422,23 @@ export default function OrderTracker() {
                   >
                     Write a Review
                   </Button>
+
+                  <Button
+                    block
+                    danger
+                    icon={<UndoOutlined />}
+                    onClick={() =>
+                      dispatch(
+                        setAction({
+                          type: ActionType.UPDATE,
+                          returnAllOrder: true,
+                          payload: { orderId: order.id },
+                        })
+                      )
+                    }
+                  >
+                    Return Order
+                  </Button>
                   <NewReview />
                 </div>
               )}
@@ -397,6 +454,8 @@ export default function OrderTracker() {
           />
         )
       )}
+      <ReturnRequestAllOrder />
+      <ReturnRequestOrderItem />
     </div>
   );
 }

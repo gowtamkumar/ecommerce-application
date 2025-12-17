@@ -18,6 +18,7 @@ router.route("/").get(getFiles).post(createFile);
 router.route("/delete-file-with-photo").post(deleteFileWithPhoto);
 router.route("/delete-files-with-photo").post(deleteMultipleFilesWithPhoto);
 router.route("/uploads").post(
+  AuthGuard,
   upload.fields([
     {
       name: "thumbnailImage",
@@ -60,7 +61,6 @@ router.route("/uploads").post(
       maxCount: 1,
     },
   ]) as any,
-  AuthGuard,
   fileUpload
 );
 

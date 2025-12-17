@@ -5,7 +5,7 @@ import brandRoutes from '../modules/brand/route/brand.route';
 import cartRoute from '../modules/cart/route/cart.route';
 import categoriesRoute from '../modules/categories/route/category.route';
 import colorRoute from '../modules/color/route/color.route';
-import currencyRoute from "../modules/currency/route/currency.route";
+import currencyRoute from '../modules/currency/route/currency.route';
 import discountRoutes from '../modules/discount/route/discount.route';
 import menuRoute from '../modules/menu/route/menu.route';
 import orderTrackingRoutes from '../modules/order-tracking/route/order-tracking.route';
@@ -20,6 +20,7 @@ import settingRoute from '../modules/other/setting/route/setting.route';
 import paymentRoute from '../modules/payment/route/payment.route';
 import productVariantRoute from '../modules/products/product-variant/route/product-variant.route';
 import productRoutes from '../modules/products/product/route/product.route';
+import returnsRoute from '../modules/return/route/return.route';
 import reviewRoute from '../modules/review/route/review.route';
 import shippingAddressRoutes from '../modules/shipping-address/route/shipping-address.route';
 import shippingChargeRoutes from '../modules/shipping-charge/route/shipping-charge.route';
@@ -28,6 +29,7 @@ import taxRoute from '../modules/tax/route/tax.route';
 import unitRoute from '../modules/unit/route/unit.route';
 import wishlistRoutes from '../modules/wishlist/route/wishlist.route';
 // import visitorRoute from "../modules/visitor/route/visitor.route";
+import { AuthGuard, isAuthorize } from '../middlewares/auth.middleware';
 import auditLogRoute from '../modules/audit-log/route/audit-log.route';
 import postRoute from '../modules/blog/post/route/post.route';
 import contactsRoute from '../modules/contact/route/contact.route';
@@ -37,8 +39,6 @@ import notificationRoute from '../modules/other/notification/route/notification.
 import homeRoute from '../modules/other/pages/home/route/home.route';
 import pageRoute from '../modules/page/route/page.route';
 import stockAdjust from '../modules/stock-adjust/route/stock-adjust.route';
-// import returnsRoute from "../modules/return/route/return.route";
-import { AuthGuard, isAuthorize } from '../middlewares/auth.middleware';
 
 // Define the type for the Express application
 
@@ -50,7 +50,7 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/products', productRoutes);
   app.use('/api/v1/product-variants', productVariantRoute);
   app.use('/api/v1/settings', settingRoute);
-  app.use("/api/v1/currencies", currencyRoute);
+  app.use('/api/v1/currencies', currencyRoute);
   app.use('/api/v1/banners', bannerRoute);
   app.use('/api/v1/carts', AuthGuard, cartRoute);
   app.use('/api/v1/menus', AuthGuard, menuRoute);
@@ -74,7 +74,7 @@ export const setupRoutes = (app: any) => {
 
   app.use('/api/v1/coupons', couponRoute);
   app.use('/api/v1/stock-adjusts', AuthGuard, stockAdjust);
-  // app.use("/api/v1/returns", AuthGuard, returnsRoute);
+  app.use('/api/v1/returns', AuthGuard, returnsRoute);
   // public route
   app.use('/api/v1/home', homeRoute);
   // app.use("/api/v1/visitors", visitorRoute);

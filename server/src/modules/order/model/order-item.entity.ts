@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { OrderEntity } from './order.entity';
-import { ProductEntity } from '../../products/product/model/product.entity';
 import { ProductVariantEntity } from '../../products/product-variant/model/product-variant.entity';
-// import { ReturnEntity } from "../../return/model/return.entity";
+import { ProductEntity } from '../../products/product/model/product.entity';
+import { ReturnEntity } from "../../return/model/return.entity";
+import { OrderEntity } from './order.entity';
 
 @Entity('order_items')
 export class OrderItemEntity {
@@ -38,11 +38,11 @@ export class OrderItemEntity {
   qty!: number;
 
   // return
-  // @Column({ name: "requested_qty", nullable: true })
-  // requestedQty!: number;
+  @Column({ name: "requested_qty", nullable: true })
+  requestedQty!: number;
 
-  // @Column({ name: "approved_qty", nullable: true })
-  // approvedQty!: number;
+  @Column({ name: "approved_qty", nullable: true })
+  approvedQty!: number;
 
   @Column({
     name: 'tax_amount',
@@ -113,6 +113,7 @@ export class OrderItemEntity {
   @JoinColumn({ name: 'product_variant_id' })
   productVariant!: ProductVariantEntity;
 
-  // @OneToMany((_type) => ReturnEntity, (item) => item.orderItem)
-  // returns!: ReturnEntity[];
+  @OneToMany((_type) => ReturnEntity, (item) => item.orderItem)
+  returns!: ReturnEntity[];
 }
+

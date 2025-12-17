@@ -39,6 +39,7 @@ import { PaymentEntity } from '../modules/payment/model/payment.entity';
 import { ProductCategoryEntity } from '../modules/products/product-category/model/product-category.entity';
 import { ProductVariantEntity } from '../modules/products/product-variant/model/product-variant.entity';
 import { ProductEntity } from '../modules/products/product/model/product.entity';
+import { ReturnEntity } from '../modules/return/model/return.entity';
 import { ReviewEntity } from '../modules/review/model/review.entity';
 import { ShippingAddressEntity } from '../modules/shipping-address/model/shipping-address.entity';
 import { ShippingChargeEntity } from '../modules/shipping-charge/model/shipping-charge.entity';
@@ -134,7 +135,7 @@ const dbConnection = new DataSource({
     PostEntity,
     PostCategoryEntity,
     CommentEntity,
-    // ReturnEntity,
+    ReturnEntity,
     ContactEntity,
     MenuEntity,
     NotificationEntity,

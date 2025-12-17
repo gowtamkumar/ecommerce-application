@@ -1,61 +1,62 @@
-// import "reflect-metadata";
-// import {
-//   Column,
-//   CreateDateColumn,
-//   Entity,
-//   JoinColumn,
-//   ManyToOne,
-//   OneToMany,
-//   PrimaryGeneratedColumn,
-//   UpdateDateColumn,
-// } from "typeorm";
-// import { ReturnStatus } from "../enums/return-status.enum";
-// import { OrderItemEntity } from "../../order/model/order-item.entity";
-// @Entity("returns")
-// export class ReturnEntity {
-//   @PrimaryGeneratedColumn()
-//   id!: number;
+import "reflect-metadata";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from "typeorm";
+import { OrderItemEntity } from "../../order/model/order-item.entity";
+import { ReturnStatus } from "../enums/return-status.enum";
 
-//   @Column({ name: "order_id" })
-//   orderId!: number;
+@Entity("returns")
+export class ReturnEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-//   @Column({ name: "order_item_id" })
-//   orderItemId!: number;
-//   @ManyToOne(() => OrderItemEntity, (orderItem) => orderItem.returns, {
-//     onDelete: "CASCADE",
-//   })
-//   @JoinColumn({ name: "order_item_id" })
-//   orderItem!: OrderItemEntity;
+  @Column({ name: "order_id" })
+  orderId!: number;
 
-//   @Column({ nullable: true })
-//   reason!: string;
+  @Column({ name: "order_item_id" })
+  orderItemId!: number;
+  @ManyToOne(() => OrderItemEntity, (orderItem) => orderItem.returns, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "order_item_id" })
+  orderItem!: OrderItemEntity;
 
-//   @Column({ name: "requested_qty", type: "int", default: 0 })
-//   requestedQty!: number;
+  @Column({ nullable: true })
+  reason!: string;
 
-//   @Column({ name: "approved_qty", type: "int", default: 0 })
-//   approvedQty!: number;
+  @Column({ name: "requested_qty", type: "int", default: 0 })
+  requestedQty!: number;
 
-//   @Column({ nullable: true })
-//   phone!: string;
+  @Column({ name: "approved_qty", type: "int", default: 0 })
+  approvedQty!: number;
 
-//   @Column({ nullable: true })
-//   image!: string;
+  @Column({ nullable: true })
+  phone!: string;
 
-//   @Column({ type: "enum", enum: ReturnStatus, default: ReturnStatus.Requested })
-//   status!: ReturnStatus;
+  @Column({ nullable: true })
+  image!: string;
 
-//   @Column({ name: "user_id" })
-//   userId!: number;
-//   // @ManyToOne(() => UserEntity, (user) => user.returns, {
-//   //   onDelete: "CASCADE",
-//   // })
-//   // @JoinColumn({ name: "user_id" })
-//   // user!: UserEntity;
+  @Column({ type: "enum", enum: ReturnStatus, default: ReturnStatus.Requested })
+  status!: ReturnStatus;
 
-//   @CreateDateColumn({ name: "requested_at", type: "timestamptz" })
-//   requestedAt?: string;
+  @Column({ name: "user_id" })
+  userId!: number;
+  // @ManyToOne(() => UserEntity, (user) => user.returns, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "user_id" })
+  // user!: UserEntity;
 
-//   @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
-//   updatedAt?: string;
-// }
+  @CreateDateColumn({ name: "requested_at", type: "timestamptz" })
+  requestedAt?: string;
+
+  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+  updatedAt?: string;
+}
+

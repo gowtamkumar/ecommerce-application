@@ -26,6 +26,8 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
     payments,
   }: any = dashboardReports || {};
 
+  console.log("dashboardReports", dashboardReports);
+
   const { formatPrice } = useCurrency();
 
   return (

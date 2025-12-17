@@ -1,7 +1,7 @@
 "use client";
 import ReturnOrderStatusUpdate from "@/components/dashboard/return/ReturnOrderStatusUpdate";
 import { ActionType } from "@/constants/constants";
-import { deleteOrder, getOrders } from "@/lib/apis/orders";
+import { deleteReturn, getReturns } from "@/lib/apis/return";
 import { getStatus } from "@/lib/utils/getStatus";
 import {
   selectGlobal,
@@ -12,54 +12,49 @@ import {
 } from "@/redux/features/global/globalSlice";
 import {
   CheckOutlined,
-  ClockCircleOutlined,
   QuestionCircleOutlined,
   RestOutlined,
-  SearchOutlined
+  SearchOutlined,
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
   Button,
-  Divider,
+  Image,
   Input,
   Popconfirm,
   Space,
   Table,
   Tabs,
   Tag,
-  Timeline,
 } from "antd";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-const OrderStatusChange = dynamic(
-  () => import("@/components/dashboard/order/OrderStatusUpdate"),
-  { ssr: false }
-);
-
-const AssignDeliveryMan = dynamic(
-  () => import("@/components/dashboard/order/AssignDeliveryMan"),
-  { ssr: false }
-);
-
 interface DataType {
   key: React.Key;
-  name: string;
-  phoneNo: string;
-  trackingNo: string;
+  id: number;
+  orderId: number;
+  reason: string;
+  status: string;
+  requestedQty: number;
+  approvedQty: number;
+  image?: string;
+  createdAt: string;
+  user?: { name: string; phone: string };
+  product?: { name: string };
 }
 
 type DataIndex = keyof DataType;
 
 const Page: React.FC = () => {
   const [tabKey, setTabKey] = useState("Requested");
-  const [orders, setOrders] = useState([]);
+  const [returns, setReturns] = useState([]);
+  const [allReturns, setAllReturns] = useState([]);
   const [searchInput, setSearchInput] = useState(null) as any;
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
@@ -68,30 +63,44 @@ const Page: React.FC = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getOrders({ returnedStatus: tabKey });
-      console.log("res", res);
-
-      const newOrders = res.data.map((items: any, idx: number) => ({
-        ...items,
-        key: idx.toString(),
-      }));
-      setOrders(newOrders);
+      try {
+        const res = await getReturns();
+        console.log("returns res", res);
+        const data = res.data || [];
+        setAllReturns(data);
+        const filtered = data.filter((r: any) => r.status === tabKey);
+        setReturns(
+          filtered.map((item: any) => ({ ...item, key: item.id.toString() }))
+        );
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch returns");
+      }
       dispatch(setLoading({ loading: false }));
     })();
-  }, [dispatch, tabKey, global.action]);
+  }, [dispatch, global.action]);
 
-  const handleDelete = async (id: string) => {
+  useEffect(() => {
+    if (allReturns.length > 0) {
+      const filtered = allReturns.filter((r: any) => r.status === tabKey);
+      setReturns(
+        filtered.map((item: any) => ({ ...item, key: item.id.toString() }))
+      );
+    }
+  }, [tabKey, allReturns]);
+
+  const handleDelete = async (id: number) => {
     try {
       dispatch(setLoading({ delete: true }));
-      await deleteOrder(id);
+      await deleteReturn(id); // Ensure deleteReturn exists in API
       setTimeout(async () => {
         dispatch(setLoading({ delete: false }));
-        toast.success("Discount deleted successfully");
-        dispatch(setAction({}));
+        toast.success("Return request deleted successfully");
+        dispatch(setAction({ type: ActionType.DELETE })); // Trigger refresh
       }, 500);
     } catch (error: any) {
       console.log("v", error);
-      toast.error(error);
+      toast.error(error.message || "Failed to delete");
     }
   };
 
@@ -126,8 +135,7 @@ const Page: React.FC = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          // ref={searchInput}
-          placeholder={`Search {dataIndex}`}
+          placeholder={`Search ${String(dataIndex)}`}
           value={selectedKeys[0]}
           onChange={(e) => {
             setSelectedKeys(e.target.value ? [e.target.value] : []);
@@ -161,17 +169,6 @@ const Page: React.FC = () => {
             type="link"
             size="small"
             onClick={() => {
-              confirm({ closeDropdown: false });
-              dispatch(setSearchText((selectedKeys as string[])[0]));
-              dispatch(setSearchedColumn(dataIndex));
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
               close();
             }}
           >
@@ -184,15 +181,10 @@ const Page: React.FC = () => {
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
+      (record[dataIndex] || "")
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
     render: (text) =>
       global?.searchedColumn === dataIndex ? (
         <Highlighter
@@ -206,262 +198,40 @@ const Page: React.FC = () => {
       ),
   });
 
-  const expandedRowRender = (value: any) => {
-    const { dabitTotal, creditTotal } = value.payments.reduce(
-      (acc: any, element: any) => {
-        if (element.paymentType === "Credit")
-          acc.creditTotal += +element.amount;
-        if (element.paymentType === "Debit") acc.dabitTotal += +element.amount;
-        return acc;
-      },
-      { dabitTotal: 0, creditTotal: 0 } // Initial accumulator values
-    );
-
-    const paidAmount = dabitTotal - creditTotal;
-
-    const childColumns: any = [
-      {
-        title: "Product",
-        dataIndex: "product",
-        key: "product",
-        render: (v: { name: string }) => <span>{v.name}</span>,
-      },
-      {
-        title: "Color",
-        dataIndex: "productVariant",
-        render: (v: any) => {
-          return <span>{v?.color?.name}</span>;
-        },
-      },
-      {
-        title: "Size",
-        dataIndex: "productVariant",
-        render: (v: any) => {
-          return <span>{v?.size?.name}</span>;
-        },
-      },
-      {
-        title: "Material",
-        dataIndex: "material",
-        key: "material",
-      },
-      {
-        title: "Purchase Price",
-        dataIndex: "purchasePrice",
-        key: "purchasePrice",
-      },
-      { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
-      {
-        title: "Tax Amount",
-        key: "taxAmount",
-        dataIndex: "taxAmount",
-      },
-      {
-        title: "Discount Amount",
-        dataIndex: "totalDiscountAmount",
-        key: "totalDiscountAmount",
-      },
-      {
-        title: "Sale Price",
-        key: "salePrice",
-        render: (v: any) => {
-          return (
-            <span>
-              {(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount).toFixed(
-                2
-              )}
-            </span>
-          );
-        },
-      },
-
-      { title: "Qty", dataIndex: "qty", key: "qty" },
-      {
-        title: "Requested Qty",
-        dataIndex: "requestedQty",
-        key: "requestedQty",
-      },
-      { title: "Approved Qty", dataIndex: "approvedQty", key: "approvedQty" },
-      {
-        title: "Sub Total",
-        key: "subTotal",
-        dataIndex: "subTotal",
-      },
-      {
-        render: () => {
-          return (
-            <Button
-              size="small"
-              icon={<CheckOutlined />}
-              title="Return Status Change"
-              className="me-1"
-              onClick={() => {
-                dispatch(
-                  setAction({
-                    type: ActionType.UPDATE,
-                    orderReturnStatusUpdate: true,
-                    payload: { orderItemId: value.id },
-                  })
-                );
-              }}
-            />
-          );
-        },
-      },
-    ];
-
-    return (
-      <div className="grid grid-cols-4 p-2">
-        <div className="col-span-4">
-          {value.status === "Canceled" && (
-            <h2 className="bg-red-500">
-              <span className="font-bold">Order Resson: </span>
-              <code>{value.cancelResson}</code>
-            </h2>
-          )}
-          <h1>
-            <span className="font-bold">Order No: </span>
-            <code>{value.trackingNo}</code>
-          </h1>
-          {value.tranId && (
-            <h1>
-              <span className="font-bold">Transaction ID: </span>
-              <code>{value.tranId}</code>
-            </h1>
-          )}
-          <h1>
-            <span className="font-bold">Shipping Address: </span>
-            <code> {value.shippingAddress?.address}</code>
-          </h1>
-          <h1>
-            <span className="font-bold">Delivery Man: </span>
-            <code>{value?.deliveryMan?.name}</code>
-          </h1>
-          <h1>
-            <span className="font-bold">Return Status: </span>
-            <code>{value?.returnedStatus}</code>
-          </h1>
-          <Divider dashed />
-          <div className="p-4 bg-white">
-            <h1 className="font-semibold">Order Items</h1>
-            <Table
-              columns={childColumns}
-              size="small"
-              scroll={{ x: "auto" }}
-              dataSource={value.orderItems}
-              pagination={false}
-              bordered
-            />
-          </div>
-          <div className="grid grid-cols-8 mt-5">
-            <div className="col-span-5 p-2">
-              <Timeline
-                items={(value?.orderTrackings || []).map(
-                  (timeline: any, idx: number) => ({
-                    dot: <ClockCircleOutlined />,
-                    color: "red",
-                    children: (
-                      <div key={idx}>
-                        <div> {timeline.status}</div>
-                        <div>
-                          {" "}
-                          {dayjs(timeline.createdAt).format(
-                            "MMMM D, YYYY h:mm A"
-                          )}
-                        </div>
-                        <div> {timeline.location}</div>
-                      </div>
-                    ),
-                  })
-                )}
-              />
-            </div>
-
-            <div className="col-span-3">
-              <div className="flex justify-between">
-                <h1>Total Qty:</h1>
-                <h1 className="font-semibold">{value.totalQty}</h1>
-              </div>
-
-              <div className="flex justify-between">
-                <h1>Net Amount:</h1>
-                <h1 className="font-semibold">
-                  {(+value.subTotal).toFixed(2)}
-                </h1>
-              </div>
-
-              {+value.totalItemsDiscount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Discount Amount:</h1>
-                  <h1 className="font-semibold">{value.totalItemsDiscount}</h1>
-                </div>
-              )}
-
-              {+value.couponDiscount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Coupon Discount:</h1>
-                  <h1 className="font-semibold">{value.couponDiscount}</h1>
-                </div>
-              )}
-
-              <div className="flex justify-between">
-                <h1>Tax Amount:</h1>
-                <h1 className="font-semibold">{value.totalTax}</h1>
-              </div>
-
-              {paidAmount > 0 && (
-                <div className="flex justify-between">
-                  <h1>Paid Amount:</h1>
-                  <h1 className="font-semibold">{paidAmount}</h1>
-                </div>
-              )}
-
-              {+value.shippingCharge > 0 && (
-                <div className="flex justify-between">
-                  <h1>Shipping:</h1>
-                  <h1 className="font-semibold">+{value.shippingCharge}</h1>
-                </div>
-              )}
-
-              <div className="flex justify-between border-t-2">
-                <h1>Grand Total:</h1>
-                <h1 className="font-semibold">
-                  {(+value.grandTotal - paidAmount).toFixed(2)}
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const columns: TableColumnsType<DataType> = [
     {
-      ...getColumnSearchProps("trackingNo"),
-      title: "Tracking No",
-      dataIndex: "trackingNo",
-      key: "trackingNo",
-      render: (value) => <span className="bg-green-200">{value}</span>,
-    },
-
-    {
-      title: "Phone No",
-      dataIndex: "phoneNo",
-      key: "phoneNo",
-      render: (value) => <span>{value?.phoneNo}</span>,
-    },
-
-    {
-      title: "Customer",
-      dataIndex: "user",
-      key: "user",
-      render: (customer) => <span>{customer?.name}</span>,
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
     },
     {
-      title: "Payment Method",
-      dataIndex: "paymentMethod",
-      key: "paymentMethod",
+      ...getColumnSearchProps("orderId"),
+      title: "Order ID",
+      dataIndex: "orderId",
+      key: "orderId",
+      render: (value) => <span>#{value}</span>,
+    },
+    {
+      title: "Reason",
+      dataIndex: "reason",
+      key: "reason",
+    },
+    {
+      title: "Evidence",
+      dataIndex: "image",
+      key: "image",
+      render: (img) =>
+        img ? <Image src={img} width={50} height={50} alt="evidence" /> : "N/A",
+    },
+    {
+      title: "Req. Qty",
+      dataIndex: "requestedQty",
+      key: "requestedQty",
+    },
+    {
+      title: "Appr. Qty",
+      dataIndex: "approvedQty",
+      key: "approvedQty",
     },
 
     {
@@ -471,42 +241,36 @@ const Page: React.FC = () => {
       render: (date) => date && dayjs(date).format("DD-MM-YYYY h:mm A"),
     },
     {
-      title: "P. Status",
-      dataIndex: "paymentStatus",
-      key: "paymentStatus",
-    },
-    {
       title: "Status",
       key: "status",
-      render: (orderStatus) => (
-        <Tag color={getStatus(orderStatus.status)}>{orderStatus.status}</Tag>
-      ),
+      dataIndex: "status",
+      render: (status) => <Tag color={getStatus(status)}>{status}</Tag>,
     },
     {
       title: "Action",
       key: "operation",
       render: (value) => (
         <div className="flex gap-2 justify-end">
-          {/* <Button
+          <Button
             size="small"
             icon={<CheckOutlined />}
-            title="Return Status Change"
+            title="Update Status"
             className="me-1"
             onClick={() =>
               dispatch(
                 setAction({
                   type: ActionType.UPDATE,
                   orderReturnStatusUpdate: true,
-                  payload: { id: value.id },
+                  payload: { id: value.id, ...value },
                 })
               )
             }
-          /> */}
+          />
           <Popconfirm
             title={
               <span>
                 Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Order?
+                this Request?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -534,40 +298,32 @@ const Page: React.FC = () => {
       label: "Requested",
     },
     {
-      key: "Processing",
-      label: "Processing",
-    },
-    {
       key: "Approved",
       label: "Approved",
     },
-    {
-      key: "Rejected",
-      label: "Rejected",
-    },
+
     {
       key: "Completed",
       label: "Completed",
     },
     {
-      key: "Refunded",
-      label: "Refunded",
+      key: "Rejected",
+      label: "Rejected",
     },
   ];
 
   return (
     <div className="p-3">
       <Tabs
-        defaultActiveKey="1"
+        defaultActiveKey="Requested"
         activeKey={tabKey}
         items={items}
         onChange={onChange}
       />
       <Table
         scroll={{ x: "auto" }}
-        dataSource={orders}
+        dataSource={returns}
         columns={columns}
-        expandable={{ expandedRowRender }}
         loading={global.loading.loading}
         pagination={{ pageSize: 10 }}
         bordered

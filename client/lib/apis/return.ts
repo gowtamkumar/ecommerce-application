@@ -16,6 +16,8 @@ export async function saveReturn(data: any) {
 // single-product
 
 export async function returnOrder(data: any) {
+  console.log("data", data);
+
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/returns/full-request`, {
     method: "POST",
@@ -29,7 +31,7 @@ export async function returnOrder(data: any) {
 export async function singleProductReturn(params: any) {
   const { orderItemId, status, approvedQty } = params;
   console.log("params", params);
-  
+
   const headers = await getAuthHeaders();
 
   const res = await fetch(
@@ -42,4 +44,35 @@ export async function singleProductReturn(params: any) {
     }
   );
   return await handleResponse(res);
+}
+
+export async function getReturns() {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/returns`, {
+    method: "GET",
+    cache: "no-cache",
+    headers,
+  });
+  return await res.json();
+}
+
+export async function updateReturn(data: any) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/returns/${data.id}`, {
+    method: "PUT",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
+  return await res.json();
+}
+
+export async function deleteReturn(id: number) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/returns/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+    headers,
+  });
+  return await res.json();
 }

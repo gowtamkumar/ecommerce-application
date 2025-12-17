@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
-import { ActionType } from "../../../constants/constants";
+import { updateReturn } from "@/lib/apis/return";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import {
   selectGlobal,
   setAction,
   setFormValues,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, InputNumber, Modal, Select } from "antd";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
-import { singleProductReturn } from "@/lib/apis/return";
+import { ActionType } from "../../../constants/constants";
 
 const ReturnOrderStatusUpdate = () => {
   const global = useSelector(selectGlobal);
@@ -28,9 +28,12 @@ const ReturnOrderStatusUpdate = () => {
     };
   }, [global.action]);
 
+  console.log("global.action", global.action);
+
+
   const handleSubmit = async (values: any) => {
-    const result = () => singleProductReturn(values);
-     await handleAsyncAction(result, dispatch);
+    const result = () => updateReturn({ ...values, id: payload.id });
+    await handleAsyncAction(result, dispatch);
   };
 
   const handleClose = () => {
@@ -54,6 +57,9 @@ const ReturnOrderStatusUpdate = () => {
     }
   };
 
+  console.log("global.formValues", global.formValues);
+
+
   return (
     <Modal
       title={"Return Order"}
@@ -74,7 +80,7 @@ const ReturnOrderStatusUpdate = () => {
         autoComplete="off"
         scrollToFirstError={true}
       >
-        <Form.Item name="orderItemId" hidden>
+        <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
@@ -100,7 +106,7 @@ const ReturnOrderStatusUpdate = () => {
           </Select>
         </Form.Item>
 
-        {global.formValues.status === "Completed" && (
+        {(global.formValues.status === "Completed") && (
           <Form.Item
             name="approvedQty"
             className="mb-1"
@@ -125,7 +131,7 @@ const ReturnOrderStatusUpdate = () => {
             color="primary"
             htmlType="submit"
             loading={global.loading.save}
-            disabled={!payload?.orderItemId}
+            disabled={!payload?.id}
           >
             Save
           </Button>

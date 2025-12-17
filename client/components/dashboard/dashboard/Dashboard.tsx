@@ -41,6 +41,8 @@ const Dashboard = () => {
         endDate: lastDateOfMonth.toISOString(),
       });
 
+      console.log("results", results);
+
       const setting = await getSettings();
       dispatch(setSetting(setting.data));
 
