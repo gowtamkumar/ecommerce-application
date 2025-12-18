@@ -290,10 +290,25 @@ const Order = () => {
         render: (text: number) => <span className="font-medium">×{text}</span>,
       },
       {
+        title: "Ret. Qty",
+        dataIndex: "approvedQty",
+        key: "approvedQty",
+        render: (text: number) => text > 0 ? <span className="text-orange-600">-{text}</span> : <span className="text-gray-400">0</span>,
+      },
+      {
+        title: "Net Qty",
+        key: "netQty",
+        render: (v: any) => <span className="font-bold">{(v.qty || 0) - (v.approvedQty || 0)}</span>,
+      },
+      {
         title: "Sub Total",
         key: "subTotal",
         dataIndex: "subTotal",
-        render: (value: number) => <span className="font-bold">{formatPrice(value)}</span>,
+        render: (value: number, record: any) => {
+          const netQty = (record.qty || 1) - (record.approvedQty || 0);
+          const effectiveSubTotal = (Number(value) / (record.qty || 1)) * netQty;
+          return <span className="font-bold">{formatPrice(effectiveSubTotal)}</span>;
+        },
       },
     ];
 
@@ -314,11 +329,20 @@ const Order = () => {
 
                 <Descriptions column={1} size="small">
                   <Descriptions.Item label={<Text strong>Order No</Text>}>
-                    <Tag color="green" className="font-mono">{value.trackingNo}</Tag>
+                    <Text strong copyable className="text-lg">
+                      {value.trackingNo}
+                    </Text>
                   </Descriptions.Item>
                   {value.tranId && (
                     <Descriptions.Item label={<Text strong>Transaction ID</Text>}>
-                      <Text code>{value.tranId}</Text>
+                      <Text copyable className="text-lg">
+                        {value.tranId}
+                      </Text>
+                    </Descriptions.Item>
+                  )}
+                  {value.returnedStatus && (
+                    <Descriptions.Item label={<Text strong>Return Status</Text>}>
+                      <Tag color="orange">{value.returnedStatus}</Tag>
                     </Descriptions.Item>
                   )}
                   <Descriptions.Item label={<Text strong><EnvironmentOutlined /> Shipping Address</Text>}>
@@ -336,7 +360,7 @@ const Order = () => {
               <Table
                 columns={childColumns}
                 size="small"
-                scroll={{ x: "auto" }}
+                scroll={{ x: "max-content" }}
                 dataSource={value.orderItems}
                 pagination={false}
                 className="border border-gray-100 rounded-lg overflow-hidden"
@@ -386,7 +410,7 @@ const Order = () => {
 
                 {+value.totalItemsDiscount > 0 && (
                   <div className="flex justify-between items-center">
-                    <Text type="secondary">Discount</Text>
+                    <Text type="secondary">Product Discount</Text>
                     <Text className="text-red-600">-{formatPrice(value.totalItemsDiscount)}</Text>
                   </div>
                 )}
@@ -402,6 +426,13 @@ const Order = () => {
                   <Text type="secondary">Tax Amount</Text>
                   <Text>{formatPrice(value.totalTax)}</Text>
                 </div>
+
+                {+value.totalReturned > 0 && (
+                  <div className="flex justify-between items-center">
+                    <Text type="secondary" className="text-orange-600 font-bold">Returned Amount</Text>
+                    <Text className="text-orange-600 font-bold">-{formatPrice(value.totalReturned)}</Text>
+                  </div>
+                )}
 
                 {paidAmount > 0 && (
                   <div className="flex justify-between items-center">
@@ -420,13 +451,14 @@ const Order = () => {
                 <Divider className="!my-3" />
 
                 <div className="flex justify-between items-center bg-gray-50 -mx-6 -mb-6 p-4 rounded-b-lg">
-                  <Text strong className="text-lg">Grand Total</Text>
+                  <Text strong className="text-lg">Balance Due</Text>
                   <Text strong className="text-lg text-green-600">
-                    {formatPrice(+value.grandTotal - paidAmount)}
+                    {formatPrice(+value.grandTotal - +value.totalReturned - paidAmount)}
                   </Text>
                 </div>
               </div>
             </Card>
+
           </div>
         </div>
       </div>
@@ -440,9 +472,10 @@ const Order = () => {
       dataIndex: "trackingNo",
       key: "trackingNo",
       render: (value) => (
-        <Tag color="green" className="font-mono font-medium">
+        <Text strong copyable className="text-lg">
           {value}
-        </Tag>
+        </Text>
+
       ),
     },
 

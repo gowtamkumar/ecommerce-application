@@ -65,6 +65,8 @@ interface DataType {
   shippingCharge: number;
   payments: any[];
   totalQty: number;
+  totalReturned: number;
+  returnedStatus: string;
 }
 
 const UserOrders = () => {
@@ -193,6 +195,11 @@ const UserOrders = () => {
                         {order.trackingNo}
                       </Text>
                       {renderStatusBadge(order.status)}
+                      {order.returnedStatus && (
+                        <Tag color="orange" className="uppercase font-bold px-2 py-0.5 rounded-md">
+                          {order.returnedStatus}
+                        </Tag>
+                      )}
                     </div>
                     <div className="flex items-center gap-2 text-gray-500 text-sm">
                       <CalendarOutlined />
@@ -201,10 +208,17 @@ const UserOrders = () => {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <Text type="secondary" className="block text-xs">Total Amount</Text>
-                      <Text strong className="text-xl md:text-2xl text-blue-600">
-                        {formatPrice(order.grandTotal)}
+                      <Text type="secondary" className="block text-xs">
+                        {Number(order.totalReturned) > 0 ? "Net Amount" : "Total Amount"}
                       </Text>
+                      <Text strong className={`text-xl md:text-2xl ${Number(order.totalReturned) > 0 ? "text-orange-600" : "text-blue-600"}`}>
+                        {formatPrice(Number(order.grandTotal) - Number(order.totalReturned))}
+                      </Text>
+                      {Number(order.totalReturned) > 0 && (
+                        <div className="text-[10px] text-gray-400 line-through">
+                          {formatPrice(order.grandTotal)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -224,9 +238,14 @@ const UserOrders = () => {
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-110"
                           />
-                          <div className="absolute bottom-0 right-0 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded-tl-md">
-                            x{item.qty}
+                          <div className="absolute bottom-0 right-0 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-tl-md">
+                            x{item.qty}{Number(item.approvedQty) > 0 && ` (-${item.approvedQty})`}
                           </div>
+                          {Number(item.approvedQty) > 0 && (
+                            <div className="absolute top-0 right-0 bg-orange-500 text-white text-[8px] px-1 font-bold">
+                              RETURNED
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -261,7 +280,14 @@ const UserOrders = () => {
         title={
           <div className="flex items-center justify-between mr-8">
             <span className="text-xl font-bold">Order Details</span>
-            {selectedOrder && renderStatusBadge(selectedOrder.status)}
+            <Space>
+              {selectedOrder && renderStatusBadge(selectedOrder.status)}
+              {selectedOrder?.returnedStatus && (
+                <Tag color="orange" className="uppercase font-bold px-2 py-0.5 rounded-md">
+                  {selectedOrder.returnedStatus}
+                </Tag>
+              )}
+            </Space>
           </div>
         }
         open={isModalOpen}
@@ -349,19 +375,30 @@ const UserOrders = () => {
                   )
                 },
                 {
-                  title: "Price",
+                  title: "Unit Price",
                   align: 'right',
-                  render: (_, item: any) => <span>{formatPrice(Number(item.unitPrice) + Number(item.taxAmount))}</span>
+                  render: (_, item: any) => <span>{formatPrice(Number(item.unitPrice) - Number(item.totalDiscountAmount) + Number(item.taxAmount))}</span>
                 },
                 {
                   title: "Qty",
-                  dataIndex: "qty",
                   align: "center",
+                  render: (_, item: any) => (
+                    <div className="flex flex-col items-center">
+                      <span>{item.qty}</span>
+                      {Number(item.approvedQty) > 0 && (
+                        <span className="text-orange-500 text-[10px]">-{item.approvedQty} ret</span>
+                      )}
+                    </div>
+                  )
                 },
                 {
-                  title: "Total",
+                  title: "Net Total",
                   align: "right",
-                  render: (_, item: any) => <span className="font-medium">{formatPrice(Number(item.subTotal))}</span>
+                  render: (_, item: any) => {
+                    const netQty = Number(item.qty) - Number(item.approvedQty || 0);
+                    const netTotal = (Number(item.subTotal) / Number(item.qty)) * netQty;
+                    return <span className="font-medium">{formatPrice(netTotal)}</span>;
+                  }
                 }
               ]}
             />
@@ -405,19 +442,26 @@ const UserOrders = () => {
                       <Text type="success">-{formatPrice(Number(selectedOrder.totalItemsDiscount))}</Text>
                     </div>
                   )}
+                  {Number(selectedOrder.totalReturned) > 0 && (
+                    <div className="flex justify-between mb-2 text-orange-600 font-semibold">
+                      <Text type="warning">Returned Amount</Text>
+                      <Text type="warning">-{formatPrice(Number(selectedOrder.totalReturned))}</Text>
+                    </div>
+                  )}
                   <Divider className="my-3" />
                   <div className="flex justify-between items-center">
-                    <Text strong className="text-lg">Grand Total</Text>
-                    <Text strong className="text-xl text-blue-600">{formatPrice(Number(selectedOrder.grandTotal))}</Text>
+                    <Text strong className="text-lg">Net Grand Total</Text>
+                    <Text strong className="text-xl text-blue-600">{formatPrice(Number(selectedOrder.grandTotal) - Number(selectedOrder.totalReturned))}</Text>
                   </div>
-                  {(selectedOrder.payments?.reduce((acc: number, p: any) => p.paymentType === 'Debit' ? acc + Number(p.amount) : acc - Number(p.amount), 0) || 0) < Number(selectedOrder.grandTotal) && (
+                  {(selectedOrder.payments?.reduce((acc: number, p: any) => p.paymentType === 'Debit' ? acc + Number(p.amount) : acc - Number(p.amount), 0) || 0) < (Number(selectedOrder.grandTotal) - Number(selectedOrder.totalReturned)) && (
                     <div className="mt-2 text-right">
-                      <Tag color="warning">Payment Pending</Tag>
+                      <Tag color="warning">Balance Due</Tag>
                     </div>
                   )}
                 </div>
               </Col>
             </Row>
+
 
           </div>
         )}

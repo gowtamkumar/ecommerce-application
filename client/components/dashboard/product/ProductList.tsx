@@ -106,17 +106,17 @@ const ProductList = () => {
         </div>
       ),
     },
-    {
-      title: "Stock",
-      dataIndex: "alertQty",
-      key: "alertQty",
-      render: (qty, record) => (
-        <div className="flex flex-col">
-          <span className={`font-medium ${qty < 5 ? 'text-red-600' : 'text-gray-700'}`}>{qty} units</span>
-          <span className="text-xs text-gray-400">Limit: {record.limitPurchaseQty}</span>
-        </div>
-      )
-    },
+    // {
+    //   title: "Stock",
+    //   dataIndex: "alertQty",
+    //   key: "alertQty",
+    //   render: (qty, record) => (
+    //     <div className="flex flex-col">
+    //       <span className={`font-medium ${qty < 5 ? 'text-red-600' : 'text-gray-700'}`}>{qty} units</span>
+    //       <span className="text-xs text-gray-400">Limit: {record.limitPurchaseQty}</span>
+    //     </div>
+    //   )
+    // },
     {
       title: "Discount",
       dataIndex: "discount",
