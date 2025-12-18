@@ -28,9 +28,6 @@ const ReturnOrderStatusUpdate = () => {
     };
   }, [global.action]);
 
-  console.log("global.action", global.action);
-
-
   const handleSubmit = async (values: any) => {
     const result = () => updateReturn({ ...values, id: payload.id });
     await handleAsyncAction(result, dispatch);

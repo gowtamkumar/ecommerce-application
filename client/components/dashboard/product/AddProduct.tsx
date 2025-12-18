@@ -368,9 +368,9 @@ const AddProduct = ({
             <Input />
           </Form.Item>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Left Column - Main Info */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-3 space-y-8">
               {/* Basic Details Card */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
                 <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Basic Information</h2>

@@ -74,6 +74,8 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
           SUM(CASE WHEN status = 'Processing' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_processing_order_amount,
           SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_shipped_order_amount,
           SUM(CASE WHEN status = 'Delivered' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_Delivered_order_amount
+
+          
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
 

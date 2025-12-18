@@ -1,13 +1,10 @@
-import React from "react";
 import { Checkbox, Form, InputNumber } from "antd";
 
 export default function WithOutVariant({ form }: any) {
   return (
     <>
-      <div className="grid grid-cols-3 gap-2">
-        <Form.Item name="enableReview" valuePropName="checked">
-          <Checkbox>Enable Review</Checkbox>
-        </Form.Item>
+      <div className="grid grid-cols-2 gap-2">
+
 
         <Form.Item name="limitPurchaseQty" label="Limit Purchase Qty">
           <InputNumber placeholder="Enter" className="!w-full" />

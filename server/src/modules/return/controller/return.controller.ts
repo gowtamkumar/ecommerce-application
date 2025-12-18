@@ -577,14 +577,10 @@ export const updateReturn = asyncHandler(async (req: CustomRequest, res: Respons
 export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, res: Response) => {
   const userId = req.id;
 
-  console.log('req.body', req.body);
-
   const validation = returnFullOrderValidationSchema.safeParse({
     ...req.body,
     userId,
   });
-
-  console.log('validation', validation);
 
   if (!validation.success) {
     const formattedErrors = validation.error.issues.map((issue) => ({
@@ -781,7 +777,6 @@ export const completeFullOrderReturn = asyncHandler(async (req: Request, res: Re
       approvedQty: requestedQty,
       refundStatus: RefundStatus.None,
       returnedStatus: ReturnStatus.Completed,
-      status: OrderStatus.Returned,
     });
 
     console.log('requestedQty', requestedQty);

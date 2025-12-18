@@ -49,7 +49,20 @@ export default function ProductRightTopSection({
             <Checkbox>New Arrival</Checkbox>
           </Form.Item>
         </div>
+
+        <div className="col-span-1 self-end">
+          <Form.Item name="isReturnable" valuePropName="checked" label={null}>
+            <Checkbox>Returnable</Checkbox>
+          </Form.Item>
+        </div>
+        <div className="col-span-1 self-end">
+          <Form.Item name="enableReview" valuePropName="checked">
+            <Checkbox>Enable Review</Checkbox>
+          </Form.Item>
+        </div>
       </div>
+
+
 
       <Form.Item name="brandId" label="Brand">
         <Select
