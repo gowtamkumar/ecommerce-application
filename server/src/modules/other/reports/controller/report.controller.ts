@@ -101,17 +101,20 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
     `with orderItems as (
           SELECT 
             oi.product_id AS product_id,
-            SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
-            SUM(COALESCE(oi.qty, 0)) AS sale_qty
+            SUM(
+                COALESCE(oi.sub_total, 0) * 
+                ( CAST(COALESCE(oi.qty, 1) - COALESCE(oi.approved_qty, 0) AS NUMERIC) / NULLIF(CAST(COALESCE(oi.qty, 1) AS NUMERIC), 0) )
+            ) AS total_sale_amount,
+            SUM(COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0)) AS sale_qty
           FROM 
             order_items oi
           LEFT JOIN 
             orders ON orders.id = oi.order_id
           WHERE 
             orders.status = 'Delivered'
+            AND orders.created_at BETWEEN '${fromDate}' AND '${toDate}'
           GROUP BY 
             oi.product_id
-            order by total_sale_amount DESC
           )
       select
         oI.product_id,
@@ -120,7 +123,8 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
         products.name,
         products.alert_qty
       from orderItems oI
-      LEFT JOIN products ON products.id = oI.product_id;
+      LEFT JOIN products ON products.id = oI.product_id
+      order by oI.total_sale_amount DESC;
     `,
   );
 
@@ -130,8 +134,11 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
           SELECT 
               users.id AS customer_id,
               users.name AS customer_name,
-              SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
-              SUM(COALESCE(oi.qty, 0)) AS total_qty
+              SUM(
+                  COALESCE(oi.sub_total, 0) * 
+                  ( CAST(COALESCE(oi.qty, 1) - COALESCE(oi.approved_qty, 0) AS NUMERIC) / NULLIF(CAST(COALESCE(oi.qty, 1) AS NUMERIC), 0) )
+              ) AS total_sale_amount,
+              SUM(COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0)) AS total_qty
           FROM 
               order_items oi
           LEFT JOIN 
@@ -140,6 +147,7 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
               users ON users.id = orders.user_id
           WHERE 
               orders.status = 'Delivered'
+              AND orders.created_at BETWEEN '${fromDate}' AND '${toDate}'
           GROUP BY 
               users.id, users.name
         )
