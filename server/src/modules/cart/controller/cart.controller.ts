@@ -247,13 +247,15 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
         // Check if we already notified for this coupon application to avoid spam?
         // Since this is a "check" logic often hit, let's limit it or just notify.
         // For now, simple notification.
-        await notificationRepo.save(notificationRepo.create({
-          type: NotificationType.CouponApplied,
-          title: 'Coupon Applied',
-          message: `Coupon ${coupon.code} applied successfully! Discount: ${coupon.value}${coupon.discountType === DiscountType.Percentage ? '%' : ''}`,
-          userId,
-          isRead: false,
-        }));
+        await notificationRepo.save(
+          notificationRepo.create({
+            type: NotificationType.CouponApplied,
+            title: 'Coupon Applied',
+            message: `Coupon ${coupon.code} applied successfully! Discount: ${coupon.value}${coupon.discountType === DiscountType.Percentage ? '%' : ''}`,
+            userId,
+            isRead: false,
+          }),
+        );
       }
     }
   }

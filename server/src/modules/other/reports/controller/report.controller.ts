@@ -183,13 +183,20 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
       with orderItems as (
       SELECT 
             oi.product_id AS product_id,
-            SUM(COALESCE(orders.grand_total, 0)) AS total_sale_amount,
-            SUM(COALESCE(oi.purchase_price, 0) * COALESCE(oi.qty, 0)) AS total_purchase_amount
+            SUM(
+                COALESCE(oi.sub_total, 0) * 
+                ( CAST(COALESCE(oi.qty, 1) - COALESCE(oi.approved_qty, 0) AS NUMERIC) / NULLIF(CAST(COALESCE(oi.qty, 1) AS NUMERIC), 0) )
+            ) AS total_sale_amount,
+
+            SUM(
+                COALESCE(oi.purchase_price, 0) * 
+                ( COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0) )
+            ) AS total_purchase_amount
         FROM 
             order_items oi
         LEFT JOIN 
             orders ON orders.id = oi.order_id
-        WHERE created_at BETWEEN '${fromDate}' AND '${toDate}' AND orders.status = 'Delivered'
+        WHERE orders.created_at BETWEEN '${fromDate}' AND '${toDate}' AND orders.status = 'Delivered'
         GROUP BY 
             oi.product_id
       )
