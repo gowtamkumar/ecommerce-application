@@ -59,23 +59,41 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
       SELECT
           SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_order_count,
           SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_order_count,
-          SUM(CASE WHEN status = 'Delivered' THEN 1 ELSE 0 END) AS total_Delivered_order_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_pending_order_count,
           SUM(CASE WHEN status = 'Canceled' THEN 1 ELSE 0 END) AS total_canceled_order_count,
+          SUM(CASE WHEN status = 'Delivered'  THEN 1 ELSE 0 END) AS total_delivered_order_count,
 
           SUM(CASE WHEN status = 'Pending' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_pending_product_count,
           SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_canceled_product_count,
           SUM(CASE WHEN status = 'Processing' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_processing_product_count,
           SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_shipped_product_count,
-          SUM(CASE WHEN status = 'Delivered' THEN (COALESCE(total_qty,0)) ELSE 0 END) AS total_Delivered_product_count,
+          SUM( CASE WHEN status = 'Delivered' AND returned_status = 'Completed' THEN COALESCE(approved_qty, 0) WHEN status = 'Delivered' THEN COALESCE(total_qty, 0) ELSE 0 END ) AS total_delivered_product_count,
 
           SUM(CASE WHEN status = 'Pending' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_pending_order_amount,
           SUM(CASE WHEN status = 'Canceled' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_canceled_order_amount,
           SUM(CASE WHEN status = 'Processing' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_processing_order_amount,
-          SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_shipped_order_amount,
-          SUM(CASE WHEN status = 'Delivered' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_Delivered_order_amount
+          SUM(CASE WHEN status = 'Shipped' THEN (COALESCE(grand_total,0)) ELSE 0 END) AS total_shipped_order_amount, 
+          SUM( CASE WHEN status = 'Delivered' AND returned_status = 'Completed' THEN COALESCE(grand_total, 0) - COALESCE(total_returned, 0) WHEN status = 'Delivered' THEN COALESCE(grand_total, 0) ELSE 0 END ) AS total_delivered_order_amount,
 
-          
+          SUM(CASE WHEN returned_status = 'Requested' THEN 1 ELSE 0 END) AS total_return_requested_count,
+          SUM(CASE WHEN returned_status = 'Processing' THEN 1 ELSE 0 END) AS total_return_processing_count,
+          SUM(CASE WHEN returned_status = 'Approved' THEN 1 ELSE 0 END) AS total_return_approved_count,
+          SUM(CASE WHEN returned_status = 'Rejected' THEN 1 ELSE 0 END) AS total_return_rejected_count,
+          SUM(CASE WHEN returned_status = 'Completed' THEN 1 ELSE 0 END) AS total_return_completed_count,
+
+          SUM(CASE WHEN returned_status = 'Requested' THEN (COALESCE(total_returned,0)) ELSE 0 END) AS total_return_requested_amount,
+          SUM(CASE WHEN returned_status = 'Processing' THEN (COALESCE(total_returned,0)) ELSE 0 END) AS total_return_processing_amount,
+          SUM(CASE WHEN returned_status = 'Approved' THEN (COALESCE(total_returned,0)) ELSE 0 END) AS total_return_approved_amount,
+          SUM(CASE WHEN returned_status = 'Rejected' THEN (COALESCE(total_returned,0)) ELSE 0 END) AS total_return_rejected_amount,
+          SUM(CASE WHEN returned_status = 'Completed' THEN (COALESCE(total_returned,0)) ELSE 0 END) AS total_return_completed_amount,
+
+          SUM(CASE WHEN returned_status = 'Requested' THEN (COALESCE(requested_qty,0)) ELSE 0 END) AS total_return_requested_product_count,
+          SUM(CASE WHEN returned_status = 'Processing' THEN (COALESCE(requested_qty,0)) ELSE 0 END) AS total_return_processing_product_count,
+          SUM(CASE WHEN returned_status = 'Approved' THEN (COALESCE(requested_qty,0)) ELSE 0 END) AS total_return_approved_product_count,
+          SUM(CASE WHEN returned_status = 'Rejected' THEN (COALESCE(requested_qty,0)) ELSE 0 END) AS total_return_rejected_product_count,
+          SUM(CASE WHEN returned_status = 'Completed' THEN (COALESCE(approved_qty,0)) ELSE 0 END) AS total_return_completed_product_count
+
+
       FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
   `);
 

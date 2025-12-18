@@ -24,9 +24,27 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
     total_delivered_order_count,
     total_processing_order_count,
     payments,
-  }: any = dashboardReports || {};
 
-  console.log("dashboardReports", dashboardReports);
+    // total return summary
+    total_return_requested_count,
+    total_return_processing_count,
+    total_return_approved_count,
+    total_return_rejected_count,
+    total_return_completed_count,
+    // return amount
+    total_return_rejected_amount,
+    total_return_completed_amount,
+    total_return_approved_amount,
+    total_return_processing_amount,
+    total_return_requested_amount,
+
+    // return product summary
+    total_return_completed_product_count,
+    total_return_rejected_product_count,
+    total_return_approved_product_count,
+    total_return_processing_product_count,
+    total_return_requested_product_count,
+  }: any = dashboardReports || {};
 
   const { formatPrice } = useCurrency();
 
@@ -138,6 +156,99 @@ const TotalOrderSummaryDashboard = ({ dashboardReports }: any) => {
             <div className="flex justify-between">
               <span>SSLcommerz Order Amount</span>
               <span>{formatPrice(payments?.ssl_debit_amount || 0)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-4 w-full">
+          <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
+            Total Order Return Summary
+            <span>🛒</span>
+          </h2>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Requested</span>
+              <span>{total_return_requested_count || 0}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Processing</span>
+              <span>{total_return_processing_count || 0}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Approved</span>
+              <span>{total_return_approved_count || 0}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Rejected</span>
+              <span>{total_return_rejected_count || 0}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Completed</span>
+              <span>{total_return_completed_count || 0}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-4 w-full">
+          <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
+            Total Return Products Summary
+            <span>🛒</span>
+          </h2>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Requested</span>
+              <span>{total_return_requested_product_count || 0}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Processing</span>
+              <span>{total_return_processing_product_count || 0}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Approved</span>
+              <span>{total_return_approved_product_count || 0}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Rejected</span>
+              <span>{total_return_rejected_product_count || 0}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Completed</span>
+              <span>{total_return_completed_product_count || 0}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-4 w-full">
+          <h2 className="font-semibold text-lg mb-2 flex items-center justify-between">
+            Total Order Return Amount
+            <span>🛒</span>
+          </h2>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Requested</span>
+              <span>{formatPrice(total_return_requested_amount || 0)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Processing</span>
+              <span>{formatPrice(total_return_processing_amount || 0)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Approved</span>
+              <span>{formatPrice(total_return_approved_amount || 0)}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Rejected</span>
+              <span>{formatPrice(total_return_rejected_amount || 0)}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Completed</span>
+              <span>{formatPrice(total_return_completed_amount || 0)}</span>
             </div>
           </div>
         </div>
