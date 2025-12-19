@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres_db_clean
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: gowtampaul1995@
+      POSTGRES_DB: ecommerce_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+  dbclean:
+    image: postgres:17-alpine
+    container_name: postgres_dbclean
+    volumes:
+      - ./backups:/backups # Mount backup directory
+      - ./scripts/dbclean.sh:/dbclean.sh # Mount dbclean script
+    entrypoint: ["sh", "/dbclean.sh"] # Execute the dbclean script
+    environment:
+      PGPASSWORD: gowtampaul1995@ # PostgreSQL password
+    depends_on:
+      - postgres
+    networks:
+      - main_network
+
+networks:
+  main_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
