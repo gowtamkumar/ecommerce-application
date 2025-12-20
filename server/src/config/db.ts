@@ -143,21 +143,24 @@ const dbConnection = new DataSource({
     AuditLogEntity,
     PageEntity,
   ],
+  extra: {
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 30000,
+  },
   subscribers: [],
   migrations: [],
 });
 
 export const getDBConnection = async (): Promise<any> => {
   if (!dbConnection.isInitialized) {
-    await dbConnection
-      .initialize()
-      .then(() => {
-        console.log('database connection successfully');
-      })
-      .catch((error) => {
-        console.log('🚀 ~ error:', error);
-        console.log('Database connection error');
-      });
+    try {
+      await dbConnection.initialize();
+      console.log('database connection successfully');
+    } catch (error) {
+      console.error('🚀 ~ Database connection error:', error);
+      // We don't throw here to avoid crashing the whole process unnecessarily, 
+      // but the caller will get an uninitialized connection.
+    }
   }
   return dbConnection;
 };

@@ -91,7 +91,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   //   newUser: "/auth/new-user",
   // },
 
-  secret: process.env.NEXTAUTH_SECRET, // environment variable should be server and client same
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET, // environment variable should be server and client same
   session: { strategy: "jwt", maxAge: 1 * 24 * 60 * 60 }, // 1 day
   // debug: true,
   callbacks: {
