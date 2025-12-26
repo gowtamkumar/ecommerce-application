@@ -89,11 +89,11 @@ export default function PaymentMethod() {
           <Checkbox className="mt-1" />
           <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
             I agree to the{" "}
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+            <a href="/terms-conditions" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
               Terms and Conditions
             </a>
             {" "}and{" "}
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+            <a href="/return-policy" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
               Return Policy
             </a>
           </span>

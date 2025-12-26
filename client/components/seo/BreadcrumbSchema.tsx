@@ -22,7 +22,7 @@ interface BreadcrumbSchemaProps {
  * ]} />
  */
 export default function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
-  const baseUrl = appConfig.baseUrl || 'https://ecommerce.com';
+  const baseUrl = appConfig.baseUrl
 
   const breadcrumbData = {
     '@context': 'https://schema.org',
