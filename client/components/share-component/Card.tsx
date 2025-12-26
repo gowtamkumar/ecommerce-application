@@ -71,78 +71,88 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative  backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-global-primary hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
-      {/* Image + Hover */}
-      <div className="relative aspect-square overflow-hidden ">
-        <Link href={`/products/${item.slug}`}>
+    <div className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col h-full">
+      {/* Image Area */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
+        <Link href={`/products/${item.slug}`} className="block w-full h-full">
           <Image
             src={thumbnailUrl}
             alt={item.name}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {/* Hover Image */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-white">
-            <Image
-              src={hoverUrl}
-              alt={item.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </div>
+          {hoverUrl && (
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-white">
+              <Image
+                src={hoverUrl}
+                alt={item.name}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
+          )}
         </Link>
-
+        
         {/* Badges */}
-        {+item.discountAmount > 0 && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full z-10">
-            -{item.discountValue}{item.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
-          </div>
-        )}
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+          {+item.discountAmount > 0 && (
+             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-white/90 backdrop-blur text-rose-500 shadow-sm border border-rose-100">
+               -{item.discountValue}{item.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
+             </span>
+          )}
+        </div>
 
-        {/* Quick Actions */}
-        <div className="absolute right-2 top-2 flex flex-col gap-2 translate-x-10 group-hover:translate-x-0 transition-transform duration-300 z-20">
-          <button
-            className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-black hover:text-white transition-colors"
-            onClick={() => {
+        {/* Floating Actions */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300 ease-out z-20">
+           <button
+            className="w-10 h-10 bg-white/90 backdrop-blur text-gray-700 rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-all duration-300 transform hover:scale-110"
+            onClick={(e) => {
+              e.preventDefault(); 
+              e.stopPropagation();
               if (session.status === "unauthenticated") {
                 dispatch(setUnAuthorize(true));
               } else {
                 AddToWishlist(item.id);
               }
             }}
+            title="Add to Wishlist"
           >
-            <FaRegHeart size={14} />
+            <FaRegHeart size={16} />
           </button>
         </div>
       </div>
 
-      {/* Content area */}
-      <div className="p-4 flex flex-col flex-1">
-        <div className="mb-1">
-          <div className="flex items-center gap-1 mb-1">
-            <Rate disabled value={+item.avgRating || 0} className="text-xs" style={{ fontSize: 12 }} />
-            <span className="text-xs text-gray-400">({item.reviewsCount || 0})</span>
-          </div>
-          <h3 className="font-medium text-gray-900 text-sm leading-snug mb-1 h-10 overflow-hidden">
-            <Link href={`/products/${item.slug}`} className="hover:text-black transition-colors">
-              {item.name}
-            </Link>
-          </h3>
+      {/* Content Area */}
+      <div className="p-5 flex flex-col flex-1">
+        
+        {/* Ratings */}
+        <div className="flex items-center gap-2 mb-2">
+            <Rate disabled value={+item.avgRating || 0} className="text-xs text-amber-400" style={{ fontSize: 12 }} />
+            <span className="text-xs text-gray-400 font-medium">({item.reviewsCount || 0})</span>
         </div>
 
-        <div className="mt-auto pt-2 border-t border-gray-50">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex flex-col">
-              {+item?.discountValue > 0 && (
-                <span className="text-xs text-gray-400 line-through">{formatPrice(item.salePrice)}</span>
-              )}
-              <span className="text-base font-bold text-black">{formatPrice(item.finalPrice)}</span>
-            </div>
-          </div>
+        {/* Title */}
+        <h3 className="font-semibold text-gray-900 text-base leading-snug mb-3 line-clamp-2 min-h-[2.75rem] group-hover:text-indigo-600 transition-colors">
+          <Link href={`/products/${item.slug}`}>
+            {item.name}
+          </Link>
+        </h3>
 
-          <AddToCartButton item={{ ...item, qty: 1 }} />
+        {/* Price & Cart */}
+        <div className="mt-auto pt-4 border-t border-gray-50 flex flex-col gap-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-bold text-gray-900 tracking-tight">{formatPrice(item.finalPrice)}</span>
+             {+item?.discountValue > 0 && (
+                <span className="text-sm text-gray-400 line-through decoration-gray-300">{formatPrice(item.salePrice)}</span>
+              )}
+          </div>
+          
+           <div className="w-full">
+            <AddToCartButton item={{ ...item, qty: 1 }} />
+           </div>
         </div>
       </div>
 
