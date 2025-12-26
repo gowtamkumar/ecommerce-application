@@ -588,7 +588,8 @@ export const getProductByslug = asyncHandler(
               'rating', r.rating,
               'like', r.like,
               'disLike', r.dis_like,
-              'comment', r.comment
+              'comment', r.comment,
+              'user', JSONB_BUILD_OBJECT('name', u.name, 'image', u.image)
             )
           ) FILTER (WHERE r.status = 'Approved'), '[]'
         ) AS "reviews"
@@ -603,11 +604,13 @@ export const getProductByslug = asyncHandler(
       LEFT JOIN sizes s ON s.id = pv.size_id
       LEFT JOIN colors ON colors.id = pv.color_id
       LEFT JOIN reviews r ON r.product_id = p.product_id
+      LEFT JOIN users u ON u.id = r.user_id
+
       GROUP BY 
-        sd.discount_strategy, sd.discount_value,p.variant,
-        p.product_id, p.name, p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, 
-        p.short_description, p.enable_review, p.limit_purchase_qty, p.tags, rt.reviews_count, 
-        rt.average_rating, t.name, t.value, b.id, b.image, b.status, b.name, p.unit_price, p.images;
+        sd.discount_strategy,sd.discount_value,p.variant,
+        p.product_id, p.name,p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, 
+        p.short_description,p.enable_review, p.limit_purchase_qty, p.tags, rt.reviews_count, 
+        rt.average_rating,t.name, t.value, b.id, b.image, b.status, b.name, p.unit_price, p.images;
       `,
       [slug, productVariantId],
     );

@@ -79,7 +79,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               },
             ]}
           >
-            <ImgCrop rotationSlider showReset>
+            {/* <ImgCrop rotationSlider showReset> */}
               <Upload
                 name="thumbnailImage"
                 listType="picture-card"
@@ -107,7 +107,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               >
                 {!formValues.thumbnailImage && uploadButton}
               </Upload>
-            </ImgCrop>
+            {/* </ImgCrop> */}
           </Form.Item>
 
           <Form.Item name="thumbnailImage" hidden>
@@ -128,7 +128,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               },
             ]}
           >
-            <ImgCrop rotationSlider showReset>
+            {/* <ImgCrop rotationSlider showReset> */}
               <Upload
                 name="hoverImage"
                 listType="picture-card"
@@ -156,7 +156,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               >
                 {!formValues.hoverImage && uploadButton}
               </Upload>
-            </ImgCrop>
+            {/* </ImgCrop> */}
           </Form.Item>
 
           <Form.Item name="hoverImage" hidden>
@@ -177,7 +177,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             },
           ]}
         >
-          <ImgCrop rotationSlider showReset>
+          {/* <ImgCrop rotationSlider showReset> */}
             <Upload
               name="images"
               listType="picture-card"
@@ -210,7 +210,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             >
               {uploadButton}
             </Upload>
-          </ImgCrop>
+          {/* </ImgCrop>   */}
         </Form.Item>
 
         <Form.Item name="images" hidden>

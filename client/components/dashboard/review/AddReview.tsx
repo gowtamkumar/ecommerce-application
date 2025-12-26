@@ -43,9 +43,10 @@ const AddReview = () => {
   }, [fetchData, form, global.action]);
 
   const handleSubmit = async (values: any) => {
+    const newValues = { ...values, rating: Number(values.rating) };
     const result = values.id
-      ? () => updateReview(values)
-      : () => saveReview(values);
+      ? () => updateReview(newValues)
+      : () => saveReview(newValues);
 
     await handleAsyncAction(result, dispatch);
   };

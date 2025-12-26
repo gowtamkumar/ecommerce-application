@@ -143,17 +143,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Product({ params }: { params: Promise<{ slug: string }> }) {
 
-
   const slug = (await params).slug;
-  console.log("slug", slug);
   if (!slug) {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gray-100">
-          <h1 className="text-center text-2xl font-bold mt-10">
-            Product Not Found
-          </h1>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
+            <p className="text-gray-500">The product you are looking for does not exist.</p>
+          </div>
         </div>
         <ScrollToCart />
         <WebFooter />
@@ -164,7 +163,7 @@ export default async function Product({ params }: { params: Promise<{ slug: stri
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-50">
         <SingleProduct slug={slug} />
       </div>
       <ScrollToCart />
