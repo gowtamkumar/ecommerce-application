@@ -71,9 +71,9 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative bg-white/10 backdrop-blur-md rounded-xl border border-transparent hover:border-global-primary hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
+    <div className="group relative  backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-global-primary hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
       {/* Image + Hover */}
-      <div className="relative aspect-square overflow-hidden bg-gray-50">
+      <div className="relative aspect-square overflow-hidden ">
         <Link href={`/products/${item.slug}`}>
           <Image
             src={thumbnailUrl}

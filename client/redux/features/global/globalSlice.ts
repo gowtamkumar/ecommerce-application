@@ -17,7 +17,8 @@ export interface GlobalState {
   setting: Record<string, any>;
   unAuthorize: boolean;
   mobile: boolean;
-  categories: any
+  drawarCart: boolean;
+  categories: any;
 }
 
 // Define the initial state using that type
@@ -37,7 +38,8 @@ const initialState: GlobalState = {
   setting: {},
   unAuthorize: false,
   mobile: false,
-  categories: []
+  drawarCart: false,
+  categories: [],
 };
 
 export const globalSlice = createSlice({
@@ -92,6 +94,9 @@ export const globalSlice = createSlice({
     setCategories: (state, action: PayloadAction<any>) => {
       state.categories = action.payload;
     },
+    setDrawarCart: (state, action: PayloadAction<boolean>) => {
+      state.drawarCart = action.payload;
+    },
   },
 });
 
@@ -112,7 +117,8 @@ export const {
   setPreviewTitle,
   setUnAuthorize,
   setMobile,
-  setCategories
+  setDrawarCart,
+  setCategories,
 } = globalSlice.actions;
 
 // Selector for accessing the global state

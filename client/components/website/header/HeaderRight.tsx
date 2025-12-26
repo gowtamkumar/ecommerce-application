@@ -3,18 +3,17 @@ import NotificationDropdown from "@/components/share-component/NotificationDropd
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { userProfileRoute } from "@/NavBarRoute";
 import { selectCart } from "@/redux/features/cart/cartSlice";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { Avatar, Drawer, Dropdown } from "antd";
+import { selectGlobal, setDrawarCart, setLoading } from "@/redux/features/global/globalSlice";
+import { Avatar, Dropdown } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FiShoppingBag } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import ViewCart from "./ViewCart";
 
 export default function HeaderRight() {
-  const [drawarCart, setDrawarCart] = useState(false);
+  // const [drawarCart, setDrawarCart] = useState(false);
   const [mounted, setMounted] = useState(false);
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
@@ -29,7 +28,7 @@ export default function HeaderRight() {
   if (!mounted) return null;
 
   const showLoading = () => {
-    setDrawarCart(true);
+    dispatch(setDrawarCart(true));
     dispatch(setLoading({ drawerLoading: true }));
     setTimeout(() => {
       dispatch(setLoading({}));
@@ -95,7 +94,7 @@ export default function HeaderRight() {
         </div>
 
         {/* Cart Drawer */}
-        <Drawer
+        {/* <Drawer
           closable
           title={
             <div className="flex items-center gap-2">
@@ -107,14 +106,14 @@ export default function HeaderRight() {
             </div>
           }
           placement="right"
-          open={drawarCart}
+          open={global.drawarCart}
           loading={global.loading.drawerLoading}
-          onClose={() => setDrawarCart(false)}
+          onClose={() => dispatch(setDrawarCart(false))}
           width={450}
           className="cart-drawer"
         >
           <ViewCart />
-        </Drawer>
+        </Drawer> */}
       </div>
 
       {/* User Profile */}
