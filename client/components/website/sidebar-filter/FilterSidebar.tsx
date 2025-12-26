@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import "./index.css";
 
-const { Panel } = Collapse;
+
 
 interface Category {
   name: string;
@@ -127,167 +127,164 @@ export default function FilterSidebar() {
             )}
             ghost
             bordered={false}
-          >
-            {/* Price Range */}
-            <Panel
-              header={<span className="font-medium text-gray-800">Price Range</span>}
-              key="price"
-              className="border-b border-gray-100"
-            >
-              <div className="space-y-4">
-                <Slider
-                  range
-                  min={0}
-                  max={10000}
-                  step={10}
-                  value={[filterData.minPrice || 0, filterData.maxPrice || 10000]}
-                  onChange={(val) => {
-                    handleChange(val[0], "minPrice");
-                    handleChange(val[1], "maxPrice");
-                  }}
-                  className="mb-2"
-                />
-                <div className="flex items-center gap-2">
-                  <InputNumber
-                    placeholder="Min"
-                    value={filterData.minPrice}
-                    onChange={(val) => handleChange(val, "minPrice")}
-                    className="flex-1"
-                    controls={false}
-                    prefix="$"
-                  />
-                  <span className="text-gray-400">—</span>
-                  <InputNumber
-                    placeholder="Max"
-                    value={filterData.maxPrice}
-                    onChange={(val) => handleChange(val, "maxPrice")}
-                    className="flex-1"
-                    controls={false}
-                    prefix="$"
-                  />
-                </div>
-              </div>
-            </Panel>
-
-            {/* Categories */}
-            <Panel
-              header={<span className="font-medium text-gray-800">Category</span>}
-              key="category"
-              className="border-b border-gray-100"
-            >
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {categories.map((item) => (
-                  <label
-                    key={item.id}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
-                  >
-                    <Checkbox
-                      checked={filterData.categoryId?.includes(item.id.toString())}
-                      onChange={(e) => {
-                        const current = filterData.categoryId || [];
-                        const val = item.id.toString();
-                        const next = e.target.checked
-                          ? [...current, val]
-                          : current.filter((v: string) => v !== val);
-                        handleChange(next, "categoryId");
+            items={[
+              {
+                key: "price",
+                label: <span className="font-medium text-gray-800">Price Range</span>,
+                className: "border-b border-gray-100",
+                children: (
+                  <div className="space-y-4">
+                    <Slider
+                      range
+                      min={0}
+                      max={10000}
+                      step={10}
+                      value={[filterData.minPrice || 0, filterData.maxPrice || 10000]}
+                      onChange={(val) => {
+                        handleChange(val[0], "minPrice");
+                        handleChange(val[1], "maxPrice");
                       }}
+                      className="mb-2"
                     />
-                    <span className="text-sm text-gray-700">{item.name}</span>
-                  </label>
-                ))}
-              </div>
-            </Panel>
-
-            {/* Brands */}
-            <Panel
-              header={<span className="font-medium text-gray-800">Brand</span>}
-              key="brand"
-              className="border-b border-gray-100"
-            >
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {brands.map((item) => (
-                  <label
-                    key={item.id}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
-                  >
-                    <Checkbox
-                      checked={filterData.brandId?.includes(item.id.toString())}
-                      onChange={(e) => {
-                        const current = filterData.brandId || [];
-                        const val = item.id.toString();
-                        const next = e.target.checked
-                          ? [...current, val]
-                          : current.filter((v: string) => v !== val);
-                        handleChange(next, "brandId");
-                      }}
-                    />
-                    <span className="text-sm text-gray-700">{item.name}</span>
-                  </label>
-                ))}
-              </div>
-            </Panel>
-
-            {/* Colors */}
-            <Panel
-              header={<span className="font-medium text-gray-800">Color</span>}
-              key="color"
-              className="border-b border-gray-100"
-            >
-              <div className="grid grid-cols-5 gap-3">
-                {colors.map((item) => {
-                  const isSelected = filterData.colorId?.includes(item.id.toString());
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex flex-col items-center gap-1"
-                    >
-                      <button
-                        onClick={() => handleColorSelect(item.id.toString())}
-                        className={`w-10 h-10 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${isSelected
-                          ? 'border-gray-900 shadow-md'
-                          : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        style={{ backgroundColor: item.color }}
-                        title={item.name}
-                      >
-                        {isSelected && (
-                          <CheckOutlined
-                            className={`text-xs ${['white', '#ffffff', '#fff'].includes(item.color.toLowerCase())
-                              ? 'text-gray-900'
-                              : 'text-white'
-                              }`}
-                          />
-                        )}
-                      </button>
-                      <span className="text-[10px] text-gray-600 text-center leading-tight">
-                        {item.name}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <InputNumber
+                        placeholder="Min"
+                        value={filterData.minPrice}
+                        onChange={(val) => handleChange(val, "minPrice")}
+                        className="flex-1"
+                        controls={false}
+                        prefix="$"
+                      />
+                      <span className="text-gray-400">—</span>
+                      <InputNumber
+                        placeholder="Max"
+                        value={filterData.maxPrice}
+                        onChange={(val) => handleChange(val, "maxPrice")}
+                        className="flex-1"
+                        controls={false}
+                        prefix="$"
+                      />
                     </div>
-                  );
-                })}
-              </div>
-            </Panel>
-
-            {/* Discount */}
-            <Panel
-              header={<span className="font-medium text-gray-800">Discount</span>}
-              key="discount"
-            >
-              <Slider
-                min={0}
-                max={100}
-                marks={{
-                  0: '0%',
-                  25: '25%',
-                  50: '50%',
-                  75: '75%',
-                  100: '100%',
-                }}
-                value={filterData.discount || 0}
-                onChange={(value) => handleChange(value, "discount")}
-              />
-            </Panel>
-          </Collapse>
+                  </div>
+                ),
+              },
+              {
+                key: "category",
+                label: <span className="font-medium text-gray-800">Category</span>,
+                className: "border-b border-gray-100",
+                children: (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {categories.map((item) => (
+                      <label
+                        key={item.id}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
+                      >
+                        <Checkbox
+                          checked={filterData.categoryId?.includes(item.id.toString())}
+                          onChange={(e) => {
+                            const current = filterData.categoryId || [];
+                            const val = item.id.toString();
+                            const next = e.target.checked
+                              ? [...current, val]
+                              : current.filter((v: string) => v !== val);
+                            handleChange(next, "categoryId");
+                          }}
+                        />
+                        <span className="text-sm text-gray-700">{item.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                key: "brand",
+                label: <span className="font-medium text-gray-800">Brand</span>,
+                className: "border-b border-gray-100",
+                children: (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {brands.map((item) => (
+                      <label
+                        key={item.id}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
+                      >
+                        <Checkbox
+                          checked={filterData.brandId?.includes(item.id.toString())}
+                          onChange={(e) => {
+                            const current = filterData.brandId || [];
+                            const val = item.id.toString();
+                            const next = e.target.checked
+                              ? [...current, val]
+                              : current.filter((v: string) => v !== val);
+                            handleChange(next, "brandId");
+                          }}
+                        />
+                        <span className="text-sm text-gray-700">{item.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                key: "color",
+                label: <span className="font-medium text-gray-800">Color</span>,
+                className: "border-b border-gray-100",
+                children: (
+                  <div className="grid grid-cols-5 gap-3">
+                    {colors.map((item) => {
+                      const isSelected = filterData.colorId?.includes(item.id.toString());
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex flex-col items-center gap-1"
+                        >
+                          <button
+                            onClick={() => handleColorSelect(item.id.toString())}
+                            className={`w-10 h-10 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${isSelected
+                              ? 'border-gray-900 shadow-md'
+                              : 'border-gray-300 hover:border-gray-400'
+                              }`}
+                            style={{ backgroundColor: item.color }}
+                            title={item.name}
+                          >
+                            {isSelected && (
+                              <CheckOutlined
+                                className={`text-xs ${['white', '#ffffff', '#fff'].includes(item.color.toLowerCase())
+                                  ? 'text-gray-900'
+                                  : 'text-white'
+                                  }`}
+                              />
+                            )}
+                          </button>
+                          <span className="text-[10px] text-gray-600 text-center leading-tight">
+                            {item.name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ),
+              },
+              {
+                key: "discount",
+                label: <span className="font-medium text-gray-800">Discount</span>,
+                children: (
+                  <Slider
+                    min={0}
+                    max={100}
+                    marks={{
+                      0: '0%',
+                      25: '25%',
+                      50: '50%',
+                      75: '75%',
+                      100: '100%',
+                    }}
+                    value={filterData.discount || 0}
+                    onChange={(value) => handleChange(value, "discount")}
+                  />
+                ),
+              },
+            ]}
+          />
         </ConfigProvider>
       </div>
 

@@ -22,14 +22,9 @@ interface Product {
   finalPrice: number | string;
 }
 
-interface GenerateMetadataParams {
-  params: {
-    slug: string;
-  };
-}
 
-export async function generateMetadata({ params }: any) {
-  const slug = await params.slug;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const slug = (await params).slug;
   const product = await getProductBySlug({
     slug,
   });
@@ -146,8 +141,11 @@ export async function generateMetadata({ params }: any) {
   };
 }
 
-export default async function Product({ params }: any) {
-  const slug = await params.slug;
+export default async function Product({ params }: { params: Promise<{ slug: string }> }) {
+
+
+  const slug = (await params).slug;
+  console.log("slug", slug);
   if (!slug) {
     return (
       <>
