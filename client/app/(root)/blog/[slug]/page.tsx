@@ -1,10 +1,12 @@
+import appConfig from "@/appConfig";
 import PostContent from "@/components/website/blog/PostContent";
+import Share from "@/components/website/product/Share";
 import { getPost } from "@/lib/apis/posts";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { FaCalendar, FaClock, FaShareAlt } from "react-icons/fa";
+import { FaCalendar, FaClock } from "react-icons/fa";
 
 const Subscribe = dynamic(
   () => import("@/components/website/footer/Subscribe")
@@ -26,7 +28,6 @@ const PostCategory = dynamic(
 const CommentSection = dynamic(
   () => import("@/components/website/blog/CommentSection")
 );
-
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -78,7 +79,6 @@ export default async function page({ params, searchParams }: PageProps) {
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-md">
               {post?.title}
             </h1>
-
 
             {/* Meta Data */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-gray-300 text-sm font-medium">
@@ -134,10 +134,12 @@ export default async function page({ params, searchParams }: PageProps) {
 
             {/* Share Button Placeholder (Functional enhancement for later) */}
             <div className="mt-8 flex justify-end">
-              <button className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors">
-                <FaShareAlt />
-                <span className="font-medium">Share this post</span>
-              </button>
+              <Share
+                value={{
+                  url: `${appConfig.publicUrl}/blog/${slug}`,
+                  name: post?.title || "Blog Post",
+                }}
+              />
             </div>
           </article>
 
@@ -145,36 +147,41 @@ export default async function page({ params, searchParams }: PageProps) {
           {/* <AuthorSection author={post?.user} /> */}
 
           {/* <!-- Comments Section --> */}
-          <CommentSection comments={post?.comments} />
+          <CommentSection comments={post?.comments} postId={post?.id} />
         </section>
 
         {/* <!-- Sidebar Section --> */}
         <aside className="w-full lg:w-1/3 flex flex-col gap-8">
           {/* <!-- Search --> */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Search</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+              Search
+            </h3>
             <PostSearchSection />
           </div>
 
           {/* <!-- Categories --> */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Categories</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+              Categories
+            </h3>
             <PostCategory searchParams={searchParams} />
           </div>
 
           {/* <!-- Recent Posts --> */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Recent Posts</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+              Recent Posts
+            </h3>
             <RecentPostSection />
           </div>
 
           {/* <!-- Newsletter Signup --> */}
           <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-8 text-white">
-            <h3 className="text-2xl font-bold mb-3">
-              Join Our Newsletter
-            </h3>
+            <h3 className="text-2xl font-bold mb-3">Join Our Newsletter</h3>
             <p className="text-blue-100 mb-6 text-sm">
-              Get the latest updates, offers, and exclusive content directly to your inbox.
+              Get the latest updates, offers, and exclusive content directly to
+              your inbox.
             </p>
             <div className="newsletter-dark-theme-wrapper">
               <Subscribe />

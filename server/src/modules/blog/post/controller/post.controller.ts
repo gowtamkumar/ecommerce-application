@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { getDBConnection } from '../../../../config/db';
 import { CustomRequest } from '../../../../enums/custom-request-type';
 import { asyncHandler } from '../../../../middlewares/async.middleware';
@@ -13,6 +13,7 @@ import { PostEntity } from '../model/post.entity';
 // @access Public
 export const getPosts = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getPosts ${req.method} ${req.url}`);
+  const { limit = 10, page = 1, categoryId } = req.query;
 
   const connection = await getDBConnection();
   const repository = connection.getRepository(PostEntity);
@@ -23,20 +24,34 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
   qb.leftJoin('post.postCategories', 'postCategories');
   qb.leftJoin('postCategories.category', 'category');
   qb.leftJoin('post.user', 'user');
+  if (categoryId) {
+    qb.where('postCategories.categoryId = :categoryId', { categoryId });
+  }
+  if (limit) {
+    qb.take(Number(limit));
+  }
+  if (page) {
+    qb.skip((+page - 1) * Number(limit));
+  }
 
   const result = await qb.getMany();
 
   return res.status(200).json({
     success: true,
     message: 'Get all Post',
-    data: result,
+    data: {
+      posts: result,
+      total: await qb.getCount(), // Total count for pagination
+      page: page ? Number(page) : 1,
+      pageSize: limit ? Number(limit) : result.length,
+    },
   });
 });
 
 // @desc Get a single Post
 // @route GET /api/v1/Post/:id
 // @access Public
-export const getPost = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const getPost = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getPost ${req.method} ${req.url}`);
 
   const { slug } = req.params;
@@ -44,10 +59,21 @@ export const getPost = asyncHandler(async (req: Request, res: Response, next: Ne
   const repository = await connection.getRepository(PostEntity);
 
   const qb = repository.createQueryBuilder('post');
-  qb.select(['post', 'postCategories', 'user', 'category', 'comments']);
+  qb.select([
+    'post',
+    'postCategories.categoryId',
+    'user.name',
+    'user.image',
+    'commentUser.name',
+    'commentUser.image',
+    'category.name',
+    'comments.content',
+    'comments.createdAt',
+  ]);
   qb.leftJoin('post.postCategories', 'postCategories');
   qb.leftJoin('postCategories.category', 'category');
   qb.leftJoin('post.comments', 'comments');
+  qb.leftJoin('comments.user', 'commentUser');
   qb.leftJoin('post.user', 'user');
   qb.where({ slug });
   const result = await qb.getOne();

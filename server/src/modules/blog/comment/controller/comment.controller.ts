@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { getDBConnection } from '../../../../config/db';
 import { CustomRequest } from '../../../../enums/custom-request-type';
 import { asyncHandler } from '../../../../middlewares/async.middleware';
@@ -27,7 +27,7 @@ export const getComments = asyncHandler(async (req: Request, res: Response) => {
 // @desc Get a single Comment
 // @route GET /api/v1/Comment/:id
 // @access Public
-export const getComment = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const getComment = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getComment ${req.method} ${req.url}`);
   const { id } = req.params;
   const connection = await getDBConnection();
@@ -51,6 +51,8 @@ export const getComment = asyncHandler(async (req: Request, res: Response, next:
 export const createComment = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createComment ${req.method} ${req.url}`);
   const connection = await getDBConnection();
+  console.log('req.body', req.body);
+
   const validation = commentValidationSchema.safeParse({
     ...req.body,
     userId: req.id,

@@ -1,5 +1,6 @@
 "use client";
 import TextReactMdEditor from "@/components/share-component/react-md-editor/TextReactMdEditor";
+import uploadButton from "@/components/share-component/uploadButton";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { savePost, updatePost } from "@/lib/apis/posts";
 import {
@@ -9,25 +10,21 @@ import {
   normFile,
 } from "@/lib/utils/commonFunctions";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Image, Input, Modal, Select, Tag, Upload } from "antd";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// const TextQuillEditor = dynamic(
-//   () => import("@/components/share-component/editor-quill/TextQuillEditor"),
-//   { ssr: false }
-// );
 
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div style={{ marginTop: 8 }}>Upload</div>
-  </div>
-);
+// const uploadButton = (
+//   <div>
+//     <PlusOutlined />
+//     <div style={{ marginTop: 8 }}>Upload</div>
+//   </div>
+// );
 
 interface AddPostProps {
   categories?: any[];
@@ -64,7 +61,7 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
           name: `image`,
           status: "done",
           fileName: newData.image,
-          url: `${process.env.NEXT_PUBLIC_BASE_API_URL}/uploads/${newData.image}`,
+          url: getImageUrl(newData.image),
         };
         newData.fileList = [file];
         setFormValues({ ...newData, postCategories, fileList: [file] });

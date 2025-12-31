@@ -18,7 +18,7 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-6">
       {posts.map((post: any) => (
         <Link
-          href={`/blog/${post.slug || post.id}`}
+          href={`/blog/${post.slug}`}
           key={post.id}
           className="block group"
         >
@@ -51,10 +51,11 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
                 key="author"
               >
                 <UserOutlined />
-                <span className="text-xs">{post.user?.name || "Admin"}</span>
+                <span className="text-xs">{post?.user?.name || "Admin"}</span>
               </div>,
             ]}
           >
+
             <Meta
               title={
                 <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
@@ -62,14 +63,7 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
                 </h3>
               }
               description={
-                <div
-                  className="line-clamp-3 text-gray-500 text-sm"
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      post.content?.replace(/<[^>]+>/g, "").substring(0, 100) +
-                      "...",
-                  }}
-                />
+                <p className="line-clamp-3 text-gray-500 text-sm"> {post?.content}</p>
               }
             />
           </Card>

@@ -1,4 +1,3 @@
-import appConfig from "@/appConfig";
 import { ActionType } from "@/constants/constants";
 import { deletePost, getPosts } from "@/lib/apis/posts";
 import { getImageUrl } from "@/lib/utils/imageUrl";
@@ -15,8 +14,10 @@ import {
 } from "@/redux/features/global/globalSlice";
 import { FormOutlined, QuestionCircleOutlined, RestOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,12 +38,13 @@ const PostList: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const route = useRouter()
 
   const fetchData = useCallback(async () => {
     try {
       dispatch(setLoading({ loading: true }));
       const res = await getPosts();
-      setPosts(res?.data);
+      setPosts(res?.data.posts || []);
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -187,9 +189,11 @@ const PostList: React.FC = () => {
       title: "Slug",
       dataIndex: "slug",
       key: "slug",
+      render: (value) => {
+        return <Link href={`/blog/${value}`}>{value}</Link>;
+      },
 
     },
-
 
     {
       title: "Categories",
@@ -203,34 +207,9 @@ const PostList: React.FC = () => {
         </div>
       ),
     },
-    {
-      title: "Tags",
-      dataIndex: "tags",
-      key: "tags",
-      render: (value) => (
-        <Tag style={{ backgroundColor: `${value}` }}>{value}</Tag>
-      ),
-    },
-    {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
-      render: (value) => (
-        <Image
-          width={60}
-          alt={value}
-          src={getImageUrl(value)}
-        />
-      ),
-    },
-    {
-      title: "Content",
-      dataIndex: "content",
-      key: "content",
-      render: (value) => {
-        return <div dangerouslySetInnerHTML={{ __html: value }} />;
-      },
-    },
+
+
+
     {
       title: "Status",
       dataIndex: "status",
@@ -257,8 +236,7 @@ const PostList: React.FC = () => {
                   name: `image`,
                   status: "done",
                   fileName: newData.image,
-                  url: `${appConfig.baseApiUrl}/uploads/${newData.image || "no-data.png"
-                    }`,
+                  url: getImageUrl(newData.image),
                 };
                 newData.fileList = [file];
               }

@@ -1,16 +1,11 @@
 "use client";
-import appConfig from "@/appConfig";
-import { selectProduct } from "@/redux/features/products/productSlice";
 import { FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { useSelector } from "react-redux";
 import {
-  EmailIcon,
-  EmailShareButton,
   FacebookShareButton,
   TwitterShareButton,
   WhatsappIcon,
-  WhatsappShareButton,
+  WhatsappShareButton
 } from "react-share";
 
 interface ProductShareProps {
@@ -18,17 +13,15 @@ interface ProductShareProps {
   name: string;
 }
 
-const ProductShare = () => {
-  const products = useSelector(selectProduct);
-  const { name, slug } = products.product;
+const Share = ({ value }: { value: any }) => {
+  const { name, url } = value;
 
-  const productUrl = `${appConfig.publicUrl}/product/${slug}`;
 
   return (
     <div className="flex items-center space-x-4">
       {/* Facebook Share */}
       <FacebookShareButton
-        url={productUrl}
+        url={url}
         title={`Check out this amazing product: ${name}`}
         hashtag="#Ecommerce"
       >
@@ -37,7 +30,7 @@ const ProductShare = () => {
 
       {/* Twitter Share */}
       <TwitterShareButton
-        url={productUrl}
+        url={url}
         title={`Check out this amazing product: ${name}`}
       >
         <FaXTwitter size={30} />
@@ -45,22 +38,22 @@ const ProductShare = () => {
 
       {/* WhatsApp Share */}
       <WhatsappShareButton
-        url={productUrl}
+        url={url}
         title={`Check out this amazing product: ${name}`}
       >
         <WhatsappIcon size={30} round />
       </WhatsappShareButton>
 
       {/* Email Share */}
-      <EmailShareButton
-        url={productUrl}
+      {/* <EmailShareButton
+        url={url}
         subject={`Amazing Product: ${name}`}
-        body={`Check out this product: ${productUrl}`}
+        body={`Check out this product: ${url}`}
       >
         <EmailIcon size={30} round />
-      </EmailShareButton>
+      </EmailShareButton> */}
     </div>
   );
 };
 
-export default ProductShare;
+export default Share;

@@ -11,6 +11,8 @@ const Pagination = dynamic(() => import("./Pagination"));
 const PostHeader = dynamic(() => import("./PostHeader"));
 
 export default function Index({ posts, searchParams }: any) {
+  console.log("posts", posts);
+
   return (
     <>
       <PostHeader />
@@ -19,10 +21,10 @@ export default function Index({ posts, searchParams }: any) {
         {/* <!-- Posts Section --> */}
         <section className="w-full lg:w-2/3">
           {/* <!-- Single Post --> */}
-          {(posts.data || []).map((post: any) => (
+          {(posts?.data?.posts || []).map((post: any) => (
             <article
               key={post.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden mb-10 text-center"
+              className="bg-white rounded-lg shadow-md overflow-hidden p-4 mb-8"
             >
               <Image
                 alt={post.title}
@@ -64,9 +66,6 @@ export default function Index({ posts, searchParams }: any) {
               </div>
             </article>
           ))}
-
-          {/* <!-- Repeat Post --> */}
-          {/* <!-- Add more post articles as needed --> */}
 
           {/* <!-- Pagination --> */}
           <Pagination meta={posts?.meta} />
