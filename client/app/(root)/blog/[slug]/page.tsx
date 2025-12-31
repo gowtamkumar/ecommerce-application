@@ -29,12 +29,12 @@ const AuthorSection = dynamic(
 );
 
 interface PageProps {
-  params: { id: string };
+  params: { slug: string };
 }
 
-export default async function page({ params }: any) {
-  const { id } = await params;
-  const { data: post } = await getPost(id);
+export default async function page({ params }: PageProps) {
+  const slug = (await params).slug;
+  const { data: post } = await getPost(slug);
   return (
     <>
       <div

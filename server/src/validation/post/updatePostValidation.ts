@@ -4,6 +4,9 @@ export const updatePostValidationSchema = z.object({
   title: z.string({
     required_error: 'Title is required',
   }),
+  excerpt: z.string({
+    required_error: 'Excerpt is required',
+  }),
   image: z.string({
     required_error: 'Image is required',
   }),

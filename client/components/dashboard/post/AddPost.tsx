@@ -13,7 +13,6 @@ import { errorNotification } from "@/lib/utils/notification";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Image, Input, Modal, Select, Tag, Upload } from "antd";
-import ImgCrop from "antd-img-crop";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -225,6 +224,23 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
                 <Input placeholder="Enter" />
               </Form.Item>
 
+              <Form.Item
+                name="excerpt"
+                label="Excerpt"
+                rules={[
+                  {
+                    required: true,
+                    message: "Excerpt is required",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  placeholder="Enter post excerpt"
+                  rows={4}
+                  maxLength={300}
+                />
+              </Form.Item>
+
               <label className="mb-2 block mt-4">Content</label>
               <TextReactMdEditor
                 value={editorContent}
@@ -312,27 +328,25 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
               >
-                <ImgCrop rotationSlider>
-                  <Upload
-                    name="image"
-                    listType="picture-card"
-                    fileList={formValues?.fileList || []}
-                    onRemove={async (v) => {
-                      if (v.fileName) {
-                        form.setFieldsValue({ image: null, fileList: [] });
-                        setFormValues({ image: null, fileList: [] });
-                        const params = { filename: v.fileName };
-                        await fileDeleteWithPhoto(params);
-                      }
-                    }}
-                    className="avatar-uploader"
-                    onPreview={(file) => handlePreview(file, dispatch)}
-                    customRequest={customUploadRequest}
-                    maxCount={1}
-                  >
-                    {formValues?.fileList?.length >= 1 ? null : uploadButton}
-                  </Upload>
-                </ImgCrop>
+                <Upload
+                  name="image"
+                  listType="picture-card"
+                  fileList={formValues?.fileList || []}
+                  onRemove={async (v) => {
+                    if (v.fileName) {
+                      form.setFieldsValue({ image: null, fileList: [] });
+                      setFormValues({ image: null, fileList: [] });
+                      const params = { filename: v.fileName };
+                      await fileDeleteWithPhoto(params);
+                    }
+                  }}
+                  className="avatar-uploader"
+                  onPreview={(file) => handlePreview(file, dispatch)}
+                  customRequest={customUploadRequest}
+                  maxCount={1}
+                >
+                  {formValues?.fileList?.length >= 1 ? null : uploadButton}
+                </Upload>
               </Form.Item>
               <Form.Item name="image" hidden>
                 <Input />
@@ -343,7 +357,7 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
               open={global.previewOpen}
               title={global.previewTitle}
               footer={null}
-              onCancel={handlePreviewCancel}
+              onCancel={() => handlePreviewCancel(dispatch)}
             >
               <Image
                 alt="example"

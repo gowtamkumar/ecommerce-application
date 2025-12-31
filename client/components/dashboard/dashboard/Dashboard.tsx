@@ -3,9 +3,10 @@ import { getDashboardReports } from "@/lib/apis/reports";
 import { getSettings } from "@/lib/apis/setting";
 import { errorNotification } from "@/lib/utils/notification";
 import { setSetting } from "@/redux/features/global/globalSlice";
-import { DatePicker, Spin } from "antd";
+import { Button, Card, DatePicker, Spin, Statistic } from "antd";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 const LossProfit = dynamic(() => import("./LossProfit"));
@@ -21,12 +22,14 @@ const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const navigate = useRouter();
 
   const {
     top_selling_product,
     top_customers,
     product_alert_stock_report,
     loss_profit,
+    total_active_user,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
@@ -40,8 +43,6 @@ const Dashboard = () => {
         startDate: firstDateOfMonth.toISOString(),
         endDate: lastDateOfMonth.toISOString(),
       });
-
-      console.log("results", results);
 
       const setting = await getSettings();
       dispatch(setSetting(setting.data));
@@ -90,12 +91,20 @@ const Dashboard = () => {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 font-global-primary-fontfamily">Dashboard Overview</h1>
-          <p className="text-gray-500 text-sm mt-1">Welcome back! Here's what's happening deeply today.</p>
+          <h1 className="text-2xl font-bold text-gray-900 font-global-primary-fontfamily">
+            Dashboard Overview
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Welcome back! Here's what's happening deeply today.
+          </p>
         </div>
         <div className="w-full sm:w-auto">
           <RangePicker
-            style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+            style={{
+              padding: "8px 16px",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+            }}
             defaultValue={[firstDateOfMonth, lastDateOfMonth]}
             onChange={async (value) => {
               const newDate = {} as { startDate: string; endDate: string };
@@ -110,20 +119,38 @@ const Dashboard = () => {
       </div>
 
       {/* Summary Cards */}
-      <div>
-        <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
-      </div>
+      <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
 
       {/* Stock Report */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Stock Overview</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">
+            Stock Overview
+          </h2>
+          <Button
+            size="small"
+            onClick={() => navigate.push("/dashboard/orders")}
+          >
+            View All {">>"}
+          </Button>
+        </div>
         <StockReport recentHistory={dashboardReports} />
       </div>
 
       {/* Analytics Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Profit & Loss</h2>
+          <Card title="Recent History" size="small">
+            <div>
+              Active user
+              <Statistic value={total_active_user || "0"} />
+            </div>
+          </Card>
+        </div>
+        <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">
+            Profit & Loss
+          </h2>
           <LossProfit
             value={{
               saleAmount,
@@ -134,19 +161,24 @@ const Dashboard = () => {
         </div>
 
         <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Top Customers</h2>
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">
+            Top Customers
+          </h2>
           <TopCustomer topCustomers={top_customers} />
         </div>
-        <div className="xl:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Top Selling Products</h2>
+        <div className="xl:col-span-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">
+            Top Selling Products
+          </h2>
           <TopSellingProduct topSellingProduct={top_selling_product} />
         </div>
-      </div>
 
-      {/* Alerts */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">Stock Alerts</h2>
-        <StockAlert productAlertStockReport={product_alert_stock_report} />
+        <div className="xl:col-span-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">
+            Stock Alerts
+          </h2>
+          <StockAlert productAlertStockReport={product_alert_stock_report} />
+        </div>
       </div>
     </div>
   );

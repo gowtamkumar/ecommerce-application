@@ -7,6 +7,9 @@ export const postValidationSchema = z.object({
   slug: z.string({
     required_error: 'slug is required',
   }),
+  excerpt: z.string({
+    required_error: 'Excerpt is required',
+  }),
   image: z.string({
     required_error: 'Image is required',
   }),

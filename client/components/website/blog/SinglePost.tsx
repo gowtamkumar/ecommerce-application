@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import Image from "next/image";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 const PostSearchSection = dynamic(() => import("./PostSearchSection"));
 const PostCategorySection = dynamic(() => import("./PostCategorySection"));

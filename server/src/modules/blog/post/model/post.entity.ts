@@ -26,6 +26,9 @@ export class PostEntity {
   title!: string;
 
   @Column()
+  excerpt!: string;
+
+  @Column()
   image!: string;
 
   @Column({ type: 'simple-array', nullable: true })
