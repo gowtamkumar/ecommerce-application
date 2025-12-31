@@ -1,20 +1,41 @@
 "use client";
 import { ActionType } from "@/constants/constants";
-import { setAction } from "@/redux/features/global/globalSlice";
+import { setAction, selectGlobal } from "@/redux/features/global/globalSlice";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Tabs } from "antd";
+import { Button, Drawer, Tabs } from "antd";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCategories } from "@/lib/apis/categories";
 
 const PostList = dynamic(() => import("@/components/dashboard/post/PostList"), { ssr: false });
+const AddPost = dynamic(() => import("@/components/dashboard/post/AddPost"), { ssr: false });
 
 export default function Page() {
   const [tabKey, setTabKey] = useState("post_list");
+  const [categories, setCategories] = useState([]);
   const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await getCategories();
+      setCategories(res?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleCloseDrawer = () => {
+    dispatch(setAction({}));
+  };
 
   return (
-    <div className="container-fluid bg-white p-3  ">
+    <div className="container-fluid bg-white p-3">
       <Tabs
         activeKey={tabKey}
         onChange={(key) => setTabKey(key)}
@@ -42,6 +63,16 @@ export default function Page() {
           </Button>
         }
       />
+
+      <Drawer
+        title={global.action?.payload?.id ? "Edit Post" : "Create Post"}
+        width="80%"
+        open={global.action?.post}
+        onClose={handleCloseDrawer}
+        destroyOnClose
+      >
+        <AddPost categories={categories} />
+      </Drawer>
     </div>
   );
 }

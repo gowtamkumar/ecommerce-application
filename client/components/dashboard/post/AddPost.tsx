@@ -12,7 +12,7 @@ import {
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
-import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
+import { selectGlobal, setAction, setLoading } from "@/redux/features/global/globalSlice";
 import { Button, Form, Image, Input, Modal, Select, Tag, Upload } from "antd";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -95,11 +95,13 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
 
     const res = await handleAsyncAction(asyncFn, dispatch);
 
-    // Redirect or clear after save? The original didn't seem to redirect explicitly but maybe it should.
-    // The previous implementation used global action state, which suggests it might be a modal or tied to state.
-    // Given the task is to redesign the page at /dashboard/post/new, redirection makes sense.
     if (res.success) {
-      router.push("/dashboard/post");
+      // Close drawer and reset action state
+      dispatch(setAction({}));
+      form.resetFields();
+      setFormValues({});
+      setTags([]);
+      setEditorContent("");
     }
   };
 

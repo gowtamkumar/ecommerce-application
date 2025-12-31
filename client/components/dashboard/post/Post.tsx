@@ -1,9 +1,12 @@
 "use client";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Tabs } from "antd";
+import { Button, Drawer, Tabs } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
+import { getCategories } from "@/lib/apis/categories";
 
 const AddPost = dynamic(() => import('./AddPost'), { ssr: false })
 const PostList = dynamic(() => import('./PostList'), { ssr: false })
@@ -11,7 +14,27 @@ const PostList = dynamic(() => import('./PostList'), { ssr: false })
 
 export default function Post() {
   const [tabKey, setTabKey] = useState("post_list");
-  const router = useRouter()
+  const [categories, setCategories] = useState([]);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await getCategories();
+      setCategories(res?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleCloseDrawer = () => {
+    dispatch(setAction({}));
+  };
 
   return (
     <div className="container bg-white p-3">
@@ -36,7 +59,16 @@ export default function Post() {
           </Button>
         }
       />
-      <AddPost />
+      
+      <Drawer
+        title={global.action?.payload?.id ? "Edit Post" : "Create Post"}
+        width="80%"
+        open={global.action?.post}
+        onClose={handleCloseDrawer}
+        destroyOnClose
+      >
+        <AddPost categories={categories} />
+      </Drawer>
     </div>
   );
 }
