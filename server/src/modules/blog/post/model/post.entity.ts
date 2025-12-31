@@ -25,17 +25,17 @@ export class PostEntity {
   @Column()
   title!: string;
 
-  @Column()
+  @Column({ nullable: true })
   excerpt!: string;
+
+  @Column()
+  content!: string;
 
   @Column()
   image!: string;
 
   @Column({ type: 'simple-array', nullable: true })
   tags!: string[];
-
-  @Column()
-  content!: string;
 
   @Column({ name: 'user_id' })
   userId!: number;
