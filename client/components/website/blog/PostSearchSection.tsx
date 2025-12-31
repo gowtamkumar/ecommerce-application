@@ -1,6 +1,7 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+import { FaSearch } from "react-icons/fa";
 
 export default function PostSearchSection() {
   const router = useRouter();
@@ -21,25 +22,20 @@ export default function PostSearchSection() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4">Search</h3>
-      <form onSubmit={handleSearch}>
-        <div className="relative">
-          <input
-            type="text"
-            className="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:border-blue-500"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="absolute right-2 top-2 text-gray-500 hover:text-gray-600"
-          >
-            🔍
-          </button>
-        </div>
-      </form>
-    </div>
+    <form onSubmit={handleSearch} className="relative group">
+      <input
+        type="text"
+        className="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl pl-5 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all placeholder-gray-400"
+        placeholder="Search articles..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <button
+        type="submit"
+        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50"
+      >
+        <FaSearch />
+      </button>
+    </form>
   );
 }
