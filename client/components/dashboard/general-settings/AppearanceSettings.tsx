@@ -33,11 +33,15 @@ const AppearanceSettings = () => {
             primaryFont: "var(--font-poppins)",
             secondaryFont: "var(--font-poppins)",
             baseFontSize: 16,
+            pSize: 16,
             h1Size: 48,
             h2Size: 36,
             h3Size: 24,
             buttonFontSize: 14,
             buttonBorderRadius: 8,
+            primaryColor: "#F7AA0E",
+            primaryHoverColor: "#e59a0d",
+            textColor: "#1f2937",
             ...initialData
         };
         form.setFieldsValue(defaultValues);
@@ -57,11 +61,15 @@ const AppearanceSettings = () => {
             primaryFont,
             secondaryFont,
             baseFontSize,
+            pSize,
             h1Size,
             h2Size,
             h3Size,
             buttonFontSize,
             buttonBorderRadius,
+            primaryColor,
+            primaryHoverColor,
+            textColor,
         } = values;
 
         const payload = {
@@ -73,11 +81,15 @@ const AppearanceSettings = () => {
                 primaryFont,
                 secondaryFont,
                 baseFontSize,
+                pSize,
                 h1Size,
                 h2Size,
                 h3Size,
                 buttonFontSize,
                 buttonBorderRadius,
+                primaryColor,
+                primaryHoverColor,
+                textColor,
             }
         };
 
@@ -107,7 +119,7 @@ const AppearanceSettings = () => {
         <div className="space-y-6">
             <SettingsHeader 
                 title="Appearance Settings" 
-                description="Manage your website's typography, branding, and social media integrations" 
+                description="Manage your website's colors, typography, branding, and social media integrations" 
             />
 
             <Card className="shadow-sm border border-gray-100 rounded-2xl">
@@ -121,6 +133,36 @@ const AppearanceSettings = () => {
                     <Form.Item name="id" hidden>
                         <Input />
                     </Form.Item>
+
+                    {/* Color Palette Section */}
+                    <div className="space-y-6">
+                        <SettingsHeader title="Brand Color Palette" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Form.Item
+                                name="primaryColor"
+                                label={<span className="text-base font-medium">Primary Color</span>}
+                                extra="Main theme color (buttons, accents)"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="primaryHoverColor"
+                                label={<span className="text-base font-medium">Hover Color</span>}
+                                extra="Color when interacting with items"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="textColor"
+                                label={<span className="text-base font-medium">Default Text Color</span>}
+                                extra="Color for standard paragraph text"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+                    <Divider className="!my-8" />
 
                     {/* Typography & Global Styles */}
                     <div className="space-y-6">
@@ -145,10 +187,18 @@ const AppearanceSettings = () => {
 
                             <Form.Item
                                 name="baseFontSize"
-                                label={<span className="text-base font-medium">Base Font Size (px)</span>}
-                                extra="Controls the default text size across the site"
+                                label={<span className="text-base font-medium">Global Scale (Base px)</span>}
+                                extra="Scales everything site-wide (rem context)"
                             >
                                 <InputNumber size="large" className="w-full" min={10} max={24} />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="pSize"
+                                label={<span className="text-base font-medium">Paragraph font size (px)</span>}
+                                extra="Specifically for standard body/paragraph text"
+                            >
+                                <InputNumber size="large" className="w-full" min={10} max={30} />
                             </Form.Item>
 
                             <Form.Item
@@ -160,8 +210,8 @@ const AppearanceSettings = () => {
 
                             <Form.Item
                                 name="buttonBorderRadius"
-                                label={<span className="text-base font-medium">Button Border Radius (px)</span>}
-                                extra="Controls the roundness of buttons and inputs"
+                                label={<span className="text-base font-medium">Primary Roundness (px)</span>}
+                                extra="Applies to buttons, inputs, and standard cards"
                             >
                                 <InputNumber size="large" className="w-full" min={0} max={100} />
                             </Form.Item>

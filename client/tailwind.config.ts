@@ -10,9 +10,11 @@ const config: Config = {
     extend: {
       colors: {
         global: {
-          primary: "#F7AA0E",
-          secondary: "#000000",
-          accent: "#F2F2F2",
+          primary: "var(--global-primary)",
+          secondary: "var(--global-secondary)",
+          accent: "var(--global-accent)",
+          hover: "var(--primary-hover)",
+          text: "var(--text-color)",
         },
         // Footer color system
         footer: {

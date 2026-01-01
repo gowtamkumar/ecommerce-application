@@ -52,7 +52,7 @@ export default function FilterHeader() {
             <Badge
               count={products?.length || 0}
               showZero
-              style={{ backgroundColor: '#3b82f6' }}
+              style={{ backgroundColor: 'var(--global-primary)' }}
               className="[&_.ant-badge-count]:px-2 [&_.ant-badge-count]:h-6 [&_.ant-badge-count]:leading-6"
             />
             <span className="text-gray-600 font-medium">Products</span>
@@ -93,7 +93,7 @@ export default function FilterHeader() {
                   <button
                     onClick={() => dispatch(setProductView(false))}
                     className={`p-2 transition-colors ${!global.productView
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-global-primary text-white'
                       : 'bg-white text-gray-600 hover:bg-gray-50'
                       }`}
                     title="List View"
@@ -103,7 +103,7 @@ export default function FilterHeader() {
                   <button
                     onClick={() => dispatch(setProductView(true))}
                     className={`p-2 border-l border-gray-300 transition-colors ${global.productView
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-global-primary text-white'
                       : 'bg-white text-gray-600 hover:bg-gray-50'
                       }`}
                     title="Grid View"

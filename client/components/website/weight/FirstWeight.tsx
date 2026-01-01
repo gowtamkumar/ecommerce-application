@@ -33,7 +33,7 @@ export default function FirstWeight() {
         {data?.address && (
           <div className="flex items-start gap-3 group">
             <HiLocationMarker
-              className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 
+              className="w-5 h-5 text-global-primary flex-shrink-0 mt-0.5 
                                        group-hover:scale-110 transition-transform duration-300"
             />
             <address className="not-italic text-gray-300 group-hover:text-white transition-colors duration-300">
@@ -45,8 +45,8 @@ export default function FirstWeight() {
         {data?.phone && (
           <div className="flex items-center gap-3 group">
             <HiPhone
-              className="w-5 h-5 text-green-400 flex-shrink-0
-                              group-hover:scale-110 transition-transform duration-300"
+              className="w-5 h-5 text-global-primary flex-shrink-0
+                               group-hover:scale-110 transition-transform duration-300"
             />
             <Link
               href={`tel:${data.phone}`}
@@ -60,8 +60,8 @@ export default function FirstWeight() {
         {data?.email && (
           <div className="flex items-center gap-3 group">
             <HiMail
-              className="w-5 h-5 text-purple-400 flex-shrink-0
-                             group-hover:scale-110 transition-transform duration-300"
+              className="w-5 h-5 text-global-primary flex-shrink-0
+                               group-hover:scale-110 transition-transform duration-300"
             />
             <Link
               href={`mailto:${data.email}`}

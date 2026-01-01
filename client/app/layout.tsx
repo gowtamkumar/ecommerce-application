@@ -110,11 +110,15 @@ export default async function RootLayout({
     "--primary-font": appearance.primaryFont || "var(--font-poppins)",
     "--secondary-font": appearance.secondaryFont || "var(--font-poppins)",
     "--base-font-size": `${appearance.baseFontSize || 16}px`,
+    "--p-size": `${appearance.pSize || 16}px`,
     "--h1-size": `${appearance.h1Size || 48}px`,
     "--h2-size": `${appearance.h2Size || 36}px`,
     "--h3-size": `${appearance.h3Size || 24}px`,
     "--button-font-size": `${appearance.buttonFontSize || 14}px`,
     "--button-border-radius": `${appearance.buttonBorderRadius || 8}px`,
+    "--global-primary": appearance.primaryColor || "#F7AA0E",
+    "--primary-hover": appearance.primaryHoverColor || "#e59a0d",
+    "--text-color": appearance.textColor || "#1f2937",
   };
 
   const googleFonts = [

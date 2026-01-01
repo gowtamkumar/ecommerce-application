@@ -30,8 +30,8 @@ export default function TopBar() {
               href={`tel:${global.setting?.phone}`} 
               className="hover:text-white transition-all duration-300 flex items-center gap-2 group"
             >
-              <div className="p-1.5 rounded-full bg-green-500/20 border border-green-500/30 group-hover:bg-green-500/30 transition-all duration-300">
-                <HiPhone className="w-3 h-3 text-green-400" />
+              <div className="p-1.5 rounded-full bg-global-primary/20 border border-global-primary/30 group-hover:bg-global-primary/30 transition-all duration-300">
+                <HiPhone className="w-3 h-3 text-global-primary" />
               </div>
               <span className="text-gray-300 group-hover:text-white transition-colors">
                 {global.setting?.phone}
@@ -45,8 +45,8 @@ export default function TopBar() {
               href={`mailto:${global.setting?.email}`}
               className="hover:text-white transition-all duration-300 hidden lg:flex items-center gap-2 group"
             >
-              <div className="p-1.5 rounded-full bg-blue-500/20 border border-blue-500/30 group-hover:bg-blue-500/30 transition-all duration-300">
-                <HiMail className="w-3 h-3 text-blue-400" />
+              <div className="p-1.5 rounded-full bg-global-primary/20 border border-global-primary/30 group-hover:bg-global-primary/30 transition-all duration-300">
+                <HiMail className="w-3 h-3 text-global-primary" />
               </div>
               <span className="text-gray-300 group-hover:text-white transition-colors">
                 {global.setting?.email}
@@ -81,7 +81,7 @@ export default function TopBar() {
               
               <Link 
                 href="/register" 
-                className="px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 font-semibold"
+                className="px-3 py-1.5 rounded-full bg-global-primary hover:bg-global-hover text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 font-semibold"
               >
                 Sign up
               </Link>

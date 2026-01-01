@@ -125,7 +125,7 @@ const NotificationsUser = () => {
                         group relative p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md
                         ${item.isRead
                   ? "bg-white border-gray-100"
-                  : "bg-blue-50 border-blue-100"
+                  : "bg-global-primary/5 border-global-primary/20"
                 }
                     `}
             >
@@ -135,7 +135,7 @@ const NotificationsUser = () => {
                              mt-1 p-2 rounded-full shrink-0
                              ${item.isRead
                       ? "bg-gray-100 text-gray-400"
-                      : "bg-blue-100 text-blue-500"
+                      : "bg-global-primary/10 text-global-primary"
                     }
                           `}
                 >
@@ -167,7 +167,7 @@ const NotificationsUser = () => {
                     className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => handleRowClick(item)}
                   >
-                    <Tag color="blue">Mark as Read</Tag>
+                    <Tag color="var(--global-primary)">Mark as Read</Tag>
                   </div>
                 )}
               </div>
@@ -180,7 +180,7 @@ const NotificationsUser = () => {
       <Modal
         title={
           <div className="flex items-center gap-2">
-            <InfoCircleOutlined className="text-blue-500" />
+            <InfoCircleOutlined className="text-global-primary" />
             <span>Notification Details</span>
           </div>
         }

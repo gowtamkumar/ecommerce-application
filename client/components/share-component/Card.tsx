@@ -135,7 +135,7 @@ export default function Card({ item }: { item: any }) {
         </div>
 
         {/* Title */}
-        <h3 className="font-semibold text-gray-900 text-base leading-snug mb-3 line-clamp-2 min-h-[2.75rem] group-hover:text-indigo-600 transition-colors">
+        <h3 className="font-semibold text-gray-900 text-base leading-snug mb-3 line-clamp-2 min-h-[2.75rem] group-hover:text-global-primary transition-colors">
           <Link href={`/products/${item.slug}`}>
             {item.name}
           </Link>

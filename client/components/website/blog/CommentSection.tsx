@@ -120,7 +120,7 @@ export default function CommentSection({
                 id="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all placeholder-gray-400"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-global-primary/10 focus:border-global-primary transition-all placeholder-gray-400"
                 placeholder="Enter your name"
                 required
               />
@@ -137,7 +137,7 @@ export default function CommentSection({
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all placeholder-gray-400"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-global-primary/10 focus:border-global-primary transition-all placeholder-gray-400"
                 placeholder="Enter your email"
                 required
               />
@@ -155,7 +155,7 @@ export default function CommentSection({
               rows={5}
               value={formData.content}
               onChange={handleChange}
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all placeholder-gray-400 resize-y"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-global-primary/10 focus:border-global-primary transition-all placeholder-gray-400 resize-y"
               placeholder="Write your comment here..."
               required
             ></textarea>
@@ -163,7 +163,7 @@ export default function CommentSection({
           <button
             type="submit"
             disabled={loading}
-            className={`px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5 ${loading ? "opacity-70 cursor-not-allowed" : ""
+            className={`px-8 py-3 bg-global-primary hover:bg-global-hover text-white font-semibold rounded-xl shadow-lg hover:shadow-global-primary/30 transition-all duration-300 transform hover:-translate-y-0.5 ${loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
           >
             {loading ? "Posting..." : "Post Comment"}

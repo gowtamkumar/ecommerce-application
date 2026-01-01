@@ -59,17 +59,17 @@ export default function Subscribe() {
             className="!bg-white/10 !border-white/20 !text-white placeholder:!text-gray-400
                      !rounded-lg !pr-32 !py-3 !backdrop-blur-sm
                      hover:!bg-white/15 hover:!border-white/30
-                     focus:!bg-white/15 focus:!border-blue-400/50 focus:!shadow-[0_0_20px_rgba(59,130,246,0.3)]
-                     transition-all duration-300"
+            focus:!bg-white/15 focus:!border-global-primary focus:!shadow-[0_0_20px_rgba(247,170,14,0.3)]
+            transition-all duration-300"
           />
         </Form.Item>
 
         <button
           type="submit"
           disabled={loading}
-          className="absolute right-1.5 top-1.5 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600
+          className="absolute right-1.5 top-1.5 px-6 py-2 bg-global-primary
                    text-white rounded-md font-medium
-                   hover:from-blue-600 hover:to-purple-700
+                   hover:bg-global-hover
                    disabled:opacity-50 disabled:cursor-not-allowed
                    transform transition-all duration-300 hover:scale-105
                    shadow-lg hover:shadow-xl

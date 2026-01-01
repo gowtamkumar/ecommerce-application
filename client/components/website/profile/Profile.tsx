@@ -125,7 +125,7 @@ export default function Profile() {
 
               {/* User Summary Card (Desktop) */}
               <div className="hidden lg:block bg-white rounded-2xl p-6 border border-gray-100 shadow-sm text-center">
-                <div className="w-20 h-20 mx-auto bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-3xl mb-4">
+                <div className="w-20 h-20 mx-auto bg-global-primary/10 text-global-primary rounded-full flex items-center justify-center text-3xl mb-4">
                   <Image
                     src={getImageUrl(userImage)}
                     alt={session.data?.user.name}
@@ -147,7 +147,7 @@ export default function Profile() {
                     <button
                       key={item.key}
                       onClick={() => handleTabChange(item.key)}
-                      className={`flex items-center cursor-pointer gap-3 px-4 py-3 rounded-xl text-sm font-medium ${tabKey === item.key ? "bg-black !text-white shadow-md lg:w-full" : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900 lg:w-full border border-gray-100 lg:border-transparent"}`}
+                      className={`flex items-center cursor-pointer gap-3 px-4 py-3 rounded-xl text-sm font-medium ${tabKey === item.key ? "bg-global-secondary !text-white shadow-md lg:w-full" : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-900 lg:w-full border border-gray-100 lg:border-transparent"}`}
                     >
                       <span className="text-lg">{item.icon}</span>
                       <span>{item.label}</span>

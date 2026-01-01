@@ -299,7 +299,7 @@ export default function FilterSidebar() {
         >
           Apply Filters
           {filterCount > 0 && (
-            <span className="ml-2 bg-white text-blue-600 px-2 py-0.5 rounded-full text-xs font-semibold">
+            <span className="ml-2 bg-white text-global-primary px-2 py-0.5 rounded-full text-xs font-semibold">
               {filterCount}
             </span>
           )}

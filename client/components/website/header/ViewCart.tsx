@@ -38,9 +38,9 @@ export default function ViewCart() {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-8 space-y-6 animate-in fade-in duration-500">
         <div className="relative">
-          <div className="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50"></div>
+          <div className="absolute inset-0 bg-global-primary/10 rounded-full blur-xl opacity-50"></div>
           <div className="w-28 h-28 bg-white/80 backdrop-blur-sm rounded-full border border-white/50 shadow-xl flex items-center justify-center relative z-10">
-            <FiShoppingBag className="h-10 w-10 text-gray-400" />
+            <FiShoppingBag className="h-10 w-10 text-global-primary/40" />
           </div>
         </div>
         <div>
@@ -52,7 +52,7 @@ export default function ViewCart() {
         <Button
           type="primary"
           size="large"
-          className="bg-black text-white hover:bg-gray-800 h-10 px-8 rounded-full font-medium"
+          className="bg-global-primary text-white hover:bg-global-hover h-10 px-8 rounded-full font-medium border-none"
           onClick={() => router.push("/shop")} // Assuming /shop exists, or keep empty if handled by drawer close logic
         >
           Start Shopping
@@ -81,7 +81,7 @@ export default function ViewCart() {
         </div>
         <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
           <div
-            className="bg-black h-full rounded-full transition-all duration-1000 ease-out"
+            className="bg-global-primary h-full rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
@@ -153,7 +153,7 @@ export default function ViewCart() {
 
         <Button
           size="large"
-          className="w-full h-14 bg-black hover:bg-gray-800 border-none rounded-2xl text-base font-medium shadow-xl shadow-gray-200 flex items-center justify-center gap-2 group"
+          className="w-full h-14 bg-global-primary hover:bg-global-hover border-none rounded-2xl text-base font-medium shadow-xl shadow-global-primary/20 text-white flex items-center justify-center gap-2 group"
           onClick={() => {
             dispatch(setDrawarCart(false))
             router.push("/checkout")

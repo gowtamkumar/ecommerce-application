@@ -25,14 +25,14 @@ export default function PostSearchSection() {
     <form onSubmit={handleSearch} className="relative group">
       <input
         type="text"
-        className="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl pl-5 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all placeholder-gray-400"
+        className="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl pl-5 pr-12 py-3.5 focus:outline-none focus:ring-2 focus:ring-global-primary/10 focus:border-global-primary transition-all placeholder-gray-400"
         placeholder="Search articles..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <button
         type="submit"
-        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50"
+        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-global-primary transition-colors rounded-lg hover:bg-global-primary/10"
       >
         <FaSearch />
       </button>

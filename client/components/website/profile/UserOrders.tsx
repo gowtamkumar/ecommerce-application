@@ -211,7 +211,7 @@ const UserOrders = () => {
                       <Text type="secondary" className="block text-xs">
                         {Number(order.totalReturned) > 0 ? "Net Amount" : "Total Amount"}
                       </Text>
-                      <Text strong className={`text-xl md:text-2xl ${Number(order.totalReturned) > 0 ? "text-orange-600" : "text-blue-600"}`}>
+                      <Text strong className={`text-xl md:text-2xl ${Number(order.totalReturned) > 0 ? "text-orange-600" : "text-global-primary"}`}>
                         {formatPrice(Number(order.grandTotal) - Number(order.totalReturned))}
                       </Text>
                       {Number(order.totalReturned) > 0 && (
@@ -410,7 +410,7 @@ const UserOrders = () => {
                 <div className="mt-4 pl-2">
                   <Timeline
                     items={(selectedOrder.orderTrackings || []).map((t: any) => ({
-                      color: t.status === selectedOrder.status ? "blue" : "gray",
+                      color: t.status === selectedOrder.status ? "var(--global-primary)" : "gray",
                       children: (
                         <>
                           <Text strong>{t.status}</Text>
@@ -423,7 +423,7 @@ const UserOrders = () => {
                 </div>
               </Col>
               <Col xs={24} md={12}>
-                <div className="bg-blue-50/50 p-6 rounded-lg">
+                <div className="bg-global-primary/5 p-6 rounded-lg">
                   <div className="flex justify-between mb-2">
                     <Text type="secondary">Subtotal</Text>
                     <Text>{formatPrice(Number(selectedOrder.subTotal))}</Text>
@@ -451,7 +451,7 @@ const UserOrders = () => {
                   <Divider className="my-3" />
                   <div className="flex justify-between items-center">
                     <Text strong className="text-lg">Net Grand Total</Text>
-                    <Text strong className="text-xl text-blue-600">{formatPrice(Number(selectedOrder.grandTotal) - Number(selectedOrder.totalReturned))}</Text>
+                    <Text strong className="text-xl text-global-primary">{formatPrice(Number(selectedOrder.grandTotal) - Number(selectedOrder.totalReturned))}</Text>
                   </div>
                   {(selectedOrder.payments?.reduce((acc: number, p: any) => p.paymentType === 'Debit' ? acc + Number(p.amount) : acc - Number(p.amount), 0) || 0) < (Number(selectedOrder.grandTotal) - Number(selectedOrder.totalReturned)) && (
                     <div className="mt-2 text-right">

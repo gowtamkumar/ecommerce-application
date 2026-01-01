@@ -94,12 +94,20 @@ html {
 
 body {
   font-family: var(--secondary-font);
+  color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, .h1, h2, .h2, h3, .h3, h4, h5, h6 { 
     font-family: var(--primary-font);
+    color: var(--secondary-font); /* Keep headings dark or based on secondary/primary config if needed */
+}
+
+p {
+    font-size: var(--p-size);
+    line-height: 1.6;
+    margin-bottom: 1rem;
 }
 
 h1, .h1 { font-size: var(--h1-size); }
@@ -111,11 +119,21 @@ h3, .h3 { font-size: var(--h3-size); }
     font-family: inherit;
 }
 
-body {
+button, .ant-btn {
     font-family: var(--secondary-font);
+    background-color: var(--global-primary) !important;
+    color: white !important; /* Default for primary buttons */
+    border: none !important;
+    border-radius: var(--button-border-radius) !important;
+    transition: all 0.3s ease !important;
 }
 
-button, .ant-btn, input, select, textarea {
+button:hover, .ant-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-1px);
+}
+
+input, select, textarea {
     font-family: var(--secondary-font);
     border-radius: var(--button-border-radius) !important;
 }

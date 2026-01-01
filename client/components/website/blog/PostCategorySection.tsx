@@ -13,7 +13,7 @@ export default async function PostCategorySection({ searchParams }: { searchPara
         <Link
           href="/blog"
           className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${!activeCategory
-            ? "bg-blue-50 text-blue-700 font-semibold shadow-sm ring-1 ring-blue-100"
+            ? "bg-global-primary/10 text-global-primary font-semibold shadow-sm ring-1 ring-global-primary/20"
             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent hover:border-gray-100"
             }`}
         >
@@ -37,7 +37,7 @@ export default async function PostCategorySection({ searchParams }: { searchPara
             <Link
               href={`?${params.toString()}`}
               className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
-                ? "bg-blue-50 text-blue-700 font-semibold shadow-sm ring-1 ring-blue-100"
+                ? "bg-global-primary/10 text-global-primary font-semibold shadow-sm ring-1 ring-global-primary/20"
                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent hover:border-gray-100"
                 }`}
             >
