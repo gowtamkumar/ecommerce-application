@@ -127,19 +127,30 @@ export default async function RootLayout({
 
         {/* Custom header code (Analytics, etc.) */}
         {renderSeoCode(setting?.seo?.headerCode)}
+
+        {/* Google Analytics */}
+        {setting?.seo?.googleAnalyticsId && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${setting.seo.googleAnalyticsId}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${setting.seo.googleAnalyticsId}');
+                `,
+              }}
+            />
+          </>
+        )}
       </head>
       <body className={`${poppinsFont.variable} antialiased`}>
-        {/* Google Tag Manager (noscript) */}
-        {setting?.seo?.bodyStartCode && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${setting.seo.bodyStartCode}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            />
-          </noscript>
-        )}
+        {/* Custom body start code */}
+        {renderSeoCode(setting?.seo?.bodyStartCode)}
 
         <AuthProvider session={session}>
           <StoreProvider>

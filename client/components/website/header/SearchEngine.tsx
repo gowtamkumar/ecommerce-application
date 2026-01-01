@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined, CloseCircleFilled } from "@ant-design/icons";
 import { HiSparkles } from "react-icons/hi";
+import { useCurrency } from "@/context/CurrencyContext";
 
 export default function SearchEngine() {
   const [query, setQuery] = useState("");
@@ -20,6 +21,7 @@ export default function SearchEngine() {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const route = useRouter();
+  const { formatPrice, selectedCurrency } = useCurrency();
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 500);
@@ -174,21 +176,27 @@ export default function SearchEngine() {
                                          transition-colors duration-300 truncate">
                               {product.name}
                             </h3>
-                            
-                            <div className="flex items-center gap-2 mt-1">
-                              {product.salePrice ? (
-                                <>
-                                  <span className="text-sm font-bold text-global-primary">
-                                    ${product.salePrice}
-                                  </span>
-                                  <span className="text-xs text-gray-400 line-through">
-                                    ${product.price}
-                                  </span>
-                                </>
-                              ) : (
+                            <div className="flex flex-col gap-1 mt-1">
+                              <div className="flex items-center gap-2">
                                 <span className="text-sm font-bold text-gray-900">
-                                  ${product.price}
+                                  {formatPrice(product.finalPrice)}
                                 </span>
+                                {+product.discountValue > 0 && (
+                                  <span className="text-xs text-gray-400 line-through">
+                                    {formatPrice(product.salePrice)}
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {+product.discountValue > 0 && (
+                                <div className="flex">
+                                  <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded uppercase tracking-wide">
+                                    Save {product.discountValue}
+                                    {product.discountStrategy === "Percentage"
+                                      ? "%"
+                                      : selectedCurrency?.symbol}
+                                  </span>
+                                </div>
                               )}
                             </div>
                             

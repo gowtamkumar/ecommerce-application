@@ -71,9 +71,9 @@ export default function Index() {
           createUploadFile(newData.footerOption.image),
         ];
       }
-      if (newData?.homePage?.metaImage) {
-        newData.homePage.metaImagefileList = [
-          createUploadFile(newData?.homePage?.metaImage),
+      if (newData?.seo?.metaImage) {
+        newData.seo.metaImagefileList = [
+          createUploadFile(newData?.seo?.metaImage),
         ];
       }
       if (newData?.marketing?.popupImage) {
