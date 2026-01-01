@@ -5,7 +5,8 @@
 2. [Getting Started](#getting-started)
 3. [Customer Guide](#customer-guide)
 4. [Admin Dashboard](#admin-dashboard)
-5. [Troubleshooting](#troubleshooting)
+5. [Return & Refund System](#return--refund-system)
+6. [Troubleshooting](#troubleshooting)
 
 ## Introduction
 
@@ -109,6 +110,24 @@ Welcome to the E-Commerce Application! This comprehensive platform provides a co
 - Click the **heart icon** on any product to add to wishlist
 - View all wishlist items in **My Account** > **Wishlist**
 - Move items from wishlist to cart
+
+### Return & Refund
+#### 1. Eligibility
+- Product must be marked as **Returnable**.
+- Return request must be submitted within **7 days** of delivery.
+- Order status must be **Delivered**.
+
+#### 2. Requesting a Return
+- Go to **My Account** > **Orders**.
+- Select the delivered order you wish to return.
+- Click **Return Request** for specific items or the entire order.
+- Provide a reason for return and upload images if required.
+- Provide a contact phone number.
+- Submit the request.
+
+#### 3. Tracking Return Status
+- View your return requests in **My Account** > **Returns**.
+- Status updates: Requested, Processing, Approved, Refunded, or Rejected.
 
 ---
 
@@ -223,6 +242,29 @@ Welcome to the E-Commerce Application! This comprehensive platform provides a co
 3. Assign appropriate role
 4. Set permissions
 5. Send invitation email (optional)
+
+### Return Management
+
+#### Handling Return Requests
+1. Navigate to **Orders** > **Returns**.
+2. View all pending and processed return requests.
+3. Click on a request to view details (reason, images, requester info).
+
+#### Processing a Return
+1. Select a return request.
+2. Review the details and optionally adjust the **Approved Quantity**.
+3. Update the status:
+   - **Processing**: The request is being reviewed.
+   - **Approved**: Return is accepted.
+   - **Rejected**: Return is not accepted (provide reason).
+   - **Completed**: Return is finalized, stock is adjusted automatically.
+   - **Refunded**: Refund has been processed to the user.
+
+#### Automatic Adjustments
+- When a return is marked as **Completed**, the system automatically:
+  - Updates the product stock quantity.
+  - Calculates the refundable amount for the order.
+  - Updates the order's return and refund status.
 
 ### Content Management
 

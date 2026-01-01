@@ -9,10 +9,7 @@ import {
   FaRegUser,
   FaUser,
 } from "react-icons/fa";
-import {
-  IoNotifications,
-  IoReorderFour
-} from "react-icons/io5";
+import { IoNotifications, IoReorderFour } from "react-icons/io5";
 import {
   MdCategory,
   MdDashboard,
@@ -22,7 +19,7 @@ import {
   MdOutlinePermMedia,
   MdOutlineSpatialTracking,
   MdPayment,
-  MdViewModule
+  MdViewModule,
 } from "react-icons/md";
 import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
 import { SiWish } from "react-icons/si";
@@ -252,7 +249,6 @@ const navbarRoute = [
     ],
   },
 
-
   {
     key: "coupon",
     icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
@@ -273,7 +269,6 @@ const navbarRoute = [
       },
     ],
   },
-
 
   {
     key: "Shipping_managment",
@@ -341,6 +336,7 @@ const navbarRoute = [
   //   route: "true",
   // },
 
+
   {
     key: "setting",
     label: "Setting",
@@ -358,7 +354,11 @@ const navbarRoute = [
   {
     key: "general_setting",
     icon: <FaUser className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/general-setting?tab=site_settings">General Setting</Link>,
+    label: (
+      <Link href="/dashboard/general-setting?tab=site_settings">
+        General Setting
+      </Link>
+    ),
     route: "true",
   },
 
@@ -368,7 +368,6 @@ const navbarRoute = [
     label: <Link href="/dashboard/user">User</Link>,
     route: "true",
   },
-
 ];
 
 const profileRoute: MenuProps["items"] = [
@@ -504,4 +503,3 @@ const webSiteNavbarItems: MenuProps["items"] = [
 ];
 
 export { navbarRoute, profileRoute, userProfileRoute, webSiteNavbarItems };
-

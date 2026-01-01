@@ -10,7 +10,12 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import { Button, Image, Input, Popconfirm, Table, Tag } from "antd";
 import { useRouter } from "next/navigation";
@@ -88,7 +93,10 @@ const ProductList = () => {
       key: "name",
       width: 300,
       render: (text, record) => (
-        <div className="flex items-center gap-4 group cursor-pointer" onClick={() => route.push(`/dashboard/product/${record.id}`)}>
+        <div
+          className="flex items-center gap-4 group cursor-pointer"
+          onClick={() => route.push(`/dashboard/product/${record.id}`)}
+        >
           <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
             <Image
               width={48}
@@ -100,34 +108,33 @@ const ProductList = () => {
             />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 group-hover:text-black transition-colors">{text}</span>
-            <span className="text-xs text-gray-500">{record.variant ? "Has Variants" : "Simple Product"}</span>
+            <span className="font-semibold text-gray-900 group-hover:text-black transition-colors">
+              {text}
+            </span>
+            <span className="text-xs text-gray-500">
+              {record.variant ? "Has Variants" : "Simple Product"}
+            </span>
           </div>
         </div>
       ),
     },
-    // {
-    //   title: "Stock",
-    //   dataIndex: "alertQty",
-    //   key: "alertQty",
-    //   render: (qty, record) => (
-    //     <div className="flex flex-col">
-    //       <span className={`font-medium ${qty < 5 ? 'text-red-600' : 'text-gray-700'}`}>{qty} units</span>
-    //       <span className="text-xs text-gray-400">Limit: {record.limitPurchaseQty}</span>
-    //     </div>
-    //   )
-    // },
+
     {
       title: "Discount",
       dataIndex: "discount",
       key: "discount",
-      render: (value) => (
+      render: (value) =>
         value?.value ? (
-          <Tag color="purple" className="border-0 bg-purple-50 text-purple-700 rounded-full px-3">
-            {value.value}{value.discountStrategy === "Percentage" ? "%" : " BDT"} OFF
+          <Tag
+            color="purple"
+            className="border-0 bg-purple-50 text-purple-700 rounded-full px-3"
+          >
+            {value.value}
+            {value.discountStrategy === "Percentage" ? "%" : " BDT"} OFF
           </Tag>
-        ) : <span className="text-gray-400 text-sm">-</span>
-      ),
+        ) : (
+          <span className="text-gray-400 text-sm">-</span>
+        ),
     },
     {
       title: "Status",
@@ -136,11 +143,17 @@ const ProductList = () => {
       render: (status) => {
         const isActive = status === "Active";
         return (
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+              }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                }`}
+            ></span>
             {status}
           </div>
-        )
+        );
       },
     },
     {
@@ -150,11 +163,17 @@ const ProductList = () => {
       render: (featured) => {
         const isActive = featured === true;
         return (
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+              }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                }`}
+            ></span>
             {featured ? "Featured" : "Not Featured"}
           </div>
-        )
+        );
       },
     },
     {
@@ -164,11 +183,17 @@ const ProductList = () => {
       render: (isNewArrival) => {
         const isActive = isNewArrival === true;
         return (
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isActive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+              }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                }`}
+            ></span>
             {isNewArrival ? "New Arrival" : "Not New Arrival"}
           </div>
-        )
+        );
       },
     },
     {
@@ -219,8 +244,12 @@ const ProductList = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 font-global-primary-fontfamily">Products</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your product catalog and inventory</p>
+          <h1 className="text-2xl font-bold text-gray-900 font-global-primary-fontfamily">
+            Products
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Manage your product catalog and inventory
+          </p>
         </div>
         <div className="flex gap-4 w-full sm:w-auto">
           <Input
@@ -233,7 +262,7 @@ const ProductList = () => {
             type="primary"
             icon={<PlusOutlined />}
             className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
-            onClick={() => route.push('/dashboard/product/new')}
+            onClick={() => route.push("/dashboard/product/new")}
           >
             Add Product
           </Button>
