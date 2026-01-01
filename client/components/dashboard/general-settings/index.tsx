@@ -18,10 +18,9 @@ import WhatsAppWidgetSetting from "./WhatsAppWidgetSetting";
 const { Title, Text } = Typography;
 
 const Menu = dynamic(() => import("./Menu"), { ssr: false });
-const HelpSupport = dynamic(() => import("./HelpSupport"), { ssr: false });
-const HeaderOption = dynamic(() => import("./HeaderOption"), { ssr: false });
-const FooterOption = dynamic(() => import("./FooterOption"), { ssr: false });
-const FaqSettings = dynamic(() => import("./FaqSettings"), { ssr: false });
+const AppearanceSettings = dynamic(() => import("./AppearanceSettings"), { ssr: false });
+const MarketingAndSeo = dynamic(() => import("./MarketingAndSeo"), { ssr: false });
+const SupportSettings = dynamic(() => import("./SupportSettings"), { ssr: false });
 const OrderAdnShhiping = dynamic(() => import("./OrderAndShipping"), {
   ssr: false,
 });
@@ -29,9 +28,6 @@ const GeneralSettings = dynamic(() => import("./GeneralSettings"), {
   ssr: false,
 });
 const SyncGeoLocation = dynamic(() => import("./SyncGeoLocation"), {
-  ssr: false,
-});
-const Marketing = dynamic(() => import("./Marketing"), {
   ssr: false,
 });
 
@@ -91,7 +87,8 @@ export default function Index() {
   }, [dispatch]);
 
   useEffect(() => {
-    setTabKey(search.get("tab"));
+    const tab = search.get("tab") || "site_settings";
+    setTabKey(tab);
     fetchData();
   }, [fetchData, global.action, search]);
 
@@ -110,7 +107,6 @@ export default function Index() {
       {/* Tabs */}
       <Tabs
         tabPosition="left"
-        defaultValue={tabKey}
         activeKey={tabKey}
         onChange={(key) => {
           setTabKey(key);
@@ -120,60 +116,39 @@ export default function Index() {
         className="modern-tabs"
         items={[
           {
-            label: "General Settings",
+            label: "Basic Information",
             key: "site_settings",
             children: <GeneralSettings />,
           },
           {
-            label: "Menu",
+            label: "Navigation Menu",
             key: "menu",
             children: <Menu />,
           },
           {
-            label: "Order & Shipping",
+            label: "Appearance",
+            key: "appearance",
+            children: <AppearanceSettings />,
+          },
+          {
+            label: "Orders & Shipping",
             key: "order_and_shipping",
             children: <OrderAdnShhiping />,
           },
           {
-            label: "Header Option",
-            key: "header_option",
-            children: <HeaderOption />,
+            label: "Support & FAQ",
+            key: "support",
+            children: <SupportSettings />,
           },
           {
-            label: "Help & Support",
-            key: "help_Support",
-            children: <HelpSupport />,
+            label: "Marketing & SEO",
+            key: "marketing_seo",
+            children: <MarketingAndSeo />,
           },
           {
-            label: "FAQ",
-            key: "faq",
-            children: <FaqSettings />,
-          },
-          {
-            label: "WhatsApp Widget",
-            key: "whatsApp_widget",
-            children: <WhatsAppWidgetSetting />,
-          },
-          
-          {
-            label: "Footer Option",
-            key: "footer_option",
-            children: <FooterOption />,
-          },
-          {
-            label: "Sync Geo Location",
+            label: "Advanced (Geo)",
             key: "geo_locations",
             children: <SyncGeoLocation />,
-          },
-          {
-            label: "SEO",
-            key: "seo",
-            children: <Seo />,
-          },
-          {
-            label: "Marketing",
-            key: "marketing",
-            children: <Marketing />,
           },
         ]}
       />
