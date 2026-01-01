@@ -52,7 +52,7 @@ export default function ViewCart() {
         <Button
           type="primary"
           size="large"
-          className="h-10 px-8 rounded-full font-medium"
+          className="h-10 px-8 rounded-[var(--button-border-radius)] font-medium"
           onClick={() => router.push("/shop")} // Assuming /shop exists, or keep empty if handled by drawer close logic
         >
           Start Shopping

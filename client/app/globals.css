@@ -121,22 +121,21 @@ h3, .h3 { font-size: var(--h3-size); }
 
 button, .ant-btn {
     font-family: var(--secondary-font);
-    background: linear-gradient(135deg, var(--global-primary), var(--primary-hover)) !important;
+    background-color: var(--global-primary) !important;
     color: white !important;
     border: none !important;
     border-radius: var(--button-border-radius) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 button:hover, .ant-btn:hover {
-    background: linear-gradient(135deg, var(--primary-hover), var(--global-primary)) !important;
-    transform: translateY(-2px) scale(1.02);
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-}
-
-button:active, .ant-btn:active {
-    transform: translateY(0) scale(0.98);
 }
 
 a {

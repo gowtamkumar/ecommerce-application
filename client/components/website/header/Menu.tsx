@@ -62,7 +62,7 @@ const MainMenu = () => {
         overlayClassName="pt-2"
       >
         <button className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
-                       rounded-full transition-all duration-300 
+                       rounded-[var(--button-border-radius)] transition-all duration-300 
                        shadow-lg hover:shadow-xl 
                        hover:scale-105 group
                        border border-white/10">

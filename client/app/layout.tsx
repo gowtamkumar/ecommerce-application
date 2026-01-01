@@ -247,7 +247,7 @@ export default async function RootLayout({
                     fontFamily: appearance.secondaryFont || "var(--font-poppins)",
                     fontSize: appearance.baseFontSize || 16,
                     borderRadius: appearance.buttonBorderRadius || 8,
-                    colorPrimary: "#F7AA0E", // Keeping the primary color from globals.css
+                    colorPrimary: appearance.primaryColor || "#F7AA0E",
                   },
                   components: {
                     Button: {

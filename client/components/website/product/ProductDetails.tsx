@@ -301,14 +301,14 @@ const ProductDetails = ({
                   <Button
                     type="primary"
                     onClick={() => route.push("/checkout")}
-                    className="w-full h-full text-lg font-bold rounded-full flex items-center justify-center gap-2"
+                    className="w-full h-full text-lg font-bold rounded-[var(--button-border-radius)] flex items-center justify-center gap-2"
                   >
                     <span className="tracking-wide">CHECKOUT NOW</span>
                   </Button>
                 ) : (
                   <div className="w-full h-full">
                     <AddToCartButton
-                      className="!h-full !rounded-full !text-lg !font-bold flex items-center justify-center gap-3"
+                      className="!h-full !rounded-[var(--button-border-radius)] !text-lg !font-bold flex items-center justify-center gap-3"
                       item={{
                         ...product,
                         productVariantId: defaultProduct?.id,
