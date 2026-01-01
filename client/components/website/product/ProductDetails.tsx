@@ -173,7 +173,7 @@ const ProductDetails = ({
           <div className="relative mb-10 z-10">
             <div className="flex flex-col gap-2">
               <div className="flex items-end gap-3 flex-wrap">
-                <span className="text-5xl lg:text-6xl font-black text-indigo-600 tracking-tighter leading-none">
+                <span className="text-5xl lg:text-6xl font-black text-global-primary tracking-tighter leading-none">
                   {formatPrice(product.finalPrice)}
                 </span>
                 {+discountValue > 0 && (
@@ -226,8 +226,8 @@ const ProductDetails = ({
                         }}
                         className={`group relative flex items-center gap-3 pl-3 pr-5 py-3 border-2 rounded-2xl transition-all duration-300 min-w-[150px]
                           ${isSelected
-                            ? "border-indigo-600 bg-indigo-50/50 shadow-lg shadow-indigo-100 ring-1 ring-indigo-600"
-                            : "border-gray-100 bg-white hover:border-indigo-300 hover:shadow-md"
+                            ? "border-global-primary bg-global-primary/5 shadow-lg shadow-global-primary/10 ring-1 ring-global-primary"
+                            : "border-gray-100 bg-white hover:border-global-primary/30 hover:shadow-md"
                           }`}
                       >
                         {item?.color?.value ? (
@@ -250,7 +250,7 @@ const ProductDetails = ({
 
                         <div className="flex flex-col items-start">
                           <span
-                            className={`font-bold text-sm ${isSelected ? "text-indigo-900" : "text-gray-700"
+                            className={`font-bold text-sm ${isSelected ? "text-global-primary" : "text-gray-700"
                               }`}
                           >
                             {item?.size?.name}
@@ -261,7 +261,7 @@ const ProductDetails = ({
                         </div>
 
                         {isSelected && (
-                          <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-indigo-600 text-white rounded-full p-1 shadow-md shadow-indigo-200">
+                          <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-global-primary text-white rounded-full p-1 shadow-md shadow-global-primary/20">
                             <CheckOutlined className="text-xs" />
                           </div>
                         )}
@@ -301,14 +301,14 @@ const ProductDetails = ({
                   <Button
                     type="primary"
                     onClick={() => route.push("/checkout")}
-                    className="w-full h-full text-lg font-bold rounded-full bg-gray-900 hover:bg-black border-none shadow-xl shadow-gray-900/20 transform hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                    className="w-full h-full text-lg font-bold rounded-full flex items-center justify-center gap-2"
                   >
                     <span className="tracking-wide">CHECKOUT NOW</span>
                   </Button>
                 ) : (
                   <div className="w-full h-full">
                     <AddToCartButton
-                      className="w-full !h-full !rounded-full !text-lg !font-bold !bg-gradient-to-r !from-indigo-600 !to-violet-600 !text-white hover:!shadow-lg hover:!shadow-indigo-500/40 hover:!to-indigo-500 transition-all flex items-center justify-center gap-3 transform hover:scale-[1.02] border-none"
+                      className="!h-full !rounded-full !text-lg !font-bold flex items-center justify-center gap-3"
                       item={{
                         ...product,
                         productVariantId: defaultProduct?.id,

@@ -61,18 +61,17 @@ const MainMenu = () => {
         trigger={["click"]}
         overlayClassName="pt-2"
       >
-        <div className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
-                      bg-global-primary hover:bg-global-hover
-                      text-white rounded-full transition-all duration-300 
-                      shadow-lg hover:shadow-xl 
-                      hover:scale-105 group
-                      border border-white/10">
+        <button className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
+                       rounded-full transition-all duration-300 
+                       shadow-lg hover:shadow-xl 
+                       hover:scale-105 group
+                       border border-white/10">
           <CiMenuFries className="text-lg group-hover:rotate-90 transition-transform duration-300" />
           <span className="font-semibold tracking-wide text-sm font-global-primary-fontfamily">
             Categories
           </span>
           <HiChevronDown className="text-sm group-hover:translate-y-0.5 transition-transform duration-300" />
-        </div>
+        </button>
       </Dropdown>
     </div>
   );

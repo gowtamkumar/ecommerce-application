@@ -66,14 +66,7 @@ export default function Subscribe() {
 
         <button
           type="submit"
-          disabled={loading}
-          className="absolute right-1.5 top-1.5 px-6 py-2 bg-global-primary
-                   text-white rounded-md font-medium
-                   hover:bg-global-hover
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   transform transition-all duration-300 hover:scale-105
-                   shadow-lg hover:shadow-xl
-                   flex items-center gap-2 group"
+          className="h-12 px-8 rounded-xl font-medium flex items-center gap-2 group"
         >
           {loading ? (
             <>

@@ -54,7 +54,7 @@ export default function ApplyCoupon() {
           onClick={handleCoupon}
           loading={loading}
           disabled={loading || !data}
-          className="!bg-global-primary hover:!bg-global-hover !border-global-primary rounded-r-xl px-6"
+          className="px-6"
         >
           Apply
         </Button>

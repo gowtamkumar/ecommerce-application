@@ -147,7 +147,7 @@ export default function CheckoutSummary() {
         <Button
           type="primary"
           size="large"
-          className="w-full h-12 text-base font-semibold !bg-global-primary hover:!bg-global-hover border-none shadow-md hover:shadow-lg transition-all rounded-xl"
+          className="w-full h-12 text-base font-semibold"
           onClick={handleOrder}
           loading={loading.save}
           disabled={loading.save}

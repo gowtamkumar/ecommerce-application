@@ -52,7 +52,7 @@ export default function ViewCart() {
         <Button
           type="primary"
           size="large"
-          className="bg-global-primary text-white hover:bg-global-hover h-10 px-8 rounded-full font-medium border-none"
+          className="h-10 px-8 rounded-full font-medium"
           onClick={() => router.push("/shop")} // Assuming /shop exists, or keep empty if handled by drawer close logic
         >
           Start Shopping
@@ -153,7 +153,8 @@ export default function ViewCart() {
 
         <Button
           size="large"
-          className="w-full h-14 bg-global-primary hover:bg-global-hover border-none rounded-2xl text-base font-medium shadow-xl shadow-global-primary/20 text-white flex items-center justify-center gap-2 group"
+          type="primary"
+          className="w-full h-14 rounded-2xl text-base font-medium flex items-center justify-center gap-2 group"
           onClick={() => {
             dispatch(setDrawarCart(false))
             router.push("/checkout")

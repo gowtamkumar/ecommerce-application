@@ -84,7 +84,7 @@ export default function Slider({ banners }: any) {
                         <Button
                           type="primary"
                           size="large"
-                          className="!h-14 !px-10 !text-lg !font-medium !bg-global-primary !text-white !border-none hover:!bg-global-hover hover:!text-white transition-all duration-300 flex items-center gap-2 group/btn shadow-xl hover:shadow-2xl hover:-translate-y-1"
+                          className="!h-14 !px-10 !text-lg !font-medium flex items-center gap-2 group/btn"
                         >
                           Shop Now
                           <ArrowRightOutlined className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />

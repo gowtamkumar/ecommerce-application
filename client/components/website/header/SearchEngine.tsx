@@ -91,8 +91,7 @@ export default function SearchEngine() {
                   )}
                   <button
                     type="submit"
-                    className="bg-global-primary !h-11 !w-11 hover:brightness-110 text-white !rounded-full 
-                             transition-all duration-300 hover:scale-110  hover:shadow-lg"
+                    className="!h-9 !w-9 flex items-center justify-center !rounded-full"
                   >
                     <SearchOutlined className="text-base" />
                   </button>
