@@ -29,6 +29,8 @@ import { renderSeoCode } from "@/components/seo/renderSeoCode";
 // Dynamically loaded components
 const ScrollToTop = dynamic(() => import("@/components/share-component/ScrollToTop"));
 const CookieBanner = dynamic(() => import("@/components/share-component/CookieBanner"));
+const AnnouncementBar = dynamic(() => import("@/components/share-component/AnnouncementBar"));
+const MarketingPopup = dynamic(() => import("@/components/share-component/MarketingPopup"));
 
 // Custom font (Poppins)
 const poppinsFont = localFont({
@@ -61,6 +63,35 @@ const poppinsFont = localFont({
   ],
   variable: "--font-poppins",
 });
+
+export async function generateMetadata() {
+  const settingRes = await getSettings();
+  const seo = settingRes?.data?.seo || {};
+
+  return {
+    title: seo.metaTitle || "Ecommerce Store",
+    description: seo.metaDescription || "Best products online",
+    keywords: seo.metaKeywords || [],
+    alternates: {
+      canonical: seo.canonicalUrl || undefined,
+    },
+    openGraph: {
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      type: seo.ogType || "website",
+      images: seo.metaImage ? [getImageUrl(seo.metaImage)] : [],
+    },
+    twitter: {
+      card: seo.twitterCard || "summary_large_image",
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      images: seo.metaImage ? [getImageUrl(seo.metaImage)] : [],
+    },
+    verification: {
+      google: seo.googleSearchConsoleId,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -126,10 +157,12 @@ export default async function RootLayout({
                   pauseOnHover
                   theme="colored"
                 />
+                <AnnouncementBar marketing={setting?.marketing} />
                 <ScrollToTop />
 
                 {children}
                 <CookieBanner />
+                <MarketingPopup marketing={setting?.marketing} />
               </CurrencyProvider>
             </AntdRegistry>
           </StoreProvider>

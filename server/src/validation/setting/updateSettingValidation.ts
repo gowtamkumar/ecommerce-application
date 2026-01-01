@@ -20,4 +20,6 @@ export const updateSettingValidationSchema = z.object({
   footerOption: z.any().optional(),
   headerOption: z.any().optional(),
   faq: z.any().optional(),
+  seo: z.any().optional(),
+  marketing: z.any().optional(),
 });

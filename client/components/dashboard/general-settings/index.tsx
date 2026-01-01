@@ -31,6 +31,9 @@ const GeneralSettings = dynamic(() => import("./GeneralSettings"), {
 const SyncGeoLocation = dynamic(() => import("./SyncGeoLocation"), {
   ssr: false,
 });
+const Marketing = dynamic(() => import("./Marketing"), {
+  ssr: false,
+});
 
 export default function Index() {
   const [tabKey, setTabKey] = useState<any>("site_settings");
@@ -71,6 +74,11 @@ export default function Index() {
       if (newData?.homePage?.metaImage) {
         newData.homePage.metaImagefileList = [
           createUploadFile(newData?.homePage?.metaImage),
+        ];
+      }
+      if (newData?.marketing?.popupImage) {
+        newData.marketing.popupImagefileList = [
+          createUploadFile(newData?.marketing?.popupImage),
         ];
       }
 
@@ -146,11 +154,7 @@ export default function Index() {
             key: "whatsApp_widget",
             children: <WhatsAppWidgetSetting />,
           },
-          {
-            label: "SEO",
-            key: "seo",
-            children: <Seo />,
-          },
+          
           {
             label: "Footer Option",
             key: "footer_option",
@@ -160,6 +164,16 @@ export default function Index() {
             label: "Sync Geo Location",
             key: "geo_locations",
             children: <SyncGeoLocation />,
+          },
+          {
+            label: "SEO",
+            key: "seo",
+            children: <Seo />,
+          },
+          {
+            label: "Marketing",
+            key: "marketing",
+            children: <Marketing />,
           },
         ]}
       />

@@ -306,6 +306,17 @@ Welcome to the E-Commerce Application! This comprehensive platform provides a co
 - Tax calculation method
 - Tax display preferences
 
+#### SEO & Marketing Settings
+- **SEO Configuration**:
+  - **Global Meta Data**: Set default title, description, and keywords for your store.
+  - **Social Sharing**: Configure Open Graph and Twitter tags for better social media visibility.
+  - **Advanced SEO**: Manage canonical URLs, Google Analytics, and Search Console.
+  - **Robots.txt**: Edit your robots.txt content directly from the dashboard.
+- **Marketing Integrations**:
+  - **Social Tracking**: Facebook Pixel and Google Ads integration.
+  - **Newsletter**: Mailchimp API integration for email marketing.
+  - **Customer Engagement**: Configure announcement bars and marketing popups with custom delays and images.
+
 #### Geo-Location Sync
 1. Go to **Settings** > **Sync Geo-Location**
 2. Click **Sync Geo-Location Data**

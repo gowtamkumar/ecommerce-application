@@ -41,6 +41,10 @@ router.route("/uploads").post(
       maxCount: 1,
     },
     {
+      name: "popupImage",
+      maxCount: 1,
+    },
+    {
       name: "images",
       maxCount: 5,
     },

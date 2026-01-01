@@ -195,9 +195,16 @@ export const dbBackup = asyncHandler(async (req: Request, res: Response) => {
           }
         });
       });
-    } else {
-      // If file doesn't exist, return 404
-      res.status(404).send('File not found');
     }
   });
+});
+
+export const getRobotsTxt = asyncHandler(async (req: Request, res: Response) => {
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(SettingEntity);
+  const settings = await repository.find();
+  const robotsTxt = settings[0]?.seo?.robotsTxt || 'User-agent: *\nAllow: /';
+
+  res.type('text/plain');
+  return res.send(robotsTxt);
 });

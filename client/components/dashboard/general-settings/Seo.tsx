@@ -43,16 +43,15 @@ const Seo = () => {
   const [form] = Form.useForm();
   const global = useSelector(selectGlobal);
 
-  const helpSupport = React.useMemo(() => ({
+  const seoData = React.useMemo(() => ({
     id: global.setting.id,
     ...global.setting.seo,
-    ...global.setting.homePage,
   }), [global.setting]);
 
   // Populate form on setting change
   useEffect(() => {
-    form.setFieldsValue(helpSupport);
-  }, [form, global.setting, helpSupport]);
+    form.setFieldsValue(seoData);
+  }, [form, global.setting, seoData]);
 
   // Submit Handler
   const handleSubmit = async (values: any) => {
@@ -61,17 +60,11 @@ const Seo = () => {
     const payload = {
       id: values.id,
       seo: {
-        headerCode: values.headerCode,
-        bodyStartCode: values.bodyStartCode,
-        bodyEndCode: values.bodyEndCode,
-      },
-      homePage: {
-        metaTitle: values.metaTitle,
-        metaDescription: values.metaDescription,
-        metaImage: values.metaImage,
-        metaKeywords: values.metaKeywords,
+        ...values,
       },
     };
+
+    delete payload.seo.id;
 
     try {
       const res = payload.id
@@ -111,7 +104,10 @@ const Seo = () => {
 
       dispatch(setSetting({
         ...global.setting,
-        homePage: updatedData,
+        seo: {
+            ...global.setting.seo,
+            ...updatedData
+        },
       }));
     }
   };
@@ -128,7 +124,10 @@ const Seo = () => {
 
       dispatch(setSetting({
         ...global.setting,
-        homePage: resetData,
+        seo: {
+             ...global.setting.seo,
+             ...resetData
+        },
       }));
 
       await fileDeleteWithPhoto({ filename: file.fileName });
@@ -160,72 +159,20 @@ const Seo = () => {
             <Input />
           </Form.Item>
 
-          {/* SEO Code Injection Section */}
-          <div className="space-y-4">
-            <Title level={5} className="!mb-3">
-              Code Injection
-            </Title>
-
-            <Form.Item
-              name="headerCode"
-              label={<span className="text-base font-medium">Header Code</span>}
-              extra="Code will be injected in the <head> section (e.g., Google Analytics)"
-              className="!mb-0"
-            >
-              <Input.TextArea
-                placeholder="<!-- Google Analytics or other header scripts -->"
-                rows={4}
-                size="large"
-                className="max-w-2xl font-mono text-sm"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="bodyStartCode"
-              label={<span className="text-base font-medium">Body Start Code</span>}
-              extra="Code will be injected right after the opening <body> tag"
-              className="!mb-0"
-            >
-              <Input.TextArea
-                placeholder="<!-- Facebook Pixel or other body start scripts -->"
-                rows={4}
-                size="large"
-                className="max-w-2xl font-mono text-sm"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="bodyEndCode"
-              label={<span className="text-base font-medium">Body End Code</span>}
-              extra="Code will be injected right before the closing </body> tag"
-              className="!mb-0"
-            >
-              <Input.TextArea
-                placeholder="<!-- Chat widgets or other body end scripts -->"
-                rows={4}
-                size="large"
-                className="max-w-2xl font-mono text-sm"
-              />
-            </Form.Item>
-          </div>
-
-          <Divider className="!my-8" />
-
           {/* Home Page Meta Data Section */}
           <div className="space-y-4">
             <Title level={5} className="!mb-3">
-              Home Page Meta Data
+              Global Meta Data
             </Title>
 
             <Form.Item
               name="metaTitle"
-              label={<span className="text-base font-medium">Meta Title</span>}
-              extra="The title that appears in search engine results (50-60 characters recommended)"
+              label={<span className="text-base font-medium">Global Meta Title</span>}
+              extra="Recommended: 50-60 characters"
               className="!mb-0"
             >
-              <Input.TextArea
-                placeholder="Your Store Name - Best Products Online"
-                rows={2}
+              <Input
+                placeholder="Your Store Name - Tagline"
                 size="large"
                 className="max-w-2xl"
               />
@@ -233,14 +180,28 @@ const Seo = () => {
 
             <Form.Item
               name="metaDescription"
-              label={<span className="text-base font-medium">Meta Description</span>}
-              extra="Description shown in search results (150-160 characters recommended)"
+              label={<span className="text-base font-medium">Global Meta Description</span>}
+              extra="Recommended: 150-160 characters"
               className="!mb-0"
             >
               <Input.TextArea
-                placeholder="Shop the best products online. Free shipping, fast delivery, and great customer service."
+                placeholder="Shop the best products online..."
                 rows={3}
                 size="large"
+                className="max-w-2xl"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="metaKeywords"
+              label={<span className="text-base font-medium">Global Meta Keywords</span>}
+              className="!mb-0"
+            >
+              <Select
+                mode="tags"
+                size="large"
+                placeholder="e.g., shopping, electronics"
+                tokenSeparators={[","]}
                 className="max-w-2xl"
               />
             </Form.Item>
@@ -248,24 +209,23 @@ const Seo = () => {
             {/* Meta Image Upload */}
             <Form.Item
               name="metaImagefileList"
-              label={<span className="text-base font-medium">Meta Image (Open Graph)</span>}
+              label={<span className="text-base font-medium">Default Share Image (OG)</span>}
               valuePropName="fileList"
               getValueFromEvent={normFile}
-              extra="Image displayed when your site is shared on social media (1200x630px recommended)"
+              extra="Recommended: 1200x630px"
               className="!mb-0"
             >
               <ImgCrop rotationSlider showReset aspect={1200 / 630}>
                 <Upload
                   name="metaImage"
                   listType="picture-card"
-                  fileList={helpSupport?.metaImagefileList || []}
+                  fileList={seoData?.metaImagefileList || []}
                   onRemove={handleImageRemove}
                   onPreview={(file) => handlePreview(file, dispatch)}
                   customRequest={customUploadRequest}
                   maxCount={1}
-                  className="avatar-uploader"
                 >
-                  {helpSupport?.metaImagefileList?.length >= 1 ? null : uploadButton}
+                  {seoData?.metaImagefileList?.length >= 1 ? null : uploadButton}
                 </Upload>
               </ImgCrop>
             </Form.Item>
@@ -273,19 +233,136 @@ const Seo = () => {
             <Form.Item name="metaImage" hidden>
               <Input />
             </Form.Item>
+          </div>
+
+          <Divider className="!my-8" />
+
+          {/* Social Meta Section */}
+          <div className="space-y-4">
+            <Title level={5} className="!mb-3">
+              Social Media Optimization
+            </Title>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Form.Item
+                    name="ogType"
+                    label={<span className="text-base font-medium">OG Type</span>}
+                    className="!mb-0"
+                >
+                    <Select size="large">
+                        <Select.Option value="website">Website</Select.Option>
+                        <Select.Option value="article">Article</Select.Option>
+                        <Select.Option value="product">Product</Select.Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    name="twitterCard"
+                    label={<span className="text-base font-medium">Twitter Card</span>}
+                    className="!mb-0"
+                >
+                    <Select size="large">
+                        <Select.Option value="summary">Summary</Select.Option>
+                        <Select.Option value="summary_large_image">Summary with Large Image</Select.Option>
+                    </Select>
+                </Form.Item>
+            </div>
+          </div>
+
+          <Divider className="!my-8" />
+
+          {/* Advanced SEO Section */}
+          <div className="space-y-4">
+            <Title level={5} className="!mb-3">
+              Advanced Configuration
+            </Title>
 
             <Form.Item
-              name="metaKeywords"
-              label={<span className="text-base font-medium">Meta Keywords</span>}
-              extra="Enter keywords and press Enter (comma-separated also works)"
+              name="canonicalUrl"
+              label={<span className="text-base font-medium">Canonical URL</span>}
               className="!mb-0"
             >
-              <Select
-                mode="tags"
+              <Input placeholder="https://yourstore.com" size="large" />
+            </Form.Item>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Form.Item
+                    name="googleAnalyticsId"
+                    label={<span className="text-base font-medium">Google Analytics ID (G-XXXX)</span>}
+                    className="!mb-0"
+                >
+                    <Input placeholder="G-XXXXXXXXXX" size="large" />
+                </Form.Item>
+
+                <Form.Item
+                    name="googleSearchConsoleId"
+                    label={<span className="text-base font-medium">Google Search Console Verification ID</span>}
+                    className="!mb-0"
+                >
+                    <Input placeholder="Verification key" size="large" />
+                </Form.Item>
+            </div>
+
+            <Form.Item
+              name="robotsTxt"
+              label={<span className="text-base font-medium">Robots.txt Content</span>}
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="User-agent: *&#10;Allow: /"
+                rows={4}
                 size="large"
-                placeholder="e.g., online shopping, best deals, electronics"
-                tokenSeparators={[","]}
-                className="max-w-2xl"
+                className="font-mono text-sm"
+              />
+            </Form.Item>
+          </div>
+
+          <Divider className="!my-8" />
+
+          {/* SEO Code Injection Section */}
+          <div className="space-y-4">
+            <Title level={5} className="!mb-3">
+              Custom Scripts (Code Injection)
+            </Title>
+
+            <Form.Item
+              name="headerCode"
+              label={<span className="text-base font-medium">Header Code</span>}
+              extra="Injected in <head>"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="<!-- Custom scripts -->"
+                rows={4}
+                size="large"
+                className="font-mono text-sm"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="bodyStartCode"
+              label={<span className="text-base font-medium">Body Start Code</span>}
+              extra="Injected after <body>"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="<!-- Custom scripts -->"
+                rows={4}
+                size="large"
+                className="font-mono text-sm"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="bodyEndCode"
+              label={<span className="text-base font-medium">Body End Code</span>}
+              extra="Injected before </body>"
+              className="!mb-0"
+            >
+              <Input.TextArea
+                placeholder="<!-- Custom scripts -->"
+                rows={4}
+                size="large"
+                className="font-mono text-sm"
               />
             </Form.Item>
           </div>
