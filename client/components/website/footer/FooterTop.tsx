@@ -15,22 +15,22 @@ export default function FooterTop() {
     {
       icon: <FaTruckPickup size={36} />,
       text: setting?.cashDelivery || "Fast Delivery",
-      gradient: "from-blue-500/20 to-cyan-500/20"
+      gradient: "from-global-primary/30 to-global-primary/10"
     },
     {
       icon: <IoIosCall size={36} />,
       text: setting?.returnSupport || "24/7 Support",
-      gradient: "from-purple-500/20 to-pink-500/20"
+      gradient: "from-global-primary/20 to-global-primary/5"
     },
     {
       icon: <MdOutlinePayment size={36} />,
       text: setting?.originalProduct || "Secure Payment",
-      gradient: "from-green-500/20 to-emerald-500/20"
+      gradient: "from-global-primary/25 to-global-primary/10"
     },
     {
       icon: <CiGift size={36} />,
       text: setting?.guarantee || "Gift Cards",
-      gradient: "from-orange-500/20 to-red-500/20"
+      gradient: "from-global-primary/30 to-global-primary/15"
     }
   ];
 

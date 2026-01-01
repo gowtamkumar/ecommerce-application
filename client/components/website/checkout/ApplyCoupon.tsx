@@ -41,7 +41,7 @@ export default function ApplyCoupon() {
         <Input
           type="text"
           placeholder="Enter Coupon Code"
-          className="hover:border-blue-400 focus:border-blue-500 rounded-l-xl"
+          className="hover:!border-global-primary/50 focus:!border-global-primary rounded-l-xl"
           onChange={(value) => setData(value.target.value)}
           prefix={
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,7 +54,7 @@ export default function ApplyCoupon() {
           onClick={handleCoupon}
           loading={loading}
           disabled={loading || !data}
-          className="bg-gray-800 hover:bg-gray-900 border-gray-800 rounded-r-xl px-6"
+          className="!bg-global-primary hover:!bg-global-hover !border-global-primary rounded-r-xl px-6"
         >
           Apply
         </Button>

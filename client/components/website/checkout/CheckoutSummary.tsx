@@ -122,13 +122,13 @@ export default function CheckoutSummary() {
 
         <div className="flex justify-between">
           <span>Discount</span>
-          <span className="text-green-600">- {formatPrice(totalItemsDiscount)}</span>
+          <span className="text-global-primary font-medium">- {formatPrice(totalItemsDiscount)}</span>
         </div>
 
         {+couponDiscount > 0 && (
           <div className="flex justify-between">
             <span>Coupon Discount</span>
-            <span className="text-green-600">- {formatPrice(couponDiscount)}</span>
+            <span className="text-global-primary font-medium">- {formatPrice(couponDiscount)}</span>
           </div>
         )}
 
@@ -141,13 +141,13 @@ export default function CheckoutSummary() {
       <div className="pt-4 border-t border-gray-100">
         <div className="flex justify-between items-end mb-6">
           <span className="text-base font-bold text-gray-800">Total Payable</span>
-          <span className="text-2xl font-bold text-blue-600">{formatPrice(grandTotal)}</span>
+          <span className="text-2xl font-bold text-global-primary">{formatPrice(grandTotal)}</span>
         </div>
 
         <Button
           type="primary"
           size="large"
-          className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 border-none shadow-md hover:shadow-lg transition-all rounded-xl"
+          className="w-full h-12 text-base font-semibold !bg-global-primary hover:!bg-global-hover border-none shadow-md hover:shadow-lg transition-all rounded-xl"
           onClick={handleOrder}
           loading={loading.save}
           disabled={loading.save}

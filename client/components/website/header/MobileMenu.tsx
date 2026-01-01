@@ -73,7 +73,7 @@ export default function MobileMenu() {
       <Drawer
         title={
           <div className="flex items-center justify-between">
-            <span className="font-bold text-xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <span className="font-bold text-xl bg-gradient-to-r from-global-primary to-global-secondary bg-clip-text text-transparent">
               Menu
             </span>
             <button 
@@ -119,9 +119,9 @@ export default function MobileMenu() {
               </Link>
               <Link href="/register" onClick={() => setOpen(false)}>
                 <button className="w-full py-3.5 px-4 rounded-xl 
-                                 bg-gradient-to-r from-global-primary to-orange-500 
+                                 bg-gradient-to-r from-global-primary to-global-hover 
                                  text-white font-semibold 
-                                 hover:from-orange-500 hover:to-global-primary
+                                 hover:from-global-hover hover:to-global-primary
                                  transition-all duration-300 shadow-lg hover:shadow-xl 
                                  hover:scale-105">
                   Sign Up

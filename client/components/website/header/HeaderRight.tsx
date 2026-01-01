@@ -47,7 +47,7 @@ export default function HeaderRight() {
         <div className="relative p-2 rounded-full hover:bg-gray-100 transition-all duration-300">
           <CiHeart
             size={26}
-            className="text-gray-700 group-hover:text-red-500 transition-all duration-300 
+            className="text-gray-700 group-hover:text-global-primary transition-all duration-300 
                      group-hover:scale-110"
           />
 
@@ -76,7 +76,7 @@ export default function HeaderRight() {
 
           {/* Cart Badge */}
           {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-gradient-to-br from-global-primary to-orange-500 
+            <span className="absolute -top-1 -right-1 bg-gradient-to-br from-global-primary to-global-hover 
                            text-white text-[10px] font-bold min-w-[18px] h-[18px] 
                            flex items-center justify-center rounded-full
                            shadow-md animate-pulse">
@@ -129,7 +129,7 @@ export default function HeaderRight() {
             <div className="cursor-pointer group relative">
               <div className="p-0.5 rounded-full border-2 border-transparent 
                           hover:border-global-primary/30 transition-all duration-300
-                          hover:shadow-[0_0_12px_rgba(247,170,14,0.3)]">
+                          hover:shadow-[0_0_12px_var(--global-primary)]">
                 <Avatar
                   size={36}
                   src={getUploadImageUrl(profileImage)}

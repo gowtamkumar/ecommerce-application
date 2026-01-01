@@ -38,7 +38,7 @@ export default function PaymentMethod() {
               className={`
                 relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all
                 ${checkoutFormData.paymentMethod === method.value
-                  ? "border-blue-600 ring-1 ring-blue-600 bg-blue-50/50"
+                  ? "border-global-primary ring-1 ring-global-primary bg-global-primary/5"
                   : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                 }
               `}
@@ -49,7 +49,7 @@ export default function PaymentMethod() {
                   <div className="text-sm">
                     <p
                       className={`font-medium ${checkoutFormData.paymentMethod === method.value
-                        ? "text-blue-900"
+                        ? "text-global-primary"
                         : "text-gray-900"
                         }`}
                     >
@@ -57,7 +57,7 @@ export default function PaymentMethod() {
                     </p>
                     <p
                       className={`text-xs ${checkoutFormData.paymentMethod === method.value
-                        ? "text-blue-700"
+                        ? "text-global-primary/80"
                         : "text-gray-500"
                         }`}
                     >
@@ -68,7 +68,7 @@ export default function PaymentMethod() {
                 <div
                   className={`h-5 w-5 rounded-full border flex items-center justify-center
                     ${checkoutFormData.paymentMethod === method.value
-                      ? "border-blue-600 bg-blue-600"
+                      ? "border-global-primary bg-global-primary"
                       : "border-gray-300"
                     }
                   `}
@@ -89,11 +89,11 @@ export default function PaymentMethod() {
           <Checkbox className="mt-1" />
           <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
             I agree to the{" "}
-            <a href="/terms-conditions" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+            <a href="/terms-conditions" className="text-global-primary hover:text-global-hover font-medium hover:underline">
               Terms and Conditions
             </a>
             {" "}and{" "}
-            <a href="/return-policy" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+            <a href="/return-policy" className="text-global-primary hover:text-global-hover font-medium hover:underline">
               Return Policy
             </a>
           </span>

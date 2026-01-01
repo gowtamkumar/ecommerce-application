@@ -32,7 +32,7 @@ const MainMenu = () => {
           <Link
             href={`/products?categoryId=${node.id}&`}
             rel="noopener noreferrer"
-            className="block px-3 py-2 hover:text-global-primary transition-colors"
+            className="block px-3 py-2 text-global-primary hover:bg-global-primary/10 rounded-lg transition-colors font-medium"
           >
             {node.name}
           </Link>
@@ -56,14 +56,13 @@ const MainMenu = () => {
       <Dropdown
         menu={{
           items: optimizeCategory,
-          className: "min-w-[220px] p-2 rounded-xl shadow-2xl border border-gray-100/50 backdrop-blur-sm"
+          className: "min-w-[220px] p-2 rounded-xl shadow-2xl border border-gray-100/50 bg-white backdrop-blur-md"
         }}
         trigger={["click"]}
         overlayClassName="pt-2"
       >
         <div className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
-                      bg-gradient-to-r from-gray-900 to-black 
-                      hover:from-gray-800 hover:to-gray-900
+                      bg-global-primary hover:bg-global-hover
                       text-white rounded-full transition-all duration-300 
                       shadow-lg hover:shadow-xl 
                       hover:scale-105 group

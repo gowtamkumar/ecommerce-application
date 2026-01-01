@@ -99,7 +99,7 @@ export default function OrderSummary() {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
-        <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-medium">
+        <thead className="bg-gray-50 text-[10px] uppercase text-gray-500 font-bold tracking-wider">
           <tr>
             <th className="p-4 font-semibold">Product</th>
             <th className="p-4 font-semibold text-center">Quantity</th>
@@ -175,7 +175,7 @@ export default function OrderSummary() {
                 <div className="flex flex-col items-end">
                   <span className="font-medium text-gray-900">{formatPrice(item.salePrice)}</span>
                   {item.totalDiscountAmount > 0 && (
-                    <span className="text-xs text-green-600">Save {formatPrice(item.totalDiscountAmount)}</span>
+                    <span className="text-xs text-global-primary font-medium">Save {formatPrice(item.totalDiscountAmount)}</span>
                   )}
                 </div>
               </td>
@@ -194,7 +194,7 @@ export default function OrderSummary() {
                   okButtonProps={{ loading: global.loading.remove, danger: true }}
                   placement="left"
                 >
-                  <button className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
+                  <button className="p-2 text-gray-400 hover:text-global-primary transition-colors rounded-full hover:bg-global-primary/10">
                     <MdDelete size={20} />
                   </button>
                 </Popconfirm>

@@ -115,8 +115,8 @@ export default function Header() {
                 <Link href="/offers">
                   <Button
                     type="primary"
-                    className="!bg-gradient-to-r !from-global-primary !to-orange-500
-                             hover:!from-orange-500 hover:!to-global-primary
+                    className="!bg-gradient-to-r !from-global-primary !to-global-hover
+                             hover:!from-global-hover hover:!to-global-primary
                              !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm 
                              flex items-center gap-2 !shadow-lg hover:!shadow-xl
                              !transition-all !duration-300 hover:!scale-105 group"

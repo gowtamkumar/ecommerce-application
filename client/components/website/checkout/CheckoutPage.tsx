@@ -109,7 +109,7 @@ export default function CheckoutPage() {
               <div className="text-center">
                 <Link 
                   href="/products" 
-                  className="inline-flex items-center text-gray-500 hover:text-gray-800 transition-colors font-medium"
+                  className="inline-flex items-center text-gray-500 hover:text-global-primary transition-colors font-medium"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
