@@ -41,7 +41,7 @@ export default function CategoryCard({ categories }: any) {
                       router.push(`/products?categoryId=${item.id}&`);
                     }}
                   >
-                    <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-black transition-all duration-300 shadow-sm group-hover:shadow-md bg-gray-50 flex items-center justify-center">
+                    <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-transparent group-hover:border-global-primary transition-all duration-300 shadow-sm group-hover:shadow-md bg-gray-50 flex items-center justify-center">
                       <Image
                         alt={item.name || "image"}
                         src={getUploadImageUrl(item.image)}
@@ -51,7 +51,7 @@ export default function CategoryCard({ categories }: any) {
                         className="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-500"
                       />
                     </div>
-                    <p className="mt-3 text-sm font-medium text-gray-700 group-hover:text-black text-center truncate w-full px-2">
+                    <p className="mt-3 text-sm font-medium text-gray-700 group-hover:text-global-primary text-center truncate w-full px-2">
                       {item.name}
                     </p>
                   </div>

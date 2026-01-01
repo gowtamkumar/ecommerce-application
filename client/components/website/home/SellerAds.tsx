@@ -17,8 +17,8 @@ const SellerAds = ({ banners }: any) => {
     <section className="py-20 bg-[#0B0F19] relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-global-primary/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-global-secondary/10 rounded-full blur-[120px]" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -62,7 +62,7 @@ const SellerAds = ({ banners }: any) => {
                     <Button
                       type="primary"
                       size="large"
-                      className="!h-14 !px-12 !text-lg !font-medium !bg-white !text-black !border-none !rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:!shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
+                      className="!h-14 !px-12 !text-lg !font-medium !bg-global-primary !text-white !border-none !rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:!bg-global-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
                     >
                       Explore Now <ArrowRightOutlined />
                     </Button>
@@ -77,7 +77,7 @@ const SellerAds = ({ banners }: any) => {
                     <div className="absolute inset-0 border border-white/5 rounded-full scale-110 animate-[spin_15s_linear_infinite_reverse]" />
 
                     {/* Center Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/30 to-purple-500/30 rounded-full blur-3xl group-hover:blur-[100px] transition-all duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-global-primary/30 to-global-secondary/30 rounded-full blur-3xl group-hover:blur-[100px] transition-all duration-700" />
 
                     {/* Image */}
                     <div className="relative h-full w-full transform transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3">

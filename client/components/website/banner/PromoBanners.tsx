@@ -46,7 +46,7 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
                       <Button 
                         block
                         size="large"
-                        className="!bg-white !text-black !border-none !font-medium !h-12 !rounded-xl flex items-center justify-center gap-2 hover:!bg-gray-100 transition-colors duration-300 shadow-md"
+                        className="!bg-global-primary !text-white !border-none !font-medium !h-12 !rounded-xl flex items-center justify-center gap-2 hover:!bg-global-hover transition-colors duration-300 shadow-md"
                       >
                         Shop Now <ArrowRightOutlined className="text-xs transition-transform group-hover:translate-x-1" />
                       </Button>

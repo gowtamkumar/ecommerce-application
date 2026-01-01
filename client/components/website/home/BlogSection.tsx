@@ -58,7 +58,7 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
 
             <Meta
               title={
-                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
+                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2">
                   {post.title}
                 </h3>
               }

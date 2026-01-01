@@ -54,7 +54,7 @@ const ScrollToCart: React.FC = () => {
           <span className="text-sm">
             {cart?.carts?.cartSummary?.totalQty || 0} Items
           </span>
-          <span className="text-sm bg-blue-500 rounded-sm p-2 text-white">
+          <span className="text-sm bg-global-primary rounded-sm p-2 text-white">
             {formatPrice(cart?.carts?.cartSummary?.subTotal || 0)}
           </span>
         </div>

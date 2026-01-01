@@ -142,15 +142,15 @@ export default async function Home() {
         <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
           {title}
         </h2>
-        <div className="h-1 w-20 bg-black mt-2 rounded-full"></div>
+        <div className="h-1 w-20 bg-global-primary mt-2 rounded-full"></div>
       </div>
       {link && (
         <Link
           href={link}
-          className="group flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500 hover:text-black transition-colors duration-300"
+          className="group flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500 hover:text-global-primary transition-colors duration-300"
         >
           View All Collection
-          <span className="block h-[1px] w-4 bg-gray-400 transition-all duration-300 group-hover:w-8 group-hover:bg-black"></span>
+          <span className="block h-[1px] w-4 bg-gray-400 transition-all duration-300 group-hover:w-8 group-hover:bg-global-primary"></span>
         </Link>
       )}
     </div>
