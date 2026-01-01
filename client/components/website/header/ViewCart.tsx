@@ -154,7 +154,8 @@ export default function ViewCart() {
         <Button
           size="large"
           type="primary"
-          className="w-full h-14 rounded-2xl text-base font-medium flex items-center justify-center gap-2 group"
+          className="w-full h-14 text-base font-medium flex items-center justify-center gap-2 group"
+          style={{ borderRadius: "var(--button-border-radius)" }}
           onClick={() => {
             dispatch(setDrawarCart(false))
             router.push("/checkout")

@@ -53,6 +53,7 @@ export default function HeaderRight() {
             size={26}
             className="group-hover:text-global-primary transition-all duration-300 
                      group-hover:scale-110"
+            style={{ color: "inherit" }}
           />
 
           {/* Tooltip */}
@@ -77,6 +78,7 @@ export default function HeaderRight() {
             size={24}
             className="group-hover:text-global-primary transition-all duration-300
                      group-hover:scale-110"
+            style={{ color: "inherit" }}
           />
 
           {/* Cart Badge */}
@@ -91,7 +93,6 @@ export default function HeaderRight() {
 
           {/* Tooltip */}
           <span
-         
           className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
