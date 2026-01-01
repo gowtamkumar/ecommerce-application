@@ -212,10 +212,10 @@ const AddDiscount = () => {
         <div className="flex gap-3">
           <Button
             size="large"
-            onClick={() => resetFormData(payload)}
-            className="!rounded-lg !border-gray-300 !text-gray-600 hover:!text-gray-900 hover:!border-gray-400"
+            onClick={resetFormData}
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
-            Reset Changes
+            Reset
           </Button>
           <Button
             size="large"
@@ -223,7 +223,11 @@ const AddDiscount = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !border-none !rounded-lg !px-8 !font-medium"
+            className="!px-8"
+            style={{ 
+              borderRadius: "var(--button-border-radius)",
+              backgroundColor: "var(--global-primary)"
+            }}
           >
             {isEditMode ? "Update Discount" : "Save Discount"}
           </Button>

@@ -110,7 +110,7 @@ const AddUser = () => {
       onCancel={handleClose}
       footer={
         <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button size="large" onClick={() => resetFormData(payload)} className="!rounded-lg">
+          <Button size="large" onClick={() => resetFormData(payload)} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
           <Button
@@ -119,7 +119,11 @@ const AddUser = () => {
             onClick={() => form.submit()}
             loading={global.loading.save}
             disabled={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+            className="!px-8"
+            style={{ 
+              borderRadius: "var(--button-border-radius)",
+              backgroundColor: "var(--global-primary)"
+            }}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>

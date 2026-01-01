@@ -225,7 +225,17 @@ const MarketingAndSeo = () => {
                     </div>
 
                     <Form.Item className="!mb-0 !mt-8">
-                        <Button type="primary" htmlType="submit" loading={loading} size="large" className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium">
+                        <Button 
+                            type="primary" 
+                            htmlType="submit" 
+                            loading={loading} 
+                            size="large" 
+                            className="!h-11 !px-8 !font-medium"
+                            style={{ 
+                                borderRadius: "var(--button-border-radius)",
+                                backgroundColor: "var(--global-primary)"
+                            }}
+                        >
                             Save Marketing & SEO
                         </Button>
                     </Form.Item>

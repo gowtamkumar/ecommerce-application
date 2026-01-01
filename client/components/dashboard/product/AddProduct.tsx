@@ -264,7 +264,8 @@ const AddProduct = ({
               onClick={handleSubmit}
               loading={global.loading.save}
               disabled={global.loading.save}
-              className="!bg-black hover:!bg-gray-800 !border-none !rounded-lg !px-8 !font-medium"
+              className="!border-none !px-8 !font-medium"
+              style={{ borderRadius: "var(--button-border-radius)" }}
             >
               {product?.id ? "Update Product" : "Save Product"}
             </Button>

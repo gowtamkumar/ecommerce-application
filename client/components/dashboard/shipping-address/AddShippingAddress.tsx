@@ -106,7 +106,7 @@ const AddShippingAddress = () => {
           <Button
             size="large"
             onClick={resetFormData}
-            className="!rounded-lg"
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Reset
           </Button>
@@ -116,7 +116,11 @@ const AddShippingAddress = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+            className="!px-8"
+            style={{ 
+              borderRadius: "var(--button-border-radius)",
+              backgroundColor: "var(--global-primary)"
+            }}
           >
             {payload?.id ? "Update Address" : "Save Address"}
           </Button>

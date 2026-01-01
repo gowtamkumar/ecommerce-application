@@ -283,7 +283,11 @@ const GeneralSettings = () => {
               htmlType="submit"
               loading={loading}
               size="large"
-              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+              className="!h-11 !px-8 !font-medium"
+              style={{ 
+                borderRadius: "var(--button-border-radius)",
+                backgroundColor: "var(--global-primary)"
+              }}
             >
               Save Settings
             </Button>

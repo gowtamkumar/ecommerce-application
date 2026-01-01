@@ -114,7 +114,8 @@ const AddBrand = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+            className="!h-10 !px-6 !font-medium"
+            style={{ borderRadius: "var(--button-border-radius)", backgroundColor: "var(--global-primary)" }}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>

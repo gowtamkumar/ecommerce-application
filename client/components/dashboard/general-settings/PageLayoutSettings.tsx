@@ -200,7 +200,11 @@ const PageLayoutSettings = () => {
                         onClick={handleSubmit} 
                         loading={loading}
                         size="large"
-                        className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+                        className="!h-11 !px-8 !font-medium"
+                        style={{ 
+                            borderRadius: "var(--button-border-radius)",
+                            backgroundColor: "var(--global-primary)"
+                        }}
                     >
                         Save Layout Changes
                     </Button>

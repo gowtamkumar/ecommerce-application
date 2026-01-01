@@ -100,7 +100,7 @@ const OrderAdnShhiping = () => {
                 formatter={(value) =>
                   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
-                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+                // parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
               />
             </Form.Item>
           </div>
@@ -112,7 +112,11 @@ const OrderAdnShhiping = () => {
               htmlType="submit"
               loading={loading}
               size="large"
-              className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+              className="!h-11 !px-8 !font-medium"
+              style={{ 
+                borderRadius: "var(--button-border-radius)",
+                backgroundColor: "var(--global-primary)"
+              }}
             >
               Save Settings
             </Button>

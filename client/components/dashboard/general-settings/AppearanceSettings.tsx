@@ -321,7 +321,8 @@ const AppearanceSettings = () => {
                             htmlType="submit"
                             loading={loading}
                             size="large"
-                            className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium"
+                            className="!h-11 !px-8 !font-medium"
+                            style={{ borderRadius: "var(--button-border-radius)" }}
                         >
                             Save Appearance Settings
                         </Button>

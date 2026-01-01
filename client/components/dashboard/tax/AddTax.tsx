@@ -62,7 +62,7 @@ const AddTax = () => {
           <Button
             size="large"
             onClick={() => resetFormData(global.action?.payload)}
-            className="!rounded-lg"
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Reset
           </Button>
@@ -72,7 +72,11 @@ const AddTax = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+            className="!px-8"
+            style={{ 
+              borderRadius: "var(--button-border-radius)",
+              backgroundColor: "var(--global-primary)"
+            }}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>

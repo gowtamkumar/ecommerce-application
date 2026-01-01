@@ -137,7 +137,7 @@ const CategoryList: React.FC = () => {
             type="text"
             size="small"
             icon={<EditOutlined className="text-gray-500" />}
-            className="hover:!text-blue-600 hover:bg-blue-50"
+            className="hover:!text-global-primary hover:bg-global-primary/5"
             title="Edit"
             onClick={() => {
               const newData = { ...value };
@@ -182,7 +182,8 @@ const CategoryList: React.FC = () => {
         <Input
           prefix={<SearchOutlined className="text-gray-400" />}
           placeholder="Search categories..."
-          className="w-full sm:w-64 rounded-xl border-gray-200 hover:border-black focus:border-black transition-colors"
+          className="w-full sm:w-64 border-gray-200 hover:border-global-primary focus:border-global-primary transition-colors"
+          style={{ borderRadius: "var(--button-border-radius)" }}
           onChange={(e) => setSearchText(e.target.value)}
         />
       </div>

@@ -144,12 +144,13 @@ const AddCoupon = () => {
           <Button
             size="large"
             type="primary"
-            onClick={() => form.submit()}
+            onClick={handleSubmit}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !border-none !rounded-lg !px-8 !font-medium"
+            className="!border-none !px-8 !font-medium"
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
-            {isEditMode ? "Update Coupon" : "Save Coupon"}
+            {payload?.id ? "Update Post" : "Publish Post"}
           </Button>
         </div>
       </div>

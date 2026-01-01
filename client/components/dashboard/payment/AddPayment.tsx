@@ -35,7 +35,8 @@ export default function Payment() {
           onClick={() => {
             route.push("/dashboard/payments/new");
           }}
-          className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+          className="!h-10 !px-6 !font-medium"
+          style={{ borderRadius: "var(--button-border-radius)" }}
         >
           New Payment
         </Button>

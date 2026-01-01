@@ -254,7 +254,8 @@ export default function MediaDetails() {
           <div className="p-6 border-t border-gray-100 bg-gray-50/50">
             <button 
               onClick={handleClose}
-              className="w-full py-2.5 px-4 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-sm"
+              className="w-full py-2.5 px-4 bg-white border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-sm"
+              style={{ borderRadius: "var(--button-border-radius)" }}
             >
               Close Viewer
             </button>

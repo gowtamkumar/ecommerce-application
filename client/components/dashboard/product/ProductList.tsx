@@ -206,7 +206,7 @@ const ProductList = () => {
             type="text"
             size="small"
             icon={<EditOutlined className="text-gray-500" />}
-            className="hover:!text-blue-600 hover:bg-blue-50"
+            className="hover:!text-global-primary hover:bg-global-primary/5"
             onClick={(e) => {
               e.stopPropagation();
               route.push(`/dashboard/product/${record.id}/edit`);
@@ -230,7 +230,7 @@ const ProductList = () => {
               danger
               loading={global.loading?.delete}
               icon={<DeleteOutlined />}
-              className="hover:bg-red-50"
+              className="hover:bg-red-50/50"
               onClick={(e) => e.stopPropagation()}
             />
           </Popconfirm>
@@ -255,13 +255,15 @@ const ProductList = () => {
           <Input
             prefix={<SearchOutlined className="text-gray-400" />}
             placeholder="Search products..."
-            className="w-full sm:w-64 rounded-xl border-gray-200 hover:border-black focus:border-black transition-colors"
+            className="w-full sm:w-64 border-gray-200 hover:border-global-primary focus:border-global-primary transition-colors"
+            style={{ borderRadius: "var(--button-border-radius)" }}
             onChange={(e) => setSearchText(e.target.value)}
           />
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            className="!bg-black hover:!bg-gray-800 !rounded-xl !h-10 !px-6 !font-medium"
+            className="!h-10 !px-6 !font-medium"
+            style={{ borderRadius: "var(--button-border-radius)" }}
             onClick={() => route.push("/dashboard/product/new")}
           >
             Add Product

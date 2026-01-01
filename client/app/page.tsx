@@ -227,7 +227,7 @@ export default async function Home() {
     ),
     footer_banners: () => (
       FooterBanners?.length > 0 ? (
-        <section className="py-10 overflow-hidden">
+        <section className="py-10 overflow-hidden bg-gray-50">
           <SellerAds banners={FooterBanners} />
         </section>
       ) : null

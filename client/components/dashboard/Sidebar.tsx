@@ -180,9 +180,9 @@ const Sidebar = () => {
               prefix={<SearchOutlined className="text-gray-400" />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 hover:border-gray-600 focus:border-blue-500"
+              className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 hover:border-gray-600 focus:border-global-primary"
               style={{
-                borderRadius: "8px",
+                borderRadius: "var(--button-border-radius)",
               }}
             />
           </div>

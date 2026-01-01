@@ -14,7 +14,7 @@ const SellerAds = ({ banners }: any) => {
   if (!banners?.length) return null;
 
   return (
-    <section className="py-20 bg-[#0B0F19] relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-global-primary/20 rounded-full blur-[120px]" />

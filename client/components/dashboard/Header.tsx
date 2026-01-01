@@ -73,7 +73,7 @@ export default function DashboardHeader() {
               justifyContent: "center",
               borderRadius: "12px",
             }}
-            className="hover:bg-gradient-to-br hover:from-gray-100 hover:to-gray-50 transition-all duration-300 shadow-sm hover:shadow-md"
+            className="hover:bg-global-primary/10 transition-all duration-300 shadow-sm hover:shadow-global-primary/10"
           />
         </div>
 
@@ -154,10 +154,10 @@ export default function DashboardHeader() {
               style={{
                 backgroundColor: profileImage
                   ? undefined
-                  : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  : "var(--global-primary)",
                 border: "2px solid #ffffff",
                 boxShadow:
-                  "0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(102, 126, 234, 0.1)",
+                  "0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--global-primary)",
               }}
             />
             <div className="hidden lg:block pr-2">
