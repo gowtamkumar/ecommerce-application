@@ -69,6 +69,7 @@ export async function deleteNotification(id: string) {
 export async function sendPromotionalNotification(data: {
   title: string;
   message: string;
+  offerUrl: string;
   type?: string;
 }) {
   const headers = await getAuthHeaders();

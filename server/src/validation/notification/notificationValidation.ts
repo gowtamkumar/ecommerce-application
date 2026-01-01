@@ -7,6 +7,7 @@ export const notificationValidationSchema = z.object({
   title: z.string({
     required_error: 'Title is required',
   }),
+  offerUrl: z.string().url().optional(),
   type: z.string({
     required_error: 'Type is required',
   }),

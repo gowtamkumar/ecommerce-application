@@ -49,7 +49,6 @@ export const getNotificationsForAdmin = asyncHandler(async (req: CustomRequest, 
   });
 });
 
-
 // @desc Get a single Notification
 // @route GET /api/v1/Notification/:id
 // @access Public
@@ -205,38 +204,42 @@ export const clearNotification = asyncHandler(async (req: CustomRequest, res: Re
 // @desc Send Promotional Notification (Admin Only)
 // @route POST /api/v1/Notification/promote
 // @access Private (Admin)
-export const sendPromotionalNotification = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: sendPromotionalNotification ${req.method} ${req.url}`);
+export const sendPromotionalNotification = asyncHandler(
+  async (req: CustomRequest, res: Response) => {
+    logger.info(`Service: sendPromotionalNotification ${req.method} ${req.url}`);
 
-  const { title, message, type } = req.body; // Expect title, message, and optionally type (default to NewOffer)
+    const { title, message, type, offerUrl } = req.body; // Expect title, message, and optionally type (default to NewOffer)
 
-  if (!title || !message) {
-    throw new Error('Title and Message are required');
-  }
+    if (!title || !message) {
+      throw new Error('Title and Message are required');
+    }
 
-  const connection = await getDBConnection();
-  const userRepo = connection.getRepository(UserEntity);
-  const notificationRepo = connection.getRepository(NotificationEntity);
+    const connection = await getDBConnection();
+    const userRepo = connection.getRepository(UserEntity);
+    const notificationRepo = connection.getRepository(NotificationEntity);
+    // 1. Get all users (or maybe filter by subscribers? For now, all users)
+    // Optimization: In a real large scale app, this should be a job. Here we do it inline for simplicity.
+    const users = await userRepo.find();
 
-  // 1. Get all users (or maybe filter by subscribers? For now, all users)
-  // Optimization: In a real large scale app, this should be a job. Here we do it inline for simplicity.
-  const users = await userRepo.find();
+    const notifications = users.map((user: UserEntity) =>
+      notificationRepo.create({
+        type: type || NotificationType.NewOffer, // Default to NewOffer
+        title: title,
+        offerUrl: offerUrl,
+        message: message,
+        userId: user.id,
+        isRead: false,
+      }),
+    );
 
-  const notifications = users.map((user: UserEntity) => notificationRepo.create({
-    type: type || NotificationType.NewOffer, // Default to NewOffer
-    title: title,
-    message: message,
-    userId: user.id,
-    isRead: false,
-  }));
+    if (notifications.length > 0) {
+      // Save in chunks if necessary, but typeorm save handles array.
+      await notificationRepo.save(notifications);
+    }
 
-  if (notifications.length > 0) {
-    // Save in chunks if necessary, but typeorm save handles array.
-    await notificationRepo.save(notifications);
-  }
-
-  return res.status(200).json({
-    success: true,
-    message: `Promotional notification sent to ${users.length} users.`,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      message: `Promotional notification sent to ${users.length} users.`,
+    });
+  },
+);

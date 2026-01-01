@@ -5,7 +5,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -24,6 +23,9 @@ export class NotificationEntity {
 
   @Column()
   message!: string;
+
+  @Column({ name: 'offer_url', nullable: true })
+  offerUrl!: string;
 
   @Column({ name: 'is_read', type: 'boolean', default: false })
   isRead!: boolean;

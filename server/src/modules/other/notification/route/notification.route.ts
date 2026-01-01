@@ -10,7 +10,7 @@ import {
   getNotificationsForAdmin,
   readNotification,
   sendPromotionalNotification,
-  updateNotification
+  updateNotification,
 } from '../controller/notification.controller';
 
 const router = express.Router();

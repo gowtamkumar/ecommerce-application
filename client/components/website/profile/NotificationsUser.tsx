@@ -14,6 +14,7 @@ import {
 import { Button, Card, Empty, Modal, Skeleton, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -25,6 +26,7 @@ const NotificationsUser = () => {
   const [notifications, setNotifications] = useState([]);
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(setLoading({ notification: true }));
@@ -115,7 +117,10 @@ const NotificationsUser = () => {
           {notifications.map((item: any) => (
             <div
               key={item.id}
-              onClick={() => handleRowClick(item)}
+              onClick={() => {
+                if (!item.offerUrl) return;
+                router.push(`${item.offerUrl}`);
+              }}
               className={`
                         group relative p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md
                         ${item.isRead
@@ -158,7 +163,10 @@ const NotificationsUser = () => {
                 </div>
 
                 {!item.isRead && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div
+                    className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleRowClick(item)}
+                  >
                     <Tag color="blue">Mark as Read</Tag>
                   </div>
                 )}
