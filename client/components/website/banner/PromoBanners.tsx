@@ -1,9 +1,7 @@
 "use client";
-import React from "react";
 import Link from "next/link";
 import { Button } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import appConfig from "@/appConfig";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 export default function PromoBanners({ banners }: { banners: any[] }) {

@@ -106,72 +106,7 @@ export default function CheckoutSummary() {
     }
   };
 
-  // const handleOrder = async () => {
-  //   try {
-  //     dispatch(setLoading({ save: true }));
-  //     const validatedFields = onlineOrderValidationSchema.safeParse({
-  //       totalQty,
-  //       subTotal,
-  //       totalItemsDiscount,
-  //       totalTax,
-  //       shippingCharge,
-  //       couponDiscount,
-  //       grandTotal,
-  //       couponId,
-  //       shippingAddressId: checkoutFormData?.shippingAddressId,
-  //       paymentMethod: checkoutFormData.paymentMethod,
-  //       note: checkoutFormData.note,
-  //       orderItems: cart?.carts?.cartList,
-  //     });
-
-  //     console.log("validatedFields", validatedFields);
-
-  //     if (!validatedFields.success) {
-  //       const formattedErrors = validatedFields.error.issues.map((issue) => ({
-  //         path: issue.path.join("."),
-  //         message: issue.message,
-  //       }));
-
-  //       dispatch(setLoading({ save: false }));
-  //       return {
-  //         errors: formattedErrors,
-  //       };
-  //     }
-
-  //     const res = await saveOrder(validatedFields.data);
-  //     console.log("res", res);
-
-  //     if (res.message?.formErrors) {
-  //       dispatch(setLoading({ save: false }));
-  //       return;
-  //     }
-
-  //     if (!res.success) {
-  //       dispatch(setLoading({ save: false }));
-  //       dispatch(setResponse({ type: "error", message: res.message }));
-  //       return;
-  //     } else {
-  //       dispatch(
-  //         setResponse({ type: "success", message: "Order successfully" })
-  //       );
-  //     }
-
-  //     setTimeout(async () => {
-  //       dispatch(setLoading({ save: false }));
-  //       dispatch(setAction({}));
-  //       dispatch(setResponse({}));
-  //       dispatch(clearCart());
-  //       dispatch(setCheckoutFormData({}));
-  //       dispatch(setShippingAddress([]));
-  //       dispatch(setShippingCharge({}));
-  //       if (res.data.paymentUrl) {
-  //         window.location.href = res.data.paymentUrl;
-  //       }
-  //       // route.push("/");
-  //     }, 1000);
-  //   } catch (err: any) { }
-  // };
-
+ 
   return (
     <div className="space-y-4">
       <div className="space-y-3 text-sm text-gray-600">

@@ -17,10 +17,7 @@ export default function ApplyCoupon() {
   const handleCoupon = async () => {
     setLoading(true);
 
-    const coupon = await getCartLists({ couponCode: data, shippingCost: 0 });
-
-    console.log("coupon", coupon);
-    
+    const coupon = await getCartLists({ couponCode: data, shippingCost: 0 });    
 
     if (coupon.success) {
       successNotification({ message: coupon.message });

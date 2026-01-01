@@ -6,10 +6,9 @@ import {
   setShippingCharge,
 } from "@/redux/features/checkout/checkoutSlice";
 import { setAction } from "@/redux/features/global/globalSlice";
-import { Button, Radio, Space } from "antd";
+import { Radio } from "antd";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import React from "react";
 import { CiEdit } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -23,9 +22,6 @@ export default function CheckoutShippingAddress() {
   const checkout = useSelector(selectCheckout);
   const { shippingAddress, checkoutFormData } = checkout || {};
 
-  // const findAddress = shippingAddress?.find(
-  //   (item: { id: number }) => item.id === checkoutFormData.shippingAddressId
-  // );
 
   return (
     <div className="space-y-6">

@@ -3,7 +3,6 @@ import { getCartLists } from "../apis/cart";
 export const fetchCartData = async () => {
   try {
     const cartData = await getCartLists();
-    console.log("cart sync");
 
     // const cartItems = cartData.data?.cartList || [];
 

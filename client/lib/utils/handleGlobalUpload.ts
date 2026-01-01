@@ -1,5 +1,5 @@
 import { uploadFile } from "@/lib/apis/file";
-import { getUploadImageUrl } from "./imageUrl";
+import { imageSetFile } from "./imageSetFile";
 
 export const handleGlobalUpload = async ({
   file,
@@ -18,13 +18,16 @@ export const handleGlobalUpload = async ({
       throw new Error(res?.message || res?.error || "Invalid response format");
     }
     const uploadedFilename = res.data[0].filename;
-    const newFile = {
-      uid: Math.random() * 1000 + "",
-      name: `photo ${Math.random() * 10000 + ""}`,
-      status: "done",
-      fileName: uploadedFilename,
-      url: getUploadImageUrl(uploadedFilename),
-    };
+    
+    // const newFile = {
+    //   uid: Math.random() * 1000 + "",
+    //   name: `photo ${Math.random() * 10000 + ""}`,
+    //   status: "done",
+    //   fileName: uploadedFilename,
+    //   url: getUploadImageUrl(uploadedFilename),
+    // };
+    const newFile = imageSetFile(uploadedFilename);
+
     const newFileName = res.data.length ? uploadedFilename : null;
 
     if (onSuccess) onSuccess("Ok");
