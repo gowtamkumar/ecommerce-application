@@ -51,7 +51,7 @@ export default function HeaderRight() {
         <div className="relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300">
           <CiHeart
             size={26}
-            className="text-global-text group-hover:text-global-primary transition-all duration-300 
+            className="group-hover:text-global-primary transition-all duration-300 
                      group-hover:scale-110"
           />
 
@@ -75,8 +75,7 @@ export default function HeaderRight() {
         >
           <FiShoppingBag
             size={24}
-            
-            className="text-global-text group-hover:text-global-primary transition-all duration-300
+            className="group-hover:text-global-primary transition-all duration-300
                      group-hover:scale-110"
           />
 

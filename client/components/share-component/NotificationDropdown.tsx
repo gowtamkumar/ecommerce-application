@@ -68,7 +68,8 @@ const NotificationDropdown = () => {
         <div className="flex items-center gap-2">
           <Title level={5} className="!mb-0 !text-gray-800">Notifications</Title>
           {unreadCount > 0 && (
-            <span className="bg-blue-100 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                  style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
               {unreadCount} New
             </span>
           )}
@@ -76,8 +77,8 @@ const NotificationDropdown = () => {
         <Link 
           href="/dashboard/notifications" 
           onClick={() => setOpen(false)}
-          className="group flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-blue-600 transition-colors"
-        >
+          className="group flex items-center gap-1 text-xs font-medium hover:text-global-primary transition-colors"
+          style={{ color: "#6b7280" }}>
           View All <RightOutlined className="text-[10px] group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
@@ -105,16 +106,18 @@ const NotificationDropdown = () => {
               <div
                 className={`
                   group relative p-4 transition-all duration-200 cursor-pointer border-b border-gray-50 last:border-0
-                  ${!item.isRead ? "bg-blue-50/40 hover:bg-blue-50/60" : "bg-white hover:bg-gray-50"}
+                  ${!item.isRead ? "hover:bg-global-primary/5" : "bg-white hover:bg-gray-50"}
                 `}
+                style={!item.isRead ? { backgroundColor: "rgba(var(--global-primary-rgb, 247, 170, 14), 0.05)" } : {}}
                 onClick={() => handleRead(item.id)}
               >
                 <div className="flex gap-3 items-start ">
                    {/* Indicator/Icon */}
                   <div className={`
                     mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
-                    ${!item.isRead ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}
-                  `}>
+                    ${!item.isRead ? 'text-white' : 'bg-gray-100 text-gray-400'}
+                  `}
+                  style={!item.isRead ? { backgroundColor: "var(--global-primary)" } : {}}>
                     {!item.isRead ? (
                       <BellOutlined className="text-sm" />
                     ) : (
@@ -139,8 +142,10 @@ const NotificationDropdown = () => {
                     </Text>
 
                     {!item.isRead && (
-                      <div className="mt-2 flex items-center gap-1 text-[10px] text-blue-500 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                      <div className="mt-2 flex items-center gap-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                           style={{ color: "var(--global-primary)" }}>
+                         <span className="w-1.5 h-1.5 rounded-full animate-pulse" 
+                               style={{ backgroundColor: "var(--global-primary)" }} />
                          Mark as read
                       </div>
                     )}
@@ -168,7 +173,11 @@ const NotificationDropdown = () => {
               type="primary" 
               block 
               ghost 
-              className="!border-blue-200 !text-blue-600 hover:!bg-blue-50 !h-9 !text-xs !font-medium !rounded-lg"
+              className="!h-9 !text-xs !font-medium !rounded-lg"
+              style={{ 
+                borderColor: "var(--global-primary)", 
+                color: "var(--global-primary)"
+              }}
             >
               View all {notifications.length} notifications
             </Button>
@@ -204,7 +213,7 @@ const NotificationDropdown = () => {
   offset={[-4, 4]}
   styles={{
     indicator: {
-      backgroundColor: "#ef4444",
+      backgroundColor: "var(--global-primary)",
       boxShadow: "0 2px 4px rgba(239, 68, 68, 0.4)",
       border: "2px solid white",
       fontWeight: "bold",
@@ -220,11 +229,11 @@ const NotificationDropdown = () => {
           className={`
             !w-10 !h-10 !flex !items-center !justify-center !rounded-full !border-0
             transition-all duration-300 transform active:scale-95
-            ${open 
-              ? "!bg-blue-50 !text-blue-600 shadow-inner" 
-              : "hover:!bg-gray-100 text-gray-500 hover:text-gray-700"
-            }
           `}
+          style={open ? {
+            backgroundColor: "rgba(var(--global-primary-rgb, 247, 170, 14), 0.1)",
+            color: "var(--global-primary)"
+          } : {}}
           icon={<BellOutlined style={{ fontSize: "20px" }} />}
         />
       </Badge>
