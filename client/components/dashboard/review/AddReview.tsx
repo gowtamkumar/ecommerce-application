@@ -79,7 +79,7 @@ const AddReview = () => {
       onCancel={handleClose}
       footer={
         <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button size="large" onClick={resetFormData} className="!rounded-lg">
+          <Button size="large" onClick={resetFormData} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
           <Button
@@ -88,7 +88,11 @@ const AddReview = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!bg-black hover:!bg-gray-800 !rounded-lg !px-8"
+            className="!px-8"
+            style={{ 
+              borderRadius: "var(--button-border-radius)",
+              backgroundColor: "var(--global-primary)"
+            }}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>

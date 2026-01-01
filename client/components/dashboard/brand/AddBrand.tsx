@@ -104,7 +104,7 @@ const AddBrand = () => {
           <Button
             size="large"
             onClick={() => resetFormData(payload)}
-            className="!rounded-lg"
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Reset
           </Button>

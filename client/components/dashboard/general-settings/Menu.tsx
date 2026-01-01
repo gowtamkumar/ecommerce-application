@@ -305,7 +305,8 @@ const Index = () => {
             loading={global.loading.save}
             disabled={global.loading.save}
             htmlType="submit"
-            className="!bg-black hover:!bg-gray-800 !rounded-xl !h-11 !px-8 !font-medium mt-6"
+            className="!h-11 !px-8 !font-medium mt-6"
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Save Menu
           </Button>

@@ -28,6 +28,10 @@ const CurrencySwitcher = () => {
     >
       <Button
         type="text"
+        style={{ 
+          borderRadius: "var(--button-border-radius)",
+          backgroundColor: "var(--global-primary)",
+        }}
         className="flex items-center gap-2 hover:bg-gray-100 !rounded-full !px-4 !h-10 
                  text-gray-700 font-medium border border-gray-200 hover:!border-global-primary
                  transition-all duration-300 group"

@@ -4,16 +4,20 @@ import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { userProfileRoute } from "@/NavBarRoute";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import { selectGlobal, setDrawarCart, setLoading } from "@/redux/features/global/globalSlice";
-import { Avatar, Dropdown } from "antd";
+import { Avatar, Drawer, Dropdown } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FiShoppingBag } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
+import dynamic from "next/dynamic";
+
+const ViewCart = dynamic(() => import("@/components/website/header/ViewCart"), {
+  ssr: false,
+});
 
 export default function HeaderRight() {
-  // const [drawarCart, setDrawarCart] = useState(false);
   const [mounted, setMounted] = useState(false);
   const cart = useSelector(selectCart);
   const global = useSelector(selectGlobal);
@@ -44,18 +48,19 @@ export default function HeaderRight() {
         href="/profile?tab=wishlist"
         className="cursor-pointer md:inline hidden group relative"
       >
-        <div className="relative p-2 rounded-full hover:bg-gray-100 transition-all duration-300">
+        <div className="relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300">
           <CiHeart
             size={26}
-            className="text-gray-700 group-hover:text-global-primary transition-all duration-300 
+            className="text-global-text group-hover:text-global-primary transition-all duration-300 
                      group-hover:scale-110"
           />
 
           {/* Tooltip */}
           <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
-                         text-[10px] font-medium bg-gray-900 text-white px-2 py-1 rounded
+                         text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-10">
+                         pointer-events-none z-10"
+                style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
             Wishlist
           </span>
         </div>
@@ -66,11 +71,12 @@ export default function HeaderRight() {
       <div className="relative group">
         <div
           onClick={showLoading}
-          className="cursor-pointer relative p-2 rounded-full hover:bg-gray-100 transition-all duration-300"
+          className="cursor-pointer relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300"
         >
           <FiShoppingBag
             size={24}
-            className="text-gray-700 group-hover:text-global-primary transition-all duration-300
+            
+            className="text-global-text group-hover:text-global-primary transition-all duration-300
                      group-hover:scale-110"
           />
 
@@ -85,16 +91,19 @@ export default function HeaderRight() {
           )}
 
           {/* Tooltip */}
-          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
-                         text-[10px] font-medium bg-gray-900 text-white px-2 py-1 rounded
+          <span
+         
+          className="absolute -bottom-8 left-1/2 -translate-x-1/2 
+                         text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-10">
+                         pointer-events-none z-10"
+                style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
             Shopping Cart
           </span>
         </div>
 
         {/* Cart Drawer */}
-        {/* <Drawer
+        <Drawer
           closable
           title={
             <div className="flex items-center gap-2">
@@ -113,7 +122,7 @@ export default function HeaderRight() {
           className="cart-drawer"
         >
           <ViewCart />
-        </Drawer> */}
+        </Drawer>
       </div>
 
       {/* User Profile */}
@@ -133,20 +142,22 @@ export default function HeaderRight() {
                 <Avatar
                   size={36}
                   src={getUploadImageUrl(profileImage)}
-                  className="bg-gradient-to-br from-gray-200 to-gray-300 
-                         group-hover:scale-105 transition-transform duration-300"
+                  className="group-hover:scale-105 transition-transform duration-300"
+                  style={{ background: "linear-gradient(to bottom right, var(--global-primary-light, #e5e7eb), var(--global-primary-lighter, #f3f4f6))" }}
                 />
               </div>
 
               {/* Online Indicator */}
-              <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 
-                           border-2 border-white rounded-full"></span>
+              <span className="absolute bottom-0 right-0 w-3 h-3
+                           border-2 border-white rounded-full"
+                    style={{ backgroundColor: "#10b981" }}></span>
 
               {/* Tooltip */}
               <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
-                           text-[10px] font-medium bg-gray-900 text-white px-2 py-1 rounded
+                           text-[10px] font-medium px-2 py-1 rounded
                            opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                           pointer-events-none z-10">
+                           pointer-events-none z-10"
+                    style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
                 My Account
               </span>
             </div>

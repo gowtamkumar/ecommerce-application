@@ -137,7 +137,8 @@ const AddCoupon = () => {
           <Button
             size="large"
             onClick={() => resetFormData(payload)}
-            className="!rounded-lg !border-gray-300 !text-gray-600 hover:!text-gray-900 hover:!border-gray-400"
+            className="!border-gray-300 !text-gray-600 hover:!text-gray-900 hover:!border-gray-400"
+            style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Reset Changes
           </Button>

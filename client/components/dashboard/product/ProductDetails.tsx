@@ -61,7 +61,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
           type="primary"
           icon={<EditOutlined />}
           onClick={() => router.push(`/dashboard/product/${productId}/edit`)}
-          className="!bg-black hover:!bg-gray-800"
+          style={{ borderRadius: "var(--button-border-radius)" }}
         >
           Edit Product
         </Button>
