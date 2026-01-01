@@ -92,7 +92,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   // },
 
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET, // environment variable should be server and client same
-  session: { strategy: "jwt", maxAge: 1 * 24 * 60 * 60 }, // 1 day
+  session: {
+    strategy: "jwt",
+    maxAge: (Number(process.env.JWT_EXPIRES) || 24) * 60 * 60,
+  }, // Matches backend JWT_EXPIRES (default 24h)
   // debug: true,
   callbacks: {
     async session({ session, token, user }) {

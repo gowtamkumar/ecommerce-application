@@ -73,6 +73,15 @@ export async function getAuthHeaders() {
 
 // Function to handle API responses
 export async function handleResponse(res: Response) {
+  if (res.status === 401) {
+    // Optional: Trigger global signout if on client side
+    // For now, return the error structure so the UI can handle it
+    return {
+      success: false,
+      message: "Session expired. Please login again.",
+      status: 401,
+    };
+  }
   return res.json();
 }
 
