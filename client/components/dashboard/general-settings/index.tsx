@@ -12,8 +12,6 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Seo from "./Seo";
-import WhatsAppWidgetSetting from "./WhatsAppWidgetSetting";
 
 const { Title, Text } = Typography;
 
@@ -21,6 +19,7 @@ const Menu = dynamic(() => import("./Menu"), { ssr: false });
 const AppearanceSettings = dynamic(() => import("./AppearanceSettings"), { ssr: false });
 const MarketingAndSeo = dynamic(() => import("./MarketingAndSeo"), { ssr: false });
 const SupportSettings = dynamic(() => import("./SupportSettings"), { ssr: false });
+const PageLayoutSettings = dynamic(() => import("./PageLayoutSettings"), { ssr: false });
 const OrderAdnShhiping = dynamic(() => import("./OrderAndShipping"), {
   ssr: false,
 });
@@ -144,6 +143,11 @@ export default function Index() {
             label: "Marketing & SEO",
             key: "marketing_seo",
             children: <MarketingAndSeo />,
+          },
+          {
+            label: "Page Layout",
+            key: "page_layout",
+            children: <PageLayoutSettings />,
           },
           {
             label: "Advanced (Geo)",

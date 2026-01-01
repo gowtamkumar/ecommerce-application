@@ -7,16 +7,28 @@ const ContactForm = dynamic(
   () => import("@/components/website/contact/ContactForm")
 );
 
+import { getSettings } from "@/lib/apis/setting";
+
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: "...",
+  description: "Get in touch with us.",
 };
 
-export default function page() {
-  return (
-    <>
-      <Header />
-      <section className="bg-white py-20 lg:py-28 text-center relative overflow-hidden">
+export default async function page() {
+  const settingRes = await getSettings();
+  const setting = settingRes?.data || {};
+  const contactPage = setting?.contactPage || {};
+
+  const sections = (contactPage?.sections || [
+    { slug: "header", status: true, sequence: 1 },
+    { slug: "form_map", status: true, sequence: 2 },
+  ])
+  .filter((s: any) => s.status)
+  .sort((a: any, b: any) => a.sequence - b.sequence);
+
+  const sectionMap: Record<string, React.ReactNode> = {
+    header: (
+      <section key="header" className="bg-white py-20 lg:py-28 text-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-gray-50 -z-10" />
         <div className="container mx-auto px-6 max-w-4xl relative z-10">
           <span className="uppercase tracking-widest text-xs font-bold text-gray-400 mb-4 block font-global-secondary-fontfamily">
@@ -30,8 +42,9 @@ export default function page() {
           </p>
         </div>
       </section>
-
-      <div className="container mx-auto px-4 lg:px-8 pb-20 lg:pb-32 -mt-10 relative z-20">
+    ),
+    form_map: (
+      <div key="form_map" className="container mx-auto px-4 lg:px-8 pb-20 lg:pb-32 -mt-10 relative z-20">
         <div className="bg-white rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-100 overflow-hidden flex flex-col lg:flex-row">
           {/* Form Section */}
           <div className="w-full lg:w-1/2 p-8 lg:p-16">
@@ -51,6 +64,13 @@ export default function page() {
           </div>
         </div>
       </div>
+    )
+  };
+
+  return (
+    <>
+      <Header />
+      {sections.map((section: any) => sectionMap[section.slug])}
       <WebFooter />
     </>
   );
