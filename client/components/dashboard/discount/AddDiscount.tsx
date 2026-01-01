@@ -11,6 +11,7 @@ import {
   normFile,
 } from "@/lib/utils/commonFunctions";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
+import { imageSetFile } from "@/lib/utils/imageSetFile";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
@@ -77,7 +78,7 @@ const AddDiscount = () => {
       );
 
       discountData.fileList = [
-        generateFile(discountData?.image, discountData?.key),
+        imageSetFile(discountData?.image),
       ];
 
       form.setFieldsValue({
@@ -111,14 +112,6 @@ const AddDiscount = () => {
       }
     };
   }, [form, initialize, params.new]);
-
-  const generateFile = (fileName: string, identifier: string | number) => ({
-    uid: `${Math.random() * 1000}`,
-    name: `photo`,
-    status: "done",
-    fileName,
-    url: getUploadImageUrl(fileName),
-  });
 
   const parseDateFields = (data: any) => ({
     ...data,
@@ -550,7 +543,7 @@ const AddDiscount = () => {
             extra="Upload a banner image for this discount campaign"
             className="!mb-0"
           >
-            <ImgCrop rotationSlider showReset>
+          
               <Upload
                 name="image"
                 listType="picture-card"
@@ -570,7 +563,7 @@ const AddDiscount = () => {
               >
                 {formValues?.fileList?.length >= 1 ? null : uploadButton}
               </Upload>
-            </ImgCrop>
+            
           </Form.Item>
         </Card>
 

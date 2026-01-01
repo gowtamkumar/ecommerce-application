@@ -1,6 +1,7 @@
 'use client'
 import { ActionType } from "@/constants/constants";
 import { deleteUser, getUsers } from "@/lib/apis/user";
+import { imageSetFile } from "@/lib/utils/imageSetFile";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import {
   errorNotification,
@@ -336,14 +337,8 @@ const UserList = () => {
               onClick={() => {
                 const newData = { ...value };
                 if (newData.image) {
-                  const file = {
-                    uid: Math.random() * 1000 + "",
-                    name: `image`,
-                    status: "done",
-                    fileName: newData.image,
-                    url: getUploadImageUrl(newData.image),
-                  };
-                  newData.fileList = [file];
+                
+                  newData.fileList = [imageSetFile(newData.image)];
                 }
                 dispatch(
                   setAction({

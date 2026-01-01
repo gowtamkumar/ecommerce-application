@@ -33,6 +33,7 @@ export default function Brand() {
           onClick={() =>
             dispatch(
               setAction({
+                brand:true,
                 type: ActionType.CREATE,
               })
             )

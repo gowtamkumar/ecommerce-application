@@ -8,7 +8,6 @@ import {
   InputNumber,
   Select,
 } from "antd";
-import React from "react";
 
 export default function ProductVariant({
   formValues,

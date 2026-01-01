@@ -177,7 +177,6 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             },
           ]}
         >
-          {/* <ImgCrop rotationSlider showReset> */}
             <Upload
               name="images"
               listType="picture-card"
@@ -210,7 +209,6 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             >
               {uploadButton}
             </Upload>
-          {/* </ImgCrop>   */}
         </Form.Item>
 
         <Form.Item name="images" hidden>

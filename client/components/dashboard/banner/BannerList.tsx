@@ -18,6 +18,7 @@ import { deleteBanner, getBanners } from "@/lib/apis/banner";
 import appConfig from "@/appConfig";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
 import { getImageUrl } from "@/lib/utils/imageUrl";
+import { imageSetFile } from "@/lib/utils/imageSetFile";
 
 interface DataType {
   key: string;
@@ -229,14 +230,7 @@ const BannerList: React.FC = () => {
               onClick={() => {
                 const newData = { ...value };
                 if (newData.image) {
-                  const file = {
-                    uid: Math.random() * 1000 + "",
-                    name: `image`,
-                    status: "done",
-                    fileName: newData.image,
-                    url: getImageUrl(newData.image),
-                  };
-                  newData.fileList = [file];
+                  newData.fileList = [imageSetFile(newData.image)];
                 }
                 dispatch(
                   setAction({

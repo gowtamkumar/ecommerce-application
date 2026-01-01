@@ -38,7 +38,6 @@ import {
   TreeSelect,
   Upload,
 } from "antd";
-import ImgCrop from "antd-img-crop";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
@@ -290,12 +289,11 @@ const AddCategory = () => {
             getValueFromEvent={normFile}
             className="mb-0"
           >
-            <ImgCrop rotationSlider showReset aspect={1} quality={1}>
-              <Upload
-                name="image"
-                listType="picture-card"
-                fileList={formValues?.fileList || []}
-                onRemove={async (v) => {
+            <Upload
+              name="image"
+              listType="picture-card"
+              fileList={formValues?.fileList || []}
+              onRemove={async (v) => {
                   if (v.fileName) {
                     form.setFieldsValue({ image: null, fileList: [] });
                     setFormValues({ image: null, fileList: [] });
@@ -318,7 +316,6 @@ const AddCategory = () => {
                   </div>
                 )}
               </Upload>
-            </ImgCrop>
           </Form.Item>
           <Form.Item name="image" hidden>
             <Input />

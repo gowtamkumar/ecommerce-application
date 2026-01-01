@@ -7,6 +7,7 @@ import {
 } from "@/lib/apis/admin/product";
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { generateFile } from "@/lib/utils/imageSetFile";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button, Form, Input } from "antd";
@@ -73,13 +74,8 @@ const AddProduct = ({
   const route = useRouter();
 
   const fetchData = useCallback(async () => {
-    const generateFile = (fileName: string, identifier: string | number) => ({
-      uid: `${Math.random() * 1000}`,
-      name: `photo ${identifier}`,
-      status: "done",
-      fileName,
-      url: getUploadImageUrl(fileName),
-    });
+   
+
 
     try {
       if (!productId) {

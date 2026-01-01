@@ -18,7 +18,6 @@ const AddUser = dynamic(() => import("@/components/dashboard/user/AddUser"), {
 });
 
 export default function User() {
-  const [tabKey, setTabKey] = useState("user_list");
   const dispatch = useDispatch();
 
   return (
