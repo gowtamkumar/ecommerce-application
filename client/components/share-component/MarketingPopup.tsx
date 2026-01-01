@@ -28,9 +28,6 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({ marketing }) => {
     const delay = parseInt(marketing?.popupDelay?.toString() || "3000");
 
     const timer = setTimeout(() => {
-      console.log("visible", visible);
-      console.log("marketing", marketing);
-      
       setVisible(true);
     }, delay);
 
@@ -44,9 +41,6 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({ marketing }) => {
 
   const isEnabled = marketing?.popupEnabled === true || marketing?.popupEnabled === "true";
   if (!isEnabled) return null;
-
-  console.log("visible", visible);
-  console.log("marketing", marketing);
   
 
   return (
