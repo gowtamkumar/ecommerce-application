@@ -60,20 +60,18 @@ const config: Config = {
         },
       },
       fontFamily: {
-        "global-fontfamily": ["Poppins", "Urbanist"],
-        "global-primary-fontfamily": "Poppins",
-        "global-secondary-fontfamily": "Urbanist",
-        "bangla-primary-fontfamily": "হিন্দ শিলিগুড়ি",
-        "bangla-secondary-fontfamily": "আদর নইিরত",
+        "global-fontfamily": ["var(--secondary-font)", "sans-serif"],
+        "global-primary-fontfamily": "var(--primary-font)",
+        "global-secondary-fontfamily": "var(--secondary-font)",
       },
       fontSize: {
-        "global-size-h1": "1rem",
-        "global-size-h2": "0.8rem",
-        "global-size-h3": "0.8rem",
-        "global-size-h4": "0.8rem",
-        "global-size-h5": "0.8rem",
-        "global-size-h6": "0.8rem",
-        "global-size-p": "0.5rem",
+        "global-size-h1": "var(--h1-size)",
+        "global-size-h2": "var(--h2-size)",
+        "global-size-h3": "var(--h3-size)",
+        "global-size-h4": "var(--h3-size)", // Fallback to h3
+        "global-size-h5": "var(--h3-size)", // Fallback to h3
+        "global-size-h6": "var(--h3-size)", // Fallback to h3
+        "global-size-p": "var(--base-font-size)",
       },
       screens: {
         xs: "480px", // Custom extra small (Mobile portrait)

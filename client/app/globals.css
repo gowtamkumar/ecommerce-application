@@ -88,28 +88,35 @@
 }
 
 /*global font*/
-body {
-  font-family: var(--secondary-font);
+html {
   font-size: var(--base-font-size);
 }
 
-h1, .h1 { 
-    font-family: var(--primary-font);
-    font-size: var(--h1-size); 
+body {
+  font-family: var(--secondary-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-h2, .h2 { 
-    font-family: var(--primary-font);
-    font-size: var(--h2-size); 
-}
-h3, .h3 { 
-    font-family: var(--primary-font);
-    font-size: var(--h3-size); 
-}
-h4, h5, h6 { 
+
+h1, .h1, h2, .h2, h3, .h3, h4, h5, h6 { 
     font-family: var(--primary-font);
 }
 
-button, .ant-btn {
+h1, .h1 { font-size: var(--h1-size); }
+h2, .h2 { font-size: var(--h2-size); }
+h3, .h3 { font-size: var(--h3-size); }
+
+/* Ensure all elements inherit the secondary font by default unless overridden */
+*, ::before, ::after {
+    font-family: inherit;
+}
+
+body {
+    font-family: var(--secondary-font);
+}
+
+button, .ant-btn, input, select, textarea {
+    font-family: var(--secondary-font);
     border-radius: var(--button-border-radius) !important;
 }
 
