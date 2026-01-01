@@ -89,8 +89,28 @@
 
 /*global font*/
 body {
-  /* font-family: var(--font-urbanist); */
-  font-family: var(--font-poppins);
+  font-family: var(--secondary-font);
+  font-size: var(--base-font-size);
+}
+
+h1, .h1 { 
+    font-family: var(--primary-font);
+    font-size: var(--h1-size); 
+}
+h2, .h2 { 
+    font-family: var(--primary-font);
+    font-size: var(--h2-size); 
+}
+h3, .h3 { 
+    font-family: var(--primary-font);
+    font-size: var(--h3-size); 
+}
+h4, h5, h6 { 
+    font-family: var(--primary-font);
+}
+
+button, .ant-btn {
+    border-radius: var(--button-border-radius) !important;
 }
 
 /* .tobar {

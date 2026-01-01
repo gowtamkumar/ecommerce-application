@@ -1,12 +1,18 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
-import { Button, Card, Divider, Form, Input } from "antd";
+import { Button, Card, Divider, Form, Input, InputNumber, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
 import { selectGlobal, setAction, setSetting } from "@/redux/features/global/globalSlice";
 import { SettingsHeader, FileUploadField, PreviewModal } from "./CommonComponents";
+
+const fontOptions = [
+    { label: "Poppins (Default)", value: "var(--font-poppins)" },
+    { label: "Inter", value: "Inter, sans-serif" },
+    { label: "Roboto", value: "Roboto, sans-serif" },
+    { label: "Outfit", value: "Outfit, sans-serif" },
+    { label: "System Sans", value: "system-ui, -apple-system, sans-serif" },
+];
 
 const AppearanceSettings = () => {
     const [form] = Form.useForm();
@@ -19,10 +25,22 @@ const AppearanceSettings = () => {
         ...global.setting?.headerOption,
         ...global.setting?.footerOption,
         ...global.setting?.socialLink,
+        ...global.setting?.appearance,
     }), [global.setting]);
 
     useEffect(() => {
-        form.setFieldsValue(initialData);
+        const defaultValues = {
+            primaryFont: "var(--font-poppins)",
+            secondaryFont: "var(--font-poppins)",
+            baseFontSize: 16,
+            h1Size: 48,
+            h2Size: 36,
+            h3Size: 24,
+            buttonFontSize: 14,
+            buttonBorderRadius: 8,
+            ...initialData
+        };
+        form.setFieldsValue(defaultValues);
     }, [form, initialData]);
 
     const handleSubmit = async (values: any) => {
@@ -36,6 +54,14 @@ const AppearanceSettings = () => {
             instagramUrl,
             linkedinUrl,
             twitterUrl,
+            primaryFont,
+            secondaryFont,
+            baseFontSize,
+            h1Size,
+            h2Size,
+            h3Size,
+            buttonFontSize,
+            buttonBorderRadius,
         } = values;
 
         const payload = {
@@ -43,6 +69,16 @@ const AppearanceSettings = () => {
             headerOption: { leftText },
             footerOption: { copyRight, image },
             socialLink: { facebookUrl, instagramUrl, linkedinUrl, twitterUrl },
+            appearance: {
+                primaryFont,
+                secondaryFont,
+                baseFontSize,
+                h1Size,
+                h2Size,
+                h3Size,
+                buttonFontSize,
+                buttonBorderRadius,
+            }
         };
 
         try {
@@ -55,13 +91,14 @@ const AppearanceSettings = () => {
             }
 
             successNotification({ message: res.message });
+            // Update global state with new settings
+            dispatch(setSetting(res.data));
         } catch (error: any) {
             errorNotification({
                 message: error?.response?.data?.message || error?.message || "Unexpected error",
             });
         } finally {
             setLoading(false);
-            dispatch(setSetting({}));
             dispatch(setAction({}));
         }
     };
@@ -70,7 +107,7 @@ const AppearanceSettings = () => {
         <div className="space-y-6">
             <SettingsHeader 
                 title="Appearance Settings" 
-                description="Manage your website's header text, footer copyright, and social media integrations" 
+                description="Manage your website's typography, branding, and social media integrations" 
             />
 
             <Card className="shadow-sm border border-gray-100 rounded-2xl">
@@ -84,6 +121,68 @@ const AppearanceSettings = () => {
                     <Form.Item name="id" hidden>
                         <Input />
                     </Form.Item>
+
+                    {/* Typography & Global Styles */}
+                    <div className="space-y-6">
+                        <SettingsHeader title="Typography & Global Styles" />
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                            <Form.Item
+                                name="primaryFont"
+                                label={<span className="text-base font-medium">Primary Font (Headings)</span>}
+                                extra="Used for headings and prominent text"
+                            >
+                                <Select size="large" options={fontOptions} />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="secondaryFont"
+                                label={<span className="text-base font-medium">Secondary Font (Body)</span>}
+                                extra="Used for body text and descriptions"
+                            >
+                                <Select size="large" options={fontOptions} />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="baseFontSize"
+                                label={<span className="text-base font-medium">Base Font Size (px)</span>}
+                                extra="Controls the default text size across the site"
+                            >
+                                <InputNumber size="large" className="w-full" min={10} max={24} />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="buttonFontSize"
+                                label={<span className="text-base font-medium">Button Text Size (px)</span>}
+                            >
+                                <InputNumber size="large" className="w-full" min={10} max={20} />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="buttonBorderRadius"
+                                label={<span className="text-base font-medium">Button Border Radius (px)</span>}
+                                extra="Controls the roundness of buttons and inputs"
+                            >
+                                <InputNumber size="large" className="w-full" min={0} max={100} />
+                            </Form.Item>
+                        </div>
+
+                        <Divider plain><span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Heading Sizes</span></Divider>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Form.Item name="h1Size" label={<span className="text-sm font-medium">H1 size (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={24} max={100} />
+                            </Form.Item>
+                            <Form.Item name="h2Size" label={<span className="text-sm font-medium">H2 size (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={20} max={80} />
+                            </Form.Item>
+                            <Form.Item name="h3Size" label={<span className="text-sm font-medium">H3 size (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={16} max={60} />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+                    <Divider className="!my-8" />
 
                     {/* Header Section */}
                     <div className="space-y-4">

@@ -3,6 +3,7 @@ import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import StoreProvider from "@/redux/storeProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { ConfigProvider } from "antd";
 import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
@@ -102,11 +103,58 @@ export default async function RootLayout({
   const settingRes = await getSettings();
   const setting = settingRes?.data || {};
   const favicon = getImageUrl(setting?.favicon);
+  const appearance = setting?.appearance || {};
+
+  // Default values for appearance
+  const cssVars = {
+    "--primary-font": appearance.primaryFont || "var(--font-poppins)",
+    "--secondary-font": appearance.secondaryFont || "var(--font-poppins)",
+    "--base-font-size": `${appearance.baseFontSize || 16}px`,
+    "--h1-size": `${appearance.h1Size || 48}px`,
+    "--h2-size": `${appearance.h2Size || 36}px`,
+    "--h3-size": `${appearance.h3Size || 24}px`,
+    "--button-font-size": `${appearance.buttonFontSize || 14}px`,
+    "--button-border-radius": `${appearance.buttonBorderRadius || 8}px`,
+  };
+
+  const googleFonts = [
+    appearance.primaryFont,
+    appearance.secondaryFont,
+  ]
+    .filter(Boolean)
+    .filter((f) => !f.includes("var(--font-poppins)") && !f.includes("system-ui"))
+    .map((f) => f.split(",")[0].trim())
+    .filter((v, i, a) => a.indexOf(v) === i);
 
   return (
     <html lang="en">
       <head>
         {favicon && <link rel="icon" href={favicon} />}
+
+        {googleFonts.length > 0 && (
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link
+              href={`https://fonts.googleapis.com/css2?${googleFonts
+                .map((f) => `family=${f.replace(" ", "+")}:wght@400;500;600;700;900`)
+                .join("&")}&display=swap`}
+              rel="stylesheet"
+            />
+          </>
+        )}
+
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                ${Object.entries(cssVars)
+                .map(([key, value]) => `${key}: ${value};`)
+                .join("\n")}
+              }
+            `,
+          }}
+        />
 
         {/* Structured Data for SEO */}
         <OrganizationSchema
@@ -189,26 +237,46 @@ export default async function RootLayout({
         <AuthProvider session={session}>
           <StoreProvider>
             <AntdRegistry>
-              <CurrencyProvider>
-                <ToastContainer
-                  position="top-right"
-                  autoClose={3000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  draggable
-                  pauseOnHover
-                  theme="colored"
-                />
-                <AnnouncementBar marketing={setting?.marketing} />
-                <ScrollToTop />
+              <ConfigProvider
+                theme={{
+                  token: {
+                    fontFamily: appearance.secondaryFont || "var(--font-poppins)",
+                    fontSize: appearance.baseFontSize || 16,
+                    borderRadius: appearance.buttonBorderRadius || 8,
+                    colorPrimary: "#F7AA0E", // Keeping the primary color from globals.css
+                  },
+                  components: {
+                    Button: {
+                      fontSize: appearance.buttonFontSize || 14,
+                      borderRadius: appearance.buttonBorderRadius || 8,
+                    },
+                    Typography: {
+                      fontFamily: appearance.primaryFont || "var(--font-poppins)",
+                    },
+                  },
+                }}
+              >
+                <CurrencyProvider>
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                  />
+                  <AnnouncementBar marketing={setting?.marketing} />
+                  <ScrollToTop />
 
-                {children}
-                <CookieBanner />
-                <MarketingPopup marketing={setting?.marketing} />
-              </CurrencyProvider>
+                  {children}
+                  <CookieBanner />
+                  <MarketingPopup marketing={setting?.marketing} />
+                </CurrencyProvider>
+              </ConfigProvider>
             </AntdRegistry>
           </StoreProvider>
         </AuthProvider>

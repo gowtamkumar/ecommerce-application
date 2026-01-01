@@ -72,6 +72,9 @@ export class SettingEntity {
   @Column({ name: 'header_option', type: 'simple-json', nullable: true })
   headerOption!: string;
 
+  @Column({ name: 'appearance', type: 'simple-json', nullable: true })
+  appearance!: any;
+
   @Column({ name: 'faq', type: 'simple-json', nullable: true })
   faq!: string;
 
