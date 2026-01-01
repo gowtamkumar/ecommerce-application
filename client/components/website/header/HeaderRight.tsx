@@ -60,7 +60,7 @@ export default function HeaderRight() {
           <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-10"
+                         pointer-events-none z-50"
                 style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
             Wishlist
           </span>
@@ -72,7 +72,7 @@ export default function HeaderRight() {
       <div className="relative group">
         <div
           onClick={showLoading}
-          className="cursor-pointer relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300"
+          className="group cursor-pointer relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300"
         >
           <FiShoppingBag
             size={24}
@@ -83,20 +83,18 @@ export default function HeaderRight() {
 
           {/* Cart Badge */}
           {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-gradient-to-br from-global-primary to-global-hover 
-                           text-white text-[10px] font-bold min-w-[18px] h-[18px] 
+            <div style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }} className="absolute -top-1 -right-1 text-white text-[10px] font-bold min-w-[18px] h-[18px] 
                            flex items-center justify-center rounded-full
                            shadow-md animate-pulse">
               {cartCount > 99 ? '99+' : cartCount}
-            </span>
+            </div>
           )}
 
           {/* Tooltip */}
-          <span
-          className="absolute -bottom-8 left-1/2 -translate-x-1/2 
+          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-10"
+                         pointer-events-none z-50"
                 style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
             Shopping Cart
           </span>
@@ -107,7 +105,7 @@ export default function HeaderRight() {
           closable
           title={
             <div className="flex items-center gap-2">
-              <FiShoppingBag className="text-xl text-global-primary" />
+              <FiShoppingBag className="text-xl text-global-primary " />
               <span className="font-bold text-lg">Shopping Cart</span>
               {cartCount > 0 && (
                 <span className="text-sm text-gray-500">({cartCount} items)</span>
@@ -156,7 +154,7 @@ export default function HeaderRight() {
               <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
                            text-[10px] font-medium px-2 py-1 rounded
                            opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                           pointer-events-none z-10"
+                           pointer-events-none z-50"
                     style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
                 My Account
               </span>
