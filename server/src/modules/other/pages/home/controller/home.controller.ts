@@ -75,7 +75,7 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
         currentPage: +page,
         data: products,
       },
-      homePage: result.length ?? result[0]?.homePage,
+      homePage: result[0]?.homePage,
       topSellingProducts,
       banners,
       categories,

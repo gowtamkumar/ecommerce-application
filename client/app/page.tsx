@@ -156,103 +156,116 @@ export default async function Home() {
     </div>
   );
 
+  const homePageData = home.data?.homePage;
+  const sectionsConfig = homePageData?.sections || [];
+
+  // Define available sections and their render functions
+  const sectionMap: Record<string, () => React.ReactNode> = {
+    slider: () => (
+      sliderBanners?.length > 0 ? (
+        <div className="w-full">
+          <Slider banners={sliderBanners} />
+        </div>
+      ) : null
+    ),
+    categories: () => (
+      categories ? (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader title="Shop by Category" link="/categories" />
+            <CategoryCard categories={categories} />
+          </div>
+        </section>
+      ) : null
+    ),
+    featured_products: () => (
+      products?.data ? (
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader title="Featured Collections" link="/products" />
+            <FeaturedProduct products={featuredProducts} />
+          </div>
+        </section>
+      ) : null
+    ),
+    promo_banners: () => (
+      HomeBanners?.length > 0 ? (
+        <section className="py-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <PromoBanners banners={HomeBanners} />
+          </div>
+        </section>
+      ) : null
+    ),
+    top_selling: () => (
+      topSellingProducts?.length > 0 ? (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader title="Best Sellers" link="/products" />
+            <FeaturedProduct products={topSellingProducts} />
+          </div>
+        </section>
+      ) : null
+    ),
+    new_arrivals: () => (
+      products?.data ? (
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader title="New Arrivals" link="/products" />
+            <FeaturedProduct products={isNewArrivalProducts} />
+          </div>
+        </section>
+      ) : null
+    ),
+    category_tabs: () => (
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader title="Browse by Category" link="/products" />
+          <CategoryTab categories={categories} />
+        </div>
+      </section>
+    ),
+    footer_banners: () => (
+      FooterBanners?.length > 0 ? (
+        <section className="py-10 overflow-hidden">
+          <SellerAds banners={FooterBanners} />
+        </section>
+      ) : null
+    ),
+    blog: () => (
+      <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader title="Latest from our Blog" link="/blog" />
+          <BlogTab posts={posts || []} />
+        </div>
+      </section>
+    ),
+  };
+
+  // Determine the order of sections
+  const orderedSections = sectionsConfig.length > 0
+    ? [...sectionsConfig]
+      .filter((s: any) => s.status !== false)
+      .sort((a: any, b: any) => (a.sequence || 0) - (b.sequence || 0))
+      .map((s: any) => s.slug)
+    : ["slider", "categories", "featured_products", "promo_banners", "top_selling", "new_arrivals", "category_tabs", "footer_banners", "blog"];
+
   return (
     <>
       <header className="relative z-50">
         <Header />
-        <div className="w-full">
-          {sliderBanners?.length > 0 && <Slider banners={sliderBanners} />}
-        </div>
+        {/* Render Slider separately if it's in the header context, but here we handle it in-flow if ordered */}
+        {orderedSections.includes("slider") && sectionMap.slider()}
       </header>
 
       <main className="bg-white">
-        {/* Categories Section - Clean white background */}
-        {categories && (
-          <section className="py-20 bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <SectionHeader title="Shop by Category" link="/categories" />
-              <CategoryCard categories={categories} />
+        {orderedSections
+          .filter(slug => slug !== "slider") // Slider is rendered in header
+          .map(slug => (
+            <div key={slug}>
+              {sectionMap[slug] ? sectionMap[slug]() : null}
             </div>
-          </section>
-        )}
-
-        {/* Featured Products - Subtle gray background for separation */}
-        {products?.data && (
-          <section className="py-20 bg-gray-50">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <SectionHeader title="Featured Collections" link="/products" />
-              <FeaturedProduct products={featuredProducts} />
-            </div>
-          </section>
-        )}
-
-        {/* Flash Sale / Offers */}
-        {HomeBanners?.length > 0 && (
-          <section className="py-10">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <PromoBanners banners={HomeBanners} />
-            </div>
-          </section>
-        )}
-
-        {/* Top Selling - White background */}
-        {topSellingProducts?.length > 0 && (
-          <section className="py-20 bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <SectionHeader title="Best Sellers" link="/products" />
-              <FeaturedProduct products={topSellingProducts} />
-            </div>
-          </section>
-        )}
-
-        {/* New Arrivals - Gray background */}
-        {products?.data && (
-          <section className="py-20 bg-gray-50">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <SectionHeader title="New Arrivals" link="/products" />
-              <FeaturedProduct products={isNewArrivalProducts} />
-            </div>
-          </section>
-        )}
-
-        {/* Category Products */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeader title="Browse by Category" link="/products" />
-            <CategoryTab categories={categories} />
-          </div>
-        </section>
-
-        {/* Footer Banner */}
-        {FooterBanners?.length > 0 && (
-          <section className="py-10 overflow-hidden">
-            <SellerAds banners={FooterBanners} />
-          </section>
-        )}
-
-        {/* Blog / Tips Section - Slight accent background */}
-        <section className="py-24 bg-gradient-to-b from-white to-gray-50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeader title="Latest from our Blog" link="/blog" />
-            <BlogTab posts={posts || []} />
-          </div>
-        </section>
-
-        {/* Subscribe */}
-        {/* <section className="relative bg-[url('/newsletter.jpg')] bg-cover bg-center bg-no-repeat text-white py-20 px-6 md:px-12">
-          <div className="absolute inset-0 z-0" />
-          <div className="relative z-10 max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Stay in the loop!
-            </h2>
-            <p className="text-base md:text-lg mb-8 text-gray-200">
-              Subscribe to our newsletter and never miss exclusive offers,
-              updates, and more.
-            </p>
-
-            <Subscribe />
-          </div>
-        </section> */}
+          ))}
       </main>
       <WhatsAppWidget />
       <ScrollToCart />
