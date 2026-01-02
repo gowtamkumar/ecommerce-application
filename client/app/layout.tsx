@@ -119,6 +119,8 @@ export default async function RootLayout({
     "--button-padding-y": `${appearance.buttonPaddingVertical || 8}px`,
     "--button-padding-x": `${appearance.buttonPaddingHorizontal || 16}px`,
     "--button-font-weight": appearance.buttonFontWeight || 500,
+    "--button-primary-color": appearance.buttonPrimaryColor || appearance.primaryColor || "#F7AA0E",
+    "--button-hover-color": appearance.buttonHoverColor || appearance.primaryHoverColor || "#e59a0d",
     "--input-padding-y": `${appearance.inputPaddingVertical || 8}px`,
     "--input-padding-x": `${appearance.inputPaddingHorizontal || 12}px`,
     "--input-border-radius": `${appearance.inputBorderRadius || 8}px`,
@@ -289,6 +291,8 @@ export default async function RootLayout({
                       fontWeight: appearance.buttonFontWeight || 500,
                       paddingInline: appearance.buttonPaddingHorizontal || 16,
                       controlHeight: (appearance.buttonPaddingVertical || 8) * 2 + (appearance.buttonFontSize || 14),
+                      colorPrimary: appearance.buttonPrimaryColor || appearance.primaryColor || "#3211ecff",
+                      colorPrimaryHover: appearance.buttonHoverColor || appearance.primaryHoverColor || "#e59a0d",
                     },
                     Input: {
                       borderRadius: appearance.inputBorderRadius || 8,
