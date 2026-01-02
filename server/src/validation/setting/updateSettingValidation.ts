@@ -22,4 +22,5 @@ export const updateSettingValidationSchema = z.object({
   faq: z.any().optional(),
   seo: z.any().optional(),
   marketing: z.any().optional(),
+  appearance: z.any().optional(),
 });

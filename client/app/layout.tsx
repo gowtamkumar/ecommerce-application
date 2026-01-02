@@ -116,8 +116,13 @@ export default async function RootLayout({
     "--h3-size": `${appearance.h3Size || 24}px`,
     "--button-font-size": `${appearance.buttonFontSize || 14}px`,
     "--button-border-radius": `${appearance.buttonBorderRadius || 8}px`,
+    "--button-padding-y": `${appearance.buttonPaddingVertical || 8}px`,
+    "--button-padding-x": `${appearance.buttonPaddingHorizontal || 16}px`,
+    "--button-font-weight": appearance.buttonFontWeight || 500,
     "--global-primary": appearance.primaryColor || "#F7AA0E",
     "--primary-hover": appearance.primaryHoverColor || "#e59a0d",
+    "--global-secondary": appearance.secondaryColor || "#000000",
+    "--link-color": appearance.linkColor || appearance.primaryColor || "#F7AA0E",
     "--text-color": appearance.textColor || "#1f2937",
   };
 
@@ -256,6 +261,9 @@ export default async function RootLayout({
                     Button: {
                       fontSize: appearance.buttonFontSize || 14,
                       borderRadius: appearance.buttonBorderRadius || 8,
+                      fontWeight: appearance.buttonFontWeight || 500,
+                      paddingInline: appearance.buttonPaddingHorizontal || 16,
+                      controlHeight: (appearance.buttonPaddingVertical || 8) * 2 + (appearance.buttonFontSize || 14),
                     },
                     Typography: {
                       fontFamily: appearance.primaryFont || "var(--font-poppins)",

@@ -39,8 +39,13 @@ const AppearanceSettings = () => {
             h3Size: 24,
             buttonFontSize: 14,
             buttonBorderRadius: 8,
+            buttonFontWeight: 500,
+            buttonPaddingVertical: 8,
+            buttonPaddingHorizontal: 16,
             primaryColor: "#F7AA0E",
             primaryHoverColor: "#e59a0d",
+            secondaryColor: "#000000",
+            linkColor: "#F7AA0E",
             textColor: "#1f2937",
             ...initialData
         };
@@ -67,8 +72,13 @@ const AppearanceSettings = () => {
             h3Size,
             buttonFontSize,
             buttonBorderRadius,
+            buttonFontWeight,
+            buttonPaddingVertical,
+            buttonPaddingHorizontal,
             primaryColor,
             primaryHoverColor,
+            secondaryColor,
+            linkColor,
             textColor,
         } = values;
 
@@ -87,8 +97,13 @@ const AppearanceSettings = () => {
                 h3Size,
                 buttonFontSize,
                 buttonBorderRadius,
+                buttonFontWeight,
+                buttonPaddingVertical,
+                buttonPaddingHorizontal,
                 primaryColor,
                 primaryHoverColor,
+                secondaryColor,
+                linkColor,
                 textColor,
             }
         };
@@ -159,6 +174,20 @@ const AppearanceSettings = () => {
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
+                            <Form.Item
+                                name="secondaryColor"
+                                label={<span className="text-base font-medium">Secondary Color</span>}
+                                extra="Secondary brand color"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="linkColor"
+                                label={<span className="text-base font-medium">Link Color</span>}
+                                extra="Color for hyperlinks"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
                         </div>
                     </div>
 
@@ -201,21 +230,36 @@ const AppearanceSettings = () => {
                                 <InputNumber size="large" className="w-full" min={10} max={30} />
                             </Form.Item>
 
-                            <Form.Item
-                                name="buttonFontSize"
-                                label={<span className="text-base font-medium">Button Text Size (px)</span>}
-                            >
+
+                        </div>
+
+                        <Divider className="!my-8" />
+
+                        {/* Button & Interactive Settings */}
+                        <SettingsHeader title="Buttons & Interactivity" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Form.Item name="buttonFontSize" label={<span className="text-base font-medium">Text Size (px)</span>}>
                                 <InputNumber size="large" className="w-full" min={10} max={20} />
                             </Form.Item>
-
-                            <Form.Item
-                                name="buttonBorderRadius"
-                                label={<span className="text-base font-medium">Primary Roundness (px)</span>}
-                                extra="Applies to buttons, inputs, and standard cards"
-                            >
-                                <InputNumber size="large" className="w-full" min={0} max={100} />
+                            <Form.Item name="buttonBorderRadius" label={<span className="text-base font-medium">Border Radius (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={0} max={50} />
+                            </Form.Item>
+                            <Form.Item name="buttonFontWeight" label={<span className="text-base font-medium">Font Weight</span>}>
+                                <Select size="large" options={[
+                                    { label: "Regular (400)", value: 400 },
+                                    { label: "Medium (500)", value: 500 },
+                                    { label: "Semi Bold (600)", value: 600 },
+                                    { label: "Bold (700)", value: 700 },
+                                ]} />
+                            </Form.Item>
+                            <Form.Item name="buttonPaddingVertical" label={<span className="text-base font-medium">Vertical Padding (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={0} max={30} />
+                            </Form.Item>
+                            <Form.Item name="buttonPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={0} max={60} />
                             </Form.Item>
                         </div>
+
 
                         <Divider plain><span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Heading Sizes</span></Divider>
 
