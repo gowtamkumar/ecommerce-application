@@ -15,6 +15,7 @@ import {
   MdDashboard,
   MdHistory,
   MdLocalShipping,
+  MdOutlineContactPhone,
   MdOutlineDiscount,
   MdOutlinePermMedia,
   MdOutlineSpatialTracking,
@@ -327,6 +328,12 @@ const navbarRoute = [
     key: "notifications",
     icon: <IoNotifications className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/notifications">Notifications</Link>,
+    route: "true",
+  },
+  {
+    key: "contacts",
+    icon: <MdOutlineContactPhone className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/contacts">Contacts</Link>,
     route: "true",
   },
   // {
