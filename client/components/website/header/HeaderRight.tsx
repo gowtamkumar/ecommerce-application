@@ -53,7 +53,7 @@ export default function HeaderRight() {
             size={26}
             className="group-hover:text-global-primary transition-all duration-300 
                      group-hover:scale-110"
-            style={{ color: "inherit" }}
+            // style={{ color: "inherit" }}
           />
 
           {/* Tooltip */}

@@ -26,14 +26,14 @@ const CurrencySwitcher = () => {
       placement="bottomRight"
       overlayClassName="currency-dropdown"
     >
-      <Button
-        type="text"
-        style={{ 
-          borderRadius: "var(--button-border-radius)",
-          backgroundColor: "var(--global-primary)",
-        }}
-        className="flex items-center gap-2 hover:bg-gray-100 !rounded-full !px-4 !h-10 
-                 text-gray-700 font-medium border border-gray-200 hover:!border-global-primary
+      <button
+        type="button"
+        // style={{ 
+        //   borderRadius: "var(--button-border-radius)",
+        //   backgroundColor: "var(--global-primary)",
+        // }}
+        className="flex cursor-pointer items-center gap-2 !rounded-full !px-4 !h-10 bg-white hover:bg-global-primary/5
+                 text-gray-700 font-medium border border-gray-200 hover:border-global-primary
                  transition-all duration-300 group"
       >
         <GlobalOutlined className="text-gray-500 group-hover:text-global-primary transition-colors" />
@@ -42,7 +42,7 @@ const CurrencySwitcher = () => {
         </span>
         <DownOutlined className="text-[10px] text-gray-400 group-hover:text-global-primary 
                                transition-all duration-300 group-hover:translate-y-0.5" />
-      </Button>
+      </button>
     </Dropdown>
   );
 };
