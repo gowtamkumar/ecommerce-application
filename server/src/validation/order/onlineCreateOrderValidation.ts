@@ -24,6 +24,9 @@ export const onlineCreateOrderValidationSchema = z.object({
   shippingAddressId: z.number({
     required_error: 'Shipping Address is Required',
   }),
+  termsAndConditions: z.boolean({
+    required_error: 'You must accept the terms and conditions',
+  }),
   paymentMethod: z.enum(['Cash', 'SSLCOMMERZ', 'Stripe'], {
     required_error: 'Payment Method is Required',
   }),

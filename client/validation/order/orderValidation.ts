@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const orderValidationSchema = z.object({
-  
   subTotal: z.number({
     required_error: "order total Amount is Required",
   }),
@@ -24,7 +23,7 @@ export const orderValidationSchema = z.object({
       "Completed",
       "Pending",
       "Returned",
-      "Canceled"
+      "Canceled",
     ])
     .optional(),
   orderItems: z

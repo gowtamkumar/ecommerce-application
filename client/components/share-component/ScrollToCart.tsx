@@ -45,7 +45,7 @@ const ScrollToCart: React.FC = () => {
   return (
     <>
       <button
-        className="fixed bottom-1/2 right-1 z-50 cursor-pointer p-2 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center gap-2"
+        className="fixed bottom-1/2 right-1 z-50 cursor-pointer p-2 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center gap-2"
         aria-label="Scroll to Cart"
         onClick={showLoading}
       >
@@ -54,7 +54,7 @@ const ScrollToCart: React.FC = () => {
           <span className="text-sm">
             {cart?.carts?.cartSummary?.totalQty || 0} Items
           </span>
-          <span className="text-sm bg-global-primary rounded-sm p-2 text-white">
+          <span className="text-sm bg-global-primary rounded-sm p-2">
             {formatPrice(cart?.carts?.cartSummary?.subTotal || 0)}
           </span>
         </div>

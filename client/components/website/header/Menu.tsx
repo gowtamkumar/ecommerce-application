@@ -1,6 +1,6 @@
 "use client";
 
-import { Dropdown } from "antd";
+import { Button, Dropdown } from "antd";
 import Link from "next/link";
 
 import { selectGlobal } from "@/redux/features/global/globalSlice";
@@ -32,7 +32,7 @@ const MainMenu = () => {
           <Link
             href={`/products?categoryId=${node.id}&`}
             rel="noopener noreferrer"
-            className="block px-3 py-2 text-global-text hover:text-global-button-primary hover:bg-global-button-primary/10 rounded-lg transition-colors font-medium"
+            className="block px-3 py-2 text-global-text hover:!text-global-button-primary hover:bg-global-button-primary/10 rounded-lg transition-colors font-medium"
           >
             {node.name}
           </Link>
@@ -56,24 +56,24 @@ const MainMenu = () => {
       <Dropdown
         menu={{
           items: optimizeCategory,
-          className: "min-w-[220px] p-2 rounded-xl shadow-2xl border border-gray-100/50 bg-white backdrop-blur-md"
         }}
         trigger={["click"]}
-        overlayClassName="pt-2"
+        overlayClassName="pt-2 profile-dropdown-overlay"
       >
-        <button className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
-                       rounded-global-button-radius transition-all duration-300 
-                       bg-global-button-primary text-global-button-text
-                       shadow-lg hover:shadow-xl 
-                       hover:bg-global-button-hover
-                       hover:scale-105 group
-                       border border-white/10">
+        <Button
+          type="primary"
+          className="!bg-gradient-to-r !from-global-hover !to-global-hover
+                             hover:!from-global-primary hover:!to-global-hover
+                             !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm 
+                             flex items-center gap-2 !shadow-lg hover:!shadow-xl
+                             !transition-all !duration-300 hover:!scale-105 group"
+        >
           <CiMenuFries className="text-lg group-hover:rotate-90 transition-transform duration-300" />
           <span className="font-semibold tracking-wide text-sm font-global-primary-fontfamily">
             Categories
           </span>
           <HiChevronDown className="text-sm group-hover:translate-y-0.5 transition-transform duration-300" />
-        </button>
+        </Button>
       </Dropdown>
     </div>
   );

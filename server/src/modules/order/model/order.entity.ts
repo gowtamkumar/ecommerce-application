@@ -163,6 +163,9 @@ export class OrderEntity {
   })
   status!: OrderStatus;
 
+  @Column({ name: 'terms_and_conditions', nullable: true })
+  termsAndConditions!: boolean;
+
   @Column({ name: 'tran_id', nullable: true })
   tranId?: string;
 

@@ -19,9 +19,12 @@ export const onlineOrderValidationSchema = z.object({
   }),
   grandTotal: z.string({
     required_error: "Grand Total Amount is Required",
-  }), 
+  }),
   couponId: z.union([z.number(), z.null()]).optional(),
   couponDiscount: z.string().optional(),
+  termsAndConditions: z.boolean({
+    required_error: "You must accept the terms and conditions",
+  }),
   status: z
     .enum([
       "Processing",

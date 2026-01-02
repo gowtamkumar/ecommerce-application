@@ -1,6 +1,4 @@
 "use client";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
-import { userProfileRoute } from "@/NavBarRoute";
 import {
   selectLayout,
   setCollapsed,
@@ -10,13 +8,13 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   SettingOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Layout } from "antd";
+import { Button, Layout } from "antd";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationDropdown from "../share-component/NotificationDropdown";
+import ProfileDropdown from "../share-component/ProfileDropdown";
 
 export default function DashboardHeader() {
   const { Header } = Layout;
@@ -126,7 +124,6 @@ export default function DashboardHeader() {
         </div>
 
         {/* Notifications */}
-
         <NotificationDropdown />
 
         {/* Divider */}
@@ -141,53 +138,8 @@ export default function DashboardHeader() {
         />
 
         {/* Profile Dropdown */}
-        <Dropdown
-          menu={{ items: userProfileRoute as any }}
-          placement="bottomRight"
-          trigger={["click"]}
-        >
-          <div className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl transition-all duration-300">
-            <Avatar
-              size={44}
-              src={getUploadImageUrl(profileImage)}
-              icon={!profileImage && <UserOutlined />}
-              style={{
-                backgroundColor: profileImage
-                  ? undefined
-                  : "var(--global-primary)",
-                border: "2px solid #ffffff",
-                boxShadow:
-                  "0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--global-primary)",
-              }}
-            />
-            <div className="hidden lg:block pr-2">
-              <p className="text-sm font-semibold text-gray-900 mb-0 leading-tight">
-                {userName}
-              </p>
-              <div className="flex items-center gap-1 mt-0.5">
-                <div
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    backgroundColor: "#10b981",
-                    boxShadow: "0 0 6px rgba(16, 185, 129, 0.5)",
-                  }}
-                />
-                <p className="text-xs text-gray-500 mb-0">{userRole}</p>
-              </div>
-            </div>
-          </div>
-        </Dropdown>
+        <ProfileDropdown profileImage={profileImage} />
       </div>
-
-      {/* <style jsx global>{`
-        .search-input-premium:hover,
-        .search-input-premium:focus {
-          border-color: rgba(99, 102, 241, 0.3) !important;
-          box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15) !important;
-        }
-      `}</style> */}
     </Header>
   );
 }

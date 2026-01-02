@@ -43,10 +43,15 @@ export default function CheckoutSummary() {
   const { checkoutFormData } = checkout || {};
   const { loading } = global || {};
 
+
+
   // State for form inputs
   const handleOrder = async () => {
     try {
       dispatch(setLoading({ save: true }));
+
+      console.log("checkoutFormData", checkoutFormData);
+
 
       const validatedFields = onlineOrderValidationSchema.safeParse({
         totalQty,
@@ -60,6 +65,7 @@ export default function CheckoutSummary() {
         shippingAddressId: checkoutFormData?.shippingAddressId,
         paymentMethod: checkoutFormData.paymentMethod,
         note: checkoutFormData.note,
+        termsAndConditions: checkoutFormData.termsAndConditions,
         orderItems: cart?.carts?.cartList,
       });
 
@@ -93,8 +99,6 @@ export default function CheckoutSummary() {
         dispatch(setCheckoutFormData({}));
         dispatch(setShippingAddress([]));
         dispatch(setShippingCharge({}));
-        console.log("res.data.", res.data);
-
         if (res.data.paymentUrl) {
           window.location.href = res.data.paymentUrl;
         }
@@ -106,7 +110,7 @@ export default function CheckoutSummary() {
     }
   };
 
- 
+
   return (
     <div className="space-y-4">
       <div className="space-y-3 text-sm text-gray-600">

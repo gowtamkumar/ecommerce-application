@@ -86,7 +86,18 @@ export default function PaymentMethod() {
       {/* Terms and Conditions */}
       <div className="pt-4 border-t border-gray-100">
         <label className="flex items-start gap-3 cursor-pointer group">
-          <Checkbox className="mt-1" />
+          <Checkbox className="mt-1"
+            onChange={({ target }) =>
+              dispatch(
+                setCheckoutFormData({
+                  ...checkoutFormData,
+                  termsAndConditions: target.checked,
+                })
+              )
+            }
+            value={checkoutFormData.termsAndConditions}
+          />
+
           <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
             I agree to the{" "}
             <a href="/terms-conditions" className="text-global-primary hover:text-global-hover font-medium hover:underline">
