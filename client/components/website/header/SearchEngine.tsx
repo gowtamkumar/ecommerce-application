@@ -171,7 +171,7 @@ export default function SearchEngine() {
                           
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-gray-900 group-hover:text-global-primary 
+                            <h3 className="font-medium text-gray-900 group-hover:text-global-hover 
                                          transition-colors duration-300 truncate">
                               {product.name}
                             </h3>
@@ -210,7 +210,7 @@ export default function SearchEngine() {
                           {/* Arrow Icon */}
                           <div className="flex-shrink-0 flex items-center">
                             <svg 
-                              className="w-5 h-5 text-gray-400 group-hover:text-global-primary 
+                              className="w-5 h-5 text-gray-400 group-hover:text-global-hover 
                                        group-hover:translate-x-1 transition-all duration-300"
                               fill="none" 
                               stroke="currentColor" 
@@ -235,9 +235,9 @@ export default function SearchEngine() {
                   <div className="p-3 border-t border-gray-100 mt-2">
                     <button
                       onClick={searchHandle}
-                      className="w-full py-2.5 px-4 bg-gray-50 hover:bg-global-primary hover:text-white
+                      className="w-full py-2.5 px-4 bg-gray-50 hover:bg-global-hover hover:text-white
                                text-gray-700 font-medium rounded-lg transition-all duration-300
-                               border border-gray-200 hover:border-global-primary"
+                               border border-gray-200 hover:border-global-hover"
                     >
                       View All {results.length} Results →
                     </button>

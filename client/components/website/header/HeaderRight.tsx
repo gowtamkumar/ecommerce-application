@@ -48,10 +48,10 @@ export default function HeaderRight() {
         href="/profile?tab=wishlist"
         className="cursor-pointer md:inline hidden group relative"
       >
-        <div className="relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300">
+        <div className="relative p-2 rounded-full hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)] transition-all duration-300">
           <CiHeart
             size={26}
-            className="group-hover:text-global-primary transition-all duration-300 
+            className="group-hover:text-global-hover transition-all duration-300 
                      group-hover:scale-110"
             // style={{ color: "inherit" }}
           />
@@ -61,7 +61,7 @@ export default function HeaderRight() {
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
                          pointer-events-none z-50"
-                style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
+                style={{ backgroundColor: "var(--primary-hover)", color: "#ffffff" }}>
             Wishlist
           </span>
         </div>
@@ -72,11 +72,11 @@ export default function HeaderRight() {
       <div className="relative group">
         <div
           onClick={showLoading}
-          className="group cursor-pointer relative p-2 rounded-full hover:bg-global-primary/10 transition-all duration-300"
+          className="group cursor-pointer relative p-2 rounded-full hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)] transition-all duration-300"
         >
           <FiShoppingBag
             size={24}
-            className="group-hover:text-global-primary transition-all duration-300
+            className="group-hover:text-global-hover transition-all duration-300
                      group-hover:scale-110"
             style={{ color: "inherit" }}
           />
@@ -95,7 +95,7 @@ export default function HeaderRight() {
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
                          pointer-events-none z-50"
-                style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
+                style={{ backgroundColor: "var(--primary-hover)", color: "#ffffff" }}>
             Shopping Cart
           </span>
         </div>
@@ -135,8 +135,8 @@ export default function HeaderRight() {
           >
             <div className="cursor-pointer group relative">
               <div className="p-0.5 rounded-full border-2 border-transparent 
-                          hover:border-global-primary/30 transition-all duration-300
-                          hover:shadow-[0_0_12px_var(--global-primary)]">
+                          hover:border-global-hover/30 transition-all duration-300
+                          hover:shadow-[0_0_12px_var(--primary-hover)]">
                 <Avatar
                   size={36}
                   src={getUploadImageUrl(profileImage)}
@@ -155,7 +155,7 @@ export default function HeaderRight() {
                            text-[10px] font-medium px-2 py-1 rounded
                            opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
                            pointer-events-none z-50"
-                    style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
+                    style={{ backgroundColor: "var(--primary-hover)", color: "#ffffff" }}>
                 My Account
               </span>
             </div>

@@ -147,10 +147,10 @@ export default async function Home() {
       {link && (
         <Link
           href={link}
-          className="group flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500 hover:text-global-primary transition-colors duration-300"
+          className="group flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-gray-500 hover:text-global-hover transition-colors duration-300"
         >
           View All Collection
-          <span className="block h-[1px] w-4 bg-gray-400 transition-all duration-300 group-hover:w-8 group-hover:bg-global-primary"></span>
+          <span className="block h-[1px] w-4 bg-gray-400 transition-all duration-300 group-hover:w-8 group-hover:bg-global-hover"></span>
         </Link>
       )}
     </div>

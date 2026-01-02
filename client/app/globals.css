@@ -123,7 +123,7 @@ h3, .h3 { font-size: var(--h3-size); }
 button:not(.ant-btn-text):not(.ant-btn-link), 
 .ant-btn:not(.ant-btn-text):not(.ant-btn-link) {
     font-family: var(--secondary-font);
-    background-color: var(--global-primary) !important;
+    background-color: var(--primary-hover) !important;
     color: white !important;
     border: none !important;
     border-radius: var(--button-border-radius) !important;
@@ -152,7 +152,7 @@ a {
 }
 
 a:hover {
-    color: var(--global-primary);
+    color: var(--primary-hover);
 }
 
 input, select, textarea {
@@ -275,11 +275,11 @@ input, select, textarea {
 }
 
 .profile-dropdown-overlay .ant-dropdown-menu-item:hover {
-  background-color: color-mix(in srgb, var(--global-primary), transparent 90%) !important;
+  background-color: color-mix(in srgb, var(--primary-hover), transparent 90%) !important;
 }
 
 .profile-dropdown-overlay .ant-dropdown-menu-item:hover .ant-dropdown-menu-item-icon,
 .profile-dropdown-overlay .ant-dropdown-menu-item:hover a,
 .profile-dropdown-overlay .ant-dropdown-menu-item:hover .ant-dropdown-menu-title-content {
-  color: var(--global-primary) !important;
+  color: var(--primary-hover) !important;
 }

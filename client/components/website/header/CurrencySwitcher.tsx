@@ -28,15 +28,15 @@ const CurrencySwitcher = () => {
     >
       <button
         type="button"
-        className="flex cursor-pointer items-center gap-2 !rounded-full !px-4 !h-10 hover:bg-global-primary/5
-                 text-gray-700 font-medium border border-gray-200 hover:border-global-primary
+        className="flex cursor-pointer items-center gap-2 !rounded-full !px-4 !h-10 hover:!bg-[color-mix(in_srgb,var(--primary-hover),transparent_95%)]
+                 text-gray-700 font-medium border border-gray-200 hover:!border-global-hover
                  transition-all duration-300 group"
       >
-        <GlobalOutlined className="text-gray-500 group-hover:text-global-primary transition-colors" />
-        <span className="hidden sm:inline-block font-semibold">
+        <GlobalOutlined className="text-gray-500 group-hover:text-global-hover transition-colors" />
+        <span className="hidden sm:inline-block font-semibold group-hover:text-global-hover transition-colors">
           {selectedCurrency?.symbol || '$'} {selectedCurrency?.name || 'USD'}
         </span>
-        <DownOutlined className="text-[10px] text-gray-400 group-hover:text-global-primary 
+        <DownOutlined className="text-[10px] text-gray-400 group-hover:text-global-hover 
                                transition-all duration-300 group-hover:translate-y-0.5" />
       </button>
     </Dropdown>

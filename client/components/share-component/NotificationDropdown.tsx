@@ -106,7 +106,7 @@ const NotificationDropdown = () => {
               <div
                 className={`
                   group relative p-4 transition-all duration-200 cursor-pointer border-b border-gray-50 last:border-0
-                  ${!item.isRead ? "hover:bg-global-primary/5" : "bg-white hover:bg-gray-50"}
+                  ${!item.isRead ? "hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_95%)]" : "bg-white hover:bg-gray-50"}
                 `}
                 style={!item.isRead ? { backgroundColor: "rgba(var(--global-primary-rgb, 247, 170, 14), 0.05)" } : {}}
                 onClick={() => handleRead(item.id)}
@@ -128,7 +128,7 @@ const NotificationDropdown = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-0.5">
                       <Text
-                        className={`text-sm truncate pr-2 ${!item.isRead ? "font-semibold text-gray-800" : "font-medium text-gray-600"}`}
+                        className={`text-sm truncate pr-2 ${!item.isRead ? "font-semibold text-gray-800" : "font-medium text-gray-600"} group-hover:text-global-hover transition-colors`}
                       >
                         {item.title}
                       </Text>
@@ -143,9 +143,9 @@ const NotificationDropdown = () => {
 
                     {!item.isRead && (
                       <div className="mt-2 flex items-center gap-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                           style={{ color: "var(--global-primary)" }}>
+                           style={{ color: "var(--primary-hover)" }}>
                          <span className="w-1.5 h-1.5 rounded-full animate-pulse" 
-                               style={{ backgroundColor: "var(--global-primary)" }} />
+                               style={{ backgroundColor: "var(--primary-hover)" }} />
                          Mark as read
                       </div>
                     )}
@@ -175,8 +175,8 @@ const NotificationDropdown = () => {
               ghost 
               className="!h-9 !text-xs !font-medium !rounded-lg"
               style={{ 
-                borderColor: "var(--global-primary)", 
-                color: "var(--global-primary)"
+                borderColor: "var(--primary-hover)", 
+                color: "var(--primary-hover)"
               }}
             >
               View all {notifications.length} notifications
@@ -226,12 +226,12 @@ const NotificationDropdown = () => {
           type="text"
           className={`
             !w-10 !h-10 !flex !items-center !justify-center !rounded-full !border-0
-            text-gray-600 hover:!text-global-primary hover:!bg-[color-mix(in_srgb,var(--global-primary),transparent_90%)]
+            text-gray-600 hover:!text-global-hover hover:!bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)]
             transition-all duration-300 transform active:scale-95
           `}
           style={open ? {
-            backgroundColor: "rgba(var(--global-primary-rgb, 247, 170, 14), 0.1)",
-            color: "var(--global-primary)"
+            backgroundColor: "color-mix(in srgb, var(--primary-hover), transparent 90%)",
+            color: "var(--primary-hover)"
           } : {}}
           icon={<BellOutlined style={{ fontSize: "20px" }} />}
         />

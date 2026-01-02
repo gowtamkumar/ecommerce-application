@@ -25,14 +25,14 @@ export default function MobileMenu() {
           <Link
             href={`/products?categoryId=${item.key}`}
             onClick={onClose}
-            className="text-gray-800 font-medium text-base flex-1 hover:text-global-primary transition-colors"
+            className="text-gray-800 font-medium text-base flex-1 hover:text-global-hover transition-colors"
           >
             {item.label}
           </Link>
           {item.children?.length > 0 && (
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-gray-400 hover:text-global-primary transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 text-gray-400 hover:text-global-hover transition-colors rounded-full hover:bg-gray-100"
             >
               <svg
                 className={`w-5 h-5 transform transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
@@ -65,7 +65,7 @@ export default function MobileMenu() {
       >
         <IoMdMenu
           size={28}
-          className="text-gray-800 group-hover:text-global-primary transition-colors"
+          className="text-gray-800 group-hover:text-global-hover transition-colors"
         />
       </div>
       
@@ -109,7 +109,7 @@ export default function MobileMenu() {
               <Link href="/login" onClick={() => setOpen(false)}>
                 <button className="w-full py-3.5 px-4 rounded-xl border border-gray-300 
                                  font-semibold text-gray-700 hover:bg-white hover:shadow-lg 
-                                 hover:border-global-primary hover:text-global-primary
+                                 hover:border-global-hover hover:text-global-hover
                                  transition-all duration-300 group">
                   <span className="flex items-center justify-center gap-2">
                     Login
