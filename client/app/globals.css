@@ -268,3 +268,18 @@ input, select, textarea {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #d1d5db;
 }
+
+/* User Profile Dropdown Hover Effects */
+.profile-dropdown-overlay .ant-dropdown-menu-item {
+  color: #4b5563; /* text-gray-600 */
+}
+
+.profile-dropdown-overlay .ant-dropdown-menu-item:hover {
+  background-color: color-mix(in srgb, var(--global-primary), transparent 90%) !important;
+}
+
+.profile-dropdown-overlay .ant-dropdown-menu-item:hover .ant-dropdown-menu-item-icon,
+.profile-dropdown-overlay .ant-dropdown-menu-item:hover a,
+.profile-dropdown-overlay .ant-dropdown-menu-item:hover .ant-dropdown-menu-title-content {
+  color: var(--global-primary) !important;
+}

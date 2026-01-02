@@ -413,27 +413,27 @@ const userProfileRoute: MenuProps["items"] = [
   {
     key: "my_account",
     label: <Link href="/profile?tab=my_account">My Account</Link>,
-    icon: <RiAccountCircleLine className="h-5 w-5 text-global-primary" />,
+    icon: <RiAccountCircleLine className="h-5 w-5 text-gray-500" />,
   },
   {
     key: "orders",
     label: <Link href="/profile?tab=orders">Orders</Link>,
-    icon: <IoReorderFour className="h-5 w-5 text-global-primary" />,
+    icon: <IoReorderFour className="h-5 w-5 text-gray-500" />,
   },
   {
     key: "wishlist",
     label: <Link href="/profile?tab=wishlist">Wishlist</Link>,
-    icon: <SiWish className="h-5 w-5 text-global-primary" />,
+    icon: <SiWish className="h-5 w-5 text-gray-500" />,
   },
   {
     key: "order_track",
     label: <Link href="/profile?tab=track_order">Order Track</Link>,
-    icon: <MdOutlineSpatialTracking className="h-5 w-5 text-global-primary" />,
+    icon: <MdOutlineSpatialTracking className="h-5 w-5 text-gray-500" />,
   },
   {
     key: "logout",
     label: <Link href="/">Logout</Link>,
-    icon: <CiLogout className="h-5 w-5 text-global-primary" />,
+    icon: <CiLogout className="h-5 w-5 text-gray-500" />,
     onClick: () => {
       signOut();
     },

@@ -131,7 +131,7 @@ export default function HeaderRight() {
             menu={{ items: userProfileRoute as any }}
             placement="bottomRight"
             trigger={["click"]}
-            overlayClassName="pt-2"
+            overlayClassName="pt-2 profile-dropdown-overlay"
           >
             <div className="cursor-pointer group relative">
               <div className="p-0.5 rounded-full border-2 border-transparent 

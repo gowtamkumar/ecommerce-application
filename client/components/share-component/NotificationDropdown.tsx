@@ -202,33 +202,31 @@ const NotificationDropdown = () => {
           boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)',
         },
       }}
-      classNames={{
-        root: "notification-popover",
-      }}
+      className="notification-popover"
     >
       <Badge
-  count={unreadCount}
-  overflowCount={99}
-  size="small"
-  offset={[-4, 4]}
-  styles={{
-    indicator: {
-      backgroundColor: "var(--global-primary)",
-      boxShadow: "0 2px 4px rgba(239, 68, 68, 0.4)",
-      border: "2px solid white",
-      fontWeight: "bold",
-      width: "20px",
-      height: "20px",
-      borderRadius: "50%",
-    },
-  }}
+      count={unreadCount}
+      overflowCount={99}
+      size="small"
+      offset={[-4, 4]}
+      styles={{
+        indicator: {
+          backgroundColor: "var(--global-primary)",
+          boxShadow: "0 2px 4px rgba(239, 68, 68, 0.4)",
+          border: "2px solid white",
+          fontWeight: "bold",
+          width: "20px",
+          height: "20px",
+          borderRadius: "50%",
+        },
+      }}
 >
 
         <Button
-        
           type="text"
           className={`
             !w-10 !h-10 !flex !items-center !justify-center !rounded-full !border-0
+            text-gray-600 hover:!text-global-primary hover:!bg-[color-mix(in_srgb,var(--global-primary),transparent_90%)]
             transition-all duration-300 transform active:scale-95
           `}
           style={open ? {
