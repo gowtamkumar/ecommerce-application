@@ -163,7 +163,7 @@ export default function CommentSection({
           <button
             type="submit"
             disabled={loading}
-            className={`px-8 py-3 bg-global-primary hover:bg-global-hover text-white font-semibold rounded-xl shadow-lg hover:shadow-global-primary/30 transition-all duration-300 transform hover:-translate-y-0.5 ${loading ? "opacity-70 cursor-not-allowed" : ""
+            className={`px-8 py-3 bg-global-hover hover:bg-global-hover text-white font-semibold rounded-xl shadow-lg hover:shadow-global-hover/30 transition-all duration-300 transform hover:-translate-y-0.5 ${loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
           >
             {loading ? "Posting..." : "Post Comment"}

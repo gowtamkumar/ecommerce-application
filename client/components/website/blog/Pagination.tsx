@@ -42,7 +42,7 @@ export default function Pagination({ meta }: { meta: any }) {
               href={createPageURL(page)}
               className={`px-3 py-2 rounded-md border ${
                 isActive
-                  ? "bg-global-primary text-white border-global-primary"
+                  ? "bg-global-hover text-white border-global-hover"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
               }`}
             >

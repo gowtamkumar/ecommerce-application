@@ -81,7 +81,7 @@ export default function TopBar() {
               
               <Link 
                 href="/register" 
-                className="px-3 py-1.5 rounded-full bg-global-primary hover:bg-global-hover text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 font-semibold"
+                className="px-3 py-1.5 rounded-full bg-global-hover hover:bg-global-hover text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 font-semibold"
               >
                 Sign up
               </Link>

@@ -27,7 +27,7 @@ export default function PagesPage() {
         </div>
         <Link
           href="/dashboard/pages/new"
-          className="group flex items-center gap-2 bg-global-primary text-white px-6 py-3 rounded-full hover:bg-global-hover transition-all duration-300 shadow-lg hover:shadow-global-hover/30 transform hover:-translate-y-0.5 active:translate-y-0"
+          className="group flex items-center gap-2 bg-global-hover text-white px-6 py-3 rounded-full hover:bg-global-hover transition-all duration-300 shadow-lg hover:shadow-global-hover/30 transform hover:-translate-y-0.5 active:translate-y-0"
         >
           <PlusOutlined className="text-lg group-hover:rotate-90 transition-transform duration-300" />
           <span className="font-medium">Create Page</span>

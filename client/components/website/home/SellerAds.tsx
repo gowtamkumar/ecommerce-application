@@ -62,7 +62,7 @@ const SellerAds = ({ banners }: any) => {
                     <Button
                       type="primary"
                       size="large"
-                      className="!h-14 !px-12 !text-lg !font-medium !bg-global-primary !text-white !border-none !rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:!bg-global-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
+                      className="!h-14 !px-12 !text-lg !font-medium !bg-global-hover !text-white !border-none !rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:!bg-global-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
                     >
                       Explore Now <ArrowRightOutlined />
                     </Button>
