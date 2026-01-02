@@ -5,6 +5,7 @@ import Header from "@/components/website/header/Header";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import { getHome } from "@/lib/apis/home";
 import { getImageUrl } from "@/lib/utils/imageUrl";
+import { Divider } from "antd";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -137,7 +138,9 @@ export default async function Home() {
 
   // Common Section Title Component for consistency
   const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-    <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4 border-b border-global-secondary/10 pb-4">
+    <>
+    
+    <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
       <div>
         <h2 className="text-global-size-h2 font-bold text-global-text tracking-tight">
           {title}
@@ -154,6 +157,8 @@ export default async function Home() {
         </Link>
       )}
     </div>
+    <Divider/>
+    </>
   );
 
   const homePageData = home.data?.homePage;
@@ -227,7 +232,7 @@ export default async function Home() {
     ),
     footer_banners: () => (
       FooterBanners?.length > 0 ? (
-        <section className="py-10 overflow-hidden bg-global-card-bg">
+        <section className="py-10 overflow-hidden ">
           <SellerAds banners={FooterBanners} />
         </section>
       ) : null

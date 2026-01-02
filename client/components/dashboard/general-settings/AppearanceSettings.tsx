@@ -314,19 +314,7 @@ const AppearanceSettings = () => {
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
-                             <Form.Item
-                                name="iconColor"
-                                label={<span className="text-base font-medium">Global Icon Color</span>}
-                                extra="Default color for icons"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="iconHoverColor"
-                                label={<span className="text-base font-medium">Icon Hover Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
+                            
                         </div>
                     </div>
 
@@ -388,9 +376,19 @@ const AppearanceSettings = () => {
                             >
                                 <InputNumber size="large" className="w-full" min={12} max={48} />
                             </Form.Item>
-
-                            
-
+                             <Form.Item
+                                name="iconColor"
+                                label={<span className="text-base font-medium">Global Icon Color</span>}
+                                extra="Default color for icons"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="iconHoverColor"
+                                label={<span className="text-base font-medium">Icon Hover Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
                             
                             <Form.Item
                                 name="iconBackgroundColor"

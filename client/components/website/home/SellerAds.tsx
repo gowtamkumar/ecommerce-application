@@ -9,6 +9,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Divider } from "antd";
 
 const SellerAds = ({ banners }: any) => {
   if (!banners?.length) return null;
@@ -22,6 +23,7 @@ const SellerAds = ({ banners }: any) => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
+        <Divider/>
         <Swiper
           modules={[Navigation, Pagination, Autoplay, EffectFade]}
           slidesPerView={1}

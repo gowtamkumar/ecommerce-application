@@ -54,8 +54,8 @@ export default function FooterTop() {
                            group-hover:opacity-100 transition-opacity duration-300 -z-10`}></div>
             
             {/* Icon with glow effect */}
-            <div className="relative text-global-footer-text/60 group-hover:text-global-footer-text transition-colors duration-300
-                          drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+            <div className="relative text-global-primary group-hover:scale-110 transition-all duration-300
+                          drop-shadow-[0_0_15px_var(--global-primary-alpha-20)]">
               {feature.icon}
             </div>
             

@@ -4,7 +4,7 @@ import WebFooter from "@/components/website/footer/Footer";
 import Header from "@/components/website/header/Header";
 import { getDiscounts } from "@/lib/apis/discount";
 import { getImageUrl } from "@/lib/utils/imageUrl";
-import { Empty } from "antd";
+import { Button, Empty } from "antd";
 import Link from "next/link";
 
 export async function generateMetadata() {
@@ -148,24 +148,29 @@ export default async function Offers() {
                           </p>
                         )}
 
-                        {/* CTA Arrow */}
-                        <div className="flex items-center text-white font-semibold">
-                          <span className="mr-2 transform transition-transform duration-300 group-hover:translate-x-2">
-                            View Offer
-                          </span>
-                          <svg
-                            className="w-5 h-5 transform transition-transform duration-300 group-hover:translate-x-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                        {/* CTA Button */}
+                        <div className="mt-4">
+                          <Button 
+                            type="primary"
+                            className="!h-10 !px-6 !rounded-global-button-radius !bg-global-button-primary !text-global-button-text
+                                     !border-none !font-global-button-weight !text-global-button-size
+                                     hover:!scale-105 transition-all duration-300 flex items-center gap-2 group/btn"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 8l4 4m0 0l-4 4m4-4H3"
-                            />
-                          </svg>
+                            <span>View Offer</span>
+                            <svg
+                              className="w-4 h-4 transform transition-transform duration-300 group-hover/btn:translate-x-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                              />
+                            </svg>
+                          </Button>
                         </div>
                       </div>
                     </div>

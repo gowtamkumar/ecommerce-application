@@ -6,8 +6,8 @@ export default function FourWeight() {
     <div className="space-y-6">
       <div className="space-y-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-global-primary/10 
-                        border border-global-primary/20">
+          <div className="p-3 rounded-global-button-radius bg-global-primary/10 
+                        border border-global-primary/20 shadow-[0_0_20px_rgba(247,170,14,0.1)]">
             <HiMail className="w-6 h-6 text-global-primary" />
           </div>
           <h2 className="text-xl font-bold text-global-footer-text">
