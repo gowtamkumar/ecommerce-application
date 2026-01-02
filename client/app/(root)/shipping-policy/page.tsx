@@ -6,8 +6,7 @@ import { FiTruck, FiMapPin, FiGlobe, FiPackage, FiClock, FiAlertCircle } from "r
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const Header = dynamic(() => import("@/components/website/header/Header"));
-const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+
 
 export const metadata: Metadata = {
   title: "Shipping Policy | Ecommerce",
@@ -143,8 +142,6 @@ export default async function ShippingPolicyPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative h-[35vh] min-h-[350px] flex items-center justify-center overflow-hidden">
@@ -205,8 +202,6 @@ export default async function ShippingPolicyPage() {
           </div>
         </section>
       </main>
-
-      <WebFooter />
     </div>
   );
 };

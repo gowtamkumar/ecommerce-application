@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
-const Header = dynamic(() => import("@/components/website/header/Header"));
-const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const ContactForm = dynamic(
   () => import("@/components/website/contact/ContactForm")
 );
@@ -69,9 +67,7 @@ export default async function page() {
 
   return (
     <>
-      <Header />
       {sections.map((section: any) => sectionMap[section.slug])}
-      <WebFooter />
     </>
   );
 }

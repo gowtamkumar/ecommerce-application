@@ -1,7 +1,4 @@
 import appConfig from "@/appConfig";
-import ScrollToCart from "@/components/share-component/ScrollToCart";
-import WebFooter from "@/components/website/footer/Footer";
-import Header from "@/components/website/header/Header";
 import { getDiscounts } from "@/lib/apis/discount";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { Button, Empty } from "antd";
@@ -58,8 +55,6 @@ export default async function Offers() {
 
   return (
     <>
-      <Header />
-
       {/* Premium Offers Container */}
       <div className="min-h-screen relative overflow-hidden bg-global-header-bg">
         {/* Subtle Theme-aware Background Elements */}
@@ -197,8 +192,8 @@ export default async function Offers() {
         </div>
       </div>
 
-      <ScrollToCart />
-      <WebFooter />
+      {/* <ScrollToCart />
+      <WebFooter /> */}
 
       {/* <style jsx global>{`
         @keyframes gradient-shift {

@@ -6,8 +6,7 @@ import { FiAlertCircle, FiCheckCircle, FiFileText, FiInfo, FiShield } from "reac
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const Header = dynamic(() => import("@/components/website/header/Header"));
-const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+
 
 export const metadata: Metadata = {
   title: "Terms & Conditions | Ecommerce",
@@ -53,8 +52,6 @@ export default async function TermsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative h-[35vh] min-h-[350px] flex items-center justify-center overflow-hidden">
@@ -142,8 +139,6 @@ export default async function TermsPage() {
           </div>
         </section>
       </main>
-
-      <WebFooter />
     </div>
   );
 };

@@ -6,12 +6,7 @@ import {
   TrophyOutlined
 } from "@ant-design/icons";
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Link from "next/link";
-
-const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
-const Header = dynamic(() => import("@/components/website/header/Header"));
-
 import { getSettings } from "@/lib/apis/setting";
 
 export const metadata: Metadata = {
@@ -196,12 +191,8 @@ export default async function About() {
   };
 
   return (
-    <>
-      <Header />
-      <div className="font-global-secondary-fontfamily text-gray-800 bg-gray-50/50">
-        {sections.map((section: any) => sectionMap[section.slug])}
-      </div>
-      <WebFooter />
-    </>
+    <div className="font-global-secondary-fontfamily text-gray-800 bg-gray-50/50">
+      {sections.map((section: any) => sectionMap[section.slug])}
+    </div>
   );
 }

@@ -1,9 +1,6 @@
 import appConfig from "@/appConfig";
 import { getProductBySlug } from "@/lib/apis/product";
 import dynamic from "next/dynamic";
-const ScrollToCart = dynamic(() => import("@/components/share-component/ScrollToCart"));
-const Header = dynamic(() => import("@/components/website/header/Header"));
-const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 const SingleProduct = dynamic(
   () => import("@/components/website/product/SingleProduct")
 );
@@ -146,28 +143,18 @@ export default async function Product({ params }: { params: Promise<{ slug: stri
   const slug = (await params).slug;
   if (!slug) {
     return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-            <p className="text-gray-500">The product you are looking for does not exist.</p>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
+          <p className="text-gray-500">The product you are looking for does not exist.</p>
         </div>
-        <ScrollToCart />
-        <WebFooter />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gray-50">
-        <SingleProduct slug={slug} />
-      </div>
-      <ScrollToCart />
-      <WebFooter />
-    </>
+    <div className="min-h-screen bg-gray-50">
+      <SingleProduct slug={slug} />
+    </div>
   );
 }
