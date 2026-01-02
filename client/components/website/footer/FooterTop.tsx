@@ -54,20 +54,20 @@ export default function FooterTop() {
                            group-hover:opacity-100 transition-opacity duration-300 -z-10`}></div>
             
             {/* Icon with glow effect */}
-            <div className="relative text-gray-300 group-hover:text-white transition-colors duration-300
-                          drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+            <div className="relative text-global-footer-text/60 group-hover:text-global-footer-text transition-colors duration-300
+                          drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
               {feature.icon}
             </div>
             
             {/* Text */}
-            <span className="text-sm font-medium text-gray-300 group-hover:text-white 
+            <span className="text-sm font-medium text-global-footer-text/70 group-hover:text-global-footer-text 
                            transition-colors duration-300 text-center">
               {feature.text}
             </span>
             
             {/* Decorative border */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 
-                          bg-gradient-to-r from-transparent via-white to-transparent
+                          bg-gradient-to-r from-transparent via-global-footer-text/40 to-transparent
                           group-hover:w-3/4 transition-all duration-300"></div>
           </div>
         ))}

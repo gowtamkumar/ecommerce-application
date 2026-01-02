@@ -24,7 +24,7 @@ export default function FirstWeight() {
       </div>
 
       {/* Company Description */}
-      <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
+      <p className="text-sm text-global-footer-text/60 leading-relaxed max-w-xs">
         {data?.description}
       </p>
 
@@ -36,7 +36,7 @@ export default function FirstWeight() {
               className="w-5 h-5 text-global-primary flex-shrink-0 mt-0.5 
                                        group-hover:scale-110 transition-transform duration-300"
             />
-            <address className="not-italic text-gray-300 group-hover:text-white transition-colors duration-300">
+            <address className="not-italic text-global-footer-text/80 group-hover:text-global-footer-text transition-colors duration-300">
               {data.address}
             </address>
           </div>
@@ -50,7 +50,7 @@ export default function FirstWeight() {
             />
             <Link
               href={`tel:${data.phone}`}
-              className="text-gray-300 hover:text-white transition-colors duration-300"
+              className="text-global-footer-text/80 hover:text-global-footer-text transition-colors duration-300"
             >
               {data.phone}
             </Link>
@@ -65,7 +65,7 @@ export default function FirstWeight() {
             />
             <Link
               href={`mailto:${data.email}`}
-              className="text-gray-300 hover:text-white transition-colors duration-300"
+              className="text-global-footer-text/80 hover:text-global-footer-text transition-colors duration-300"
             >
               {data.email}
             </Link>

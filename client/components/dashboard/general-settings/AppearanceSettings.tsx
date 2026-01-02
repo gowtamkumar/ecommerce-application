@@ -474,9 +474,6 @@ const AppearanceSettings = () => {
                             <Form.Item name="buttonPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
                                 <InputNumber size="large" className="w-full" min={0} max={60} />
                             </Form.Item>
-                            <Form.Item name="buttonPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={60} />
-                            </Form.Item>
                              <Form.Item
                                 name="buttonPrimaryColor"
                                 label={<span className="text-base font-medium">Button Primary Color</span>}

@@ -53,14 +53,14 @@ export default function SocialIcon() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Copyright */}
         <div className="text-center md:text-left">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-global-footer-text/60">
             © {new Date().getFullYear()} {settingData?.footerOption?.copyRight || "E-Commerce. All rights reserved."}
           </p>
         </div>
 
         {/* Social Media Icons */}
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-400 mr-2">Follow us:</span>
+          <span className="text-sm text-global-footer-text/60 mr-2">Follow us:</span>
           <div className="flex gap-3">
             {socialLinks.filter(link => link.show).map((social, index) => (
               <Link
@@ -73,7 +73,7 @@ export default function SocialIcon() {
               >
                 <div className={`
                   relative flex items-center justify-center w-10 h-10 rounded-full
-                  bg-white/10 backdrop-blur-sm border border-white/20
+                  bg-global-footer-text/10 backdrop-blur-sm border border-global-footer-text/20
                   transition-all duration-300
                   hover:scale-110 hover:border-transparent
                   ${social.hoverColor}
@@ -94,10 +94,10 @@ export default function SocialIcon() {
 
       {/* Payment Gateway Section */}
       <div className="flex flex-col items-center gap-4">
-        <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+        <h4 className="text-sm font-semibold text-global-footer-text/60 uppercase tracking-wider">
           Secure Payment Methods
         </h4>
-        <div className="w-full max-w-[900px] mx-auto p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+        <div className="w-full max-w-[900px] mx-auto p-6 rounded-xl bg-global-footer-text/5 backdrop-blur-sm border border-global-footer-text/10">
           <Image
             src={getUploadImageUrl(settingData?.footerOption?.image, "/banglargonji-payment-methods.png.webp")}
             alt="Payment Gateway"
@@ -109,22 +109,22 @@ export default function SocialIcon() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-white/10">
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+      <div className="flex flex-wrap items-center justify-center gap-4 pt-4 border-t border-global-footer-text/10">
+        <div className="flex items-center gap-2 text-xs text-global-footer-text/60">
           <svg className="w-4 h-4 text-global-primary" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
           </svg>
           <span>Secure Checkout</span>
         </div>
-        <div className="h-4 w-px bg-white/20"></div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="h-4 w-px bg-global-footer-text/20"></div>
+        <div className="flex items-center gap-2 text-xs text-global-footer-text/60">
           <svg className="w-4 h-4 text-global-primary" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
           </svg>
           <span>SSL Encrypted</span>
         </div>
-        <div className="h-4 w-px bg-white/20"></div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="h-4 w-px bg-global-footer-text/20"></div>
+        <div className="flex items-center gap-2 text-xs text-global-footer-text/60">
           <svg className="w-4 h-4 text-global-primary" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
             <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>

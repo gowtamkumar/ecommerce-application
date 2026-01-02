@@ -56,10 +56,10 @@ export default function Subscribe() {
           <Input
             size="large"
             placeholder="Enter your email address"
-            className="!bg-white/10 !border-white/20 !text-white placeholder:!text-gray-400
+            className="!bg-global-footer-text/10 !border-global-footer-text/20 !text-global-footer-text placeholder:!text-global-footer-text/40
                      !rounded-lg !pr-32 !py-3 !backdrop-blur-sm
-                     hover:!bg-white/15 hover:!border-white/30
-            focus:!bg-white/15 focus:!border-global-primary focus:!shadow-[0_0_20px_rgba(247,170,14,0.3)]
+                     hover:!bg-global-footer-text/15 hover:!border-global-footer-text/30
+            focus:!bg-global-footer-text/15 focus:!border-global-primary focus:!shadow-[0_0_20px_var(--button-primary-color)]
             transition-all duration-300"
           />
         </Form.Item>

@@ -11,7 +11,7 @@ export default function SecondWeight() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-bold text-white uppercase tracking-wide 
+      <h2 className="text-lg font-bold text-global-footer-text uppercase tracking-wide 
                    relative inline-block after:content-[''] after:absolute after:bottom-0 
                    after:left-0 after:w-12 after:h-0.5 after:bg-global-primary pb-2">
         Help Center
@@ -22,7 +22,7 @@ export default function SecondWeight() {
           <li key={index}>
             <Link
               href={link.href}
-              className="group flex items-center gap-2 text-gray-300 hover:text-white 
+              className="group flex items-center gap-2 text-global-footer-text/80 hover:text-global-footer-text 
                        transition-all duration-300"
             >
               <HiArrowRight className="w-4 h-4 text-global-primary/60 -translate-x-2

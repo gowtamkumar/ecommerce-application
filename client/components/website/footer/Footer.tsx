@@ -16,7 +16,7 @@ export default function WebFooter() {
       </div>
 
       {/* Top Features */}
-      <div className="relative border-b border-white/10 backdrop-blur-sm">
+      <div className="relative border-b border-global-footer-text/10 backdrop-blur-sm">
         <div className="container mx-auto">
           <FooterTop />
         </div>
@@ -41,10 +41,10 @@ export default function WebFooter() {
       </div>
 
       {/* Divider with gradient */}
-      <div className="relative w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+      <div className="relative w-full h-px bg-gradient-to-r from-transparent via-global-footer-text/20 to-transparent"></div>
 
       {/* Social Icons Section */}
-      <div className="relative bg-black/10 backdrop-blur-sm py-10 border-t border-white/5">
+      <div className="relative bg-black/10 backdrop-blur-sm py-10 border-t border-global-footer-text/5">
         <div className="container mx-auto px-4">
           <SocialIcon />
         </div>
