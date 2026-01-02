@@ -9,8 +9,8 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import DataTable from "./tables/DataTable";
 const LossProfit = dynamic(() => import("./LossProfit"));
-const StockReport = dynamic(() => import("./components/StockReport"));
 const TopCustomer = dynamic(() => import("./components/TopCustomer"));
 const StockAlert = dynamic(() => import("./components/StockAlert"));
 const TotalOrderSummaryDashboard = dynamic(() => import("./TodayOrderSummary"));
@@ -30,6 +30,7 @@ const Dashboard = () => {
     product_alert_stock_report,
     loss_profit,
     total_active_user,
+    orders,
   }: any = dashboardReports || {};
   const { RangePicker } = DatePicker;
 
@@ -134,7 +135,7 @@ const Dashboard = () => {
             View All {">>"}
           </Button>
         </div>
-        <StockReport recentHistory={dashboardReports} />
+        <DataTable orders={orders} />
       </div>
 
       {/* Analytics Grid */}

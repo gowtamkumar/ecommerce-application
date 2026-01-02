@@ -4,6 +4,7 @@ import { getDBConnection } from '../../../../config/db';
 import { asyncHandler } from '../../../../middlewares/async.middleware';
 import { logger } from '../../../../middlewares/logger';
 import { topSellingProductQuery } from '../../../../sqlQuery';
+import { OrderStatus } from '../../../order/enums';
 import { OrderEntity } from '../../../order/model/order.entity';
 
 // @desc Get all ProductCategorys
@@ -11,13 +12,8 @@ import { OrderEntity } from '../../../order/model/order.entity';
 // @access Public
 export const getDashboardReport = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getDashbordReport ${req.method} ${req.url}`);
-  // logger.error(`Error: something `); //this is error log
-  // logger.log({
-  //   level: 'info',
-  //   message: 'Hello distributed log files!'
-  // })
 
-  const { status, startDate, endDate }: any = req.query;
+  const { status = OrderStatus.Pending, startDate, endDate }: any = req.query;
   const connection = await getDBConnection();
 
   const fromDate = dayjs(startDate).toISOString();
@@ -25,11 +21,15 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
 
   const orderRepository = connection.getRepository(OrderEntity);
   const qb = orderRepository.createQueryBuilder('order');
-  qb.select(['order', 'orderItems', 'product', 'payments', 'user.name']);
-  qb.leftJoin('order.orderItems', 'orderItems');
-  qb.leftJoin('orderItems.product', 'product');
+  qb.select([
+    'order.trackingNo',
+    'order.status',
+    'order.createdAt',
+    'order.paymentStatus',
+    'order.grandTotal',
+    'user.name',
+  ]);
   qb.leftJoin('order.user', 'user');
-  qb.leftJoin('order.payments', 'payments');
 
   if (status) qb.where({ status });
   qb.andWhere(`order.createdAt BETWEEN '${fromDate}' AND '${toDate}'`);
