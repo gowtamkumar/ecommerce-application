@@ -216,12 +216,13 @@ const NotificationDropdown = () => {
 >
 
         <Button
-          type="text"
+          type="primary"
           className={`
-            !w-10 !h-10 !flex !items-center !justify-center !rounded-full !border-0
-            text-gray-600 hover:!text-global-button-primary hover:!bg-global-button-primary/10
-            transition-all duration-300 transform active:scale-95
-            ${open ? "!bg-global-button-primary/20 !text-global-button-primary" : ""}
+            !w-10 !h-10 !flex !items-center !justify-center !rounded-global-button-radius !border-0
+            !bg-global-button-primary !text-global-button-text
+            transition-all duration-300 transform active:scale-95 shadow-md hover:shadow-lg
+            hover:!bg-global-button-hover hover:scale-105
+            ${open ? "!scale-105 !shadow-lg" : ""}
           `}
           icon={<BellOutlined style={{ fontSize: "20px" }} />}
         />

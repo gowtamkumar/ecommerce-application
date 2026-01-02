@@ -48,18 +48,20 @@ export default function HeaderRight() {
         href="/profile?tab=wishlist"
         className="cursor-pointer md:inline hidden group relative"
       >
-        <div className="relative p-2 rounded-full hover:bg-global-button-primary/10 transition-all duration-300">
+        <div className="relative w-10 h-10 flex items-center justify-center rounded-global-button-radius 
+                     bg-global-button-primary text-global-button-text
+                     transition-all duration-300 shadow-md hover:shadow-lg hover:bg-global-button-hover
+                     hover:scale-105">
           <CiHeart
-            size={26}
-            className="group-hover:text-global-button-primary transition-all duration-300 
-                     group-hover:scale-110"
+            size={22}
+            className="transition-all duration-300"
           />
 
           {/* Tooltip */}
-          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
+          <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-50 bg-global-button-primary text-global-button-text">
+                         pointer-events-none z-50 bg-global-button-primary text-global-button-text shadow-xl">
             Wishlist
           </span>
         </div>
@@ -70,29 +72,31 @@ export default function HeaderRight() {
       <div className="relative group">
         <div
           onClick={showLoading}
-          className="group cursor-pointer relative p-2 rounded-full hover:bg-global-button-primary/10 transition-all duration-300"
+          className="group cursor-pointer relative w-10 h-10 flex items-center justify-center 
+                   rounded-global-button-radius bg-global-button-primary text-global-button-text
+                   transition-all duration-300 shadow-md hover:shadow-lg hover:bg-global-button-hover
+                   hover:scale-105"
         >
           <FiShoppingBag
-            size={24}
-            className="group-hover:text-global-button-primary transition-all duration-300
-                     group-hover:scale-110"
+            size={20}
+            className="transition-all duration-300"
             style={{ color: "inherit" }}
           />
 
           {/* Cart Badge */}
           {cartCount > 0 && (
-            <div className="absolute -top-1 -right-1 text-global-button-text text-[10px] font-bold min-w-[18px] h-[18px] 
+            <div className="absolute -top-1.5 -right-1.5 text-global-button-primary text-[10px] font-bold min-w-[18px] h-[18px] 
                            flex items-center justify-center rounded-full
-                           shadow-md animate-pulse bg-global-button-primary">
+                           shadow-md animate-pulse bg-global-button-text border border-global-button-primary">
               {cartCount > 99 ? '99+' : cartCount}
             </div>
           )}
 
           {/* Tooltip */}
-          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
+          <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 
                          text-[10px] font-medium px-2 py-1 rounded
                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-50 bg-global-button-primary text-global-button-text">
+                         pointer-events-none z-50 bg-global-button-primary text-global-button-text shadow-xl">
             Shopping Cart
           </span>
         </div>
@@ -131,27 +135,28 @@ export default function HeaderRight() {
             overlayClassName="pt-2 profile-dropdown-overlay"
           >
             <div className="cursor-pointer group relative">
-              <div className="p-0.5 rounded-full border-2 border-transparent 
-                          hover:border-global-button-primary/30 transition-all duration-300
-                          hover:shadow-[0_0_12px_var(--button-primary-color)]">
+              <div className="w-10 h-10 flex items-center justify-center rounded-global-button-radius 
+                           bg-global-button-primary p-0.5 border border-white/20
+                           transition-all duration-300 shadow-md hover:shadow-lg 
+                           hover:bg-global-button-hover hover:scale-105 overflow-hidden">
                 <Avatar
-                  size={36}
+                  size={32}
                   src={getUploadImageUrl(profileImage)}
-                  className="group-hover:scale-105 transition-transform duration-300"
+                  className="transition-transform duration-300"
                   style={{ background: "linear-gradient(to bottom right, var(--button-primary-color), var(--button-hover-color))" }}
                 />
               </div>
 
               {/* Online Indicator */}
-              <span className="absolute bottom-0 right-0 w-3 h-3
-                           border-2 border-white rounded-full"
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5
+                           border-2 border-white rounded-full shadow-sm"
                     style={{ backgroundColor: "#10b981" }}></span>
 
               {/* Tooltip */}
-              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
+              <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 
                            text-[10px] font-medium px-2 py-1 rounded
                            opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                           pointer-events-none z-50 bg-global-button-primary text-global-button-text">
+                           pointer-events-none z-50 bg-global-button-primary text-global-button-text shadow-xl">
                 My Account
               </span>
             </div>
