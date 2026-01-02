@@ -135,6 +135,18 @@ export default async function RootLayout({
     "--background-color": appearance.backgroundColor || "#ffffff",
     "--card-background": appearance.cardBackgroundColor || "#ffffff",
     "--link-color": appearance.linkColor || appearance.primaryColor || "#F7AA0E",
+    "--global-accent": appearance.accentColor || appearance.primaryColor || "#F7AA0E",
+    "--icon-color": appearance.iconColor || appearance.textColor || "#1f2937",
+    "--icon-hover-color": appearance.iconHoverColor || appearance.primaryHoverColor || "#e59a0d",
+    "--icon-bg": appearance.iconBackgroundColor || "transparent",
+    "--icon-hover-bg": appearance.iconHoverBackgroundColor || "rgba(0,0,0,0.05)",
+    "--icon-size": `${appearance.iconSize || 18}px`,
+    "--topbar-bg": appearance.topBarBg || appearance.secondaryColor || "#000000",
+    "--topbar-text": appearance.topBarText || "#ffffff",
+    "--header-bg": appearance.headerBg || "#ffffff",
+    "--header-text": appearance.headerText || appearance.textColor || "#1f2937",
+    "--footer-bg": appearance.footerBg || "#0f172a",
+    "--footer-text": appearance.footerText || "#ffffff",
     "--text-color": appearance.textColor || "#1f2937",
   };
 

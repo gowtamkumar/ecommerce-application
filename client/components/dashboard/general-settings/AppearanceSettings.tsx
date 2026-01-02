@@ -58,6 +58,18 @@ const AppearanceSettings = () => {
             inputBorderRadius: 8,
             inputBorderColor: "#d9d9d9",
             linkColor: "#F7AA0E",
+            accentColor: "#F7AA0E",
+            iconColor: "#1f2937",
+            iconHoverColor: "#F7AA0E",
+            iconBackgroundColor: "#F7AA0E",
+            iconHoverBackgroundColor: "rgba(0,0,0,0.05)",
+            iconSize: 18,
+            topBarBg: "#000000",
+            topBarText: "#ffffff",
+            headerBg: "#ffffff",
+            headerText: "#1f2937",
+            footerBg: "#0f172a",
+            footerText: "#ffffff",
             textColor: "#1f2937",
             ...initialData
         };
@@ -103,6 +115,18 @@ const AppearanceSettings = () => {
             inputBorderRadius,
             inputBorderColor,
             linkColor,
+            accentColor,
+            iconColor,
+            iconHoverColor,
+            iconBackgroundColor,
+            iconHoverBackgroundColor,
+            iconSize,
+            topBarBg,
+            topBarText,
+            headerBg,
+            headerText,
+            footerBg,
+            footerText,
             textColor,
         } = values;
 
@@ -140,6 +164,18 @@ const AppearanceSettings = () => {
                 inputBorderRadius,
                 inputBorderColor,
                 linkColor,
+                accentColor,
+                iconColor,
+                iconHoverColor,
+                iconBackgroundColor,
+                iconHoverBackgroundColor,
+                iconSize,
+                topBarBg,
+                topBarText,
+                headerBg,
+                headerText,
+                footerBg,
+                footerText,
                 textColor,
             }
         };
@@ -197,6 +233,20 @@ const AppearanceSettings = () => {
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
                             <Form.Item
+                                name="secondaryColor"
+                                label={<span className="text-base font-medium">Secondary Color</span>}
+                                extra="Secondary brand color"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item 
+                                name="primaryHoverColor"
+                                label={<span className="text-base font-medium">Hover Color</span>}
+                                extra="Color when interacting with items"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
                                 name="successColor"
                                 label={<span className="text-base font-medium">Success Color</span>}
                                 extra="For success states/messages"
@@ -238,13 +288,7 @@ const AppearanceSettings = () => {
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
-                            <Form.Item
-                                name="primaryHoverColor"
-                                label={<span className="text-base font-medium">Hover Color</span>}
-                                extra="Color when interacting with items"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
+                           
                             <Form.Item
                                 name="textColor"
                                 label={<span className="text-base font-medium">Default Text Color</span>}
@@ -252,19 +296,110 @@ const AppearanceSettings = () => {
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
-                            <Form.Item
-                                name="secondaryColor"
-                                label={<span className="text-base font-medium">Secondary Color</span>}
-                                extra="Secondary brand color"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
+                            
                             <Form.Item
                                 name="linkColor"
                                 label={<span className="text-base font-medium">Link Color</span>}
                                 extra="Color for hyperlinks"
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="accentColor"
+                                label={<span className="text-base font-medium">Accent Color</span>}
+                                extra="Secondary accent color"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                             <Form.Item
+                                name="iconColor"
+                                label={<span className="text-base font-medium">Global Icon Color</span>}
+                                extra="Default color for icons"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="iconHoverColor"
+                                label={<span className="text-base font-medium">Icon Hover Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+                    <Divider className="!my-8" />
+
+                    {/* Layout Component Colors Section */}
+                    <div className="space-y-6">
+                        <SettingsHeader title="Layout Component Colors" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Form.Item
+                                name="topBarBg"
+                                label={<span className="text-base font-medium">Top Bar Background</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="topBarText"
+                                label={<span className="text-base font-medium">Top Bar Text</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="headerBg"
+                                label={<span className="text-base font-medium">Header Background</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="headerText"
+                                label={<span className="text-base font-medium">Header Navigation Text</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="footerBg"
+                                label={<span className="text-base font-medium">Footer Background</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="footerText"
+                                label={<span className="text-base font-medium">Footer Text</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+                    <Divider className="!my-8" />
+
+                    {/* Icon Settings Section */}
+                    <div className="space-y-6">
+                        <SettingsHeader title="Icon & Ornament Settings" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Form.Item 
+                                name="iconSize" 
+                                label={<span className="text-base font-medium">Base Icon Size (px)</span>}
+                                extra="Default scaling for icons"
+                            >
+                                <InputNumber size="large" className="w-full" min={12} max={48} />
+                            </Form.Item>
+
+                            
+
+                            
+                            <Form.Item
+                                name="iconBackgroundColor"
+                                label={<span className="text-base font-medium">Icon Background</span>}
+                            >
+                                <Input  type="color" className="h-10 w-full p-1 cursor-pointer" placeholder="transparent or #hex" />
+                            </Form.Item>
+                            <Form.Item
+                                name="iconHoverBackgroundColor"
+                                label={<span className="text-base font-medium">Icon Hover Background</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" placeholder="rgba(0,0,0,0.05) or #hex" />
                             </Form.Item>
                         </div>
                     </div>

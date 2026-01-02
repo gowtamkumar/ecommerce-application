@@ -11,7 +11,7 @@ const CurrencySwitcher = () => {
   const items: MenuProps['items'] = currencies.map((currency) => ({
     key: currency.id,
     label: (
-      <span className="flex items-center gap-2.5 font-medium px-2 py-1.5 hover:text-global-hover transition-colors">
+      <span className="flex items-center gap-2.5 font-medium px-2 py-1.5 hover:text-global-hover hover:!bg-global-hover transition-colors">
         <span className="text-base">{currency.symbol}</span>
         <span>{currency.name}</span>
       </span>
@@ -24,11 +24,11 @@ const CurrencySwitcher = () => {
       menu={{ items }}
       trigger={['click']}
       placement="bottomRight"
-      overlayClassName="currency-dropdown"
+      // overlayClassName="currency-dropdown"
     >
       <button
         type="button"
-        className="flex cursor-pointer items-center gap-2 !rounded-full !px-4 !h-10 hover:!bg-[color-mix(in_srgb,var(--primary-hover),transparent_95%)]
+        className="flex cursor-pointer items-center gap-2 !rounded-full !px-4 !h-10 hover:!bg-global-hover !transparent_95%]
                  text-gray-700 font-medium border border-gray-200 hover:!border-global-hover
                  transition-all duration-300 group"
       >
