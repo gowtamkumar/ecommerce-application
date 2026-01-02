@@ -120,30 +120,30 @@ const ProductDetails = ({
           {/* Brand & Stock Status */}
           <div className="relative flex items-center justify-between mb-6 z-10">
             {brand?.name && (
-              <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-bold uppercase tracking-widest shadow-lg shadow-gray-900/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-global-text text-global-bg text-xs font-bold uppercase tracking-widest shadow-lg shadow-global-text/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-global-primary" />
                 {brand.name}
               </span>
             )}
             {checkStock > 0 ? (
               <div className="flex items-center gap-2">
                 <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-global-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-global-primary"></span>
                 </span>
-                <span className="text-emerald-700 font-bold text-sm tracking-wide">
+                <span className="text-global-primary font-bold text-sm tracking-wide">
                   In Stock
                 </span>
               </div>
             ) : (
-              <span className="text-rose-600 font-bold text-sm tracking-wide bg-rose-50 px-3 py-1 rounded-full">
+              <span className="text-global-primary font-bold text-sm tracking-wide bg-global-primary/10 px-3 py-1 rounded-full">
                 Out of Stock
               </span>
             )}
           </div>
 
           {/* Title - Gradient Typography */}
-          <h1 className="relative text-4xl lg:text-5xl font-black mb-4 leading-[1.1] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 z-10">
+          <h1 className="relative text-4xl lg:text-5xl font-black mb-4 leading-[1.1] tracking-tight text-global-text z-10">
             {name}
           </h1>
 
@@ -178,10 +178,10 @@ const ProductDetails = ({
                 </span>
                 {+discountValue > 0 && (
                   <div className="flex flex-col mb-1.5">
-                    <span className="text-xl text-gray-400 line-through font-semibold">
+                    <span className="text-xl text-global-text/40 line-through font-semibold">
                       {formatPrice(salePrice)}
                     </span>
-                    <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded uppercase tracking-wide">
+                    <span className="text-xs font-bold text-global-button-text bg-global-primary px-2 py-0.5 rounded uppercase tracking-wide">
                       Save {discountValue}
                       {discountStrategy === "Percentage"
                         ? "%"
@@ -195,7 +195,7 @@ const ProductDetails = ({
 
           {/* Short Description */}
           <div
-            className="relative prose prose-sm text-gray-600 mb-10 leading-loose z-10"
+            className="relative prose prose-sm text-global-text/70 mb-10 leading-loose z-10"
             dangerouslySetInnerHTML={{
               __html: shortDescription,
             }}
@@ -227,14 +227,14 @@ const ProductDetails = ({
                         className={`group relative flex items-center gap-3 pl-3 pr-5 py-3 border-2 rounded-global-button-radius transition-all duration-300 min-w-[150px]
                           ${isSelected
                             ? "border-global-button-primary bg-global-button-primary/5 shadow-lg shadow-global-button-primary/10 ring-1 ring-global-button-primary"
-                            : "border-gray-100 bg-white hover:border-global-button-primary/30 hover:shadow-md"
+                            : "border-global-header-text/5 bg-global-bg hover:border-global-button-primary/30 hover:shadow-md"
                           }`}
                       >
                         {item?.color?.value ? (
                           <div
                             className={`p-1 rounded-full border ${isSelected
-                              ? "border-indigo-200"
-                              : "border-gray-100"
+                              ? "border-global-button-primary/30"
+                              : "border-global-header-text/5"
                               }`}
                           >
                             <div
@@ -243,19 +243,19 @@ const ProductDetails = ({
                             />
                           </div>
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs text-gray-500">
+                          <div className="w-8 h-8 rounded-full bg-global-header-text/5 flex items-center justify-center font-bold text-xs text-global-header-text/40">
                             ?
                           </div>
                         )}
 
                         <div className="flex flex-col items-start">
                           <span
-                            className={`font-bold text-sm ${isSelected ? "text-global-primary" : "text-gray-700"
+                            className={`font-bold text-sm ${isSelected ? "text-global-primary" : "text-global-text/80"
                               }`}
                           >
                             {item?.size?.name}
                           </span>
-                          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                          <span className="text-[10px] font-semibold text-global-text/40 uppercase tracking-wider">
                             {item?.color?.name}
                           </span>
                         </div>
@@ -277,19 +277,19 @@ const ProductDetails = ({
           <div className="relative space-y-6 pt-8 border-t border-gray-100 z-10">
             <div className="flex flex-col sm:flex-row gap-4 h-[60px]">
               {/* Quantity - Pill Style */}
-              <div className="flex items-center justify-between px-2 py-1 bg-gray-100 rounded-full w-full sm:w-40 border border-transparent hover:border-gray-300 transition-colors">
+              <div className="flex items-center justify-between px-2 py-1 bg-global-header-text/5 rounded-full w-full sm:w-40 border border-transparent hover:border-global-header-text/10 transition-colors">
                 <button
                   onClick={() => setQty((pre) => Math.max(1, pre - 1))}
                   disabled={qty <= 1}
-                  className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm text-gray-700 hover:text-black hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                  className="w-10 h-10 flex items-center justify-center bg-global-bg rounded-full shadow-sm text-global-text hover:text-global-primary hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <HiOutlineMinus size={16} />
                 </button>
-                <span className="font-bold text-xl text-gray-900">{qty}</span>
+                <span className="font-bold text-xl text-global-text">{qty}</span>
                 <button
                   onClick={() => setQty((pre) => pre + 1)}
                   disabled={qty >= checkStock}
-                  className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm text-gray-700 hover:text-black hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                  className="w-10 h-10 flex items-center justify-center bg-global-bg rounded-full shadow-sm text-global-text hover:text-global-primary hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <AiOutlinePlus size={16} />
                 </button>
@@ -322,7 +322,7 @@ const ProductDetails = ({
 
             <div className="flex items-center justify-between gap-4 pt-2">
               <button
-                className="flex items-center gap-2.5 text-sm font-bold text-gray-500 hover:text-rose-500 transition-all group py-2"
+                className="flex items-center gap-2.5 text-sm font-bold text-global-text/60 hover:text-global-primary transition-all group py-2"
                 onClick={() => {
                   if (session.status === "unauthenticated") {
                     dispatch(setUnAuthorize(true));
@@ -331,17 +331,17 @@ const ProductDetails = ({
                   }
                 }}
               >
-                <div className="w-10 h-10 rounded-full bg-global-button-primary/10 flex items-center justify-center group-hover:bg-global-button-primary/20 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-global-primary/10 flex items-center justify-center group-hover:bg-global-primary/20 transition-colors">
                   <CiHeart
                     size={22}
-                    className="group-hover:scale-110 text-global-button-primary transition-transform"
+                    className="group-hover:scale-110 text-global-primary transition-transform"
                   />
                 </div>
                 <span>Add to Wishlist</span>
               </button>
 
-              <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-full">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              <div className="flex items-center gap-3 bg-global-header-text/5 px-4 py-2 rounded-full">
+                <span className="text-xs font-bold text-global-text/40 uppercase tracking-wider">
                   Share
                 </span>
                 <Share

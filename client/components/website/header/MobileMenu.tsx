@@ -25,14 +25,14 @@ export default function MobileMenu() {
           <Link
             href={`/products?categoryId=${item.key}`}
             onClick={onClose}
-            className="text-gray-800 font-medium text-base flex-1 hover:text-global-hover transition-colors"
+            className="text-global-text font-bold text-base flex-1 hover:text-global-primary transition-colors"
           >
             {item.label}
           </Link>
           {item.children?.length > 0 && (
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-gray-400 hover:text-global-hover transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 text-global-text/40 hover:text-global-primary transition-colors rounded-full hover:bg-global-text/5"
             >
               <svg
                 className={`w-5 h-5 transform transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
@@ -61,11 +61,11 @@ export default function MobileMenu() {
       {/* Menu Button */}
       <div 
         onClick={() => setOpen(true)}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-all duration-300 cursor-pointer group"
+        className="p-2 hover:bg-global-header-text/5 rounded-lg transition-all duration-300 cursor-pointer group"
       >
         <IoMdMenu
           size={28}
-          className="text-gray-800 group-hover:text-global-hover transition-colors"
+          className="text-global-header-text/80 group-hover:text-global-primary transition-colors"
         />
       </div>
       
@@ -73,14 +73,14 @@ export default function MobileMenu() {
       <Drawer
         title={
           <div className="flex items-center justify-between">
-            <span className="font-bold text-xl bg-gradient-to-r from-global-hover to-global-secondary bg-clip-text text-transparent">
+            <span className="font-extrabold text-2xl bg-gradient-to-r from-global-primary to-global-primary/60 bg-clip-text text-transparent uppercase tracking-tight">
               Menu
             </span>
             <button 
               onClick={() => setOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-global-header-text/5 rounded-full transition-colors"
             >
-              <HiX className="w-5 h-5 text-gray-600" />
+              <HiX className="w-5 h-5 text-global-header-text/60" />
             </button>
           </div>
         }
@@ -104,12 +104,12 @@ export default function MobileMenu() {
           </div>
           
           {/* Bottom Action Buttons */}
-          <div className="p-6 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-white">
+          <div className="p-6 border-t border-global-header-text/5 bg-gradient-to-br from-global-bg to-global-bg/50">
             <div className="grid grid-cols-2 gap-3">
               <Link href="/login" onClick={() => setOpen(false)}>
-                <button className="w-full py-3.5 px-4 rounded-xl border border-gray-300 
-                                 font-semibold text-gray-700 hover:bg-white hover:shadow-lg 
-                                 hover:border-global-hover hover:text-global-hover
+                <button className="w-full py-3.5 px-4 rounded-xl border border-global-header-text/10 
+                                 font-bold text-global-text/80 hover:bg-global-bg hover:shadow-xl 
+                                 hover:border-global-primary/30 hover:text-global-primary
                                  transition-all duration-300 group">
                   <span className="flex items-center justify-center gap-2">
                     Login
@@ -119,9 +119,9 @@ export default function MobileMenu() {
               </Link>
               <Link href="/register" onClick={() => setOpen(false)}>
                 <button className="w-full py-3.5 px-4 rounded-xl 
-                                 bg-gradient-to-r from-global-hover to-global-hover 
-                                 text-white font-semibold 
-                                 hover:from-global-hover hover:to-global-primary
+                                 bg-global-button-primary
+                                 text-global-button-text font-bold 
+                                 hover:bg-global-button-hover
                                  transition-all duration-300 shadow-lg hover:shadow-xl 
                                  hover:scale-105">
                   Sign Up

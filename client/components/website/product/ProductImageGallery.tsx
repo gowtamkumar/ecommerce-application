@@ -114,8 +114,8 @@ const ProductImageGallery = ({ images }: { images: string }) => {
                   key={idx}
                   className={`!w-full !h-20 lg:!h-24 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                     isActive
-                      ? 'border-gray-900 opacity-100 ring-1 ring-gray-900'
-                      : 'border-transparent opacity-60 hover:opacity-100 hover:border-gray-300'
+                      ? 'border-global-primary opacity-100 ring-1 ring-global-primary'
+                      : 'border-transparent opacity-60 hover:opacity-100 hover:border-global-header-text/20'
                   }`}
                 >
                   <div className="relative w-full h-full bg-white">
@@ -148,12 +148,12 @@ const ProductImageGallery = ({ images }: { images: string }) => {
         {newimages.length > 1 && (
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-20 pointer-events-none">
             <button
-              className="gallery-prev pointer-events-auto w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur text-gray-900 rounded-full shadow-md hover:bg-black hover:text-white transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
+              className="gallery-prev pointer-events-auto w-10 h-10 flex items-center justify-center bg-global-bg/80 backdrop-blur text-global-text rounded-full shadow-md hover:bg-global-primary hover:text-global-button-text transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
             >
               <FaChevronLeft size={16} />
             </button>
             <button
-              className="gallery-next pointer-events-auto w-10 h-10 flex items-center justify-center bg-white/80 backdrop-blur text-gray-900 rounded-full shadow-md hover:bg-black hover:text-white transition-all opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0"
+              className="gallery-next pointer-events-auto w-10 h-10 flex items-center justify-center bg-global-bg/80 backdrop-blur text-global-text rounded-full shadow-md hover:bg-global-primary hover:text-global-button-text transition-all opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0"
             >
               <FaChevronRight size={16} />
             </button>
@@ -161,7 +161,7 @@ const ProductImageGallery = ({ images }: { images: string }) => {
         )}
 
         {/* Counter Badge */}
-        <div className="absolute bottom-5 right-5 z-20 px-3 py-1 bg-black/5 backdrop-blur-sm rounded-full border border-white/20 text-xs font-bold text-gray-900">
+        <div className="absolute bottom-5 right-5 z-20 px-3 py-1 bg-global-text/5 backdrop-blur-sm rounded-full border border-global-text/10 text-xs font-bold text-global-text">
             {selectedIndex + 1} / {newimages.length}
         </div>
 

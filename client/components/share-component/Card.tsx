@@ -71,7 +71,7 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col h-full">
+    <div className="group relative bg-global-bg border border-global-header-text/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-global-primary/10 transition-all duration-500 flex flex-col h-full">
       {/* Image Area */}
       <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
         <Link href={`/products/${item.slug}`} className="block w-full h-full">
@@ -99,7 +99,7 @@ export default function Card({ item }: { item: any }) {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
           {+item.discountAmount > 0 && (
-             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-white/90 backdrop-blur text-rose-500 shadow-sm border border-rose-100">
+             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-global-bg/90 backdrop-blur text-global-primary shadow-sm border border-global-primary/10">
                -{item.discountValue}{item.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
              </span>
           )}
@@ -107,21 +107,21 @@ export default function Card({ item }: { item: any }) {
 
         {/* Floating Actions */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300 ease-out z-20">
-           <button
-            className="w-10 h-10 bg-white/90 backdrop-blur text-gray-700 rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-all duration-300 transform hover:scale-110"
-            onClick={(e) => {
-              e.preventDefault(); 
-              e.stopPropagation();
-              if (session.status === "unauthenticated") {
-                dispatch(setUnAuthorize(true));
-              } else {
-                AddToWishlist(item.id);
-              }
-            }}
-            title="Add to Wishlist"
-          >
-            <FaRegHeart size={16} />
-          </button>
+            <button
+              className="w-10 h-10 bg-global-header-bg/80 backdrop-blur text-global-header-text rounded-full flex items-center justify-center shadow-sm hover:bg-global-primary hover:text-global-button-text transition-all duration-300 transform hover:scale-110"
+              onClick={(e) => {
+                e.preventDefault(); 
+                e.stopPropagation();
+                if (session.status === "unauthenticated") {
+                  dispatch(setUnAuthorize(true));
+                } else {
+                  AddToWishlist(item.id);
+                }
+              }}
+              title="Add to Wishlist"
+            >
+              <FaRegHeart size={16} />
+            </button>
         </div>
       </div>
 
@@ -130,12 +130,12 @@ export default function Card({ item }: { item: any }) {
         
         {/* Ratings */}
         <div className="flex items-center gap-2 mb-2">
-            <Rate disabled value={+item.avgRating || 0} className="text-xs text-amber-400" style={{ fontSize: 12 }} />
-            <span className="text-xs text-gray-400 font-medium">({item.reviewsCount || 0})</span>
+            <Rate disabled value={+item.avgRating || 0} className="text-xs text-global-primary" style={{ fontSize: 12 }} />
+            <span className="text-xs text-global-text/40 font-bold">({item.reviewsCount || 0})</span>
         </div>
 
         {/* Title */}
-        <h3 className="font-semibold text-gray-900 text-base leading-snug mb-3 line-clamp-2 min-h-[2.75rem] group-hover:text-global-primary transition-colors">
+        <h3 className="font-bold text-global-text text-base leading-snug mb-3 line-clamp-2 min-h-[2.75rem] group-hover:text-global-primary transition-colors">
           <Link href={`/products/${item.slug}`}>
             {item.name}
           </Link>
@@ -144,9 +144,9 @@ export default function Card({ item }: { item: any }) {
         {/* Price & Cart */}
         <div className="mt-auto pt-4 border-t border-gray-50 flex flex-col gap-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold text-gray-900 tracking-tight">{formatPrice(item.finalPrice)}</span>
+            <span className="text-xl font-extrabold text-global-text tracking-tight">{formatPrice(item.finalPrice)}</span>
              {+item?.discountValue > 0 && (
-                <span className="text-sm text-gray-400 line-through decoration-gray-300">{formatPrice(item.salePrice)}</span>
+                <span className="text-sm text-global-text/40 line-through decoration-global-text/20">{formatPrice(item.salePrice)}</span>
               )}
           </div>
           

@@ -230,13 +230,13 @@ export default async function Home() {
         </div>
       </section>
     ),
-    footer_banners: () => (
-      FooterBanners?.length > 0 ? (
-        <section className="py-10 overflow-hidden ">
-          <SellerAds banners={FooterBanners} />
-        </section>
-      ) : null
-    ),
+    // footer_banners: () => (
+    //   FooterBanners?.length > 0 ? (
+    //     <section className="py-10 overflow-hidden bg-black/10">
+    //       <SellerAds banners={FooterBanners} />
+    //     </section>
+    //   ) : null
+    // ),
     blog: () => (
       <section className="py-24 bg-gradient-to-b from-global-bg to-global-card-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

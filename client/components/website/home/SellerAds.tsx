@@ -33,8 +33,8 @@ const SellerAds = ({ banners }: any) => {
           fadeEffect={{ crossFade: true }}
           pagination={{
             clickable: true,
-            bulletActiveClass: "!bg-white !opacity-100 !w-8 !rounded-full",
-            bulletClass: "swiper-pagination-bullet !bg-white/20 !opacity-100 !w-2.5 !h-2.5 !transition-all !duration-300"
+            bulletActiveClass: "!bg-global-primary !opacity-100 !w-8 !rounded-full",
+            bulletClass: "swiper-pagination-bullet !bg-global-primary/20 !opacity-100 !w-2.5 !h-2.5 !transition-all !duration-300"
           }}
           className="!pb-12"
         >
@@ -44,9 +44,9 @@ const SellerAds = ({ banners }: any) => {
                 {/* Content Side */}
                 <div className="order-2 lg:order-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
                   <div className="space-y-6 max-w-xl">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-xs font-medium text-gray-300 uppercase tracking-widest">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-global-primary/10 bg-global-primary/5 backdrop-blur-sm">
+                      <span className="w-2 h-2 rounded-full bg-global-primary animate-pulse" />
+                      <span className="text-xs font-bold text-global-primary uppercase tracking-widest">
                         Limited Edition
                       </span>
                     </div>
@@ -55,7 +55,7 @@ const SellerAds = ({ banners }: any) => {
                       {item.title}
                     </h2>
 
-                    <p className="text-lg text-gray-400 leading-relaxed font-light border-l-2 border-white/10 pl-6">
+                    <p className="text-lg text-global-text/60 leading-relaxed font-light border-l-2 border-global-primary/20 pl-6">
                       {item.description}
                     </p>
                   </div>
@@ -64,7 +64,7 @@ const SellerAds = ({ banners }: any) => {
                     <Button
                       type="primary"
                       size="large"
-                      className="!h-14 !px-12 !text-lg !font-medium !bg-global-hover !text-white !border-none !rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:!bg-global-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
+                      className="!h-14 !px-12 !text-lg !font-bold !bg-global-primary !text-global-button-text !border-none !rounded-full shadow-lg shadow-global-primary/20 hover:!bg-global-primary/90 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
                     >
                       Explore Now <ArrowRightOutlined />
                     </Button>

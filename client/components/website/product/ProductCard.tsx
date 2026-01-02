@@ -139,7 +139,7 @@ const ProductCard: React.FC = () => {
                             src={thumbnailUrl}
                             alt={item.name}
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, 300px"
                           />
                           {/* Hover Image Overlay */}
@@ -159,7 +159,7 @@ const ProductCard: React.FC = () => {
                       {/* Discount Badge */}
                       <div className="absolute top-3 left-3 z-10">
                         {item?.discountId && (
-                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-white/90 backdrop-blur text-rose-500 shadow-sm border border-rose-100">
+                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-global-primary text-global-button-text shadow-sm">
                            -{item.discountValue}
                            {item?.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
                          </span>
@@ -177,7 +177,7 @@ const ProductCard: React.FC = () => {
                                 AddToWishlist(item.id);
                               }
                             }}
-                            className="w-10 h-10 bg-white/90 backdrop-blur text-gray-700 rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-all duration-300 transform hover:scale-110"
+                            className="w-10 h-10 bg-global-header-bg/80 backdrop-blur text-global-header-text rounded-full flex items-center justify-center shadow-sm hover:bg-global-primary hover:text-global-button-text transition-all duration-300 transform hover:scale-110"
                             title="Add to Wishlist"
                           >
                             <FaRegHeart size={16} />
@@ -205,11 +205,11 @@ const ProductCard: React.FC = () => {
 
                             {/* Price Section */}
                             <div className="mb-6 flex items-baseline gap-3">
-                                <span className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
+                                <span className="text-2xl md:text-3xl font-bold text-global-text tracking-tight">
                                     {formatPrice(item.finalPrice)}
                                 </span>
                                 {item?.discountId && (
-                                    <span className="text-lg text-gray-400 line-through decoration-gray-300">
+                                    <span className="text-lg text-global-text/40 line-through decoration-global-text/20">
                                         {formatPrice(item.salePrice)}
                                     </span>
                                 )}

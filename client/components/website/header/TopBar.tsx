@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import { HiPhone, HiMail } from "react-icons/hi";
 import { RiUserLine, RiLoginBoxLine } from "react-icons/ri";
+import { Divider } from "antd";
 
 export default function TopBar() {
   const global = useSelector(selectGlobal);
@@ -11,10 +12,9 @@ export default function TopBar() {
   const session = useSession();
 
   return (
-    <div className="relative bg-global-topbar-bg text-global-topbar-text text-xs py-2.5 font-global-secondary-fontfamily tracking-wide overflow-hidden">
+    <>
+    <div className="relative bg-global-topbar-bg text-global-topbar-text text-xs py-2 font-global-secondary-fontfamily tracking-wide overflow-hidden">
       {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-white/5 to-white/5 pointer-events-none"></div>
-      
       <div className="container relative flex flex-col sm:flex-row justify-between items-center mx-auto px-4 py-1.5 sm:py-0 font-global-secondary-fontfamily z-10">
         {/* Left Section */}
         <div className="text-[11px] font-medium tracking-wide flex gap-4 sm:gap-6 items-center opacity-90">
@@ -89,6 +89,9 @@ export default function TopBar() {
           )}
         </div>
       </div>
+
+  
     </div>
+        <Divider className="!m-0 !p-0"/></>
   );
 }

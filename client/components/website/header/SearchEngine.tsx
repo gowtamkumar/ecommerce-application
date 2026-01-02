@@ -76,11 +76,11 @@ export default function SearchEngine() {
               onFocus={() => setIsFocused(true)}
               placeholder="Search for products..."
               className="!h-11 !rounded-full !pl-12
-                       !bg-gray-50 !border-gray-200
-                       hover:!bg-white hover:!border-gray-300
-                       focus:!bg-white focus:!border-global-hover focus:!shadow-[0_0_0_3px_rgba(247,170,14,0.1)]
+                       !bg-global-header-bg/5 !border-global-header-text/10
+                       hover:!bg-global-bg hover:!border-global-header-text/20
+                       focus:!bg-global-bg focus:!border-global-primary focus:!shadow-[0_0_0_3px_var(--global-primary-alpha-10)]
                        !transition-all !duration-300
-                       placeholder:!text-gray-400"
+                       placeholder:!text-global-header-text/40"
               suffix={
                 <div className="flex items-center gap-2">
                   {query && (
@@ -135,8 +135,8 @@ export default function SearchEngine() {
             ) : results.length > 0 ? (
               // Results List
               <div className="p-2">
-                <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
-                  <HiSparkles className="text-global-hover" />
+                <div className="px-3 py-2 text-xs font-bold text-global-header-text/40 uppercase tracking-wide flex items-center gap-2">
+                  <HiSparkles className="text-global-primary" />
                   {results.length} Result{results.length !== 1 ? 's' : ''} Found
                 </div>
                 
@@ -171,7 +171,7 @@ export default function SearchEngine() {
                           
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-gray-900 group-hover:text-global-hover 
+                           <h3 className="font-bold text-global-text group-hover:text-global-primary 
                                          transition-colors duration-300 truncate">
                               {product.name}
                             </h3>
@@ -189,7 +189,7 @@ export default function SearchEngine() {
                               
                               {+product.discountValue > 0 && (
                                 <div className="flex">
-                                  <span className="text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded uppercase tracking-wide">
+                                  <span className="text-[10px] font-bold text-global-button-text bg-global-primary px-1.5 py-0.5 rounded uppercase tracking-wide">
                                     Save {product.discountValue}
                                     {product.discountStrategy === "Percentage"
                                       ? "%"
@@ -210,7 +210,7 @@ export default function SearchEngine() {
                           {/* Arrow Icon */}
                           <div className="flex-shrink-0 flex items-center">
                             <svg 
-                              className="w-5 h-5 text-gray-400 group-hover:text-global-hover 
+                              className="w-5 h-5 text-global-text/20 group-hover:text-global-primary 
                                        group-hover:translate-x-1 transition-all duration-300"
                               fill="none" 
                               stroke="currentColor" 
