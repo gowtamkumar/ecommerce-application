@@ -20,7 +20,7 @@ export default function TopBar() {
         <div className="text-[11px] font-medium tracking-wide flex gap-4 sm:gap-6 items-center text-gray-300">
           {/* Welcome Message */}
           <span className="opacity-90 hover:opacity-100 transition-opacity cursor-default hidden sm:flex items-center gap-2">
-            <span className="inline-block w-1 h-1 rounded-full bg-global-primary animate-pulse"></span>
+            <span className="inline-block w-1 h-1 rounded-full bg-global-hover animate-pulse"></span>
             {setting || "Welcome to our store!"}
           </span>
           
@@ -30,8 +30,8 @@ export default function TopBar() {
               href={`tel:${global.setting?.phone}`} 
               className="hover:text-white transition-all duration-300 flex items-center gap-2 group"
             >
-              <div className="p-1.5 rounded-full bg-global-primary/20 border border-global-primary/30 group-hover:bg-global-primary/30 transition-all duration-300">
-                <HiPhone className="w-3 h-3 text-global-primary" />
+              <div className="p-1.5 rounded-full bg-global-hover/20 border border-global-hover/30 group-hover:bg-global-hover/30 transition-all duration-300">
+                <HiPhone className="w-3 h-3 text-global-hover" />
               </div>
               <span className="text-gray-300 group-hover:text-white transition-colors">
                 {global.setting?.phone}
@@ -45,8 +45,8 @@ export default function TopBar() {
               href={`mailto:${global.setting?.email}`}
               className="hover:text-white transition-all duration-300 hidden lg:flex items-center gap-2 group"
             >
-              <div className="p-1.5 rounded-full bg-global-primary/20 border border-global-primary/30 group-hover:bg-global-primary/30 transition-all duration-300">
-                <HiMail className="w-3 h-3 text-global-primary" />
+              <div className="p-1.5 rounded-full bg-global-hover/20 border border-global-hover/30 group-hover:bg-global-hover/30 transition-all duration-300">
+                <HiMail className="w-3 h-3 text-global-hover" />
               </div>
               <span className="text-gray-300 group-hover:text-white transition-colors">
                 {global.setting?.email}

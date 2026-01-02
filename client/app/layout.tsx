@@ -130,6 +130,9 @@ export default async function RootLayout({
     .map((f) => f.split(",")[0].trim())
     .filter((v, i, a) => a.indexOf(v) === i);
 
+    console.log("appearance", appearance);
+    
+
   return (
     <html lang="en">
       <head>
@@ -247,7 +250,7 @@ export default async function RootLayout({
                     fontFamily: appearance.secondaryFont || "var(--font-poppins)",
                     fontSize: appearance.baseFontSize || 16,
                     borderRadius: appearance.buttonBorderRadius || 8,
-                    colorPrimary: appearance.primaryColor || "#F7AA0E",
+                    colorPrimary: appearance.primaryColor || "#3211ecff",
                   },
                   components: {
                     Button: {

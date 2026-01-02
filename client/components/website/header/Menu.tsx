@@ -32,7 +32,7 @@ const MainMenu = () => {
           <Link
             href={`/products?categoryId=${node.id}&`}
             rel="noopener noreferrer"
-            className="block px-3 py-2 text-global-primary hover:text-global-hover hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)] rounded-lg transition-colors font-medium"
+            className="block px-3 py-2 text-global-hover hover:text-global-hover hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)] rounded-lg transition-colors font-medium"
           >
             {node.name}
           </Link>

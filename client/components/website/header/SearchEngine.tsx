@@ -78,7 +78,7 @@ export default function SearchEngine() {
               className="!h-11 !rounded-full !pl-12
                        !bg-gray-50 !border-gray-200
                        hover:!bg-white hover:!border-gray-300
-                       focus:!bg-white focus:!border-global-primary focus:!shadow-[0_0_0_3px_rgba(247,170,14,0.1)]
+                       focus:!bg-white focus:!border-global-hover focus:!shadow-[0_0_0_3px_rgba(247,170,14,0.1)]
                        !transition-all !duration-300
                        placeholder:!text-gray-400"
               suffix={
@@ -136,7 +136,7 @@ export default function SearchEngine() {
               // Results List
               <div className="p-2">
                 <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
-                  <HiSparkles className="text-global-primary" />
+                  <HiSparkles className="text-global-hover" />
                   {results.length} Result{results.length !== 1 ? 's' : ''} Found
                 </div>
                 
@@ -258,7 +258,7 @@ export default function SearchEngine() {
                 </p>
                 <button
                   onClick={handleClose}
-                  className="text-global-primary hover:underline text-sm font-medium"
+                  className="text-global-hover hover:underline text-sm font-medium"
                 >
                   Clear search
                 </button>

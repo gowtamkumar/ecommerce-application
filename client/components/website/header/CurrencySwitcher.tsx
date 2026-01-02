@@ -11,7 +11,7 @@ const CurrencySwitcher = () => {
   const items: MenuProps['items'] = currencies.map((currency) => ({
     key: currency.id,
     label: (
-      <span className="flex items-center gap-2.5 font-medium px-2 py-1.5 hover:text-global-primary transition-colors">
+      <span className="flex items-center gap-2.5 font-medium px-2 py-1.5 hover:text-global-hover transition-colors">
         <span className="text-base">{currency.symbol}</span>
         <span>{currency.name}</span>
       </span>

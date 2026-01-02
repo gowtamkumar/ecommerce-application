@@ -83,7 +83,7 @@ export default function HeaderRight() {
 
           {/* Cart Badge */}
           {cartCount > 0 && (
-            <div style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }} className="absolute -top-1 -right-1 text-white text-[10px] font-bold min-w-[18px] h-[18px] 
+            <div style={{ backgroundColor: "var(--primary-hover)", color: "#ffffff" }} className="absolute -top-1 -right-1 text-white text-[10px] font-bold min-w-[18px] h-[18px] 
                            flex items-center justify-center rounded-full
                            shadow-md animate-pulse">
               {cartCount > 99 ? '99+' : cartCount}
