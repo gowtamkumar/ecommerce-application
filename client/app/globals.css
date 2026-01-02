@@ -287,3 +287,22 @@ input, select, textarea {
 .profile-dropdown-overlay .ant-dropdown-menu-item:hover .ant-dropdown-menu-title-content {
   color: var(--primary-hover) !important;
 }
+
+/* Divider Styling */
+.ant-divider {
+  border-block-start-color: var(--global-primary) !important;
+  opacity: 0.2;
+}
+
+.ant-divider-horizontal {
+    margin: 16px 0 !important;
+}
+
+.bg-global-header-bg {
+    background-color: var(--header-bg) !important;
+}
+
+.text-global-header-text {
+    color: var(--header-text) !important;
+}
+

@@ -61,10 +61,11 @@ export default async function Offers() {
       <Header />
 
       {/* Premium Offers Container */}
-      <div className="min-h-screen relative overflow-hidden">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 animate-gradient-shift"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-100/20 via-transparent to-blue-100/20"></div>
+      <div className="min-h-screen relative overflow-hidden bg-global-header-bg">
+        {/* Subtle Theme-aware Background Elements */}
+        <div className="absolute inset-0 bg-global-primary/5 animate-pulse"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--global-primary)_0%,_transparent_70%)] opacity-20"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--global-hover)_0%,_transparent_70%)] opacity-10"></div>
 
         {/* Content */}
         <div className="relative z-10">
@@ -72,14 +73,14 @@ export default async function Offers() {
           <div className="container mx-auto px-4 pt-12 pb-16">
             <div className="text-center mb-12">
               <div className="inline-block mb-4">
-                <span className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-semibold rounded-full shadow-lg animate-pulse">
+                <span className="px-6 py-2 bg-global-primary text-global-button-text text-sm font-semibold rounded-full shadow-lg">
                   🎉 Exclusive Offers
                 </span>
               </div>
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 text-global-header-text leading-tight">
                 Latest Discounts & Deals
               </h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-xl text-global-header-text/60 max-w-2xl mx-auto">
                 Discover amazing offers and save big on your favorite products
               </p>
             </div>
@@ -106,23 +107,23 @@ export default async function Offers() {
 
                       {/* Glassmorphism Card Overlay */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <div className="absolute inset-0 backdrop-blur-sm bg-white/10"></div>
+                        <div className="absolute inset-0 backdrop-blur-sm bg-black/40"></div>
                       </div>
 
-                      {/* Gradient Border on Hover */}
-                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-[2px] bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500">
+                      {/* Theme Border on Hover */}
+                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-[2px] bg-global-primary/50">
                         <div className="w-full h-full rounded-2xl bg-transparent"></div>
                       </div>
 
                       {/* Glow Effect on Hover */}
-                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-2xl shadow-purple-500/50"></div>
+                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-2xl shadow-global-primary/30"></div>
 
                       {/* Content */}
                       <div className="absolute inset-0 p-6 flex flex-col justify-end">
                         {/* Discount Badge */}
                         {item.discountPercent && (
                           <div className="absolute top-6 right-6">
-                            <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg transform rotate-3 group-hover:rotate-0 transition-transform duration-300">
+                            <div className="bg-global-primary text-global-button-text px-4 py-2 rounded-full font-bold text-lg shadow-lg transform rotate-3 group-hover:rotate-0 transition-transform duration-300">
                               {item.discountPercent}% OFF
                             </div>
                           </div>
@@ -136,9 +137,9 @@ export default async function Offers() {
                         </div>
 
                         {/* Offer Name */}
-                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 transform transition-transform duration-300 group-hover:translate-x-1">
-                          {item.name}
-                        </h3>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 transform transition-transform duration-300 group-hover:translate-x-1 drop-shadow-md">
+                          {item.name
+                        }</h3>
 
                         {/* Description if available */}
                         {item.description && (
@@ -174,11 +175,11 @@ export default async function Offers() {
             ) : (
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
-                  <div className="mb-8 inline-block p-8 bg-white/40 backdrop-blur-lg rounded-3xl border border-white/60 shadow-xl">
+                  <div className="mb-8 inline-block p-8 bg-global-header-bg/40 backdrop-blur-lg rounded-3xl border border-global-header-text/10 shadow-xl">
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
                       description={
-                        <span className="text-gray-600 text-lg">
+                        <span className="text-global-header-text/60 text-lg">
                           No offers available at the moment. Check back soon!
                         </span>
                       }

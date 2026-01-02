@@ -80,10 +80,10 @@ export default async function page({
     <>
       <Header />
 
-      <div className="min-h-screen relative overflow-hidden">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 animate-gradient-shift"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-100/20 via-transparent to-blue-100/20"></div>
+      <div className="min-h-screen relative overflow-hidden bg-global-header-bg">
+        {/* Subtle Theme Background Elements */}
+        <div className="absolute inset-0 bg-global-primary/5"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--global-primary)_0%,_transparent_70%)] opacity-20"></div>
 
         <div className="relative z-10">
           {discount.success && offer ? (
@@ -107,14 +107,14 @@ export default async function page({
                     {/* Discount Badge */}
                     {offer.discountStrategy === "Percentage" ? (
                       <div className="mb-6 inline-block">
-                        <div className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 text-white px-8 py-4 rounded-full font-bold text-3xl md:text-4xl shadow-2xl animate-pulse">
+                        <div className="bg-global-primary text-global-button-text px-8 py-4 rounded-full font-bold text-3xl md:text-4xl shadow-2xl">
                           {+offer.value}% OFF
                         </div>
                       </div>
                     ) :
                       offer.discountStrategy === "fixed" && (
                         <div className="mb-6 inline-block">
-                          <div className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 text-white px-8 py-4 rounded-full font-bold text-3xl md:text-4xl shadow-2xl animate-pulse">
+                          <div className="bg-global-primary text-global-button-text px-8 py-4 rounded-full font-bold text-3xl md:text-4xl shadow-2xl">
                             {+offer.value} OFF
                           </div>
                         </div>
@@ -122,35 +122,35 @@ export default async function page({
                     }
 
                     {/* Offer Name */}
-                    <h1 className={`text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight ${offer.image ? 'text-white drop-shadow-2xl' : 'bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent'}`}>
+                    <h1 className={`text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight ${offer.image ? 'text-white drop-shadow-2xl' : 'text-global-header-text'}`}>
                       {offer.name}
                     </h1>
 
                     {/* Description */}
                     {offer.description && (
-                      <p className={`text-xl md:text-2xl mb-8 max-w-2xl mx-auto ${offer.image ? 'text-white/95 drop-shadow-lg' : 'text-gray-700'}`}>
+                      <p className={`text-xl md:text-2xl mb-8 max-w-2xl mx-auto ${offer.image ? 'text-white/95 drop-shadow-lg' : 'text-global-header-text/80'}`}>
                         {offer.description}
                       </p>
                     )}
 
                     {/* Offer Details Card */}
-                    <div className="inline-block backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6 shadow-2xl">
+                    <div className="inline-block backdrop-blur-xl bg-global-header-bg/20 border border-global-header-text/20 rounded-2xl p-6 shadow-2xl">
                       <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
                         {/* Scope */}
                         <div className="flex items-center gap-2">
-                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-global-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                           </svg>
-                          <span className="text-white font-semibold">{offer.scope}</span>
+                          <span className={`${offer.image ? 'text-white' : 'text-global-header-text'} font-semibold`}>{offer.scope}</span>
                         </div>
 
                         {/* Valid Until */}
                         {offer.endDate && (
                           <div className="flex items-center gap-2">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 text-global-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span className="text-white font-semibold">
+                            <span className={`${offer.image ? 'text-white' : 'text-global-header-text'} font-semibold`}>
                               Valid until {new Date(offer.endDate).toLocaleDateString()}
                             </span>
                           </div>
@@ -167,16 +167,16 @@ export default async function page({
                   <>
                     {/* Section Header */}
                     <div className="text-center my-12">
-                      <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 bg-clip-text text-transparent">
+                      <h2 className="text-4xl md:text-5xl font-bold mb-4 text-global-header-text">
                         Featured Products
                       </h2>
-                      <p className="text-gray-600 text-lg">
+                      <p className="text-global-header-text/60 text-lg">
                         Discover amazing products available with this exclusive offer
                       </p>
                     </div>
 
                     {/* Products Grid */}
-                    <div className="backdrop-blur-xl bg-white/30 border border-white/50 rounded-3xl p-6 md:p-8 shadow-1xl">
+                    <div className="backdrop-blur-xl bg-global-header-bg/30 border border-global-header-text/10 rounded-3xl p-6 md:p-8 shadow-sm">
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                         {products.map((item: any) => (
                           <div
@@ -193,8 +193,8 @@ export default async function page({
                   </>
                 ) : (
                   <div className="flex items-center justify-center py-20">
-                    <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-12 shadow-2xl max-w-md">
-                      <PremiumEmpty description="No products available under this offer." />
+                    <div className="backdrop-blur-xl bg-global-header-bg/40 border border-global-header-text/10 rounded-3xl p-12 shadow-2xl max-w-md">
+                      <PremiumEmpty description={<span className="text-global-header-text/60">No products available under this offer.</span>} />
                     </div>
                   </div>
                 )}
@@ -202,14 +202,14 @@ export default async function page({
             </>
           ) : (
             <div className="flex items-center justify-center min-h-[60vh] px-4">
-              <div className="backdrop-blur-xl bg-white/40 border border-white/60 rounded-3xl p-12 shadow-2xl max-w-md w-full">
+              <div className="backdrop-blur-xl bg-global-header-bg/40 border border-global-header-text/10 rounded-3xl p-12 shadow-2xl max-w-md w-full">
                 <div className="text-center mb-6">
                   <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                  <h2 className="text-3xl font-bold mb-2 text-global-primary">
                     Offer Expired
                   </h2>
                 </div>
