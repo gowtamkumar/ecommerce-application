@@ -137,9 +137,9 @@ export default async function Home() {
 
   // Common Section Title Component for consistency
   const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-    <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4 border-b border-gray-100 pb-4">
+    <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4 border-b border-global-secondary/10 pb-4">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <h2 className="text-global-size-h2 font-bold text-global-text tracking-tight">
           {title}
         </h2>
         <div className="h-1 w-20 bg-global-primary mt-2 rounded-full"></div>
@@ -170,7 +170,7 @@ export default async function Home() {
     ),
     categories: () => (
       categories ? (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-global-bg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Shop by Category" link="/categories" />
             <CategoryCard categories={categories} />
@@ -180,7 +180,7 @@ export default async function Home() {
     ),
     featured_products: () => (
       products?.data ? (
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-global-card-bg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Featured Collections" link="/products" />
             <FeaturedProduct products={featuredProducts} />
@@ -199,7 +199,7 @@ export default async function Home() {
     ),
     top_selling: () => (
       topSellingProducts?.length > 0 ? (
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-global-bg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Best Sellers" link="/products" />
             <FeaturedProduct products={topSellingProducts} />
@@ -209,7 +209,7 @@ export default async function Home() {
     ),
     new_arrivals: () => (
       products?.data ? (
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-global-card-bg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="New Arrivals" link="/products" />
             <FeaturedProduct products={isNewArrivalProducts} />
@@ -218,7 +218,7 @@ export default async function Home() {
       ) : null
     ),
     category_tabs: () => (
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-global-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Browse by Category" link="/products" />
           <CategoryTab categories={categories} />
@@ -227,13 +227,13 @@ export default async function Home() {
     ),
     footer_banners: () => (
       FooterBanners?.length > 0 ? (
-        <section className="py-10 overflow-hidden bg-gray-50">
+        <section className="py-10 overflow-hidden bg-global-card-bg">
           <SellerAds banners={FooterBanners} />
         </section>
       ) : null
     ),
     blog: () => (
-      <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-24 bg-gradient-to-b from-global-bg to-global-card-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Latest from our Blog" link="/blog" />
           <BlogTab posts={posts || []} />
@@ -258,7 +258,7 @@ export default async function Home() {
         {orderedSections.includes("slider") && sectionMap.slider()}
       </header>
 
-      <main className="bg-white">
+      <main className="bg-global-bg">
         {orderedSections
           .filter(slug => slug !== "slider") // Slider is rendered in header
           .map(slug => (
