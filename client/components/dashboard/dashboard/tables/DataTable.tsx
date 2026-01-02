@@ -1,8 +1,10 @@
 "use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { Avatar, Table } from "antd";
 import dayjs from "dayjs";
 
 const DataTable = ({ orders }: any) => {
+  const { formatPrice } = useCurrency();
   const columns = [
     {
       title: "Tracking No",
@@ -40,15 +42,14 @@ const DataTable = ({ orders }: any) => {
     },
 
     {
-      title: "Paid Amount",
-      dataIndex: "totalPaid",
-      key: "totalPaid",
-      render: (v: number) => <span>{v}</span>,
-    },
-    {
       title: "GrandTotal",
       key: "grandTotal",
       dataIndex: "grandTotal",
+      render: (value: any) => (
+        <>
+          <span className="mx-2">{formatPrice(value)}</span>
+        </>
+      ),
     },
   ];
 

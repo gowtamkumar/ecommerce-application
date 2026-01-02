@@ -7,6 +7,7 @@ export default function SecondWeight() {
     { href: "/about", label: "About Us" },
     { href: "/support-and-help", label: "Support & Help" },
     { href: "/support-and-help", label: "FAQ" },
+    { href: "/contact", label: "Contact" },
   ];
 
   return (
