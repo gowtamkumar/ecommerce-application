@@ -119,9 +119,19 @@ export default async function RootLayout({
     "--button-padding-y": `${appearance.buttonPaddingVertical || 8}px`,
     "--button-padding-x": `${appearance.buttonPaddingHorizontal || 16}px`,
     "--button-font-weight": appearance.buttonFontWeight || 500,
+    "--input-padding-y": `${appearance.inputPaddingVertical || 8}px`,
+    "--input-padding-x": `${appearance.inputPaddingHorizontal || 12}px`,
+    "--input-border-radius": `${appearance.inputBorderRadius || 8}px`,
+    "--input-border-color": appearance.inputBorderColor || "#d9d9d9",
     "--global-primary": appearance.primaryColor || "#F7AA0E",
     "--primary-hover": appearance.primaryHoverColor || "#e59a0d",
     "--global-secondary": appearance.secondaryColor || "#000000",
+    "--success-color": appearance.successColor || "#52c41a",
+    "--warning-color": appearance.warningColor || "#faad14",
+    "--error-color": appearance.errorColor || "#ff4d4f",
+    "--info-color": appearance.infoColor || "#1890ff",
+    "--background-color": appearance.backgroundColor || "#ffffff",
+    "--card-background": appearance.cardBackgroundColor || "#ffffff",
     "--link-color": appearance.linkColor || appearance.primaryColor || "#F7AA0E",
     "--text-color": appearance.textColor || "#1f2937",
   };
@@ -163,6 +173,10 @@ export default async function RootLayout({
                 ${Object.entries(cssVars)
                 .map(([key, value]) => `${key}: ${value};`)
                 .join("\n")}
+                body {
+                  background-color: var(--background-color);
+                  color: var(--text-color);
+                }
               }
             `,
           }}
@@ -256,6 +270,17 @@ export default async function RootLayout({
                     fontSize: appearance.baseFontSize || 16,
                     borderRadius: appearance.buttonBorderRadius || 8,
                     colorPrimary: appearance.primaryColor || "#3211ecff",
+                    colorPrimaryHover: appearance.primaryHoverColor || "#e59a0d",
+                    colorLink: appearance.linkColor || appearance.primaryColor || "#F7AA0E",
+                    colorText: appearance.textColor || "#1f2937",
+                    colorSuccess: appearance.successColor || "#52c41a",
+                    colorWarning: appearance.warningColor || "#faad14",
+                    colorError: appearance.errorColor || "#ff4d4f",
+                    colorInfo: appearance.infoColor || "#1890ff",
+                    colorBgBase: appearance.backgroundColor || "#ffffff",
+                    fontSizeHeading1: appearance.h1Size || 48,
+                    fontSizeHeading2: appearance.h2Size || 36,
+                    fontSizeHeading3: appearance.h3Size || 24,
                   },
                   components: {
                     Button: {
@@ -264,6 +289,11 @@ export default async function RootLayout({
                       fontWeight: appearance.buttonFontWeight || 500,
                       paddingInline: appearance.buttonPaddingHorizontal || 16,
                       controlHeight: (appearance.buttonPaddingVertical || 8) * 2 + (appearance.buttonFontSize || 14),
+                    },
+                    Input: {
+                      borderRadius: appearance.inputBorderRadius || 8,
+                      paddingInline: appearance.inputPaddingHorizontal || 11,
+                      colorBorder: appearance.inputBorderColor || "#d9d9d9",
                     },
                     Typography: {
                       fontFamily: appearance.primaryFont || "var(--font-poppins)",

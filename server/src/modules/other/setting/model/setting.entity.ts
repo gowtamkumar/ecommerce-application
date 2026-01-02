@@ -54,9 +54,6 @@ export class SettingEntity {
   @Column({ name: 'payment_account', type: 'simple-json', nullable: true })
   paymentAccount!: string;
 
-  @Column({ name: 'home_page', type: 'simple-json', nullable: true })
-  homePage!: string;
-
   @Column({ name: 'about_page', type: 'simple-json', nullable: true })
   aboutPage!: string;
 

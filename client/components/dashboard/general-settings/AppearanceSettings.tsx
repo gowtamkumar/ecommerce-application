@@ -45,6 +45,16 @@ const AppearanceSettings = () => {
             primaryColor: "#F7AA0E",
             primaryHoverColor: "#e59a0d",
             secondaryColor: "#000000",
+            successColor: "#52c41a",
+            warningColor: "#faad14",
+            errorColor: "#ff4d4f",
+            infoColor: "#1890ff",
+            backgroundColor: "#ffffff",
+            cardBackgroundColor: "#ffffff",
+            inputPaddingVertical: 8,
+            inputPaddingHorizontal: 12,
+            inputBorderRadius: 8,
+            inputBorderColor: "#d9d9d9",
             linkColor: "#F7AA0E",
             textColor: "#1f2937",
             ...initialData
@@ -78,6 +88,16 @@ const AppearanceSettings = () => {
             primaryColor,
             primaryHoverColor,
             secondaryColor,
+            successColor,
+            warningColor,
+            errorColor,
+            infoColor,
+            backgroundColor,
+            cardBackgroundColor,
+            inputPaddingVertical,
+            inputPaddingHorizontal,
+            inputBorderRadius,
+            inputBorderColor,
             linkColor,
             textColor,
         } = values;
@@ -103,6 +123,16 @@ const AppearanceSettings = () => {
                 primaryColor,
                 primaryHoverColor,
                 secondaryColor,
+                successColor,
+                warningColor,
+                errorColor,
+                infoColor,
+                backgroundColor,
+                cardBackgroundColor,
+                inputPaddingVertical,
+                inputPaddingHorizontal,
+                inputBorderRadius,
+                inputBorderColor,
                 linkColor,
                 textColor,
             }
@@ -157,6 +187,48 @@ const AppearanceSettings = () => {
                                 name="primaryColor"
                                 label={<span className="text-base font-medium">Primary Color</span>}
                                 extra="Main theme color (buttons, accents)"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="successColor"
+                                label={<span className="text-base font-medium">Success Color</span>}
+                                extra="For success states/messages"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="warningColor"
+                                label={<span className="text-base font-medium">Warning Color</span>}
+                                extra="For warning states/messages"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="errorColor"
+                                label={<span className="text-base font-medium">Error Color</span>}
+                                extra="For error states/messages"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="infoColor"
+                                label={<span className="text-base font-medium">Info Color</span>}
+                                extra="For informational states"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                             <Form.Item
+                                name="backgroundColor"
+                                label={<span className="text-base font-medium">Page Background</span>}
+                                extra="Main site background color"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                             <Form.Item
+                                name="cardBackgroundColor"
+                                label={<span className="text-base font-medium">Card Background</span>}
+                                extra="Background for cards/containers"
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
@@ -257,6 +329,28 @@ const AppearanceSettings = () => {
                             </Form.Item>
                             <Form.Item name="buttonPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
                                 <InputNumber size="large" className="w-full" min={0} max={60} />
+                            </Form.Item>
+                        </div>
+
+                        <Divider className="!my-8" />
+
+                        {/* Input Field Settings */}
+                        <SettingsHeader title="Input Fields (Forms)" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Form.Item name="inputPaddingVertical" label={<span className="text-base font-medium">Vertical Padding (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={0} max={30} />
+                            </Form.Item>
+                            <Form.Item name="inputPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={0} max={60} />
+                            </Form.Item>
+                             <Form.Item name="inputBorderRadius" label={<span className="text-base font-medium">Border Radius (px)</span>}>
+                                <InputNumber size="large" className="w-full" min={0} max={50} />
+                            </Form.Item>
+                             <Form.Item
+                                name="inputBorderColor"
+                                label={<span className="text-base font-medium">Default Border Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
                         </div>
 

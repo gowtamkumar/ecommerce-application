@@ -11,6 +11,15 @@ import { SettingsHeader } from "./CommonComponents";
 const { Title, Text } = Typography;
 
 const DEFAULT_SECTIONS = {
+    home: [
+        { slug: "hero", name: "Main Hero Slider", sequence: 1, status: true },
+        { slug: "features", name: "Feature Highlights", sequence: 2, status: true },
+        { slug: "categories", name: "Featured Categories", sequence: 3, status: true },
+        { slug: "new_arrivals", name: "New Arrivals", sequence: 4, status: true },
+        { slug: "promo_banner", name: "Promotional Banner", sequence: 5, status: true },
+        { slug: "best_sellers", name: "Best Sellers", sequence: 6, status: true },
+        { slug: "blogs", name: "Recent Blogs", sequence: 7, status: true },
+    ],
     about: [
         { slug: "hero", name: "Hero / Intro", sequence: 1, status: true },
         { slug: "stats", name: "Stats Section", sequence: 2, status: true },
@@ -35,7 +44,7 @@ const PageLayoutSettings = () => {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const global = useSelector(selectGlobal);
-    const [activeTab, setActiveTab] = useState("about");
+    const [activeTab, setActiveTab] = useState("home");
 
     const getSectionsForPage = (pageKey: string) => {
         const pageData = global.setting?.[pageKey === 'support' ? 'helpSupport' : `${pageKey}Page`];
@@ -50,6 +59,7 @@ const PageLayoutSettings = () => {
     };
 
     const [sections, setSections] = useState({
+        home: getSectionsForPage("home"),
         about: getSectionsForPage("about"),
         contact: getSectionsForPage("contact"),
         support: getSectionsForPage("support"),
@@ -57,6 +67,7 @@ const PageLayoutSettings = () => {
 
     useEffect(() => {
         setSections({
+            home: getSectionsForPage("home"),
             about: getSectionsForPage("about"),
             contact: getSectionsForPage("contact"),
             support: getSectionsForPage("support"),
@@ -77,6 +88,7 @@ const PageLayoutSettings = () => {
         const id = global.setting?.id;
 
         const payload: any = { id };
+        payload.homePage = { ...global.setting?.homePage, sections: sections.home };
         payload.aboutPage = { ...global.setting?.aboutPage, sections: sections.about };
         payload.contactPage = { ...global.setting?.contactPage, sections: sections.contact };
         payload.helpSupport = { ...global.setting?.helpSupport, sections: sections.support };
@@ -147,6 +159,20 @@ const PageLayoutSettings = () => {
                     activeKey={activeTab}
                     onChange={setActiveTab}
                     items={[
+                        {
+                            label: "Home Page",
+                            key: "home",
+                            children: (
+                                <div className="py-4">
+                                    <Table 
+                                        dataSource={sections.home} 
+                                        columns={columns("home")} 
+                                        pagination={false} 
+                                        rowKey="slug"
+                                    />
+                                </div>
+                            )
+                        },
                         {
                             label: "About Us Page",
                             key: "about",
