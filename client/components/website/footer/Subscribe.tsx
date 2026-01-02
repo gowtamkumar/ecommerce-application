@@ -66,11 +66,11 @@ export default function Subscribe() {
 
         <button
           type="submit"
-          className="h-12 px-8 rounded-xl font-medium flex items-center gap-2 group"
+          className="h-12 px-8 rounded-global-button-radius bg-global-button-primary text-global-button-text hover:bg-global-button-hover font-global-button-weight flex items-center gap-2 group transition-all duration-300 shadow-lg shadow-global-button-primary/20"
         >
           {loading ? (
             <>
-              <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span className="inline-block w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin"></span>
               <span>Sending...</span>
             </>
           ) : (

@@ -32,7 +32,7 @@ const MainMenu = () => {
           <Link
             href={`/products?categoryId=${node.id}&`}
             rel="noopener noreferrer"
-            className="block px-3 py-2 text-global-hover hover:text-global-hover hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)] rounded-lg transition-colors font-medium"
+            className="block px-3 py-2 text-global-text hover:text-global-button-primary hover:bg-global-button-primary/10 rounded-lg transition-colors font-medium"
           >
             {node.name}
           </Link>
@@ -62,8 +62,10 @@ const MainMenu = () => {
         overlayClassName="pt-2"
       >
         <button className="cursor-pointer flex items-center gap-2.5 px-6 py-2.5 
-                       rounded-[var(--button-border-radius)] transition-all duration-300 
+                       rounded-global-button-radius transition-all duration-300 
+                       bg-global-button-primary text-global-button-text
                        shadow-lg hover:shadow-xl 
+                       hover:bg-global-button-hover
                        hover:scale-105 group
                        border border-white/10">
           <CiMenuFries className="text-lg group-hover:rotate-90 transition-transform duration-300" />

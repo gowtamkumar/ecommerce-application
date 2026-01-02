@@ -91,7 +91,7 @@ export default function SearchEngine() {
                   )}
                   <button
                     type="submit"
-                    className="!h-9 !w-9 flex items-center justify-center !rounded-full"
+                    className="!h-9 !w-9 flex items-center justify-center !rounded-full bg-global-button-primary text-global-button-text hover:bg-global-button-hover transition-colors"
                   >
                     <SearchOutlined className="text-base" />
                   </button>
@@ -235,9 +235,9 @@ export default function SearchEngine() {
                   <div className="p-3 border-t border-gray-100 mt-2">
                     <button
                       onClick={searchHandle}
-                      className="w-full py-2.5 px-4 bg-gray-50 hover:bg-global-hover hover:text-white
-                               text-gray-700 font-medium rounded-lg transition-all duration-300
-                               border border-gray-200 hover:border-global-hover"
+                      className="w-full py-2.5 px-4 bg-global-button-primary text-global-button-text hover:bg-global-button-hover
+                               font-medium rounded-global-button-radius transition-all duration-300
+                               shadow-sm"
                     >
                       View All {results.length} Results →
                     </button>
@@ -258,7 +258,7 @@ export default function SearchEngine() {
                 </p>
                 <button
                   onClick={handleClose}
-                  className="text-global-hover hover:underline text-sm font-medium"
+                  className="text-global-button-primary hover:text-global-button-hover hover:underline text-sm font-medium transition-colors"
                 >
                   Clear search
                 </button>

@@ -19,6 +19,7 @@ const config: Config = {
           "card-bg": "var(--card-background)",
           "button-primary": "var(--button-primary-color)",
           "button-hover": "var(--button-hover-color)",
+          "button-text": "var(--button-text-color)",
           "icon-color": "var(--icon-color)",
           "icon-hover-color": "var(--icon-hover-color)",
           "icon-bg": "var(--icon-bg)",
@@ -31,6 +32,16 @@ const config: Config = {
           "footer-bg": "var(--footer-bg)",
           "footer-text": "var(--footer-text)",
         },
+      },
+      borderRadius: {
+        "global-button-radius": "var(--button-border-radius)",
+      },
+      fontWeight: {
+        "global-button-weight": "var(--button-font-weight)",
+      },
+      spacing: {
+        "global-button-padding-y": "var(--button-padding-y)",
+        "global-button-padding-x": "var(--button-padding-x)",
       },
       fontFamily: {
         "global-fontfamily": ["var(--secondary-font)", "sans-serif"],
@@ -45,6 +56,7 @@ const config: Config = {
         "global-size-h5": "var(--h3-size)", // Fallback to h3
         "global-size-h6": "var(--h3-size)", // Fallback to h3
         "global-size-p": "var(--base-font-size)",
+        "global-button-size": "var(--button-font-size)",
       },
       screens: {
         xs: "480px", // Custom extra small (Mobile portrait)

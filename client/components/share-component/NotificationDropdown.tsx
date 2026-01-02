@@ -68,8 +68,7 @@ const NotificationDropdown = () => {
         <div className="flex items-center gap-2">
           <Title level={5} className="!mb-0 !text-gray-800">Notifications</Title>
           {unreadCount > 0 && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: "var(--global-primary)", color: "#ffffff" }}>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-global-button-primary text-global-button-text">
               {unreadCount} New
             </span>
           )}
@@ -77,7 +76,7 @@ const NotificationDropdown = () => {
         <Link 
           href="/dashboard/notifications" 
           onClick={() => setOpen(false)}
-          className="group flex items-center gap-1 text-xs font-medium hover:text-global-primary transition-colors"
+          className="group flex items-center gap-1 text-xs font-medium hover:text-global-button-primary transition-colors"
           style={{ color: "#6b7280" }}>
           View All <RightOutlined className="text-[10px] group-hover:translate-x-0.5 transition-transform" />
         </Link>
@@ -106,18 +105,18 @@ const NotificationDropdown = () => {
               <div
                 className={`
                   group relative p-4 transition-all duration-200 cursor-pointer border-b border-gray-50 last:border-0
-                  ${!item.isRead ? "hover:bg-[color-mix(in_srgb,var(--primary-hover),transparent_95%)]" : "bg-white hover:bg-gray-50"}
+                  ${!item.isRead ? "hover:bg-global-button-primary/10" : "bg-white hover:bg-gray-50"}
                 `}
-                style={!item.isRead ? { backgroundColor: "rgba(var(--global-primary-rgb, 247, 170, 14), 0.05)" } : {}}
+                style={!item.isRead ? { backgroundColor: "rgba(var(--button-primary-color-rgb, 247, 170, 14), 0.05)" } : {}}
                 onClick={() => handleRead(item.id)}
               >
                 <div className="flex gap-3 items-start ">
-                   {/* Indicator/Icon */}
+                  {/* Indicator/Icon */}
                   <div className={`
                     mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
-                    ${!item.isRead ? 'text-white' : 'bg-gray-100 text-gray-400'}
+                    ${!item.isRead ? 'text-global-button-text' : 'bg-gray-100 text-gray-400'}
                   `}
-                  style={!item.isRead ? { backgroundColor: "var(--global-primary)" } : {}}>
+                  style={!item.isRead ? { backgroundColor: "var(--button-primary-color)" } : {}}>
                     {!item.isRead ? (
                       <BellOutlined className="text-sm" />
                     ) : (
@@ -142,10 +141,8 @@ const NotificationDropdown = () => {
                     </Text>
 
                     {!item.isRead && (
-                      <div className="mt-2 flex items-center gap-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                           style={{ color: "var(--primary-hover)" }}>
-                         <span className="w-1.5 h-1.5 rounded-full animate-pulse" 
-                               style={{ backgroundColor: "var(--primary-hover)" }} />
+                      <div className="mt-2 flex items-center gap-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity text-global-button-primary">
+                         <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-global-button-primary" />
                          Mark as read
                       </div>
                     )}
@@ -173,11 +170,7 @@ const NotificationDropdown = () => {
               type="primary" 
               block 
               ghost 
-              className="!h-9 !text-xs !font-medium !rounded-lg"
-              style={{ 
-                borderColor: "var(--primary-hover)", 
-                color: "var(--primary-hover)"
-              }}
+              className="!h-9 !text-xs !font-medium !rounded-lg !border-global-button-primary !text-global-button-primary hover:!bg-global-button-primary/5 transition-colors"
             >
               View all {notifications.length} notifications
             </Button>
@@ -226,13 +219,10 @@ const NotificationDropdown = () => {
           type="text"
           className={`
             !w-10 !h-10 !flex !items-center !justify-center !rounded-full !border-0
-            text-gray-600 hover:!text-global-hover hover:!bg-[color-mix(in_srgb,var(--primary-hover),transparent_90%)]
+            text-gray-600 hover:!text-global-button-primary hover:!bg-global-button-primary/10
             transition-all duration-300 transform active:scale-95
+            ${open ? "!bg-global-button-primary/20 !text-global-button-primary" : ""}
           `}
-          style={open ? {
-            backgroundColor: "color-mix(in srgb, var(--primary-hover), transparent 90%)",
-            color: "var(--primary-hover)"
-          } : {}}
           icon={<BellOutlined style={{ fontSize: "20px" }} />}
         />
       </Badge>

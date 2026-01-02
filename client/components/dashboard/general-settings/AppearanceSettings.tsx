@@ -44,6 +44,7 @@ const AppearanceSettings = () => {
             buttonPaddingHorizontal: 16,
             buttonPrimaryColor: "",
             buttonHoverColor: "",
+            buttonTextColor: "#ffffff",
             primaryColor: "#F7AA0E",
             primaryHoverColor: "#e59a0d",
             secondaryColor: "#000000",
@@ -101,6 +102,7 @@ const AppearanceSettings = () => {
             buttonPaddingHorizontal,
             buttonPrimaryColor,
             buttonHoverColor,
+            buttonTextColor,
             primaryColor,
             primaryHoverColor,
             secondaryColor,
@@ -150,6 +152,7 @@ const AppearanceSettings = () => {
                 buttonPaddingHorizontal,
                 buttonPrimaryColor,
                 buttonHoverColor,
+                buttonTextColor,
                 primaryColor,
                 primaryHoverColor,
                 secondaryColor,
@@ -228,7 +231,7 @@ const AppearanceSettings = () => {
                             <Form.Item
                                 name="primaryColor"
                                 label={<span className="text-base font-medium">Primary Color</span>}
-                                extra="Main theme color (buttons, accents)"
+                                extra="Main theme color"
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
@@ -485,6 +488,13 @@ const AppearanceSettings = () => {
                                 name="buttonHoverColor"
                                 label={<span className="text-base font-medium">Button Hover Color</span>}
                                 extra="Override global hover color"
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="buttonTextColor"
+                                label={<span className="text-base font-medium">Button Text Color</span>}
+                                extra="Color for text inside buttons"
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>

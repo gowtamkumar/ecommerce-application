@@ -120,23 +120,27 @@ h3, .h3 { font-size: var(--h3-size); }
 }
 
 /* Global Button Standards */
-button:not(.ant-btn-text):not(.ant-btn-link), 
+button:not(.ant-btn-text):not(.ant-btn-link):not(.ant-dropdown-trigger), 
 .ant-btn:not(.ant-btn-text):not(.ant-btn-link) {
     font-family: var(--secondary-font);
-    background-color: var(--primary-hover) !important;
-    color: white !important;
+    background-color: var(--button-primary-color) !important;
+    color: var(--button-text-color) !important;
     border: none !important;
     border-radius: var(--button-border-radius) !important;
+    font-size: var(--button-font-size) !important;
+    font-weight: var(--button-font-weight) !important;
+    padding: var(--button-padding-y) var(--button-padding-x) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
-button:not(.ant-btn-text):not(.ant-btn-link):hover, 
+button:not(.ant-btn-text):not(.ant-btn-link):not(.ant-dropdown-trigger):hover, 
 .ant-btn:not(.ant-btn-text):not(.ant-btn-link):hover {
-    background-color: var(--primary-hover) !important;
+    background-color: var(--button-hover-color) !important;
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }

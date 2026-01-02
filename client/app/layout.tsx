@@ -121,6 +121,7 @@ export default async function RootLayout({
     "--button-font-weight": appearance.buttonFontWeight || 500,
     "--button-primary-color": appearance.buttonPrimaryColor || appearance.primaryColor || "#F7AA0E",
     "--button-hover-color": appearance.buttonHoverColor || appearance.primaryHoverColor || "#e59a0d",
+    "--button-text-color": appearance.buttonTextColor || "#ffffff",
     "--input-padding-y": `${appearance.inputPaddingVertical || 8}px`,
     "--input-padding-x": `${appearance.inputPaddingHorizontal || 12}px`,
     "--input-border-radius": `${appearance.inputBorderRadius || 8}px`,
@@ -286,6 +287,7 @@ export default async function RootLayout({
                     colorPrimary: appearance.primaryColor || "#3211ecff",
                     colorPrimaryHover: appearance.primaryHoverColor || "#e59a0d",
                     colorLink: appearance.linkColor || appearance.primaryColor || "#F7AA0E",
+                    colorBgTextHover: `rgba(${parseInt((appearance.primaryColor || "#F7AA0E").slice(1, 3), 16)}, ${parseInt((appearance.primaryColor || "#F7AA0E").slice(3, 5), 16)}, ${parseInt((appearance.primaryColor || "#F7AA0E").slice(5, 7), 16)}, 0.1)`,
                     colorText: appearance.textColor || "#1f2937",
                     colorSuccess: appearance.successColor || "#52c41a",
                     colorWarning: appearance.warningColor || "#faad14",
@@ -305,6 +307,7 @@ export default async function RootLayout({
                       controlHeight: (appearance.buttonPaddingVertical || 8) * 2 + (appearance.buttonFontSize || 14),
                       colorPrimary: appearance.buttonPrimaryColor || appearance.primaryColor || "#3211ecff",
                       colorPrimaryHover: appearance.buttonHoverColor || appearance.primaryHoverColor || "#e59a0d",
+                      colorTextLightSolid: appearance.buttonTextColor || "#ffffff",
                     },
                     Input: {
                       borderRadius: appearance.inputBorderRadius || 8,

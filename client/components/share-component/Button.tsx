@@ -7,7 +7,7 @@ export default function Button({ before, after, size }: { before: string, after:
     <button
       type="submit"
       disabled={pending}
-      className={`${size} flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+      className={`${size} flex justify-center items-center rounded-global-button-radius bg-global-button-primary px-global-button-padding-x py-global-button-padding-y text-global-button-text font-global-button-weight text-global-button-size shadow-sm hover:bg-global-button-hover active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {pending ? before : after}
     </button>

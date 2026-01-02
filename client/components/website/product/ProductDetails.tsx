@@ -224,10 +224,10 @@ const ProductDetails = ({
                           );
                           setCheckStock(item.stockQty);
                         }}
-                        className={`group relative flex items-center gap-3 pl-3 pr-5 py-3 border-2 rounded-2xl transition-all duration-300 min-w-[150px]
+                        className={`group relative flex items-center gap-3 pl-3 pr-5 py-3 border-2 rounded-global-button-radius transition-all duration-300 min-w-[150px]
                           ${isSelected
-                            ? "border-global-primary bg-global-primary/5 shadow-lg shadow-global-primary/10 ring-1 ring-global-primary"
-                            : "border-gray-100 bg-white hover:border-global-primary/30 hover:shadow-md"
+                            ? "border-global-button-primary bg-global-button-primary/5 shadow-lg shadow-global-button-primary/10 ring-1 ring-global-button-primary"
+                            : "border-gray-100 bg-white hover:border-global-button-primary/30 hover:shadow-md"
                           }`}
                       >
                         {item?.color?.value ? (
@@ -261,7 +261,7 @@ const ProductDetails = ({
                         </div>
 
                         {isSelected && (
-                          <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-global-primary text-white rounded-full p-1 shadow-md shadow-global-primary/20">
+                          <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-global-button-primary text-global-button-text rounded-full p-1 shadow-md shadow-global-button-primary/20">
                             <CheckOutlined className="text-xs" />
                           </div>
                         )}
@@ -301,7 +301,7 @@ const ProductDetails = ({
                   <Button
                     type="primary"
                     onClick={() => route.push("/checkout")}
-                    className="w-full h-full text-lg font-bold rounded-[var(--button-border-radius)] flex items-center justify-center gap-2"
+                    className="w-full h-full text-lg font-bold rounded-[var(--button-border-radius)] flex items-center justify-center gap-2 !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text"
                   >
                     <span className="tracking-wide">CHECKOUT NOW</span>
                   </Button>
@@ -331,10 +331,10 @@ const ProductDetails = ({
                   }
                 }}
               >
-                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-rose-50 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-global-button-primary/10 flex items-center justify-center group-hover:bg-global-button-primary/20 transition-colors">
                   <CiHeart
                     size={22}
-                    className="group-hover:scale-110 transition-transform"
+                    className="group-hover:scale-110 text-global-button-primary transition-transform"
                   />
                 </div>
                 <span>Add to Wishlist</span>

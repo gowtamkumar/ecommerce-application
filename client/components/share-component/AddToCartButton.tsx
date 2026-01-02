@@ -71,7 +71,8 @@ export default function AddToCartButton({ item, className }: { item: any, classN
 
   return (
     <Button
-      className={`w-full ${className || ""}`}
+      type="primary"
+      className={`w-full !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text !border-none !h-11 !rounded-global-button-radius ${className || ""}`}
       onClick={() => addToCart(item)}
       style={{ fontFamily: "unset" }}
       disabled={global.loading.productId === item.id}
