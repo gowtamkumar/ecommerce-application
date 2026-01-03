@@ -1,6 +1,4 @@
 import appConfig from "@/appConfig";
-import WebFooter from "@/components/website/footer/Footer";
-import Header from "@/components/website/header/Header";
 import { getPageBySlug } from "@/lib/apis/page";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
@@ -49,8 +47,6 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-
       <main className="flex-grow">
         {/* Hero Section with Parallax-like effect */}
         <section className="relative h-[40vh] min-h-[400px] flex items-center justify-center overflow-hidden">
@@ -137,8 +133,6 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
       </main>
-
-      <WebFooter />
     </div>
   );
 }

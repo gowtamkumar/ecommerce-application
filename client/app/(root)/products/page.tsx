@@ -15,23 +15,18 @@ const ScrollToCart = dynamic(() => import("@/components/share-component/ScrollTo
 
 export default function Products() {
   return (
-    <>
-      <Header />
-      <section className="container mx-auto lg:py-5 px-3">
-        <div className="grid md:grid-cols-12 gap-4">
+    <section className="container mx-auto lg:py-5 px-3">
+      <div className="grid md:grid-cols-12 gap-4">
 
-          <div className="md:col-span-2 py-3">
-            <FilterSidebar />
-          </div>
-          <div className="md:col-span-10">
-            <CategoryHeader />
-            <ProductCard />
-          </div>
+        <div className="md:col-span-2 py-3">
+          <FilterSidebar />
         </div>
-      </section>
+        <div className="md:col-span-10">
+          <CategoryHeader />
+          <ProductCard />
+        </div>
+      </div>
       <ScrollToCart />
-
-      <WebFooter />
-    </>
+    </section>
   );
 }

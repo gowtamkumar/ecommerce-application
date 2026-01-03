@@ -23,12 +23,8 @@ export default async function CheckOut() {
   }
 
   return (
-    <>
-      <Header />
-      <div className="bg-gray-100">
-        <CheckoutPage />
-      </div>
-      <WebFooter />
-    </>
+    <div className="bg-gray-100">
+      <CheckoutPage />
+    </div>
   );
 }

@@ -1,11 +1,6 @@
 import { auth } from "@/auth";
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
-
-const Header = dynamic(() => import("@/components/website/header/Header"));
-
-const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -26,9 +21,7 @@ export default async function ProfileLayout({
 
   return (
     <main>
-      <Header />
       <div className="w-4/5 mx-auto md:p-10">{children}</div>
-      <WebFooter />
     </main>
   );
 }

@@ -1,6 +1,4 @@
 import ContactForm from "@/components/website/contact/ContactForm";
-import WebFooter from "@/components/website/footer/Footer";
-import Header from "@/components/website/header/Header";
 import { getPageBySlug } from "@/lib/apis/page";
 import { getSettings } from "@/lib/apis/setting";
 import { Metadata } from "next";
@@ -17,7 +15,7 @@ export const metadata: Metadata = {
 export default async function Support() {
   const pageRes = await getPageBySlug('support-and-help');
   const page = pageRes?.data;
-  
+
   const settingRes = await getSettings();
   const setting = settingRes?.data || {};
   const helpSupport = setting?.helpSupport || {};
@@ -28,8 +26,8 @@ export default async function Support() {
     { slug: "faqs", status: true, sequence: 3 },
     { slug: "contact_form", status: true, sequence: 4 },
   ])
-  .filter((s: any) => s.status)
-  .sort((a: any, b: any) => a.sequence - b.sequence);
+    .filter((s: any) => s.status)
+    .sort((a: any, b: any) => a.sequence - b.sequence);
 
   const supportOptions = [
     {
@@ -186,11 +184,9 @@ export default async function Support() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
       <main className="flex-grow">
         {sections.map((section: any) => sectionMap[section.slug])}
       </main>
-      <WebFooter />
     </div>
   );
 }
