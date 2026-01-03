@@ -149,6 +149,16 @@ export default async function RootLayout({
     "--footer-bg": appearance.footerBg || "#0f172a",
     "--footer-text": appearance.footerText || "#ffffff",
     "--text-color": appearance.textColor || "#1f2937",
+    "--social-icon-size": `${appearance.socialIconSize || 20}px`,
+    "--social-icon-padding": `${appearance.socialIconPadding || 10}px`,
+    "--social-icon-radius": `${appearance.socialIconBorderRadius || 50}px`,
+    "--social-icon-color": appearance.socialIconColor || "#ffffff",
+    "--social-icon-hover-color": appearance.socialIconHoverColor || "#ffffff",
+    "--social-icon-bg": appearance.socialIconBg || "rgba(255,255,255,0.1)",
+    "--social-icon-hover-bg": appearance.socialIconHoverBg || "#F7AA0E",
+    "--social-icon-border-width": `${appearance.socialIconBorderWidth || 1}px`,
+    "--social-icon-border-color": appearance.socialIconBorderColor || "rgba(255,255,255,0.2)",
+    "--social-icon-hover-border-color": appearance.socialIconHoverBorderColor || "transparent",
   };
 
   const googleFonts = [

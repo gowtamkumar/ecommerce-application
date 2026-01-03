@@ -19,30 +19,30 @@ export default function SocialIcon() {
   const socialLinks = [
     {
       name: "Facebook",
-      icon: <FaFacebookF className="w-5 h-5" />,
+      icon: <FaFacebookF />,
       url: settingData?.socialLink?.facebookUrl,
-      hoverColor: "group-hover:bg-[#1877f2]",
+      hoverColor: "var(--social-icon-hover-bg)",
       show: settingData?.socialLink?.facebookUrl
     },
     {
       name: "LinkedIn",
-      icon: <FaLinkedinIn className="w-5 h-5" />,
+      icon: <FaLinkedinIn />,
       url: settingData?.socialLink?.linkedinUrl,
-      hoverColor: "group-hover:bg-[#0a66c2]",
+      hoverColor: "var(--social-icon-hover-bg)",
       show: settingData?.socialLink?.linkedinUrl
     },
     {
       name: "Instagram",
-      icon: <FaInstagram className="w-5 h-5" />,
+      icon: <FaInstagram />,
       url: settingData?.socialLink?.instagramUrl,
-      hoverColor: "group-hover:bg-gradient-to-br group-hover:from-[#f58529] group-hover:via-[#dd2a7b] group-hover:to-[#8134af]",
+      hoverColor: "var(--social-icon-hover-bg)",
       show: settingData?.socialLink?.instagramUrl
     },
     {
       name: "Twitter/X",
-      icon: <FaX className="w-4 h-4" />,
+      icon: <FaX />,
       url: settingData?.socialLink?.twitterUrl,
-      hoverColor: "group-hover:bg-black",
+      hoverColor: "var(--social-icon-hover-bg)",
       show: settingData?.socialLink?.twitterUrl
     }
   ];
@@ -71,14 +71,30 @@ export default function SocialIcon() {
                 className="group relative"
                 aria-label={social.name}
               >
-                <div className={`
-                  relative flex items-center justify-center w-10 h-10 rounded-full
-                  bg-global-footer-text/10 backdrop-blur-sm border border-global-footer-text/20
-                  transition-all duration-300
-                  hover:scale-110 hover:border-transparent
-                  ${social.hoverColor}
-                `}>
-                  <span className="relative z-10 text-white transition-transform duration-300 group-hover:scale-110">
+                <div 
+                  className="relative flex items-center justify-center transition-all duration-300 hover:scale-110 hover:border-transparent group-hover:!bg-global-social-hover-bg"
+                  style={{
+                    width: "auto",
+                    height: "auto",
+                    padding: "var(--social-icon-padding)",
+                    borderRadius: "var(--social-icon-radius)",
+                    backgroundColor: "var(--social-icon-bg)",
+                    border: "var(--social-icon-border-width) solid var(--social-icon-border-color)"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--social-icon-hover-border-color)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--social-icon-border-color)";
+                  }}
+                >
+                  <span 
+                    className="relative z-10 transition-transform duration-300 group-hover:scale-110 group-hover:!text-global-social-hover-color"
+                    style={{
+                      fontSize: "var(--social-icon-size)",
+                      color: "var(--social-icon-color)"
+                    }}
+                  >
                     {social.icon}
                   </span>
                   

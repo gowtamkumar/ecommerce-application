@@ -31,6 +31,10 @@ const config: Config = {
           "header-text": "var(--header-text)",
           "footer-bg": "var(--footer-bg)",
           "footer-text": "var(--footer-text)",
+          "social-color": "var(--social-icon-color)",
+          "social-hover-color": "var(--social-icon-hover-color)",
+          "social-bg": "var(--social-icon-bg)",
+          "social-hover-bg": "var(--social-icon-hover-bg)",
         },
       },
       borderRadius: {

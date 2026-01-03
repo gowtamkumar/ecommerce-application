@@ -72,6 +72,16 @@ const AppearanceSettings = () => {
             footerBg: "#0f172a",
             footerText: "#ffffff",
             textColor: "#1f2937",
+            socialIconSize: 20,
+            socialIconPadding: 8,
+            socialIconBorderRadius: 50,
+            socialIconColor: "#ffffff",
+            socialIconHoverColor: "#ffffff",
+            socialIconBg: "rgba(255,255,255,0.1)",
+            socialIconHoverBg: "#F7AA0E",
+            socialIconBorderWidth: 1,
+            socialIconBorderColor: "rgba(255,255,255,0.2)",
+            socialIconHoverBorderColor: "transparent",
             ...initialData
         };
         form.setFieldsValue(defaultValues);
@@ -130,6 +140,16 @@ const AppearanceSettings = () => {
             footerBg,
             footerText,
             textColor,
+            socialIconSize,
+            socialIconPadding,
+            socialIconBorderRadius,
+            socialIconColor,
+            socialIconHoverColor,
+            socialIconBg,
+            socialIconHoverBg,
+            socialIconBorderWidth,
+            socialIconBorderColor,
+            socialIconHoverBorderColor,
         } = values;
 
         const payload = {
@@ -180,6 +200,16 @@ const AppearanceSettings = () => {
                 footerBg,
                 footerText,
                 textColor,
+                socialIconSize,
+                socialIconPadding,
+                socialIconBorderRadius,
+                socialIconColor,
+                socialIconHoverColor,
+                socialIconBg,
+                socialIconHoverBg,
+                socialIconBorderWidth,
+                socialIconBorderColor,
+                socialIconHoverBorderColor,
             }
         };
 
@@ -612,6 +642,76 @@ const AppearanceSettings = () => {
                                 className="!mb-0"
                             >
                                 <Input size="large" placeholder="https://twitter.com/yourstore" />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+                    <Divider className="!my-8" />
+
+                    {/* Social Media Icon Appearance Settings */}
+                    <div className="space-y-6">
+                        <SettingsHeader title="Social Media Icon Appearance" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Form.Item 
+                                name="socialIconSize" 
+                                label={<span className="text-base font-medium">Icon Size (px)</span>}
+                            >
+                                <InputNumber size="large" className="w-full" min={12} max={48} />
+                            </Form.Item>
+                            <Form.Item 
+                                name="socialIconPadding" 
+                                label={<span className="text-base font-medium">Padding (px)</span>}
+                            >
+                                <InputNumber size="large" className="w-full" min={0} max={40} />
+                            </Form.Item>
+                            <Form.Item 
+                                name="socialIconBorderRadius" 
+                                label={<span className="text-base font-medium">Border Radius (px)</span>}
+                            >
+                                <InputNumber size="large" className="w-full" min={0} max={100} />
+                            </Form.Item>
+                            <Form.Item
+                                name="socialIconColor"
+                                label={<span className="text-base font-medium">Icon Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="socialIconHoverColor"
+                                label={<span className="text-base font-medium">Icon Hover Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="socialIconBg"
+                                label={<span className="text-base font-medium">Background Color</span>}
+                                extra="Use rgba for transparency if needed"
+                            >
+                                <Input size="large" type="color" placeholder="rgba(255,255,255,0.1) or #hex" />
+                            </Form.Item>
+                            <Form.Item
+                                name="socialIconHoverBg"
+                                label={<span className="text-base font-medium">Hover Background</span>}
+                            >
+                                <Input size="large" type="color" placeholder="rgba(247,170,14,1) or #hex" />
+                            </Form.Item>
+                            <Form.Item 
+                                name="socialIconBorderWidth" 
+                                label={<span className="text-base font-medium">Border Width (px)</span>}
+                            >
+                                <InputNumber size="large" className="w-full" min={0} max={10} />
+                            </Form.Item>
+                            <Form.Item
+                                name="socialIconBorderColor"
+                                label={<span className="text-base font-medium">Border Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                            </Form.Item>
+                            <Form.Item
+                                name="socialIconHoverBorderColor"
+                                label={<span className="text-base font-medium">Hover Border Color</span>}
+                            >
+                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
                         </div>
                     </div>
