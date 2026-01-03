@@ -9,7 +9,7 @@ const SocialIcon = dynamic(() => import("./SocialIcon"));
 
 export default function WebFooter() {
   return (
-    <footer className="relative bg-global-footer-bg text-global-footer-text font-sans overflow-hidden">
+    <footer className="relative font-sans overflow-hidden" style={{ backgroundColor: 'var(--footer-bg)', color: 'var(--footer-text)' }}>
       <Divider/>
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

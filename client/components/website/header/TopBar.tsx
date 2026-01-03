@@ -13,7 +13,7 @@ export default function TopBar() {
 
   return (
     <>
-      <div className="relative bg-global-topbar-bg text-global-topbar-text text-xs py-2 font-global-secondary-fontfamily tracking-wide overflow-hidden">
+      <div className="relative text-xs py-2 font-global-secondary-fontfamily tracking-wide overflow-hidden" style={{ backgroundColor: 'var(--topbar-bg)', color: 'var(--topbar-text)' }}>
         {/* Decorative gradient overlay */}
         <div className="container relative flex flex-col sm:flex-row justify-between items-center mx-auto px-4 py-1.5 sm:py-0 font-global-secondary-fontfamily z-10">
           {/* Left Section */}
