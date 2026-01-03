@@ -60,17 +60,17 @@ export default function TopBar() {
             {/* Navigation Links */}
 
 
-            <Link
+         
+            {/* Auth Buttons */}
+            {session.status === "authenticated"  ?    <Link
               href="/profile?tab=my_account"
               className="hover:text-white transition-all duration-300 flex items-center gap-1.5 group"
             >
               <RiUserLine className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
               <span>My Account</span>
             </Link>
-
-            {/* Auth Buttons */}
-            {session.status === "unauthenticated" && (
-              <div className="flex items-center gap-3 border-l border-gray-700 pl-3 ml-1">
+ :  (
+              <div className="flex items-center gap-3  border-gray-700 pl-3 ml-1">
                 <Link
                   href="/login"
                   className="flex gap-1.5 items-center hover:text-white transition-all duration-300 group"
@@ -81,7 +81,7 @@ export default function TopBar() {
 
                 <Link
                   href="/register"
-                  className="px-3 py-1.5 rounded-full bg-global-hover hover:bg-global-hover text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 font-semibold"
+                  className="px-3 py-1.5  bg-global-hover hover:bg-global-hover text-white transition-all duration-300 font-semibold"
                 >
                   Sign up
                 </Link>
@@ -92,6 +92,7 @@ export default function TopBar() {
 
 
       </div>
-      <Divider className="!m-0 !p-0" /></>
+      <Divider className="!m-0 !p-0" />
+      </>
   );
 }
