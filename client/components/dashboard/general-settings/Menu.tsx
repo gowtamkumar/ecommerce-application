@@ -173,7 +173,7 @@ const Index = () => {
                 size="large"
                 loading={global.loading.selectMenu}
                 onClick={selectMenu}
-                className="!bg-blue-600 hover:!bg-blue-700"
+                style={{ borderRadius: "var(--button-border-radius)" }}
               >
                 Load Menu
               </Button>
@@ -183,7 +183,8 @@ const Index = () => {
           {/* Create Menu */}
           <div>
             <Text className="block mb-2 text-sm font-medium">Create New Menu</Text>
-            <Space.Compact className="w-full sm:w-auto">
+            
+            <Space.Compact block className="w-full sm:w-auto">
               <Input
                 size="large"
                 placeholder="Enter menu name"
@@ -196,10 +197,10 @@ const Index = () => {
                 disabled={!newMenu || global.loading.save}
                 onClick={createMenu}
                 loading={global.loading.save}
-                className="!bg-green-600 hover:!bg-green-700 !text-white"
+                style={{ borderRadius: "var(--button-border-radius)" }}
               >
-                Create
-              </Button>
+              Create
+            </Button>
             </Space.Compact>
           </div>
         </div>

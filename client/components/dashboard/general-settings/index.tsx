@@ -124,11 +124,7 @@ export default function Index() {
             key: "menu",
             children: <Menu />,
           },
-          {
-            label: "Appearance",
-            key: "appearance",
-            children: <AppearanceSettings />,
-          },
+         
           {
             label: "Orders & Shipping",
             key: "order_and_shipping",
@@ -153,6 +149,10 @@ export default function Index() {
             label: "Advanced (Geo)",
             key: "geo_locations",
             children: <SyncGeoLocation />,
+          }, {
+            label: "Appearance",
+            key: "appearance",
+            children: <AppearanceSettings />,
           },
         ]}
       />

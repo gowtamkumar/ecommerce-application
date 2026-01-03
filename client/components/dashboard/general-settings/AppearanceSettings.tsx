@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Divider, Form, Input, InputNumber, Select } from "antd";
+import { Button, Card, Divider, Form, Input, InputNumber, Select, Tabs } from "antd";
+import { 
+    BgColorsOutlined, 
+    FontSizeOutlined, 
+    AppstoreOutlined, 
+    ShareAltOutlined,
+    GlobalOutlined 
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
@@ -238,437 +245,306 @@ const AppearanceSettings = () => {
                         <Input />
                     </Form.Item>
 
-                    {/* Color Palette Section */}
-                    <div className="space-y-6">
-                        <SettingsHeader title="Brand Color Palette" />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <Form.Item
-                                name="primaryColor"
-                                label={<span className="text-base font-medium">Primary Color</span>}
-                                extra="Main theme color"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="secondaryColor"
-                                label={<span className="text-base font-medium">Secondary Color</span>}
-                                extra="Secondary brand color"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item 
-                                name="primaryHoverColor"
-                                label={<span className="text-base font-medium">Hover Color</span>}
-                                extra="Color when interacting with items"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                             <Form.Item
-                                name="backgroundColor"
-                                label={<span className="text-base font-medium">Page Background</span>}
-                                extra="Main site background color"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                             <Form.Item
-                                name="cardBackgroundColor"
-                                label={<span className="text-base font-medium">Card Background</span>}
-                                extra="Background for cards/containers"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                           
-                            <Form.Item
-                                name="textColor"
-                                label={<span className="text-base font-medium">Default Text Color</span>}
-                                extra="Color for standard paragraph text"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            
-                        </div>
-                    </div>
+                    <Tabs
+                        defaultActiveKey="1"
+                        type="line"
+                        size="large"
+                        animated={{ inkBar: true, tabPane: true }}
+                        className="custom-appearance-tabs"
+                        items={[
+                            {
+                                key: "1",
+                                label: (
+                                    <span className="flex items-center gap-2 px-1">
+                                        <BgColorsOutlined /> Themes & Colors
+                                    </span>
+                                ),
+                                children: (
+                                    <div className="space-y-8 pt-4">
+                                        {/* Color Palette Section */}
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Brand Color Palette" description="Configure your primary and secondary brand colors" />
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                                                <Form.Item name="primaryColor" label="Primary Color" extra="Main theme color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="secondaryColor" label="Secondary Color" extra="Secondary brand color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="primaryHoverColor" label="Hover Color" extra="Interaction color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="backgroundColor" label="Page Background">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="cardBackgroundColor" label="Card Background">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="textColor" label="Default Text Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
 
-                    <Divider className="!my-8" />
+                                        {/* Layout Colors */}
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Layout Colors" description="Surface colors for major UI sections" />
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                                                <Form.Item name="topBarBg" label="Top Bar Bg">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="topBarText" label="Top Bar Text">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="headerBg" label="Header Bg">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="headerText" label="Header Nav Text">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="footerBg" label="Footer Bg">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="footerText" label="Footer Text">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
 
-                    {/* Layout Component Colors Section */}
-                    <div className="space-y-6">
-                        <SettingsHeader title="Layout Component Colors" />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <Form.Item
-                                name="topBarBg"
-                                label={<span className="text-base font-medium">Top Bar Background</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="topBarText"
-                                label={<span className="text-base font-medium">Top Bar Text</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="headerBg"
-                                label={<span className="text-base font-medium">Header Background</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="headerText"
-                                label={<span className="text-base font-medium">Header Navigation Text</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="footerBg"
-                                label={<span className="text-base font-medium">Footer Background</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="footerText"
-                                label={<span className="text-base font-medium">Footer Text</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                        </div>
-                    </div>
+                                        {/* Icons Section */}
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Iconography" description="Default styles for system icons" />
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                                                <Form.Item name="iconSize" label="Base Icon Size (px)">
+                                                    <InputNumber className="w-full h-10" min={12} max={48} />
+                                                </Form.Item>
+                                                <Form.Item name="iconColor" label="Global Icon Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="iconHoverColor" label="Icon Hover Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="iconBackgroundColor" label="Icon Background">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="iconHoverBackgroundColor" label="Icon Hover Bg">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            },
+                            {
+                                key: "2",
+                                label: (
+                                    <span className="flex items-center gap-2 px-1">
+                                        <FontSizeOutlined /> Typography
+                                    </span>
+                                ),
+                                children: (
+                                    <div className="space-y-8 pt-4">
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Fonts & Global Scaling" />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                                <Form.Item name="primaryFont" label="Primary Font (Headings)">
+                                                    <Select size="large" options={fontOptions} />
+                                                </Form.Item>
+                                                <Form.Item name="secondaryFont" label="Secondary Font (Body)">
+                                                    <Select size="large" options={fontOptions} />
+                                                </Form.Item>
+                                                <Form.Item name="baseFontSize" label="Global Scale (Base px)" extra="Scales everything site-wide">
+                                                    <InputNumber size="large" className="w-full h-11" min={10} max={24} />
+                                                </Form.Item>
+                                                <Form.Item name="pSize" label="Paragraph Size (px)" extra="Standard body text size">
+                                                    <InputNumber size="large" className="w-full h-11" min={10} max={30} />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
 
-                    <Divider className="!my-8" />
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Heading Sizes" />
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <Form.Item name="h1Size" label="H1 size (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={24} max={100} />
+                                                </Form.Item>
+                                                <Form.Item name="h2Size" label="H2 size (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={20} max={80} />
+                                                </Form.Item>
+                                                <Form.Item name="h3Size" label="H3 size (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={16} max={60} />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            },
+                            {
+                                key: "3",
+                                label: (
+                                    <span className="flex items-center gap-2 px-1">
+                                        <AppstoreOutlined /> Components
+                                    </span>
+                                ),
+                                children: (
+                                    <div className="space-y-8 pt-4">
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Buttons & Interactivity" />
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                                                <Form.Item name="buttonFontSize" label="Text Size (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={10} max={20} />
+                                                </Form.Item>
+                                                <Form.Item name="buttonBorderRadius" label="Border Radius (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={50} />
+                                                </Form.Item>
+                                                <Form.Item name="buttonFontWeight" label="Font Weight">
+                                                    <Select size="large" options={[
+                                                        { label: "Regular (400)", value: 400 },
+                                                        { label: "Medium (500)", value: 500 },
+                                                        { label: "Semi Bold (600)", value: 600 },
+                                                        { label: "Bold (700)", value: 700 },
+                                                    ]} />
+                                                </Form.Item>
+                                                <Form.Item name="buttonTextColor" label="Text Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="buttonPaddingVertical" label="Vertical P (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={30} />
+                                                </Form.Item>
+                                                <Form.Item name="buttonPaddingHorizontal" label="Horizontal P (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={60} />
+                                                </Form.Item>
+                                                <Form.Item name="buttonPrimaryColor" label="Primary Color" extra="Overrides brand primary">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="buttonHoverColor" label="Hover Color" extra="Overrides brand hover">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
 
-                    {/* Icon Settings Section */}
-                    <div className="space-y-6">
-                        <SettingsHeader title="Icon & Ornament Settings" />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <Form.Item 
-                                name="iconSize" 
-                                label={<span className="text-base font-medium">Base Icon Size (px)</span>}
-                                extra="Default scaling for icons"
-                            >
-                                <InputNumber size="large" className="w-full" min={12} max={48} />
-                            </Form.Item>
-                             <Form.Item
-                                name="iconColor"
-                                label={<span className="text-base font-medium">Global Icon Color</span>}
-                                extra="Default color for icons"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="iconHoverColor"
-                                label={<span className="text-base font-medium">Icon Hover Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            
-                            <Form.Item
-                                name="iconBackgroundColor"
-                                label={<span className="text-base font-medium">Icon Background</span>}
-                            >
-                                <Input  type="color" className="h-10 w-full p-1 cursor-pointer" placeholder="transparent or #hex" />
-                            </Form.Item>
-                            <Form.Item
-                                name="iconHoverBackgroundColor"
-                                label={<span className="text-base font-medium">Icon Hover Background</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" placeholder="rgba(0,0,0,0.05) or #hex" />
-                            </Form.Item>
-                        </div>
-                    </div>
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Form Inputs" />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                                <Form.Item name="inputPaddingVertical" label="Vertical Padding (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={30} />
+                                                </Form.Item>
+                                                <Form.Item name="inputPaddingHorizontal" label="Horizontal Padding (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={60} />
+                                                </Form.Item>
+                                                <Form.Item name="inputBorderRadius" label="Border Radius (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={50} />
+                                                </Form.Item>
+                                                <Form.Item name="inputBorderColor" label="Default Border Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            },
+                            {
+                                key: "4",
+                                label: (
+                                    <span className="flex items-center gap-2 px-1">
+                                        <GlobalOutlined /> Branding & Social
+                                    </span>
+                                ),
+                                children: (
+                                    <div className="space-y-8 pt-4">
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Website Identity" />
+                                            <div className="grid grid-cols-1 gap-6">
+                                                <Form.Item name="leftText" label="Header Left Text" rules={[{ required: true, message: "Header text is required" }]} extra="Displayed at top-left">
+                                                    <Input size="large" placeholder="Welcome text" />
+                                                </Form.Item>
+                                                <Form.Item name="copyRight" label="Copyright Text" rules={[{ required: true, message: "Copyright text is required" }]}>
+                                                    <Input size="large" placeholder="Copyright info" />
+                                                </Form.Item>
+                                                <FileUploadField 
+                                                    name="image" 
+                                                    label="Payment Methods Image" 
+                                                    fileList={global.setting?.footerOption?.fileList || []}
+                                                    aspect={2}
+                                                    onFileUpdate={(fileList, fileName) => {
+                                                        const footerOption = { ...global.setting.footerOption, fileList, image: fileName };
+                                                        dispatch(setSetting({ ...global.setting, footerOption }));
+                                                        form.setFieldsValue({ image: fileName, fileList });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
 
-                    <Divider className="!my-8" />
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Social Connections" />
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                                <Form.Item name="facebookUrl" label="Facebook URL">
+                                                    <Input size="large" placeholder="https://facebook.com/yourstore" />
+                                                </Form.Item>
+                                                <Form.Item name="instagramUrl" label="Instagram URL">
+                                                    <Input size="large" placeholder="https://instagram.com/yourstore" />
+                                                </Form.Item>
+                                                <Form.Item name="linkedinUrl" label="LinkedIn URL">
+                                                    <Input size="large" placeholder="https://linkedin.com/company/yourstore" />
+                                                </Form.Item>
+                                                <Form.Item name="twitterUrl" label="Twitter/X URL">
+                                                    <Input size="large" placeholder="https://twitter.com/yourstore" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
 
-                    {/* Typography & Global Styles */}
-                    <div className="space-y-6">
-                        <SettingsHeader title="Typography & Global Styles" />
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                            <Form.Item
-                                name="primaryFont"
-                                label={<span className="text-base font-medium">Primary Font (Headings)</span>}
-                                extra="Used for headings and prominent text"
-                            >
-                                <Select size="large" options={fontOptions} />
-                            </Form.Item>
+                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                                            <SettingsHeader title="Social Icon Appearance" />
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                                                <Form.Item name="socialIconSize" label="Size (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={12} max={48} />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconPadding" label="Padding (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={40} />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconBorderRadius" label="Border Radius (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={100} />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconBorderWidth" label="Border Width (px)">
+                                                    <InputNumber size="large" className="w-full h-11" min={0} max={10} />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconColor" label="Icon Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconHoverColor" label="Hover Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconBg" label="Background">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconHoverBg" label="Hover Bg">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconBorderColor" label="Border Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                                <Form.Item name="socialIconHoverBorderColor" label="Hover Border Color">
+                                                    <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
+                                                </Form.Item>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        ]}
+                    />
 
-                            <Form.Item
-                                name="secondaryFont"
-                                label={<span className="text-base font-medium">Secondary Font (Body)</span>}
-                                extra="Used for body text and descriptions"
-                            >
-                                <Select size="large" options={fontOptions} />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="baseFontSize"
-                                label={<span className="text-base font-medium">Global Scale (Base px)</span>}
-                                extra="Scales everything site-wide (rem context)"
-                            >
-                                <InputNumber size="large" className="w-full" min={10} max={24} />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="pSize"
-                                label={<span className="text-base font-medium">Paragraph font size (px)</span>}
-                                extra="Specifically for standard body/paragraph text"
-                            >
-                                <InputNumber size="large" className="w-full" min={10} max={30} />
-                            </Form.Item>
-
-
-                        </div>
-
-                        <Divider className="!my-8" />
-
-                        {/* Button & Interactive Settings */}
-                        <SettingsHeader title="Buttons & Interactivity" />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <Form.Item name="buttonFontSize" label={<span className="text-base font-medium">Text Size (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={10} max={20} />
-                            </Form.Item>
-                            <Form.Item name="buttonBorderRadius" label={<span className="text-base font-medium">Border Radius (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={50} />
-                            </Form.Item>
-                            <Form.Item name="buttonFontWeight" label={<span className="text-base font-medium">Font Weight</span>}>
-                                <Select size="large" options={[
-                                    { label: "Regular (400)", value: 400 },
-                                    { label: "Medium (500)", value: 500 },
-                                    { label: "Semi Bold (600)", value: 600 },
-                                    { label: "Bold (700)", value: 700 },
-                                ]} />
-                            </Form.Item>
-                            <Form.Item name="buttonPaddingVertical" label={<span className="text-base font-medium">Vertical Padding (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={30} />
-                            </Form.Item>
-                            <Form.Item name="buttonPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={60} />
-                            </Form.Item>
-                             <Form.Item
-                                name="buttonPrimaryColor"
-                                label={<span className="text-base font-medium">Button Primary Color</span>}
-                                extra="Override global primary color"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="buttonHoverColor"
-                                label={<span className="text-base font-medium">Button Hover Color</span>}
-                                extra="Override global hover color"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="buttonTextColor"
-                                label={<span className="text-base font-medium">Button Text Color</span>}
-                                extra="Color for text inside buttons"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                        </div>
-
-                        <Divider className="!my-8" />
-
-                        {/* Input Field Settings */}
-                        <SettingsHeader title="Input Fields (Forms)" />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Form.Item name="inputPaddingVertical" label={<span className="text-base font-medium">Vertical Padding (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={30} />
-                            </Form.Item>
-                            <Form.Item name="inputPaddingHorizontal" label={<span className="text-base font-medium">Horizontal Padding (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={60} />
-                            </Form.Item>
-                             <Form.Item name="inputBorderRadius" label={<span className="text-base font-medium">Border Radius (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={0} max={50} />
-                            </Form.Item>
-                             <Form.Item
-                                name="inputBorderColor"
-                                label={<span className="text-base font-medium">Default Border Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                        </div>
-
-
-                        <Divider plain><span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Heading Sizes</span></Divider>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <Form.Item name="h1Size" label={<span className="text-sm font-medium">H1 size (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={24} max={100} />
-                            </Form.Item>
-                            <Form.Item name="h2Size" label={<span className="text-sm font-medium">H2 size (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={20} max={80} />
-                            </Form.Item>
-                            <Form.Item name="h3Size" label={<span className="text-sm font-medium">H3 size (px)</span>}>
-                                <InputNumber size="large" className="w-full" min={16} max={60} />
-                            </Form.Item>
-                        </div>
-                    </div>
-
-                    <Divider className="!my-8" />
-
-                    {/* Header Section */}
-                    <div className="space-y-4">
-                        <SettingsHeader title="Header Branding" />
-                        <Form.Item
-                            name="leftText"
-                            label={<span className="text-base font-medium">Header Left Text</span>}
-                            rules={[{ required: true, message: "Header text is required" }]}
-                            extra="Text displayed at the top left of the website"
-                            className="!mb-0"
-                        >
-                            <Input size="large" placeholder="Welcome to our store!" className="max-w-xl" />
-                        </Form.Item>
-                    </div>
-
-                    <Divider className="!my-8" />
-
-                    {/* Footer Section */}
-                    <div className="space-y-4">
-                        <SettingsHeader title="Footer Branding" />
-                        <Form.Item
-                            name="copyRight"
-                            label={<span className="text-base font-medium">Copyright Text</span>}
-                            rules={[{ required: true, message: "Copyright text is required" }]}
-                            className="!mb-0"
-                        >
-                            <Input size="large" placeholder="© 2024 Your Store. All rights reserved." className="max-w-xl" />
-                        </Form.Item>
-
-                        <div className="pt-4">
-                            <FileUploadField 
-                                name="image" 
-                                label="Payment Methods Image" 
-                                fileList={global.setting?.footerOption?.fileList || []}
-                                extra="Upload an image showing accepted payment methods"
-                                aspect={2}
-                                onFileUpdate={(fileList, fileName) => {
-                                    const footerOption = { ...global.setting.footerOption, fileList, image: fileName };
-                                    dispatch(setSetting({ ...global.setting, footerOption }));
-                                    form.setFieldsValue({ image: fileName, fileList });
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    <Divider className="!my-8" />
-
-                    {/* Social Media Section */}
-                    <div className="space-y-4">
-                        <SettingsHeader title="Social Media Connect" />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Form.Item
-                                name="facebookUrl"
-                                label={<span className="text-base font-medium">Facebook URL</span>}
-                                className="!mb-0"
-                            >
-                                <Input size="large" placeholder="https://facebook.com/yourstore" />
-                            </Form.Item>
-                            <Form.Item
-                                name="instagramUrl"
-                                label={<span className="text-base font-medium">Instagram URL</span>}
-                                className="!mb-0"
-                            >
-                                <Input size="large" placeholder="https://instagram.com/yourstore" />
-                            </Form.Item>
-                            <Form.Item
-                                name="linkedinUrl"
-                                label={<span className="text-base font-medium">LinkedIn URL</span>}
-                                className="!mb-0"
-                            >
-                                <Input size="large" placeholder="https://linkedin.com/company/yourstore" />
-                            </Form.Item>
-                            <Form.Item
-                                name="twitterUrl"
-                                label={<span className="text-base font-medium">Twitter URL</span>}
-                                className="!mb-0"
-                            >
-                                <Input size="large" placeholder="https://twitter.com/yourstore" />
-                            </Form.Item>
-                        </div>
-                    </div>
-
-                    <Divider className="!my-8" />
-
-                    {/* Social Media Icon Appearance Settings */}
-                    <div className="space-y-6">
-                        <SettingsHeader title="Social Media Icon Appearance" />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <Form.Item 
-                                name="socialIconSize" 
-                                label={<span className="text-base font-medium">Icon Size (px)</span>}
-                            >
-                                <InputNumber size="large" className="w-full" min={12} max={48} />
-                            </Form.Item>
-                            <Form.Item 
-                                name="socialIconPadding" 
-                                label={<span className="text-base font-medium">Padding (px)</span>}
-                            >
-                                <InputNumber size="large" className="w-full" min={0} max={40} />
-                            </Form.Item>
-                            <Form.Item 
-                                name="socialIconBorderRadius" 
-                                label={<span className="text-base font-medium">Border Radius (px)</span>}
-                            >
-                                <InputNumber size="large" className="w-full" min={0} max={100} />
-                            </Form.Item>
-                            <Form.Item
-                                name="socialIconColor"
-                                label={<span className="text-base font-medium">Icon Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="socialIconHoverColor"
-                                label={<span className="text-base font-medium">Icon Hover Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="socialIconBg"
-                                label={<span className="text-base font-medium">Background Color</span>}
-                                extra="Use rgba for transparency if needed"
-                            >
-                                <Input size="large" type="color" placeholder="rgba(255,255,255,0.1) or #hex" />
-                            </Form.Item>
-                            <Form.Item
-                                name="socialIconHoverBg"
-                                label={<span className="text-base font-medium">Hover Background</span>}
-                            >
-                                <Input size="large" type="color" placeholder="rgba(247,170,14,1) or #hex" />
-                            </Form.Item>
-                            <Form.Item 
-                                name="socialIconBorderWidth" 
-                                label={<span className="text-base font-medium">Border Width (px)</span>}
-                            >
-                                <InputNumber size="large" className="w-full" min={0} max={10} />
-                            </Form.Item>
-                            <Form.Item
-                                name="socialIconBorderColor"
-                                label={<span className="text-base font-medium">Border Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="socialIconHoverBorderColor"
-                                label={<span className="text-base font-medium">Hover Border Color</span>}
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                        </div>
-                    </div>
-
-                    <Form.Item className="!mb-0 !mt-8">
+                    <div className="flex justify-end mt-10 pt-8 border-t border-gray-100">
                         <Button
                             type="primary"
                             htmlType="submit"
                             loading={loading}
                             size="large"
-                            className="!h-11 !px-8 !font-medium"
-                            style={{ borderRadius: "var(--button-border-radius)" }}
+                            className="!h-14 !px-12 !rounded-2xl !font-bold text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                         >
-                            Save Appearance Settings
+                            Save All Settings
                         </Button>
-                    </Form.Item>
+                    </div>
                 </Form>
             </Card>
             <PreviewModal />
