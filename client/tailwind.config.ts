@@ -12,7 +12,6 @@ const config: Config = {
         global: {
           primary: "var(--global-primary)",
           secondary: "var(--global-secondary)",
-          accent: "var(--global-accent)",
           hover: "var(--primary-hover)",
           text: "var(--text-color)",
           bg: "var(--background-color)",

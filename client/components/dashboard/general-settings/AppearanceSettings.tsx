@@ -48,10 +48,6 @@ const AppearanceSettings = () => {
             primaryColor: "#F7AA0E",
             primaryHoverColor: "#e59a0d",
             secondaryColor: "#000000",
-            successColor: "#52c41a",
-            warningColor: "#faad14",
-            errorColor: "#ff4d4f",
-            infoColor: "#1890ff",
             backgroundColor: "#ffffff",
             cardBackgroundColor: "#ffffff",
             inputPaddingVertical: 8,
@@ -116,18 +112,12 @@ const AppearanceSettings = () => {
             primaryColor,
             primaryHoverColor,
             secondaryColor,
-            successColor,
-            warningColor,
-            errorColor,
-            infoColor,
             backgroundColor,
             cardBackgroundColor,
             inputPaddingVertical,
             inputPaddingHorizontal,
             inputBorderRadius,
             inputBorderColor,
-            linkColor,
-            accentColor,
             iconColor,
             iconHoverColor,
             iconBackgroundColor,
@@ -176,18 +166,12 @@ const AppearanceSettings = () => {
                 primaryColor,
                 primaryHoverColor,
                 secondaryColor,
-                successColor,
-                warningColor,
-                errorColor,
-                infoColor,
                 backgroundColor,
                 cardBackgroundColor,
                 inputPaddingVertical,
                 inputPaddingHorizontal,
                 inputBorderRadius,
                 inputBorderColor,
-                linkColor,
-                accentColor,
                 iconColor,
                 iconHoverColor,
                 iconBackgroundColor,
@@ -279,34 +263,6 @@ const AppearanceSettings = () => {
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
-                            <Form.Item
-                                name="successColor"
-                                label={<span className="text-base font-medium">Success Color</span>}
-                                extra="For success states/messages"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="warningColor"
-                                label={<span className="text-base font-medium">Warning Color</span>}
-                                extra="For warning states/messages"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="errorColor"
-                                label={<span className="text-base font-medium">Error Color</span>}
-                                extra="For error states/messages"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="infoColor"
-                                label={<span className="text-base font-medium">Info Color</span>}
-                                extra="For informational states"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
                              <Form.Item
                                 name="backgroundColor"
                                 label={<span className="text-base font-medium">Page Background</span>}
@@ -326,21 +282,6 @@ const AppearanceSettings = () => {
                                 name="textColor"
                                 label={<span className="text-base font-medium">Default Text Color</span>}
                                 extra="Color for standard paragraph text"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            
-                            <Form.Item
-                                name="linkColor"
-                                label={<span className="text-base font-medium">Link Color</span>}
-                                extra="Color for hyperlinks"
-                            >
-                                <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
-                            </Form.Item>
-                            <Form.Item
-                                name="accentColor"
-                                label={<span className="text-base font-medium">Accent Color</span>}
-                                extra="Secondary accent color"
                             >
                                 <Input type="color" className="h-10 w-full p-1 cursor-pointer" />
                             </Form.Item>
