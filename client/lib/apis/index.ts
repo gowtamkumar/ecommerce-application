@@ -16,7 +16,7 @@ export async function Gets(url: string) {
 }
 
 // Gets
-export async function Get(url: string, id: string | number) {
+export async function Get(url: string) {
   const get = await getHeaders({ method: "GET" });
   const res = await fetch(url, get as RequestInit);
   return res.json();
@@ -31,8 +31,6 @@ export async function Update({ url, body }: { url: string; body: any }) {
 
 // Delete
 export async function Delete(url: string) {
-  console.log("url", url);
-
   const newData = await getHeaders({ method: "DELETE" });
   const res = await fetch(url, newData as RequestInit);
   return res.json();
