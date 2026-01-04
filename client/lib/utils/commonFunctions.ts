@@ -7,8 +7,8 @@ import {
 } from "@/redux/features/global/globalSlice";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../authOption";
-import { errorNotification, successNotification } from "./notification";
 import { auth } from "@/auth";
+import { errorNotification, successNotification } from "./notification";
 
 export const handleAsyncAction = async (
   asyncFn: () => Promise<any>,
@@ -23,7 +23,7 @@ export const handleAsyncAction = async (
     if (!res.success) {
       errorNotification({ message: res.message });
       dispatch(setLoading({}));
-      return null
+      return null;
     }
 
     successNotification({ message: res.message });
@@ -68,6 +68,37 @@ export async function getAuthHeaders() {
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${session?.user?.accessToken}`,
+  };
+}
+
+export async function getPostPutHeaders({
+  method,
+  body,
+}: {
+  method: string;
+  body: any;
+}) {
+  const session = await auth();
+  return {
+    method,
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.user?.accessToken}`,
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+export async function getHeaders({ method }: { method: string }) {
+  const session = await auth();
+  return {
+    method,
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session?.user?.accessToken}`,
+    },
   };
 }
 

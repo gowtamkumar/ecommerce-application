@@ -1,6 +1,7 @@
 "use client";
 import uploadButton from "@/components/share-component/uploadButton";
-import { saveBrand, updateBrand } from "@/lib/apis/brand";
+import { brandsApi } from "@/constants/api";
+import { Save, Update } from "@/lib/apis";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
   handleAsyncAction,
@@ -14,7 +15,7 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Image, Input, Modal, Switch, Upload } from "antd";
+import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,11 +37,9 @@ const AddBrand = () => {
   }, [payload]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
-
-    const result = newData.id
-      ? () => updateBrand(newData)
-      : () => saveBrand(newData);
+    const result = values.id
+      ? () => Update({ url: `${brandsApi}/${values.id}`, body: values })
+      : () => Save({ url: brandsApi, body: values });
 
     await handleAsyncAction(result, dispatch);
   };
@@ -115,7 +114,10 @@ const AddBrand = () => {
             disabled={global.loading.save}
             loading={global.loading.save}
             className="!h-10 !px-6 !font-medium"
-            style={{ borderRadius: "var(--button-border-radius)", backgroundColor: "var(--global-primary)" }}
+            style={{
+              borderRadius: "var(--button-border-radius)",
+              backgroundColor: "var(--global-primary)",
+            }}
           >
             {payload?.id ? "Update" : "Save"}
           </Button>
@@ -152,7 +154,7 @@ const AddBrand = () => {
           </Form.Item>
 
           {/* Status */}
-          <Form.Item
+          {/* <Form.Item
             name="status"
             label="Status"
             valuePropName="checked"
@@ -163,6 +165,22 @@ const AddBrand = () => {
               unCheckedChildren="Inactive"
               defaultChecked
             />
+          </Form.Item> */}
+
+          <Form.Item
+            name="status"
+            label="Status"
+            rules={[
+              {
+                required: true,
+                message: "Status is required",
+              },
+            ]}
+          >
+            <Select placeholder="Select Status">
+              <Select.Option value="Active">Active</Select.Option>
+              <Select.Option value="Inactive">Inactive</Select.Option>
+            </Select>
           </Form.Item>
 
           {/* Image Upload */}

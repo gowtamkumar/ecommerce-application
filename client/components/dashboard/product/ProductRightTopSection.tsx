@@ -32,7 +32,7 @@ export default function ProductRightTopSection({
               },
             ]}
           >
-            <Select showSearch allowClear placeholder="Select Status">
+            <Select placeholder="Select Status">
               <Select.Option value="Active">Active</Select.Option>
               <Select.Option value="Inactive">Inactive</Select.Option>
             </Select>

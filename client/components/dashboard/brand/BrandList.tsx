@@ -1,6 +1,7 @@
 "use client";
+import { brandsApi } from "@/constants/api";
 import { ActionType } from "@/constants/constants";
-import { deleteBrand, getBrands } from "@/lib/apis/brand";
+import { Delete, Gets } from "@/lib/apis";
 import { imageSetFile } from "@/lib/utils/imageSetFile";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
@@ -41,7 +42,7 @@ const BrandList: React.FC = () => {
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
-      const res = await getBrands();
+      const res = await Gets(`${brandsApi}`);
       setBrands(res.data);
     } catch (err: any) {
       errorNotification({ message: err.message });
@@ -57,7 +58,7 @@ const BrandList: React.FC = () => {
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
     try {
-      await deleteBrand(id);
+      await Delete(`${brandsApi}/${id}`);
       successNotification({ message: "Successfully deleted" });
       fetchData();
     } catch (error: any) {
