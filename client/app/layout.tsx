@@ -164,8 +164,6 @@ export default async function RootLayout({
     .map((f) => f.split(",")[0].trim())
     .filter((v, i, a) => a.indexOf(v) === i);
 
-  console.log("appearance", appearance);
-
 
   return (
     <html lang="en">

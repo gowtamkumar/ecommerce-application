@@ -34,10 +34,21 @@ const SECTION_ICONS: Record<SectionType, any> = {
 export default function Sidebar({ sections, selectedId, onSelect, onUpdate }: SidebarProps) {
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(true);
   const addSection = (type: SectionType) => {
+    // Default settings based on section type
+    const defaultSettings: Record<string, any> = {
+      'product-slider': {
+        headline: 'Featured Products',
+        source: 'all',
+        layout: 'grid',
+        columns: 4,
+        count: 8,
+      },
+    };
+
     const newSection: CustomizerSection = {
       id: `section-${Date.now()}`,
       type,
-      settings: {},
+      settings: defaultSettings[type] || {},
       styles: { paddingTop: 40, paddingBottom: 40 },
     };
     onUpdate([...sections, newSection]);

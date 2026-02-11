@@ -87,10 +87,15 @@ export const createPage = asyncHandler(
   async (req: CustomRequest, res: Response) => {
     logger.info(`Service: createPage ${req.method} ${req.url}`);
     const connection = await getDBConnection();
+    console.log("req.body", req.body);
+    console.log("req.id", req.id);
     const validation = createPageValidation.safeParse({
       ...req.body,
       userId: req.id,
     });
+
+    console.log("validation", validation);
+    
 
     if (!validation.success) {
       const formattedErrors = validation.error.issues.map((issue) => ({

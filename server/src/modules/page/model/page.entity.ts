@@ -62,8 +62,8 @@ export class PageEntity {
     })
     status!: string;
 
-    @Column({ type: 'uuid' })
-    userId!: string;
+    @Column({name: "user_id"})
+    userId!: number;
 
 
     @CreateDateColumn({ type: 'timestamptz' })

@@ -1227,14 +1227,14 @@ export default function SettingsPanel({ section, onUpdate, onClose }: SettingsPa
                           <input type="text" placeholder="Question" value={faq.question} onChange={(e) => updateArrayItem('items', faq.id, { question: e.target.value })} className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
                           <textarea placeholder="Answer" value={faq.answer} onChange={(e) => updateArrayItem('items', faq.id, { answer: e.target.value })} rows={3} className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
                           <button onClick={() => removeArrayItem('items', faq.id)} className="w-full py-1.5 text-[10px] font-bold text-red-500 flex items-center justify-center gap-1 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg">
-                            <Trash2 className="w-3 h-3" /> Remove Question
+                            <BsTrash2 className="w-3 h-3" /> Remove Question
                           </button>
                         </div>
                       )}
                     </div>
                   ))}
                   <button onClick={() => addArrayItem('items', { question: 'New Question', answer: 'Answer goes here' })} className="w-full py-2 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-[10px] font-bold text-slate-500 hover:border-brand-500 hover:text-brand-600 transition-all flex items-center justify-center gap-2">
-                    <Plus className="w-4 h-4" /> Add Question
+                    <BiPlus className="w-4 h-4" /> Add Question
                   </button>
                 </div>
               )}

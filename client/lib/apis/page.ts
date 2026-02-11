@@ -36,7 +36,7 @@ export async function createPage(data: any) {
   return handleResponse(res);
 }
 
-export async function updatePage(id: number, data: any) {
+export async function updatePage(id: string, data: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/pages/${id}`, {
     method: "PUT",
@@ -47,7 +47,7 @@ export async function updatePage(id: number, data: any) {
   return handleResponse(res);
 }
 
-export async function deletePage(id: number) {
+export async function deletePage(id: string) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/pages/${id}`, {
     method: "DELETE",
@@ -57,7 +57,7 @@ export async function deletePage(id: number) {
   return handleResponse(res);
 }
 
-export async function getPageById(id: number) {
+export async function getPageById(id: string) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/pages/${id}`, {
     method: "GET",

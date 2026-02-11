@@ -6,6 +6,7 @@ import { PageData } from "@/types/customizer";
 import { use, useEffect, useState } from "react";
 import toast from "react-toastify";
 import Loading from "../../loading";
+import { getPageById } from "@/lib/apis/page";
 
 export default function CustomizerPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -29,8 +30,6 @@ export default function CustomizerPage({ params }: { params: Promise<{ id: strin
   const fetchPage = async () => {
     try {
       const res = await fetchAPI(`/pages/${resolvedParams.id}`);
-      console.log("age", res);
-      
       if (res.success) {
         const page = res.data;
         // The entity has 'sections' column, but Customizer expects data.content.sections

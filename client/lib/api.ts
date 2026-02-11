@@ -19,7 +19,7 @@ function getClientAuthHeaders(): Record<string, string> {
 }
 
 export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  const url = endpoint.startsWith('http') ? endpoint : `${appConfig.apiUrl}${endpoint}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${appConfig.baseApiClientUrl}/api/v1${endpoint}`;
   
   const headers = {
     ...getClientAuthHeaders(),

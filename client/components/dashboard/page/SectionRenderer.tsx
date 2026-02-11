@@ -3,6 +3,7 @@ import BannerSlider from "./store/BannerSlider";
 import BuilderButton from "./store/BuilderButton";
 import ImageBlock from "./store/ImageBlock";
 import OfferBanner from "./store/OfferBanner";
+import ProductSlider from "./store/ProductSlider";
 import StatsCounter from "./store/StatsCounter";
 import TextBlock from "./store/TextBlock";
 import VideoBlock from "./store/VideoBlock";
@@ -81,21 +82,23 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ section }) => {
           />
         );
 
+
       case "button":
         return (
           <BuilderButton variant={settings?.variant} size={settings?.size} text={settings?.text} styles={styles} link={settings?.link} />
         );
 
-     
+      case "product-slider":
         return (
-          <FAQSection
-            items={settings?.items}
-            headline={settings?.title}
-            subline={settings?.subline}
-            styles={styles}
-            buttonText={settings?.buttonText}
-            faqIds={settings?.faqIds}
+          <ProductSlider
+            headline={settings?.headline}
+            count={settings?.count}
             source={settings?.source}
+            productIds={settings?.productIds}
+            collectionId={settings?.collectionId}
+            layout={settings?.layout}
+            columns={settings?.columns}
+            styles={styles}
           />
         );
     

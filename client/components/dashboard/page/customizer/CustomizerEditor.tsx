@@ -1,7 +1,5 @@
 "use client";
 
-import { fetchAPI } from '@/lib/api';
-// import { CustomizerSection, PageData } from '@/types/customizer';
 import Link from 'next/link';
 import { useState } from 'react';
 import PageSettings from './PageSettings';
@@ -14,6 +12,8 @@ import { CiMonitor, CiSettings } from 'react-icons/ci';
 import { FiSmartphone } from 'react-icons/fi';
 import { BiLayout, BiSave } from 'react-icons/bi';
 import { createPage, updatePage } from '@/lib/apis/page';
+import { toast } from 'react-toastify';
+import { fetchAPI } from '@/lib/api';
 
 interface CustomizerEditorProps {
   pageId: string;
@@ -44,21 +44,34 @@ export default function CustomizerEditor({ pageId, initialData }: CustomizerEdit
 
       if (isNewPage) {
         // Create new page with POST /pages
-        const response = await createPage(payload);
-        alert('Page created successfully');
+                const response = await createPage(payload);
+
+        // const response = await fetchAPI(`/pages`, { method: 'POST', body: JSON.stringify(payload) });
+        
+        toast.success('Page created successfully');
 
         // Navigate to the newly created page to enable further editing
-        if (response?.id) {
-          window.location.href = `/dashboard/pages/${response.id}`;
+        if (response?.data?.id) {
+          window.location.href = `/dashboard/pages/${response.data.id}`;
         }
       } else {
         // Update existing page with PUT /pages/:id
-        await updatePage(Number(pageId), { ...data });
-        alert('Page saved successfully');
+        const updatePayload = {
+          title: data.title,
+          slug: data.slug,
+          isHomePage: data.isHomePage,
+          sections: data.content.sections,
+          metaTitle: data.metaTitle,
+          metaDescription: data.metaDescription,
+          status: data.status,
+          typography: data.typography,
+        };
+         await updatePage(pageId, updatePayload);
+        toast.success('Page saved successfully');
       }
     } catch (error: any) {
       console.error('Save error:', error);
-      alert(error.message || 'Failed to save page');
+      toast.error(error.message || 'Failed to save page');
     } finally {
       setIsSaving(false);
     }
@@ -71,7 +84,7 @@ export default function CustomizerEditor({ pageId, initialData }: CustomizerEdit
       {/* Header */}
       <header className="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shrink-0 z-50">
         <div className="flex items-center gap-4">
-          <Link href="/admin/pages" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+          <Link href="/dashboard/pages" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
             <BsArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -96,7 +109,7 @@ export default function CustomizerEditor({ pageId, initialData }: CustomizerEdit
         </div>
 
         <div className="flex items-center gap-3">
-          <Link href={`/${data.slug}`} target='_blank' className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+          <Link href={`/page/${data.slug}`} target='_blank' className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
             <BsEye className="w-4 h-4" />
             Preview
           </Link>

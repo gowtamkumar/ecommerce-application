@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import Loading from "../loading";
 import { EditFilled, PlusCircleFilled } from "@ant-design/icons";
 import { BsTrash2 } from "react-icons/bs";
+import { deletePage, getPages } from "@/lib/apis/page";
+import { toast } from "react-toastify";
 
 interface Page {
   id: string;
@@ -28,6 +30,8 @@ export default function PagesListPage() {
   const fetchPages = async () => {
     try {
       const res = await fetchAPI("/pages");
+      console.log("pages", res);
+      
       if (res.success) {
         setPages(res.data || []);
       }
@@ -42,12 +46,12 @@ export default function PagesListPage() {
     if (!confirm("Are you sure you want to delete this page?")) return;
 
     try {
-      await fetchAPI(`/pages/${id}`, { method: "DELETE" });
-      alert("Page deleted successfully");
+      await deletePage(id);
+      toast.success("Page deleted successfully");
       fetchPages();
     } catch (error) {
       console.error("Failed to delete page:", error);
-      alert("Failed to delete page");
+      toast.error("Failed to delete page");
     }
   };
 

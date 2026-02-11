@@ -44,7 +44,7 @@ export const createPageValidation = z.object({
     .optional()
     .nullable(),
   status: z.enum(['draft', 'published']).default('published'),
-  userId: z.string({
+  userId: z.number({
     required_error: 'User ID is required',
   }),
 });
