@@ -10,42 +10,65 @@ import { ContentType, PageStatus } from '../enums';
 
 @Entity('pages')
 export class PageEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+   @PrimaryGeneratedColumn()
+    id!: number;
 
-  @Column()
-  title!: string;
+    @Column({ type: 'varchar', length: 255 })
+    title!: string;
 
-  @Column({ unique: true })
-  slug!: string;
+    @Column({ type: 'varchar', length: 255, default: '' })
+    slug!: string;
 
-  @Column({ type: 'text' })
-  content!: string;
+    @Column({ type: 'boolean', default: false })
+    isHomePage!: boolean;
 
-  @Column({
-    name: 'content_type',
-    type: 'enum',
-    enum: ContentType,
-    default: ContentType.MARKDOWN,
-  })
-  contentType!: ContentType;
+    @Column({ type: 'int', default: 0 })
+    order!: number;
 
-  @Column({ name: 'meta_description', type: 'text', nullable: true })
-  metaDescription?: string;
+    @Column({ type: 'jsonb', nullable: true })
+    sections!: Array<{
+        id: string;
+        type: 'banner' | 'product-slider' | 'category-grid' | 'offer-banner' | 'review-slider' | 'text-block' | 'image-block' | 'button' | 'faq-section' | string;
+        settings?: any;
+        styles?: any;
+        disabled?: boolean;
+    }>;
 
-  @Column({
-    type: 'enum',
-    enum: PageStatus,
-    default: PageStatus.DRAFT,
-  })
-  status!: PageStatus;
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    metaTitle!: string;
 
-  @Column({ name: 'user_id', nullable: true })
-  userId?: number;
+    @Column({ type: 'text', nullable: true })
+    metaDescription!: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt?: string;
+    @Column({ type: 'jsonb', nullable: true })
+    typography!: {
+        fontFamily?: string;
+        headingFont?: string;
+        baseFontSize?: number;
+        headingFontFamily?: string;
+        headingFontWeight?: string;
+        headingFontSize?: string;
+        headingLineHeight?: string;
+        paragraphFontFamily?: string;
+        paragraphFontWeight?: string;
+        paragraphFontSize?: string;
+        paragraphLineHeight?: string;
+    };
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt?: string;
+    @Column({
+        type: 'enum',
+        enum: ['draft', 'published'],
+        default: 'published',
+    })
+    status!: string;
+
+    @Column({ type: 'uuid' })
+    userId!: string;
+
+
+    @CreateDateColumn({ type: 'timestamptz' })
+    createdAt!: Date;
+
+    @UpdateDateColumn({ type: 'timestamptz' })
+    updatedAt!: Date;
 }
