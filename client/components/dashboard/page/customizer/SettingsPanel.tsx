@@ -1,6 +1,10 @@
 "use client";
 
 import { fetchAPI } from '@/lib/api';
+import { getProducts } from '@/lib/apis/admin/product';
+import { getBrands } from '@/lib/apis/brand';
+import { getCategories } from '@/lib/apis/categories';
+import { getReviews } from '@/lib/apis/review';
 import { CustomizerSection, FAQItem, ReviewItem } from '@/types/customizer';
 import { useEffect, useState } from 'react';
 import { BiChevronDown, BiChevronUp, BiPalette, BiPlus } from 'react-icons/bi';
@@ -26,11 +30,22 @@ export default function SettingsPanel({ section, onUpdate, onClose }: SettingsPa
   useEffect(() => {
     async function loadData() {
       try {
-        const [catRes] = await Promise.all([
-          fetchAPI('/categories'),
+        const [catRes, prodRes, brandRes, reviewRes] = await Promise.all([
+          getCategories(),
+          getProducts(),
+          getBrands(),
+          getReviews(),
+          // getFaqs(),
         ]);
 
+        console.log("prodRes", prodRes);
+        
+
         if (catRes.success) setCategories(catRes.data);
+        if (prodRes.success) setProducts(prodRes.data);
+        if (brandRes.success) setBrands(brandRes.data);
+        if (reviewRes.success) setDbReviews(reviewRes.data);
+        // if (faqRes.success) setDbFaqs(faqRes.data);
       } catch (error) {
         console.error("Failed to load customizer data:", error);
       }

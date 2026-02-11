@@ -10,6 +10,7 @@ import {
 import { Swiper, SwiperSlide } from "swiper/react";
 
 const FeaturedProduct = ({ products }: any) => {
+  console.log("products dsfasdf", products);
   return (
     <Swiper
       modules={[Navigation, Pagination, Scrollbar, A11y, EffectFade]}

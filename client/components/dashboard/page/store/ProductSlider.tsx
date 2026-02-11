@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
+import { useEffect, useState } from "react";
+import FeaturedProduct from "@/components/website/home/FeaturedProduct";
+import { getProducts } from "@/lib/apis/admin/product";
 
 interface Product {
   id: string;
@@ -33,37 +34,48 @@ export default function ProductSlider({
   styles,
 }: ProductSliderProps) {
   const [products, setProducts] = useState<Product[]>([]);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock products for preview - replace with actual API call
-    const mockProducts: Product[] = Array.from({ length: count }, (_, i) => ({
-      id: `product-${i}`,
-      title: `Product ${i + 1}`,
-      price: 29.99 + i * 10,
-      image: `https://via.placeholder.com/300x400?text=Product+${i + 1}`,
-      slug: `product-${i + 1}`,
-    }));
-    setProducts(mockProducts);
-  }, [count, source, productIds, collectionId]);
-
-  const scroll = (direction: "left" | "right") => {
-    if (sliderRef.current) {
-      const scrollAmount = 300;
-      sliderRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        // Fetch products based on source
+        if (source === "manual" && productIds && productIds.length > 0) {
+          // Fetch specific products by IDs
+          const response = await getProducts();
+          if (response.success) {
+            const filtered = response.data.filter((p: any) => 
+              productIds.includes(p.id)
+            ).slice(0, count);
+            setProducts(filtered);
+          }
+        } else if (source === "collection" && collectionId) {
+          // Fetch products by collection/category
+          const response = await getProducts();
+          if (response.success) {
+            const filtered = response.data.filter((p: any) => 
+              p.categoryId === collectionId
+            ).slice(0, count);
+            setProducts(filtered);
+          }
+        } else {
+          // Fetch all products
+          const response = await getProducts();
+          if (response.success) {
+            setProducts(response.data.slice(0, count));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
     }
-  };
 
-  const gridCols = {
-    2: "grid-cols-1 sm:grid-cols-2",
-    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-    5: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5",
-    6: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-6",
-  };
+    fetchProducts();
+  }, [ ]);
 
   return (
     <section
@@ -76,113 +88,29 @@ export default function ProductSlider({
     >
       <div className="container mx-auto px-4">
         {headline && (
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8">
             <h2
               className="text-3xl font-bold"
               style={{ color: styles?.headlineColor || "#111827" }}
             >
               {headline}
             </h2>
-            
-            {layout === "slider" && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => scroll("left")}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-brand-600 hover:text-white hover:border-brand-600 transition-all shadow-sm"
-                  aria-label="Previous"
-                >
-                  <BiChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => scroll("right")}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-brand-600 hover:text-white hover:border-brand-600 transition-all shadow-sm"
-                  aria-label="Next"
-                >
-                  <BiChevronRight className="w-6 h-6" />
-                </button>
-              </div>
-            )}
           </div>
         )}
 
-        {layout === "grid" ? (
-          <div
-            className={`grid ${gridCols[columns as keyof typeof gridCols] || gridCols[4]} gap-6`}
-          >
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group"
-              >
-                <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-brand-600 hover:text-white transition-colors">
-                      ♥
-                    </button>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-slate-900 mb-2 truncate">
-                    {product.title}
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-brand-600">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <button className="px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700 transition-colors">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
           </div>
+        ) : products.length > 0 ? (
+          <FeaturedProduct products={products} />
         ) : (
-          <div 
-            ref={sliderRef}
-            className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="flex-shrink-0 w-64 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group"
-              >
-                <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-brand-600 hover:text-white transition-colors">
-                      ♥
-                    </button>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-slate-900 mb-2 truncate">
-                    {product.title}
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-brand-600">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <button className="px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700 transition-colors">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="text-center py-12 text-slate-500">
+            No products available
           </div>
         )}
       </div>
     </section>
   );
 }
+
