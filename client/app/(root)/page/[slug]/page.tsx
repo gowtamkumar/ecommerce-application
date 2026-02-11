@@ -1,5 +1,7 @@
 import appConfig from "@/appConfig";
+import PageRenderer from "@/components/dashboard/page/PageRenderer";
 import { getPageBySlug } from "@/lib/apis/page";
+import { CustomizerSection } from "@/types/customizer";
 import Link from "next/link";
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -18,11 +20,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   return {
-    title: page.title,
+    title: page.metaTitle || page.title,
     description: page.metaDescription || page.title,
     metadataBase: new URL(appConfig.baseUrl as any),
     openGraph: {
-      title: page.title,
+      title: page.metaTitle || page.title,
       description: page.metaDescription || page.title,
       type: 'website',
     },
@@ -38,7 +40,31 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  // Format date if available, otherwise use current date as fallback for visual
+  // Check if page uses new sections system
+  const hasSections = page.sections && Array.isArray(page.sections) && page.sections.length > 0;
+
+  // If page has sections, render them dynamically (Shopify-like)
+  if (hasSections) {
+    const sections: CustomizerSection[] = page.sections.map((s: any) => ({
+      id: s.id,
+      type: s.type,
+      settings: s.settings || {},
+      styles: s.styles || { paddingTop: 40, paddingBottom: 40 },
+      disabled: s.disabled || false,
+    }));
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <PageRenderer 
+          sections={sections} 
+          typography={page.typography}
+          className="w-full"
+        />
+      </div>
+    );
+  }
+
+  // Fallback to old content-based rendering for backward compatibility
   const formattedDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -73,10 +99,6 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
             </h1>
 
             <div className="flex items-center justify-center gap-6 text-white/70 animate-in slide-in-from-bottom-8 fade-in duration-700 delay-200">
-              {/* <span className="flex items-center gap-2">
-                 <FiClock className="w-4 h-4" />
-                 5 min read
-               </span> */}
               <span className="flex items-center gap-2">
                 Last updated: {formattedDate}
               </span>
@@ -96,11 +118,10 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
                 prose-img:rounded-2xl prose-img:shadow-lg
                 prose-code:bg-gray-100 prose-code:text-indigo-600 prose-code:px-2 prose-code:py-1 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
                 ">
-                {page.contentType === 'markdown' ? (
+                {page.contentType === 'markdown' && page.content ? (
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      // Custom components to override default markdown rendering
                       h1: ({ node, ...props }) => <h1 className="text-3xl md:text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700" {...props} />,
                       h2: ({ node, ...props }) => <h2 className="text-2xl md:text-3xl font-bold mt-12 mb-6 text-gray-800 flex items-center gap-3 after:content-[''] after:h-px after:flex-1 after:bg-gray-200" {...props} />,
                       ul: ({ node, ...props }) => <ul className="space-y-3 my-6 list-none" {...props} />,
@@ -122,11 +143,13 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
                   >
                     {page.content}
                   </ReactMarkdown>
-                ) : (
+                ) : page.content ? (
                   <div
                     className="space-y-6"
                     dangerouslySetInnerHTML={{ __html: page.content }}
                   />
+                ) : (
+                  <p className="text-gray-500 text-center py-10">No content available</p>
                 )}
               </div>
             </div>
@@ -136,3 +159,4 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
     </div>
   );
 }
+
