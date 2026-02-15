@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict ZZ9vImkQ2MYI4IC8WZlGl9OzRBWceeFiiHQgVgblQXCcbOhc7FzD52hcR7puajX
+\restrict LCTupWKW3tJ0xaS3MhKTiUxIbaRkPafCGMtTFbWom0is1O2e20ebfuQMTK1oqqI
 
 -- Dumped from database version 17.7
 -- Dumped by pg_dump version 17.7
@@ -18,6 +18,22 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: admin
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO admin;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: admin
+--
+
+COMMENT ON SCHEMA public IS '';
+
 
 --
 -- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
@@ -257,18 +273,6 @@ CREATE TYPE public.orders_status_enum AS ENUM (
 
 
 ALTER TYPE public.orders_status_enum OWNER TO admin;
-
---
--- Name: pages_content_type_enum; Type: TYPE; Schema: public; Owner: admin
---
-
-CREATE TYPE public.pages_content_type_enum AS ENUM (
-    'html',
-    'markdown'
-);
-
-
-ALTER TYPE public.pages_content_type_enum OWNER TO admin;
 
 --
 -- Name: pages_status_enum; Type: TYPE; Schema: public; Owner: admin
@@ -1288,7 +1292,8 @@ CREATE TABLE public.notifications (
     user_id integer NOT NULL,
     order_id integer,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    offer_url character varying
 );
 
 
@@ -1432,7 +1437,8 @@ CREATE TABLE public.orders (
     total_returned numeric(10,2),
     returned_status public.orders_returned_status_enum,
     total_refuned numeric(10,2),
-    refund_status public.orders_refund_status_enum
+    refund_status public.orders_refund_status_enum,
+    terms_and_conditions boolean
 );
 
 
@@ -1466,15 +1472,18 @@ ALTER SEQUENCE public.orders_id_seq OWNED BY public.orders.id;
 
 CREATE TABLE public.pages (
     id integer NOT NULL,
-    title character varying NOT NULL,
-    slug character varying NOT NULL,
-    content text NOT NULL,
-    content_type public.pages_content_type_enum DEFAULT 'markdown'::public.pages_content_type_enum NOT NULL,
-    meta_description text,
-    status public.pages_status_enum DEFAULT 'draft'::public.pages_status_enum NOT NULL,
-    user_id integer,
-    created_at timestamp without time zone DEFAULT now() NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    status public.pages_status_enum DEFAULT 'published'::public.pages_status_enum NOT NULL,
+    "isHomePage" boolean DEFAULT false NOT NULL,
+    "order" integer DEFAULT 0 NOT NULL,
+    sections jsonb,
+    "metaTitle" character varying(255),
+    "metaDescription" text,
+    typography jsonb,
+    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    title character varying(255) NOT NULL,
+    slug character varying(255) DEFAULT ''::character varying NOT NULL,
+    user_id integer NOT NULL
 );
 
 
@@ -1593,7 +1602,8 @@ CREATE TABLE public.posts (
     user_id integer NOT NULL,
     status public.posts_status_enum DEFAULT 'Draft'::public.posts_status_enum NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    excerpt character varying
 );
 
 
@@ -1860,7 +1870,6 @@ CREATE TABLE public.settings (
     email_config text,
     whats_app_widget text,
     payment_account text,
-    home_page text,
     about_page text,
     contact_page text,
     term_policy_page text,
@@ -1868,7 +1877,9 @@ CREATE TABLE public.settings (
     header_option text,
     faq text,
     help_support text,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    marketing text,
+    appearance text
 );
 
 
@@ -2755,6 +2766,7 @@ becd42b1-b6aa-4c5b-932a-c42c12c8af6e	1	gowtam kumar	Unknown	Admin	CREATE	Unknown
 117539e4-5517-4bc4-bb3e-1e5d48f751bf	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "475.20", "totalQty": 4, "totalTax": "43.20", "grandTotal": "475.20", "orderItems": [{"qty": 4, "subTotal": "475.20", "productId": 2, "taxAmount": "43.20", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "108.00", "totalDiscountAmount": "48.00", "totalDiscountedPrice": "432.00", "discountAmountPerUnit": "12.00"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "totalItemsDiscount": "48.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-18 04:55:44.205471
 6235e3ae-0426-4134-a19c-0ba5d9898e27	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"image": "profile.png", "phone": "01796354654", "reason": "2 prduct i snot good", "orderId": 5, "orderItemId": 5, "requestedQty": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/returns", "method": "POST", "userAgent": "node"}	2025-12-18 04:57:23.944171
 6b39ddfb-a7d2-4995-91a5-06e03784bb4e	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	4	\N	\N	{"id": 4, "status": "Completed", "approvedQty": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/returns/4", "method": "PUT", "userAgent": "node"}	2025-12-18 04:58:57.349123
+1f5cd483-d41e-44c7-8492-20ccd762a311	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	11	\N	\N	{"id": 11, "qty": 2, "type": "Increment"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts/qty-up-down/11", "method": "PUT", "userAgent": "node"}	2025-12-26 09:50:10.931909
 006642ee-6f96-4a23-b227-df65de0a2654	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "new product", "slug": "new-product", "scope": "Global", "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": null, "productId": 2, "salePrice": "130.80", "taxAmount": "10.80", "unitPrice": "120.00", "discountId": 1, "finalPrice": "118.80", "hoverImage": "hoverImage-1765959641459.png", "discountSlug": "winter-sale", "isNewArrival": true, "reviewsCount": null, "discountValue": "10.00", "promotionType": "Seasonal", "purchasePrice": "100.00", "discountAmount": "12.00", "thumbnailImage": "thumbnailImage-1765959241212.png", "discountedPrice": "108.00", "discountStrategy": "Percentage", "productVariantId": 2, "shortDescription": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-18 05:00:18.11328
 2c3a13d2-6b02-4c58-a731-ce20e30accaa	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	9	\N	\N	{"id": 9, "qty": 2, "type": "Increment"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts/qty-up-down/9", "method": "PUT", "userAgent": "node"}	2025-12-18 05:00:25.86681
 71210c93-5211-4c49-83c4-15f590606272	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "237.60", "totalQty": 2, "totalTax": "21.60", "grandTotal": "237.60", "orderItems": [{"qty": 2, "subTotal": "237.60", "productId": 2, "taxAmount": "21.60", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "108.00", "totalDiscountAmount": "24.00", "totalDiscountedPrice": "216.00", "discountAmountPerUnit": "12.00"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "totalItemsDiscount": "24.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-18 05:00:28.433583
@@ -2770,6 +2782,60 @@ d14611e5-9818-4e52-9bce-abe935e1a9e2	1	gowtam kumar	Unknown	Admin	CREATE	Unknown
 4a4c28b1-5f92-4b3b-a97b-c03e42e5f2fa	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "475.20", "totalQty": 4, "totalTax": "43.20", "grandTotal": "475.20", "orderItems": [{"qty": 4, "subTotal": "475.20", "productId": 2, "taxAmount": "43.20", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "108.00", "totalDiscountAmount": "48.00", "totalDiscountedPrice": "432.00", "discountAmountPerUnit": "12.00"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "totalItemsDiscount": "48.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-18 08:28:46.280315
 69d2dc74-65f8-4c3f-aac9-16f644b332a5	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"image": "image.png", "phone": "01798653254", "reason": "this product not good", "orderId": 7, "orderItemId": 7, "requestedQty": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/returns", "method": "POST", "userAgent": "node"}	2025-12-18 08:29:57.011456
 6325fbfa-0edb-4974-99f3-414feb4884d9	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	6	\N	\N	{"id": 6, "status": "Completed", "approvedQty": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/returns/6", "method": "PUT", "userAgent": "node"}	2025-12-18 08:30:41.336325
+135dab2b-62db-4a2d-b3cc-0db7279b4b04	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "new product", "slug": "new-product", "scope": null, "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": null, "productId": 2, "salePrice": "132.00", "taxAmount": "12.00", "unitPrice": "120.00", "discountId": null, "finalPrice": "132.00", "hoverImage": "hoverImage-1766233864026.jpg", "discountSlug": null, "isNewArrival": true, "reviewsCount": null, "discountValue": null, "promotionType": null, "purchasePrice": "100.00", "discountAmount": null, "thumbnailImage": "thumbnailImage-1766233856446.webp", "discountedPrice": "120.00", "discountStrategy": null, "productVariantId": 2, "shortDescription": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-26 05:09:21.582099
+20bf5e4e-d2c5-456d-8ba3-230f053254d4	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	11	\N	\N	{"id": 11, "qty": 2, "type": "Increment"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts/qty-up-down/11", "method": "PUT", "userAgent": "node"}	2025-12-26 09:49:55.807078
+20eb50f8-31a0-44de-96e5-93fab239d0e1	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	11	\N	\N	{"id": 11, "qty": 1, "type": "Decrement"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts/qty-up-down/11", "method": "PUT", "userAgent": "node"}	2025-12-26 09:50:02.174973
+d3e78457-6997-4f92-a8c5-69be453a4c1d	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "264.00", "totalQty": 2, "totalTax": "24.00", "grandTotal": "264.00", "orderItems": [{"qty": 2, "subTotal": "264.00", "productId": 2, "taxAmount": "24.00", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "120.00", "totalDiscountAmount": "0.00", "totalDiscountedPrice": "240.00", "discountAmountPerUnit": "0.00"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "totalItemsDiscount": "0.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-26 09:50:19.477798
+2e064ad5-1781-4aca-ae33-c29bcaa58d0b	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"productId": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/wishlists", "method": "POST", "userAgent": "node"}	2025-12-26 09:51:57.604345
+bd77605e-b529-4e60-9ac1-2fe22d3bf0d6	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"image": "asdfa.png", "phone": "01767163576", "reason": "sdfasdf", "orderId": 8, "orderItemId": 8, "requestedQty": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/returns", "method": "POST", "userAgent": "node"}	2025-12-26 10:06:30.462282
+0f4964e2-c527-473a-b9de-d700c010a21e	1	gowtam kumar	Unknown	Admin	UPDATE	Unknown	7	\N	\N	{"id": 7, "status": "Completed", "approvedQty": 1}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/returns/7", "method": "PUT", "userAgent": "node"}	2025-12-26 10:07:06.358589
+b59aab24-0270-4a87-97fe-a104c966d796	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "new product", "slug": "new-product", "scope": null, "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": null, "productId": 2, "salePrice": "132.00", "taxAmount": "12.00", "unitPrice": "120.00", "discountId": null, "finalPrice": "132.00", "hoverImage": "hoverImage-1766233864026.jpg", "discountSlug": null, "isNewArrival": true, "reviewsCount": null, "discountValue": null, "promotionType": null, "purchasePrice": "100.00", "discountAmount": null, "thumbnailImage": "thumbnailImage-1766233856446.webp", "discountedPrice": "120.00", "discountStrategy": null, "productVariantId": 2, "shortDescription": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2025-12-26 11:13:17.195335
+56e44c0c-ac46-43f0-b505-53866e59dc1c	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "132.00", "totalQty": 1, "totalTax": "12.00", "grandTotal": "132.00", "orderItems": [{"qty": 1, "subTotal": "132.00", "productId": 2, "taxAmount": "12.00", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "120.00", "totalDiscountAmount": "0.00", "totalDiscountedPrice": "120.00", "discountAmountPerUnit": "0.00"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "totalItemsDiscount": "0.00"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2025-12-26 11:13:24.220535
+7a81e4d8-511f-431f-b109-3ade297959cb	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	single product discount	\N	{"name": "single product discount", "image": "image-1766750829303.webp", "scope": "Product", "value": 2, "status": "Active", "endDate": "2025-12-26T12:06:41.600Z", "fileList": [{"uid": "70.07372145651259", "url": "http://localhost:3900/uploads/image-1766750829303.webp", "name": "photo 2214.3958439242183", "status": "done", "fileName": "image-1766750829303.webp"}], "startDate": "2025-12-26T12:06:39.300Z", "description": "asdfasdf", "promotionType": "Discount", "discountStrategy": "Percentage"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/discounts", "method": "POST", "userAgent": "node"}	2025-12-26 12:07:12.268235
+758e1ebb-3923-43c8-819d-f337c77da772	1	gowtam kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"rating": 5, "comment": "nice product boss", "productId": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/reviews", "method": "POST", "userAgent": "node"}	2025-12-26 12:29:53.836247
+7d96c542-0faf-4aa1-9209-0192469693f5	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	NEw post	\N	{"slug": "new-post", "tags": ["dsfasdf"], "image": "image-1767192101403.webp", "title": "NEw post", "status": "Published", "content": "asdfasdfasdfv\\n![image](http://localhost:3900/uploads/images-1766751484041.jpg)", "fileList": [{"uid": "515.4724461207335", "url": "http://localhost:3900/uploads/image-1767192101403.webp", "name": "photo 1325.1725373776912", "status": "done", "fileName": "image-1767192101403.webp"}], "postCategories": [2, 5]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/posts", "method": "POST", "userAgent": "node"}	2025-12-31 14:41:45.409738
+d1e73734-4db2-4917-9fd0-5f124492bbc7	\N	Unknown	Unknown	Unknown	CREATE	Unknown	\N	\N	\N	{"email": "newssss@gmail.com"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/leads", "method": "POST", "userAgent": "node"}	2025-12-31 15:49:49.965825
+5a07432b-a980-4891-a702-d3f952692b5a	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"name": "Gowtam Kumar", "email": "gowtampaul0@gmail.com", "postId": 2, "content": "here should be upage"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/comments", "method": "POST", "userAgent": "node"}	2025-12-31 15:58:46.463111
+949e61b2-b343-462b-9e86-5f7ad3c3b0f8	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	NEw post	\N	{"id": 2, "slug": "new-post", "tags": ["dsfasdf"], "image": "image-1767192101403.webp", "title": "NEw post", "status": "Published", "content": "asdfasdfasdfv\\n![image](http://localhost:3900/uploads/images-1766751484041.jpg)", "excerpt": "hell ow k asldkf jlasdf", "fileList": [{"uid": "911.2518015166744", "url": "http://localhost:3900/uploads/image-1767192101403.webp", "name": "image", "status": "done", "fileName": "image-1767192101403.webp"}], "postCategories": [2]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/posts/2", "method": "PUT", "userAgent": "node"}	2025-12-31 17:07:36.470613
+64647a9c-054a-43fc-b757-3f1600a179c5	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "NewOffer", "title": "Winter offer", "message": "Get 10%"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/notifications/promote", "method": "POST", "userAgent": "node"}	2026-01-01 12:23:20.025538
+0cbd859d-3ce0-456c-b7e5-5c851f8964e1	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "General", "title": "server down", "message": "Hello every on very soon our sever will be down only for 5 minutes"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/notifications/promote", "method": "POST", "userAgent": "node"}	2026-01-01 12:25:01.320472
+df83b87e-e8c0-4067-a0c8-60c9c0b5a82d	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "NewOffer", "title": "new offer", "message": "asfdasdf", "offerUrl": "https://chatgpt.com/c/69566a66-2ec0-8322-9cbd-cb94ee6e1315"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/notifications/promote", "method": "POST", "userAgent": "node"}	2026-01-01 12:38:32.051601
+ecc3eece-ddf2-4d2e-89d8-e8cde3371a91	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "NewOffer", "title": "arko offer", "message": "10% discount", "offerUrl": "http://localhost:3100/offers/winter-sale"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/notifications/promote", "method": "POST", "userAgent": "node"}	2026-01-01 12:46:35.575072
+2dbcb427-0183-4ea1-9a79-d576aa5c9b88	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "NewOffer", "title": "new ooferrrrrrrr", "message": "sdfasdfasdfasdf", "offerUrl": "http://localhost:3100/offers/winter-sale"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/notifications/promote", "method": "POST", "userAgent": "node"}	2026-01-01 12:51:02.533376
+1d450568-ff79-430b-b6b2-a6886a0ed587	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"type": "NewOffer", "title": "new offer ", "message": "sdfasdfa", "offerUrl": "http://localhost:3100/offers/winter-sale"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/notifications/promote", "method": "POST", "userAgent": "node"}	2026-01-01 13:10:03.153144
+793402cb-3310-4e49-b80c-c854b66e1759	1	Gowtam Kumar	Unknown	Admin	DELETE	Unknown	1	\N	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/wishlists/1", "method": "DELETE", "userAgent": "node"}	2026-01-01 13:13:30.832231
+57319e77-04c1-4fbc-af51-1b43e91488cb	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "draft", "content": "asdfasdf", "contentType": "markdown", "metaDescription": "asdfasdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages", "method": "POST", "userAgent": "node"}	2026-01-01 13:40:41.620203
+a1c87ac8-6ec2-4f5f-9d2b-dd6b039939d6	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	Yahama	\N	{"id": 2, "name": "Yahama", "image": "image-1767284117179.webp", "active": true, "fileList": [{"uid": "136.2510834520503", "url": "http://localhost:3900/uploads/image-1767284117179.webp", "name": "photo 4884.171919332671", "status": "done", "fileName": "image-1767284117179.webp"}], "isFeatured": true, "description": null}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/categories/2", "method": "PUT", "userAgent": "node"}	2026-01-01 16:15:19.442007
+aa50e9a2-b2c7-49b4-937f-c57db596ca26	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	new brand	\N	{"name": "new brand", "image": "image-1767284279727.webp", "fileList": [{"uid": "606.2785886893193", "url": "http://localhost:3900/uploads/image-1767284279727.webp", "name": "photo 7033.305840220497", "status": "done", "fileName": "image-1767284279727.webp"}]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/brands", "method": "POST", "userAgent": "node"}	2026-01-01 16:18:01.246451
+a8eb915e-17c9-4935-b593-655dfe223e23	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "new product", "slug": "new-product", "scope": "Product", "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": 5, "productId": 2, "salePrice": "131.76", "taxAmount": "11.76", "unitPrice": "120.00", "discountId": 2, "finalPrice": "129.36", "hoverImage": "hoverImage-1766233864026.jpg", "discountSlug": "single-product-discount", "isNewArrival": true, "reviewsCount": "1", "discountValue": "2.00", "promotionType": "Discount", "purchasePrice": "100.00", "discountAmount": "2.40", "thumbnailImage": "thumbnailImage-1766233856446.webp", "discountedPrice": "117.60", "discountStrategy": "Percentage", "productVariantId": 2, "shortDescription": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2026-01-01 17:22:55.899549
+b8dc9f49-983b-43d7-8b88-17752d3faa69	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"productId": 2}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/wishlists", "method": "POST", "userAgent": "node"}	2026-01-01 18:27:25.796761
+dd78a578-7065-46cc-bbe7-0dc919f31c45	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "129.36", "totalQty": 1, "totalTax": "11.76", "grandTotal": "129.36", "orderItems": [{"qty": 1, "subTotal": "129.36", "productId": 2, "taxAmount": "11.76", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "117.60", "totalDiscountAmount": "2.40", "totalDiscountedPrice": "117.60", "discountAmountPerUnit": "2.40"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "totalItemsDiscount": "2.40"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2026-01-02 09:24:55.517119
+e5deeb91-17e5-42cb-b25a-83fb3c4b96f9	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "new product", "slug": "new-product", "scope": "Product", "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": 5, "productId": 2, "salePrice": "131.76", "taxAmount": "11.76", "unitPrice": "120.00", "discountId": 2, "finalPrice": "129.36", "hoverImage": "hoverImage-1766233864026.jpg", "discountSlug": "single-product-discount", "isNewArrival": true, "reviewsCount": "1", "discountValue": "2.00", "promotionType": "Discount", "purchasePrice": "100.00", "discountAmount": "2.40", "thumbnailImage": "thumbnailImage-1766233856446.webp", "discountedPrice": "117.60", "discountStrategy": "Percentage", "productVariantId": 2, "shortDescription": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2026-01-02 10:23:29.618212
+65c1ef04-cf00-41fc-b22a-213f555702f5	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"couponId": null, "subTotal": "129.36", "totalQty": 1, "totalTax": "11.76", "grandTotal": "129.36", "orderItems": [{"qty": 1, "subTotal": "129.36", "productId": 2, "taxAmount": "11.76", "unitPrice": "120.00", "purchasePrice": "100.00", "productVariantId": 2, "discountedUnitPrice": "117.60", "totalDiscountAmount": "2.40", "totalDiscountedPrice": "117.60", "discountAmountPerUnit": "2.40"}], "paymentMethod": "Cash", "couponDiscount": "0.00", "shippingCharge": "0.00", "shippingAddressId": 2, "termsAndConditions": true, "totalItemsDiscount": "2.40"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/orders", "method": "POST", "userAgent": "node"}	2026-01-02 11:18:15.221208
+1897c0e5-30be-4e5d-a752-2254cf3fdc56	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	\N	\N	{"id": 2, "qty": 1, "name": "new product", "slug": "new-product", "scope": "Product", "total": "1", "brandId": 1, "variant": false, "featured": true, "avgRating": 5, "productId": 2, "salePrice": "131.76", "taxAmount": "11.76", "unitPrice": "120.00", "discountId": 2, "finalPrice": "129.36", "hoverImage": "hoverImage-1766233864026.jpg", "discountSlug": "single-product-discount", "isNewArrival": true, "reviewsCount": "1", "discountValue": "2.00", "promotionType": "Discount", "purchasePrice": "100.00", "discountAmount": "2.40", "thumbnailImage": "thumbnailImage-1766233856446.webp", "discountedPrice": "117.60", "discountStrategy": "Percentage", "productVariantId": 2, "shortDescription": "asdf"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/carts", "method": "POST", "userAgent": "node"}	2026-01-02 11:40:47.573295
+9710af17-6328-4c8b-a95d-3030f8bb4b08	\N	Unknown	Unknown	Unknown	CREATE	Unknown	\N	Gowtam Kumar	\N	{"name": "Gowtam Kumar", "email": "gowtamkumar2019@gmail.com", "phone": "01767163576", "message": "i wan tto be get lead", "subject": "testing bss"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/contacts", "method": "POST", "userAgent": "node"}	2026-01-02 13:04:02.734125
+bead3934-334b-4d54-a066-ca49fe57e141	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	Imported Chinese Embroidery Beaded Beige Kids Shoe	\N	{"name": "Imported Chinese Embroidery Beaded Beige Kids Shoe", "slug": "imported-chinese-embroidery-beaded-beige-kids-shoe", "tags": ["nice product"], "taxId": 1, "images": ["images-1767462845638.jpg", "images-1767462856284.png"], "status": "Active", "unitId": 2, "brandId": 2, "alertQty": 10, "featured": true, "stockQty": 100, "unitPrice": 350, "discountId": 2, "hoverImage": "hoverImage-1767462840742.jpg", "description": "Authentic China Imported Product – A Perfect Blend of Style and Comfort\\n\\nExperience the perfect balance of fashion and comfort with this original China imported product, crafted to complement any outfit effortlessly. Combining premium Chinese quality with a sleek, modern design, it ensures both elegance and durability for everyday wear.Authentic China Imported Product – A Perfect Blend of Style and Comfort\\n\\nExperience the perfect balance of fashion and comfort with this original China imported product, crafted to complement any outfit effortlessly. Combining premium Chinese quality with a sleek, modern design, it ensures both elegance and durability for everyday wear.", "enableReview": true, "isNewArrival": true, "isReturnable": true, "purchasePrice": 300, "thumbnailImage": "thumbnailImage-1767462833628.jpg", "productVariants": [{"stockQty": 100, "unitPrice": 350, "purchasePrice": 300}], "limitPurchaseQty": 10, "shortDescription": "Authentic China Imported Product – A Perfect Blend of Style and Comfort\\n\\nExperience the perfect balance of fashion and comfort with this original China imported product, crafted to complement any outfit effortlessly. Combining premium Chinese quality with a sleek, modern design, it ensures both elegance and durability for everyday wear.", "productCategories": [5, 7, 8, 9, 10, 11, 3, 1, 6]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/products", "method": "POST", "userAgent": "node"}	2026-01-03 17:54:23.860218
+753ab526-75db-450d-99f4-0892e7cb06b7	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	Exclusive Kids Boys Sandals – Soft & Comfortable	\N	{"name": "Exclusive Kids Boys Sandals – Soft & Comfortable", "slug": "exclusive-kids-boys-sandals-–-soft-&-comfortable", "tags": ["nice"], "taxId": 1, "images": ["images-1767463142663.png", "images-1767463147685.png"], "status": "Active", "unitId": 2, "brandId": 1, "alertQty": 10, "featured": true, "stockQty": 100, "unitPrice": 120, "discountId": 2, "hoverImage": "hoverImage-1767463140069.png", "description": "Perfect for little adventurers, these official Disney sandals combine playful style with all-day comfort, safety, and durability. Lightweight and easy to wear, they are ideal for active summer days and outdoor fun.\\n\\nSoft, breathable design for maximum comfort.\\n\\nSecure, adjustable buckle strap for a snug fit.\\n\\nAnti-slip rubber outsole for safe walking.\\n\\nDurable PVC upper & polyester lining.\\n\\nLightweight for effortless movement.\\n\\nEasy to clean and quick-drying.\\n\\nIdeal for summer outings, playground play, and casual adventures.", "enableReview": true, "isNewArrival": true, "isReturnable": true, "purchasePrice": 100, "thumbnailImage": "thumbnailImage-1767463137549.png", "productVariants": [{"stockQty": 100, "unitPrice": 120, "purchasePrice": 100}], "limitPurchaseQty": 10, "shortDescription": "Perfect for little adventurers, these official Disney sandals combine playful style with all-day comfort, safety, and durability. Lightweight and easy to wear, they are ideal for active summer days and outdoor fun.\\n\\nSoft, breathable design for maximum comfort.\\n\\nSecure, adjustable buckle strap for a snug fit.\\n\\nAnti-slip rubber outsole for safe walking.\\n\\nDurable PVC upper & polyester lining.\\n\\nLightweight for effortless movement.\\n\\nEasy to clean and quick-drying.\\n\\nIdeal for summer outings, playground play, and casual adventures.", "productCategories": [3, 10, 7, 5, 8, 9, 11, 1, 6]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/products", "method": "POST", "userAgent": "node"}	2026-01-03 17:59:13.553772
+1350dab5-239b-454c-9618-cf05a3d09ffd	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	Baby Cotton Yellow T-shirt & Shorts For Kids	\N	{"name": "Baby Cotton Yellow T-shirt & Shorts For Kids", "slug": "baby-cotton-yellow-t-shirt-&-shorts-for-kids", "tags": [], "taxId": 1, "images": ["images-1767463285932.jpg", "images-1767463291186.jpg"], "status": "Active", "unitId": 2, "brandId": 1, "alertQty": 10, "featured": true, "stockQty": 30, "unitPrice": 120, "hoverImage": "hoverImage-1767463283646.jpg", "description": "This Baby Cotton Yellow T-shirt & Shorts Set is thoughtfully designed with your child’s comfort and safety in mind. Made from 100% baby-safe cotton, the fabric is soft, breathable, and gentle on delicate skin. Its lightweight design makes it perfect for summer, keeping your little one cool, fresh, and comfortable all day long. The bright yellow color adds a cheerful touch, while the durable premium print keeps the outfit stylish and long-lasting.\\n\\nFeatures\\n\\n100% Baby-Safe Cotton: Soft, gentle fabric ideal for sensitive baby skin.\\n\\nSuper Comfortable: Perfect for all-day movement, playtime, and daily activities.\\n\\nPremium Rubber Print: Durable, stylish design that stays attractive even after washing.\\n\\nGreat for Hot Weather: Breathable fabric keeps your child cool, relaxed, and irritation-free.\\n\\nSoft & Safe Finishing: Smooth edges ensure no discomfort, itching, or skin irritation.\\n\\nA perfect blend of style, comfort, and safety—ideal for keeping your little one happy, cool, and adorable every day!", "enableReview": true, "isNewArrival": true, "isReturnable": true, "purchasePrice": 100, "thumbnailImage": "thumbnailImage-1767463280504.jpg", "productVariants": [{"stockQty": 30, "unitPrice": 120, "purchasePrice": 100}], "limitPurchaseQty": 10, "shortDescription": "This Baby Cotton Yellow T-shirt & Shorts Set is thoughtfully designed with your child’s comfort and safety in mind. Made from 100% baby-safe cotton, the fabric is soft, breathable, and gentle on delicate skin. Its lightweight design makes it perfect for summer, keeping your little one cool, fresh, and comfortable all day long. The bright yellow color adds a cheerful touch, while the durable premium print keeps the outfit stylish and long-lasting.\\n\\nFeatures\\n\\n100% Baby-Safe Cotton: Soft, gentle fabric ideal for sensitive baby skin.\\n\\nSuper Comfortable: Perfect for all-day movement, playtime, and daily activities.\\n\\nPremium Rubber Print: Durable, stylish design that stays attractive even after washing.\\n\\nGreat for Hot Weather: Breathable fabric keeps your child cool, relaxed, and irritation-free.\\n\\nSoft & Safe Finishing: Smooth edges ensure no discomfort, itching, or skin irritation.\\n\\nA perfect blend of style, comfort, and safety—ideal for keeping your little one happy, cool, and adorable every day!", "productCategories": [1, 3, 11, 10, 9, 8, 7, 5, 6]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/products", "method": "POST", "userAgent": "node"}	2026-01-03 18:01:54.02544
+d3736f50-256e-49ce-b2e5-50a8520b9e44	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	testing..	\N	{"name": "testing..", "image": "image-1767544308248.png", "status": "Active", "fileList": [{"uid": "1767544308264", "url": "http://localhost:3900/uploads/image-1767544308248.png", "name": "image-1767544308248.png", "status": "done", "fileName": "image-1767544308248.png"}]}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/brands", "method": "POST", "userAgent": "node"}	2026-01-04 16:31:51.011628
+9debb8c5-f21a-4ccd-a27a-bd66c4d86162	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	tesint 1995	\N	{"name": "tesint 1995", "status": "Active"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/brands", "method": "POST", "userAgent": "node"}	2026-01-04 16:45:52.567881
+5f02990d-de39-4ec4-837d-3cfa95fec217	1	Gowtam Kumar	Unknown	Admin	DELETE	Unknown	4	tesint 1995	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/brands/4", "method": "DELETE", "userAgent": "node"}	2026-01-04 16:47:59.238507
+09c3031b-c6c0-41ac-bcd3-c3ab4f2acb6c	1	Gowtam Kumar	Unknown	Admin	DELETE	Unknown	3	testing.. 222 333	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/brands/3", "method": "DELETE", "userAgent": "node"}	2026-01-04 16:48:03.352256
+b4ca46a6-2402-4515-a90d-77d3288ea991	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	fdasdf	\N	{"name": "fdasdf", "status": "Active"}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/brands", "method": "POST", "userAgent": "node"}	2026-01-04 16:54:51.574165
+185d562e-a401-4ef2-b39c-ab49bf033ec4	1	Gowtam Kumar	Unknown	Admin	DELETE	Unknown	1	about-us	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/1", "method": "DELETE", "userAgent": "node"}	2026-02-11 06:29:46.608636
+36fd2c04-6812-4e78-aa04-6787feca7f40	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "published", "sections": [{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {}}], "isHomePage": false}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages", "method": "POST", "userAgent": "node"}	2026-02-11 10:03:08.782998
+3f50503d-4347-404b-b3f5-3749a798e4e1	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "published", "sections": [{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "disabled": false, "settings": {}}, {"id": "section-1770804531399", "type": "offer-banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"buttonText": ""}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/2", "method": "PUT", "userAgent": "node"}	2026-02-11 10:09:07.475854
+79a12d9d-3442-4a3d-8b4c-eec38abfa376	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "published", "sections": [{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40, "backgroundColor": "#bd2e2e"}, "disabled": false, "settings": {}}, {"id": "section-1770804531399", "type": "offer-banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"buttonText": ""}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/2", "method": "PUT", "userAgent": "node"}	2026-02-11 10:09:24.458144
+846a3b69-9e1e-4c08-92da-9ecb666dd240	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "published", "sections": [{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40, "backgroundColor": "#bd2e2e"}, "disabled": false, "settings": {"slides": [{"id": "item-1770804778682", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}, {"id": "item-1770804780849", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}]}}, {"id": "section-1770804531399", "type": "offer-banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "disabled": false, "settings": {"buttonText": ""}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/2", "method": "PUT", "userAgent": "node"}	2026-02-11 10:13:04.825031
+1268db3c-451a-4fef-a2b2-2eeb54d69014	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "published", "sections": [{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40, "backgroundColor": "#bd2e2e"}, "disabled": false, "settings": {"slides": [{"id": "item-1770804778682", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}, {"id": "item-1770804780849", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}]}}, {"id": "section-1770804531399", "type": "offer-banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "disabled": false, "settings": {"buttonText": ""}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/2", "method": "PUT", "userAgent": "node"}	2026-02-11 10:13:08.941186
+35d8ae3d-f754-4092-8f77-f0be37d9f43e	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	test	\N	{"slug": "test", "title": "test", "status": "published", "sections": [], "isHomePage": false}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages", "method": "POST", "userAgent": "node"}	2026-02-11 10:13:51.222662
+b2b2d837-0a7e-4389-a0c5-d518cc5bf611	1	Gowtam Kumar	Unknown	Admin	DELETE	Unknown	3	test	\N	\N	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/3", "method": "DELETE", "userAgent": "node"}	2026-02-11 10:16:07.673
+1c198ed3-8780-4a39-a31c-013dac4f555c	1	Gowtam Kumar	Unknown	Admin	CREATE	Unknown	\N	test1	\N	{"slug": "test1", "title": "test1", "status": "published", "sections": [], "isHomePage": false}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages", "method": "POST", "userAgent": "node"}	2026-02-11 10:16:25.915864
+266ad2d4-1666-4593-9c50-169de55e4a63	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	4	test1	\N	{"slug": "test1", "title": "test1", "status": "published", "sections": [{"id": "section-1770805966891", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {}}, {"id": "section-1770805967723", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 6, "layout": "slider"}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/4", "method": "PUT", "userAgent": "node"}	2026-02-11 10:34:36.140297
+24f1e2fe-0040-4066-97c1-e29a1eb8e588	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	4	test1	\N	{"slug": "test1", "title": "test1", "status": "published", "sections": [{"id": "section-1770805966891", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {}}, {"id": "section-1770805967723", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 6, "layout": "slider"}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/4", "method": "PUT", "userAgent": "node"}	2026-02-11 10:36:27.712298
+6eed2fd2-dabb-4a31-8454-f47c425eb11e	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	4	test1	\N	{"slug": "test1", "title": "test1", "status": "published", "sections": [{"id": "section-1770805966891", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {}}, {"id": "section-1770805967723", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 6, "layout": "slider"}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/4", "method": "PUT", "userAgent": "node"}	2026-02-11 10:47:07.865768
+c557a96b-7e52-415f-8048-01b29cc06bf7	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	4	test1	\N	{"slug": "test1", "title": "test1", "status": "published", "sections": [{"id": "section-1770805966891", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {}}, {"id": "section-1770805967723", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 6, "layout": "slider", "source": "all"}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/4", "method": "PUT", "userAgent": "node"}	2026-02-11 10:48:48.472011
+d4af1d85-63a8-4087-94f7-4c49aa13247f	1	Gowtam Kumar	Unknown	Admin	UPDATE	Unknown	2	about-us	\N	{"slug": "about-us", "title": "about-us", "status": "published", "sections": [{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40, "backgroundColor": "#bd2e2e"}, "disabled": false, "settings": {"slides": [{"id": "item-1770804778682", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}, {"id": "item-1770804780849", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}]}}, {"id": "section-1770804531399", "type": "offer-banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "disabled": false, "settings": {"buttonText": ""}}, {"id": "section-1770807828911", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 8, "layout": "slider", "source": "all", "columns": 2, "headline": "Featured Products"}}], "metaTitle": "", "isHomePage": false, "metaDescription": ""}	{"ip": "::ffff:172.19.0.5", "path": "/api/v1/pages/2", "method": "PUT", "userAgent": "node"}	2026-02-11 11:04:51.269053
 \.
 
 
@@ -2793,6 +2859,8 @@ COPY public.banners (id, title, type, image, url, description, active, user_id) 
 
 COPY public.brands (id, name, slug, image, description, status, user_id, created_at, updated_at) FROM stdin;
 1	Honda	honda	image-1765480724497.jpg	\N	Active	1	2025-06-26 01:53:09.52051	2025-12-11 19:18:46.112887
+2	new brand	new-brand	image-1767284279727.webp	\N	Active	1	2026-01-01 16:18:01.241494	2026-01-01 16:18:01.241494
+5	fdasdf	fdasdf	\N	\N	Active	1	2026-01-04 16:54:51.566069	2026-01-04 16:54:51.566069
 \.
 
 
@@ -2801,6 +2869,7 @@ COPY public.brands (id, name, slug, image, description, status, user_id, created
 --
 
 COPY public.carts (id, product_id, product_variant_id, qty, user_id, abandoned_email_sent, created_at, updated_at) FROM stdin;
+15	2	2	1	1	t	2026-01-02 11:40:47.561341	2026-01-03 16:00:00.902349
 \.
 
 
@@ -2809,7 +2878,6 @@ COPY public.carts (id, product_id, product_variant_id, qty, user_id, abandoned_e
 --
 
 COPY public.categories (id, name, slug, image, level, description, active, is_featured, user_id, created_at, updated_at, mpath, "parentId") FROM stdin;
-2	Yahama	yahama	\N	1	\N	t	f	1	2025-08-08 04:05:10.266491	2025-08-08 04:05:10.266491	2.	\N
 5	Fashion	fashin	image-1765480785022.jpg	1	asdf	t	t	1	2025-12-11 19:19:46.421698	2025-12-12 01:17:22.532523	5.	\N
 7	warmers sterilizers	warmers-sterilizers	image-1765502328220.png	1	warmers sterilizers\n	t	t	1	2025-12-12 01:18:49.714467	2025-12-12 01:18:49.714467	7.	\N
 8	monoculars	monoculars	image-1765502425785.png	1	monoculars	t	t	1	2025-12-12 01:20:27.827678	2025-12-12 01:20:27.827678	8.	\N
@@ -2819,6 +2887,7 @@ COPY public.categories (id, name, slug, image, level, description, active, is_fe
 3	New Category	test-category	image-1765474918003.jpg	1	asdf	t	f	1	2025-12-11 17:41:59.131506	2025-12-12 01:29:19.544406	3.	\N
 1	Honda	honda	image-1765475165379.jpg	1	\N	t	t	1	2025-08-08 04:02:59.000581	2025-12-13 12:38:02.394426	1.	\N
 6	high school	high-school	image-1765501980012.png	1	high school  high school	t	f	1	2025-12-12 01:13:03.997073	2025-12-13 12:53:15.774597	6.	\N
+2	Yahama	yahama	image-1767284117179.webp	1	\N	t	t	1	2025-08-08 04:05:10.266491	2026-01-01 16:15:19.43702	2.	\N
 \.
 
 
@@ -2836,6 +2905,7 @@ COPY public.colors (id, name, color, user_id) FROM stdin;
 --
 
 COPY public.comments (id, post_id, content, status, user_id, created_at, updated_at) FROM stdin;
+1	2	here should be upage	Pending	1	2025-12-31 15:58:46.455827	2025-12-31 15:58:46.455827
 \.
 
 
@@ -2844,6 +2914,7 @@ COPY public.comments (id, post_id, content, status, user_id, created_at, updated
 --
 
 COPY public.contacts (id, name, email, phone, subject, message) FROM stdin;
+1	Gowtam Kumar	gowtamkumar2019@gmail.com	01767163576	testing bss	i wan tto be get lead
 \.
 
 
@@ -2880,6 +2951,7 @@ COPY public.currencies (id, name, symbol, exchange_rate, user_id) FROM stdin;
 
 COPY public.discounts (id, name, key, scope, slug, promotion_type, discount_strategy, offer_details, value, start_date, end_date, priority, stackable, status, image, description, user_id, created_at, updated_at) FROM stdin;
 1	Winter sale	DISC-0.P7J6JQWB7KD	Global	winter-sale	Seasonal	Percentage	\N	10.00	2025-12-10 18:00:00+00	2025-12-24 18:00:00+00	1	f	Active	image-1765510885665.jpg	asdfasdf dasfasdf	1	2025-12-12 03:41:32.110711	2025-12-12 03:41:32.110711
+2	single product discount	DISC-0.XT1MU7YTKA	Product	single-product-discount	Discount	Percentage	\N	2.00	2025-12-26 12:06:39.3+00	2025-12-26 12:06:41.6+00	1	f	Active	image-1766750829303.webp	asdfasdf	1	2025-12-26 12:07:12.259197	2025-12-26 12:07:12.259197
 \.
 
 
@@ -3018,6 +3090,41 @@ COPY public.files (id, fieldname, originalname, encoding, mimetype, destination,
 17	thumbnailImage	Screenshot from 2025-11-11 15-45-47.png	7bit	image/png	public/uploads	thumbnailImage-1765959241212.png	public/uploads/thumbnailImage-1765959241212.png	142313	2025-12-17 08:14:01.224167+00	2025-12-17 08:14:01.224167+00
 44	images	Screenshot from 2025-11-27 11-29-16.png	7bit	image/png	public/uploads	images-1765959636691.png	public/uploads/images-1765959636691.png	125228	2025-12-17 08:20:36.706236+00	2025-12-17 08:20:36.706236+00
 45	hoverImage	Screenshot from 2025-11-11 15-45-47.png	7bit	image/png	public/uploads	hoverImage-1765959641459.png	public/uploads/hoverImage-1765959641459.png	142313	2025-12-17 08:20:41.46506+00	2025-12-17 08:20:41.46506+00
+46	thumbnailImage	photo-1505740420928-5e560c06d30e.webp	7bit	image/webp	public/uploads	thumbnailImage-1766233856446.webp	public/uploads/thumbnailImage-1766233856446.webp	9062	2025-12-20 12:30:56.453775+00	2025-12-20 12:30:56.453775+00
+47	hoverImage	c1ce4f7a627c4759fc7037fa6f7cb11d.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	hoverImage-1766233864026.jpg	public/uploads/hoverImage-1766233864026.jpg	5839	2025-12-20 12:31:04.027415+00	2025-12-20 12:31:04.027415+00
+48	images	34624cd55a78074f89e9b1fb7515f158.png_200x200q80.png	7bit	image/png	public/uploads	images-1766233871169.png	public/uploads/images-1766233871169.png	69418	2025-12-20 12:31:11.171323+00	2025-12-20 12:31:11.171323+00
+49	images	d6363a621b143fdd4113ceff36cbcefe.jpg_200x200q80.png	7bit	image/png	public/uploads	images-1766750510399.png	public/uploads/images-1766750510399.png	75043	2025-12-26 12:01:50.40624+00	2025-12-26 12:01:50.40624+00
+50	images	c1ce4f7a627c4759fc7037fa6f7cb11d.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	images-1766750547241.jpg	public/uploads/images-1766750547241.jpg	5839	2025-12-26 12:02:27.254127+00	2025-12-26 12:02:27.254127+00
+51	images	Sbf7298547a8a48539d367de5792f6ab2I.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	images-1766750577362.jpg	public/uploads/images-1766750577362.jpg	4164	2025-12-26 12:02:57.368143+00	2025-12-26 12:02:57.368143+00
+52	image	photo-1505740420928-5e560c06d30e.webp	7bit	image/webp	public/uploads	image-1766750829303.webp	public/uploads/image-1766750829303.webp	9062	2025-12-26 12:07:09.304622+00	2025-12-26 12:07:09.304622+00
+53	images	34624cd55a78074f89e9b1fb7515f158.png_200x200q80.png	7bit	image/png	public/uploads	images-1766751472248.png	public/uploads/images-1766751472248.png	3579	2025-12-26 12:17:52.249741+00	2025-12-26 12:17:52.249741+00
+54	images	3448809f7e0a7134ca8f657f7b44fcc5.jpg	7bit	image/jpeg	public/uploads	images-1766751484041.jpg	public/uploads/images-1766751484041.jpg	169609	2025-12-26 12:18:04.04258+00	2025-12-26 12:18:04.04258+00
+55	image	stories.png	7bit	image/png	public/uploads	image-1766752469159.png	public/uploads/image-1766752469159.png	118044	2025-12-26 12:34:29.160798+00	2025-12-26 12:34:29.160798+00
+56	image	photo-1505740420928-5e560c06d30e.webp	7bit	image/webp	public/uploads	image-1767191999796.webp	public/uploads/image-1767191999796.webp	16576	2025-12-31 14:39:59.798247+00	2025-12-31 14:39:59.798247+00
+57	image	photo-1505740420928-5e560c06d30e.webp	7bit	image/webp	public/uploads	image-1767192101403.webp	public/uploads/image-1767192101403.webp	16576	2025-12-31 14:41:41.405528+00	2025-12-31 14:41:41.405528+00
+58	popupImage	d6363a621b143fdd4113ceff36cbcefe.jpg_200x200q80.png	7bit	image/png	public/uploads	popupImage-1767276488260.png	public/uploads/popupImage-1767276488260.png	75043	2026-01-01 14:08:08.26855+00	2026-01-01 14:08:08.26855+00
+59	image	photo-1505740420928-5e560c06d30e.webp	7bit	image/webp	public/uploads	image-1767284117179.webp	public/uploads/image-1767284117179.webp	16576	2026-01-01 16:15:17.182078+00	2026-01-01 16:15:17.182078+00
+60	image	photo-1505740420928-5e560c06d30e.webp	7bit	image/webp	public/uploads	image-1767284279727.webp	public/uploads/image-1767284279727.webp	9542	2026-01-01 16:17:59.727787+00	2026-01-01 16:17:59.727787+00
+62	thumbnailImage	imported-chinese-embroidery-beaded-beige-kids-shoe_1_Vo8cO85JjiY.jpg	7bit	image/jpeg	public/uploads	thumbnailImage-1767462833628.jpg	public/uploads/thumbnailImage-1767462833628.jpg	26189	2026-01-03 17:53:53.630417+00	2026-01-03 17:53:53.630417+00
+63	hoverImage	c1ce4f7a627c4759fc7037fa6f7cb11d.jpg_200x200q80.jpg	7bit	image/jpeg	public/uploads	hoverImage-1767462840742.jpg	public/uploads/hoverImage-1767462840742.jpg	5239	2026-01-03 17:54:00.743272+00	2026-01-03 17:54:00.743272+00
+64	images	imported-chinese-embroidery-beaded-beige-kids-shoe_1_Vo8cO85JjiY.jpg	7bit	image/jpeg	public/uploads	images-1767462845638.jpg	public/uploads/images-1767462845638.jpg	26189	2026-01-03 17:54:05.640278+00	2026-01-03 17:54:05.640278+00
+65	images	d6363a621b143fdd4113ceff36cbcefe.jpg_200x200q80.png	7bit	image/png	public/uploads	images-1767462856284.png	public/uploads/images-1767462856284.png	4863	2026-01-03 17:54:16.285264+00	2026-01-03 17:54:16.285264+00
+66	thumbnailImage	82696b96-2a4a-4eed-b415-e1a80c9459b6.png	7bit	image/png	public/uploads	thumbnailImage-1767462987504.png	public/uploads/thumbnailImage-1767462987504.png	853485	2026-01-03 17:56:27.510236+00	2026-01-03 17:56:27.510236+00
+67	hoverImage	d3675a98-dd6a-45ba-be98-231ba10e0610.png	7bit	image/png	public/uploads	hoverImage-1767462990007.png	public/uploads/hoverImage-1767462990007.png	837798	2026-01-03 17:56:30.010594+00	2026-01-03 17:56:30.010594+00
+68	images	82696b96-2a4a-4eed-b415-e1a80c9459b6.png	7bit	image/png	public/uploads	images-1767462995159.png	public/uploads/images-1767462995159.png	853485	2026-01-03 17:56:35.164523+00	2026-01-03 17:56:35.164523+00
+69	images	d3675a98-dd6a-45ba-be98-231ba10e0610.png	7bit	image/png	public/uploads	images-1767462998142.png	public/uploads/images-1767462998142.png	837798	2026-01-03 17:56:38.149267+00	2026-01-03 17:56:38.149267+00
+70	thumbnailImage	82696b96-2a4a-4eed-b415-e1a80c9459b6.png	7bit	image/png	public/uploads	thumbnailImage-1767463137549.png	public/uploads/thumbnailImage-1767463137549.png	853485	2026-01-03 17:58:57.554793+00	2026-01-03 17:58:57.554793+00
+71	hoverImage	d3675a98-dd6a-45ba-be98-231ba10e0610.png	7bit	image/png	public/uploads	hoverImage-1767463140069.png	public/uploads/hoverImage-1767463140069.png	837798	2026-01-03 17:59:00.075377+00	2026-01-03 17:59:00.075377+00
+72	images	82696b96-2a4a-4eed-b415-e1a80c9459b6.png	7bit	image/png	public/uploads	images-1767463142663.png	public/uploads/images-1767463142663.png	853485	2026-01-03 17:59:02.667976+00	2026-01-03 17:59:02.667976+00
+73	images	d3675a98-dd6a-45ba-be98-231ba10e0610.png	7bit	image/png	public/uploads	images-1767463147685.png	public/uploads/images-1767463147685.png	837798	2026-01-03 17:59:07.688629+00	2026-01-03 17:59:07.688629+00
+74	thumbnailImage	baby-cotton-yellow-t-shirt-shorts-for-kids-3_1_GKs1vQRemM4.jpg	7bit	image/jpeg	public/uploads	thumbnailImage-1767463280504.jpg	public/uploads/thumbnailImage-1767463280504.jpg	76577	2026-01-03 18:01:20.506163+00	2026-01-03 18:01:20.506163+00
+75	hoverImage	baby-cotton-yellow-t-shirt-shorts-for-kids-3_1_GKs1vQRemM4.jpg	7bit	image/jpeg	public/uploads	hoverImage-1767463283646.jpg	public/uploads/hoverImage-1767463283646.jpg	76577	2026-01-03 18:01:23.65274+00	2026-01-03 18:01:23.65274+00
+76	images	baby-cotton-yellow-t-shirt-shorts-for-kids-3_1_GKs1vQRemM4.jpg	7bit	image/jpeg	public/uploads	images-1767463285932.jpg	public/uploads/images-1767463285932.jpg	76577	2026-01-03 18:01:25.933667+00	2026-01-03 18:01:25.933667+00
+77	images	baby-cotton-yellow-t-shirt-shorts-for-kids-3_1_GKs1vQRemM4.jpg	7bit	image/jpeg	public/uploads	images-1767463291186.jpg	public/uploads/images-1767463291186.jpg	76577	2026-01-03 18:01:31.188195+00	2026-01-03 18:01:31.188195+00
+78	image	Screenshot from 2026-01-04 00-37-57.png	7bit	image/png	public/uploads	image-1767543934927.png	public/uploads/image-1767543934927.png	57882	2026-01-04 16:25:34.934858+00	2026-01-04 16:25:34.934858+00
+79	image	Screenshot from 2026-01-04 00-37-57.png	7bit	image/png	public/uploads	image-1767543992737.png	public/uploads/image-1767543992737.png	57882	2026-01-04 16:26:32.738045+00	2026-01-04 16:26:32.738045+00
+80	image	Screenshot from 2026-01-04 00-40-26.png	7bit	image/png	public/uploads	image-1767544111487.png	public/uploads/image-1767544111487.png	67797	2026-01-04 16:28:31.489321+00	2026-01-04 16:28:31.489321+00
+81	image	Screenshot from 2026-01-04 00-40-26.png	7bit	image/png	public/uploads	image-1767544246672.png	public/uploads/image-1767544246672.png	67797	2026-01-04 16:30:46.673282+00	2026-01-04 16:30:46.673282+00
 \.
 
 
@@ -3028,6 +3135,7 @@ COPY public.files (id, fieldname, originalname, encoding, mimetype, destination,
 COPY public.leads (id, email, created_at, updated_at) FROM stdin;
 1	gowtamkumar2019@gmail.com	2025-08-08 04:07:33.464106+00	2025-08-08 04:07:33.464106+00
 2	helo@gamil.com	2025-12-13 13:33:14.143279+00	2025-12-13 13:33:14.143279+00
+3	newssss@gmail.com	2025-12-31 15:49:49.954484+00	2025-12-31 15:49:49.954484+00
 \.
 
 
@@ -3044,97 +3152,106 @@ COPY public.menus (id, name, items, footer_menu, top_bar_menu, main_menu, active
 -- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.notifications (id, title, type, message, is_read, user_id, order_id, created_at, updated_at) FROM stdin;
-3	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 07:53:48.90071+00	2025-12-17 07:53:48.90071+00
-4	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 07:55:00.376416+00	2025-12-17 07:55:00.376416+00
-5	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 08:06:37.893836+00	2025-12-17 08:06:37.893836+00
-6	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 08:16:43.418954+00	2025-12-17 08:16:43.418954+00
-7	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000001	f	1	2	2025-12-17 08:39:35.735877+00	2025-12-17 08:39:35.735877+00
-8	New Order Received	ADMIN_NEW_ORDER	New order #2 received from User 1. Tracking No: TRK-0000000001	f	1	2	2025-12-17 08:39:35.676606+00	2025-12-17 08:39:35.676606+00
-9	How was your order?	ReviewRequest	Your order #2 has been delivered. We'd love to hear your feedback!	f	1	2	2025-12-17 08:40:01.964685+00	2025-12-17 08:40:01.964685+00
-10	Delivered	OrderDelivered	Your order has been Delivered. Order Tracking No: TRK-0000000001	f	1	2	2025-12-17 08:40:02.435787+00	2025-12-17 08:40:02.435787+00
-11	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 08:46:48.909528+00	2025-12-17 08:46:48.909528+00
-12	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 08:54:42.993461+00	2025-12-17 08:54:42.993461+00
-13	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 08:59:33.888412+00	2025-12-17 08:59:33.888412+00
-14	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 08:59:51.185636+00	2025-12-17 08:59:51.185636+00
-15	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:03:33.588447+00	2025-12-17 09:03:33.588447+00
-16	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:03:45.679344+00	2025-12-17 09:03:45.679344+00
-17	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:06:45.095042+00	2025-12-17 09:06:45.095042+00
-18	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:07:51.780404+00	2025-12-17 09:07:51.780404+00
-19	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:09:25.202482+00	2025-12-17 09:09:25.202482+00
-20	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:22:36.645696+00	2025-12-17 09:22:36.645696+00
-21	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:31:47.788044+00	2025-12-17 09:31:47.788044+00
-54	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:32:30.700621+00	2025-12-17 09:32:30.700621+00
-55	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:33:35.200426+00	2025-12-17 09:33:35.200426+00
-56	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-17 09:35:42.80601+00	2025-12-17 09:35:42.80601+00
-57	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:07:26.227743+00	2025-12-18 04:07:26.227743+00
-58	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:11:48.516689+00	2025-12-18 04:11:48.516689+00
-59	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:21:30.483211+00	2025-12-18 04:21:30.483211+00
-60	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:22:37.82448+00	2025-12-18 04:22:37.82448+00
-61	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:23:59.657018+00	2025-12-18 04:23:59.657018+00
-62	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000002	f	1	3	2025-12-18 04:25:10.352157+00	2025-12-18 04:25:10.352157+00
-63	New Order Received	ADMIN_NEW_ORDER	New order #3 received from User 1. Tracking No: TRK-0000000002	f	1	3	2025-12-18 04:25:10.3157+00	2025-12-18 04:25:10.3157+00
-64	How was your order?	ReviewRequest	Your order #3 has been delivered. We'd love to hear your feedback!	f	1	3	2025-12-18 04:27:33.403134+00	2025-12-18 04:27:33.403134+00
-65	Delivered	OrderDelivered	Your order has been Delivered. Order Tracking No: TRK-0000000002	f	1	3	2025-12-18 04:27:33.826748+00	2025-12-18 04:27:33.826748+00
-66	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:41:05.553082+00	2025-12-18 04:41:05.553082+00
-67	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000003	f	1	4	2025-12-18 04:48:46.245687+00	2025-12-18 04:48:46.245687+00
-68	New Order Received	ADMIN_NEW_ORDER	New order #4 received from User 1. Tracking No: TRK-0000000003	f	1	4	2025-12-18 04:48:46.209844+00	2025-12-18 04:48:46.209844+00
-69	How was your order?	ReviewRequest	Your order #4 has been delivered. We'd love to hear your feedback!	f	1	4	2025-12-18 04:49:08.591304+00	2025-12-18 04:49:08.591304+00
-70	Delivered	OrderDelivered	Your order has been Delivered. Order Tracking No: TRK-0000000003	f	1	4	2025-12-18 04:49:08.907183+00	2025-12-18 04:49:08.907183+00
-71	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000004	f	1	5	2025-12-18 04:55:44.191893+00	2025-12-18 04:55:44.191893+00
-72	New Order Received	ADMIN_NEW_ORDER	New order #5 received from User 1. Tracking No: TRK-0000000004	f	1	5	2025-12-18 04:55:44.162869+00	2025-12-18 04:55:44.162869+00
-73	How was your order?	ReviewRequest	Your order #5 has been delivered. We'd love to hear your feedback!	f	1	5	2025-12-18 04:56:39.20987+00	2025-12-18 04:56:39.20987+00
-74	Delivered	OrderDelivered	Your order has been Delivered. Order Tracking No: TRK-0000000004	f	1	5	2025-12-18 04:56:39.581961+00	2025-12-18 04:56:39.581961+00
-75	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 04:59:48.689062+00	2025-12-18 04:59:48.689062+00
-76	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 05:00:04.204874+00	2025-12-18 05:00:04.204874+00
-77	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000005	f	1	6	2025-12-18 05:00:28.420088+00	2025-12-18 05:00:28.420088+00
-78	New Order Received	ADMIN_NEW_ORDER	New order #6 received from User 1. Tracking No: TRK-0000000005	f	1	6	2025-12-18 05:00:28.382606+00	2025-12-18 05:00:28.382606+00
-79	How was your order?	ReviewRequest	Your order #6 has been delivered. We'd love to hear your feedback!	f	1	6	2025-12-18 05:01:05.356544+00	2025-12-18 05:01:05.356544+00
-80	Delivered	OrderDelivered	Your order has been Delivered. Order Tracking No: TRK-0000000005	f	1	6	2025-12-18 05:01:05.687239+00	2025-12-18 05:01:05.687239+00
-81	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 05:15:56.573778+00	2025-12-18 05:15:56.573778+00
-82	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 05:41:28.861563+00	2025-12-18 05:41:28.861563+00
-83	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 05:46:59.439718+00	2025-12-18 05:46:59.439718+00
-84	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 05:49:43.709401+00	2025-12-18 05:49:43.709401+00
-85	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 05:56:32.730988+00	2025-12-18 05:56:32.730988+00
-86	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:02:05.309002+00	2025-12-18 06:02:05.309002+00
-87	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:02:52.887067+00	2025-12-18 06:02:52.887067+00
-88	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:03:08.709856+00	2025-12-18 06:03:08.709856+00
-89	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:03:44.851736+00	2025-12-18 06:03:44.851736+00
-90	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:07:43.500663+00	2025-12-18 06:07:43.500663+00
-91	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:07:59.2247+00	2025-12-18 06:07:59.2247+00
-92	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:10:52.472419+00	2025-12-18 06:10:52.472419+00
-93	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:11:53.113115+00	2025-12-18 06:11:53.113115+00
-94	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:41:11.951749+00	2025-12-18 06:41:11.951749+00
-95	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:41:23.923359+00	2025-12-18 06:41:23.923359+00
-96	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:44:01.620073+00	2025-12-18 06:44:01.620073+00
-97	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:50:38.565617+00	2025-12-18 06:50:38.565617+00
-98	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:51:35.33318+00	2025-12-18 06:51:35.33318+00
-99	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:51:43.541351+00	2025-12-18 06:51:43.541351+00
-100	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:54:16.481761+00	2025-12-18 06:54:16.481761+00
-101	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:54:31.65834+00	2025-12-18 06:54:31.65834+00
-102	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:55:32.901086+00	2025-12-18 06:55:32.901086+00
-103	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 06:58:55.137961+00	2025-12-18 06:58:55.137961+00
-104	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 07:00:01.301358+00	2025-12-18 07:00:01.301358+00
-105	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 07:00:15.712947+00	2025-12-18 07:00:15.712947+00
-106	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 08:28:24.098671+00	2025-12-18 08:28:24.098671+00
-107	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000001	f	1	7	2025-12-18 08:28:46.264577+00	2025-12-18 08:28:46.264577+00
-108	New Order Received	ADMIN_NEW_ORDER	New order #7 received from User 1. Tracking No: TRK-0000000001	f	1	7	2025-12-18 08:28:46.242071+00	2025-12-18 08:28:46.242071+00
-109	Low Stock Alert	ADMIN_LOW_STOCK	Product Variant (ID: 2) is running low. Current Stock: 3	f	1	\N	2025-12-18 08:28:59.704603+00	2025-12-18 08:28:59.704603+00
-110	How was your order?	ReviewRequest	Your order #7 has been delivered. We'd love to hear your feedback!	f	1	7	2025-12-18 08:28:59.704603+00	2025-12-18 08:28:59.704603+00
-111	Delivered	OrderDelivered	Your order has been Delivered. Order Tracking No: TRK-0000000001	f	1	7	2025-12-18 08:29:00.190721+00	2025-12-18 08:29:00.190721+00
-112	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 08:33:56.292455+00	2025-12-18 08:33:56.292455+00
-113	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 08:35:21.702349+00	2025-12-18 08:35:21.702349+00
-114	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 08:36:01.733232+00	2025-12-18 08:36:01.733232+00
-115	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 08:59:29.620515+00	2025-12-18 08:59:29.620515+00
-116	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:04:30.66006+00	2025-12-18 09:04:30.66006+00
-117	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:09:31.615631+00	2025-12-18 09:09:31.615631+00
-118	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:11:17.858614+00	2025-12-18 09:11:17.858614+00
-119	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:12:33.620102+00	2025-12-18 09:12:33.620102+00
-120	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:13:58.857912+00	2025-12-18 09:13:58.857912+00
-121	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:14:40.155224+00	2025-12-18 09:14:40.155224+00
-122	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:22:38.966866+00	2025-12-18 09:22:38.966866+00
-123	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-18 09:23:29.37002+00	2025-12-18 09:23:29.37002+00
-124	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2025-12-20 08:11:57.966235+00	2025-12-20 08:11:57.966235+00
+COPY public.notifications (id, title, type, message, is_read, user_id, order_id, created_at, updated_at, offer_url) FROM stdin;
+233	new offer 	NewOffer	sdfasdfa	t	1	\N	2026-01-01 13:10:03.146637+00	2026-01-01 13:10:52.043535+00	http://localhost:3100/offers/winter-sale
+235	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2026-01-01 13:10:37.357413+00	2026-01-01 13:12:43.319727+00	\N
+234	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2026-01-01 13:10:30.326687+00	2026-01-01 13:12:44.785803+00	\N
+236	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 13:51:18.779281+00	2026-01-01 13:51:18.779281+00	\N
+237	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 13:51:25.505417+00	2026-01-01 13:51:25.505417+00	\N
+238	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 13:59:39.1194+00	2026-01-01 13:59:39.1194+00	\N
+239	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 14:07:42.105352+00	2026-01-01 14:07:42.105352+00	\N
+240	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 14:16:46.400564+00	2026-01-01 14:16:46.400564+00	\N
+241	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 14:38:38.328607+00	2026-01-01 14:38:38.328607+00	\N
+242	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-01 14:44:59.62752+00	2026-01-01 14:44:59.62752+00	\N
+244	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2026-01-01 16:47:04.530622+00	2026-01-01 17:38:39.694503+00	\N
+246	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2026-01-01 18:22:10.822709+00	2026-01-01 18:33:10.903845+00	\N
+245	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2026-01-01 18:03:20.356248+00	2026-01-01 18:33:12.451443+00	\N
+247	Server Alert	ServerDown	Server successfully started/restarted.	t	1	\N	2026-01-01 18:32:30.61005+00	2026-01-01 18:33:14.225853+00	\N
+248	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 03:43:03.331553+00	2026-01-02 03:43:03.331553+00	\N
+249	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 04:58:38.047997+00	2026-01-02 04:58:38.047997+00	\N
+282	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 05:03:05.800299+00	2026-01-02 05:03:05.800299+00	\N
+283	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 05:20:54.840828+00	2026-01-02 05:20:54.840828+00	\N
+284	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 05:33:54.703182+00	2026-01-02 05:33:54.703182+00	\N
+285	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 08:41:00.909152+00	2026-01-02 08:41:00.909152+00	\N
+286	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000004	f	1	10	2026-01-02 09:24:55.506286+00	2026-01-02 09:24:55.506286+00	\N
+287	New Order Received	ADMIN_NEW_ORDER	New order #10 received from User 1. Tracking No: TRK-0000000004	f	1	10	2026-01-02 09:24:55.485014+00	2026-01-02 09:24:55.485014+00	\N
+288	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 09:38:44.089711+00	2026-01-02 09:38:44.089711+00	\N
+289	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 09:44:31.265375+00	2026-01-02 09:44:31.265375+00	\N
+290	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 10:34:11.657114+00	2026-01-02 10:34:11.657114+00	\N
+291	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 11:02:55.706525+00	2026-01-02 11:02:55.706525+00	\N
+292	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 11:12:23.808904+00	2026-01-02 11:12:23.808904+00	\N
+293	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 11:12:34.523825+00	2026-01-02 11:12:34.523825+00	\N
+295	New Order Received	ADMIN_NEW_ORDER	New order #11 received from User 1. Tracking No: TRK-0000000005	f	1	11	2026-01-02 11:18:15.182138+00	2026-01-02 11:18:15.182138+00	\N
+294	Order Placed	OrderPlaced	Your order has been placed successfully. Order Tracking No: TRK-0000000005	t	1	11	2026-01-02 11:18:15.209118+00	2026-01-02 11:19:23.200392+00	\N
+296	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 11:39:08.821377+00	2026-01-02 11:39:08.821377+00	\N
+297	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:02:46.778876+00	2026-01-02 12:02:46.778876+00	\N
+298	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:28:37.72614+00	2026-01-02 12:28:37.72614+00	\N
+299	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:33:04.087799+00	2026-01-02 12:33:04.087799+00	\N
+300	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:33:32.725821+00	2026-01-02 12:33:32.725821+00	\N
+301	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:33:49.034778+00	2026-01-02 12:33:49.034778+00	\N
+302	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:33:54.92812+00	2026-01-02 12:33:54.92812+00	\N
+303	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:36:02.795068+00	2026-01-02 12:36:02.795068+00	\N
+304	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:36:27.237915+00	2026-01-02 12:36:27.237915+00	\N
+305	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:36:58.571378+00	2026-01-02 12:36:58.571378+00	\N
+306	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:37:28.485893+00	2026-01-02 12:37:28.485893+00	\N
+307	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:37:34.241526+00	2026-01-02 12:37:34.241526+00	\N
+308	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:37:51.715161+00	2026-01-02 12:37:51.715161+00	\N
+309	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:38:18.081728+00	2026-01-02 12:38:18.081728+00	\N
+310	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:38:57.128956+00	2026-01-02 12:38:57.128956+00	\N
+311	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:39:10.126339+00	2026-01-02 12:39:10.126339+00	\N
+312	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:39:29.170767+00	2026-01-02 12:39:29.170767+00	\N
+313	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:39:42.647241+00	2026-01-02 12:39:42.647241+00	\N
+314	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:39:48.692452+00	2026-01-02 12:39:48.692452+00	\N
+315	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:40:16.941786+00	2026-01-02 12:40:16.941786+00	\N
+316	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:40:24.355254+00	2026-01-02 12:40:24.355254+00	\N
+317	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:40:38.852519+00	2026-01-02 12:40:38.852519+00	\N
+318	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:40:52.234273+00	2026-01-02 12:40:52.234273+00	\N
+319	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:41:14.907573+00	2026-01-02 12:41:14.907573+00	\N
+320	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:41:48.619378+00	2026-01-02 12:41:48.619378+00	\N
+321	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:41:59.460239+00	2026-01-02 12:41:59.460239+00	\N
+322	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:42:13.925616+00	2026-01-02 12:42:13.925616+00	\N
+323	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:45:50.824535+00	2026-01-02 12:45:50.824535+00	\N
+324	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:46:45.295728+00	2026-01-02 12:46:45.295728+00	\N
+325	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:46:53.89314+00	2026-01-02 12:46:53.89314+00	\N
+326	Processing	Order	Your order has been Processing. Order Tracking No: TRK-0000000005	f	1	11	2026-01-02 12:47:38.171099+00	2026-01-02 12:47:38.171099+00	\N
+327	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:48:08.523896+00	2026-01-02 12:48:08.523896+00	\N
+328	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 12:48:22.313042+00	2026-01-02 12:48:22.313042+00	\N
+329	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 13:06:15.856247+00	2026-01-02 13:06:15.856247+00	\N
+330	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-02 13:10:32.703642+00	2026-01-02 13:10:32.703642+00	\N
+331	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-03 15:09:26.219343+00	2026-01-03 15:09:26.219343+00	\N
+332	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-03 17:50:07.508777+00	2026-01-03 17:50:07.508777+00	\N
+333	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-03 18:06:19.060958+00	2026-01-03 18:06:19.060958+00	\N
+334	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-03 18:09:10.358881+00	2026-01-03 18:09:10.358881+00	\N
+335	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-03 18:16:19.975651+00	2026-01-03 18:16:19.975651+00	\N
+336	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-04 16:21:17.657483+00	2026-01-04 16:21:17.657483+00	\N
+337	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-01-04 17:14:15.293089+00	2026-01-04 17:14:15.293089+00	\N
+338	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 03:40:08.309761+00	2026-02-11 03:40:08.309761+00	\N
+339	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 05:40:31.020386+00	2026-02-11 05:40:31.020386+00	\N
+340	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 06:41:31.288859+00	2026-02-11 06:41:31.288859+00	\N
+341	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:10:42.141345+00	2026-02-11 07:10:42.141345+00	\N
+342	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:11:32.515908+00	2026-02-11 07:11:32.515908+00	\N
+343	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:14:17.77523+00	2026-02-11 07:14:17.77523+00	\N
+344	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:14:53.785433+00	2026-02-11 07:14:53.785433+00	\N
+345	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:15:01.357312+00	2026-02-11 07:15:01.357312+00	\N
+346	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:16:54.722964+00	2026-02-11 07:16:54.722964+00	\N
+347	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:17:31.953476+00	2026-02-11 07:17:31.953476+00	\N
+348	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 07:18:00.059587+00	2026-02-11 07:18:00.059587+00	\N
+349	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 08:39:56.263845+00	2026-02-11 08:39:56.263845+00	\N
+382	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 08:42:23.170347+00	2026-02-11 08:42:23.170347+00	\N
+415	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 08:47:21.755242+00	2026-02-11 08:47:21.755242+00	\N
+416	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 08:52:13.834788+00	2026-02-11 08:52:13.834788+00	\N
+417	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 09:21:44.446307+00	2026-02-11 09:21:44.446307+00	\N
+418	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 09:26:34.321665+00	2026-02-11 09:26:34.321665+00	\N
+419	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 09:42:51.872727+00	2026-02-11 09:42:51.872727+00	\N
+420	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 10:00:13.926144+00	2026-02-11 10:00:13.926144+00	\N
+421	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 10:01:10.656717+00	2026-02-11 10:01:10.656717+00	\N
+422	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 10:01:38.027463+00	2026-02-11 10:01:38.027463+00	\N
+423	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 10:02:49.056792+00	2026-02-11 10:02:49.056792+00	\N
+424	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 10:03:03.801285+00	2026-02-11 10:03:03.801285+00	\N
+425	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 11:00:01.821233+00	2026-02-11 11:00:01.821233+00	\N
+426	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 11:02:30.890158+00	2026-02-11 11:02:30.890158+00	\N
+427	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 11:09:49.946084+00	2026-02-11 11:09:49.946084+00	\N
+428	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-15 01:50:11.923537+00	2026-02-15 01:50:11.923537+00	\N
 \.
 
 
@@ -3144,6 +3261,10 @@ COPY public.notifications (id, title, type, message, is_read, user_id, order_id,
 
 COPY public.order_items (id, order_id, unit_price, purchase_price, qty, tax_amount, discounted_unit_pice, total_discounted_price, discount_amount_per_unit, total_discount_amount, sub_total, product_id, product_variant_id, requested_qty, approved_qty) FROM stdin;
 7	7	120.00	100.00	4	43.20	108.00	432.00	12.00	48.00	475.20	2	2	2	2
+8	8	120.00	100.00	2	24.00	120.00	240.00	0.00	0.00	264.00	2	2	2	1
+9	9	120.00	100.00	1	12.00	120.00	120.00	0.00	0.00	132.00	2	2	\N	\N
+10	10	120.00	100.00	1	11.76	117.60	117.60	2.40	2.40	129.36	2	2	\N	\N
+11	11	120.00	100.00	1	11.76	117.60	117.60	2.40	2.40	129.36	2	2	\N	\N
 \.
 
 
@@ -3154,6 +3275,13 @@ COPY public.order_items (id, order_id, unit_price, purchase_price, qty, tax_amou
 COPY public.order_trackings (id, order_id, user_id, location, status, created_at, updated_at) FROM stdin;
 12	7	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-12-18 08:28:46.242071	2025-12-18 08:28:46.242071
 13	7	1	\N	Order Delivered	2025-12-18 08:28:59.704603	2025-12-18 08:28:59.704603
+14	8	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-12-26 09:50:19.442475	2025-12-26 09:50:19.442475
+15	8	1	\N	Order Delivered	2025-12-26 09:52:26.450931	2025-12-26 09:52:26.450931
+16	9	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2025-12-26 11:13:24.194799	2025-12-26 11:13:24.194799
+17	9	1	\N	Order Delivered	2025-12-31 14:22:06.711111	2025-12-31 14:22:06.711111
+18	10	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2026-01-02 09:24:55.485014	2026-01-02 09:24:55.485014
+19	11	1	অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।	Order Placed	2026-01-02 11:18:15.182138	2026-01-02 11:18:15.182138
+20	11	1	\N	Order is Being Processed	2026-01-02 12:47:37.734013	2026-01-02 12:47:37.734013
 \.
 
 
@@ -3161,8 +3289,12 @@ COPY public.order_trackings (id, order_id, user_id, location, status, created_at
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.orders (id, tracking_no, total_qty, sub_total, total_items_discount, coupon_discount, total_tax, shipping_charge, grand_total, shipping_address_id, coupon_id, cancel_resson, payment_status, payment_method, status, tran_id, user_id, delivery_id, created_at, updated_at, requested_qty, approved_qty, total_returned, returned_status, total_refuned, refund_status) FROM stdin;
-7	TRK-0000000001	4	475.20	48.00	0.00	43.20	0.00	475.20	2	\N	\N	Not Paid	Cash	Delivered	1766046526239	1	\N	2025-12-18 08:28:46.242071+00	2025-12-18 08:30:41.308495+00	2	2	237.60	Completed	\N	None
+COPY public.orders (id, tracking_no, total_qty, sub_total, total_items_discount, coupon_discount, total_tax, shipping_charge, grand_total, shipping_address_id, coupon_id, cancel_resson, payment_status, payment_method, status, tran_id, user_id, delivery_id, created_at, updated_at, requested_qty, approved_qty, total_returned, returned_status, total_refuned, refund_status, terms_and_conditions) FROM stdin;
+7	TRK-0000000001	4	475.20	48.00	0.00	43.20	0.00	475.20	2	\N	\N	Not Paid	Cash	Delivered	1766046526239	1	\N	2025-12-18 08:28:46.242071+00	2025-12-18 08:30:41.308495+00	2	2	237.60	Completed	\N	None	\N
+8	TRK-0000000002	2	264.00	0.00	0.00	24.00	0.00	264.00	2	\N	\N	Not Paid	Cash	Delivered	1766742619441	1	\N	2025-12-26 09:50:19.442475+00	2025-12-26 10:07:06.339206+00	2	1	132.00	Completed	\N	None	\N
+9	TRK-0000000003	1	132.00	0.00	0.00	12.00	0.00	132.00	2	\N	\N	Not Paid	Cash	Delivered	1766747604193	1	\N	2025-12-26 11:13:24.194799+00	2025-12-31 14:22:06.711111+00	\N	\N	\N	\N	\N	\N	\N
+10	TRK-0000000004	1	129.36	2.40	0.00	11.76	0.00	129.36	2	\N	\N	Not Paid	Cash	Pending	1767345895483	1	\N	2026-01-02 09:24:55.485014+00	2026-01-02 09:24:55.485014+00	\N	\N	\N	\N	\N	\N	\N
+11	TRK-0000000005	1	129.36	2.40	0.00	11.76	0.00	129.36	2	\N	\N	Not Paid	Cash	Processing	1767352695175	1	\N	2026-01-02 11:18:15.182138+00	2026-01-02 12:47:37.734013+00	\N	\N	\N	\N	\N	\N	t
 \.
 
 
@@ -3170,7 +3302,9 @@ COPY public.orders (id, tracking_no, total_qty, sub_total, total_items_discount,
 -- Data for Name: pages; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.pages (id, title, slug, content, content_type, meta_description, status, user_id, created_at, updated_at) FROM stdin;
+COPY public.pages (id, status, "isHomePage", "order", sections, "metaTitle", "metaDescription", typography, "createdAt", "updatedAt", title, slug, user_id) FROM stdin;
+4	published	f	0	[{"id": "section-1770805966891", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {}}, {"id": "section-1770805967723", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 6, "layout": "slider", "source": "all"}}]			\N	2026-02-11 10:16:25.90599+00	2026-02-11 10:48:48.462537+00	test1	test1	1
+2	published	f	0	[{"id": "section-1770803749256", "type": "banner", "styles": {"paddingTop": 40, "paddingBottom": 40, "backgroundColor": "#bd2e2e"}, "disabled": false, "settings": {"slides": [{"id": "item-1770804778682", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}, {"id": "item-1770804780849", "subline": "Description goes here", "headline": "New Slide", "backgroundImage": "", "primaryButtonLink": "/products", "primaryButtonText": "Shop Now"}]}}, {"id": "section-1770804531399", "type": "offer-banner", "styles": {"paddingTop": 40, "paddingBottom": 40}, "disabled": false, "settings": {"buttonText": ""}}, {"id": "section-1770807828911", "type": "product-slider", "styles": {"paddingTop": 40, "paddingBottom": 40}, "settings": {"count": 8, "layout": "slider", "source": "all", "columns": 2, "headline": "Featured Products"}}]			\N	2026-02-11 10:03:08.766975+00	2026-02-11 11:04:51.260029+00	about-us	about-us	1
 \.
 
 
@@ -3187,6 +3321,7 @@ COPY public.payments (id, order_id, payment_date, payment_type, payment_method, 
 --
 
 COPY public.post_categories (id, post_id, category_id) FROM stdin;
+4	2	2
 \.
 
 
@@ -3194,7 +3329,8 @@ COPY public.post_categories (id, post_id, category_id) FROM stdin;
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.posts (id, slug, title, image, tags, content, user_id, status, created_at, updated_at) FROM stdin;
+COPY public.posts (id, slug, title, image, tags, content, user_id, status, created_at, updated_at, excerpt) FROM stdin;
+2	new-post	NEw post	image-1767192101403.webp	dsfasdf	asdfasdfasdfv\n![image](http://localhost:3900/uploads/images-1766751484041.jpg)	1	Published	2025-12-31 14:41:45.402683+00	2025-12-31 17:07:36.44999+00	hell ow k asldkf jlasdf
 \.
 
 
@@ -3203,7 +3339,34 @@ COPY public.posts (id, slug, title, image, tags, content, user_id, status, creat
 --
 
 COPY public.product_categories (id, category_id, product_id) FROM stdin;
-3	2	2
+8	2	2
+9	5	3
+10	7	3
+11	8	3
+12	9	3
+13	10	3
+14	11	3
+15	3	3
+16	1	3
+17	6	3
+18	3	4
+19	10	4
+20	7	4
+21	5	4
+22	8	4
+23	9	4
+24	11	4
+25	1	4
+26	6	4
+27	1	5
+28	3	5
+29	11	5
+30	10	5
+31	9	5
+32	8	5
+33	7	5
+34	5	5
+35	6	5
 \.
 
 
@@ -3212,7 +3375,10 @@ COPY public.product_categories (id, category_id, product_id) FROM stdin;
 --
 
 COPY public.product_variants (id, sku, unit_price, purchase_price, product_id, size_id, color_id, material, image, "default", stock_qty) FROM stdin;
-2	\N	120.00	100.00	2	\N	\N	\N	\N	f	5
+2	\N	120.00	100.00	2	\N	\N	\N	\N	f	3
+3	\N	350.00	300.00	3	\N	\N	\N	\N	f	100
+4	\N	120.00	100.00	4	\N	\N	\N	\N	f	100
+5	\N	120.00	100.00	5	\N	\N	\N	\N	f	30
 \.
 
 
@@ -3221,7 +3387,10 @@ COPY public.product_variants (id, sku, unit_price, purchase_price, product_id, s
 --
 
 COPY public.products (id, name, slug, variant, is_returnable, is_new_arrival, featured, description, short_description, tax_id, discount_id, enable_review, limit_purchase_qty, alert_qty, status, brand_id, unit_id, tags, thumbnail_image, hover_image, images, user_id, created_at, updated_at) FROM stdin;
-2	new product	new-product	f	t	t	t	asdf	asdf	1	\N	t	10	10	Active	1	1	new production	thumbnailImage-1765959241212.png	hoverImage-1765959641459.png	images-1765959636691.png	1	2025-12-17 08:20:49.844466	2025-12-17 08:20:49.844466
+2	new product	new-product	f	t	t	t	asdf	asdf	1	2	t	10	10	Active	1	1	new production	thumbnailImage-1766233856446.webp	hoverImage-1766233864026.jpg	images-1766233871169.png,images-1766750510399.png,images-1766750547241.jpg,images-1766750577362.jpg,images-1766751472248.png,images-1766751484041.jpg	1	2025-12-17 08:20:49.844466	2025-12-26 12:18:07.417764
+3	Imported Chinese Embroidery Beaded Beige Kids Shoe	imported-chinese-embroidery-beaded-beige-kids-shoe	f	t	t	t	Authentic China Imported Product – A Perfect Blend of Style and Comfort\n\nExperience the perfect balance of fashion and comfort with this original China imported product, crafted to complement any outfit effortlessly. Combining premium Chinese quality with a sleek, modern design, it ensures both elegance and durability for everyday wear.Authentic China Imported Product – A Perfect Blend of Style and Comfort\n\nExperience the perfect balance of fashion and comfort with this original China imported product, crafted to complement any outfit effortlessly. Combining premium Chinese quality with a sleek, modern design, it ensures both elegance and durability for everyday wear.	Authentic China Imported Product – A Perfect Blend of Style and Comfort\n\nExperience the perfect balance of fashion and comfort with this original China imported product, crafted to complement any outfit effortlessly. Combining premium Chinese quality with a sleek, modern design, it ensures both elegance and durability for everyday wear.	1	2	t	10	10	Active	2	2	nice product	thumbnailImage-1767462833628.jpg	hoverImage-1767462840742.jpg	images-1767462845638.jpg,images-1767462856284.png	1	2026-01-03 17:54:23.831238	2026-01-03 17:54:23.831238
+4	Exclusive Kids Boys Sandals – Soft & Comfortable	exclusive-kids-boys-sandals-–-soft-&-comfortable	f	t	t	t	Perfect for little adventurers, these official Disney sandals combine playful style with all-day comfort, safety, and durability. Lightweight and easy to wear, they are ideal for active summer days and outdoor fun.\n\nSoft, breathable design for maximum comfort.\n\nSecure, adjustable buckle strap for a snug fit.\n\nAnti-slip rubber outsole for safe walking.\n\nDurable PVC upper & polyester lining.\n\nLightweight for effortless movement.\n\nEasy to clean and quick-drying.\n\nIdeal for summer outings, playground play, and casual adventures.	Perfect for little adventurers, these official Disney sandals combine playful style with all-day comfort, safety, and durability. Lightweight and easy to wear, they are ideal for active summer days and outdoor fun.\n\nSoft, breathable design for maximum comfort.\n\nSecure, adjustable buckle strap for a snug fit.\n\nAnti-slip rubber outsole for safe walking.\n\nDurable PVC upper & polyester lining.\n\nLightweight for effortless movement.\n\nEasy to clean and quick-drying.\n\nIdeal for summer outings, playground play, and casual adventures.	1	2	t	10	10	Active	1	2	nice	thumbnailImage-1767463137549.png	hoverImage-1767463140069.png	images-1767463142663.png,images-1767463147685.png	1	2026-01-03 17:59:13.529351	2026-01-03 17:59:13.529351
+5	Baby Cotton Yellow T-shirt & Shorts For Kids	baby-cotton-yellow-t-shirt-&-shorts-for-kids	f	t	t	t	This Baby Cotton Yellow T-shirt & Shorts Set is thoughtfully designed with your child’s comfort and safety in mind. Made from 100% baby-safe cotton, the fabric is soft, breathable, and gentle on delicate skin. Its lightweight design makes it perfect for summer, keeping your little one cool, fresh, and comfortable all day long. The bright yellow color adds a cheerful touch, while the durable premium print keeps the outfit stylish and long-lasting.\n\nFeatures\n\n100% Baby-Safe Cotton: Soft, gentle fabric ideal for sensitive baby skin.\n\nSuper Comfortable: Perfect for all-day movement, playtime, and daily activities.\n\nPremium Rubber Print: Durable, stylish design that stays attractive even after washing.\n\nGreat for Hot Weather: Breathable fabric keeps your child cool, relaxed, and irritation-free.\n\nSoft & Safe Finishing: Smooth edges ensure no discomfort, itching, or skin irritation.\n\nA perfect blend of style, comfort, and safety—ideal for keeping your little one happy, cool, and adorable every day!	This Baby Cotton Yellow T-shirt & Shorts Set is thoughtfully designed with your child’s comfort and safety in mind. Made from 100% baby-safe cotton, the fabric is soft, breathable, and gentle on delicate skin. Its lightweight design makes it perfect for summer, keeping your little one cool, fresh, and comfortable all day long. The bright yellow color adds a cheerful touch, while the durable premium print keeps the outfit stylish and long-lasting.\n\nFeatures\n\n100% Baby-Safe Cotton: Soft, gentle fabric ideal for sensitive baby skin.\n\nSuper Comfortable: Perfect for all-day movement, playtime, and daily activities.\n\nPremium Rubber Print: Durable, stylish design that stays attractive even after washing.\n\nGreat for Hot Weather: Breathable fabric keeps your child cool, relaxed, and irritation-free.\n\nSoft & Safe Finishing: Smooth edges ensure no discomfort, itching, or skin irritation.\n\nA perfect blend of style, comfort, and safety—ideal for keeping your little one happy, cool, and adorable every day!	1	\N	t	10	10	Active	1	2		thumbnailImage-1767463280504.jpg	hoverImage-1767463283646.jpg	images-1767463285932.jpg,images-1767463291186.jpg	1	2026-01-03 18:01:53.996353	2026-01-03 18:01:53.996353
 \.
 
 
@@ -3231,6 +3400,7 @@ COPY public.products (id, name, slug, variant, is_returnable, is_new_arrival, fe
 
 COPY public.returns (id, order_id, order_item_id, reason, requested_qty, approved_qty, phone, image, status, user_id, requested_at, updated_at) FROM stdin;
 6	7	7	this product not good	2	2	01798653254	image.png	Completed	1	2025-12-18 08:29:56.977695+00	2025-12-18 08:30:41.308495+00
+7	8	8	sdfasdf	2	1	01767163576	asdfa.png	Completed	1	2025-12-26 10:06:30.440053+00	2025-12-26 10:07:06.339206+00
 \.
 
 
@@ -3239,6 +3409,7 @@ COPY public.returns (id, order_id, order_item_id, reason, requested_qty, approve
 --
 
 COPY public.reviews (id, product_id, rating, comment, "like", dis_like, status, user_id, created_at, updated_at) FROM stdin;
+1	2	5	nice product boss	4	3	Approved	1	2025-12-26 12:29:53.817462	2025-12-26 14:34:46.5668
 \.
 
 
@@ -3246,8 +3417,8 @@ COPY public.reviews (id, product_id, rating, comment, "like", dis_like, status, 
 -- Data for Name: settings; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-COPY public.settings (id, site_name, image, order_free_shipping_amount, favicon, address, phone, email, description, social_link, seo, email_config, whats_app_widget, payment_account, home_page, about_page, contact_page, term_policy_page, footer_option, header_option, faq, help_support, updated_at) FROM stdin;
-1	Arko store	image-1765418573917.jpg	3000.00	favicon-1765639747311.png	Monoharpur, Kayemkola Bazar, Jhikargacha, Jashore	01767163576	arko@gmail.com	test descripiton	{"facebookUrl":"/","instagramUrl":"/","linkedinUrl":"/","twitterUrl":"/"}	{}	\N	{"message":"Hello! How can you help me?","phone":"01767163576"}	\N	{"metaKeywords":["hello","hello\\\\","new account"]}	\N	\N	\N	{"copyRight":"Copyright in E-Commerce","image":"image-1765512284558.png"}	{"leftText":"Welcome to our Store"}	\N	{"returnSupport":"Return Support","originalProduct":"Original Product","guarantee":"100% Guarantee","cashDelivery":"Cash Delivery"}	2025-12-13 15:33:10.012288
+COPY public.settings (id, site_name, image, order_free_shipping_amount, favicon, address, phone, email, description, social_link, seo, email_config, whats_app_widget, payment_account, about_page, contact_page, term_policy_page, footer_option, header_option, faq, help_support, updated_at, marketing, appearance) FROM stdin;
+1	Arko store	image-1765418573917.jpg	3000.00	favicon-1765639747311.png	Monoharpur, Kayemkola Bazar, Jhikargacha, Jashore	01767163576	arko@gmail.com	test descripiton	{}	{}	\N	{"message":"Hello! How can you help me?","phone":"01767163576"}	\N	{"sections":[{"slug":"hero","name":"Hero / Intro","sequence":1,"status":true},{"slug":"stats","name":"Stats Section","sequence":2,"status":true},{"slug":"origin_story","name":"Origin Story","sequence":3,"status":true},{"slug":"mission_vision","name":"Mission & Vision","sequence":4,"status":true},{"slug":"team","name":"Team Section","sequence":5,"status":true},{"slug":"cta","name":"Call to Action","sequence":6,"status":true}]}	{"sections":[{"slug":"header","name":"Hero / Header","sequence":1,"status":true},{"slug":"form_map","name":"Form & Map Section","sequence":2,"status":true}]}	\N	{}	{}	\N	{"returnSupport":"Return Support","originalProduct":"Original Product","guarantee":"100% Guarantee","cashDelivery":"Cash Delivery","sections":[{"slug":"hero","name":"Hero Section","sequence":1,"status":true},{"slug":"support_options","name":"Support Options","sequence":2,"status":true},{"slug":"faqs","name":"FAQ Section","sequence":3,"status":true},{"slug":"contact_form","name":"Contact Form","sequence":4,"status":true}]}	2026-02-11 10:11:26.561298	{"googleAdsId":"gowtamkumar","mailchimpApiKey":"12345678","announcementEnabled":true,"announcementText":"20%off boss","announcementColor":"#f7aa0e","announcementTextColor":"#ffffff","announcementLink":"/offers","popupEnabled":true,"popupTitle":"hello testing popo","popupDelay":"3000","popupDescription":"hell test descrtiption","popupImage":"popupImage-1767276488260.png","popupLink":"/offers"}	{"buttonFontSize":18,"buttonBorderRadius":5,"buttonFontWeight":400,"buttonPaddingVertical":8,"buttonPaddingHorizontal":5,"buttonPrimaryColor":"#d5e26e","buttonHoverColor":"#8a690f","buttonTextColor":"#ffffff","primaryColor":"#633eea","primaryHoverColor":"#f8a10d","secondaryColor":"#000000","backgroundColor":"#ffffff","cardBackgroundColor":"#ffffff","inputPaddingVertical":8,"inputPaddingHorizontal":12,"inputBorderRadius":8,"inputBorderColor":"#f2eded","iconColor":"#1f2937","iconHoverColor":"#F7AA0E","iconBackgroundColor":"#F7AA0E","iconHoverBackgroundColor":"rgba(0,0,0,0.05)","iconSize":30,"topBarBg":"#10e0c8","topBarText":"#000000","headerBg":"#ffffff","headerText":"#000000","footerBg":"#ffffff","footerText":"#000000","textColor":"#000000"}
 \.
 
 
@@ -8529,6 +8700,22 @@ COPY public.user_activities (id, user_id, "timestamp") FROM stdin;
 9	1	2025-12-17T06:34:07.612+00:00
 10	1	2025-12-17T09:29:44.989+00:00
 11	1	2025-12-18T04:09:15.669+00:00
+12	1	2025-12-20T12:30:14.398+00:00
+13	1	2025-12-20T12:33:45.819+00:00
+14	1	2025-12-26T05:09:10.862+00:00
+15	1	2025-12-26T12:35:07.445+00:00
+16	1	2025-12-26T12:43:38.741+00:00
+17	1	2025-12-31T14:21:33.889+00:00
+18	1	2026-01-01T14:39:31.182+00:00
+19	1	2026-01-01T15:11:26.461+00:00
+20	1	2026-01-02T11:13:14.267+00:00
+21	1	2026-01-02T12:17:23.334+00:00
+22	1	2026-01-02T12:18:33.558+00:00
+23	1	2026-01-02T13:04:22.717+00:00
+24	1	2026-01-03T15:14:01.912+00:00
+25	1	2026-01-04T16:24:50.144+00:00
+26	1	2026-02-11T05:41:52.661+00:00
+27	1	2026-02-11T10:32:35.508+00:00
 \.
 
 
@@ -8537,7 +8724,7 @@ COPY public.user_activities (id, user_id, "timestamp") FROM stdin;
 --
 
 COPY public.users (id, name, username, password, email, type, phone, dob, gender, point, address, image, role, status, last_login, last_logout, ip_address, divice_id, is_verified, verification_token, reset_token, failed_login_attempts, block_until, created_at, updated_at) FROM stdin;
-1	gowtam kumar	gowtamkumar	$2a$10$KZkB1lyQePSqsXC.YzPd1Op7txHtdZ.NPTV85mF.cowLK289lv/Xq	gowtampaul0@gmail.com	Admin	\N	\N	\N	\N	\N	\N	Admin	Active	2025-12-18 04:09:15.657	\N	::ffff:172.19.0.5	\N	f	\N	\N	0	\N	2025-06-26 01:29:52.362724	2025-12-18 04:09:15.661789
+1	Gowtam Kumar	gowtamkumar	$2a$10$KZkB1lyQePSqsXC.YzPd1Op7txHtdZ.NPTV85mF.cowLK289lv/Xq	gowtampaul0@gmail.com	Admin	+8801767163576	\N	Male	\N	Monoharpur,kayemkola bazar, Jhikargacha	image-1766752469159.png	Admin	Active	2026-02-11 10:32:35.5	\N	::ffff:172.19.0.5	\N	f	\N	\N	0	\N	2025-06-26 01:29:52.362724	2026-02-11 10:32:35.50141
 \.
 
 
@@ -8546,6 +8733,7 @@ COPY public.users (id, name, username, password, email, type, phone, dob, gender
 --
 
 COPY public.wishlists (id, product_id, user_id, created_at, updated_at) FROM stdin;
+2	2	1	2026-01-01 18:27:25.791913	2026-01-01 18:27:25.791913
 \.
 
 
@@ -8588,14 +8776,14 @@ SELECT pg_catalog.setval('public.banners_id_seq', 1, false);
 -- Name: brands_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.brands_id_seq', 1, true);
+SELECT pg_catalog.setval('public.brands_id_seq', 5, true);
 
 
 --
 -- Name: carts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.carts_id_seq', 10, true);
+SELECT pg_catalog.setval('public.carts_id_seq', 15, true);
 
 
 --
@@ -8616,14 +8804,14 @@ SELECT pg_catalog.setval('public.colors_id_seq', 1, true);
 -- Name: comments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.comments_id_seq', 1, false);
+SELECT pg_catalog.setval('public.comments_id_seq', 1, true);
 
 
 --
 -- Name: contacts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.contacts_id_seq', 1, false);
+SELECT pg_catalog.setval('public.contacts_id_seq', 1, true);
 
 
 --
@@ -8651,7 +8839,7 @@ SELECT pg_catalog.setval('public.currencies_id_seq', 2, true);
 -- Name: discounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.discounts_id_seq', 1, false);
+SELECT pg_catalog.setval('public.discounts_id_seq', 2, true);
 
 
 --
@@ -8672,14 +8860,14 @@ SELECT pg_catalog.setval('public.divisions_id_seq', 8, true);
 -- Name: files_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.files_id_seq', 45, true);
+SELECT pg_catalog.setval('public.files_id_seq', 82, true);
 
 
 --
 -- Name: leads_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.leads_id_seq', 1, true);
+SELECT pg_catalog.setval('public.leads_id_seq', 3, true);
 
 
 --
@@ -8693,35 +8881,35 @@ SELECT pg_catalog.setval('public.menus_id_seq', 1, false);
 -- Name: notifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.notifications_id_seq', 124, true);
+SELECT pg_catalog.setval('public.notifications_id_seq', 428, true);
 
 
 --
 -- Name: order_items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.order_items_id_seq', 7, true);
+SELECT pg_catalog.setval('public.order_items_id_seq', 11, true);
 
 
 --
 -- Name: order_trackings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.order_trackings_id_seq', 13, true);
+SELECT pg_catalog.setval('public.order_trackings_id_seq', 20, true);
 
 
 --
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.orders_id_seq', 7, true);
+SELECT pg_catalog.setval('public.orders_id_seq', 11, true);
 
 
 --
 -- Name: pages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.pages_id_seq', 1, false);
+SELECT pg_catalog.setval('public.pages_id_seq', 4, true);
 
 
 --
@@ -8735,49 +8923,49 @@ SELECT pg_catalog.setval('public.payments_id_seq', 1, true);
 -- Name: post_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.post_categories_id_seq', 1, true);
+SELECT pg_catalog.setval('public.post_categories_id_seq', 4, true);
 
 
 --
 -- Name: posts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.posts_id_seq', 1, true);
+SELECT pg_catalog.setval('public.posts_id_seq', 2, true);
 
 
 --
 -- Name: product_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.product_categories_id_seq', 3, true);
+SELECT pg_catalog.setval('public.product_categories_id_seq', 35, true);
 
 
 --
 -- Name: product_variants_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.product_variants_id_seq', 2, true);
+SELECT pg_catalog.setval('public.product_variants_id_seq', 5, true);
 
 
 --
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.products_id_seq', 2, true);
+SELECT pg_catalog.setval('public.products_id_seq', 5, true);
 
 
 --
 -- Name: returns_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.returns_id_seq', 6, true);
+SELECT pg_catalog.setval('public.returns_id_seq', 7, true);
 
 
 --
 -- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.reviews_id_seq', 1, false);
+SELECT pg_catalog.setval('public.reviews_id_seq', 1, true);
 
 
 --
@@ -8847,7 +9035,7 @@ SELECT pg_catalog.setval('public.upazilas_id_seq', 660, true);
 -- Name: user_activities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.user_activities_id_seq', 11, true);
+SELECT pg_catalog.setval('public.user_activities_id_seq', 27, true);
 
 
 --
@@ -8861,7 +9049,7 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 -- Name: wishlists_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.wishlists_id_seq', 1, false);
+SELECT pg_catalog.setval('public.wishlists_id_seq', 2, true);
 
 
 --
@@ -9294,14 +9482,6 @@ ALTER TABLE ONLY public.discounts
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE (username);
-
-
---
--- Name: pages UQ_fe66ca6a86dc94233e5d7789535; Type: CONSTRAINT; Schema: public; Owner: admin
---
-
-ALTER TABLE ONLY public.pages
-    ADD CONSTRAINT "UQ_fe66ca6a86dc94233e5d7789535" UNIQUE (slug);
 
 
 --
@@ -9766,8 +9946,15 @@ ALTER TABLE ONLY public.unions
 
 
 --
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: admin
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ZZ9vImkQ2MYI4IC8WZlGl9OzRBWceeFiiHQgVgblQXCcbOhc7FzD52hcR7puajX
+\unrestrict LCTupWKW3tJ0xaS3MhKTiUxIbaRkPafCGMtTFbWom0is1O2e20ebfuQMTK1oqqI
 
