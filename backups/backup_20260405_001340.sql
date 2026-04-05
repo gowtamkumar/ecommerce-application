@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict LCTupWKW3tJ0xaS3MhKTiUxIbaRkPafCGMtTFbWom0is1O2e20ebfuQMTK1oqqI
+\restrict tAvr675HbdruSSvW68kDZb4vCSxd4Wcw3SwJbwZgOfKCl3PJwoVmY0uwq5JIrVZ
 
--- Dumped from database version 17.7
--- Dumped by pg_dump version 17.7
+-- Dumped from database version 17.9
+-- Dumped by pg_dump version 17.9
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -3252,6 +3252,8 @@ COPY public.notifications (id, title, type, message, is_read, user_id, order_id,
 426	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 11:02:30.890158+00	2026-02-11 11:02:30.890158+00	\N
 427	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-11 11:09:49.946084+00	2026-02-11 11:09:49.946084+00	\N
 428	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-02-15 01:50:11.923537+00	2026-02-15 01:50:11.923537+00	\N
+429	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-03-21 05:43:26.768068+00	2026-03-21 05:43:26.768068+00	\N
+430	Server Alert	ServerDown	Server successfully started/restarted.	f	1	\N	2026-04-05 00:11:42.393892+00	2026-04-05 00:11:42.393892+00	\N
 \.
 
 
@@ -8716,6 +8718,7 @@ COPY public.user_activities (id, user_id, "timestamp") FROM stdin;
 25	1	2026-01-04T16:24:50.144+00:00
 26	1	2026-02-11T05:41:52.661+00:00
 27	1	2026-02-11T10:32:35.508+00:00
+28	1	2026-03-21T05:50:07.794+00:00
 \.
 
 
@@ -8724,7 +8727,7 @@ COPY public.user_activities (id, user_id, "timestamp") FROM stdin;
 --
 
 COPY public.users (id, name, username, password, email, type, phone, dob, gender, point, address, image, role, status, last_login, last_logout, ip_address, divice_id, is_verified, verification_token, reset_token, failed_login_attempts, block_until, created_at, updated_at) FROM stdin;
-1	Gowtam Kumar	gowtamkumar	$2a$10$KZkB1lyQePSqsXC.YzPd1Op7txHtdZ.NPTV85mF.cowLK289lv/Xq	gowtampaul0@gmail.com	Admin	+8801767163576	\N	Male	\N	Monoharpur,kayemkola bazar, Jhikargacha	image-1766752469159.png	Admin	Active	2026-02-11 10:32:35.5	\N	::ffff:172.19.0.5	\N	f	\N	\N	0	\N	2025-06-26 01:29:52.362724	2026-02-11 10:32:35.50141
+1	Gowtam Kumar	gowtamkumar	$2a$10$KZkB1lyQePSqsXC.YzPd1Op7txHtdZ.NPTV85mF.cowLK289lv/Xq	gowtampaul0@gmail.com	Admin	+8801767163576	\N	Male	\N	Monoharpur,kayemkola bazar, Jhikargacha	image-1766752469159.png	Admin	Active	2026-03-21 05:50:07.785	\N	::ffff:172.20.0.5	\N	f	\N	\N	0	\N	2025-06-26 01:29:52.362724	2026-03-21 05:50:07.787433
 \.
 
 
@@ -8881,7 +8884,7 @@ SELECT pg_catalog.setval('public.menus_id_seq', 1, false);
 -- Name: notifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.notifications_id_seq', 428, true);
+SELECT pg_catalog.setval('public.notifications_id_seq', 430, true);
 
 
 --
@@ -9035,7 +9038,7 @@ SELECT pg_catalog.setval('public.upazilas_id_seq', 660, true);
 -- Name: user_activities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.user_activities_id_seq', 27, true);
+SELECT pg_catalog.setval('public.user_activities_id_seq', 28, true);
 
 
 --
@@ -9956,5 +9959,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict LCTupWKW3tJ0xaS3MhKTiUxIbaRkPafCGMtTFbWom0is1O2e20ebfuQMTK1oqqI
+\unrestrict tAvr675HbdruSSvW68kDZb4vCSxd4Wcw3SwJbwZgOfKCl3PJwoVmY0uwq5JIrVZ
 
