@@ -1,0 +1,68 @@
+import 'reflect-metadata';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { OrderEntity } from '@/modules/sales/order/model/order.entity';
+import { PaymentMethod } from '@/modules/sales/order/enums';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
+import { PaymentType } from '../enums/payment-type.enum';
+
+@Entity('payments')
+export class PaymentEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column({ name: 'order_id', nullable: true })
+  orderId!: number;
+  @ManyToOne((_type) => OrderEntity, (order) => order.payments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'order_id' })
+  order!: OrderEntity;
+
+  @Column({ name: 'payment_date', type: 'timestamp with time zone' })
+  paymentDate!: string;
+
+  @Column({
+    name: 'payment_type',
+    type: 'enum',
+    enum: PaymentType,
+  })
+  paymentType!: PaymentType;
+
+  @Column({
+    name: 'payment_method',
+    type: 'enum',
+    enum: PaymentMethod,
+  })
+  paymentMethod!: PaymentMethod;
+
+  @Column({ type: 'numeric', precision: 15, scale: 2 })
+  amount!: number;
+
+  @Column({ name: 'user_id', nullable: true })
+  userId!: number;
+  @ManyToOne((_type) => UserEntity, (user) => user.payments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'user_id' })
+  user!: UserEntity;
+
+  // @Column({ name: "is_successfull", type: "boolean", default: true })
+  // isSuccessfull!: boolean;
+
+  @Column({ name: 'tran_id', nullable: true })
+  tranId!: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+  createdAt?: string;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
+  updatedAt?: string;
+}

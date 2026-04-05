@@ -1,10 +1,10 @@
 import nodemailer from 'nodemailer';
 import { Options } from 'nodemailer/lib/mailer';
-import { getDBConnection } from '../config/db';
-import { NotificationType } from '../enums/notification-type.enum';
-import { RoleEnum } from '../modules/auth/enums/role.enum';
-import { UserEntity } from '../modules/auth/model/user.entity';
-import { NotificationEntity } from '../modules/other/notification/model/notification.entity';
+import { getDBConnection } from '@/config/db';
+import { NotificationType } from '@/enums/notification-type.enum';
+import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
 
 export const sendEmail = async (mailOptions: Options) => {
   try {

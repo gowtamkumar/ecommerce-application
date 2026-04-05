@@ -1,10 +1,10 @@
 import { NextFunction, Response } from 'express';
-import { getDBConnection } from '../config/db';
-import { CustomRequest } from '../enums/custom-request-type';
-import { NotificationType } from '../enums/notification-type.enum';
-import { RoleEnum } from '../modules/auth/enums/role.enum';
-import { UserEntity } from '../modules/auth/model/user.entity';
-import { NotificationEntity } from '../modules/other/notification/model/notification.entity';
+import { getDBConnection } from '@/config/db';
+import { CustomRequest } from '@/enums/custom-request-type';
+import { NotificationType } from '@/enums/notification-type.enum';
+import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
 
 let requestCount = 0;
 let lastReset = Date.now();

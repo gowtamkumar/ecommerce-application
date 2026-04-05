@@ -1,7 +1,7 @@
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 import passport from 'passport';
-import { getDBConnection } from '../config/db';
-import { UserEntity } from '../modules/auth/model/user.entity';
+import { getDBConnection } from '@/config/db';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import { getSignJwtToken } from './auth.middleware';
 
 passport.use(

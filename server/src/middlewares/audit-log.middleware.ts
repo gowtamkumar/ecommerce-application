@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
-import { getDBConnection } from '../config/db';
-import { CustomRequest } from '../enums/custom-request-type';
-import { AuditAction, AuditLogEntity } from '../modules/audit-log/model/audit-log.entity';
+import { getDBConnection } from '@/config/db';
+import { CustomRequest } from '@/enums/custom-request-type';
+import { AuditAction, AuditLogEntity } from '@/modules/system/audit-log/model/audit-log.entity';
 import { logger } from './logger';
 
 /**

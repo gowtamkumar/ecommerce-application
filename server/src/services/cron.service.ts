@@ -1,6 +1,6 @@
 import cron from 'node-cron';
-import { getDBConnection } from '../config/db';
-import { CartEntity } from '../modules/cart/model/cart.entity';
+import { getDBConnection } from '@/config/db';
+import { CartEntity } from '@/modules/sales/cart/model/cart.entity';
 
 export const initCronJobs = () => {
   // Run every hour: 0 * * * *

@@ -1,0 +1,32 @@
+import 'reflect-metadata';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { DistrictEntity } from '@/modules/system/other/geo-location/districts/model/district.entity';
+import { UnionEntity } from '@/modules/system/other/geo-location/unions/model/union.entity';
+import { ShippingAddressEntity } from '@/modules/sales/shipping-address/model/shipping-address.entity';
+
+@Entity('upazilas')
+export class UpazilaEntity {
+  @PrimaryGeneratedColumn()
+  id!: string;
+
+  @Column({ name: 'district_id', nullable: true })
+  districtId!: number;
+  @ManyToOne((_type) => DistrictEntity, (district) => district.upazilas)
+  @JoinColumn({ name: 'district_id' })
+  district!: DistrictEntity;
+
+  @Column()
+  name!: string;
+
+  @Column({ name: 'bn_name' })
+  bnName!: string;
+
+  @Column({ nullable: true })
+  url!: string;
+
+  @OneToMany((_type) => UnionEntity, (union) => union.upazila)
+  unions!: UnionEntity[];
+
+  @OneToMany((_type) => ShippingAddressEntity, (shippingAddress) => shippingAddress.upazila)
+  shippingAddress!: ShippingAddressEntity[];
+}

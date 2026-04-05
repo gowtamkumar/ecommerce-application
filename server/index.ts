@@ -1,4 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getDBConnection } from '@/config/db';
+import { NotificationType } from '@/enums/notification-type.enum';
+import { errorHandler } from '@/middlewares/errorHandler';
+import { trafficMonitor } from '@/middlewares/traffic-monitor.middleware';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import colors from 'colors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -7,19 +14,12 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import 'reflect-metadata';
-import { getDBConnection } from './src/config/db';
-import { NotificationType } from './src/enums/notification-type.enum';
-import { errorHandler } from './src/middlewares/errorHandler';
-import { trafficMonitor } from './src/middlewares/traffic-monitor.middleware';
-import { RoleEnum } from './src/modules/auth/enums/role.enum';
-import { UserEntity } from './src/modules/auth/model/user.entity';
-import { NotificationEntity } from './src/modules/other/notification/model/notification.entity';
 // all routes
+import { auditLogMiddleware } from '@/middlewares/audit-log.middleware';
+import { setupRoutes } from '@/routes/routes';
+import { initCronJobs } from '@/services/cron.service';
 import { rateLimit } from 'express-rate-limit';
 import path from 'path';
-import { setupRoutes } from './src/routes/routes';
-import { initCronJobs } from './src/services/cron.service';
-import { auditLogMiddleware } from './src/middlewares/audit-log.middleware';
 
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 

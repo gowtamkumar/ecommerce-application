@@ -1,4 +1,4 @@
-import { UserEntity } from '../modules/auth/model/user.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 
 interface PaymentData {
   tranId: string;
