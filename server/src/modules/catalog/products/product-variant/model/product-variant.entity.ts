@@ -1,10 +1,10 @@
-import 'reflect-metadata';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ColorEntity } from '@/modules/catalog/color/model/color.entity';
 import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
 import { SizeEntity } from '@/modules/catalog/size/model/size.entity';
-import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
 import { CartEntity } from '@/modules/sales/cart/model/cart.entity';
-import { ColorEntity } from '@/modules/catalog/color/model/color.entity';
+import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
+import 'reflect-metadata';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('product_variants')
 export class ProductVariantEntity {
@@ -30,6 +30,7 @@ export class ProductVariantEntity {
   })
   purchasePrice!: number;
 
+  @Index()
   @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.productVariants, {

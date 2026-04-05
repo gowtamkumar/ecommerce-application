@@ -1,15 +1,16 @@
+import { Status } from '@/enums/status.enum';
+import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
 import 'reflect-metadata';
 import {
   BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
-import { Status } from '@/enums/status.enum';
 import { DiscountStrategyEnum, PromotionTypeEnum, ScopeEnum } from '../enum';
 import { ApplicableBrandEntity } from './applicable-brand.entity';
 import { ApplicableCategoryEntity } from './applicable-category.entity';
@@ -48,6 +49,7 @@ export class DiscountEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   value!: number;
 
+  @Index()
   @Column({
     name: 'start_date',
     type: 'timestamp with time zone',
@@ -55,6 +57,7 @@ export class DiscountEntity {
   })
   startDate!: string;
 
+  @Index()
   @Column({
     name: 'end_date',
     type: 'timestamp with time zone',
@@ -68,6 +71,7 @@ export class DiscountEntity {
   @Column({ type: 'boolean', default: false })
   stackable!: boolean; // If true, this discount can be combined with others
 
+  @Index()
   @Column({ type: 'enum', enum: Status, default: Status.Active })
   status!: Status;
 

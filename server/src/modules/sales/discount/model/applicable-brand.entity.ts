@@ -1,21 +1,23 @@
+import { BrandEntity } from '@/modules/catalog/brand/model/brand.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DiscountEntity } from './discount.entity';
-import { BrandEntity } from '@/modules/catalog/brand/model/brand.entity';
 
 @Entity('applicable_brands')
 export class ApplicableBrandEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Index()
   @Column({ name: 'brand_id' })
   brandId!: number;
   @ManyToOne((_type) => BrandEntity, (item) => item.applicableBrands, {
@@ -24,6 +26,7 @@ export class ApplicableBrandEntity {
   @JoinColumn({ name: 'brand_id' })
   brand!: BrandEntity;
 
+  @Index()
   @Column({ name: 'discount_id' })
   discountId!: number;
   @ManyToOne((_type) => DiscountEntity, (item) => item.applicableBrands, {

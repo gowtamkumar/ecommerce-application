@@ -1,22 +1,24 @@
+import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { reviewStatusEnum } from '../enums/review.status.enum';
-import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
 
 @Entity('reviews')
 export class ReviewEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Index()
   @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.reviews, {

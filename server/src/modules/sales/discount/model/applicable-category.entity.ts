@@ -1,21 +1,23 @@
+import { CategoriesEntity } from '@/modules/catalog/categories/model/categories.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DiscountEntity } from './discount.entity';
-import { CategoriesEntity } from '@/modules/catalog/categories/model/categories.entity';
 
 @Entity('applicable_categories')
 export class ApplicableCategoryEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Index()
   @Column({ name: 'category_id' })
   categoryId!: number;
   @ManyToOne((_type) => CategoriesEntity, (item) => item.applicableCategories, {
@@ -24,6 +26,7 @@ export class ApplicableCategoryEntity {
   @JoinColumn({ name: 'category_id' })
   category!: CategoriesEntity;
 
+  @Index()
   @Column({ name: 'discount_id' })
   discountId?: number;
   @ManyToOne((_type) => DiscountEntity, (item) => item.applicableCategories, {

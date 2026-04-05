@@ -1,14 +1,15 @@
+import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
 import { DiscountEntity } from './discount.entity';
 
 @Entity('applicable_products')
@@ -16,6 +17,7 @@ export class ApplicableProductEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Index()
   @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.applicableProducts, {
@@ -23,7 +25,8 @@ export class ApplicableProductEntity {
   })
   @JoinColumn({ name: 'product_id' })
   product!: ProductEntity;
-
+  
+  @Index()
   @Column({ name: 'discount_id' })
   discountId?: number;
   @ManyToOne((_type) => DiscountEntity, (discount) => discount.applicableProducts, {

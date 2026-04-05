@@ -497,6 +497,122 @@ LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
   return query;
 };
 
+
+// optimze and performance code
+// export const productsQuery = async (queryData: any) => {
+//   const {
+//     search,
+//     brandId,
+//     categoryId,
+//     page = 1,
+//     perPage = 12,
+//     featured,
+//     isNewArrival
+//   } = queryData;
+
+//   const parseFilter = (filter: any) => {
+//     if (!filter) return null;
+//     const arr = filter
+//       .split(',')
+//       .filter((id: any) => id.trim() !== '' && !isNaN(id))
+//       .map((id: any) => parseInt(id.trim()));
+
+//     return arr.length ? arr : null;
+//   };
+
+//   const categoryFilter = parseFilter(categoryId);
+//   const brandFilter = parseFilter(brandId);
+
+//   const values = [
+//     featured ?? null,          // $1
+//     isNewArrival ?? null,      // $2
+//     brandFilter,               // $3
+//     categoryFilter,            // $4
+//     search ?? null,            // $5
+//     perPage,                   // $6
+//     (page - 1) * perPage       // $7
+//   ];
+
+//   const query = `
+// WITH base_products AS (
+//   SELECT p.*
+//   FROM products p
+//   WHERE 1=1
+//     AND ($1 IS NULL OR p.featured = $1)
+//     AND ($2 IS NULL OR p.is_new_arrival = $2)
+//     AND ($3 IS NULL OR p.brand_id = ANY($3))
+//     AND (
+//       $4 IS NULL OR EXISTS (
+//         SELECT 1
+//         FROM product_categories pc
+//         WHERE pc.product_id = p.id
+//           AND pc.category_id = ANY($4)
+//       )
+//     )
+// ),
+
+// variant AS (
+//   SELECT DISTINCT ON (pv.product_id)
+//     pv.product_id,
+//     pv.unit_price,
+//     pv.purchase_price
+//   FROM product_variants pv
+//   ORDER BY pv.product_id, pv.default DESC, pv.id ASC
+// ),
+
+// active_discount AS (
+//   SELECT *
+//   FROM discounts
+//   WHERE status = 'Active'
+//     AND NOW() BETWEEN start_date AND end_date
+// ),
+
+// price_calc AS (
+//   SELECT
+//     p.id,
+//     p.name,
+//     p.slug,
+//     p.featured,
+//     p.is_new_arrival,
+//     v.unit_price,
+//     v.purchase_price,
+//     d.discount_strategy,
+//     d.value AS discount_value,
+//     t.value AS tax_rate,
+
+//     CASE
+//       WHEN d.discount_strategy = 'Percentage'
+//         THEN v.unit_price - (v.unit_price * d.value / 100)
+//       WHEN d.discount_strategy = 'Fixed'
+//         THEN v.unit_price - d.value
+//       ELSE v.unit_price
+//     END AS discounted_price
+
+//   FROM base_products p
+//   LEFT JOIN variant v ON v.product_id = p.id
+//   LEFT JOIN active_discount d ON d.product_id = p.id
+//   LEFT JOIN taxs t ON t.id = p.tax_id
+// )
+
+// SELECT
+//   *,
+//   ROUND(discounted_price * COALESCE(tax_rate, 0) / 100, 2) AS tax_amount,
+//   ROUND(discounted_price + (discounted_price * COALESCE(tax_rate, 0) / 100), 2) AS final_price
+
+// FROM price_calc
+
+// WHERE ($5 IS NULL OR name ILIKE '%' || $5 || '%')
+
+// ORDER BY id DESC   -- ✅ FIX: avoid sorting by computed column
+
+// LIMIT $6
+// OFFSET $7;
+// `;
+
+//   return { query, values };
+// };
+
+
 export const singleDiscountQuery = async (id: string) => {
   const query = `
           WITH product_variants_dedup AS (

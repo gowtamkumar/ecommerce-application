@@ -1,19 +1,20 @@
+import { AppliedCouponEntity } from '@/modules/sales/coupon/model/applied-coupon.entity';
+import { OrderTrackingEntity } from '@/modules/sales/order-tracking/model/order-tracking.entity';
+import { PaymentEntity } from '@/modules/sales/payment/model/payment.entity';
+import { ShippingAddressEntity } from '@/modules/sales/shipping-address/model/shipping-address.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
-import { AppliedCouponEntity } from '@/modules/sales/coupon/model/applied-coupon.entity';
-import { OrderTrackingEntity } from '@/modules/sales/order-tracking/model/order-tracking.entity';
-import { PaymentEntity } from '@/modules/sales/payment/model/payment.entity';
-import { ShippingAddressEntity } from '@/modules/sales/shipping-address/model/shipping-address.entity';
 import { PaymentMethod, PaymentStatus, RefundStatus } from '../enums';
 
 import { ReturnStatus } from '@/modules/sales/return/enums/return-status.enum';
@@ -156,6 +157,7 @@ export class OrderEntity {
   })
   paymentMethod!: PaymentMethod;
 
+  @Index()
   @Column({
     type: 'enum',
     enum: OrderStatus,
