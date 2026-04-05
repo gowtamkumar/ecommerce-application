@@ -66,7 +66,7 @@ const AddShippingAddress = () => {
   }, [fetchData, userShippingAddress]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
+    const newData = { ...values };
 
     const result = newData.id
       ? () => updateShippingAddress(newData)

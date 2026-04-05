@@ -50,7 +50,7 @@ const AddBanner = () => {
   }, [form, global.action]);
 
   const handleSubmit = async (values: any) => {
-    let newData = { ...values };
+    const newData = { ...values };
 
     const result = newData.id
       ? () => updateBanner(newData)

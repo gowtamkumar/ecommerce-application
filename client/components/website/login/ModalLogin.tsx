@@ -24,7 +24,7 @@ export default function ModalLogin() {
   const handleSubmit = async (values: any) => {
     try {
       dispatch(setLoading({ save: true }));
-      let newData = { ...values };
+      const newData = { ...values };
       const result: any = await signIn("credentials", {
         ...newData,
         redirect: false,

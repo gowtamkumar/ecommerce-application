@@ -85,7 +85,7 @@ export default function OrderSummary() {
   // }
 
   function stockCheckingAndPurchaseLimit(value: any) {
-    let checkStock = value?.stockQty;
+    const checkStock = value?.stockQty;
 
     if (value.limitPurchaseQty && value.limitPurchaseQty <= value.qty) {
       return true;

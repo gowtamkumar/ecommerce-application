@@ -40,7 +40,7 @@ const AssignDeliveryMan = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      let newData = { ...values };
+      const newData = { ...values };
       // return console.log("newData:", newData);
       dispatch(setLoading({ save: true }));
       const result = await assignDeliveryMan(values);

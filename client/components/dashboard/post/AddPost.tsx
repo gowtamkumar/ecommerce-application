@@ -87,7 +87,7 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
-    let newData = { ...values, content: editorContent, tags };
+    const newData = { ...values, content: editorContent, tags };
 
     const asyncFn = newData.id
       ? () => updatePost(newData)
