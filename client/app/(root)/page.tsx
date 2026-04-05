@@ -18,30 +18,9 @@ const FeaturedProduct = dynamic(
 
 const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
-export default async function Home() {
-  const [home] = await Promise.all([
-    getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
-  ]);
-
-  const { banners, posts, categories, products, topSellingProducts } = home.data || {};
-
-  const sliderBanners =
-    banners?.filter((item: { type: string }) => item.type === "Slider") || [];
-
-  const HomeBanners =
-    banners?.filter((item: { type: string }) => item.type === "Banner") || [];
-
-  const featuredProducts = products?.data?.filter(
-    (item: { featured: boolean }) => item.featured
-  );
-
-  const isNewArrivalProducts = products?.data?.filter(
-    (item: { isNewArrival: boolean }) => item.isNewArrival
-  );
-
-  // Common Section Title Component for consistency
-  const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-    <>
+// Common Section Title Component for consistency
+const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
+  <>
     <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
       <div>
         <h2 className="text-global-size-h2 font-bold text-global-text tracking-tight">
@@ -59,8 +38,30 @@ export default async function Home() {
         </a>
       )}
     </div>
-    <Divider/>
-    </>
+    <Divider />
+  </>
+);
+
+export default async function Home() {
+  const [home] = await Promise.all([
+    getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
+  ]);
+
+  const { banners, posts, categories, products, topSellingProducts } =
+    home.data || {};
+
+  const sliderBanners =
+    banners?.filter((item: { type: string }) => item.type === "Slider") || [];
+
+  const HomeBanners =
+    banners?.filter((item: { type: string }) => item.type === "Banner") || [];
+
+  const featuredProducts = products?.data?.filter(
+    (item: { featured: boolean }) => item.featured
+  );
+
+  const isNewArrivalProducts = products?.data?.filter(
+    (item: { isNewArrival: boolean }) => item.isNewArrival
   );
 
   const homePageData = home.data?.homePage;

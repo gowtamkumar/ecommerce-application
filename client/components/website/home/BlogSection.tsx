@@ -44,7 +44,9 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
               >
                 <CalendarOutlined />
                 <span className="text-xs">
-                  {new Date(post.createdAt || Date.now()).toLocaleDateString()}
+                  {post.createdAt
+                    ? new Date(post.createdAt).toLocaleDateString()
+                    : "Recent"}
                 </span>
               </div>,
               <div

@@ -10,6 +10,32 @@ import {
   FaUndo
 } from "react-icons/fa";
 
+// Helper to render a stat row
+const StatRow = ({ label, value, colorClass = "text-gray-600" }: any) => (
+  <div className="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 px-2 rounded-lg transition-colors">
+    <span className="text-gray-500 text-sm font-medium">{label}</span>
+    <span className={`font-bold ${colorClass}`}>{value}</span>
+  </div>
+);
+
+// Helper for the Card Container
+const SummaryCard = ({ title, icon: Icon, children, color }: any) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 overflow-hidden group">
+    <div className={`p-4 flex items-center justify-between border-b border-gray-50 ${color} bg-opacity-5`}>
+      <h3 className="font-bold text-gray-800 text-base flex items-center gap-2">
+        <Icon className={`text-lg ${color.replace("bg-", "text-")}`} />
+        {title}
+      </h3>
+      <span
+        className={`p-2 rounded-full ${color} bg-opacity-10 group-hover:bg-opacity-20 transition-all`}
+      >
+        <Icon className={`${color.replace("bg-", "text-")} text-xl`} />
+      </span>
+    </div>
+    <div className="p-4 space-y-1">{children}</div>
+  </div>
+);
+
 const TodayOrderSummaryDashboard = ({ dashboardReports }: any) => {
   const {
     total_delivered_product_count,
@@ -55,32 +81,6 @@ const TodayOrderSummaryDashboard = ({ dashboardReports }: any) => {
   }: any = dashboardReports || {};
 
   const { formatPrice } = useCurrency();
-
-  // Helper to render a stat row
-  const StatRow = ({ label, value, colorClass = "text-gray-600" }: any) => (
-    <div className="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-0 hover:bg-gray-50 px-2 rounded-lg transition-colors">
-      <span className="text-gray-500 text-sm font-medium">{label}</span>
-      <span className={`font-bold ${colorClass}`}>{value}</span>
-    </div>
-  );
-
-  // Helper for the Card Container
-  const SummaryCard = ({ title, icon: Icon, children, color }: any) => (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 overflow-hidden group">
-      <div className={`p-4 flex items-center justify-between border-b border-gray-50 ${color} bg-opacity-5`}>
-        <h3 className="font-bold text-gray-800 text-base flex items-center gap-2">
-          <Icon className={`text-lg ${color.replace('bg-', 'text-')}`} />
-          {title}
-        </h3>
-        <span className={`p-2 rounded-full ${color} bg-opacity-10 group-hover:bg-opacity-20 transition-all`}>
-          <Icon className={`${color.replace('bg-', 'text-')} text-xl`} />
-        </span>
-      </div>
-      <div className="p-4 space-y-1">
-        {children}
-      </div>
-    </div>
-  );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
