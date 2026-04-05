@@ -7,7 +7,7 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 # Cache and Install dependencies
 COPY package*.json yarn.lock ./
-RUN yarn install
+RUN yarn install --frozen-lockfile
 # copy app files
 COPY . ./
 # Expose port
