@@ -25,7 +25,7 @@ export default function ProductVariant({
                 <div className="grid grid-cols-4 justify-center items-center gap-1">
                   <div className="col-span-3">
                     <Divider
-                      orientation="center"
+                      orientation={"center" as any}
                       style={{ margin: "0px", padding: "0px" }}
                     >
                       Product Variants

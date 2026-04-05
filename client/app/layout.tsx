@@ -11,7 +11,6 @@ import AuthProvider from "../lib/SessionProvider";
 
 // Global styles
 import { auth } from "@/auth";
-import "@ant-design/v5-patch-for-react-19";
 import "antd/dist/reset.css";
 import "react-toastify/dist/ReactToastify.css";
 import "swiper/css";

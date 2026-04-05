@@ -1,7 +1,6 @@
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
 import { Card } from "antd";
-import Meta from "antd/es/card/Meta";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,6 +9,8 @@ interface BlogSectionProps {
 }
 
 const BlogSection = ({ posts }: BlogSectionProps) => {
+  const Meta = Card?.Meta;
+
   if (!posts || posts.length === 0) {
     return null;
   }
@@ -56,16 +57,25 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
             ]}
           >
 
-            <Meta
-              title={
+            {Meta ? (
+              <Meta
+                title={
+                  <h3 className="text-lg font-semibold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                }
+                description={
+                  <p className="line-clamp-3 text-gray-500 text-sm"> {post?.content}</p>
+                }
+              />
+            ) : (
+              <div className="p-4">
                 <h3 className="text-lg font-semibold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2">
                   {post.title}
                 </h3>
-              }
-              description={
-                <p className="line-clamp-3 text-gray-500 text-sm"> {post?.content}</p>
-              }
-            />
+                <p className="line-clamp-3 text-gray-500 text-sm">{post?.content}</p>
+              </div>
+            )}
           </Card>
         </Link>
       ))}

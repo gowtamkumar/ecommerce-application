@@ -2,28 +2,28 @@ import { z } from "zod";
 
 export const shippingAddressValidationSchema = z.object({
   type: z.enum(["Office", "Home"], {
-    required_error: "Type is required",
+    message: "Type is required",
   }),
   userId: z.number({
-    required_error: "user is required",
+    message: "user is required",
   }),
   name: z.string({
-    required_error: "name is required",
+    message: "name is required",
   }),
   email: z.string().optional(),
   phoneNo: z.string({
-    required_error: "Phone No is required",
+    message: "Phone No is required",
   }),
   alternativPhoneNo: z.string().optional(),
   divisionId: z.number({
-    required_error: "Division is required",
+    message: "Division is required",
   }),
   districtId: z.number({
-    required_error: "District is required",
+    message: "District is required",
   }),
   upazilaId: z.number().optional(),
   unionId: z.number().optional(),
   address: z.string({
-    required_error: "Address is required",
+    message: "Address is required",
   }),
 });

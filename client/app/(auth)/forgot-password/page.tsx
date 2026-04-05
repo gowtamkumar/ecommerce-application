@@ -27,7 +27,7 @@ export default function ForgotPassrod() {
 
     if (!validatedFields.success) {
       return {
-        errors: validatedFields.error.formErrors,
+        errors: validatedFields.error.flatten().fieldErrors,
       };
     }
     const result = await sendForgotPassword(validatedFields.data);

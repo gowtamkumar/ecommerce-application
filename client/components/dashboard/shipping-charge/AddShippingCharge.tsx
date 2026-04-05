@@ -175,9 +175,9 @@ const AddShippingCharge = () => {
                 min={0}
                 className="!w-full"
                 formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") as any
                 }
-                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+                parser={(value) => value!.replace(/\$\s?|(,*)/g, "") as any}
               />
             </Form.Item>
 

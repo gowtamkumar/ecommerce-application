@@ -53,9 +53,9 @@ type DataIndex = keyof DataType;
 
 const Page: React.FC = () => {
   const [tabKey, setTabKey] = useState("Requested");
-  const [returns, setReturns] = useState([]);
-  const [allReturns, setAllReturns] = useState([]);
-  const [searchInput, setSearchInput] = useState(null) as any;
+  const [returns, setReturns] = useState<DataType[]>([]);
+  const [allReturns, setAllReturns] = useState<DataType[]>([]);
+  const [searchInput, setSearchInput] = useState<string | null>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
@@ -136,7 +136,7 @@ const Page: React.FC = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           placeholder={`Search ${String(dataIndex)}`}
-          value={selectedKeys[0]}
+          value={selectedKeys[0] as string}
           onChange={(e) => {
             setSelectedKeys(e.target.value ? [e.target.value] : []);
             setSearchInput(e.target.value);

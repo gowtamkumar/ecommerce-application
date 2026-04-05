@@ -2,20 +2,19 @@ import { z } from "zod";
 
 export const UserValidationSchema = z.object({
   name: z.string({
-    required_error: "Name is required",
-    invalid_type_error: "Name must be a string",
+    message: "Name is required",
   }),
   username: z
-    .string({ required_error: "Name is required" })
+    .string({ message: "Name is required" })
     .min(5, { message: "Must be 5 or more characters long" }),
   password: z
     .string({
-      required_error: "password is required",
+      message: "password is required",
     })
     .min(6, { message: "Must be 5 or more characters long" }),
   email: z
     .string({
-      required_error: "email is required",
+      message: "email is required",
     })
     .email(),
 

@@ -31,7 +31,7 @@ export default function ResetPassrod() {
     // Return early if the form data is invalid
     if (!validatedFields.success) {
       return {
-        errors: validatedFields.error.formErrors,
+        errors: validatedFields.error.flatten().fieldErrors,
       };
     }
 

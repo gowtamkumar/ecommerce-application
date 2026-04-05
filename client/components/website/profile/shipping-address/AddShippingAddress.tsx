@@ -115,7 +115,7 @@ const AddShippingAddress = () => {
         <Row gutter={24}>
           {/* Left Column: Personal Info */}
           <Col xs={24} md={12}>
-            <Divider orientation="left" className="!mt-0 !mb-4 text-sm text-gray-400">Contact Details</Divider>
+            <Divider orientation={"left" as any} className="!mt-0 !mb-4 text-sm text-gray-400">Contact Details</Divider>
             <Form.Item
               name="type"
               label="Address Type"
@@ -154,7 +154,7 @@ const AddShippingAddress = () => {
 
           {/* Right Column: Location Info */}
           <Col xs={24} md={12}>
-            <Divider orientation="left" className="!mt-0 !mb-4 text-sm text-gray-400">Location Details</Divider>
+            <Divider orientation={"left" as any} className="!mt-0 !mb-4 text-sm text-gray-400">Location Details</Divider>
             <Form.Item name="divisionId" label="Division" rules={[{ required: true, message: "Required" }]}>
               <Select
                 showSearch

@@ -2,14 +2,12 @@ import { z } from "zod";
 
 export const updateUserValidationSchema = z.object({
   name: z.string({
-    required_error: "Name is required",
-    invalid_type_error: "Name must be a string",
+    message: "Name is required",
   }),
 
   email: z
     .string({
-      required_error: "email is required",
-      invalid_type_error: " must be  Email a string",
+      message: "email is required",
     })
     .email(),
   gender: z.enum(["Male", "Female"]).optional(),

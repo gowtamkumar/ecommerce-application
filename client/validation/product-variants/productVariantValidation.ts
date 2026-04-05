@@ -2,25 +2,25 @@ import { z } from "zod";
 
 export const productVariantValidationSchema = z.object({
   name: z.string({
-    required_error: "name is required",
+    message: "name is required",
   }),
 
   price: z.string({
-    required_error: "price is required",
+    message: "price is required",
   }),
   product_id: z.string({
-    required_error: "product is required",
+    message: "product is required",
   }),
 
   size: z.string({
-    required_error: "Size is required",
+    message: "Size is required",
   }),
 
   color: z.string({
-    required_error: "color is required",
+    message: "color is required",
   }),
 
   qty: z.number({
-    required_error: "url Slug is required",
+    message: "url Slug is required",
   }),
 });

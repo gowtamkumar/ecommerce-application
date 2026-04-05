@@ -189,7 +189,7 @@ const NotificationDropdown = () => {
       open={open}
       onOpenChange={setOpen}
       styles={{
-        body: {
+        content: {
           padding: 0,
           borderRadius: 12,
           boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)',

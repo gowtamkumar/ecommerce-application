@@ -96,7 +96,7 @@ const BannerList: React.FC = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
+          value={selectedKeys[0] as string}
           onChange={(e) => {
             setSearchInput(e.target.value);
             setSelectedKeys(e.target.value ? [e.target.value] : []);

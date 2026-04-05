@@ -2,17 +2,17 @@ import { z } from "zod";
 
 export const orderValidationSchema = z.object({
   subTotal: z.number({
-    required_error: "order total Amount is Required",
+    message: "order total Amount is Required",
   }),
   shippingAddressId: z.number({
-    required_error: "Shipping Address is Required",
+    message: "Shipping Address is Required",
   }),
   discountAmount: z.number().optional(),
   totalTax: z.number().optional(),
   shippingCharge: z.number().optional(),
   note: z.string().optional(),
   paymentMethod: z.enum(["Cash", "SSLCOMMERZ", "Stripe"], {
-    required_error: "Payment Method is Required",
+    message: "Payment Method is Required",
   }),
   status: z
     .enum([
@@ -30,19 +30,19 @@ export const orderValidationSchema = z.object({
     .array(
       z.object({
         purchasePrice: z.string({
-          required_error: "Purchase Price is required",
+          message: "Purchase Price is required",
         }),
-        price: z.string({ required_error: "Price is required" }),
-        taxAmount: z.string({ required_error: "Tax is required" }),
+        price: z.string({ message: "Price is required" }),
+        taxAmount: z.string({ message: "Tax is required" }),
         discountAmount: z.string().optional(),
-        id: z.number({ required_error: "cart is required" }),
-        productId: z.number({ required_error: "Product is required" }),
+        id: z.number({ message: "cart is required" }),
+        productId: z.number({ message: "Product is required" }),
         productVariantId: z.number({
-          required_error: "Product Variant is required",
+          message: "Product Variant is required",
         }),
         colorId: z.number().optional().nullable(),
         sizeId: z.number().optional().nullable(),
-        qty: z.number({ required_error: "qty is required" }),
+        qty: z.number({ message: "qty is required" }),
       })
     )
     .nonempty({ message: "can't be empty!" }),

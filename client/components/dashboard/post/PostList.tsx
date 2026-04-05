@@ -98,7 +98,7 @@ const PostList: React.FC = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
+          value={selectedKeys[0] as string}
           onChange={(e) => {
             setSelectedKeys(e.target.value ? [e.target.value] : []);
             setSearchInput(e.target.value);

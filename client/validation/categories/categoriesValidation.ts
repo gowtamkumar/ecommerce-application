@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const categoriesValidationSchema = z.object({
   name: z.string({
-    required_error: "name 1 is required",
+    message: "name 1 is required",
   }),
   // slug: z.string({
-  //   required_error: "url slug is required",
+  //   message: "url slug is required",
   // }),
 
   userId: z.string().optional(),

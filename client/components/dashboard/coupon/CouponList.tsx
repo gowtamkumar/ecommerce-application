@@ -115,7 +115,7 @@ const CouponList: React.FC = () => {
         <Input
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
+          value={selectedKeys[0] as string}
           onChange={(e) => {
             if (searchInput.current) {
               searchInput.current.input?.focus();
