@@ -112,15 +112,7 @@ SELECT
         END) * COALESCE(taxs.value, 0) / 100), 
     2) AS "taxAmount",
     ROUND(
-        ((p.unit_price) + 
-        ((CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN 
-                p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN 
-                p.unit_price - sd.discount_value
-            ELSE 
-                p.unit_price
-        END) * COALESCE(taxs.value, 0) / 100)), 
+        (p.unit_price + (p.unit_price * COALESCE(taxs.value, 0) / 100)), 
     2) AS "salePrice",
     ROUND(
         ((CASE 
@@ -130,15 +122,7 @@ SELECT
                 p.unit_price - sd.discount_value
             ELSE 
                 p.unit_price
-        END) + 
-        ((CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN 
-                p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN 
-                p.unit_price - sd.discount_value
-            ELSE 
-                p.unit_price
-        END) * COALESCE(taxs.value, 0) / 100)), 
+        END) * (1 + COALESCE(taxs.value, 0) / 100)), 
     2) AS "finalPrice",
     ROUND(
         CASE 
@@ -407,7 +391,7 @@ export const productsQuery = async (queryData: any) => {
         ROUND(unit_price - discounted_price, 2) AS "discountAmount",
         ROUND(discounted_price * tax_percent / 100, 2) AS "taxAmount",
         ROUND(discounted_price + (discounted_price * tax_percent / 100), 2) AS "finalPrice",
-        ROUND(discounted_price + (discounted_price * tax_percent / 100), 2) AS "salePrice",
+        ROUND(unit_price + (unit_price * tax_percent / 100), 2) AS "salePrice",
         ROUND(discounted_price, 2) AS "discountedPrice"
     FROM base_price
     WHERE 1=1
@@ -443,10 +427,11 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
         SELECT 
             p.*,
             pv.id AS selected_variant_id,
-            pv.unit_price AS selected_unit_price
+            pv.unit_price AS selected_unit_price,
+            pv.purchase_price AS selected_purchase_price
         FROM products p
         LEFT JOIN LATERAL (
-            SELECT id, unit_price
+            SELECT id, unit_price, purchase_price
             FROM product_variants
             WHERE product_id = p.id ${variantCondition}
             ORDER BY "default" DESC, id ASC
@@ -489,45 +474,78 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
         WHERE ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
           AND dis.status = 'Active'
         ORDER BY p.id, dis.priority DESC, dis.value DESC
+    ),
+    base_price AS (
+        SELECT 
+            p.id,
+            p.name,
+            p.slug,
+            p.variant,
+            p.thumbnail_image,
+            p.hover_image,
+            p.images,
+            p.selected_variant_id,
+            p.selected_unit_price,
+            p.selected_purchase_price,
+            p.description,
+            p.short_description,
+            p.enable_review,
+            p.limit_purchase_qty,
+            p.alert_qty,
+            p.tags,
+            sd.discount_strategy,
+            sd.discount_value,
+            ra.reviews_count,
+            ra.average_rating,
+            COALESCE(t.value, 0) AS tax_percent,
+            CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN p.selected_unit_price - (p.selected_unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN p.selected_unit_price - sd.discount_value
+                ELSE p.selected_unit_price
+            END AS discounted_price,
+            t.name AS tax_name, t.value AS tax_value,
+            b.id AS brand_id, b.name AS brand_name, b.slug AS brand_slug, b.image AS brand_image, b.status AS brand_status
+        FROM productTable p
+        LEFT JOIN selectedDiscount sd ON sd.product_id = p.id
+        LEFT JOIN reviewsAggregation ra ON ra.product_id = p.id
+        LEFT JOIN taxs t ON t.id = p.tax_id
+        LEFT JOIN brands b ON b.id = p.brand_id
     )
     SELECT 
-        p.id,
-        p.name,
-        p.slug,
-        p.variant,
-        p.thumbnail_image AS "thumbnailImage",
-        p.hover_image AS "hoverImage",
-        p.images,
-        p.selected_variant_id AS "productVariantId",
-        p.description,
-        p.short_description AS "shortDescription",
-        p.enable_review AS "enableReview",
-        p.limit_purchase_qty AS "limitPurchaseQty",
-        p.tags,
-        sd.discount_strategy AS "discountStrategy",
-        sd.discount_value AS "discountValue",
-        ra.reviews_count AS "reviewsCount",
-        ra.average_rating AS "avgRating",
-        ra.average_rating AS "rating",
-        ROUND(
-            (p.selected_unit_price + 
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN p.selected_unit_price - (p.selected_unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN p.selected_unit_price - sd.discount_value
-                ELSE p.selected_unit_price
-            END) * COALESCE(t.value, 0) / 100)), 
-        2) AS "salePrice",
-        ROUND(
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN p.selected_unit_price - (p.selected_unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN p.selected_unit_price - sd.discount_value
-                ELSE p.selected_unit_price
-            END) * (1 + COALESCE(t.value, 0) / 100)), 
-        2) AS "finalPrice",
+        bp.id,
+        bp.name,
+        bp.slug,
+        bp.variant,
+        bp.thumbnail_image AS "thumbnailImage",
+        bp.hover_image AS "hoverImage",
+        bp.images,
+        bp.selected_variant_id AS "productVariantId",
+        bp.description,
+        bp.short_description AS "shortDescription",
+        bp.enable_review AS "enableReview",
+        bp.limit_purchase_qty AS "limitPurchaseQty",
+        bp.alert_qty AS "alertQty",
+        bp.tags,
+        bp.discount_strategy AS "discountStrategy",
+        bp.discount_value AS "discountValue",
+        bp.reviews_count AS "reviewsCount",
+        bp.average_rating AS "avgRating",
+        bp.average_rating AS "rating",
+        
+        bp.selected_unit_price AS "unitPrice",
+        bp.selected_purchase_price AS "purchasePrice",
+
+        ROUND(bp.selected_unit_price - bp.discounted_price, 2) AS "discountAmount",
+        ROUND(bp.discounted_price * bp.tax_percent / 100, 2) AS "taxAmount",
+        ROUND(bp.discounted_price + (bp.discounted_price * bp.tax_percent / 100), 2) AS "finalPrice",
+        ROUND(bp.selected_unit_price + (bp.selected_unit_price * bp.tax_percent / 100), 2) AS "salePrice",
+        ROUND(bp.discounted_price, 2) AS "discountedPrice",
+
         COALESCE(
             (SELECT JSONB_AGG(JSONB_BUILD_OBJECT(
                 'id', pv.id,
                 'unitPrice', pv.unit_price,
+                'purchasePrice', pv.purchase_price,
                 'sizeId', pv.size_id,
                 'colorId', pv.color_id,
                 'material', pv.material,
@@ -539,15 +557,15 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
             )) FROM product_variants pv
             LEFT JOIN sizes s ON s.id = pv.size_id
             LEFT JOIN colors cl ON cl.id = pv.color_id
-            WHERE pv.product_id = p.id), '[]'
+            WHERE pv.product_id = bp.id), '[]'
         ) AS "productVariants",
-        JSONB_BUILD_OBJECT('name', t.name, 'value', t.value) AS "tax",
-        JSONB_BUILD_OBJECT('name', b.name, 'slug', b.slug, 'image', b.image, 'status', b.status) AS "brand",
+        JSONB_BUILD_OBJECT('name', bp.tax_name, 'value', bp.tax_value) AS "tax",
+        JSONB_BUILD_OBJECT('id', bp.brand_id, 'name', bp.brand_name, 'slug', bp.brand_slug, 'image', bp.brand_image, 'status', bp.brand_status) AS "brand",
         COALESCE(
-            (SELECT JSONB_AGG(JSONB_BUILD_OBJECT('category', JSONB_BUILD_OBJECT('name', c.name, 'slug', c.slug)))
+            (SELECT JSONB_AGG(JSONB_BUILD_OBJECT('categoryId', pc.category_id, 'category', JSONB_BUILD_OBJECT('id', c.id, 'name', c.name, 'slug', c.slug)))
              FROM product_categories pc
              JOIN categories c ON c.id = pc.category_id
-             WHERE pc.product_id = p.id), '[]'
+             WHERE pc.product_id = bp.id), '[]'
         ) AS "productCategories",
         COALESCE(
             (SELECT JSONB_AGG(JSONB_BUILD_OBJECT(
@@ -559,18 +577,9 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
                 'user', JSONB_BUILD_OBJECT('name', u.name, 'image', u.image)
             )) FROM reviews r
             LEFT JOIN users u ON u.id = r.user_id
-            WHERE r.product_id = p.id AND r.status = 'Approved'), '[]'
+            WHERE r.product_id = bp.id AND r.status = 'Approved'), '[]'
         ) AS "reviews"
-    FROM productTable p
-    LEFT JOIN selectedDiscount sd ON sd.product_id = p.id
-    LEFT JOIN reviewsAggregation ra ON ra.product_id = p.id
-    LEFT JOIN taxs t ON t.id = p.tax_id
-    LEFT JOIN brands b ON b.id = p.brand_id
-    GROUP BY 
-        p.id, p.name, p.slug, p.variant, p.thumbnail_image, p.hover_image, p.images, 
-        p.selected_variant_id, p.selected_unit_price, p.description, p.short_description, 
-        p.enable_review, p.limit_purchase_qty, p.tags, sd.discount_strategy, sd.discount_value, 
-        ra.reviews_count, ra.average_rating, t.value, t.name, b.name, b.slug, b.image, b.status;
+    FROM base_price bp;
   `;
   return { query, values };
 };
