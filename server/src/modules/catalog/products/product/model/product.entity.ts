@@ -64,7 +64,7 @@ export class ProductEntity {
 
   @Column({ name: 'discount_id', nullable: true })
   discountId?: number;
-  @ManyToOne((_type) => DiscountEntity, (discount) => discount.products)
+  @ManyToOne((_type) => DiscountEntity, (discount) => discount.products, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'discount_id' })
   discount?: DiscountEntity;
 

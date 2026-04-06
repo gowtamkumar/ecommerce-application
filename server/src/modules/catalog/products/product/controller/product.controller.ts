@@ -4,7 +4,7 @@ import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
 import { ProductCategoryEntity } from '@/modules/catalog/products/product-category/model/product-category.entity';
 import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
-import { productsQuery } from '@/sqlQuery';
+import { productDetailQuery, productsQuery } from '@/sqlQuery';
 import { fileDeleteFunction } from '@/utils/fileDeleteFunction';
 import { productValidationSchema } from '@/validation';
 import { updateProductValidationSchema } from '@/validation/products/product/updateProductValidation';
@@ -353,9 +353,9 @@ export const getPublicProducts = async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const { page = 1, perPage = 12 } = req.query;
 
-  const query = await productsQuery(req.query);
+  const { query, values } = await productsQuery(req.query);
 
-  const products = await connection.query(query);
+  const products = await connection.query(query, values);
   // Calculate total and totalPages
   const total = products.length > 0 ? products[0].total : 0;
   const totalPages = Math.ceil(total / +perPage);
@@ -445,175 +445,8 @@ export const getProductByslug = asyncHandler(
 
     const connection = await getDBConnection();
 
-    const result = await connection.query(
-      `
-      WITH productTable AS (
-        SELECT 
-          p.id AS product_id,
-          p.name,
-          p.slug,
-          p.thumbnail_image,
-          p.hover_image,
-          p.images,
-          p.variant,
-          p.description,
-          p.short_description,
-          p.enable_review,
-          p.limit_purchase_qty,
-          p.tags,
-          p.tax_id,
-          p.brand_id,
-          COALESCE(pv.id, dpv.id) AS product_variant_id,
-          COALESCE(pv.unit_price, dpv.unit_price) AS unit_price
-        FROM products p
-        LEFT JOIN LATERAL (
-          SELECT pv.id, pv.unit_price
-          FROM product_variants pv
-          WHERE pv.product_id = p.id AND pv.id = $2
-          LIMIT 1
-        ) pv ON true
-        LEFT JOIN LATERAL (
-          SELECT pv.id, pv.unit_price
-          FROM product_variants pv
-          WHERE pv.product_id = p.id
-          ORDER BY 
-          CASE WHEN pv.default = true THEN 0 ELSE 1 END,
-          pv.id
-          LIMIT 1
-        ) dpv ON true
-        WHERE p.slug = $1 AND p.status = 'Active'
-      ),
-      reviewsTable AS (
-        SELECT 
-          product_id,
-          COUNT(*) AS reviews_count,
-          COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
-        FROM reviews
-        GROUP BY product_id
-      ),
-      selectedDiscount AS (
-        SELECT DISTINCT ON (p.id) 
-          p.id AS product_id,  
-          dis.discount_strategy,
-          dis.value AS discount_value,
-          dis.promotion_type
-        FROM products p
-        LEFT JOIN discounts dis ON (
-            (dis.scope = 'Products' AND EXISTS (
-                SELECT 1 FROM applicable_products ap WHERE ap.product_id = p.id AND ap.discount_id = dis.id
-            )) OR
-            (dis.scope = 'Category' AND EXISTS (
-                SELECT 1 FROM product_categories pc WHERE pc.product_id = p.id 
-                AND pc.category_id IN (
-                    SELECT category_id FROM applicable_categories WHERE discount_id = dis.id
-                )
-            )) OR
-            (dis.scope = 'Brand' AND EXISTS (
-                SELECT 1 FROM applicable_brands ab WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.id
-            )) OR
-            (dis.scope = 'Global') OR
-            (dis.scope = 'Product' AND p.discount_id = dis.id) 
-        )
-        WHERE ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
-          AND dis.status = 'Active'
-        ORDER BY p.id, dis.priority DESC, dis.value DESC
-      )
-      SELECT 
-        p.product_id AS "id",
-        p.name,
-        p.slug,
-        p.variant,
-        p.thumbnail_image AS "thumbnailImage",
-        p.hover_image AS "hoverImage",
-        p.images,
-        p.product_variant_id AS "productVariantId",
-        p.description,
-        p.short_description AS "shortDescription",
-        p.enable_review AS "enableReview",
-        p.limit_purchase_qty AS "limitPurchaseQty",
-        p.tags,
-        sd.discount_strategy AS "discountStrategy",
-        sd.discount_value AS "discountValue",
-        rt.reviews_count AS "reviewsCount",
-        rt.average_rating AS "avgRating",
-        ROUND(
-            ((p.unit_price) + 
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    p.unit_price - (p.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    p.unit_price - sd.discount_value
-                ELSE 
-                    p.unit_price
-            END) * COALESCE(t.value, 0) / 100)), 
-        2) AS "salePrice",
-        ROUND((
-          CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN p.unit_price - sd.discount_value
-            ELSE p.unit_price
-          END
-        ) + (
-          CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN p.unit_price - sd.discount_value
-            ELSE p.unit_price
-          END * COALESCE(t.value, 0) / 100
-        ), 2) AS "finalPrice",
-        COALESCE(
-          JSONB_AGG(
-           DISTINCT JSONB_BUILD_OBJECT(
-              'id', pv.id,
-              'unitPrice', pv.unit_price,
-              'sizeId', pv.size_id,
-              'colorId', pv.color_id,
-              'material', pv.material,
-              'image', pv.image,
-              'default', pv.default,
-              'stockQty', pv.stock_qty,
-              'size', JSONB_BUILD_OBJECT('name', s.name),
-              'color', JSONB_BUILD_OBJECT('name', colors.name, 'color', colors.color)
-            )
-          ) FILTER (WHERE pv.id IS NOT NULL), '[]' 
-        ) AS "productVariants",
-        JSONB_BUILD_OBJECT('name', t.name, 'value', t.value) AS "tax",
-        JSONB_BUILD_OBJECT('name', b.name, 'slug', b.slug, 'image', b.image, 'status', b.status) AS "brand",
-        JSONB_AGG(
-          DISTINCT JSONB_BUILD_OBJECT('category', JSONB_BUILD_OBJECT('name', c.name, 'slug', c.slug))
-        ) FILTER (WHERE pc.product_id IS NOT NULL) AS "productCategories",
-        COALESCE(
-          JSONB_AGG(
-            JSONB_BUILD_OBJECT(
-              'id', r.id,
-              'rating', r.rating,
-              'like', r.like,
-              'disLike', r.dis_like,
-              'comment', r.comment,
-              'user', JSONB_BUILD_OBJECT('name', u.name, 'image', u.image)
-            )
-          ) FILTER (WHERE r.status = 'Approved'), '[]'
-        ) AS "reviews"
-      FROM productTable p
-      LEFT JOIN selectedDiscount sd ON sd.product_id = p.product_id
-      LEFT JOIN reviewsTable rt ON rt.product_id = p.product_id
-      LEFT JOIN taxs t ON t.id = p.tax_id
-      LEFT JOIN product_categories pc ON pc.product_id = p.product_id
-      LEFT JOIN categories c ON c.id = pc.category_id
-      LEFT JOIN brands b ON b.id = p.brand_id
-      LEFT JOIN product_variants pv ON pv.product_id = p.product_id
-      LEFT JOIN sizes s ON s.id = pv.size_id
-      LEFT JOIN colors ON colors.id = pv.color_id
-      LEFT JOIN reviews r ON r.product_id = p.product_id
-      LEFT JOIN users u ON u.id = r.user_id
-
-      GROUP BY 
-        sd.discount_strategy,sd.discount_value,p.variant,
-        p.product_id, p.name,p.slug, p.thumbnail_image, p.hover_image, p.product_variant_id, p.description, 
-        p.short_description,p.enable_review, p.limit_purchase_qty, p.tags, rt.reviews_count, 
-        rt.average_rating,t.name, t.value, b.id, b.image, b.status, b.name, p.unit_price, p.images;
-      `,
-      [slug, productVariantId],
-    );
+    const { query, values } = productDetailQuery(slug, productVariantId);
+    const result = await connection.query(query, values);
 
     if (!result[0]) {
       return res.status(404).json({

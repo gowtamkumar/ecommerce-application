@@ -56,8 +56,8 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   const topSellingProducts = await connection.query(topSellingProductQuery);
 
-  const query = await productsQuery(req.query);
-  const products = await connection.query(query);
+  const { query, values } = await productsQuery(req.query);
+  const products = await connection.query(query, values);
 
   // Calculate total and totalPages
   const total = products.length > 0 ? products[0].total : 0;
