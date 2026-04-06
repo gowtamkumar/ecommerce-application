@@ -1,5 +1,3 @@
-import { NextFunction, Request, Response } from 'express';
-import { In, Repository } from 'typeorm';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
@@ -8,6 +6,8 @@ import { singleDiscountQuery } from '@/sqlQuery';
 import { discountValidation } from '@/validation';
 import { updateDiscountValidation } from '@/validation/discount/updateDiscountValidation';
 import { updateStatusDiscountValidation } from '@/validation/discount/updateStatusDiscountValidation';
+import { NextFunction, Request, Response } from 'express';
+import { In, Repository } from 'typeorm';
 import { ScopeEnum } from '../enum';
 import { ApplicableBrandEntity } from '../model/applicable-brand.entity';
 import { ApplicableCategoryEntity } from '../model/applicable-category.entity';

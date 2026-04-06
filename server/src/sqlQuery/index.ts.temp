@@ -251,191 +251,367 @@ export const productsQuery = async (queryData: any) => {
   const brandFilter = parseFilter(brandId);
 
   const query = `
-    WITH best_variants AS (
-    SELECT DISTINCT ON (pv.product_id)
-        pv.product_id,
-        pv.unit_price,
-        pv.purchase_price,
-        pv.id
-    FROM product_variants pv
-    ORDER BY pv.product_id, pv.default DESC, pv.id
-),
-productTable AS (
-    SELECT 
-        p.id AS product_id,
-        p.name,
-        p.slug,
-        p.thumbnail_image,
-        p.hover_image,
-        p.variant,
-        p.featured,
-        p.is_new_arrival,
-        p.tax_id,
-        p.brand_id,
-        p.short_description,
-        bv.unit_price,
-        bv.purchase_price,
-        bv.id AS product_variant_id
-    FROM products p
-    LEFT JOIN best_variants bv 
-        ON bv.product_id = p.id
-    WHERE 1=1
-      ${featured !== undefined ? `AND p.featured = ${featured}` : ''}
-      ${isNewArrival !== undefined ? `AND p.is_new_arrival = ${isNewArrival}` : ''}
-),
-reviewsTable AS (
-    SELECT 
-        product_id,
-        COUNT(*) AS reviews_count,
-        COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
-    FROM reviews
-    GROUP BY product_id
-),
-validDiscount AS (
-    SELECT 
-        id AS discount_id,
-        discount_strategy,
-        value AS discount_value,
-        slug AS discount_slug,
-        scope,
-        promotion_type,
-        priority
-    FROM discounts
-    WHERE status = 'Active'
-      AND start_date <= NOW()
-      AND end_date >= NOW()
-),
-productDiscount AS (
-    SELECT 
-        p.id AS product_id,
-        d.id AS discount_id,
-        d.discount_strategy,
-        d.value AS discount_value,
-        d.slug AS discount_slug,
-        d.scope,
-        d.promotion_type,
-        d.priority
-    FROM products p
-    JOIN discounts d ON d.id = p.discount_id
-),
-selectedDiscount AS (
-    SELECT DISTINCT ON (p.id)
-        p.id AS product_id,
-        COALESCE(pd.discount_id, vd.discount_id) AS discount_id,
-        COALESCE(pd.discount_strategy, vd.discount_strategy) AS discount_strategy,
-        COALESCE(pd.discount_value, vd.discount_value) AS discount_value,
-        COALESCE(pd.discount_slug, vd.discount_slug) AS discount_slug,
-        COALESCE(pd.scope, vd.scope) AS scope,
-        COALESCE(pd.promotion_type, vd.promotion_type) AS promotion_type
-    FROM products p
-    LEFT JOIN validDiscount vd ON (
-        vd.scope = 'Global'
-        OR (vd.scope = 'Category' AND EXISTS (
-            SELECT 1
-            FROM product_categories pc
-            JOIN applicable_categories ac 
-                ON ac.category_id = pc.category_id
-            WHERE pc.product_id = p.id
-              AND ac.discount_id = vd.discount_id
-        ))
-        OR (vd.scope = 'Brand' AND EXISTS (
-            SELECT 1
-            FROM applicable_brands ab
-            WHERE ab.brand_id = p.brand_id
-              AND ab.discount_id = vd.discount_id
-        ))
-        OR (vd.scope = 'Products' AND EXISTS (
-            SELECT 1
-            FROM applicable_products ap
-            WHERE ap.product_id = p.id
-              AND ap.discount_id = vd.discount_id
-        ))
-    )
-    LEFT JOIN productDiscount pd ON pd.product_id = p.id
-    ORDER BY p.id, COALESCE(pd.priority, vd.priority) DESC, COALESCE(pd.discount_value, vd.discount_value) DESC
-),
-base_price AS (
-    SELECT 
-        p.product_id,
-        p.name,
-        p.slug,
-        p.thumbnail_image,
-        p.hover_image,
-        p.variant,
-        p.brand_id,
-        p.featured,
-        p.is_new_arrival,
-        p.tax_id,
-        p.short_description,
-        p.unit_price,
-        p.purchase_price,
-        p.product_variant_id,
-        sd.discount_id,
-        sd.discount_strategy,
-        sd.discount_value,
-        sd.discount_slug,
-        sd.scope,
-        sd.promotion_type,
-        rt.reviews_count,
-        rt.average_rating,
-        COALESCE(taxs.value, 0) AS tax_percent,
-        CASE 
-            WHEN sd.discount_strategy = 'Percentage' THEN p.unit_price - (p.unit_price * sd.discount_value / 100)
-            WHEN sd.discount_strategy = 'Fixed' THEN p.unit_price - sd.discount_value
-            ELSE p.unit_price
-        END AS discounted_price
-    FROM productTable p
-    LEFT JOIN selectedDiscount sd 
-        ON sd.product_id = p.product_id
-    LEFT JOIN reviewsTable rt 
-        ON rt.product_id = p.product_id
-    LEFT JOIN taxs 
-        ON taxs.id = p.tax_id
-)
-SELECT 
-    product_id AS "id",
-    name,
-    slug,
-    thumbnail_image AS "thumbnailImage",
-    hover_image AS "hoverImage",
-    variant,
-    brand_id AS "brandId",
-    discount_id AS "discountId",
-    discount_strategy AS "discountStrategy",
-    discount_value AS "discountValue",
-    discount_slug AS "discountSlug",
-    scope,
-    promotion_type AS "promotionType",
-    featured,
-    is_new_arrival AS "isNewArrival",
-    unit_price AS "unitPrice",
-    purchase_price AS "purchasePrice",
-    product_variant_id AS "productVariantId",
-    reviews_count AS "reviewsCount",
-    average_rating AS "avgRating",
-    short_description AS "shortDescription",
-    ROUND(unit_price - discounted_price, 2) AS "discountAmount",
-    ROUND(discounted_price * tax_percent / 100, 2) AS "taxAmount",
-    ROUND(discounted_price + (discounted_price * tax_percent / 100), 2) AS "finalPrice",
-    ROUND(discounted_price + (discounted_price * tax_percent / 100), 2) AS "salePrice",
-    ROUND(discounted_price, 2) AS "discountedPrice"
-FROM base_price
+  WITH productTable AS (
+      SELECT 
+          p.id AS product_id,
+          p.name,
+          p.slug,
+          p.thumbnail_image ,
+          p.hover_image,
+          p.variant,
+          p.featured,
+          p.is_new_arrival,
+          p.tax_id,
+          p.brand_id,
+          p.short_description,
+          pv.unit_price,
+          pv.purchase_price,
+          pv.id AS product_variant_id
+      FROM 
+          products p
+      JOIN LATERAL (
+          SELECT 
+              pv.unit_price, 
+              pv.purchase_price, 
+              pv.id
+          FROM 
+              product_variants pv
+          WHERE 
+              pv.product_id = p.id
+          ORDER BY 
+              pv.default DESC, pv.id
+          LIMIT 1
+      ) pv ON true 
+        WHERE 1=1
+        ${featured !== undefined ? `AND p.featured = ${featured}` : ''}
+        ${isNewArrival !== undefined ? `AND p.is_new_arrival = ${isNewArrival}` : ''}
+                
+  ),
+  reviewsTable AS (
+      SELECT 
+          product_id,
+          COUNT(*) AS reviews_count,
+          COALESCE(AVG(CAST(rating AS FLOAT)), 0) AS average_rating
+      FROM reviews
+      GROUP BY product_id
+  ),
+  validDiscount AS (
+      SELECT 
+          dis.id AS discount_id,
+          dis.discount_strategy,
+          dis.value AS discount_value,
+          dis.slug AS discount_slug,
+          dis.scope,
+          dis.promotion_type,
+          dis.start_date,
+          dis.end_date,
+          dis.priority,
+          ROW_NUMBER() OVER (PARTITION BY dis.scope ORDER BY dis.priority DESC, dis.value DESC) AS rank
+      FROM discounts dis
+      LEFT JOIN products p ON p.discount_id = dis.id
+      WHERE 
+          ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
+          AND dis.status = 'Active'
+      ORDER BY dis.value DESC
+  ),
+  selectedDiscount AS (
+      SELECT DISTINCT ON (p.id) 
+          p.id AS product_id,  
+          dis.discount_id,
+          dis.discount_strategy,
+          dis.discount_value,
+          dis.discount_slug,
+          dis.scope,
+          dis.promotion_type
+      FROM products p
+      LEFT JOIN validDiscount dis ON (
+                (dis.scope = 'Products' AND EXISTS (
+                  SELECT 1 
+                  FROM applicable_products ap 
+                  WHERE ap.product_id = p.id AND ap.discount_id = dis.discount_id
+              )) OR
+              (dis.scope = 'Category' AND EXISTS (
+                  SELECT 1 
+                  FROM product_categories pc 
+                  WHERE pc.product_id = p.id 
+                  AND pc.category_id IN 
+                      (SELECT category_id FROM applicable_categories WHERE discount_id = dis.discount_id)
+              )) OR
+              (dis.scope = 'Brand' AND EXISTS (
+                  SELECT 1 
+                  FROM applicable_brands ab 
+                  WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.discount_id
+              )) OR
+              (dis.scope = 'Global') OR
+              (dis.scope = 'Product' AND p.discount_id = dis.discount_id) 
+          )   
+      ORDER BY p.id, dis.priority DESC, dis.discount_value DESC
+  ),
+  filteredProducts AS (
+  SELECT 
+          p.product_id AS "id",
+          p.name,
+          p.slug,
+          p.thumbnail_image as "thumbnailImage",
+          p.hover_image as "hoverImage",
+          p.variant,
+          p.brand_id as "brandId",
+          sd.discount_id as "discountId",
+          sd.discount_strategy AS "discountStrategy",
+          sd.discount_value AS "discountValue",
+          sd.discount_slug AS "discountSlug",
+          sd.scope,
+          sd.promotion_type AS "promotionType",
+          p.featured,
+          p.is_new_arrival as "isNewArrival",
+          p.unit_price AS "unitPrice",
+          p.purchase_price AS "purchasePrice",
+          p.product_variant_id as "productVariantId",
+          rt.reviews_count AS "reviewsCount",
+          rt.average_rating AS "avgRating",
+          p.short_description as "shortDescription",
+
+          -- ✅ Calculate amunt
+          ROUND(
+              (CASE 
+                  WHEN sd.discount_strategy = 'Percentage' THEN 
+                     (p.unit_price * sd.discount_value / 100)
+                  WHEN sd.discount_strategy = 'Fixed' THEN 
+                     sd.discount_value
+              END),
+          2) AS "discountAmount",
+
+          -- ✅ Calculate tax amount based on the discounted price 
+          ROUND(
+              ((CASE 
+                  WHEN sd.discount_strategy = 'Percentage' THEN 
+                      p.unit_price - (p.unit_price * sd.discount_value / 100)
+                  WHEN sd.discount_strategy = 'Fixed' THEN 
+                      p.unit_price - sd.discount_value
+                  ELSE 
+                      p.unit_price
+              END) * COALESCE(taxs.value, 0) / 100), 
+          2) AS "taxAmount",
+
+
+          -- ✅ Calculate Sale Price
+        ROUND(
+            ((p.unit_price) + 
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) * COALESCE(taxs.value, 0) / 100)), 
+        2) AS "salePrice",
+
+    
+          -- ✅ Calculate Final Price
+          -- This is the final price after applying the discount and tax
+          -- finalPrice = salePrice + tax
+        ROUND(
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) + 
+            ((CASE 
+                WHEN sd.discount_strategy = 'Percentage' THEN 
+                    p.unit_price - (p.unit_price * sd.discount_value / 100)
+                WHEN sd.discount_strategy = 'Fixed' THEN 
+                    p.unit_price - sd.discount_value
+                ELSE 
+                    p.unit_price
+            END) * COALESCE(taxs.value, 0) / 100)), 
+        2) AS "finalPrice",
+
+        -- ✅ Calculate Discounted Price
+        ROUND(
+              CASE 
+                  WHEN sd.discount_strategy = 'Percentage' THEN 
+                      p.unit_price - (p.unit_price * sd.discount_value / 100)
+                  WHEN sd.discount_strategy = 'Fixed' THEN 
+                      p.unit_price - sd.discount_value
+                  ELSE 
+                      p.unit_price
+              END, 
+              2
+          ) AS "discountedPrice"
+
+      FROM 
+          productTable p
+      LEFT JOIN 
+          selectedDiscount sd ON sd.product_id = p.product_id
+      LEFT JOIN 
+          reviewsTable rt ON rt.product_id = p.product_id
+      LEFT JOIN 
+          taxs ON taxs.id = p.tax_id
+     
+      LEFT JOIN 
+          brands b ON b.id = p.brand_id
+  )
+  SELECT
+  *,
+  COUNT(*) OVER() AS total
+FROM filteredProducts
 WHERE 1=1
-  ${categoryFilter.length ? `AND "id" IN (
+  ${
+    categoryFilter.length
+      ? `
+    AND "id" IN (
       SELECT product_id 
       FROM product_categories 
       WHERE category_id IN (${categoryFilter.join(',')})
-  )` : ''}
+    )
+  `
+      : ''
+  }
   ${brandFilter.length ? `AND "brandId" IN (${brandFilter.join(',')})` : ''}
   ${minPrice && maxPrice ? `AND "finalPrice" BETWEEN ${minPrice} AND ${maxPrice}` : ''}
   ${discount ? `AND "discountValue" BETWEEN 0 AND ${discount}` : ''}
-  ${search ? `AND (LOWER("name") ILIKE LOWER('%${search}%') OR LOWER("slug") ILIKE LOWER('%${search}%'))` : ''}
-  ${discountId ? `AND "discountId" = ${discountId}` : discountSlug ? `AND "discountSlug" = '${discountSlug}'` : ''}
+  ${
+    search
+      ? `
+    AND (
+      LOWER("name") ILIKE LOWER('%${search}%') OR
+      LOWER("slug") ILIKE LOWER('%${search}%')
+    )
+  `
+      : ''
+  }
+      
+ ${
+   discountId
+     ? `AND "discountId" = ${discountId}`
+     : discountSlug
+       ? `AND "discountSlug" = '${discountSlug}'`
+       : ''
+ }
 ORDER BY ${lowPrice && !highPrice ? `"finalPrice" ASC` : `"finalPrice" DESC`}
-LIMIT ${perPage} OFFSET ${(page - 1) * perPage}
+LIMIT ${perPage} OFFSET ${(+page - 1) * +perPage}
 `;
   return query;
 };
+
+
+// optimze and performance code
+// export const productsQuery = async (queryData: any) => {
+//   const {
+//     search,
+//     brandId,
+//     categoryId,
+//     page = 1,
+//     perPage = 12,
+//     featured,
+//     isNewArrival
+//   } = queryData;
+
+//   const parseFilter = (filter: any) => {
+//     if (!filter) return null;
+//     const arr = filter
+//       .split(',')
+//       .filter((id: any) => id.trim() !== '' && !isNaN(id))
+//       .map((id: any) => parseInt(id.trim()));
+
+//     return arr.length ? arr : null;
+//   };
+
+//   const categoryFilter = parseFilter(categoryId);
+//   const brandFilter = parseFilter(brandId);
+
+//   const values = [
+//     featured ?? null,          // $1
+//     isNewArrival ?? null,      // $2
+//     brandFilter,               // $3
+//     categoryFilter,            // $4
+//     search ?? null,            // $5
+//     perPage,                   // $6
+//     (page - 1) * perPage       // $7
+//   ];
+
+//   const query = `
+// WITH base_products AS (
+//   SELECT p.*
+//   FROM products p
+//   WHERE 1=1
+//     AND ($1 IS NULL OR p.featured = $1)
+//     AND ($2 IS NULL OR p.is_new_arrival = $2)
+//     AND ($3 IS NULL OR p.brand_id = ANY($3))
+//     AND (
+//       $4 IS NULL OR EXISTS (
+//         SELECT 1
+//         FROM product_categories pc
+//         WHERE pc.product_id = p.id
+//           AND pc.category_id = ANY($4)
+//       )
+//     )
+// ),
+
+// variant AS (
+//   SELECT DISTINCT ON (pv.product_id)
+//     pv.product_id,
+//     pv.unit_price,
+//     pv.purchase_price
+//   FROM product_variants pv
+//   ORDER BY pv.product_id, pv.default DESC, pv.id ASC
+// ),
+
+// active_discount AS (
+//   SELECT *
+//   FROM discounts
+//   WHERE status = 'Active'
+//     AND NOW() BETWEEN start_date AND end_date
+// ),
+
+// price_calc AS (
+//   SELECT
+//     p.id,
+//     p.name,
+//     p.slug,
+//     p.featured,
+//     p.is_new_arrival,
+//     v.unit_price,
+//     v.purchase_price,
+//     d.discount_strategy,
+//     d.value AS discount_value,
+//     t.value AS tax_rate,
+
+//     CASE
+//       WHEN d.discount_strategy = 'Percentage'
+//         THEN v.unit_price - (v.unit_price * d.value / 100)
+//       WHEN d.discount_strategy = 'Fixed'
+//         THEN v.unit_price - d.value
+//       ELSE v.unit_price
+//     END AS discounted_price
+
+//   FROM base_products p
+//   LEFT JOIN variant v ON v.product_id = p.id
+//   LEFT JOIN active_discount d ON d.product_id = p.id
+//   LEFT JOIN taxs t ON t.id = p.tax_id
+// )
+
+// SELECT
+//   *,
+//   ROUND(discounted_price * COALESCE(tax_rate, 0) / 100, 2) AS tax_amount,
+//   ROUND(discounted_price + (discounted_price * COALESCE(tax_rate, 0) / 100), 2) AS final_price
+
+// FROM price_calc
+
+// WHERE ($5 IS NULL OR name ILIKE '%' || $5 || '%')
+
+// ORDER BY id DESC   -- ✅ FIX: avoid sorting by computed column
+
+// LIMIT $6
+// OFFSET $7;
+// `;
+
+//   return { query, values };
+// };
 
 
 export const singleDiscountQuery = async (id: string) => {

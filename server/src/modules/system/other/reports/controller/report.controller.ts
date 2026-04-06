@@ -1,11 +1,11 @@
-import dayjs from 'dayjs';
-import { Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { topSellingProductQuery } from '@/sqlQuery';
 import { OrderStatus } from '@/modules/sales/order/enums';
 import { OrderEntity } from '@/modules/sales/order/model/order.entity';
+import { topSellingProductQuery } from '@/sqlQuery';
+import dayjs from 'dayjs';
+import { Request, Response } from 'express';
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/dashboard-report

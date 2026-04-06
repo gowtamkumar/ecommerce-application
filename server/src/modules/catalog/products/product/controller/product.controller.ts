@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
-import { Brackets } from 'typeorm';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { ProductCategoryEntity } from '@/modules/catalog/products/product-category/model/product-category.entity';
+import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
 import { productsQuery } from '@/sqlQuery';
 import { fileDeleteFunction } from '@/utils/fileDeleteFunction';
 import { productValidationSchema } from '@/validation';
 import { updateProductValidationSchema } from '@/validation/products/product/updateProductValidation';
-import { ProductCategoryEntity } from '@/modules/catalog/products/product-category/model/product-category.entity';
-import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { NextFunction, Request, Response } from 'express';
+import { Brackets } from 'typeorm';
 import { ProductEntity } from '../model/product.entity';
 
 // @desc Create a Product

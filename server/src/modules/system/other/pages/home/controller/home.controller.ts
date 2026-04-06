@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { productsQuery, topSellingProductQuery } from '@/sqlQuery';
+import { CategoriesEntity } from '@/modules/catalog/categories/model/categories.entity';
 import { BannerEntity } from '@/modules/content/banner/model/banner.entity';
 import { PostStatus } from '@/modules/content/blog/post/enums';
 import { PostEntity } from '@/modules/content/blog/post/model/post.entity';
-import { CategoriesEntity } from '@/modules/catalog/categories/model/categories.entity';
 import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
+import { productsQuery, topSellingProductQuery } from '@/sqlQuery';
+import { Request, Response } from 'express';
 
 // @desc Get getHome data
 // @route GET /api/v1/home
