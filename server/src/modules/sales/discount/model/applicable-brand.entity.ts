@@ -8,7 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { DiscountEntity } from './discount.entity';
 
@@ -17,7 +17,7 @@ export class ApplicableBrandEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index()
+  @Index('IDX_APPLICABLE_BRAND_ID')
   @Column({ name: 'brand_id' })
   brandId!: number;
   @ManyToOne((_type) => BrandEntity, (item) => item.applicableBrands, {
@@ -26,7 +26,7 @@ export class ApplicableBrandEntity {
   @JoinColumn({ name: 'brand_id' })
   brand!: BrandEntity;
 
-  @Index()
+  @Index('IDX_APPLICABLE_DISCOUNT_BRAND_ID')
   @Column({ name: 'discount_id' })
   discountId!: number;
   @ManyToOne((_type) => DiscountEntity, (item) => item.applicableBrands, {

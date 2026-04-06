@@ -214,6 +214,8 @@ LIMIT 20;
 // tax = 900 * 0.05 = ৳45
 // finalPrice = 900 + 45 = ৳945
 
+
+
 export const productsQuery = async (queryData: any) => {
   const {
     search,
@@ -283,7 +285,6 @@ export const productsQuery = async (queryData: any) => {
         WHERE 1=1
         ${featured !== undefined ? `OR p.featured = ${featured}` : ''}
         ${isNewArrival !== undefined ? `OR p.is_new_arrival = ${isNewArrival}` : ''}
-        
         
   ),
   reviewsTable AS (

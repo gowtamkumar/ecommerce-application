@@ -17,7 +17,7 @@ export class ApplicableCategoryEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index()
+  @Index('IDX_APPLICABLE_CATEGORY_ID')
   @Column({ name: 'category_id' })
   categoryId!: number;
   @ManyToOne((_type) => CategoriesEntity, (item) => item.applicableCategories, {
@@ -26,7 +26,7 @@ export class ApplicableCategoryEntity {
   @JoinColumn({ name: 'category_id' })
   category!: CategoriesEntity;
 
-  @Index()
+  @Index('IDX_APPLICABLE_DISCOUNT_CAT_ID')
   @Column({ name: 'discount_id' })
   discountId?: number;
   @ManyToOne((_type) => DiscountEntity, (item) => item.applicableCategories, {

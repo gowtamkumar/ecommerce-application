@@ -17,7 +17,7 @@ export class ApplicableProductEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index()
+  @Index('IDX_APPLICABLE_PRODUCT_ID')
   @Column({ name: 'product_id' })
   productId!: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.applicableProducts, {
@@ -26,7 +26,7 @@ export class ApplicableProductEntity {
   @JoinColumn({ name: 'product_id' })
   product!: ProductEntity;
   
-  @Index()
+  @Index('IDX_APPLICABLE_DISCOUNT_PROD_ID')
   @Column({ name: 'discount_id' })
   discountId?: number;
   @ManyToOne((_type) => DiscountEntity, (discount) => discount.applicableProducts, {

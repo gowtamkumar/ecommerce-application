@@ -1,28 +1,29 @@
+import { Status } from '@/enums/status.enum';
+import { BrandEntity } from '@/modules/catalog/brand/model/brand.entity';
+import { ProductCategoryEntity } from '@/modules/catalog/products/product-category/model/product-category.entity';
+import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { UnitEntity } from '@/modules/catalog/unit/model/unit.entity';
+import { ReviewEntity } from '@/modules/communication/review/model/review.entity';
+import { CouponProductEntity } from '@/modules/sales/coupon/model/coupon-product.entity';
+import { ApplicableProductEntity } from '@/modules/sales/discount/model/applicable-products.entity';
+import { DiscountEntity } from '@/modules/sales/discount/model/discount.entity';
+import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
+import { WishListEntity } from '@/modules/sales/wishlist/model/wishlist.entity';
+import { StockAdjustEntity } from '@/modules/system/stock-adjust/model/stock-adjust.entity';
+import { TaxEntity } from '@/modules/system/tax/model/tax.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Status } from '@/enums/status.enum';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
-import { BrandEntity } from '@/modules/catalog/brand/model/brand.entity';
-import { CouponProductEntity } from '@/modules/sales/coupon/model/coupon-product.entity';
-import { ApplicableProductEntity } from '@/modules/sales/discount/model/applicable-products.entity';
-import { DiscountEntity } from '@/modules/sales/discount/model/discount.entity';
-import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
-import { ReviewEntity } from '@/modules/communication/review/model/review.entity';
-import { StockAdjustEntity } from '@/modules/system/stock-adjust/model/stock-adjust.entity';
-import { TaxEntity } from '@/modules/system/tax/model/tax.entity';
-import { UnitEntity } from '@/modules/catalog/unit/model/unit.entity';
-import { WishListEntity } from '@/modules/sales/wishlist/model/wishlist.entity';
-import { ProductCategoryEntity } from '@/modules/catalog/products/product-category/model/product-category.entity';
-import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
 
 @Entity('products')
 export class ProductEntity {
@@ -41,9 +42,11 @@ export class ProductEntity {
   @Column({ name: 'is_returnable', type: 'boolean', default: true })
   isReturnable?: boolean;
 
+  @Index()
   @Column({ name: 'is_new_arrival', type: 'boolean', default: false })
   isNewArrival!: boolean;
 
+  @Index()
   @Column({ type: 'boolean', default: false })
   featured?: boolean;
 
@@ -83,6 +86,7 @@ export class ProductEntity {
   @Column({ type: 'enum', enum: Status, default: Status.Active })
   status!: Status;
 
+  @Index()
   @Column({ name: 'brand_id', nullable: true })
   brandId?: number;
   @ManyToOne((_type) => BrandEntity, (brand) => brand.products)
