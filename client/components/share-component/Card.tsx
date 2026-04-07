@@ -71,15 +71,15 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative bg-global-bg border border-global-header-text/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-global-primary/10 transition-all duration-500 flex flex-col h-full">
+    <div className="group relative bg-global-bg border border-global-header-text-[0.08] hover:border-global-primary/30 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-global-primary/15 transition-all duration-500 flex flex-col h-full transform hover:-translate-y-1">
       {/* Image Area */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
-        <Link href={`/products/${item.slug}`} className="block w-full h-full">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50/50">
+        <Link href={`/products/${item.slug}`} className="block w-full h-full relative z-0">
           <Image
             src={thumbnailUrl}
             alt={item.name}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {/* Hover Image */}
@@ -89,18 +89,20 @@ export default function Card({ item }: { item: any }) {
                 src={hoverUrl}
                 alt={item.name}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           )}
+          {/* Subtle bottom gradient to ensure overlay items contrast nicely */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         </Link>
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
           {+item.discountAmount > 0 && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-global-bg/90 backdrop-blur text-global-primary shadow-sm border border-global-primary/10">
-              -{item.discountValue}
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/80 dark:bg-black/80 backdrop-blur-md text-global-primary shadow-sm border border-global-primary/20 tracking-wider">
+              SAVE {item.discountValue}
               {item.discountStrategy === "Percentage"
                 ? "%"
                 : selectedCurrency?.symbol}
@@ -108,10 +110,10 @@ export default function Card({ item }: { item: any }) {
           )}
         </div>
 
-        {/* Floating Actions */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300 ease-out z-20">
+        {/* Floating Actions - Slides in smoothly from Right */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out z-30">
           <button
-            className="w-10 h-10 bg-global-header-bg/80 backdrop-blur text-global-header-text rounded-full flex items-center justify-center shadow-sm hover:bg-global-primary hover:text-global-button-text transition-all duration-300 transform hover:scale-110"
+            className="w-9 h-9 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-global-header-text rounded-full flex items-center justify-center shadow-lg hover:shadow-global-primary/30 hover:bg-global-primary hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12 border border-gray-200/50 dark:border-gray-700/50"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -123,45 +125,46 @@ export default function Card({ item }: { item: any }) {
             }}
             title="Add to Wishlist"
           >
-            <FaRegHeart size={16} />
+            <FaRegHeart size={15} />
           </button>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="p-5 flex flex-col flex-1">
+      <div className="p-4 sm:p-5 flex flex-col flex-1 relative bg-global-bg z-10 transition-colors duration-300">
+        
+        {/* Title */}
+        <h3 className="font-semibold text-global-text text-sm sm:text-base leading-snug group-hover:text-global-primary transition-colors duration-300 line-clamp-2 min-h-[40px] sm:min-h-[44px] mb-2">
+          <Link href={`/products/${item.slug}`}>{item.name}</Link>
+        </h3>
+
         {/* Ratings */}
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-3">
           <Rate
             disabled
             value={+item.avgRating || 0}
-            className="text-xs text-global-primary"
-            style={{ fontSize: 12 }}
+            className="text-xs text-yellow-400"
+            style={{ fontSize: 13 }}
           />
-          <span className="text-xs text-global-text/40 font-bold">
+          <span className="text-[11px] text-global-text/50 font-medium">
             ({item.reviewsCount || 0})
           </span>
         </div>
 
-        {/* Title */}
-        <h3 className="font-bold text-global-text text-base leading-snug  group-hover:text-global-primary transition-colors">
-          <Link href={`/products/${item.slug}`}>{item.name}</Link>
-        </h3>
-
         {/* Price & Cart */}
         <div className="mt-auto flex flex-col gap-4">
-          <div className="flex items-baseline gap-2">
-            <span className="text-xl font-extrabold text-global-text tracking-tight">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <span className="text-lg sm:text-xl font-extrabold text-global-text tracking-tight">
               {formatPrice(item.finalPrice)}
             </span>
             {+item?.discountValue > 0 && (
-              <span className="text-sm text-global-text/40 line-through decoration-global-text/20">
+              <span className="text-xs sm:text-sm text-global-text/40 font-medium line-through decoration-global-text/30">
                 {formatPrice(item.salePrice)}
               </span>
             )}
           </div>
 
-          <div className="w-full">
+          <div className="w-full transform transition-all duration-300 group-hover:-translate-y-1">
             <AddToCartButton item={{ ...item, qty: 1 }} />
           </div>
         </div>

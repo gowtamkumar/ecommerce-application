@@ -53,7 +53,7 @@ export default function ViewCart() {
           type="primary"
           size="large"
           className="h-10 px-8 rounded-global-button-radius font-medium !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text !border-none"
-          onClick={() => router.push("/shop")} // Assuming /shop exists, or keep empty if handled by drawer close logic
+          onClick={() => router.push("/products")} // Assuming /shop exists, or keep empty if handled by drawer close logic
         >
           Start Shopping
         </Button>
