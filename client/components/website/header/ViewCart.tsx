@@ -110,7 +110,7 @@ export default function ViewCart() {
             <div className="flex flex-1 flex-col justify-between py-1">
               <div className="flex justify-between items-start gap-3">
                 <h3 className="text-sm font-medium text-gray-900 leading-snug line-clamp-2">
-                  <a href={`/product/${item.slug || '#'}`} className="hover:text-gray-600 transition-colors">
+                  <a href={`/products/${item.slug || '#'}`} className="hover:text-gray-600 transition-colors">
                     {item.name}
                   </a>
                 </h3>

@@ -256,6 +256,7 @@ export const productsQuery = async (queryData: any) => {
             p.tax_id,
             p.brand_id,
             p.short_description,
+            p.discount_id,
             bv.unit_price,
             bv.purchase_price,
             bv.id AS product_variant_id
@@ -271,64 +272,34 @@ export const productsQuery = async (queryData: any) => {
         FROM reviews
         GROUP BY product_id
     ),
-    validDiscount AS (
-        SELECT 
-            id AS discount_id,
-            discount_strategy,
-            value AS discount_value,
-            slug AS discount_slug,
-            scope,
-            promotion_type,
-            priority
-        FROM discounts
-        WHERE status = 'Active'
-          AND start_date <= NOW()
-          AND end_date >= NOW()
-    ),
-    productDiscount AS (
-        SELECT 
-            p.id AS product_id,
-            d.id AS discount_id,
-            d.discount_strategy,
-            d.value AS discount_value,
-            d.slug AS discount_slug,
-            d.scope,
-            d.promotion_type,
-            d.priority
-        FROM products p
-        JOIN discounts d ON d.id = p.discount_id
-    ),
     selectedDiscount AS (
-        SELECT DISTINCT ON (p.id)
-            p.id AS product_id,
-            COALESCE(pd.discount_id, vd.discount_id) AS discount_id,
-            COALESCE(pd.discount_strategy, vd.discount_strategy) AS discount_strategy,
-            COALESCE(pd.discount_value, vd.discount_value) AS discount_value,
-            COALESCE(pd.discount_slug, vd.discount_slug) AS discount_slug,
-            COALESCE(pd.scope, vd.scope) AS scope,
-            COALESCE(pd.promotion_type, vd.promotion_type) AS promotion_type
-        FROM products p
-        LEFT JOIN validDiscount vd ON (
-            vd.scope = 'Global'
-            OR (vd.scope = 'Category' AND EXISTS (
-                SELECT 1
-                FROM product_categories pc
-                JOIN applicable_categories ac ON ac.category_id = pc.category_id
-                WHERE pc.product_id = p.id AND ac.discount_id = vd.discount_id
-            ))
-            OR (vd.scope = 'Brand' AND EXISTS (
-                SELECT 1
-                FROM applicable_brands ab
-                WHERE ab.brand_id = p.brand_id AND ab.discount_id = vd.discount_id
-            ))
-            OR (vd.scope = 'Products' AND EXISTS (
-                SELECT 1
-                FROM applicable_products ap
-                WHERE ap.product_id = p.id AND ap.discount_id = vd.discount_id
-            ))
+        SELECT DISTINCT ON (p.product_id) 
+            p.product_id,  
+            dis.id AS discount_id,
+            dis.discount_strategy,
+            dis.value AS discount_value,
+            dis.slug AS discount_slug,
+            dis.scope,
+            dis.promotion_type
+        FROM productTable p
+        LEFT JOIN discounts dis ON (
+            (dis.scope = 'Products' AND EXISTS (
+                SELECT 1 FROM applicable_products ap WHERE ap.product_id = p.product_id AND ap.discount_id = dis.id
+            )) OR
+            (dis.scope = 'Category' AND EXISTS (
+                SELECT 1 FROM product_categories pc 
+                WHERE pc.product_id = p.product_id 
+                AND pc.category_id IN (SELECT category_id FROM applicable_categories WHERE discount_id = dis.id)
+            )) OR
+            (dis.scope = 'Brand' AND EXISTS (
+                SELECT 1 FROM applicable_brands ab WHERE ab.brand_id = p.brand_id AND ab.discount_id = dis.id
+            )) OR
+            (dis.scope = 'Global') OR
+            (dis.scope = 'Product' AND p.discount_id = dis.id) 
         )
-        LEFT JOIN productDiscount pd ON pd.product_id = p.id
-        ORDER BY p.id, COALESCE(pd.priority, vd.priority) DESC, COALESCE(pd.discount_value, vd.discount_value) DESC
+        WHERE ((dis.start_date <= NOW() AND dis.end_date >= NOW()) OR dis.id = p.discount_id)
+          AND dis.status = 'Active'
+        ORDER BY p.product_id, dis.priority DESC, dis.value DESC
     ),
     base_price AS (
         SELECT 
