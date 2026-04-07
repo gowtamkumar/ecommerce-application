@@ -5,21 +5,31 @@ import {
   successNotification,
 } from "@/lib/utils/notification";
 import { replaceCart } from "@/redux/features/cart/cartSlice";
+import { selectCheckout, setCheckoutFormData } from "@/redux/features/checkout/checkoutSlice";
 import { Button, Input, Space } from "antd";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ApplyCoupon() {
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const checkout = useSelector(selectCheckout);
 
   const handleCoupon = async () => {
     setLoading(true);
 
-    const coupon = await getCartLists({ couponCode: data, shippingCost: 0 });    
+    const { checkoutFormData, shippingAddress } = checkout || {};
+    const activeAddress = shippingAddress?.find((item: any) => item.id === checkoutFormData?.shippingAddressId);
+
+    const coupon = await getCartLists({
+      couponCode: data,
+      districtId: activeAddress?.districtId
+    });
 
     if (coupon.success) {
+      // Save coupon into Redux to persist correctly across shipping address switches!
+      dispatch(setCheckoutFormData({ ...checkoutFormData, couponCode: data }));
       successNotification({ message: coupon.message });
       dispatch(replaceCart(coupon.data));
     }

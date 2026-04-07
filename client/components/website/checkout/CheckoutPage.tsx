@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { setLoading } from "@/redux/features/global/globalSlice";
 import { useEffect } from "react";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
+import { getCartLists } from "@/lib/apis/cart";
+import { replaceCart } from "@/redux/features/cart/cartSlice";
 import dynamic from "next/dynamic";
 import {
   setCheckoutFormData,
@@ -34,9 +36,9 @@ export default function CheckoutPage() {
         (item: { status: boolean }) => item.status
       );
 
-      if (activeShippingAddress?.divisionId) {
+      if (activeShippingAddress?.districtId) {
         const getShippingCharge = await getShippingCharges({
-          divisionId: activeShippingAddress.divisionId,
+          districtId: activeShippingAddress.districtId,
         });
 
         dispatch(
@@ -44,6 +46,11 @@ export default function CheckoutPage() {
             getShippingCharge.data?.length ? getShippingCharge.data[0] : {}
           )
         );
+
+        const cartData = await getCartLists({ districtId: activeShippingAddress.districtId });
+        if (cartData.success) {
+           dispatch(replaceCart(cartData.data));
+        }
       }
 
       dispatch(setShippingAddress(shippingAddress.data));

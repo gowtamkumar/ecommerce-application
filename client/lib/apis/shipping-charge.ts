@@ -5,7 +5,7 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 // Define an interface for the shipping charge
 interface ShippingCharge {
   id?: string; // Optional for new entries
-  divisionId: string;
+  districtId: string;
   chargeAmount: number;
   description?: string; // Optional field
   [key: string]: any; // Allow additional properties
@@ -35,11 +35,11 @@ export async function saveShippingCharge(
 
 // Function to get shipping charges with optional parameters
 export async function getShippingCharges(params?: {
-  divisionId?: string;
+  districtId?: string;
 }): Promise<ApiResponse<ShippingCharge[]>> {
   let queryData = "";
-  if (params?.divisionId) {
-    queryData += `divisionId=${params.divisionId}`;
+  if (params?.districtId) {
+    queryData += `districtId=${params.districtId}`;
   }
 
   const headers = await getAuthHeaders();

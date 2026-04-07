@@ -43,14 +43,14 @@ export default function CheckoutSummary() {
   const { checkoutFormData } = checkout || {};
   const { loading } = global || {};
 
+  console.log("cartSummary", cart?.carts?.cartSummary);
+
 
 
   // State for form inputs
   const handleOrder = async () => {
     try {
       dispatch(setLoading({ save: true }));
-
-      console.log("checkoutFormData", checkoutFormData);
 
 
       const validatedFields = onlineOrderValidationSchema.safeParse({

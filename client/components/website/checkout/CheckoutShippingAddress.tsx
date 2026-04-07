@@ -1,5 +1,7 @@
 import { ActionType } from "@/constants/constants";
+import { getCartLists } from "@/lib/apis/cart";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
+import { replaceCart } from "@/redux/features/cart/cartSlice";
 import {
   selectCheckout,
   setCheckoutFormData,
@@ -39,10 +41,11 @@ export default function CheckoutShippingAddress() {
             (item: { id: number }) => item.id === target.value
           );
 
-          if (activeShippingAddress.divisionId) {
+          if (activeShippingAddress.districtId) {
             const getShippingCharge = await getShippingCharges({
-              divisionId: activeShippingAddress.divisionId,
+              districtId: activeShippingAddress.districtId,
             });
+
             dispatch(
               setShippingCharge(
                 getShippingCharge.data?.length
@@ -50,6 +53,15 @@ export default function CheckoutShippingAddress() {
                   : {}
               )
             );
+
+            // Sync backend cart API using selected districtId and existing coupon code 
+            const newCartList = await getCartLists({
+              districtId: activeShippingAddress.districtId,
+              couponCode: checkoutFormData?.couponCode,
+            });
+            if (newCartList.success) {
+              dispatch(replaceCart(newCartList.data));
+            }
           }
         }}
         value={checkoutFormData?.shippingAddressId}
@@ -64,10 +76,9 @@ export default function CheckoutShippingAddress() {
                 key={idx}
                 className={`
                   relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all h-full
-                  ${
-                    checkoutFormData.shippingAddressId === item.id
-                      ? "border-global-primary ring-1 ring-global-primary bg-global-primary/5"
-                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  ${checkoutFormData.shippingAddressId === item.id
+                    ? "border-global-primary ring-1 ring-global-primary bg-global-primary/5"
+                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                   }
                 `}
               >
@@ -75,20 +86,18 @@ export default function CheckoutShippingAddress() {
                 <div className="flex w-full flex-col justify-between gap-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
-                      <span className={`text-sm font-bold uppercase tracking-wider px-2 py-0.5 rounded text-[10px] ${
-                         checkoutFormData.shippingAddressId === item.id 
-                         ? "bg-global-primary/10 text-global-primary" 
-                         : "bg-gray-100 text-gray-600"
-                      }`}>
+                      <span className={`text-sm font-bold uppercase tracking-wider px-2 py-0.5 rounded text-[10px] ${checkoutFormData.shippingAddressId === item.id
+                        ? "bg-global-primary/10 text-global-primary"
+                        : "bg-gray-100 text-gray-600"
+                        }`}>
                         {item.type}
                       </span>
                     </div>
                     <div
                       className={`h-5 w-5 rounded-full border flex items-center justify-center flex-shrink-0
-                        ${
-                          checkoutFormData.shippingAddressId === item.id
-                            ? "border-global-primary bg-global-primary"
-                            : "border-gray-300"
+                        ${checkoutFormData.shippingAddressId === item.id
+                          ? "border-global-primary bg-global-primary"
+                          : "border-gray-300"
                         }
                       `}
                     >
@@ -97,7 +106,7 @@ export default function CheckoutShippingAddress() {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-1 text-sm">
                     <p className="font-semibold text-gray-900">{item.name}</p>
                     <p className="text-gray-600">{item.phoneNo}</p>
@@ -105,26 +114,26 @@ export default function CheckoutShippingAddress() {
                   </div>
 
                   <div className="pt-2 mt-auto flex gap-2">
-                     <button
-                        onClick={(e) => {
-                          e.preventDefault(); // Prevent radio selection when clicking edit
-                          dispatch(
-                            setAction({
-                              type: ActionType.UPDATE,
-                              payload: item,
-                            })
-                          )
-                        }}
-                        className="text-xs font-medium text-gray-500 hover:text-global-primary flex items-center gap-1 transition-colors"
-                      >
-                        <CiEdit size={14} /> Edit
-                      </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault(); // Prevent radio selection when clicking edit
+                        dispatch(
+                          setAction({
+                            type: ActionType.UPDATE,
+                            payload: item,
+                          })
+                        )
+                      }}
+                      className="text-xs font-medium text-gray-500 hover:text-global-primary flex items-center gap-1 transition-colors"
+                    >
+                      <CiEdit size={14} /> Edit
+                    </button>
                   </div>
                 </div>
               </label>
             )
           )}
-          
+
           {/* Add New Address Button Card */}
           <button
             onClick={() =>
@@ -137,7 +146,7 @@ export default function CheckoutShippingAddress() {
             className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-4 hover:border-global-primary/50 hover:bg-global-primary/5 transition-all min-h-[160px] group"
           >
             <div className="h-10 w-10 rounded-full bg-gray-50 group-hover:bg-global-primary/10 flex items-center justify-center mb-2 transition-colors">
-               <span className="text-2xl text-gray-400 group-hover:text-global-primary">+</span>
+              <span className="text-2xl text-gray-400 group-hover:text-global-primary">+</span>
             </div>
             <span className="text-sm font-medium text-gray-600 group-hover:text-global-primary">Add New Address</span>
           </button>
@@ -145,9 +154,9 @@ export default function CheckoutShippingAddress() {
       </Radio.Group>
 
       <div className="flex justify-end">
-         <Link href="/profile" className="text-sm text-global-primary hover:underline">
-            Manage all addresses
-         </Link>
+        <Link href="/profile" className="text-sm text-global-primary hover:underline">
+          Manage all addresses
+        </Link>
       </div>
 
       <AddShippingAddress />

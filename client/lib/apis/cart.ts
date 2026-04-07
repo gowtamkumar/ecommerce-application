@@ -24,28 +24,25 @@ export async function getCarts() {
 }
 
 export async function getCartLists(params?: {
-  couponCode: number | string;
-  shippingCost: number | string;
+  couponCode?: number | string;
+  districtId?: number | string;
 }) {
   const headers = await getAuthHeaders();
-  const { couponCode, shippingCost }: any = params || {};
-  let queryString = "";
+  const { couponCode, districtId }: any = params || {};
+  
+  const queryParams = new URLSearchParams();
+  if (couponCode) queryParams.append('couponCode', String(couponCode));
+  if (districtId) queryParams.append('districtId', String(districtId));
+  
+  const queryString = queryParams.toString();
+  const finalUrl = queryString 
+    ? `${appConfig.apiUrl}/carts/coupon-apply-cartlist?${queryString}` 
+    : `${appConfig.apiUrl}/carts/coupon-apply-cartlist`;
 
-  if (couponCode) {
-    queryString += `couponCode=${couponCode}&`;
-  }
-
-  if (couponCode) {
-    queryString += `shippingCost=${shippingCost}`;
-  }
-
-  const res = await fetch(
-    `${appConfig.apiUrl}/carts/coupon-apply-cartlist?${queryString}`,
-    {
-      cache: "no-cache",
-      headers,
-    }
-  );
+  const res = await fetch(finalUrl, {
+    cache: "no-cache",
+    headers,
+  });
 
   return await handleResponse(res);
 }
