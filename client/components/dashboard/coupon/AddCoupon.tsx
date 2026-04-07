@@ -145,13 +145,13 @@ const AddCoupon = () => {
           <Button
             size="large"
             type="primary"
-            onClick={handleSubmit}
+            onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
             className="!border-none !px-8 !font-medium"
             style={{ borderRadius: "var(--button-border-radius)" }}
           >
-            {payload?.id ? "Update Post" : "Publish Post"}
+            {payload?.id ? "Update" : "Publish"}
           </Button>
         </div>
       </div>
