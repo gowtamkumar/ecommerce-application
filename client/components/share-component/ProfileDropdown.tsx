@@ -12,7 +12,7 @@ export default function ProfileDropdown({
       menu={{ items: userProfileRoute as any }}
       placement="bottomRight"
       trigger={["click"]}
-      overlayClassName="pt-2 profile-dropdown-overlay"
+      classNames={{ root: "pt-2 profile-dropdown-overlay" }}
     >
       <div className="cursor-pointer group relative">
         <div

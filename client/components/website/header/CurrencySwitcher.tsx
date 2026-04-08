@@ -24,7 +24,7 @@ const CurrencySwitcher = () => {
       menu={{ items }}
       trigger={["click"]}
       placement="bottomRight"
-      overlayClassName="pt-2 profile-dropdown-overlay"
+      classNames={{ root: "pt-2 profile-dropdown-overlay" }}
     >
       <Button
         type="primary"

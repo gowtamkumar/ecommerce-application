@@ -13,22 +13,22 @@ const FeaturedProduct = ({ products }: any) => {
   return (
     <Swiper
       modules={[Navigation, Pagination, Scrollbar, A11y, EffectFade]}
-      spaceBetween={5}
+      spaceBetween={16}
       breakpoints={{
         // when window width is >= 320px
         320: {
           slidesPerView: 2,
-          spaceBetween: 5,
+          spaceBetween: 10,
         },
         // when window width is >= 480px
         480: {
           slidesPerView: 3,
-          spaceBetween: 5,
+          spaceBetween: 12,
         },
         // when window width is >= 640px
         640: {
           slidesPerView: 4,
-          spaceBetween: 5,
+          spaceBetween: 16,
         },
 
         // when window width is >= 768px
@@ -37,10 +37,11 @@ const FeaturedProduct = ({ products }: any) => {
           slidesPerView: 5,
         },
       }}
-      pagination
+      pagination={{ clickable: true }}
+      className="!pb-12 !pt-4 !px-4 -mx-4"
     >
       {products?.map((item: any, index: number) => (
-        <SwiperSlide key={index} className="!h-auto">
+        <SwiperSlide key={index} className="!h-auto flex">
           <Card item={item} />
         </SwiperSlide>
       ))}

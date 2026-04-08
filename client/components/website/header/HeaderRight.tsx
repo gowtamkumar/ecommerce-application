@@ -116,7 +116,7 @@ export default function HeaderRight() {
           open={global.drawarCart}
           loading={global.loading.drawerLoading}
           onClose={() => dispatch(setDrawarCart(false))}
-          width={450}
+          size="default"
           className="cart-drawer"
         >
           <ViewCart />

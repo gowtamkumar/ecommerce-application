@@ -58,7 +58,7 @@ const MainMenu = () => {
           items: optimizeCategory,
         }}
         trigger={["click"]}
-        overlayClassName="pt-2 profile-dropdown-overlay"
+        classNames={{ root: "pt-2 profile-dropdown-overlay" }}
       >
         <Button
           type="primary"

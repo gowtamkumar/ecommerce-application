@@ -20,9 +20,9 @@ const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
 // Common Section Title Component for consistency
 const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-  <div className="relative mb-10 md:mb-14 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
-    <div className="relative z-10 space-y-1.5 flex-1 text-center md:text-left">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-global-text tracking-tight capitalize">
+  <div className="relative mb-10 md:mb-12 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
+    <div className="relative z-10 space-y-2 flex-1 text-center md:text-left">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-global-text tracking-tight capitalize leading-tight">
         {title}
       </h2>
       <div className="h-1.5 w-16 bg-gradient-to-r from-global-primary to-transparent rounded-full mx-auto md:mx-0" />
@@ -80,8 +80,8 @@ export default async function Home() {
     ),
     categories: () => (
       categories ? (
-        <section className="py-16 sm:py-24 bg-global-bg relative overflow-hidden">
-          <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16 relative z-10">
+        <section className="py-12 sm:py-20 bg-global-bg relative overflow-hidden">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <SectionHeader title="Shop by Category" link="/categories" />
             <CategoryCard categories={categories} />
           </div>
@@ -90,8 +90,8 @@ export default async function Home() {
     ),
     featured_products: () => (
       products?.data ? (
-        <section className="py-16 sm:py-24 bg-global-card-bg border-y border-global-header-text/5 relative">
-          <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16">
+        <section className="py-12 sm:py-20 bg-global-card-bg border-y border-global-header-text/5 relative">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Featured Collections" link="/products" />
             <FeaturedProduct products={featuredProducts} />
           </div>
@@ -100,8 +100,8 @@ export default async function Home() {
     ),
     promo_banners: () => (
       HomeBanners?.length > 0 ? (
-        <section className="py-12 sm:py-16 bg-global-bg">
-          <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16">
+        <section className="py-12 sm:py-20 bg-global-bg">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <PromoBanners banners={HomeBanners} />
           </div>
         </section>
@@ -109,9 +109,9 @@ export default async function Home() {
     ),
     top_selling: () => (
       topSellingProducts?.length > 0 ? (
-        <section className="py-16 sm:py-24 bg-global-bg relative overflow-hidden">
+        <section className="py-12 sm:py-20 bg-global-bg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-global-primary/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
-          <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <SectionHeader title="Best Sellers" link="/products" />
             <FeaturedProduct products={topSellingProducts} />
           </div>
@@ -120,8 +120,8 @@ export default async function Home() {
     ),
     new_arrivals: () => (
       products?.data ? (
-        <section className="py-16 sm:py-24 bg-global-card-bg border-y border-global-header-text/5">
-          <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16">
+        <section className="py-12 sm:py-20 bg-global-card-bg border-y border-global-header-text/5">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="New Arrivals" link="/products" />
             <FeaturedProduct products={isNewArrivalProducts} />
           </div>
@@ -129,16 +129,16 @@ export default async function Home() {
       ) : null
     ),
     category_tabs: () => (
-      <section className="py-16 sm:py-24 bg-global-bg">
-        <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16">
+      <section className="py-12 sm:py-20 bg-global-bg">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Browse by Category" link="/products" />
           <CategoryTab categories={categories} />
         </div>
       </section>
     ),
     blog: () => (
-      <section className="py-20 sm:py-28 bg-gradient-to-b from-global-bg to-global-card-bg border-t border-global-header-text/5">
-        <div className="container mx-auto px-5 sm:px-6 lg:px-10 xl:px-16">
+      <section className="py-16 sm:py-24 bg-gradient-to-b from-global-bg to-global-card-bg border-t border-global-header-text/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Latest from our Blog" link="/blog" />
           <BlogTab posts={posts || []} />
         </div>

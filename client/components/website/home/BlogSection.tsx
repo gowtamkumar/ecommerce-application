@@ -16,7 +16,7 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
       {posts.map((post: any) => (
         <Link
           href={`/blog/${post.slug}`}
@@ -26,23 +26,23 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
           <Card
             hoverable
             cover={
-              <div className="h-48 overflow-hidden relative">
+              <div className="h-56 lg:h-64 overflow-hidden relative">
                 <Image
                   alt={post.title}
                   src={getImageUrl(post.image)}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
             }
-            className="h-full border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+            className="h-full border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden"
             actions={[
               <div
-                className="flex items-center justify-center gap-2 text-gray-500"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium"
                 key="date"
               >
-                <CalendarOutlined />
+                <CalendarOutlined className="text-global-primary" />
                 <span className="text-xs">
                   {post.createdAt
                     ? new Date(post.createdAt).toLocaleDateString()
@@ -50,10 +50,10 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
                 </span>
               </div>,
               <div
-                className="flex items-center justify-center gap-2 text-gray-500"
+                className="flex items-center justify-center gap-2 text-gray-500 font-medium"
                 key="author"
               >
-                <UserOutlined />
+                <UserOutlined className="text-global-primary" />
                 <span className="text-xs">{post?.user?.name || "Admin"}</span>
               </div>,
             ]}
@@ -62,20 +62,20 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
             {Meta ? (
               <Meta
                 title={
-                  <h3 className="text-lg font-semibold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2">
+                  <h3 className="text-lg font-bold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2 leading-tight">
                     {post.title}
                   </h3>
                 }
                 description={
-                  <p className="line-clamp-3 text-gray-500 text-sm"> {post?.content}</p>
+                  <p className="line-clamp-3 text-gray-500 text-sm mt-3 leading-relaxed"> {post?.content}</p>
                 }
               />
             ) : (
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2">
+                <h3 className="text-lg font-bold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2 leading-tight">
                   {post.title}
                 </h3>
-                <p className="line-clamp-3 text-gray-500 text-sm">{post?.content}</p>
+                <p className="line-clamp-3 text-gray-500 text-sm mt-3 leading-relaxed">{post?.content}</p>
               </div>
             )}
           </Card>

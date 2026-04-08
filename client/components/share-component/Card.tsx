@@ -71,9 +71,9 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative bg-global-bg border border-global-header-text-[0.08] hover:border-global-primary/30 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-global-primary/15 transition-all duration-500 flex flex-col h-full transform hover:-translate-y-1">
+    <div className="group relative bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-global-primary/30 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full transform hover:-translate-y-1.5">
       {/* Image Area */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50/50">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50/50 mix-blend-multiply dark:mix-blend-normal">
         <Link href={`/products/${item.slug}`} className="block w-full h-full relative z-0">
           <Image
             src={thumbnailUrl}
@@ -101,7 +101,7 @@ export default function Card({ item }: { item: any }) {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
           {+item.discountAmount > 0 && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/80 dark:bg-black/80 backdrop-blur-md text-global-primary shadow-sm border border-global-primary/20 tracking-wider">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/90 dark:bg-black/90 backdrop-blur-md text-global-primary shadow-sm tracking-wider">
               SAVE {item.discountValue}
               {item.discountStrategy === "Percentage"
                 ? "%"
@@ -113,7 +113,7 @@ export default function Card({ item }: { item: any }) {
         {/* Floating Actions - Slides in smoothly from Right */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out z-30">
           <button
-            className="w-9 h-9 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-global-header-text rounded-full flex items-center justify-center shadow-lg hover:shadow-global-primary/30 hover:bg-global-primary hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12 border border-gray-200/50 dark:border-gray-700/50"
+            className="w-9 h-9 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-global-primary/30 hover:bg-global-primary hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -131,10 +131,10 @@ export default function Card({ item }: { item: any }) {
       </div>
 
       {/* Content Area */}
-      <div className="p-4 sm:p-5 flex flex-col flex-1 relative bg-global-bg z-10 transition-colors duration-300">
+      <div className="p-5 flex flex-col flex-1 relative bg-white dark:bg-transparent z-10 transition-colors duration-300">
         
         {/* Title */}
-        <h3 className="font-semibold text-global-text text-sm sm:text-base leading-snug group-hover:text-global-primary transition-colors duration-300 line-clamp-2 min-h-[40px] sm:min-h-[44px] mb-2">
+        <h3 className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base leading-snug group-hover:text-global-primary transition-colors duration-300 line-clamp-2 min-h-[44px] mb-2">
           <Link href={`/products/${item.slug}`}>{item.name}</Link>
         </h3>
 
@@ -144,9 +144,9 @@ export default function Card({ item }: { item: any }) {
             disabled
             value={+item.avgRating || 0}
             className="text-xs text-yellow-400"
-            style={{ fontSize: 13 }}
+            style={{ fontSize: 12 }}
           />
-          <span className="text-[11px] text-global-text/50 font-medium">
+          <span className="text-[11px] text-gray-500 font-medium">
             ({item.reviewsCount || 0})
           </span>
         </div>
@@ -154,11 +154,11 @@ export default function Card({ item }: { item: any }) {
         {/* Price & Cart */}
         <div className="mt-auto flex flex-col gap-4">
           <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-lg sm:text-xl font-extrabold text-global-text tracking-tight">
+            <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               {formatPrice(item.finalPrice)}
             </span>
             {+item?.discountValue > 0 && (
-              <span className="text-xs sm:text-sm text-global-text/40 font-medium line-through decoration-global-text/30">
+              <span className="text-xs sm:text-sm text-gray-400 font-medium line-through decoration-gray-300">
                 {formatPrice(item.salePrice)}
               </span>
             )}
