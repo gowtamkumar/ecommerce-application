@@ -164,6 +164,7 @@ const AddCategory = () => {
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
+      forceRender
       footer={null}
       className="modern-modal"
       styles={{
@@ -218,7 +219,7 @@ const AddCategory = () => {
             showSearch
             size="large"
             style={{ width: "100%" }}
-            dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+            styles={{ popup: { root: { maxHeight: 400, overflow: "auto" } } }}
             placeholder="Select parent category"
             allowClear
             treeDefaultExpandAll

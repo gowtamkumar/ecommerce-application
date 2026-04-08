@@ -81,6 +81,7 @@ const AddShippingCharge = () => {
       zIndex={1050}
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
+      forceRender
       footer={
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button size="large" onClick={resetFormData} style={{ borderRadius: "var(--button-border-radius)" }}>

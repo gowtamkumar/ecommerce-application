@@ -97,7 +97,7 @@ export default function ProductRightTopSection({
         <TreeSelect
           showSearch
           style={{ width: "100%" }}
-          dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+          styles={{ popup: { root: { maxHeight: 400, overflow: "auto" } } }}
           placeholder="Please select"
           allowClear
           treeDefaultExpandAll
