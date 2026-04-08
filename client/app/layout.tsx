@@ -165,7 +165,7 @@ export default async function RootLayout({
 
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {favicon && <link rel="icon" href={favicon} />}
 
@@ -272,7 +272,7 @@ export default async function RootLayout({
           />
         )}
       </head>
-      <body className={`${poppinsFont.variable} antialiased`}>
+      <body className={`${poppinsFont.variable} antialiased`} suppressHydrationWarning>
         {/* Custom body start code */}
         {renderSeoCode(setting?.seo?.bodyStartCode)}
 
