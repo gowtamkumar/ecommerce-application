@@ -7,7 +7,7 @@ import { discountValidation } from '@/validation';
 import { updateDiscountValidation } from '@/validation/discount/updateDiscountValidation';
 import { updateStatusDiscountValidation } from '@/validation/discount/updateStatusDiscountValidation';
 import { NextFunction, Request, Response } from 'express';
-import { In, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import { ScopeEnum } from '../enum';
 import { ApplicableBrandEntity } from '../model/applicable-brand.entity';
 import { ApplicableCategoryEntity } from '../model/applicable-category.entity';
@@ -20,7 +20,7 @@ import { DiscountEntity } from '../model/discount.entity';
 export const getDiscounts = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getDiscounts ${req.method} ${req.url}`);
 
-  const { scope } = req.query as any;
+  const { scope, status, startDate, endDate } = req.query as any;
   const connection = await getDBConnection();
   const repository = connection.getRepository(DiscountEntity);
   const whereClause: any = {};
@@ -28,6 +28,15 @@ export const getDiscounts = asyncHandler(async (req: Request, res: Response) => 
   if (scope) {
     const scopesArray = scope.split(',').map((s: string) => s.trim());
     whereClause.scope = In(scopesArray);
+  }
+  if (status) {
+    whereClause.status = status;
+  }
+  if (startDate) {
+    whereClause.startDate = MoreThan(startDate);
+  }
+  if (endDate) {
+    whereClause.endDate = MoreThan(endDate);
   }
   const result = await repository.find({ where: whereClause });
 

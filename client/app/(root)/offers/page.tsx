@@ -7,6 +7,9 @@ import Link from "next/link";
 export async function generateMetadata() {
   const discountsRes = await getDiscounts({
     scope: "Global,Products,Brand,Category",
+    status: "Active",
+    // startDate: new Date().toISOString(),
+    endDate: new Date().toISOString(),
   });
 
   const discounts = discountsRes.data;
@@ -51,6 +54,9 @@ export async function generateMetadata() {
 export default async function Offers() {
   const offers = await getDiscounts({
     scope: "Global,Products,Brand,Category",
+    status: "Active",
+    // startDate: new Date().toISOString(),
+    endDate: new Date().toISOString(),
   });
 
   return (
@@ -63,7 +69,7 @@ export default async function Offers() {
       {/* Content */}
       <div className="relative z-10">
         {/* Premium Header Section */}
-        <div className="container mx-auto px-4 pt-12 pb-16">
+        <div className="container mx-auto px-4 py-12 sm:py-20">
           <div className="text-center mb-12">
             <div className="inline-block mb-4">
               <span className="px-6 py-2 bg-global-primary text-global-button-text text-sm font-semibold rounded-full shadow-lg">
@@ -86,7 +92,7 @@ export default async function Offers() {
                   href={`/offers/${item.slug}`}
                   className="group"
                 >
-                  <div className="relative h-80 rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 hover:-translate-y-2">
+                  <div className="relative h-[360px] md:h-[400px] rounded-2xl overflow-hidden transition-all duration-500 shadow-md hover:shadow-2xl hover:-translate-y-1.5 border border-white/5">
                     {/* Background Image */}
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -95,48 +101,35 @@ export default async function Offers() {
                       }}
                     >
                       {/* Dark Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500"></div>
                     </div>
-
-                    {/* Glassmorphism Card Overlay */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <div className="absolute inset-0 backdrop-blur-sm bg-black/40"></div>
-                    </div>
-
-                    {/* Theme Border on Hover */}
-                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-[2px] bg-global-primary/50">
-                      <div className="w-full h-full rounded-2xl bg-transparent"></div>
-                    </div>
-
-                    {/* Glow Effect on Hover */}
-                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-2xl shadow-global-primary/30"></div>
 
                     {/* Content */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
                       {/* Discount Badge */}
                       {item.discountPercent && (
-                        <div className="absolute top-6 right-6">
-                          <div className="bg-global-primary text-global-button-text px-4 py-2 rounded-full font-bold text-lg shadow-lg transform rotate-3 group-hover:rotate-0 transition-transform duration-300">
+                        <div className="absolute top-6 right-6 z-20">
+                          <div className="bg-global-primary text-global-button-text px-4 py-1.5 rounded-full font-bold text-sm shadow-md border border-global-primary/20 backdrop-blur-sm">
                             {item.discountPercent}% OFF
                           </div>
                         </div>
                       )}
 
                       {/* Scope Badge */}
-                      <div className="mb-3">
-                        <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/30">
+                      <div className="mb-4 z-20">
+                        <span className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
                           {item.scope || 'Special Offer'}
                         </span>
                       </div>
 
                       {/* Offer Name */}
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 transform transition-transform duration-300 group-hover:translate-x-1 drop-shadow-md">
-                        {item.name
-                        }</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight drop-shadow-sm transition-transform duration-300">
+                        {item.name}
+                      </h3>
 
                       {/* Description if available */}
                       {item.description && (
-                        <p className="text-white/90 text-sm line-clamp-2 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                        <p className="text-white/80 text-sm line-clamp-2 mb-4 font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
                           {item.description}
                         </p>
                       )}

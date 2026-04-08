@@ -14,14 +14,26 @@ export async function saveDiscount(data: any) {
   return await handleResponse(res);
 }
 
-export async function getDiscounts(params?: { scope: string }) {
+export async function getDiscounts(params?: { scope: string, status: string, endDate: string }) {
   const scope = params?.scope;
+  const status = params?.status;
+  // const startDate = params?.startDate;
+  const endDate = params?.endDate;
   const headers = await getAuthHeaders();
 
   let queryString = "";
 
   if (scope) {
     queryString += `scope=${scope}`;
+  }
+  if (status) {
+    queryString += `&status=${status}`;
+  }
+  // if (startDate) {
+  //   queryString += `&startDate=${startDate}`;
+  // }
+  if (endDate) {
+    queryString += `&endDate=${endDate}`;
   }
 
   const res = await fetch(`${appConfig.apiUrl}/discounts?${queryString}`, {

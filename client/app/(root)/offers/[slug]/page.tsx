@@ -104,15 +104,15 @@ export default async function page({
                 <div className="max-w-4xl mx-auto text-center">
                   {/* Discount Badge */}
                   {offer.discountStrategy === "Percentage" ? (
-                    <div className="mb-6 inline-block">
-                      <div className="bg-global-primary text-global-button-text px-8 py-4 rounded-full font-bold text-3xl md:text-4xl shadow-2xl">
+                    <div className="mb-8 inline-block">
+                      <div className="bg-global-primary border border-white/20 px-6 py-2 md:px-8 md:py-3 rounded-full font-bold text-2xl md:text-3xl shadow-xl backdrop-blur-md">
                         {+offer.value}% OFF
                       </div>
                     </div>
                   ) : (
                     offer.discountStrategy === "fixed" && (
-                      <div className="mb-6 inline-block">
-                        <div className="bg-global-primary text-global-button-text px-8 py-4 rounded-full font-bold text-3xl md:text-4xl shadow-2xl">
+                      <div className="mb-8 inline-block">
+                        <div className="bg-global-primary text-white border border-white/20 px-6 py-2 md:px-8 md:py-3 rounded-full font-bold text-2xl md:text-3xl shadow-xl backdrop-blur-md">
                           {+offer.value} OFF
                         </div>
                       </div>
@@ -121,7 +121,7 @@ export default async function page({
 
                   {/* Offer Name */}
                   <h1
-                    className={`text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight ${offer.image
+                    className={`text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight tracking-tight ${offer.image
                       ? "text-white drop-shadow-2xl"
                       : "text-global-header-text"
                       }`}
@@ -132,8 +132,8 @@ export default async function page({
                   {/* Description */}
                   {offer.description && (
                     <p
-                      className={`text-xl md:text-2xl mb-8 max-w-2xl mx-auto ${offer.image
-                        ? "text-white/95 drop-shadow-lg"
+                      className={`text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto leading-relaxed ${offer.image
+                        ? "text-white/90 drop-shadow-lg"
                         : "text-global-header-text/80"
                         }`}
                     >
@@ -227,7 +227,7 @@ export default async function page({
               {products.length > 0 ? (
                 <>
                   {/* Section Header */}
-                  <div className="text-center my-12">
+                  {/* <div className="text-center my-12">
                     <h2 className="text-4xl md:text-5xl font-bold mb-4 text-global-header-text">
                       Featured Products
                     </h2>
@@ -235,22 +235,18 @@ export default async function page({
                       Discover amazing products available with this exclusive
                       offer
                     </p>
-                  </div>
+                  </div> */}
 
                   {/* Products Grid */}
-                  <div className="backdrop-blur-xl bg-global-header-bg/30 border border-global-header-text/10 rounded-3xl p-6 md:p-8 shadow-sm">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                      {products.map((item: any) => (
-                        <div
-                          key={item.id}
-                          className="group  transition-all duration-300 hover:z-10"
-                        >
-                          <div className="rounded-xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-shadow duration-300">
-                            <Card item={item} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    {products.map((item: any) => (
+                      <div
+                        key={item.id}
+                        className="group transition-all duration-300"
+                      >
+                        <Card item={item} />
+                      </div>
+                    ))}
                   </div>
                 </>
               ) : (
