@@ -10,53 +10,98 @@ import {
 import { auth } from "@/auth";
 import { errorNotification, successNotification } from "./notification";
 
-export const handleAsyncAction = async (
-  asyncFn: () => Promise<any>,
-  dispatch: any
-): Promise<any> => {
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  status?: number;
+}
+
+export type AsyncActionOptions = {
+  loadingKey?: string;
+  successMessage?: string;
+  showSuccess?: boolean;
+  showError?: boolean;
+  clearAction?: boolean;
+};
+
+/**
+ * Handle asynchronous actions with consistent loading, notification, and error handling.
+ * Optimized for performance by reducing redundant dispatches and using finally for cleanup.
+ */
+export const handleAsyncAction = async <T>(
+  asyncFn: () => Promise<ApiResponse<T>>,
+  dispatch: any,
+  options: AsyncActionOptions = {}
+): Promise<T | null> => {
+  const {
+    loadingKey = "save",
+    successMessage,
+    showSuccess = true,
+    showError = true,
+    clearAction = true,
+  } = options;
+
   try {
-    dispatch(setLoading({ save: true }));
+    dispatch(setLoading({ [loadingKey]: true }));
     const res = await asyncFn();
 
-    console.log("🚀 ~ res: fun", res);
-
     if (!res.success) {
-      errorNotification({ message: res.message });
-      dispatch(setLoading({}));
+      if (showError) {
+        errorNotification({ message: res.message || "Action failed" });
+      }
       return null;
     }
 
-    successNotification({ message: res.message });
-    dispatch(setLoading({}));
-    dispatch(setAction({}));
-    return res; // Return the successful response
-  } catch (error: any) {
-    console.log("🚀 ~ Error:", error?.message);
-    //
-    const errorMessage = error?.message || "An unexpected error occurred";
-    errorNotification({ message: errorMessage });
+    if (showSuccess) {
+      successNotification({
+        message: successMessage || res.message || "Action successful",
+      });
+    }
 
-    // Return the error object or reject as a Promise
-    return Promise.reject(error); // Ensures error propagation
+    if (clearAction) {
+      dispatch(setAction({}));
+    }
+
+    return res.data ?? (res as any);
+  } catch (error: any) {
+    if (showError) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "An unexpected error occurred";
+      errorNotification({ message: errorMessage });
+    }
+    return null;
+  } finally {
+    dispatch(setLoading({}));
   }
 };
 
+/**
+ * Handle delete actions with specific messaging and cleanup logic.
+ */
 export const handleAsyncDeleteAction = async (
-  asyncFn: () => Promise<any>,
+  asyncFn: () => Promise<ApiResponse<any>>,
   successMessage: string,
   dispatch: any
 ) => {
   try {
-    dispatch(setLoading({ save: true }));
-    await asyncFn();
+    dispatch(setLoading({ delete: true }));
+    const res = await asyncFn();
+
+    if (res.success) {
+      successNotification({ message: successMessage || res.message });
+      dispatch(setAction({}));
+    } else {
+      errorNotification({ message: res.message || "Delete failed" });
+    }
   } catch (error: any) {
-    errorNotification({ message: error.message });
-    dispatch(setLoading({ save: false }));
-    dispatch(setAction({}));
+    errorNotification({
+      message: error.message || "An unexpected error occurred",
+    });
   } finally {
-    successNotification({ message: successMessage });
-    dispatch(setLoading({ save: false }));
-    dispatch(setAction({}));
+    dispatch(setLoading({}));
   }
 };
 

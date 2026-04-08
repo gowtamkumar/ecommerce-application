@@ -149,7 +149,7 @@ const AddDiscount = () => {
 
     const res = await handleAsyncAction(result, dispatch);
 
-    if (res.success) {
+    if (res) {
       route.push("/dashboard/discounts");
     }
   };

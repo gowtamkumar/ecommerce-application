@@ -33,9 +33,9 @@ const Index = () => {
     const result = () => saveMenu({ name: newMenu });
     const handleRes = await handleAsyncAction(result, dispatch);
 
-    if (handleRes.success) {
+    if (handleRes) {
       form.setFieldsValue({
-        ...handleRes.data,
+        ...handleRes,
         items: [{}],
       });
       setNewMenu("");

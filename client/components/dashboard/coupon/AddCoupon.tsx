@@ -91,7 +91,7 @@ const AddCoupon = () => {
 
     const res = await handleAsyncAction(result, dispatch);
 
-    if (res.success) {
+    if (res) {
       route.push("/dashboard/coupons");
     }
   };

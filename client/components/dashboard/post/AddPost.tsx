@@ -95,7 +95,7 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
 
     const res = await handleAsyncAction(asyncFn, dispatch);
 
-    if (res.success) {
+    if (res) {
       // Close drawer and reset action state
       dispatch(setAction({}));
       form.resetFields();
