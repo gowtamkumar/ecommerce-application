@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
-import { join } from 'path';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { categoriesValidationSchema } from '@/validation/categories/categoriesValidation';
 import { FileEntity } from '@/modules/system/other/file/model/file.entity';
+import { categoriesValidationSchema } from '@/validation/categories/categoriesValidation';
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import { join } from 'path';
 import { CategoriesEntity } from '../model/categories.entity';
 
 // @desc Get all Categorys
@@ -25,48 +25,6 @@ export const getPublicCategories = asyncHandler(async (req: Request, res: Respon
     data: categories,
   });
 });
-
-// @desc Get all for antd Categorys
-// @route GET /api/v1/categories/antd
-// @access Public
-// export const getAntdCategories = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     logger.info(`Service: getPublicCategorie ${req.method} ${req.url}`);
-//     const connection = await getDBConnection();
-//     const repository = connection.getTreeRepository(CategoriesEntity);
-
-//     const result = await repository.findTrees();
-
-//     const ress = result.map((lavel_1: any) => ({
-//       ...lavel_1,
-//       key: lavel_1.id,
-//       value: lavel_1.id,
-//       title: lavel_1.name,
-//       children:
-//         lavel_1?.children &&
-//         lavel_1?.children.map((lavel_2: any) => ({
-//           ...lavel_2,
-//           key: lavel_2.id,
-//           value: lavel_2.id,
-//           title: lavel_2.name,
-//           children:
-//             lavel_2.children &&
-//             lavel_2?.children.map((lavel_3: any) => ({
-//               ...lavel_3,
-//               key: lavel_3.id,
-//               value: lavel_3.id,
-//               title: lavel_3.name,
-//             })),
-//         })),
-//     }));
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Get all for antd table Categorys",
-//       data: ress,
-//     });
-//   }
-// );
 
 export const getAntdCategories = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getPublicCategorie ${req.method} ${req.url}`);
@@ -89,10 +47,45 @@ export const getCategoriesForMenu = asyncHandler(async (req: Request, res: Respo
   logger.info(`Service: getCategoriesForMenu ${req.method} ${req.url}`);
 
   const connection = await getDBConnection();
-  const repository = connection.getTreeRepository(CategoriesEntity);
+  // const repository = connection.getTreeRepository(CategoriesEntity);
 
-  const result = await repository.findTrees();
+  // const result = await repository.findTrees({
+  //   where: { active: true },
+  // });
 
+  const result = await connection
+  .getRepository(CategoriesEntity)
+  .createQueryBuilder("category")
+  .leftJoin("category.children", "children")
+  .select([
+    "category.id",
+    "category.name",
+    "category.slug",
+    "category.image",
+    "category.description",
+    "category.level",
+    "category.active",
+    "category.isFeatured",
+    "category.createdAt",
+    "category.updatedAt",
+    "children.id",
+    "children.name",
+    "children.slug",
+    "children.image",
+    "children.description",
+    "children.level",
+    "children.active",
+    "children.isFeatured",
+    "children.createdAt",
+    "children.updatedAt",
+  ])
+  .where("category.active = :active", { active: true })
+  .andWhere("category.parentId IS NULL")
+  .andWhere("(children.id IS NULL OR children.active = :active)", { active: true })
+  .getMany();
+
+  console.log("result", result);
+  
   return res.status(200).json({
     success: true,
     message: 'Get all for Menu',

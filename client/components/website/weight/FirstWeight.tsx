@@ -11,9 +11,9 @@ export default function FirstWeight() {
   const data = global.setting;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
       {/* Logo */}
-      <div className="flex items-center">
+      <div className="flex items-center mb-4">
         <Image
           src={getImageUrl(data?.image)}
           alt={data?.siteName || "Company Logo"}

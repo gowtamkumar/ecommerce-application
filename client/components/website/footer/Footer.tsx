@@ -1,6 +1,6 @@
+import { Divider } from "antd";
 import dynamic from "next/dynamic";
 import FooterTop from "./FooterTop";
-import { Divider } from "antd";
 const FourWeight = dynamic(() => import("../weight/FourWeight"));
 const ThirdWeight = dynamic(() => import("../weight/ThirdWeight"));
 const SecondWeight = dynamic(() => import("../weight/SecondWeight"));
@@ -10,7 +10,7 @@ const SocialIcon = dynamic(() => import("./SocialIcon"));
 export default function WebFooter() {
   return (
     <footer className="relative font-sans overflow-hidden" style={{ backgroundColor: 'var(--footer-bg)', color: 'var(--footer-text)' }}>
-      <Divider/>
+      <Divider />
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-global-primary/10 rounded-full blur-3xl"></div>
@@ -23,7 +23,7 @@ export default function WebFooter() {
           <FooterTop />
         </div>
       </div>
-      <Divider/>
+      <Divider />
 
       {/* Main Footer Content */}
       <div className="relative container mx-auto py-16 px-4">
