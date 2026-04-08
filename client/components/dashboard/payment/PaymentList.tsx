@@ -292,7 +292,7 @@ const PaymentList: React.FC = () => {
       dataSource={payments}
       pagination={{
         pageSize: 15,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

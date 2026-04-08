@@ -1,4 +1,5 @@
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import { deleteDiscount, getDiscounts } from "@/lib/apis/discount";
 import {
   errorNotification,
@@ -27,7 +28,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { TbStatusChange } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
-import { useCurrency } from "@/context/CurrencyContext";
 
 interface DataType {
   key: string;
@@ -50,8 +50,8 @@ const DiscountList: React.FC = () => {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
-  const {formatPrice} = useCurrency();
-  
+  const { formatPrice } = useCurrency();
+
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
@@ -361,7 +361,7 @@ const DiscountList: React.FC = () => {
       dataSource={discounts}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

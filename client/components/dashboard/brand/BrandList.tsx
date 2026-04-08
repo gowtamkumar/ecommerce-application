@@ -258,7 +258,7 @@ const BrandList: React.FC = () => {
       dataSource={brands}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

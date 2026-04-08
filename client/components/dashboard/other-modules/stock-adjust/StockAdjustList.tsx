@@ -1,23 +1,21 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Space, Table, Tag, Tooltip } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { useDispatch, useSelector } from "react-redux";
+import { getStockAdjusts } from "@/lib/apis/stock-adjust";
+import {
+  errorNotification
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
-  setAction,
   setLoading,
   setSearchedColumn,
-  setSearchText,
+  setSearchText
 } from "@/redux/features/global/globalSlice";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
-import { deleteStockAdjust, getStockAdjusts } from "@/lib/apis/stock-adjust";
+import { SearchOutlined } from "@ant-design/icons";
+import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Space, Table, Tag } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useDispatch, useSelector } from "react-redux";
 
 interface DataType {
   key: string;
@@ -33,7 +31,7 @@ const StockAdjustList: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
-  
+
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
     try {
@@ -45,7 +43,7 @@ const StockAdjustList: React.FC = () => {
       dispatch(setLoading({ loading: false }));
     }
   }, [dispatch]);
-  
+
   useEffect(() => {
     fetchData();
   }, [fetchData, global.action]);
@@ -180,7 +178,7 @@ const StockAdjustList: React.FC = () => {
       dataSource={StockAdjusts}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

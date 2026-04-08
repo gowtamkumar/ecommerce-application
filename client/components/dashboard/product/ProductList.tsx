@@ -279,7 +279,7 @@ const ProductList = () => {
           columns={columns}
           pagination={{
             pageSize: 10,
-            position: ["bottomRight"],
+
             showSizeChanger: true,
           }}
           size="middle"

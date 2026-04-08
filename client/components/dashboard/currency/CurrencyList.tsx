@@ -235,7 +235,7 @@ const CurrencyList: React.FC = () => {
       dataSource={currencies}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

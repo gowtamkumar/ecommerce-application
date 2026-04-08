@@ -45,7 +45,7 @@ const ShippingChargeList: React.FC = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
-  const {formatPrice} = useCurrency();
+  const { formatPrice } = useCurrency();
 
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -270,7 +270,7 @@ const ShippingChargeList: React.FC = () => {
       dataSource={shippingCharges}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

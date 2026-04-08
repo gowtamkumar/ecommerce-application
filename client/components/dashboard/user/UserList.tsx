@@ -339,7 +339,7 @@ const UserList = () => {
               onClick={() => {
                 const newData = { ...value };
                 if (newData.image) {
-                
+
                   newData.fileList = [imageSetFile(newData.image)];
                 }
                 dispatch(
@@ -389,7 +389,7 @@ const UserList = () => {
       dataSource={user}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

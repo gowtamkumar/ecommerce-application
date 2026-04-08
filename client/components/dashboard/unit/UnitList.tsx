@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
-import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tooltip } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
+import { ActionType } from "@/constants/constants";
 import { deleteUnit, getUnits } from "@/lib/apis/unit";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
@@ -13,11 +11,13 @@ import {
   setSearchedColumn,
   setSearchText,
 } from "@/redux/features/global/globalSlice";
-import { ActionType } from "@/constants/constants";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import type { TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tooltip } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useDispatch, useSelector } from "react-redux";
 
 interface DataType {
   key: string;
@@ -73,7 +73,7 @@ const UnitList: React.FC = () => {
     dispatch(setSearchedColumn(dataIndex));
   };
 
- const handleReset = (clearFilters: () => void) => {
+  const handleReset = (clearFilters: () => void) => {
     clearFilters();
     dispatch(setSearchText(""));
   };
@@ -221,7 +221,7 @@ const UnitList: React.FC = () => {
       dataSource={units}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

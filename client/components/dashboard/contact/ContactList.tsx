@@ -248,7 +248,7 @@ const ContactList = () => {
       rowKey="id"
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

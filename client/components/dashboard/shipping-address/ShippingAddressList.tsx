@@ -1,11 +1,13 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "@/constants/constants";
+import {
+  deleteShippingAddress,
+  getShippingAddress,
+} from "@/lib/apis/shipping-address";
+import {
+  errorNotification,
+  successNotification,
+} from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
@@ -16,17 +18,14 @@ import {
 import {
   DeleteOutlined,
   EditOutlined,
-  QuestionCircleOutlined,
+  QuestionCircleOutlined, SearchOutlined
 } from "@ant-design/icons";
-import { ActionType } from "@/constants/constants";
-import {
-  deleteShippingAddress,
-  getShippingAddress,
-} from "@/lib/apis/shipping-address";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
+import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useCallback, useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { useDispatch, useSelector } from "react-redux";
 
 interface DataType {
   key: string;
@@ -318,7 +317,7 @@ const ShippingAddressList: React.FC = () => {
       dataSource={addresses}
       pagination={{
         pageSize: 10,
-        position: ["bottomRight"],
+
         showSizeChanger: true,
       }}
       size="middle"

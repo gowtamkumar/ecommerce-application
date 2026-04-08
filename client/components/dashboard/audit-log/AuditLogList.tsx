@@ -257,7 +257,7 @@ const AuditLogList: React.FC = () => {
             },
             showSizeChanger: true,
             showTotal: (total) => `Total ${total} logs`,
-            position: ["bottomRight"],
+
           }}
           scroll={{ x: 900 }}
           className="modern-table"
