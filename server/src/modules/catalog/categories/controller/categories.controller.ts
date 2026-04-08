@@ -83,9 +83,7 @@ export const getCategoriesForMenu = asyncHandler(async (req: Request, res: Respo
   .andWhere("category.parentId IS NULL")
   .andWhere("(children.id IS NULL OR children.active = :active)", { active: true })
   .getMany();
-
-  console.log("result", result);
-  
+    
   return res.status(200).json({
     success: true,
     message: 'Get all for Menu',
