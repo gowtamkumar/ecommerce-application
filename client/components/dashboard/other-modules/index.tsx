@@ -52,7 +52,7 @@ export default function Index() {
 
       {/* Tabs */}
       <Tabs
-        tabPosition="left"
+        tabPlacement="top"
         defaultValue={tabKey}
         activeKey={tabKey}
         onChange={(key) => {

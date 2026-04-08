@@ -22,7 +22,7 @@ export const createPageValidation = z.object({
         settings: z.any().optional(),
         styles: z.any().optional(),
         disabled: z.boolean().optional(),
-      })
+      }),
     )
     .optional(),
   metaTitle: z.string().max(255).optional().nullable(),

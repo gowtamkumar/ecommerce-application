@@ -51,6 +51,7 @@ const StockAlert = ({ productAlertStockReport }: any) => {
         columns={columns}
         size="small"
         scroll={{ x: true }}
+        rowKey="name"
         dataSource={productAlertStockReport}
       />
     </Card>

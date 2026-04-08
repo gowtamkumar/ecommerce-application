@@ -25,7 +25,7 @@ export class ApplicableProductEntity {
   })
   @JoinColumn({ name: 'product_id' })
   product!: ProductEntity;
-  
+
   @Index('IDX_APPLICABLE_DISCOUNT_PROD_ID')
   @Column({ name: 'discount_id' })
   discountId?: number;

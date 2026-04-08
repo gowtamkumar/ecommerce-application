@@ -29,26 +29,28 @@ export const sendEmail = async (mailOptions: Options) => {
     console.log('email sent sucessfully');
   } catch (error: any) {
     console.log(error, 'email not sent');
-    
+
     try {
       const connection = await getDBConnection();
       const userRepo = connection.getRepository(UserEntity);
       const notificationRepo = connection.getRepository(NotificationEntity);
       const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
-      
-      const alerts = admins.map((admin: UserEntity) => notificationRepo.create({
+
+      const alerts = admins.map((admin: UserEntity) =>
+        notificationRepo.create({
           type: NotificationType.SmsEmailFailed,
           title: 'Email Gateway Failed',
           message: `Failed to send Email. Error: ${error.message}`,
           userId: admin.id,
-          isRead: false
-      }));
-      
+          isRead: false,
+        }),
+      );
+
       if (alerts.length > 0) {
         await notificationRepo.save(alerts);
       }
     } catch (notifyErr) {
-      console.error("Failed to send Email failure notification", notifyErr);
+      console.error('Failed to send Email failure notification', notifyErr);
     }
 
     throw new Error('email not sent');

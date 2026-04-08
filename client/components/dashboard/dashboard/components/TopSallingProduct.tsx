@@ -57,6 +57,7 @@ const TopSellingProduct = ({ topSellingProduct }: any) => {
         columns={columns}
         size="small"
         scroll={{ x: true }}
+        rowKey="name"
         dataSource={topSellingProduct}
       />
     </Card>

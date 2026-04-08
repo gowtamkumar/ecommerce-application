@@ -86,7 +86,7 @@ export const syncGeoLocation = asyncHandler(
         process.cwd() + '/database/fack-data/divisions.json',
         'utf8',
       );
-      
+
       const jsonDataDivisions = JSON.parse(fileDivisions);
 
       const repositoryDivisions = dbconnection.getRepository(DivisionEntity);

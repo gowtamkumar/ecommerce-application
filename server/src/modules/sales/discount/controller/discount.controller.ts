@@ -101,7 +101,7 @@ export const getDiscountBySlug = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     logger.info(`Service: getDiscountBySlug ${req.method} ${req.url}`);
     const { slug } = await req.params;
-    
+
     const connection = await getDBConnection();
     const repository = await connection.getRepository(DiscountEntity);
 

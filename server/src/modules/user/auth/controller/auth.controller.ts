@@ -27,8 +27,6 @@ import { RoleEnum } from '../enums/role.enum';
 import { UserActivityEntity } from '../model/user-activity.entity';
 import { UserEntity } from '../model/user.entity';
 
-
-
 // @desc Register User
 // @route POST /api/v1/auth/register
 // @access Public
@@ -301,7 +299,9 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   // Check if account is locked
   if (oldUser.blockUntil && oldUser.blockUntil > new Date()) {
     res.status(403);
-    throw new Error('Account is temporarily locked due to multiple failed login attempts. Please try again later.');
+    throw new Error(
+      'Account is temporarily locked due to multiple failed login attempts. Please try again later.',
+    );
   }
 
   const isMatch = await matchPassword(password, oldUser);
@@ -311,7 +311,7 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
 
     if (oldUser.failedLoginAttempts >= 5) {
       oldUser.blockUntil = new Date(Date.now() + 15 * 60 * 1000); // Lock for 15 minutes
-      
+
       // Notify Admins about Security Alert
       const notificationRepository = connection.getRepository(NotificationEntity);
       const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
@@ -576,10 +576,7 @@ export const forgotPassword = asyncHandler(
     });
     await notificationRepository.save(forgotPasswordNotification);
 
-
-
     return res.status(200).json({
-
       success: true,
       message: 'Forget password successful. Please check your email address',
       data: {},
@@ -792,45 +789,43 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response, next:
 // @desc Verify Email
 // @route POST /api/v1/auth/verify-email/:token
 // @access Public
-export const verifyEmail = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    logger.info(`Service: verifyEmail ${req.method} ${req.url}`);
+export const verifyEmail = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Service: verifyEmail ${req.method} ${req.url}`);
 
-    const { token } = req.params;
-    const connection = await getDBConnection();
-    const userRepository = await connection.getRepository(UserEntity);
+  const { token } = req.params;
+  const connection = await getDBConnection();
+  const userRepository = await connection.getRepository(UserEntity);
 
-    if (token) {
-      getResetVerifyJwtToken(token as string, res);
-    }
+  if (token) {
+    getResetVerifyJwtToken(token as string, res);
+  }
 
-    const user = await userRepository.findOne({
-      where: { verificationToken: token },
-    });
+  const user = await userRepository.findOne({
+    where: { verificationToken: token },
+  });
 
-    if (!user) {
-      throw new Error('Invalid or expired verification token');
-    }
+  if (!user) {
+    throw new Error('Invalid or expired verification token');
+  }
 
-    user.isVerified = true;
-    user.verificationToken = null as any; // Clear the token
+  user.isVerified = true;
+  user.verificationToken = null as any; // Clear the token
 
-    await userRepository.save(user);
+  await userRepository.save(user);
 
-    // Create Verification Notification
-    const notificationRepository = connection.getRepository(NotificationEntity);
-    const verificationNotification = notificationRepository.create({
-      title: 'Email Verified',
-      message: 'Your email has been successfully verified.',
-      type: NotificationType.Verification,
-      userId: user.id,
-      isRead: false,
-    });
-    await notificationRepository.save(verificationNotification);
+  // Create Verification Notification
+  const notificationRepository = connection.getRepository(NotificationEntity);
+  const verificationNotification = notificationRepository.create({
+    title: 'Email Verified',
+    message: 'Your email has been successfully verified.',
+    type: NotificationType.Verification,
+    userId: user.id,
+    isRead: false,
+  });
+  await notificationRepository.save(verificationNotification);
 
-    return res.status(200).json({
-      success: true,
-      message: 'Email verified successfully',
-    });
-  },
-);
+  return res.status(200).json({
+    success: true,
+    message: 'Email verified successfully',
+  });
+});

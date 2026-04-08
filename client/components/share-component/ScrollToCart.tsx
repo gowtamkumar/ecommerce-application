@@ -76,7 +76,7 @@ const ScrollToCart: React.FC = () => {
         open={global.drawarCart}
         loading={global.loading.drawerLoading}
         onClose={() => dispatch(setDrawarCart(false))}
-        width={450}
+        size={450}
         className="cart-drawer"
       >
         <ViewCart />

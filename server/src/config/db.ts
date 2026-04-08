@@ -158,7 +158,7 @@ export const getDBConnection = async (): Promise<any> => {
       console.log('database connection successfully');
     } catch (error) {
       console.error('🚀 ~ Database connection error:', error);
-      // We don't throw here to avoid crashing the whole process unnecessarily, 
+      // We don't throw here to avoid crashing the whole process unnecessarily,
       // but the caller will get an uninitialized connection.
     }
   }

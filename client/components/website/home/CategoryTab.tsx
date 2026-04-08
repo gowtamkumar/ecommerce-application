@@ -23,7 +23,7 @@ const CategoryTab = ({ categories: initialCategories }: CategoryTabProps) => {
     <Tabs
       activeKey={activeKey}
       onChange={setActiveKey}
-      tabPosition="top"
+      tabPlacement="top"
       items={categories.map((item: any) => ({
         label: item.name,
         key: item.id.toString(),

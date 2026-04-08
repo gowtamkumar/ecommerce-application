@@ -132,10 +132,12 @@ export default function DiscountProduct({ discount }: any) {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput, 100);
+        }
+      },
     },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
@@ -186,6 +188,7 @@ export default function DiscountProduct({ discount }: any) {
     <Table
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
+      rowKey="id"
       dataSource={discount.products}
       columns={columns}
       pagination={{ pageSize: 10 }}

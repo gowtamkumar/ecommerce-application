@@ -4,7 +4,15 @@ import { SizeEntity } from '@/modules/catalog/size/model/size.entity';
 import { CartEntity } from '@/modules/sales/cart/model/cart.entity';
 import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
 import 'reflect-metadata';
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('product_variants')
 export class ProductVariantEntity {

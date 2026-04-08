@@ -32,12 +32,14 @@ export default function LossProfit({ value }: LossProfitProps) {
               <ArrowDownOutlined />
             )
           }
-          valueStyle={{
-            color:
-              saleAmount >=
-              purchaseAmount + (+total_sale_return_shipping_amount || 0)
-                ? "green"
-                : "red",
+          styles={{
+            content: {
+              color:
+                saleAmount >=
+                purchaseAmount + (+total_sale_return_shipping_amount || 0)
+                  ? "green"
+                  : "red",
+            },
           }}
         />
       </div>

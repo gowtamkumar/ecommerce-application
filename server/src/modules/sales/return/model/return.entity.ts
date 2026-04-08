@@ -1,39 +1,39 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
-} from "typeorm";
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
-import { ReturnStatus } from "../enums/return-status.enum";
+import { ReturnStatus } from '../enums/return-status.enum';
 
-@Entity("returns")
+@Entity('returns')
 export class ReturnEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "order_id" })
+  @Column({ name: 'order_id' })
   orderId!: number;
 
-  @Column({ name: "order_item_id" })
+  @Column({ name: 'order_item_id' })
   orderItemId!: number;
   @ManyToOne(() => OrderItemEntity, (orderItem) => orderItem.returns, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: "order_item_id" })
+  @JoinColumn({ name: 'order_item_id' })
   orderItem!: OrderItemEntity;
 
   @Column({ nullable: true })
   reason!: string;
 
-  @Column({ name: "requested_qty", type: "int", default: 0 })
+  @Column({ name: 'requested_qty', type: 'int', default: 0 })
   requestedQty!: number;
 
-  @Column({ name: "approved_qty", type: "int", default: 0 })
+  @Column({ name: 'approved_qty', type: 'int', default: 0 })
   approvedQty!: number;
 
   @Column({ nullable: true })
@@ -42,10 +42,10 @@ export class ReturnEntity {
   @Column({ nullable: true })
   image!: string;
 
-  @Column({ type: "enum", enum: ReturnStatus, default: ReturnStatus.Requested })
+  @Column({ type: 'enum', enum: ReturnStatus, default: ReturnStatus.Requested })
   status!: ReturnStatus;
 
-  @Column({ name: "user_id" })
+  @Column({ name: 'user_id' })
   userId!: number;
   // @ManyToOne(() => UserEntity, (user) => user.returns, {
   //   onDelete: "CASCADE",
@@ -53,10 +53,9 @@ export class ReturnEntity {
   // @JoinColumn({ name: "user_id" })
   // user!: UserEntity;
 
-  @CreateDateColumn({ name: "requested_at", type: "timestamptz" })
+  @CreateDateColumn({ name: 'requested_at', type: 'timestamptz' })
   requestedAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt?: string;
 }
-

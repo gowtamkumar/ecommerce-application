@@ -152,10 +152,12 @@ const ShippingAddressList: React.FC = () => {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput, 100);
+        }
+      },
     },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
@@ -312,6 +314,7 @@ const ShippingAddressList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
+      rowKey="id"
       dataSource={addresses}
       pagination={{
         pageSize: 10,

@@ -1,13 +1,13 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
-@Entity("files")
+@Entity('files')
 export class FileEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -36,10 +36,10 @@ export class FileEntity {
   @Column({ nullable: true })
   size?: number;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp with time zone" })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt?: string;
 
-  @UpdateDateColumn({ name: "updated_at", type: "timestamp with time zone" })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt?: string;
 
   // @Column({ name: "user_id", nullable: true })

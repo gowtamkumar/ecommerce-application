@@ -29,20 +29,22 @@ export async function sendSms(number: string, message: string) {
       const userRepo = connection.getRepository(UserEntity);
       const notificationRepo = connection.getRepository(NotificationEntity);
       const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
-      
-      const alerts = admins.map((admin: UserEntity) => notificationRepo.create({
+
+      const alerts = admins.map((admin: UserEntity) =>
+        notificationRepo.create({
           type: NotificationType.SmsEmailFailed,
           title: 'SMS Gateway Failed',
           message: `Failed to send SMS to ${number}. Error: ${err.message}`,
           userId: admin.id,
-          isRead: false
-      }));
-      
+          isRead: false,
+        }),
+      );
+
       if (alerts.length > 0) {
         await notificationRepo.save(alerts);
       }
     } catch (notifyErr) {
-      console.error("Failed to send SMS failure notification", notifyErr);
+      console.error('Failed to send SMS failure notification', notifyErr);
     }
   }
 }

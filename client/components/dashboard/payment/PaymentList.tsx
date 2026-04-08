@@ -136,10 +136,12 @@ const PaymentList: React.FC = () => {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput, 100);
+        }
+      },
     },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
@@ -289,6 +291,7 @@ const PaymentList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
+      rowKey="id"
       dataSource={payments}
       pagination={{
         pageSize: 15,

@@ -95,14 +95,16 @@ export const createReview = asyncHandler(async (req: CustomRequest, res: Respons
   const userRepo = connection.getRepository(UserEntity);
 
   // 1. Notify User: Thank You for Review
-  await notificationRepo.save(notificationRepo.create({
-    type: NotificationType.ReviewSubmitted,
-    title: 'Review Submitted',
-    message: `Thank you for reviewing the product!`,
-    userId: req.id,
-    isRead: false,
-    orderId: save.id,
-  }));
+  await notificationRepo.save(
+    notificationRepo.create({
+      type: NotificationType.ReviewSubmitted,
+      title: 'Review Submitted',
+      message: `Thank you for reviewing the product!`,
+      userId: req.id,
+      isRead: false,
+      orderId: save.id,
+    }),
+  );
 
   // 2. Notify Admins: New Review Submitted
   const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });

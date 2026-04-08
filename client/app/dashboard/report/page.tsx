@@ -51,7 +51,7 @@ export default function ReportPage() {
               title="Total Revenue"
               value={stats.totalRevenue}
               precision={2}
-              valueStyle={{ color: '#3f8600' }}
+              styles={{ content: { color: "#3f8600" } }}
               prefix={<DollarOutlined />}
             />
           </Card>
@@ -62,7 +62,7 @@ export default function ReportPage() {
               title="Total Profit"
               value={stats.totalProfit}
               precision={2}
-              valueStyle={{ color: stats.totalProfit >= 0 ? '#3f8600' : '#cf1322' }}
+              styles={{ content: { color: stats.totalProfit >= 0 ? "#3f8600" : "#cf1322" } }}
               prefix={stats.totalProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
               
             />
@@ -91,7 +91,7 @@ export default function ReportPage() {
             <Statistic
               title="Low Stock Alert"
               value={stats.lowStockCount}
-              valueStyle={{ color: '#cf1322' }}
+              styles={{ content: { color: "#cf1322" } }}
               prefix={<WarningOutlined />}
             />
           </Card>

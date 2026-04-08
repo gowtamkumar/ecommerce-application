@@ -121,7 +121,7 @@ export const updateProductVariant = asyncHandler(async (req: Request, res: Respo
   // Check for Price Drop or Back in Stock
   const oldPrice = parseFloat(result.unitPrice.toString());
   const newPrice = validation.data.price ? parseFloat(validation.data.price.toString()) : oldPrice;
-  
+
   const oldStock = result.stockQty || 0;
   const newStock = validation.data.stockQty !== undefined ? validation.data.stockQty : oldStock;
 
@@ -134,7 +134,7 @@ export const updateProductVariant = asyncHandler(async (req: Request, res: Respo
   if (priceDropped || backInStock) {
     const wishlistRepo = connection.getRepository(WishListEntity);
     const notificationRepo = connection.getRepository(NotificationEntity);
-    
+
     // Find all users who wishlisted this product
     const wishlists = await wishlistRepo.find({
       where: { productId: result.productId },
@@ -145,36 +145,42 @@ export const updateProductVariant = asyncHandler(async (req: Request, res: Respo
 
     for (const item of wishlists) {
       if (priceDropped) {
-        notifications.push(notificationRepo.create({
-          type: NotificationType.WishlistPriceDrop,
-          title: 'Price Drop Alert!',
-          message: `Good news! An item in your wishlist has dropped in price to ${newPrice}.`,
-          userId: item.userId,
-          isRead: false,
-        }));
+        notifications.push(
+          notificationRepo.create({
+            type: NotificationType.WishlistPriceDrop,
+            title: 'Price Drop Alert!',
+            message: `Good news! An item in your wishlist has dropped in price to ${newPrice}.`,
+            userId: item.userId,
+            isRead: false,
+          }),
+        );
       }
-      
+
       if (backInStock) {
-        notifications.push(notificationRepo.create({
-          type: NotificationType.ProductBackInStock,
-          title: 'Back in Stock!',
-          message: `An item in your wishlist is back in stock!`,
-          userId: item.userId,
-          isRead: false,
-        }));
+        notifications.push(
+          notificationRepo.create({
+            type: NotificationType.ProductBackInStock,
+            title: 'Back in Stock!',
+            message: `An item in your wishlist is back in stock!`,
+            userId: item.userId,
+            isRead: false,
+          }),
+        );
       }
 
       // Low Stock Alert for Wishlist users
       // If stock drops to <= 5 and it wasn't low before (or just notify if low)
       // user requested: "Product Low Stock Alert (for pre-order or subscription)"
       if (newStock <= 5 && newStock > 0 && oldStock > 5) {
-         notifications.push(notificationRepo.create({
-          type: NotificationType.ProductLowStock,
-          title: 'Low Stock Alert!',
-          message: `Hurry! An item in your wishlist is running low on stock (Only ${newStock} left).`,
-          userId: item.userId,
-          isRead: false,
-        }));
+        notifications.push(
+          notificationRepo.create({
+            type: NotificationType.ProductLowStock,
+            title: 'Low Stock Alert!',
+            message: `Hurry! An item in your wishlist is running low on stock (Only ${newStock} left).`,
+            userId: item.userId,
+            isRead: false,
+          }),
+        );
       }
     }
 

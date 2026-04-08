@@ -111,7 +111,7 @@ const Sidebar = () => {
             padding: "16px 24px",
           },
         }}
-        width={280}
+        size={280}
         closeIcon={<CloseOutlined />}
         title={
           <div

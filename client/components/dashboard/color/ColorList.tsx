@@ -132,10 +132,12 @@ const ColorList: React.FC = () => {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput, 100);
+        }
+      },
     },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
@@ -232,6 +234,7 @@ const ColorList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.color}
       columns={columns}
+      rowKey="id"
       dataSource={colors}
       pagination={{
         pageSize: 10,

@@ -105,7 +105,7 @@ export default function Index() {
 
       {/* Tabs */}
       <Tabs
-        tabPosition="left"
+        tabPlacement="top"
         activeKey={tabKey}
         onChange={(key) => {
           setTabKey(key);
@@ -124,7 +124,7 @@ export default function Index() {
             key: "menu",
             children: <Menu />,
           },
-         
+
           {
             label: "Orders & Shipping",
             key: "order_and_shipping",

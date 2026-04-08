@@ -2,7 +2,15 @@ import { ProductVariantEntity } from '@/modules/catalog/products/product-variant
 import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
 import { ReturnEntity } from '@/modules/sales/return/model/return.entity';
 import 'reflect-metadata';
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { OrderEntity } from './order.entity';
 
 @Entity('order_items')

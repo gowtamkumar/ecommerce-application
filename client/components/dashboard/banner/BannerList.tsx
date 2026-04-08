@@ -136,10 +136,12 @@ const BannerList: React.FC = () => {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput, 100);
+        }
+      },
     },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
@@ -276,6 +278,7 @@ const BannerList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
+      rowKey="id"
       dataSource={Banners}
       pagination={{
         pageSize: 10,

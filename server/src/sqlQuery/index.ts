@@ -200,7 +200,14 @@ export const productsQuery = async (queryData: any) => {
 
   const parseFilter = (filter: any) => {
     if (!filter) return [];
-    return [...new Set(filter.split(',').filter((id: any) => id.trim() !== '' && !isNaN(id)).map((id: any) => parseInt(id.trim())))];
+    return [
+      ...new Set(
+        filter
+          .split(',')
+          .filter((id: any) => id.trim() !== '' && !isNaN(id))
+          .map((id: any) => parseInt(id.trim())),
+      ),
+    ];
   };
 
   const categoryFilter = parseFilter(categoryId);

@@ -54,36 +54,36 @@ export const getCategoriesForMenu = asyncHandler(async (req: Request, res: Respo
   // });
 
   const result = await connection
-  .getRepository(CategoriesEntity)
-  .createQueryBuilder("category")
-  .leftJoin("category.children", "children")
-  .select([
-    "category.id",
-    "category.name",
-    "category.slug",
-    "category.image",
-    "category.description",
-    "category.level",
-    "category.active",
-    "category.isFeatured",
-    "category.createdAt",
-    "category.updatedAt",
-    "children.id",
-    "children.name",
-    "children.slug",
-    "children.image",
-    "children.description",
-    "children.level",
-    "children.active",
-    "children.isFeatured",
-    "children.createdAt",
-    "children.updatedAt",
-  ])
-  .where("category.active = :active", { active: true })
-  .andWhere("category.parentId IS NULL")
-  .andWhere("(children.id IS NULL OR children.active = :active)", { active: true })
-  .getMany();
-    
+    .getRepository(CategoriesEntity)
+    .createQueryBuilder('category')
+    .leftJoin('category.children', 'children')
+    .select([
+      'category.id',
+      'category.name',
+      'category.slug',
+      'category.image',
+      'category.description',
+      'category.level',
+      'category.active',
+      'category.isFeatured',
+      'category.createdAt',
+      'category.updatedAt',
+      'children.id',
+      'children.name',
+      'children.slug',
+      'children.image',
+      'children.description',
+      'children.level',
+      'children.active',
+      'children.isFeatured',
+      'children.createdAt',
+      'children.updatedAt',
+    ])
+    .where('category.active = :active', { active: true })
+    .andWhere('category.parentId IS NULL')
+    .andWhere('(children.id IS NULL OR children.active = :active)', { active: true })
+    .getMany();
+
   return res.status(200).json({
     success: true,
     message: 'Get all for Menu',

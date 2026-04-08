@@ -8,14 +8,14 @@ export class ProductCategoryEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index("idx_product_categories_category_id")
+  @Index('idx_product_categories_category_id')
   @Column({ name: 'category_id' })
   categoryId?: number;
   @ManyToOne((_type) => CategoriesEntity, (category) => category.productCategories)
   @JoinColumn({ name: 'category_id' })
   category!: CategoriesEntity;
 
-  @Index("idx_product_categories_product_id")
+  @Index('idx_product_categories_product_id')
   @Column({ name: 'product_id' })
   productId?: number;
   @ManyToOne((_type) => ProductEntity, (product) => product.productCategories, {

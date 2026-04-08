@@ -62,7 +62,7 @@ export default function Post() {
       
       <Drawer
         title={global.action?.payload?.id ? "Edit Post" : "Create Post"}
-        width="80%"
+        size="80%"
         open={global.action?.post}
         onClose={handleCloseDrawer}
         destroyOnClose

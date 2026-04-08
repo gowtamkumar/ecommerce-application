@@ -134,10 +134,12 @@ const ReviewList: React.FC = () => {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput, 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput, 100);
+        }
+      },
     },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
@@ -255,6 +257,7 @@ const ReviewList: React.FC = () => {
       scroll={{ x: "auto" }}
       loading={global.loading.loading}
       columns={columns}
+      rowKey="id"
       dataSource={reviews}
       pagination={{
         pageSize: 10,

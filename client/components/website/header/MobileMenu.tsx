@@ -87,7 +87,7 @@ export default function MobileMenu() {
         open={open}
         placement="left"
         closable={false}
-        width="85%"
+        size="85%"
         onClose={() => setOpen(false)}
         styles={{ 
           header: { borderBottom: '1px solid #f3f4f6', padding: '16px 20px' }, 

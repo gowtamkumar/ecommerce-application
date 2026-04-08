@@ -12,11 +12,7 @@ import {
 const router = express.Router();
 
 router.route('/').get(getPages).post(AuthGuard, createPage);
-router
-  .route('/:id')
-  .get(getPage)
-  .put(AuthGuard, updatePage)
-  .delete(AuthGuard, deletePage);
+router.route('/:id').get(getPage).put(AuthGuard, updatePage).delete(AuthGuard, deletePage);
 router.route('/slug/:slug').get(getPageBySlug);
 
 export default router;
