@@ -1,6 +1,8 @@
 import { Checkbox, Form, InputNumber } from "antd";
 
 export default function WithOutVariant({ form }: any) {
+  const variant = Form.useWatch("variant", form);
+
   return (
     <>
       <div className="grid grid-cols-2 gap-2">
@@ -28,7 +30,7 @@ export default function WithOutVariant({ form }: any) {
           <Checkbox className="!w-full">Product Variant</Checkbox>
         </Form.Item>
 
-        {!form.getFieldValue("variant") && (
+        {!variant && (
           <>
             <Form.Item
               name="purchasePrice"

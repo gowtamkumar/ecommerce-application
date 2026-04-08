@@ -80,7 +80,7 @@ export default function DiscountDetails() {
       closeIcon={null}
       centered
       style={{ padding: 0 }}
-      bodyStyle={{ padding: 0, borderRadius: "16px" }}
+      styles={{ body: { padding: 0, borderRadius: "16px" } }}
     >
       {loading ? (
         <div className="flex justify-center items-center p-16">

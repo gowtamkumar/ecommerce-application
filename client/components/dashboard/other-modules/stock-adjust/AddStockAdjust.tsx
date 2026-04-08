@@ -24,13 +24,11 @@ const AddStockAdjust = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { formatPrice } = useCurrency();
+  const productVariants = Form.useWatch("productVariants", form);
 
   useEffect(() => {
     fetchData();
   }, [global.action]);
-
-  console.log("form", form.getFieldsValue());
-
 
   const fetchData = async () => {
     const products = await getDashboardProducts();
@@ -216,11 +214,7 @@ const AddStockAdjust = () => {
                         <td className="p-3 border-b">
                           <Form.Item {...restField} name={[name, "color"]} className="!mb-0">
                             <span className="text-gray-600">
-                              {form.getFieldValue([
-                                "productVariants",
-                                name,
-                                "color",
-                              ])?.name ?? "-"}
+                              {productVariants?.[name]?.color?.name ?? "-"}
                             </span>
                           </Form.Item>
                         </td>
@@ -228,11 +222,7 @@ const AddStockAdjust = () => {
                         <td className="p-3 border-b">
                           <Form.Item {...restField} name={[name, "size"]} className="!mb-0">
                             <span className="text-gray-600">
-                              {form.getFieldValue([
-                                "productVariants",
-                                name,
-                                "size",
-                              ])?.name ?? "-"}
+                              {productVariants?.[name]?.size?.name ?? "-"}
                             </span>
                           </Form.Item>
                         </td>
@@ -240,11 +230,7 @@ const AddStockAdjust = () => {
                         <td className="p-3 border-b">
                           <Form.Item {...restField} name={[name, "unitPrice"]} className="!mb-0">
                             <span className="text-gray-600">
-                              {formatPrice(form.getFieldValue([
-                                "productVariants",
-                                name,
-                                "unitPrice",
-                              ])) ?? "-"}
+                              {formatPrice(productVariants?.[name]?.unitPrice) ?? "-"}
                             </span>
                           </Form.Item>
                         </td>
@@ -256,11 +242,7 @@ const AddStockAdjust = () => {
                             className="!mb-0"
                           >
                             <span className="text-gray-600">
-                              {formatPrice(form.getFieldValue([
-                                "productVariants",
-                                name,
-                                "purchasePrice",
-                              ])) ?? "-"}
+                              {formatPrice(productVariants?.[name]?.purchasePrice) ?? "-"}
                             </span>
                           </Form.Item>
                         </td>
@@ -268,11 +250,7 @@ const AddStockAdjust = () => {
                         <td className="p-3 border-b">
                           <Form.Item {...restField} name={[name, "stockQty"]} className="!mb-0">
                             <span className="font-semibold text-blue-600">
-                              {formatPrice(form.getFieldValue([
-                                "productVariants",
-                                name,
-                                "stockQty",
-                              ])) ?? "-"}
+                              {productVariants?.[name]?.stockQty ?? "-"}
                             </span>
                           </Form.Item>
                         </td>

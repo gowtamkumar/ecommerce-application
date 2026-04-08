@@ -91,11 +91,13 @@ export default function MediaDetails() {
         padding: 0,
         maxWidth: "1400px",
       }}
-      bodyStyle={{
-        height: "85vh",
-        padding: 0,
-        overflow: "hidden",
-        borderRadius: "16px",
+      styles={{
+        body: {
+          height: "85vh",
+          padding: 0,
+          overflow: "hidden",
+          borderRadius: "16px",
+        },
       }}
       wrapClassName="media-details-modal-backdrop"
       className="media-details-modal"

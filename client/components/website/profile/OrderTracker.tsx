@@ -220,7 +220,7 @@ export default function OrderTracker() {
         <Card 
           bordered={false} 
           className="max-w-2xl mx-auto shadow-lg bg-white/50 backdrop-blur-sm border border-white/50"
-          bodyStyle={{ padding: '2rem' }}
+          styles={{ body: { padding: '2rem' } }}
         >
           <Form
             form={form}
@@ -470,7 +470,7 @@ export default function OrderTracker() {
                   title={<span className="font-bold text-gray-800">Timeline</span>}
                   bordered={false}
                   className="shadow-sm rounded-xl"
-                  bodyStyle={{ maxHeight: '400px', overflowY: 'auto' }}
+                  styles={{ body: { maxHeight: '400px', overflowY: 'auto' } }}
                 >
                   <div className="relative border-l-2 border-indigo-100 ml-3 space-y-6 pb-2">
                     {(order.orderTrackings || []).map(

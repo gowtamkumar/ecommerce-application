@@ -113,7 +113,7 @@ export default function PaymentMethod() {
         {response?.message && (
           <div className="mt-4">
             <Alert
-              message={response.message}
+              title={response.message}
               type={response.type}
               showIcon
               className="rounded-lg border-0"

@@ -15,6 +15,9 @@ export default function ProductVariant({
   sizes,
   colors,
 }: any) {
+  const productType = Form.useWatch("type", form);
+  const variants = Form.useWatch("productVariants", form);
+
   return (
     <div>
       {formValues.variant && (
@@ -39,8 +42,8 @@ export default function ProductVariant({
                         block
                         icon={<PlusOutlined />}
                         disabled={
-                          form.getFieldValue("type") === "SimpleProduct" &&
-                          form.getFieldValue("productVariants")?.length === 1
+                          productType === "SimpleProduct" &&
+                          variants?.length === 1
                         }
                       >
                         Add

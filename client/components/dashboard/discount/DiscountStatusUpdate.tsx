@@ -81,7 +81,7 @@ export default function DiscountStatusUpdate() {
       closeIcon={null}
       centered
       style={{ padding: 0 }}
-      bodyStyle={{ padding: 0, borderRadius: "16px" }}
+      styles={{ body: { padding: 0, borderRadius: "16px" } }}
     >
       <div className="bg-white rounded-2xl overflow-hidden">
         {/* Header */}

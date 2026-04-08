@@ -95,7 +95,7 @@ export default function ModalLogin() {
           {global.response.type && (
             <div className="mb-2">
               <Alert
-                message={`${global.response.message}`}
+                title={`${global.response.message}`}
                 type={global.response.type}
               />
             </div>

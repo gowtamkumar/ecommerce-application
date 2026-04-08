@@ -134,7 +134,7 @@ const Register = () => {
               <div className="animate-in fade-in slide-in-from-top-2 duration-300 pb-2">
                 <Alert
                   className="rounded-xl border-none font-medium"
-                  message={global.response.message}
+                  title={global.response.message}
                   type={global.response.type}
                   showIcon
                 />

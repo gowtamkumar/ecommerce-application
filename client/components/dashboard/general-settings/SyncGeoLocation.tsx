@@ -65,7 +65,7 @@ export default function SyncGeoLocation() {
           <div className="p-8 space-y-6">
             {/* Info Alert */}
             <Alert
-              message="What does this do?"
+              title="What does this do?"
               description={
                 <div className="space-y-2">
                   <Paragraph className="!mb-2">
