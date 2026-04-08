@@ -43,10 +43,10 @@ export async function getMe() {
   return await handleResponse(res);
 }
 
-// Function to get all users
-export async function getUsers() {
+// Function to get all users with pagination
+export async function getUsers(page: number = 1, limit: number = 10) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/auth/users`, {
+  const res = await fetch(`${appConfig.apiUrl}/auth/users?page=${page}&limit=${limit}`, {
     cache: "no-cache",
     headers,
   });

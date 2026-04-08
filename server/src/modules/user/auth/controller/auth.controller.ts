@@ -26,6 +26,8 @@ import { NotificationEntity } from '@/modules/system/other/notification/model/no
 import { RoleEnum } from '../enums/role.enum';
 import { UserActivityEntity } from '../model/user-activity.entity';
 import { UserEntity } from '../model/user.entity';
+import { userService } from '../service/user.service';
+import { cacheService, CacheService } from '@/utils/cache.service';
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -138,38 +140,16 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
 export const getUsers = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   logger.info(`Service: getUsers ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
 
-  const userRepository = connection.getRepository(UserEntity);
-
-  const results = await userRepository.find({
-    relations: {
-      products: true,
-    },
-    select: {
-      id: true,
-      name: true,
-      username: true,
-      email: true,
-      phone: true,
-      type: true,
-      point: true,
-      image: true,
-      role: true,
-      status: true,
-      lastLogin: true,
-      lastLogout: true,
-      ipAddress: true,
-      diviceId: true,
-      dob: true,
-      // products: true,
-    },
-  }); // populate is relation array data
+  const { users, meta } = await userService.getAllUsers(page, limit);
 
   return res.status(200).json({
     success: true,
     message: 'Get all users',
-    data: results,
+    data: users,
+    meta,
   });
 });
 
@@ -426,80 +406,25 @@ export const logout = asyncHandler(
 export const getMe = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
   logger.info(`Service: getMe ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
+  const cacheKey = CacheService.getUserKey(req.id!);
+  const cachedUser = cacheService.get<UserEntity>(cacheKey);
 
-  const userRepository = connection.getRepository(UserEntity);
+  if (cachedUser) {
+    logger.info(`Cache Hit: getMe for user ${req.id}`);
+    return res.status(200).json({
+      success: true,
+      message: 'I am Here (from cache)',
+      data: cachedUser,
+    });
+  }
 
-  const qb = userRepository.createQueryBuilder('user');
-  qb.select([
-    'user.id',
-    'user.name',
-    'user.username',
-    'user.email',
-    'user.phone',
-    'user.type',
-    'user.point',
-    'user.role',
-    'user.image',
-    'user.dob',
-    'user.gender',
-    'user.address',
-    'user.status',
-    'user.lastLogin',
-    'user.lastLogout',
-    'user.lastLogout',
-
-    // "orderShippingAddress.name",
-    // "orderShippingAddress.type",
-    // "orderShippingAddress.phoneNo",
-    // "orderShippingAddress.email",
-    // "orderShippingAddress.alternativePhoneNo",
-    // "orderShippingAddress.address",
-    // "orderShippingAddress.phoneNo",
-
-    // "orderDeliveries",
-    // "wishlists",
-
-    // "orderItems.purchasePrice",
-    // "orderItems.discountAmount",
-    // "orderItems.unitPrice",
-    // "orderItems.qty",
-    // "orderItems.taxAmount",
-    // "orderItems.productId",
-
-    // "orderProduct.name",
-    // "orderTrackings.location",
-    // "orderTrackings.createdAt",
-    // "orderTrackings.status",
-    // "deliveryMan.name",
-    // "payments",
-    // "size.name",
-    // "color.name",
-  ]);
-
-  // qb.leftJoin("user.orders", "orders");
-
-  // qb.leftJoin("orders.orderItems", "orderItems");
-  // qb.leftJoin("orderItems.product", "orderProduct");
-  // qb.leftJoin("orders.orderTrackings", "orderTrackings");
-  // qb.leftJoin("orders.deliveryMan", "deliveryMan");
-  // qb.leftJoin("orders.shippingAddress", "orderShippingAddress");
-
-  // qb.leftJoin("user.products", "products");
-  // qb.leftJoin("user.shippingAddress", "shippingAddress");
-  // qb.leftJoin("user.orderDeliveries", "orderDeliveries");
-  // qb.leftJoin("user.wishlists", "wishlists");
-  // qb.leftJoin("wishlists.product", "product");
-  // qb.leftJoin("product.discount", "discount");
-  // qb.leftJoin("product.tax", "tax");
-  // qb.leftJoin("product.reviews", "reviews");
-  qb.where({ id: req.id });
-
-  const user = await qb.getOne();
+  const user = await userService.getUserById(req.id!);
 
   if (!user) {
     throw new Error('Authorization is not Valid!');
   }
+
+  cacheService.set(cacheKey, user);
 
   return res.status(200).json({
     success: true,
@@ -732,15 +657,14 @@ export const updateUser = asyncHandler(async (req: Request, res: Response, next:
     });
   }
 
-  const connection = await getDBConnection();
-  const userRepository = await connection.getRepository(UserEntity);
-
-  const user = await userRepository.findOneBy({ id });
-  if (!user) {
+  const updateData = await userService.updateUser(id, validation.data as any);
+  if (!updateData) {
     throw new Error('User is not found');
   }
-  const updateData = await userRepository.merge(user, validation.data);
-  await userRepository.save(updateData);
+
+  // Invalidate cache
+  cacheService.delete(CacheService.getUserKey(id));
+
   delete updateData.password;
   return res.status(200).json({
     success: true,
@@ -755,29 +679,32 @@ export const updateUser = asyncHandler(async (req: Request, res: Response, next:
 export const deleteUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   logger.info(`Service: deleteUser ${req.method} ${req.url}`);
 
-  const connection = await getDBConnection();
   const { id } = req.params;
-
-  const userRepository = await connection.getRepository(UserEntity);
-
-  const user = await userRepository.findOne({ where: { id } });
+  const user = await userService.getUserById(id);
 
   if (!user) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
   if (user.image) {
+    const connection = await getDBConnection();
     const repository = connection.getRepository(FileEntity);
     const directory = join(process.cwd(), '/public/uploads');
     const filePath = `${directory}/${user.image}`;
-    const [deleteFile] = await Promise.all([
-      repository.findOne({ where: { filename: user.image } }),
-      fs.promises.unlink(filePath),
-    ]);
-    await repository.remove(deleteFile);
+    const deleteFile = await repository.findOne({ where: { filename: user.image } });
+    
+    if (deleteFile) {
+        await Promise.all([
+            repository.remove(deleteFile),
+            fs.promises.unlink(filePath).catch(err => logger.error(`File unlink failed: ${err}`))
+        ]);
+    }
   }
 
-  await userRepository.delete({ id });
+  await userService.deleteUser(id);
+
+  // Invalidate cache
+  cacheService.delete(CacheService.getUserKey(id));
 
   return res.status(200).json({
     success: true,

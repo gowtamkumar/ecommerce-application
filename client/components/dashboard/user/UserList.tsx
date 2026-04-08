@@ -19,7 +19,7 @@ import type { TableColumnsType, TableColumnType } from "antd";
 import { Avatar, Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -43,16 +43,23 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const UserList = () => {
-  const [user, setUsers] = useState([] as any);
+  const [users, setUsers] = useState<DataType[]>([]);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [searchInput, setSearchInput] = useState<string>("");
+
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (page: number, limit: number) => {
     dispatch(setLoading({ loading: true }));
     try {
-      const res = await getUsers();
-      setUsers(res?.data);
+      const res = await getUsers(page, limit);
+      if (res?.success) {
+        setUsers(res.data);
+        setTotal(res.meta?.total || 0);
+      }
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -61,15 +68,15 @@ const UserList = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData, global.action]);
+    fetchData(currentPage, pageSize);
+  }, [fetchData, currentPage, pageSize, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
     try {
       await deleteUser(id);
       successNotification({ message: "Successfully deleted" });
-      fetchData();
+      fetchData(currentPage, pageSize);
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -93,7 +100,7 @@ const UserList = () => {
     dispatch(setSearchText(""));
   };
 
-  const getColumnSearchProps = (
+  const getColumnSearchProps = useCallback((
     dataIndex: DataIndex
   ): TableColumnType<DataType> => ({
     filterDropdown: ({
@@ -101,7 +108,6 @@ const UserList = () => {
       selectedKeys,
       confirm,
       clearFilters,
-      close,
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -146,13 +152,6 @@ const UserList = () => {
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    filterDropdownProps: {
-      onOpenChange: (visible) => {
-        if (visible) {
-          setTimeout(() => searchInput, 100);
-        }
-      },
-    },
     render: (text) =>
       global.searchedColumn === dataIndex ? (
         <Highlighter
@@ -164,27 +163,27 @@ const UserList = () => {
       ) : (
         text
       ),
-  });
+  }), [global.searchedColumn, global.searchText]);
 
-  const getUserTypeColor = (type: string) => {
+  const getUserTypeColor = useCallback((type: string) => {
     switch (type) {
       case "Admin": return "purple";
       case "Vendor": return "blue";
       case "Delivery Man": return "orange";
       default: return "green";
     }
-  };
+  }, []);
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<DataType> = useMemo(() => [
     {
       title: "User",
       dataIndex: "name",
       key: "name",
       width: 250,
       fixed: "left",
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: true,
       ...getColumnSearchProps("name"),
-      render: (text, record) => (
+      render: (text: string, record: DataType) => (
         <div className="flex items-center gap-3">
           <Avatar
             size={40}
@@ -204,7 +203,7 @@ const UserList = () => {
       dataIndex: "type",
       key: "type",
       width: 130,
-      sorter: (a, b) => a.type.length - b.type.length,
+      sorter: true,
       ...getColumnSearchProps("type"),
       render: (type) => (
         <Tag color={getUserTypeColor(type)} className="font-medium">
@@ -216,7 +215,7 @@ const UserList = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      sorter: (a, b) => a.email.length - b.email.length,
+      sorter: true,
       ...getColumnSearchProps("email"),
       render: (text) => <span className="text-gray-600">{text}</span>,
     },
@@ -231,7 +230,6 @@ const UserList = () => {
       dataIndex: "point",
       key: "point",
       width: 100,
-      ...getColumnSearchProps("point"),
       render: (value) => (
         <span className="font-semibold text-blue-600">{value || 0}</span>
       ),
@@ -241,22 +239,18 @@ const UserList = () => {
       dataIndex: "dob",
       key: "dob",
       width: 140,
-      ...getColumnSearchProps("dob"),
       render: (value) =>
         value ? (
           <span className="text-gray-600">{dayjs(value).format("DD MMM YYYY")}</span>
         ) : (
           <span className="text-gray-400">-</span>
         ),
-      sorter: (a, b) => a.dob?.length - b.dob?.length,
     },
     {
       title: "Last Login",
       dataIndex: "lastLogin",
       key: "lastLogin",
       width: 160,
-      ...getColumnSearchProps("lastLogin"),
-      sorter: (a, b) => a.lastLogin?.length - b.lastLogin?.length,
       render: (value) =>
         value ? (
           <div className="text-sm">
@@ -266,58 +260,12 @@ const UserList = () => {
         ) : (
           <span className="text-gray-400">Never</span>
         ),
-    },
-    {
-      title: "Last Logout",
-      dataIndex: "lastLogout",
-      key: "lastLogout",
-      width: 160,
-      sorter: (a, b) => a.lastLogout?.length - b.lastLogout?.length,
-      ...getColumnSearchProps("lastLogout"),
-      render: (value) =>
-        value ? (
-          <div className="text-sm">
-            <div className="text-gray-900">{dayjs(value).format("DD MMM YYYY")}</div>
-            <div className="text-gray-500">{dayjs(value).format("h:mm A")}</div>
-          </div>
-        ) : (
-          <span className="text-gray-400">Never</span>
-        ),
-    },
-    {
-      title: "IP Address",
-      dataIndex: "ipAddress",
-      key: "ipAddress",
-      width: 140,
-      sorter: (a, b) => a.ipAddress?.length - b.ipAddress?.length,
-      ...getColumnSearchProps("ipAddress"),
-      render: (text) => text ? (
-        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{text}</code>
-      ) : (
-        <span className="text-gray-400">-</span>
-      ),
-    },
-    {
-      title: "Device ID",
-      dataIndex: "diviceId",
-      key: "diviceId",
-      width: 140,
-      sorter: (a, b) => a.diviceId?.length - b.diviceId?.length,
-      ...getColumnSearchProps("diviceId"),
-      render: (text) => text ? (
-        <code className="text-xs bg-gray-100 px-2 py-1 rounded">{text}</code>
-      ) : (
-        <span className="text-gray-400">-</span>
-      ),
     },
     {
       title: "Status",
       key: "status",
       width: 110,
       fixed: "right",
-      ...getColumnSearchProps("status"),
-      sortDirections: ["descend", "ascend"],
-      sorter: (a, b) => a.status.length - b.status.length,
       render: (value) => (
         <Tag color={value.status === "Active" ? "green" : "red"} className="font-medium">
           {value.status}
@@ -339,7 +287,6 @@ const UserList = () => {
               onClick={() => {
                 const newData = { ...value };
                 if (newData.image) {
-
                   newData.fileList = [imageSetFile(newData.image)];
                 }
                 dispatch(
@@ -378,7 +325,12 @@ const UserList = () => {
         </div>
       ),
     },
-  ];
+  ], [getColumnSearchProps, getUserTypeColor, dispatch, global.loading?.delete, currentPage, pageSize]);
+
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
 
   return (
     <Table
@@ -386,12 +338,14 @@ const UserList = () => {
       loading={global.loading.loading}
       columns={columns}
       rowKey="id"
-      dataSource={user}
+      dataSource={users}
       pagination={{
-        pageSize: 10,
-
+        current: currentPage,
+        pageSize: pageSize,
+        total: total,
         showSizeChanger: true,
       }}
+      onChange={handleTableChange}
       size="middle"
       className="modern-table"
       rowClassName="hover:bg-gray-50 transition-colors"
