@@ -614,7 +614,7 @@ export const resetPassword = asyncHandler(
     const userRepository = connection.getRepository(UserEntity);
 
     if (token) {
-      getResetVerifyJwtToken(token, res);
+      getResetVerifyJwtToken(token as string, res);
     }
 
     const newPassword = await hashedPassword(validation.data.password);
@@ -801,7 +801,7 @@ export const verifyEmail = asyncHandler(
     const userRepository = await connection.getRepository(UserEntity);
 
     if (token) {
-      getResetVerifyJwtToken(token, res);
+      getResetVerifyJwtToken(token as string, res);
     }
 
     const user = await userRepository.findOne({

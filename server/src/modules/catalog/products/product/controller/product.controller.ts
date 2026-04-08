@@ -445,7 +445,7 @@ export const getProductByslug = asyncHandler(
 
     const connection = await getDBConnection();
 
-    const { query, values } = productDetailQuery(slug, productVariantId);
+    const { query, values } = productDetailQuery(slug as string, productVariantId);
     const result = await connection.query(query, values);
 
     if (!result[0]) {

@@ -40,7 +40,7 @@ export const getPage = asyncHandler(
     const { id } = req.params;
     const connection = await getDBConnection();
     const repository = await connection.getRepository(PageEntity);
-    const result = await repository.findOneBy({ id: parseInt(id) });
+    const result = await repository.findOneBy({ id: parseInt(id as string) });
 
     if (!result) {
       throw new Error(`Page not found with id #${req.params.id}`);
@@ -158,7 +158,7 @@ export const updatePage = asyncHandler(
 
     const repository = await connection.getRepository(PageEntity);
 
-    const result = await repository.findOneBy({ id: parseInt(id) });
+    const result = await repository.findOneBy({ id: parseInt(id as string) });
 
     if (!result) {
       throw new Error(`Page not found`);
@@ -199,12 +199,12 @@ export const deletePage = asyncHandler(
     const connection = await getDBConnection();
     const repository = await connection.getRepository(PageEntity);
 
-    const result = await repository.findOneBy({ id: parseInt(id) });
+    const result = await repository.findOneBy({ id: parseInt(id as string) });
     if (!result) {
       throw new Error(`Page not found with id #${req.params.id}`);
     }
 
-    await repository.delete({ id: parseInt(id) });
+    await repository.delete({ id: parseInt(id as string) });
 
     return res.status(200).json({
       success: true,

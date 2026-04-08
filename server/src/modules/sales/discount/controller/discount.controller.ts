@@ -79,7 +79,7 @@ export const getDiscountDetails = asyncHandler(
     logger.info(`Service: getDiscountDetails ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
-    const query = await singleDiscountQuery(id);
+    const query = await singleDiscountQuery(id as string);
     const result = await connection.query(query);
 
     if (!result[0]) {
