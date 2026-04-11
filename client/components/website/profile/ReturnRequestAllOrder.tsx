@@ -113,6 +113,7 @@ const ReturnRequestAllOrder = () => {
       open={type === ActionType.UPDATE && returnAllOrder}
       onCancel={handleClose}
       footer={null}
+      forceRender
     >
       <Form
         layout="vertical"

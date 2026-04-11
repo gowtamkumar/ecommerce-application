@@ -114,6 +114,7 @@ const ReturnRequestOrderItem = () => {
       open={type === ActionType.UPDATE && returnOrderItem}
       onCancel={handleClose}
       footer={null}
+      forceRender
     >
       <Form
         layout="vertical"

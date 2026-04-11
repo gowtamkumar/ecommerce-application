@@ -1,11 +1,14 @@
 "use client";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Card,
   Form,
   Image,
   Input,
+  InputNumber,
   Modal,
+  Space,
   Typography,
   Upload,
   UploadProps
@@ -261,6 +264,61 @@ const GeneralSettings = () => {
                 />
               </div>
             </div>
+
+            {/* Return Settings Section */}
+            <div className="pt-6 border-t mt-6">
+              <Title level={5} className="!mb-3 text-orange-600">
+                Return Settings
+              </Title>
+              <div className="space-y-4 max-w-xl">
+                <Form.Item
+                  name={["returnSetting", "returnWindowDays"]}
+                  label={<span className="text-base font-medium">Return Window (Days)</span>}
+                  tooltip="Number of days after delivery a customer can request a return."
+                  rules={[{ required: true, message: "Return window is required" }]}
+                >
+                  <InputNumber size="large" min={0} placeholder="e.g. 7" style={{ width: "100%" }} />
+                </Form.Item>
+
+                <div className="space-y-2">
+                  <span className="text-base font-medium block">Predefined Return Reasons</span>
+                  <Text type="secondary" className="block !mb-4">
+                    Common reasons shown to customers in the return request dropdown.
+                  </Text>
+
+                  <Form.List name={["returnSetting", "predefinedReasons"]}>
+                    {(fields, { add, remove }) => (
+                      <div className="space-y-3">
+                        {fields.map(({ key, name, ...restField }) => (
+                          <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
+                            <Form.Item
+                              {...restField}
+                              name={[name]}
+                              rules={[{ required: true, message: "Reason text is required" }]}
+                              className="!mb-0"
+                            >
+                              <Input size="large" placeholder="e.g. Defective Item" style={{ width: "300px" }} />
+                            </Form.Item>
+                            <MinusCircleOutlined onClick={() => remove(name)} className="text-red-500 hover:text-red-700" />
+                          </Space>
+                        ))}
+                        <Form.Item>
+                          <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                            className="mt-2"
+                          >
+                            Add Reason
+                          </Button>
+                        </Form.Item>
+                      </div>
+                    )}
+                  </Form.List>
+                </div>
+              </div>
+            </div>
           </div>
 
           <Modal
@@ -284,7 +342,7 @@ const GeneralSettings = () => {
               loading={loading}
               size="large"
               className="!h-11 !px-8 !font-medium"
-              style={{ 
+              style={{
                 borderRadius: "var(--button-border-radius)",
                 backgroundColor: "var(--global-primary)"
               }}

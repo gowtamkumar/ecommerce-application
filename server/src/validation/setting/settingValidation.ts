@@ -28,4 +28,5 @@ export const settingValidationSchema = z.object({
   seo: z.any().optional(),
   marketing: z.any().optional(),
   appearance: z.any().optional(),
+  returnSetting: z.any().optional(),
 });
