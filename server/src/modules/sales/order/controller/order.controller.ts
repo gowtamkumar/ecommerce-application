@@ -300,10 +300,12 @@ export const getOrders = asyncHandler(async (req: CustomRequest, res: Response) 
     'deliveryMan.name',
     'user.name',
     'shippingAddress',
+    'returns',
   ]);
 
   qb.leftJoin('order.orderItems', 'orderItems');
   qb.leftJoin('orderItems.product', 'product');
+  qb.leftJoin('orderItems.returns', 'returns');
   qb.leftJoin('orderItems.productVariant', 'productVariant');
   qb.leftJoin('productVariant.color', 'color');
   qb.leftJoin('productVariant.size', 'size');
@@ -356,10 +358,12 @@ export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Respon
     'color.name',
     'color.color',
     'size.name',
+    'returns',
   ]);
 
   qb.leftJoin('order.orderItems', 'orderItems');
   qb.leftJoin('orderItems.product', 'product');
+  qb.leftJoin('orderItems.returns', 'returns');
   qb.leftJoin('orderItems.productVariant', 'productVariant');
   qb.leftJoin('productVariant.color', 'color');
   qb.leftJoin('productVariant.size', 'size');

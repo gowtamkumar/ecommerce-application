@@ -24,7 +24,8 @@ export const returnValidationSchema = z.object({
     required_error: 'User is required',
   }),
 
-  image: z.string().optional().nullable(),
+  images: z.array(z.string()).optional().nullable(),
+  comments: z.string().optional().nullable(),
 
   status: z.enum(['Requested', 'Approved', 'Rejected', 'Completed', 'Refunded']).optional(),
 });

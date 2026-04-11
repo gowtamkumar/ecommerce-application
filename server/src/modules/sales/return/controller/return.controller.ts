@@ -12,6 +12,7 @@ import { OrderEntity } from '@/modules/sales/order/model/order.entity';
 import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
 import { ReturnStatus } from '../enums/return-status.enum';
 import { ReturnEntity } from '../model/return.entity';
+import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -77,18 +78,28 @@ export const createReturn = asyncHandler(async (req: CustomRequest, res: Respons
       issues: formattedErrors,
     });
   }
-  const { orderItemId, orderId, requestedQty } = validation.data;
+  const { orderItemId, orderId, requestedQty, images, comments } = validation.data;
   const connection = await getDBConnection();
 
   await connection.transaction(async (manager: any) => {
     const repositoryReturn = manager.getRepository(ReturnEntity);
     const repositoryOrder = manager.getRepository(OrderEntity);
+    const repositorySetting = manager.getRepository(SettingEntity);
 
-    const findReturn = await repositoryReturn.findOne({
+    // Fetch settings for dynamic return window
+    const settings = await repositorySetting.createQueryBuilder('setting').getOne();
+    const returnSetting = settings?.returnSetting || {};
+    const returnWindowDays = returnSetting.returnWindowDays || 7;
+
+    const existingReturns = await repositoryReturn.find({
       where: { orderItemId },
     });
 
-    if (findReturn) throw new Error(`You already Request`);
+    const totalAlreadyRequested = existingReturns.reduce(
+      (sum: number, ret: ReturnEntity) => sum + (ret.requestedQty || 0),
+      0
+    );
+
     const order = await repositoryOrder
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.orderItems', 'orderItem')
@@ -107,8 +118,6 @@ export const createReturn = asyncHandler(async (req: CustomRequest, res: Respons
       ])
       .getOne();
 
-    console.log('order', order);
-
     if (!order) throw new Error(`Order not found or does not belong to user`);
     if (order.status !== OrderStatus.Delivered)
       throw new Error('Return is allowed only after delivery');
@@ -119,26 +128,30 @@ export const createReturn = asyncHandler(async (req: CustomRequest, res: Respons
 
     const deliveredAt = order.updatedAt;
     const now = new Date();
-    const sevenDaysLater = dayjs(deliveredAt).add(7, 'day'); // make configurable later
-    if (dayjs(now).isAfter(sevenDaysLater)) throw new Error('Return window expired');
+    const returnWindowLimit = dayjs(deliveredAt).add(returnWindowDays, 'day');
+    if (dayjs(now).isAfter(returnWindowLimit)) throw new Error(`Return window (${returnWindowDays} days) expired`);
 
-    const remainingQty = item.qty;
-    if (requestedQty > remainingQty) {
-      throw new Error(`You can only return up to ${remainingQty} units`);
+    const availableQty = item.qty - totalAlreadyRequested;
+    if (requestedQty > availableQty) {
+      throw new Error(`You can only return up to ${availableQty} more units. (Total ordered: ${item.qty}, Already requested: ${totalAlreadyRequested})`);
     }
 
-    const newReturn = repositoryReturn.create(validation.data);
+    const newReturn = repositoryReturn.create({
+      ...validation.data,
+      images,
+      comments,
+    });
     const savedReturn = await repositoryReturn.save(newReturn);
 
     const orderItemRepository = manager.getRepository(OrderItemEntity);
     await orderItemRepository.save({
       id: item.id,
-      requestedQty,
+      requestedQty: totalAlreadyRequested + requestedQty,
     });
 
     await repositoryOrder.save({
       id: order.id,
-      requestedQty,
+      requestedQty: (order.requestedQty || 0) + requestedQty,
       returnedStatus: ReturnStatus.Requested,
     });
 
@@ -594,53 +607,58 @@ export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, re
     });
   }
 
-  const { orderId, reason, phone, image } = validation.data;
+    const { orderId, reason, phone, images, comments } = validation.data;
 
-  const connection = await getDBConnection();
-  const queryRunner = connection.createQueryRunner();
+    const connection = await getDBConnection();
+    const queryRunner = connection.createQueryRunner();
 
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  try {
-    const orderRepository = queryRunner.manager.getRepository(OrderEntity);
-    const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+    try {
+      const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+      const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+      const repositorySetting = queryRunner.manager.getRepository(SettingEntity);
 
-    const findReturn = await returnRepository.findOne({
-      where: { orderId },
-    });
+      // Fetch settings for dynamic return window
+      const settings = await repositorySetting.createQueryBuilder('setting').getOne();
+      const returnSetting = settings?.returnSetting || {};
+      const returnWindowDays = returnSetting.returnWindowDays || 7;
 
-    if (findReturn) {
-      await queryRunner.rollbackTransaction();
-      return res.status(404).json({
-        success: false,
-        message: 'You already Requested',
-      });
-    }
+      const order = await orderRepository
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.orderItems', 'orderItem')
+        .leftJoinAndSelect('orderItem.product', 'product')
+        .where('order.id = :orderId', { orderId })
+        .andWhere('order.userId = :userId', { userId })
+        .getOne();
 
-    const order = await orderRepository
-      .createQueryBuilder('order')
-      .leftJoinAndSelect('order.orderItems', 'orderItem')
-      .leftJoinAndSelect('orderItem.product', 'product')
-      .where('order.id = :orderId', { orderId })
-      .andWhere('order.userId = :userId', { userId })
-      .getOne();
+      if (!order) {
+        await queryRunner.rollbackTransaction();
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found or not owned by user',
+        });
+      }
 
-    if (!order) {
-      await queryRunner.rollbackTransaction();
-      return res.status(404).json({
-        success: false,
-        message: 'Order not found or not owned by user',
-      });
-    }
+      if (order.status !== OrderStatus.Delivered) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: 'Only completed orders can be returned',
+        });
+      }
 
-    if (order.status !== OrderStatus.Delivered) {
-      await queryRunner.rollbackTransaction();
-      return res.status(400).json({
-        success: false,
-        message: 'Only completed orders can be returned',
-      });
-    }
+      const deliveredAt = order.updatedAt;
+      const now = new Date();
+      const returnWindowLimit = dayjs(deliveredAt).add(returnWindowDays, 'day');
+      if (dayjs(now).isAfter(returnWindowLimit)) {
+        await queryRunner.rollbackTransaction();
+        return res.status(400).json({
+          success: false,
+          message: `Return window (${returnWindowDays} days) expired`,
+        });
+      }
 
     const createdReturns = [];
 
@@ -654,16 +672,17 @@ export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, re
 
       if (alreadyReturned) continue;
 
-      const newReturn = returnRepository.create({
-        userId,
-        orderId: order.id,
-        reason,
-        phone,
-        image,
-        orderItemId: item.id,
-        requestedQty: +item.qty,
-        status: ReturnStatus.Requested,
-      });
+        const newReturn = returnRepository.create({
+          userId,
+          orderId: order.id,
+          reason,
+          phone,
+          images,
+          comments,
+          orderItemId: item.id,
+          requestedQty: +item.qty,
+          status: ReturnStatus.Requested,
+        });
 
       const saved = await returnRepository.save(newReturn);
       createdReturns.push(saved);

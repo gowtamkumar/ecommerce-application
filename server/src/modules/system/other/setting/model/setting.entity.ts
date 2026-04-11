@@ -78,6 +78,9 @@ export class SettingEntity {
   @Column({ name: 'help_support', type: 'simple-json', nullable: true })
   helpSupport!: string;
 
+  @Column({ name: 'return_setting', type: 'simple-json', nullable: true })
+  returnSetting!: any;
+
   // @CreateDateColumn({ name: "created_at",type: "timestamp" })
   // createdAt?: string;
 

@@ -29,6 +29,7 @@ import {
   Modal,
   Row,
   Space,
+  Steps,
   Table,
   Tabs,
   Tag,
@@ -356,21 +357,45 @@ const UserOrders = () => {
                   title: "Product",
                   dataIndex: "product",
                   key: "product",
-                  width: 250,
+                  width: 300,
                   render: (_, item: any) => (
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-12 h-12 rounded border flex-shrink-0 bg-gray-100">
-                        <Image
-                          src={getImageUrl(item.product?.thumbnailImage)}
-                          alt="Product"
-                          fill
-                          className="object-cover rounded"
-                        />
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-12 h-12 rounded border flex-shrink-0 bg-gray-100">
+                          <Image
+                            src={getImageUrl(item.product?.thumbnailImage)}
+                            alt="Product"
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-sm line-clamp-2">{item.product?.name}</span>
+                          <span className="text-xs text-gray-400">{item.productVariant?.size?.name}, {item.productVariant?.color?.name}</span>
+                        </div>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="font-medium text-sm line-clamp-2">{item.product?.name}</span>
-                        <span className="text-xs text-gray-400">{item.productVariant?.size?.name}, {item.productVariant?.color?.name}</span>
-                      </div>
+
+                      {item.returns && item.returns.length > 0 && (
+                        <div className="mt-2 p-2 bg-gray-100/50 rounded-md border border-gray-100">
+                          <Text type="secondary" className="text-[10px] uppercase font-bold mb-2 block">Return Progress</Text>
+                          <Steps
+                            size="small"
+                            current={
+                              item.returns[0].status === 'Requested' ? 0 :
+                                item.returns[0].status === 'Approved' ? 1 :
+                                  item.returns[0].status === 'Processing' ? 1 :
+                                    item.returns[0].status === 'Completed' ? 2 : 0
+                            }
+                            className="return-steps"
+                            items={[
+                              { title: 'Requested' },
+                              { title: 'Processing' },
+                              { title: 'Completed' },
+                            ]}
+                            status={item.returns[0].status === 'Rejected' ? 'error' : 'process'}
+                          />
+                        </div>
+                      )}
                     </div>
                   )
                 },

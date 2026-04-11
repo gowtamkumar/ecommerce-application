@@ -39,8 +39,11 @@ export class ReturnEntity {
   @Column({ nullable: true })
   phone!: string;
 
-  @Column({ nullable: true })
-  image!: string;
+  @Column({ name: 'images', type: 'simple-json', nullable: true })
+  images!: string[];
+
+  @Column({ type: 'text', nullable: true })
+  comments!: string;
 
   @Column({ type: 'enum', enum: ReturnStatus, default: ReturnStatus.Requested })
   status!: ReturnStatus;
