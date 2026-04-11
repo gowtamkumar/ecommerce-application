@@ -16,15 +16,12 @@ import {
   SearchOutlined,
   SyncOutlined,
   TruckOutlined,
-  UndoOutlined,
-  DollarOutlined,
-  InfoCircleOutlined
+  UndoOutlined
 } from "@ant-design/icons";
 import {
   Button,
   Card,
   Col,
-  Descriptions,
   Divider,
   Empty,
   Form,
@@ -35,9 +32,7 @@ import {
   Steps,
   Table,
   Tag,
-  Typography,
-  Badge,
-  Alert
+  Typography
 } from "antd";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
@@ -68,6 +63,7 @@ export default function OrderTracker() {
 
     try {
       const result = await getOrderQuery({ trackingNo: values.trackingNo });
+      console.log("result", result);
       if (result.success) {
         // Simulate a brief delay for UI smoothness or real fetch
         setTimeout(() => {
@@ -167,10 +163,10 @@ export default function OrderTracker() {
       align: "center" as const,
       render: (_: any, record: any) => {
         // Only show return button if order is delivered AND product is returnable AND not fully returned yet
-        const canReturn = order.status === "Delivered" && 
-                          record.product.isReturnable && 
-                          (record.qty - (record.requestedQty || 0)) > 0;
-        
+        const canReturn = order.status === "Delivered" &&
+          record.product.isReturnable &&
+          (record.qty - (record.requestedQty || 0)) > 0;
+
         return canReturn ? (
           <Button
             size="small"
@@ -201,7 +197,7 @@ export default function OrderTracker() {
     if (!order.status) return 0;
     const statuses = ["Pending", "Processing", "Shipped", "Delivered"];
     // If returned, we might want to show that separately or as a final state if full return
-    if (order.status === "Returned") return 4; 
+    if (order.status === "Returned") return 4;
     const idx = statuses.indexOf(order.status);
     return idx === -1 ? 0 : idx;
   };
@@ -217,8 +213,8 @@ export default function OrderTracker() {
           Enter your order tracking number below to verify status, manage returns, and view delivery updates.
         </p>
 
-        <Card 
-          bordered={false} 
+        <Card
+          bordered={false}
           className="max-w-2xl mx-auto shadow-lg bg-white/50 backdrop-blur-sm border border-white/50"
           styles={{ body: { padding: '2rem' } }}
         >
@@ -229,7 +225,7 @@ export default function OrderTracker() {
             className="w-full"
           >
             <div className="flex flex-col sm:flex-row gap-4">
-               <Form.Item
+              <Form.Item
                 name="trackingNo"
                 className="flex-grow mb-0"
                 rules={[{ required: true, message: "Please enter tracking number" }]}
@@ -262,16 +258,16 @@ export default function OrderTracker() {
         <Card loading bordered={false} className="shadow-sm rounded-xl" />
       ) : order.trackingNo ? (
         <div className="animate-fade-in space-y-8">
-          
+
           {/* Order Status & Summary Banner */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             {/* Status Steps */}
+            {/* Status Steps */}
             <Card bordered={false} className="md:col-span-2 shadow-sm rounded-xl overflow-hidden">
               <div className="bg-gray-50 -m-6 mb-6 p-4 border-b border-gray-100 flex justify-between items-center">
-                 <div className="font-semibold text-gray-700">Order Status: <span className="text-indigo-600">{order.status}</span></div>
-                 <div className="text-sm text-gray-500">Last Updated: {dayjs(order.updatedAt).format('MMM D, h:mm A')}</div>
+                <div className="font-semibold text-gray-700">Order Status: <span className="text-indigo-600">{order.status}</span></div>
+                <div className="text-sm text-gray-500">Last Updated: {dayjs(order.updatedAt).format('MMM D, h:mm A')}</div>
               </div>
-              
+
               <div className="py-2 px-2">
                 <Steps
                   current={getStatusIndex()}
@@ -285,48 +281,48 @@ export default function OrderTracker() {
                 />
               </div>
 
-               {/* Return Status Banner if applicable */}
+              {/* Return Status Banner if applicable */}
               {(order.returnedStatus || order.refundStatus) && (
-                 <div className="mt-8 bg-orange-50 rounded-lg p-4 border border-orange-100">
-                    <h4 className="font-semibold text-orange-900 flex items-center gap-2 mb-3">
-                      <UndoOutlined /> Return & Refund Status
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                       <div className="bg-white p-3 rounded border border-orange-100">
-                          <div className="text-xs text-gray-500">Return Status</div>
-                          <div className="font-medium text-orange-700">{order.returnedStatus || 'None'}</div>
-                       </div>
-                       <div className="bg-white p-3 rounded border border-orange-100">
-                          <div className="text-xs text-gray-500">Refund Status</div>
-                          <div className="font-medium text-orange-700">{order.refundStatus || 'None'}</div>
-                       </div>
-                        <div className="bg-white p-3 rounded border border-orange-100">
-                          <div className="text-xs text-gray-500">Total Refunded</div>
-                          <div className="font-medium text-green-600">{formatPrice(order.totalRefuned || 0)}</div>
-                       </div>
+                <div className="mt-8 bg-orange-50 rounded-lg p-4 border border-orange-100">
+                  <h4 className="font-semibold text-orange-900 flex items-center gap-2 mb-3">
+                    <UndoOutlined /> Return & Refund Status
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="bg-white p-3 rounded border border-orange-100">
+                      <div className="text-xs text-gray-500">Return Status</div>
+                      <div className="font-medium text-orange-700">{order.returnedStatus || 'None'}</div>
                     </div>
-                 </div>
+                    <div className="bg-white p-3 rounded border border-orange-100">
+                      <div className="text-xs text-gray-500">Refund Status</div>
+                      <div className="font-medium text-orange-700">{order.refundStatus || 'None'}</div>
+                    </div>
+                    <div className="bg-white p-3 rounded border border-orange-100">
+                      <div className="text-xs text-gray-500">Total Refunded</div>
+                      <div className="font-medium text-green-600">{formatPrice(order.totalRefuned || 0)}</div>
+                    </div>
+                  </div>
+                </div>
               )}
             </Card>
 
             {/* Quick Actions / Key Info */}
             <Card bordered={false} className="shadow-sm rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white">
-                <div className="h-full flex flex-col justify-between">
-                   <div>
-                      <div className="text-indigo-200 text-sm mb-1">Total Amount</div>
-                      <div className="text-3xl font-bold mb-4">{formatPrice(order.grandTotal)}</div>
-                      
-                      <div className="text-indigo-200 text-sm mb-1">Payment Status</div>
-                      <Tag color={order.paymentStatus === "Paid" ? "success" : "warning"} className="border-none px-3 py-1">
-                        {order.paymentStatus || "Unpaid"}
-                      </Tag>
-                   </div>
+              <div className="h-full flex flex-col justify-between">
+                <div>
+                  <div className="text-indigo-200 text-sm mb-1">Total Amount</div>
+                  <div className="text-3xl font-bold mb-4">{formatPrice(order.grandTotal)}</div>
 
-                   <div className="mt-6 pt-6 border-t border-indigo-500/30">
-                      <div className="text-indigo-200 text-xs mb-2">Order Date</div>
-                      <div className="font-medium">{dayjs(order.createdAt).format("MMMM D, YYYY")}</div>
-                   </div>
+                  <div className="text-indigo-200 text-sm mb-1">Payment Status</div>
+                  <Tag color={order.paymentStatus === "Paid" ? "success" : "warning"} className="border-none px-3 py-1">
+                    {order.paymentStatus || "Unpaid"}
+                  </Tag>
                 </div>
+
+                <div className="mt-6 pt-6 border-t border-indigo-500/30">
+                  <div className="text-indigo-200 text-xs mb-2">Order Date</div>
+                  <div className="font-medium">{dayjs(order.createdAt).format("MMMM D, YYYY")}</div>
+                </div>
+              </div>
             </Card>
           </div>
 
@@ -346,19 +342,19 @@ export default function OrderTracker() {
                   scroll={{ x: true }}
                   rowKey="id"
                 />
-              
+
                 {/* Delivery Address Box */}
-                <div className="mt-8 grid md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100"> 
-                   <div>
-                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                        <EnvironmentOutlined className="text-indigo-500"/> Delivery Address
-                      </h4>
-                      <div className="text-gray-600 text-sm space-y-1">
-                        <p className="font-medium text-gray-900">{order.shippingAddress?.name} ({order.shippingAddress?.type})</p>
-                        <p>{order.shippingAddress?.address}</p>
-                        <p>{order.shippingAddress?.phoneNo}</p>
-                      </div>
-                   </div>
+                <div className="mt-8 grid md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <EnvironmentOutlined className="text-indigo-500" /> Delivery Address
+                    </h4>
+                    <div className="text-gray-600 text-sm space-y-1">
+                      <p className="font-medium text-gray-900">{order.shippingAddress?.name} ({order.shippingAddress?.type})</p>
+                      <p>{order.shippingAddress?.address}</p>
+                      <p>{order.shippingAddress?.phoneNo}</p>
+                    </div>
+                  </div>
                 </div>
               </Card>
             </Col>
@@ -396,16 +392,22 @@ export default function OrderTracker() {
                         <span>-{formatPrice(order.couponDiscount)}</span>
                       </div>
                     )}
-                    
+
                     <Divider className="my-3" />
-                    
+
                     <div className="flex justify-between font-bold text-lg text-gray-900">
                       <span>Grand Total</span>
                       <span>{formatPrice(order.grandTotal)}</span>
                     </div>
-                    
+
+
+                    <div className="flex justify-between font-bold text-lg text-gray-900">
+                      <span>Paid</span>
+                      <span>{formatPrice(order.paid)}</span>
+                    </div>
+
                     {order.due > 0 && (
-                       <div className="flex justify-between text-orange-600 font-medium text-sm">
+                      <div className="flex justify-between text-orange-600 font-medium text-sm">
                         <span>Due Amount</span>
                         <span>{formatPrice(order.due)}</span>
                       </div>
@@ -416,18 +418,18 @@ export default function OrderTracker() {
                       <>
                         <Divider className="my-3" />
                         <div className="bg-red-50 p-3 rounded-lg space-y-2">
-                           {order.totalReturned > 0 && (
+                          {order.totalReturned > 0 && (
                             <div className="flex justify-between text-gray-600 text-sm">
                               <span>Total Returned Value</span>
                               <span>{formatPrice(order.totalReturned)}</span>
                             </div>
-                           )}
-                            {order.totalRefuned > 0 && (
-                             <div className="flex justify-between text-green-600 font-bold">
-                                <span>Refunded Amount</span>
-                                <span>{formatPrice(order.totalRefuned)}</span>
-                              </div>
-                            )}
+                          )}
+                          {order.totalRefuned > 0 && (
+                            <div className="flex justify-between text-green-600 font-bold">
+                              <span>Refunded Amount</span>
+                              <span>{formatPrice(order.totalRefuned)}</span>
+                            </div>
+                          )}
                         </div>
                       </>
                     )}
@@ -496,47 +498,47 @@ export default function OrderTracker() {
 
                 {/* Actions */}
                 {order.status === "Delivered" && (
-                    <Card
-                      bordered={false}
-                      className="shadow-sm rounded-xl"
-                    >
-                       <Space direction="vertical" className="w-full">
-                          <Button
-                              block
-                              type="default"
-                              icon={<CheckCircleOutlined />}
-                              onClick={() =>
-                                dispatch(
-                                  setProductRating({
-                                    type: ActionType.CREATE,
-                                    productRating: true,
-                                    payload: { orderItems: order.orderItems },
-                                  })
-                                )
-                              }
-                            >
-                              Write a Review
-                            </Button>
+                  <Card
+                    bordered={false}
+                    className="shadow-sm rounded-xl"
+                  >
+                    <Space direction="vertical" className="w-full">
+                      <Button
+                        block
+                        type="default"
+                        icon={<CheckCircleOutlined />}
+                        onClick={() =>
+                          dispatch(
+                            setProductRating({
+                              type: ActionType.CREATE,
+                              productRating: true,
+                              payload: { orderItems: order.orderItems },
+                            })
+                          )
+                        }
+                      >
+                        Write a Review
+                      </Button>
 
-                            <Button
-                              block
-                              danger
-                              icon={<UndoOutlined />}
-                              onClick={() =>
-                                dispatch(
-                                  setAction({
-                                    type: ActionType.UPDATE,
-                                    returnAllOrder: true,
-                                    payload: { orderId: order.id },
-                                  })
-                                )
-                              }
-                            >
-                              Return Full Order
-                            </Button>
-                            <NewReview />
-                       </Space>
-                    </Card>
+                      <Button
+                        block
+                        danger
+                        icon={<UndoOutlined />}
+                        onClick={() =>
+                          dispatch(
+                            setAction({
+                              type: ActionType.UPDATE,
+                              returnAllOrder: true,
+                              payload: { orderId: order.id },
+                            })
+                          )
+                        }
+                      >
+                        Return Full Order
+                      </Button>
+                      <NewReview />
+                    </Space>
+                  </Card>
                 )}
               </div>
             </Col>

@@ -1,8 +1,10 @@
 "use client";
+import ReturnDetailsModal from "@/components/dashboard/return/ReturnDetailsModal";
 import ReturnOrderStatusUpdate from "@/components/dashboard/return/ReturnOrderStatusUpdate";
 import { ActionType } from "@/constants/constants";
 import { deleteReturn, getReturns } from "@/lib/apis/return";
 import { getStatus } from "@/lib/utils/getStatus";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
   selectGlobal,
   setAction,
@@ -12,6 +14,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import {
   CheckOutlined,
+  EyeOutlined,
   QuestionCircleOutlined,
   RestOutlined,
   SearchOutlined,
@@ -44,6 +47,8 @@ interface DataType {
   requestedQty: number;
   approvedQty: number;
   image?: string;
+  images?: string[];
+  comments?: string;
   createdAt: string;
   user?: { name: string; phone: string };
   product?: { name: string };
@@ -65,7 +70,7 @@ const Page: React.FC = () => {
       dispatch(setLoading({ loading: true }));
       try {
         const res = await getReturns();
-        console.log("returns res", res);
+        console.log("res", res);
         const data = res.data || [];
         setAllReturns(data);
         const filtered = data.filter((r: any) => r.status === tabKey);
@@ -218,10 +223,20 @@ const Page: React.FC = () => {
     },
     {
       title: "Evidence",
-      dataIndex: "image",
-      key: "image",
-      render: (img) =>
-        img ? <Image src={img} width={50} height={50} alt="evidence" /> : "N/A",
+      dataIndex: "images",
+      key: "images",
+      render: (images) =>
+        images && images.length > 0 ? (
+          <Image
+            src={getImageUrl(images[0])}
+            width={50}
+            height={50}
+            alt="evidence"
+            style={{ borderRadius: "4px", objectFit: "cover" }}
+          />
+        ) : (
+          "N/A"
+        ),
     },
     {
       title: "Req. Qty",
@@ -261,6 +276,21 @@ const Page: React.FC = () => {
                 setAction({
                   type: ActionType.UPDATE,
                   orderReturnStatusUpdate: true,
+                  payload: { id: value.id, ...value },
+                })
+              )
+            }
+          />
+          <Button
+            size="small"
+            icon={<EyeOutlined />}
+            title="View Details"
+            className="me-1"
+            onClick={() =>
+              dispatch(
+                setAction({
+                  type: ActionType.UPDATE,
+                  orderReturnDetails: true,
                   payload: { id: value.id, ...value },
                 })
               )
@@ -330,6 +360,7 @@ const Page: React.FC = () => {
         size="large"
       />
       {global.action.orderReturnStatusUpdate && <ReturnOrderStatusUpdate />}
+      {global.action.orderReturnDetails && <ReturnDetailsModal />}
     </div>
   );
 };

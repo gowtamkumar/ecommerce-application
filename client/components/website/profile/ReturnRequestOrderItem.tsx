@@ -1,18 +1,20 @@
 import { saveReturn } from "@/lib/apis/return";
 import { getSettings } from "@/lib/apis/setting";
 import { errorNotification } from "@/lib/utils/notification";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { normFile } from "@/lib/utils/commonFunctions";
+import { handlePreview, handlePreviewCancel, normFile } from "@/lib/utils/commonFunctions";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Modal, Select, Space, Upload } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Modal, Select, Upload, Image } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
+import uploadButton from "@/components/share-component/uploadButton";
 
 const ReturnRequestOrderItem = () => {
   const [reasons, setReasons] = useState<string[]>([
@@ -22,13 +24,12 @@ const ReturnRequestOrderItem = () => {
     "Quality not as expected",
     "Changed my mind",
   ]);
+  const [formValues, setFormValues] = useState<any>({ images: [], fileList: [] });
   const global = useSelector(selectGlobal);
   const { payload, returnOrderItem, type } = global.action;
-  // hook
+  
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-
-  console.log("payload", payload);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -39,18 +40,27 @@ const ReturnRequestOrderItem = () => {
     };
     fetchSettings();
 
-    form.setFieldsValue(payload);
+    if (payload) {
+      form.setFieldsValue(payload);
+      setFormValues({
+        ...payload,
+        images: payload.images || [],
+        fileList: payload.fileList || [],
+      });
+    }
+    
     return () => {
       form.resetFields();
+      setFormValues({ images: [], fileList: [] });
     };
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    console.log("asdf", values);
-
-    // Transform fileList to array of filenames
-    const images = values.images?.map((file: any) => file.fileName || file.name) || [];
-    const submissionData = { ...values, images };
+    // Backend expects array of strings (filenames)
+    const submissionData = { 
+      ...values, 
+      images: values.images || [] 
+    };
 
     const result = await saveReturn(submissionData);
     if (!result.success) {
@@ -67,15 +77,39 @@ const ReturnRequestOrderItem = () => {
   const resetFormData = () => {
     if (payload?.id) {
       form.setFieldsValue(payload);
+      setFormValues(payload);
     } else {
       form.resetFields();
+      setFormValues({ images: [], fileList: [] });
+    }
+  };
+
+  const customUploadRequest = async (options: any) => {
+    const result = await handleGlobalUpload(options);
+    if (result) {
+      const { newFile, newFileName } = result;
+      const currentImages = form.getFieldValue("images") || [];
+      const currentFileList = form.getFieldValue("fileList") || [];
+
+      const updatedImages = [...currentImages, newFileName];
+      const updatedFileList = [...currentFileList, newFile];
+
+      form.setFieldsValue({
+        images: updatedImages,
+        fileList: updatedFileList,
+      });
+      setFormValues({
+        ...formValues,
+        images: updatedImages,
+        fileList: updatedFileList,
+      });
     }
   };
 
   return (
     <Modal
       title={`Order Return`}
-      width={500}
+      width={600}
       zIndex={1050}
       open={type === ActionType.UPDATE && returnOrderItem}
       onCancel={handleClose}
@@ -85,6 +119,7 @@ const ReturnRequestOrderItem = () => {
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
+        onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
       >
@@ -99,12 +134,7 @@ const ReturnRequestOrderItem = () => {
         <Form.Item
           name="reason"
           label="Return Reason"
-          rules={[
-            {
-              required: true,
-              message: "Return Reason is required",
-            },
-          ]}
+          rules={[{ required: true, message: "Return Reason is required" }]}
         >
           <Select placeholder="Select Reason">
             {reasons.map((reason) => (
@@ -125,70 +155,86 @@ const ReturnRequestOrderItem = () => {
         <Form.Item
           name="phone"
           label="Phone"
-          rules={[
-            {
-              required: true,
-              message: "Phone is required",
-            },
-          ]}
+          rules={[{ required: true, message: "Phone is required" }]}
         >
-          <Input role="alert" placeholder="Enter Reason" />
+          <Input placeholder="Enter your phone number" />
         </Form.Item>
 
         <Form.Item
           name="requestedQty"
           label="Request Qty"
-          rules={[
-            {
-              required: true,
-              message: "requestedQty is required",
-            },
-          ]}
+          rules={[{ required: true, message: "Request quantity is required" }]}
         >
-          <InputNumber placeholder="Enter " />
+          <InputNumber min={1} style={{ width: '100%' }} placeholder="Enter quantity" />
         </Form.Item>
 
         <Form.Item
-          name="images"
+          name="fileList"
           label="Proof Images"
           valuePropName="fileList"
           getValueFromEvent={normFile}
+          extra="Upload up to 5 images as proof"
         >
           <Upload
+            name="images"
             listType="picture-card"
-            multiple
-            customRequest={async (options) => {
-              const res = await handleGlobalUpload({
-                ...options,
-                filename: "image",
-              });
-              if (res) {
-                options.onSuccess?.(res.newFile);
+            fileList={formValues?.fileList || []}
+            onRemove={async (v: any) => {
+              const currentImages = form.getFieldValue("images") || [];
+              const currentFileList = form.getFieldValue("fileList") || [];
+              
+              const updatedImages = currentImages.filter((img: string) => img !== v.fileName);
+              const updatedFileList = currentFileList.filter((file: any) => file.fileName !== v.fileName);
+              
+              form.setFieldsValue({ images: updatedImages, fileList: updatedFileList });
+              setFormValues({ ...formValues, images: updatedImages, fileList: updatedFileList });
+              
+              if (v.fileName) {
+                await fileDeleteWithPhoto({ filename: v.fileName });
               }
             }}
+            onPreview={(file) => handlePreview(file, dispatch)}
+            customRequest={customUploadRequest}
+            multiple
+            maxCount={5}
           >
-            <div>
-              <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
-            </div>
+            {(formValues?.fileList?.length || 0) < 5 && uploadButton}
           </Upload>
         </Form.Item>
 
-        <div className="text-end">
-          <Button className="mx-2" size="small" onClick={resetFormData}>
+        {/* Hidden field to store the raw filenames for the backend */}
+        <Form.Item name="images" hidden>
+          <Input />
+        </Form.Item>
+
+        <div className="text-end mt-4">
+          <Button className="mx-2" onClick={resetFormData}>
             Reset
           </Button>
           <Button
-            size="small"
-            color="primary"
+            type="primary"
             htmlType="submit"
             loading={global.loading.save}
             disabled={!payload?.orderId}
           >
-            Save
+            Submit Return
           </Button>
         </div>
       </Form>
+
+      <Modal
+        open={global.previewOpen}
+        title={global.previewTitle}
+        footer={null}
+        onCancel={() => handlePreviewCancel(dispatch)}
+      >
+        <Image
+          alt="preview"
+          style={{ width: "100%" }}
+          src={global.previewImage}
+          preview={false}
+        />
+      </Modal>
     </Modal>
   );
 };
