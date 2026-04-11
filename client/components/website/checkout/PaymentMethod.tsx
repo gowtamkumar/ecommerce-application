@@ -95,7 +95,7 @@ export default function PaymentMethod() {
                 })
               )
             }
-            value={checkoutFormData.termsAndConditions}
+            checked={checkoutFormData.termsAndConditions}
           />
 
           <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">

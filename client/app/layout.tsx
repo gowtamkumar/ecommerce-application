@@ -166,7 +166,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
+      <head suppressHydrationWarning>
         {favicon && <link rel="icon" href={favicon} />}
 
         {googleFonts.length > 0 && (
