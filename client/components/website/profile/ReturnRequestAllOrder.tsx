@@ -1,13 +1,15 @@
 import { returnOrder } from "@/lib/apis/return";
 import { getSettings } from "@/lib/apis/setting";
+import { normFile } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Modal, Select, Space } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Select, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
@@ -44,11 +46,13 @@ const ReturnRequestAllOrder = () => {
   const handleSubmit = async (values: any) => {
     console.log("retur request all order", values);
 
+    // Transform fileList to array of filenames
+    const images = values.images?.map((file: any) => file.fileName || file.name) || [];
+    const submissionData = { ...values, images };
 
-    const result = await returnOrder(values);
+    const result = await returnOrder(submissionData);
 
     console.log("result", result);
-
 
     if (!result.success) {
       errorNotification({ message: result.message });
@@ -128,31 +132,31 @@ const ReturnRequestAllOrder = () => {
           <Input role="alert" placeholder="Enter Reason" />
         </Form.Item>
 
-        <Form.List name="images">
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }, index) => (
-                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                  <Form.Item
-                    {...restField}
-                    name={[name]}
-                    label={index === 0 ? "Images (URLs)" : ""}
-                    rules={[{ required: true, message: 'Missing image URL' }]}
-                    style={{ flex: 1, marginBottom: 0 }}
-                  >
-                    <Input placeholder="Enter image URL" />
-                  </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
-                </Space>
-              ))}
-              <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Proof Image
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+        <Form.Item
+          name="images"
+          label="Proof Images"
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+        >
+          <Upload
+            listType="picture-card"
+            multiple
+            customRequest={async (options) => {
+              const res = await handleGlobalUpload({
+                ...options,
+                filename: "image",
+              });
+              if (res) {
+                options.onSuccess?.(res.newFile);
+              }
+            }}
+          >
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+          </Upload>
+        </Form.Item>
 
         <div className="text-end">
           <Button
