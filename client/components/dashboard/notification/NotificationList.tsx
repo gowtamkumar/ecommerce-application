@@ -14,6 +14,7 @@ import { DeleteOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import { Button, Popconfirm, Select, Space, Table, Tag, Tooltip } from "antd";
 import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -39,9 +40,11 @@ const NotificationList = () => {
 
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
+  const session = useSession();
 
 
   const fetchData = useCallback(async () => {
+    if (session.status !== "authenticated") return;
     dispatch(setLoading({ loading: true }));
     try {
       const [resNotifs, resUsers] = await Promise.all([
@@ -61,8 +64,10 @@ const NotificationList = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (session.status === "authenticated") {
+      fetchData();
+    }
+  }, [fetchData, session.status]);
 
   // Handle Filtering
   useEffect(() => {

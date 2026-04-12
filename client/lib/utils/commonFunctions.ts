@@ -107,9 +107,11 @@ export const handleAsyncDeleteAction = async (
 
 export async function getAuthHeaders() {
   const session = await auth();
-  // if (!session?.user?.accessToken) {
-  //   throw new Error("User not authenticated");
-  // }
+  if (!session?.user?.accessToken) {
+    return {
+      "Content-Type": "application/json",
+    };
+  }
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${session?.user?.accessToken}`,
@@ -150,12 +152,11 @@ export async function getHeaders({ method }: { method: string }) {
 // Function to handle API responses
 export async function handleResponse(res: Response) {
   if (res.status === 401) {
-    // Optional: Trigger global signout if on client side
-    // For now, return the error structure so the UI can handle it
     return {
       success: false,
       message: "Session expired. Please login again.",
       status: 401,
+      data: null
     };
   }
   return res.json();

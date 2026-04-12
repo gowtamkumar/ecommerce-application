@@ -8,13 +8,24 @@ export async function getNotifications() {
   const res = await fetch(`${appConfig.apiUrl}/notifications`, {
     cache: "no-cache",
     headers,
-  });
+  } as any);
   return await handleResponse(res);
 }
 
 // Get all notifications for the current user
 export async function getNotificationsForAdmin() {
-  const headers = await getAuthHeaders();
+  const headers: any = await getAuthHeaders();
+  
+  // If no token, skip the request to avoid backend errors
+  if (!headers.Authorization) {
+    return {
+      success: false,
+      message: "Authentication required",
+      status: 401,
+      data: []
+    };
+  }
+
   const res = await fetch(`${appConfig.apiUrl}/notifications/admin`, {
     cache: "no-cache",
     headers,
@@ -28,7 +39,7 @@ export async function getNotification(id: string) {
   const res = await fetch(`${appConfig.apiUrl}/notifications/${id}`, {
     cache: "no-cache",
     headers,
-  });
+  } as any);
   return await handleResponse(res);
 }
 
@@ -39,7 +50,7 @@ export async function readNotification({ id }: any) {
     method: "GET",
     cache: "no-cache",
     headers,
-  });
+  } as any);
   return await handleResponse(res);
 }
 
@@ -50,7 +61,7 @@ export async function clearNotifications() {
     method: "GET",
     cache: "no-cache",
     headers,
-  });
+  } as any);
   return await handleResponse(res);
 }
 
@@ -61,7 +72,7 @@ export async function deleteNotification(id: string) {
     method: "DELETE",
     cache: "no-cache",
     headers,
-  });
+  } as any);
   return await handleResponse(res);
 }
 
@@ -78,6 +89,6 @@ export async function sendPromotionalNotification(data: {
     cache: "no-cache",
     headers,
     body: JSON.stringify(data),
-  });
+  } as any);
   return await handleResponse(res);
 }

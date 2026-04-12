@@ -27,9 +27,18 @@ const NotificationDropdown = () => {
   const session = useSession();
 
   const fetchNotifications = async () => {
+    if (session.status !== "authenticated") return;
+    
     setLoading(true);
     try {
       const res = await getNotificationsForAdmin();
+      
+      // If unauthorized, don't attempt to process data
+      if (res?.status === 401) {
+        console.warn("Notification fetch failed: Session expired");
+        return;
+      }
+
       if (res?.data) {
         setNotifications(res.data);
       }
@@ -41,11 +50,13 @@ const NotificationDropdown = () => {
   };
 
   useEffect(() => {
-    fetchNotifications();
-    // Optional: Poll for new notifications every 60s
-    const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
-  }, []);
+    if (session.status === "authenticated") {
+      fetchNotifications();
+      // Optional: Poll for new notifications every 60s
+      const interval = setInterval(fetchNotifications, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [session.status]);
 
   const handleRead = async (id: string) => {
     try {

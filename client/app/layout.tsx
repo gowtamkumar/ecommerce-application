@@ -183,18 +183,20 @@ export default async function RootLayout({
         )}
 
         <style
+          key="custom-theme-vars"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
-              :root {
-                ${Object.entries(cssVars)
-                .map(([key, value]) => `${key}: ${value};`)
-                .join("\n")}
-                body {
-                  background-color: var(--background-color);
-                  color: var(--text-color);
-                }
-              }
-            `,
+:root {
+  ${Object.entries(cssVars)
+    .map(([key, value]) => `${key}: ${value};`)
+    .join("\n")}
+}
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+            `.trim(),
           }}
         />
 
