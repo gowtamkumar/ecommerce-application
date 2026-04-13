@@ -37,7 +37,7 @@ export default function ChangePassword() {
     <div className="flex justify-center items-start pt-6">
       <Card
         className="w-full max-w-lg shadow-sm"
-        bordered={false}
+        variant="borderless"
       >
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 text-blue-500 mb-4">

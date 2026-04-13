@@ -214,7 +214,7 @@ export default function OrderTracker() {
         </p>
 
         <Card
-          bordered={false}
+          variant="borderless"
           className="max-w-2xl mx-auto shadow-lg bg-white/50 backdrop-blur-sm border border-white/50"
           styles={{ body: { padding: '2rem' } }}
         >
@@ -255,14 +255,14 @@ export default function OrderTracker() {
       </div>
 
       {loading ? (
-        <Card loading bordered={false} className="shadow-sm rounded-xl" />
+        <Card loading variant="borderless" className="shadow-sm rounded-xl" />
       ) : order.trackingNo ? (
         <div className="animate-fade-in space-y-8">
 
           {/* Order Status & Summary Banner */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Status Steps */}
-            <Card bordered={false} className="md:col-span-2 shadow-sm rounded-xl overflow-hidden">
+            <Card variant="borderless" className="md:col-span-2 shadow-sm rounded-xl overflow-hidden">
               <div className="bg-gray-50 -m-6 mb-6 p-4 border-b border-gray-100 flex justify-between items-center">
                 <div className="font-semibold text-gray-700">Order Status: <span className="text-indigo-600">{order.status}</span></div>
                 <div className="text-sm text-gray-500">Last Updated: {dayjs(order.updatedAt).format('MMM D, h:mm A')}</div>
@@ -306,7 +306,7 @@ export default function OrderTracker() {
             </Card>
 
             {/* Quick Actions / Key Info */}
-            <Card bordered={false} className="shadow-sm rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white">
+            <Card variant="borderless" className="shadow-sm rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white">
               <div className="h-full flex flex-col justify-between">
                 <div>
                   <div className="text-indigo-200 text-sm mb-1">Total Amount</div>
@@ -331,7 +331,7 @@ export default function OrderTracker() {
             <Col xs={24} lg={16}>
               <Card
                 title={<span className="font-bold text-gray-800">Order Items</span>}
-                bordered={false}
+                variant="borderless"
                 className="shadow-sm rounded-xl h-full"
               >
                 <Table
@@ -364,7 +364,7 @@ export default function OrderTracker() {
               <div className="space-y-6">
                 <Card
                   title={<span className="font-bold text-gray-800">Payment Summary</span>}
-                  bordered={false}
+                  variant="borderless"
                   className="shadow-sm rounded-xl"
                 >
                   <div className="space-y-3">
@@ -470,7 +470,7 @@ export default function OrderTracker() {
 
                 <Card
                   title={<span className="font-bold text-gray-800">Timeline</span>}
-                  bordered={false}
+                  variant="borderless"
                   className="shadow-sm rounded-xl"
                   styles={{ body: { maxHeight: '400px', overflowY: 'auto' } }}
                 >
@@ -499,7 +499,7 @@ export default function OrderTracker() {
                 {/* Actions */}
                 {order.status === "Delivered" && (
                   <Card
-                    bordered={false}
+                    variant="borderless"
                     className="shadow-sm rounded-xl"
                   >
                     <Space direction="vertical" className="w-full">
