@@ -2,7 +2,6 @@
 import { getDBConnection } from '@/config/db';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { errorHandler } from '@/middlewares/errorHandler';
-import { trafficMonitor } from '@/middlewares/traffic-monitor.middleware';
 import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
 import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
 import { UserEntity } from '@/modules/user/auth/model/user.entity';
@@ -18,6 +17,7 @@ import 'reflect-metadata';
 import { auditLogMiddleware } from '@/middlewares/audit-log.middleware';
 import { setupRoutes } from '@/routes/routes';
 import { initCronJobs } from '@/services/cron.service';
+import compression from 'compression';
 import { rateLimit } from 'express-rate-limit';
 import path from 'path';
 
@@ -50,7 +50,8 @@ const limiter = rateLimit({
 });
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
-app.use(trafficMonitor);
+app.use(compression());
+// app.use(trafficMonitor);
 
 // middleware
 app.use(cookieParser()); // cookie parser when we needed the cookies value then we simply get and set
