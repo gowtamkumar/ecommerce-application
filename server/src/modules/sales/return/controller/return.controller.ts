@@ -13,6 +13,8 @@ import dayjs from 'dayjs';
 import { NextFunction, Request, Response } from 'express';
 import { ReturnStatus } from '../enums/return-status.enum';
 import { ReturnEntity } from '../model/return.entity';
+import { RefundEntity } from '@/modules/sales/refund/model/refund.entity';
+import { RefundStatus as LocalRefundStatus } from '@/modules/sales/refund/enums/refund-status.enum';
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -401,6 +403,17 @@ export const singleProductReturn = asyncHandler(async (req: CustomRequest, res: 
         id: item.id,
         approvedQty: approved_qty,
       });
+
+      // Create a manual refund record
+      const refundRepository = queryRunner.manager.getRepository(RefundEntity);
+      const newRefund = refundRepository.create({
+        orderId: order.id,
+        userId: userId,
+        amount: totalRefund,
+        status: LocalRefundStatus.Pending,
+        reason: result.reason || 'Product Return',
+      });
+      await refundRepository.save(newRefund);
     }
 
     // Fallback: if status is not `Completed`, only update `returnedStatus`
@@ -559,6 +572,17 @@ export const updateReturn = asyncHandler(async (req: CustomRequest, res: Respons
         id: item.id,
         approvedQty: approved_val,
       });
+
+      // Create a manual refund record
+      const refundRepository = queryRunner.manager.getRepository(RefundEntity);
+      const newRefund = refundRepository.create({
+        orderId: order.id,
+        userId: userId,
+        amount: totalRefund,
+        status: LocalRefundStatus.Pending,
+        reason: result.reason || 'Product Return',
+      });
+      await refundRepository.save(newRefund);
     }
 
     // Update return record
@@ -797,6 +821,17 @@ export const completeFullOrderReturn = asyncHandler(async (req: Request, res: Re
       refundStatus: RefundStatus.None,
       returnedStatus: ReturnStatus.Completed,
     });
+
+    // Create a manual refund record for the full order return
+    const refundRepository = queryRunner.manager.getRepository(RefundEntity);
+    const newRefund = refundRepository.create({
+      orderId: Number(orderId),
+      userId: order.userId,
+      amount: totalRefund,
+      status: LocalRefundStatus.Pending,
+      reason: 'Full Order Return',
+    });
+    await refundRepository.save(newRefund);
 
     console.log('requestedQty', requestedQty);
 

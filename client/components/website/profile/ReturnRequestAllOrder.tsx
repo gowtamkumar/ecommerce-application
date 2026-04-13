@@ -1,28 +1,22 @@
+import uploadButton from "@/components/share-component/uploadButton";
+import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import { returnOrder } from "@/lib/apis/return";
 import { getSettings } from "@/lib/apis/setting";
+import { handlePreview, handlePreviewCancel, normFile } from "@/lib/utils/commonFunctions";
+import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { errorNotification } from "@/lib/utils/notification";
-import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { handlePreview, handlePreviewCancel, normFile } from "@/lib/utils/commonFunctions";
-import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
-import { Button, Form, Input, Modal, Select, Upload, Image } from "antd";
+import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
-import uploadButton from "@/components/share-component/uploadButton";
 
 const ReturnRequestAllOrder = () => {
-  const [reasons, setReasons] = useState<string[]>([
-    "Defective product",
-    "Wrong item received",
-    "Size/Fit issue",
-    "Quality not as expected",
-    "Changed my mind",
-  ]);
+  const [reasons, setReasons] = useState<string[]>([]);
   const [formValues, setFormValues] = useState<any>({ images: [], fileList: [] });
   const global = useSelector(selectGlobal);
   const { payload, returnAllOrder, type } = global.action;
@@ -56,10 +50,10 @@ const ReturnRequestAllOrder = () => {
 
   const handleSubmit = async (values: any) => {
     // Backend expects array of strings (filenames)
-    const submissionData = { 
-        ...values, 
-        images: values.images || [] 
-      };
+    const submissionData = {
+      ...values,
+      images: values.images || []
+    };
 
     const result = await returnOrder(submissionData);
     if (!result.success) {
@@ -104,6 +98,8 @@ const ReturnRequestAllOrder = () => {
       });
     }
   };
+
+  console.log("reasons", reasons);
 
   return (
     <Modal
@@ -170,13 +166,13 @@ const ReturnRequestAllOrder = () => {
             onRemove={async (v: any) => {
               const currentImages = form.getFieldValue("images") || [];
               const currentFileList = form.getFieldValue("fileList") || [];
-              
+
               const updatedImages = currentImages.filter((img: string) => img !== v.fileName);
               const updatedFileList = currentFileList.filter((file: any) => file.fileName !== v.fileName);
-              
+
               form.setFieldsValue({ images: updatedImages, fileList: updatedFileList });
               setFormValues({ ...formValues, images: updatedImages, fileList: updatedFileList });
-              
+
               if (v.fileName) {
                 await fileDeleteWithPhoto({ filename: v.fileName });
               }

@@ -194,6 +194,12 @@ const navbarRoute = [
     label: <Link href="/dashboard/return">Return</Link>,
     route: "true",
   },
+  {
+    key: "refund_manage",
+    icon: <MdPayment className="h-5 w-5 text-blue-500" />,
+    label: <Link href="/dashboard/refunds">Refunds</Link>,
+    route: "true",
+  },
 
   {
     key: "blog",

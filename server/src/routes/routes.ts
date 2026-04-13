@@ -21,6 +21,7 @@ import paymentRoute from '@/modules/sales/payment/route/payment.route';
 import productVariantRoute from '@/modules/catalog/products/product-variant/route/product-variant.route';
 import productRoutes from '@/modules/catalog/products/product/route/product.route';
 import returnsRoute from '@/modules/sales/return/route/return.route';
+import refundRoute from '@/modules/sales/refund/route/refund.route';
 import reviewRoute from '@/modules/communication/review/route/review.route';
 import shippingAddressRoutes from '@/modules/sales/shipping-address/route/shipping-address.route';
 import shippingChargeRoutes from '@/modules/sales/shipping-charge/route/shipping-charge.route';
@@ -75,6 +76,7 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/coupons', couponRoute);
   app.use('/api/v1/stock-adjusts', AuthGuard, stockAdjust);
   app.use('/api/v1/returns', AuthGuard, returnsRoute);
+  app.use('/api/v1/refunds', AuthGuard, refundRoute);
   // public route
   app.use('/api/v1/home', homeRoute);
   // app.use("/api/v1/visitors", visitorRoute);

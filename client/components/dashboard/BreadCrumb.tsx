@@ -1,3 +1,4 @@
+"use client";
 import { Breadcrumb } from "antd";
 import { usePathname } from "next/navigation";
 import React from "react";

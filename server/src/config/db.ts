@@ -28,6 +28,7 @@ import { OrderTrackingEntity } from '@/modules/sales/order-tracking/model/order-
 import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
 import { OrderEntity } from '@/modules/sales/order/model/order.entity';
 import { PaymentEntity } from '@/modules/sales/payment/model/payment.entity';
+import { RefundEntity } from '@/modules/sales/refund/model/refund.entity';
 import { ReturnEntity } from '@/modules/sales/return/model/return.entity';
 import { ShippingAddressEntity } from '@/modules/sales/shipping-address/model/shipping-address.entity';
 import { ShippingChargeEntity } from '@/modules/sales/shipping-charge/model/shipping-charge.entity';
@@ -142,6 +143,7 @@ const dbConnection = new DataSource({
     CurrencyEntity,
     AuditLogEntity,
     PageEntity,
+    RefundEntity,
   ],
   extra: {
     connectionTimeoutMillis: 5000,

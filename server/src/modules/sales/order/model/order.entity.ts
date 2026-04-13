@@ -87,13 +87,13 @@ export class OrderEntity {
 
   // refunded
   @Column({
-    name: 'total_refuned',
+    name: 'total_refunded',
     type: 'numeric',
     precision: 10,
     scale: 2,
     nullable: true,
   })
-  totalRefuned!: number;
+  totalRefunded!: number;
 
   @Column({
     name: 'refund_status',
