@@ -51,6 +51,7 @@ const CancelOrder = () => {
       open={type === ActionType.UPDATE && cancelOrder}
       onCancel={handleClose}
       footer={null}
+      forceRender
     >
       <Form
         layout="vertical"

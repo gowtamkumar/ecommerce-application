@@ -99,7 +99,8 @@ const AddShippingAddress = () => {
       onCancel={handleClose}
       footer={null}
       centered
-      maskClosable={false}
+      mask={false}
+      forceRender
     >
       <Form
         layout="vertical"

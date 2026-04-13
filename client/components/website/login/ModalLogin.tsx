@@ -56,6 +56,7 @@ export default function ModalLogin() {
       open={global.unAuthorize}
       onCancel={handleClose}
       footer={null}
+      forceRender
     >
       <div className="p-16">
         <Form

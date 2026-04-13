@@ -1,15 +1,15 @@
 "use client";
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Rate, Select } from "antd";
+import { ActionType } from "@/constants/constants";
+import { saveReview } from "@/lib/apis/review";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import {
   selectGlobal,
   setLoading,
   setProductRating,
 } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, Modal, Rate, Select } from "antd";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { saveReview } from "@/lib/apis/review";
-import { ActionType } from "@/constants/constants";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const NewReview = () => {
   const global = useSelector(selectGlobal);
@@ -55,6 +55,7 @@ const NewReview = () => {
       open={type === ActionType.CREATE || type === ActionType.UPDATE}
       onCancel={handleClose}
       footer={null}
+      forceRender
     >
       <Form
         {...layout}

@@ -1,6 +1,6 @@
 "use server";
 import appConfig from "@/appConfig";
-import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
+import { ApiResponse, getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Define an interface for the shipping address
 interface ShippingAddress {
@@ -12,12 +12,7 @@ interface ShippingAddress {
   [key: string]: any; // Allow additional properties
 }
 
-// Define the response structure
-interface ApiResponse<T> {
-  data?: T;
-  message?: string;
-  status?: string;
-}
+
 
 // Function to save a shipping address
 export async function saveShippingAddress(
@@ -29,7 +24,7 @@ export async function saveShippingAddress(
     cache: "no-cache",
     headers,
     body: JSON.stringify(data),
-  });
+  } as any);
 
   return await handleResponse(res);
 }
@@ -42,7 +37,7 @@ export async function getShippingAddress(): Promise<
   const res = await fetch(`${appConfig.apiUrl}/shipping-address`, {
     cache: "no-cache",
     headers,
-  });
+  } as any);
 
   return await handleResponse(res);
 }
@@ -51,7 +46,7 @@ export async function getUserShippingAddresses(){
   const res = await fetch(`${appConfig.apiUrl}/shipping-address/user`, {
     cache: "no-cache",
     headers,
-  });
+  } as any);
 
   return await handleResponse(res);
 }
@@ -68,7 +63,7 @@ export async function updateShippingAddress(
       cache: "no-cache",
       headers,
       body: JSON.stringify(data),
-    }
+    } as any
   );
 
   return await handleResponse(res);
@@ -83,7 +78,6 @@ export async function deleteShippingAddress(
     method: "DELETE",
     cache: "no-cache",
     headers,
-  });
-
+  }as any);
   return await handleResponse(res);
 }

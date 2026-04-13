@@ -102,7 +102,7 @@ export default function OrderTracker() {
       dataIndex: "product",
       key: "product",
       render: (v: { name: string }, record: any) => (
-        <Space direction="vertical" size={0}>
+        <Space orientation="vertical" size={0}>
           <Text strong>{v.name}</Text>
           {/* Show item level return status if any */}
           {record.requestedQty > 0 && (
@@ -502,7 +502,7 @@ export default function OrderTracker() {
                     variant="borderless"
                     className="shadow-sm rounded-xl"
                   >
-                    <Space direction="vertical" className="w-full">
+                    <Space orientation="vertical" className="w-full">
                       <Button
                         block
                         type="default"
@@ -521,7 +521,7 @@ export default function OrderTracker() {
                       </Button>
 
                       {(() => {
-                        const eligibleItems = order.orderItems.filter((item: any) => 
+                        const eligibleItems = order.orderItems.filter((item: any) =>
                           item.product.isReturnable && (item.qty - (item.requestedQty || 0)) > 0
                         );
                         const isFullyReturned = eligibleItems.length === 0;
