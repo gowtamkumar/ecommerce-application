@@ -14,6 +14,7 @@ import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 
 const ReturnRequestAllOrder = () => {
   const [reasons, setReasons] = useState<string[]>([]);
@@ -49,17 +50,19 @@ const ReturnRequestAllOrder = () => {
   }, [global.action]);
 
   const handleSubmit = async (values: any) => {
-    // Backend expects array of strings (filenames)
-    const submissionData = {
-      ...values,
-      images: values.images || []
-    };
-
-    const result = await returnOrder(submissionData);
-    if (!result.success) {
-      errorNotification({ message: result.message });
-    }
-    handleClose();
+    await handleAsyncAction(
+      async () => {
+        return await returnOrder({
+          ...values,
+          images: values.images || [],
+        });
+      },
+      dispatch,
+      {
+        successMessage: "Return request submitted successfully!",
+        loadingKey: "save",
+      }
+    );
   };
 
   const handleClose = () => {

@@ -520,22 +520,32 @@ export default function OrderTracker() {
                         Write a Review
                       </Button>
 
-                      <Button
-                        block
-                        danger
-                        icon={<UndoOutlined />}
-                        onClick={() =>
-                          dispatch(
-                            setAction({
-                              type: ActionType.UPDATE,
-                              returnAllOrder: true,
-                              payload: { orderId: order.id },
-                            })
-                          )
-                        }
-                      >
-                        Return Full Order
-                      </Button>
+                      {(() => {
+                        const eligibleItems = order.orderItems.filter((item: any) => 
+                          item.product.isReturnable && (item.qty - (item.requestedQty || 0)) > 0
+                        );
+                        const isFullyReturned = eligibleItems.length === 0;
+
+                        return (
+                          <Button
+                            block
+                            danger
+                            icon={<UndoOutlined />}
+                            disabled={isFullyReturned}
+                            onClick={() =>
+                              dispatch(
+                                setAction({
+                                  type: ActionType.UPDATE,
+                                  returnAllOrder: true,
+                                  payload: { orderId: order.id },
+                                })
+                              )
+                            }
+                          >
+                            {isFullyReturned ? "All items returned" : "Return Full Order"}
+                          </Button>
+                        );
+                      })()}
                       <NewReview />
                     </Space>
                   </Card>

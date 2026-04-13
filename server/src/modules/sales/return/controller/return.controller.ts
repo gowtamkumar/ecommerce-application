@@ -6,6 +6,8 @@ import { ProductVariantEntity } from '@/modules/catalog/products/product-variant
 import { OrderStatus, RefundStatus } from '@/modules/sales/order/enums';
 import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
 import { OrderEntity } from '@/modules/sales/order/model/order.entity';
+import { RefundStatus as LocalRefundStatus } from '@/modules/sales/refund/enums/refund-status.enum';
+import { RefundEntity } from '@/modules/sales/refund/model/refund.entity';
 import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
 import { returnFullOrderValidationSchema } from '@/validation/return/returnfullOrderValidation';
 import { returnValidationSchema } from '@/validation/return/returnValidation';
@@ -13,8 +15,6 @@ import dayjs from 'dayjs';
 import { NextFunction, Request, Response } from 'express';
 import { ReturnStatus } from '../enums/return-status.enum';
 import { ReturnEntity } from '../model/return.entity';
-import { RefundEntity } from '@/modules/sales/refund/model/refund.entity';
-import { RefundStatus as LocalRefundStatus } from '@/modules/sales/refund/enums/refund-status.enum';
 
 // @desc Get all Return
 // @route GET /api/v1/Return
@@ -684,11 +684,19 @@ export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, re
         });
       }
 
+    const eligibleItems = order.orderItems.filter((item:any) => item.product.isReturnable);
+    
+    if (eligibleItems.length === 0) {
+      await queryRunner.rollbackTransaction();
+      return res.status(400).json({
+        success: false,
+        message: 'No items in this order are eligible for return.',
+      });
+    }
+
     const createdReturns = [];
 
-    for (const item of order.orderItems) {
-      if (!item.product.isReturnable) continue;
-
+    for (const item of eligibleItems) {
       const alreadyReturned = await returnRepository.findOneBy({
         orderItemId: item.id,
         status: ReturnStatus.Requested,
@@ -727,6 +735,14 @@ export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, re
     }
 
     await queryRunner.commitTransaction();
+
+    if (createdReturns.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'All eligible items in this order have already been requested for return.',
+      });
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Return request submitted for all eligible items',
