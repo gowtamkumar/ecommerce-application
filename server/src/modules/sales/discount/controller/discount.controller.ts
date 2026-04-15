@@ -79,10 +79,10 @@ export const getDiscountDetails = asyncHandler(
     logger.info(`Service: getDiscountDetails ${req.method} ${req.url}`);
     const { id } = req.params;
     const connection = await getDBConnection();
-    const query = await singleDiscountQuery(id as string);
-    const result = await connection.query(query);
+    const { query, values } = await singleDiscountQuery(id as string);
+    const result = await connection.query(query, values);
 
-    if (!result[0]) {
+    if (!result || !result[0]) {
       throw new Error(`Resource not found of id #${req.params.id}`);
     }
 

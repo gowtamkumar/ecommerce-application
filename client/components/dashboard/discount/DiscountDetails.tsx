@@ -2,20 +2,20 @@ import appConfig from "@/appConfig";
 import { ActionType } from "@/constants/constants";
 import { getDiscountDetails } from "@/lib/apis/discount";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
-import { message, Modal, Spin, Tag, Descriptions, Card, Typography } from "antd";
+import { Card, Descriptions, message, Modal, Spin, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useCallback, useEffect } from "react";
+import {
+  FiCalendar,
+  FiClock,
+  FiDollarSign,
+  FiPackage,
+  FiPercent,
+  FiTag
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import DiscountProduct from "./DiscountProduct";
-import { 
-  FiTag, 
-  FiDollarSign, 
-  FiCalendar, 
-  FiPercent,
-  FiPackage,
-  FiClock
-} from "react-icons/fi";
 
 const { Title, Text } = Typography;
 
@@ -25,7 +25,7 @@ export default function DiscountDetails() {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const value = { ...global.action.payload };
-  
+
   const featchData = useCallback(async () => {
     setLoading(true);
     const id = value.id;
@@ -39,22 +39,27 @@ export default function DiscountDetails() {
       return;
     }
 
-    res.data = {
-      ...res.data,
-      startDate: res.data.startDate
-        ? dayjs(res.data.startDate).format("YYYY-MM-DD")
+    console.log("res", res);
+
+
+    const data = res?.data || {};
+
+    const formattedData = {
+      ...data,
+      startDate: data.startDate
+        ? dayjs(data.startDate).format("YYYY-MM-DD")
         : null,
-      endDate: res.data.endDate
-        ? dayjs(res.data.endDate).format("YYYY-MM-DD")
+      endDate: data.endDate
+        ? dayjs(data.endDate).format("YYYY-MM-DD")
         : null,
-      createdAt: res.data.createdAt
-        ? dayjs(res.data.createdAt).format("YYYY-MM-DD")
+      createdAt: data.createdAt
+        ? dayjs(data.createdAt).format("YYYY-MM-DD")
         : null,
-      updatedAt: res.data.updatedAt
-        ? dayjs(res.data.updatedAt).format("YYYY-MM-DD")
+      updatedAt: data.updatedAt
+        ? dayjs(data.updatedAt).format("YYYY-MM-DD")
         : null,
     };
-    setDiscount(res.data);
+    setDiscount(formattedData);
     setLoading(false);
   }, [value.id]);
 
@@ -90,11 +95,11 @@ export default function DiscountDetails() {
         <div className="bg-white rounded-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10" 
-                 style={{ 
-                   backgroundImage: 'radial-gradient(white 1px, transparent 1px)', 
-                   backgroundSize: '20px 20px' 
-                 }} 
+            <div className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage: 'radial-gradient(white 1px, transparent 1px)',
+                backgroundSize: '20px 20px'
+              }}
             />
             <div className="relative z-10 flex justify-between items-start">
               <div>
@@ -163,7 +168,7 @@ export default function DiscountDetails() {
                     </div>
                     <Text className="text-sm font-medium text-gray-900">{discount.scope || 'N/A'}</Text>
                   </Card>
-                  
+
                   <Card className="shadow-sm">
                     <div className="flex items-center gap-2 text-gray-500 mb-1">
                       <FiTag className="w-4 h-4" />
@@ -178,7 +183,7 @@ export default function DiscountDetails() {
             {/* Details Section */}
             <Card title={<Text strong>Discount Information</Text>} className="shadow-sm">
               <Descriptions column={{ xs: 1, sm: 2, md: 2 }} size="small">
-                <Descriptions.Item 
+                <Descriptions.Item
                   label={
                     <span className="flex items-center gap-2 text-gray-600">
                       <FiCalendar className="w-4 h-4" /> Start Date
@@ -187,8 +192,8 @@ export default function DiscountDetails() {
                 >
                   <Tag color="blue">{discount.startDate || 'Not Set'}</Tag>
                 </Descriptions.Item>
-                
-                <Descriptions.Item 
+
+                <Descriptions.Item
                   label={
                     <span className="flex items-center gap-2 text-gray-600">
                       <FiCalendar className="w-4 h-4" /> End Date
@@ -197,8 +202,8 @@ export default function DiscountDetails() {
                 >
                   <Tag color="orange">{discount.endDate || 'Not Set'}</Tag>
                 </Descriptions.Item>
-                
-                <Descriptions.Item 
+
+                <Descriptions.Item
                   label={
                     <span className="flex items-center gap-2 text-gray-600">
                       <FiClock className="w-4 h-4" /> Created At
@@ -207,8 +212,8 @@ export default function DiscountDetails() {
                 >
                   <Text type="secondary">{discount.createdAt}</Text>
                 </Descriptions.Item>
-                
-                <Descriptions.Item 
+
+                <Descriptions.Item
                   label={
                     <span className="flex items-center gap-2 text-gray-600">
                       <FiClock className="w-4 h-4" /> Updated At

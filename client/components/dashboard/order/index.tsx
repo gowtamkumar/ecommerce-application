@@ -17,8 +17,7 @@ import {
   EnvironmentOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
-  UserAddOutlined,
-  UserOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
@@ -51,11 +50,6 @@ const { Title, Text } = Typography;
 
 const OrderStatusChange = dynamic(
   () => import("@/components/dashboard/order/OrderStatusUpdate"),
-  { ssr: false }
-);
-
-const AssignDeliveryMan = dynamic(
-  () => import("@/components/dashboard/order/AssignDeliveryMan"),
   { ssr: false }
 );
 
@@ -551,23 +545,6 @@ const Order = () => {
               }}
             />
           </Tooltip>
-
-          <Tooltip title="Assign Delivery Man">
-            <Button
-              size="small"
-              icon={<UserAddOutlined />}
-              className="hover:!bg-purple-50 hover:!text-purple-600"
-              onClick={() =>
-                dispatch(
-                  setAction({
-                    assign: true,
-                    payload: { id: value.id },
-                  })
-                )
-              }
-            />
-          </Tooltip>
-
           <Tooltip title="Update Status">
             <Button
               size="small"
@@ -714,7 +691,6 @@ const Order = () => {
       </Card>
 
       {global.action.orderStatusUpdate && <OrderStatusChange />}
-      {global.action.assign && <AssignDeliveryMan />}
     </div>
   );
 };
