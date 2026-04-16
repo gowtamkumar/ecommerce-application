@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Card, Collapse, Divider, Empty, Form, Input, Typography } from "antd";
+import { Button, Card, Collapse, Divider, Empty, Form, Input, InputNumber, Typography } from "antd";
 import { CaretRightOutlined, DeleteOutlined, PlusOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
@@ -22,6 +22,7 @@ const SupportSettings = () => {
         ...global.setting?.helpSupport,
         ...global.setting?.whatsAppWidget,
         faq: global.setting?.faq || [],
+        orderFreeShippingAmount: global.setting?.orderFreeShippingAmount,
     }), [global.setting]);
 
     useEffect(() => {
@@ -30,11 +31,12 @@ const SupportSettings = () => {
 
     const handleSubmit = async (values: any) => {
         setLoading(true);
-        const { id, faq, phone, message, ...helpSupportFields } = values;
+        const { id, faq, phone, message, orderFreeShippingAmount, ...helpSupportFields } = values;
 
         const payload = {
             id,
             faq,
+            orderFreeShippingAmount,
             whatsAppWidget: { phone, message },
             helpSupport: {
                 cashDelivery: helpSupportFields.cashDelivery,
@@ -142,6 +144,29 @@ const SupportSettings = () => {
                                 )
                             )}
                         </Form.List>
+                    </div>
+
+                    <Divider className="!my-8" />
+
+                    {/* Order & Shipping Section */}
+                    <div className="space-y-4">
+                        <SettingsHeader title="Order & Shipping" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Form.Item
+                              name="orderFreeShippingAmount"
+                              label={<span className="text-base font-medium">Free Shipping Threshold</span>}
+                              className="!mb-0"
+                              extra="Orders above this amount will have free shipping"
+                            >
+                              <InputNumber
+                                size="large"
+                                placeholder="Enter minimum amount"
+                                className="!w-full max-w-xl"
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              />
+                            </Form.Item>
+                        </div>
                     </div>
 
                     <Form.Item className="!mb-0 !mt-8">

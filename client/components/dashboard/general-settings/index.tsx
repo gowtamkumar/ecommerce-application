@@ -20,9 +20,7 @@ const AppearanceSettings = dynamic(() => import("./AppearanceSettings"), { ssr: 
 const MarketingAndSeo = dynamic(() => import("./MarketingAndSeo"), { ssr: false });
 const SupportSettings = dynamic(() => import("./SupportSettings"), { ssr: false });
 const PageLayoutSettings = dynamic(() => import("./PageLayoutSettings"), { ssr: false });
-const OrderAdnShhiping = dynamic(() => import("./OrderAndShipping"), {
-  ssr: false,
-});
+
 const GeneralSettings = dynamic(() => import("./GeneralSettings"), {
   ssr: false,
 });
@@ -125,11 +123,7 @@ export default function Index() {
             children: <Menu />,
           },
 
-          {
-            label: "Orders & Shipping",
-            key: "order_and_shipping",
-            children: <OrderAdnShhiping />,
-          },
+
           {
             label: "Support & FAQ",
             key: "support",
