@@ -9,7 +9,7 @@ import { errorNotification, successNotification } from "@/lib/utils/notification
 import { selectGlobal, setAction, setSetting } from "@/redux/features/global/globalSlice";
 import { SettingsHeader } from "./CommonComponents";
 
-const { Panel } = Collapse;
+// const { Panel } = Collapse;
 
 const SupportSettings = () => {
     const [form] = Form.useForm();
@@ -119,9 +119,15 @@ const SupportSettings = () => {
                                 fields.length === 0 ? (
                                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No FAQs added" />
                                 ) : (
-                                    <Collapse accordion className="bg-white border-none space-y-3" expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}>
-                                        {fields.map(({ key, name, ...restField }) => (
-                                            <Panel key={key} header={`Q${name + 1}: ${form.getFieldValue(['faq', name, 'question']) || 'New Question'}`} extra={<DeleteOutlined onClick={() => remove(name)} />}>
+                                    <Collapse 
+                                        accordion 
+                                        className="bg-white border-none space-y-3" 
+                                        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                                        items={fields.map(({ key, name, ...restField }) => ({
+                                            key: key.toString(),
+                                            label: `Q${name + 1}: ${form.getFieldValue(['faq', name, 'question']) || 'New Question'}`,
+                                            extra: <DeleteOutlined onClick={() => remove(name)} />,
+                                            children: (
                                                 <div className="pt-2">
                                                     <Form.Item {...restField} name={[name, "question"]} label="Question" rules={[{ required: true }]}>
                                                         <Input placeholder="Enter question" size="large" prefix={<QuestionCircleOutlined />} />
@@ -130,9 +136,9 @@ const SupportSettings = () => {
                                                         <Input.TextArea rows={4} placeholder="Enter detailed answer" />
                                                     </Form.Item>
                                                 </div>
-                                            </Panel>
-                                        ))}
-                                    </Collapse>
+                                            )
+                                        }))}
+                                    />
                                 )
                             )}
                         </Form.List>

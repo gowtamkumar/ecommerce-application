@@ -19,6 +19,7 @@ export const settingValidationSchema = z.object({
   socialLink: z.any().optional(),
   emailConfig: z.any().optional(),
   payment_account: z.any().optional(),
+  homePage: z.any().optional(),
   aboutPage: z.any().optional(),
   contactPage: z.any().optional(),
   termPolicyPage: z.any().optional(),

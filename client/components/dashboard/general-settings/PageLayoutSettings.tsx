@@ -12,13 +12,14 @@ const { Title, Text } = Typography;
 
 const DEFAULT_SECTIONS = {
     home: [
-        { slug: "hero", name: "Main Hero Slider", sequence: 1, status: true },
-        { slug: "features", name: "Feature Highlights", sequence: 2, status: true },
-        { slug: "categories", name: "Featured Categories", sequence: 3, status: true },
-        { slug: "new_arrivals", name: "New Arrivals", sequence: 4, status: true },
-        { slug: "promo_banner", name: "Promotional Banner", sequence: 5, status: true },
-        { slug: "best_sellers", name: "Best Sellers", sequence: 6, status: true },
-        { slug: "blogs", name: "Recent Blogs", sequence: 7, status: true },
+        { slug: "slider", name: "Main Hero Slider", sequence: 1, status: true },
+        { slug: "categories", name: "Featured Categories", sequence: 2, status: true },
+        { slug: "featured_products", name: "Featured Collections", sequence: 3, status: true },
+        { slug: "promo_banners", name: "Promotional Banner", sequence: 4, status: true },
+        { slug: "top_selling", name: "Best Sellers", sequence: 5, status: true },
+        { slug: "new_arrivals", name: "New Arrivals", sequence: 6, status: true },
+        { slug: "category_tabs", name: "Category Tabs", sequence: 7, status: true },
+        { slug: "blog", name: "Recent Blogs", sequence: 8, status: true },
     ],
     about: [
         { slug: "hero", name: "Hero / Intro", sequence: 1, status: true },
