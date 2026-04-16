@@ -293,6 +293,7 @@ const UserList = () => {
                   setAction({
                     type: ActionType.UPDATE,
                     payload: newData,
+                    user: true,
                   })
                 );
               }}

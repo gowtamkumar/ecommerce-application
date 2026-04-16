@@ -273,6 +273,7 @@ const ShippingAddressList: React.FC = () => {
                   setAction({
                     type: ActionType.UPDATE,
                     payload: value,
+                    shippingAddress: true,
                   })
                 )
               }

@@ -28,7 +28,7 @@ const AddShippingAddress = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const { payload, type } = global.action;
+  const { payload, type, shippingAddress } = global.action;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,7 +99,7 @@ const AddShippingAddress = () => {
       }
       width={700}
       zIndex={1050}
-      open={type === ActionType.CREATE || type === ActionType.UPDATE}
+      open={shippingAddress && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
       forceRender
       footer={

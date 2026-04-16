@@ -42,6 +42,7 @@ export default function ShippingAddress() {
             dispatch(
               setAction({
                 type: ActionType.CREATE,
+                shippingAddress: true,
               })
             )
           }

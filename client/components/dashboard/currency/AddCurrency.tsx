@@ -69,7 +69,7 @@ const AddCurrency = () => {
       }
       width={550}
       zIndex={1050}
-      open={type === ActionType.CREATE || type === ActionType.UPDATE}
+      open={global?.action?.currency && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
       forceRender
       footer={
@@ -84,7 +84,7 @@ const AddCurrency = () => {
             disabled={global.loading.save}
             loading={global.loading.save}
             className="!px-8"
-            style={{ 
+            style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
             }}

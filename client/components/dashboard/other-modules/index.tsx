@@ -1,5 +1,15 @@
 "use client";
-import { Tabs, Typography } from "antd";
+import {
+  BgColorsOutlined,
+  ColumnWidthOutlined,
+  DollarOutlined,
+  GoldOutlined, PercentageOutlined,
+  PictureOutlined,
+  StarOutlined,
+  TagsOutlined,
+  UsergroupAddOutlined
+} from "@ant-design/icons";
+import { Space, Tabs, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -63,47 +73,47 @@ export default function Index() {
         className="modern-tabs"
         items={[
           {
-            label: "Sizes",
+            label: <Space className="font-medium text-sm"><ColumnWidthOutlined /> Sizes</Space>,
             key: "sizes",
             children: <Size />,
           },
           {
-            label: "Units",
+            label: <Space className="font-medium text-sm"><GoldOutlined /> Units</Space>,
             key: "units",
             children: <Unit />,
           },
           {
-            label: "Taxs",
+            label: <Space className="font-medium text-sm"><PercentageOutlined /> Taxs</Space>,
             key: "taxs",
             children: <Tax />,
           },
           {
-            label: "Colors",
+            label: <Space className="font-medium text-sm"><BgColorsOutlined /> Colors</Space>,
             key: "colors",
             children: <Color />,
           },
           {
-            label: "Banner",
+            label: <Space className="font-medium text-sm"><PictureOutlined /> Banner</Space>,
             key: "banners",
             children: <Banner />,
           },
           {
-            label: "Brands",
+            label: <Space className="font-medium text-sm"><TagsOutlined /> Brands</Space>,
             key: "brand",
             children: <Brand />,
           },
           {
-            label: "Reviews",
+            label: <Space className="font-medium text-sm"><StarOutlined /> Reviews</Space>,
             key: "reviews",
             children: <Review />,
           },
           {
-            label: "Leads",
+            label: <Space className="font-medium text-sm"><UsergroupAddOutlined /> Leads</Space>,
             key: "leads",
             children: <Lead />,
           },
           {
-            label: "Currencies",
+            label: <Space className="font-medium text-sm"><DollarOutlined /> Currencies</Space>,
             key: "currencies",
             children: <Currency />,
           },

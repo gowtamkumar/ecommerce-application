@@ -40,6 +40,7 @@ export default function User() {
             dispatch(
               setAction({
                 type: ActionType.CREATE,
+                user: true,
               })
             )
           }

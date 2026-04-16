@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal } from "antd";
-import { ActionType } from "../../../constants/constants";
+import { saveUnit, updateUnit } from "@/lib/apis/unit";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, Modal } from "antd";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { saveUnit, updateUnit } from "@/lib/apis/unit";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { ActionType } from "../../../constants/constants";
 
 const AddUnit = () => {
   const global = useSelector(selectGlobal);
@@ -70,7 +70,7 @@ const AddUnit = () => {
             disabled={global.loading.save}
             loading={global.loading.save}
             className="!px-8"
-            style={{ 
+            style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
             }}

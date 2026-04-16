@@ -38,7 +38,7 @@ const AddUser = () => {
   }) as any;
 
   const global = useSelector(selectGlobal);
-  const { payload, type } = global.action;
+  const { payload, type, user } = global.action;
   // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -106,7 +106,7 @@ const AddUser = () => {
       }
       width={700}
       zIndex={1050}
-      open={type === ActionType.CREATE || type === ActionType.UPDATE}
+      open={user && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
       forceRender
       footer={
