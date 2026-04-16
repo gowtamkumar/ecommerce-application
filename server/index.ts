@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getDBConnection } from '@/config/db';
-import { NotificationType } from '@/enums/notification-type.enum';
 import { errorHandler } from '@/middlewares/errorHandler';
-import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
-import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import colors from 'colors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -100,28 +96,28 @@ const server = app.listen(PORT, async () => {
   console.log(colors.magenta(`Server running in ${process.env.NODE_ENV} Mode on Port ${PORT}`));
 
   // Notify Admins: Server Started / Restarted
-  try {
-    const connection = await getDBConnection();
-    const userRepo = connection.getRepository(UserEntity);
-    const notificationRepo = connection.getRepository(NotificationEntity);
-    const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
+  // try {
+  //   const connection = await getDBConnection();
+  //   const userRepo = connection.getRepository(UserEntity);
+  //   const notificationRepo = connection.getRepository(NotificationEntity);
+  //   const admins = await userRepo.find({ where: { role: RoleEnum.Admin } });
 
-    const alerts = admins.map((admin: UserEntity) =>
-      notificationRepo.create({
-        type: NotificationType.ServerDown, // Using to indicate status change/recovery
-        title: 'Server Alert',
-        message: `Server successfully started/restarted.`,
-        userId: admin.id,
-        isRead: false,
-      }),
-    );
+  //   const alerts = admins.map((admin: UserEntity) =>
+  //     notificationRepo.create({
+  //       type: NotificationType.ServerDown, // Using to indicate status change/recovery
+  //       title: 'Server Alert',
+  //       message: `Server successfully started/restarted.`,
+  //       userId: admin.id,
+  //       isRead: false,
+  //     }),
+  //   );
 
-    if (alerts.length > 0) {
-      await notificationRepo.save(alerts);
-    }
-  } catch (error) {
-    console.error('Failed to send server startup alert', error);
-  }
+  //   if (alerts.length > 0) {
+  //     await notificationRepo.save(alerts);
+  //   }
+  // } catch (error) {
+  //   console.error('Failed to send server startup alert', error);
+  // }
 });
 
 //handle and unhandle promise rejections

@@ -75,12 +75,7 @@ export default function SearchEngine() {
               onChange={(e: any) => setQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               placeholder="Search for products..."
-              className="!h-11 !rounded-full !pl-12
-                       !bg-global-header-bg/5 !border-global-header-text/10
-                       hover:!bg-global-bg hover:!border-global-header-text/20
-                       focus:!bg-global-bg focus:!border-global-primary focus:!shadow-[0_0_0_3px_var(--global-primary-alpha-10)]
-                       !transition-all !duration-300
-                       placeholder:!text-global-header-text/40"
+              className="!h-11 !rounded-full !pl-12 !bg-global-header-bg/5 !border-global-header-text/10 hover:!bg-global-bg hover:!border-global-header-text/20 focus:!bg-global-bg focus:!border-global-primary focus:!shadow-[0_0_0_3px_var(--global-primary-alpha-10)] !transition-all !duration-300 placeholder:!text-global-header-text/40"
               suffix={
                 <div className="flex items-center gap-2">
                   {query && (
@@ -117,8 +112,7 @@ export default function SearchEngine() {
           />
           
           {/* Results Container */}
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl 
-                        border border-gray-100 overflow-hidden z-50 max-h-[70vh] overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-[70vh] overflow-y-auto">
             {global.loading.search ? (
               // Loading State
               <div className="p-4 space-y-3">
@@ -154,13 +148,9 @@ export default function SearchEngine() {
                         onClick={handleClose}
                         className="block group"
                       >
-                        <div className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 
-                                      transition-all duration-300 cursor-pointer
-                                      border border-transparent hover:border-gray-200
-                                      hover:shadow-md">
+                        <div className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer border border-transparent hover:border-gray-200 hover:shadow-md">
                           {/* Product Image */}
-                          <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden
-                                        group-hover:scale-105 transition-transform duration-300">
+                          <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden group-hover:scale-105 transition-transform duration-300">
                             <Image
                               src={thumbnailImage}
                               fill
@@ -171,8 +161,7 @@ export default function SearchEngine() {
                           
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
-                           <h3 className="font-bold text-global-text group-hover:text-global-primary 
-                                         transition-colors duration-300 truncate">
+                           <h3 className="font-bold text-global-text group-hover:text-global-primary transition-colors duration-300 truncate">
                               {product.name}
                             </h3>
                             <div className="flex flex-col gap-1 mt-1">
@@ -200,8 +189,7 @@ export default function SearchEngine() {
                             </div>
                             
                             {product.category && (
-                              <span className="inline-block mt-1 text-xs text-gray-500 bg-gray-100 
-                                           px-2 py-0.5 rounded-full">
+                              <span className="inline-block mt-1 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                                 {product.category.name}
                               </span>
                             )}
@@ -209,10 +197,7 @@ export default function SearchEngine() {
                           
                           {/* Arrow Icon */}
                           <div className="flex-shrink-0 flex items-center">
-                            <svg 
-                              className="w-5 h-5 text-global-text/20 group-hover:text-global-primary 
-                                       group-hover:translate-x-1 transition-all duration-300"
-                              fill="none" 
+                            <svg className="w-5 h-5 text-global-text/20 group-hover:text-global-primary group-hover:translate-x-1 transition-all duration-300" fill="none" 
                               stroke="currentColor" 
                               viewBox="0 0 24 24"
                             >
@@ -235,9 +220,7 @@ export default function SearchEngine() {
                   <div className="p-3 border-t border-gray-100 mt-2">
                     <button
                       onClick={searchHandle}
-                      className="w-full py-2.5 px-4 bg-global-button-primary text-global-button-text hover:bg-global-button-hover
-                               font-medium rounded-global-button-radius transition-all duration-300
-                               shadow-sm"
+                      className="w-full py-2.5 px-4 bg-global-button-primary text-global-button-text hover:bg-global-button-hover font-medium rounded-global-button-radius transition-all duration-300 shadow-sm"
                     >
                       View All {results.length} Results →
                     </button>

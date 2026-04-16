@@ -115,11 +115,7 @@ export default function Header() {
                 <Link href="/offers">
                   <Button
                     type="primary"
-                    className="!bg-gradient-to-r !from-global-hover !to-global-hover
-                             hover:!from-global-primary hover:!to-global-hover
-                             !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm 
-                             flex items-center gap-2 !shadow-lg hover:!shadow-xl
-                             !transition-all !duration-300 hover:!scale-105 group"
+                    className="!bg-gradient-to-r !from-global-hover !to-global-hover hover:!from-global-primary hover:!to-global-hover !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm flex items-center gap-2 !shadow-lg hover:!shadow-xl !transition-all !duration-300 hover:!scale-105 group"
                   >
                     <HiSparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
                     <span>Special Offers</span>
@@ -141,8 +137,7 @@ export default function Header() {
 
       {/* Mobile Bottom Navigation */}
       {global.mobile && (
-        <div className="fixed z-[60] bottom-0 left-0 bg-global-header-bg/98 backdrop-blur-lg w-full 
-                      shadow-[0_-4px_20px_rgba(0,0,0,0.08)] border-t border-global-secondary/5 pb-safe text-global-header-text">
+        <div className="fixed z-[60] bottom-0 left-0 bg-global-header-bg/98 backdrop-blur-lg w-full shadow-[0_-4px_20px_rgba(0,0,0,0.08)] border-t border-global-secondary/5 pb-safe text-global-header-text">
           <div className="container mx-auto py-3">
             <MobileMenu />
           </div>
