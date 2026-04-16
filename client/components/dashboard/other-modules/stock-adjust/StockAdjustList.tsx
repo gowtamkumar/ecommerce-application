@@ -9,9 +9,9 @@ import {
   setSearchedColumn,
   setSearchText
 } from "@/redux/features/global/globalSlice";
-import { SearchOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, ArrowUpOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tag, Typography } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -144,8 +144,12 @@ const StockAdjustList: React.FC = () => {
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
       render: (value) => (
-        <Tag color={value === "Add" ? "green" : "red"} className="font-medium">
-          {value}
+        <Tag 
+          color={value === "Add" ? "success" : "error"} 
+          className="font-medium px-3 py-0.5 rounded-full border-none flex items-center gap-1 w-fit"
+        >
+          {value === "Add" ? <ArrowUpOutlined size={12} /> : <ArrowDownOutlined size={12} />}
+          {value === "Add" ? "Stock In" : "Stock Out"}
         </Tag>
       ),
     },
@@ -163,8 +167,10 @@ const StockAdjustList: React.FC = () => {
       dataIndex: "qty",
       key: "qty",
       sorter: (a, b) => a.qty - b.qty,
-      render: (value) => (
-        <span className="font-medium text-blue-600">{value}</span>
+      render: (value, record) => (
+        <span className={`font-semibold ${record.type === 'Add' ? 'text-green-600' : 'text-red-600'}`}>
+          {record.type === 'Add' ? '+' : '-'}{value}
+        </span>
       ),
     },
   ];
