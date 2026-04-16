@@ -18,7 +18,12 @@ import {
 import {
   DeleteOutlined,
   EditOutlined,
-  QuestionCircleOutlined, SearchOutlined
+  QuestionCircleOutlined, SearchOutlined,
+  HomeOutlined,
+  GlobalOutlined,
+  PhoneOutlined,
+  MailOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
@@ -179,48 +184,47 @@ const ShippingAddressList: React.FC = () => {
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
       render: (value) => (
-        <Tag color={value === "Home" ? "blue" : value === "Office" ? "purple" : "orange"}>
+        <Tag 
+          icon={value === "Home" ? <HomeOutlined /> : <GlobalOutlined />} 
+          color={value === "Home" ? "blue" : value === "Office" ? "purple" : "orange"}
+          className="rounded-full px-3 font-medium border-none py-0.5"
+        >
           {value}
         </Tag>
       ),
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps("name"),
-      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
-    },
-    {
-      title: "Phone No",
-      dataIndex: "phoneNo",
-      key: "phoneNo",
-      sorter: (a, b) => a.phoneNo.length - b.phoneNo.length,
-      ...getColumnSearchProps("phoneNo"),
-      render: (text) => <span className="text-gray-600">{text}</span>,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      sorter: (a, b) => a.email.length - b.email.length,
-      ...getColumnSearchProps("email"),
-      render: (text) => <span className="text-gray-600">{text}</span>,
+      title: "Contact Details",
+      key: "contact",
+      render: (_, record) => (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <UserOutlined className="text-gray-400 text-xs" />
+            <span className="font-semibold text-gray-900">{record.name}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <PhoneOutlined className="text-gray-400 text-xs" />
+            <span className="text-gray-500 text-xs">{record.phoneNo}</span>
+          </div>
+          {record.email && (
+            <div className="flex items-center gap-2">
+              <MailOutlined className="text-gray-400 text-xs" />
+              <span className="text-gray-500 text-xs">{record.email}</span>
+            </div>
+          )}
+        </div>
+      ),
     },
     {
       ...getColumnSearchProps("division"),
-      title: "Division",
-      dataIndex: "division",
-      key: "division",
-      render: (value) => <span className="text-gray-700">{value?.name}</span>,
-    },
-    {
-      ...getColumnSearchProps("district"),
-      title: "District",
-      dataIndex: "district",
-      key: "district",
-      render: (value) => <span className="text-gray-700">{value?.name}</span>,
+      title: "Location",
+      key: "location",
+      render: (_, record) => (
+        <div className="text-xs text-gray-600">
+          <div className="font-medium text-gray-800">{record.division?.name}</div>
+          <div>{record.district?.name}</div>
+        </div>
+      ),
     },
     {
       ...getColumnSearchProps("address"),
@@ -228,9 +232,11 @@ const ShippingAddressList: React.FC = () => {
       dataIndex: "address",
       key: "address",
       render: (text) => (
-        <span className="text-gray-600 text-sm">
-          {text?.length > 40 ? `${text.substring(0, 40)}...` : text}
-        </span>
+        <Tooltip title={text}>
+          <span className="text-gray-600 text-sm max-w-[200px] block truncate">
+            {text}
+          </span>
+        </Tooltip>
       ),
     },
     {
@@ -238,7 +244,14 @@ const ShippingAddressList: React.FC = () => {
       title: "User",
       dataIndex: "user",
       key: "user",
-      render: (value) => <span className="font-medium text-gray-700">{value?.name}</span>,
+      render: (value) => (
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold uppercase">
+            {value?.name?.substring(0, 2) || "U"}
+          </div>
+          <span className="font-medium text-gray-700">{value?.name}</span>
+        </div>
+      ),
     },
     {
       title: "Status",
@@ -248,9 +261,10 @@ const ShippingAddressList: React.FC = () => {
       render: (value) => {
         return (
           <Tag
-            color={value.status ? "green" : "red"}
-            className="font-medium"
+            color={value.status ? "success" : "error"}
+            className="rounded-full px-3 font-medium border-none py-0.5"
           >
+            <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${value.status ? 'bg-green-500' : 'bg-red-500'}`} />
             {value.status ? "Active" : "Inactive"}
           </Tag>
         );
@@ -265,9 +279,10 @@ const ShippingAddressList: React.FC = () => {
         <div className="flex gap-2 justify-end">
           <Tooltip title="Edit Address">
             <Button
-              size="small"
-              icon={<EditOutlined />}
-              className="hover:!bg-green-50 hover:!text-green-600"
+              size="middle"
+              type="text"
+              icon={<EditOutlined className="text-blue-500" />}
+              className="hover:!bg-blue-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -288,15 +303,16 @@ const ShippingAddressList: React.FC = () => {
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
-            placement="left"
+            placement="bottomRight"
             okText="Yes"
             okType="danger"
             cancelText="No"
-            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            icon={<QuestionCircleOutlined className="text-red-500" />}
           >
             <Tooltip title="Delete Address">
               <Button
-                size="small"
+                size="middle"
+                type="text"
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}

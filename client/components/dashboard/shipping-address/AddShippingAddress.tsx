@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select, Space } from "antd";
+import { EnvironmentOutlined, InfoCircleOutlined, PushpinOutlined, HomeOutlined, GlobalOutlined } from "@ant-design/icons";
 import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
@@ -93,14 +94,19 @@ const AddShippingAddress = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Shipping Address" : "Create Shipping Address"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <EnvironmentOutlined className="text-blue-500" />
+          <span>
+            {type === ActionType.UPDATE ? "Update Shipping Address" : "Create Shipping Address"}
+          </span>
+        </Space>
       }
-      width={700}
+      width={800}
       zIndex={1050}
       open={shippingAddress && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
+      centered
+      mask={{ closable: false }}
       forceRender
       footer={
         <div className="flex justify-end gap-3 pt-4">
@@ -134,17 +140,20 @@ const AddShippingAddress = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-8"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
         {/* Basic Information */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-            Basic Information
-          </h3>
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+          <div className="flex items-center gap-2 mb-6">
+            <InfoCircleOutlined className="text-blue-500" />
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-widest">
+              Basic Information
+            </h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
               name="type"
@@ -157,9 +166,19 @@ const AddShippingAddress = () => {
               ]}
               className="!mb-0"
             >
-              <Select placeholder="Select type" size="large">
-                <Select.Option value="Home">Home</Select.Option>
-                <Select.Option value="Office">Office</Select.Option>
+              <Select placeholder="Select type" size="large" className="w-full">
+                <Select.Option value="Home">
+                  <Space>
+                    <HomeOutlined className="text-blue-500" />
+                    <span>Home</span>
+                  </Space>
+                </Select.Option>
+                <Select.Option value="Office">
+                  <Space>
+                    <GlobalOutlined className="text-purple-500" />
+                    <span>Office</span>
+                  </Space>
+                </Select.Option>
               </Select>
             </Form.Item>
 
@@ -212,10 +231,13 @@ const AddShippingAddress = () => {
         </div>
 
         {/* Location */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-            Location Details
-          </h3>
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+          <div className="flex items-center gap-2 mb-6">
+            <PushpinOutlined className="text-blue-500" />
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-widest">
+              Location Details
+            </h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item name="divisionId" label="Division" className="!mb-0">
               <Select
@@ -328,10 +350,13 @@ const AddShippingAddress = () => {
         </div>
 
         {/* Detailed Address */}
-        <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-            Detailed Address
-          </h3>
+        <div className="bg-blue-50/30 p-6 rounded-2xl border border-blue-100">
+          <div className="flex items-center gap-2 mb-6">
+            <EnvironmentOutlined className="text-blue-500" />
+            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-widest">
+              Detailed Address
+            </h3>
+          </div>
           <Form.Item
             name="address"
             label="Street Address"

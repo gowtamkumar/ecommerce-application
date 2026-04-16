@@ -1,8 +1,8 @@
 "use client";
 import { ActionType } from "@/constants/constants";
 import { setAction } from "@/redux/features/global/globalSlice";
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Typography } from "antd";
+import { EnvironmentOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Space, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -26,13 +26,18 @@ export default function ShippingAddress() {
     <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div>
-          <Title level={2} className="!mb-1">
-            Shipping Addresses
-          </Title>
-          <Text type="secondary">
-            Manage customer shipping addresses and delivery locations
-          </Text>
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-blue-50 rounded-xl">
+            <EnvironmentOutlined className="text-2xl text-blue-600" />
+          </div>
+          <div>
+            <Title level={2} className="!mb-0 !text-gray-800">
+              Shipping Addresses
+            </Title>
+            <Text type="secondary" className="text-sm">
+              Manage customer shipping addresses and delivery locations
+            </Text>
+          </div>
         </div>
         <Button
           type="primary"
