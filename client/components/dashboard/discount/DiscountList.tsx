@@ -18,6 +18,14 @@ import {
   EyeOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  GlobalOutlined,
+  AppstoreOutlined,
+  ShoppingOutlined,
+  TagsOutlined,
+  SkinOutlined,
+  PercentageOutlined,
+  DollarOutlined,
+  CalendarOutlined
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
@@ -181,7 +189,9 @@ const DiscountList: React.FC = () => {
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name?.length - b.name?.length,
-      render: (text) => <span className="font-semibold text-gray-900">{text}</span>,
+      render: (text) => (
+        <span className="font-semibold text-gray-900 block min-w-[120px]">{text}</span>
+      ),
     },
     {
       title: "Scope",
@@ -196,7 +206,19 @@ const DiscountList: React.FC = () => {
           Category: "orange",
           Brand: "cyan",
         };
-        return <Tag color={colorMap[value] || "default"}>{value}</Tag>;
+        const iconMap: Record<string, any> = {
+          Global: <GlobalOutlined />,
+          Product: <SkinOutlined />,
+          Products: <ShoppingOutlined />,
+          Category: <AppstoreOutlined />,
+          Brand: <TagsOutlined />,
+        };
+        return (
+          <Tag color={colorMap[value] || "default"} className="rounded-full px-3 py-0.5 border-none font-medium">
+            <span className="mr-1">{iconMap[value]}</span>
+            {value}
+          </Tag>
+        );
       },
     },
     {
@@ -206,7 +228,11 @@ const DiscountList: React.FC = () => {
       key: "discountStrategy",
       sorter: (a, b) => a.discountStrategy.length - b.discountStrategy.length,
       render: (value) => (
-        <Tag color={value === "Percentage" ? "blue" : "green"}>
+        <Tag 
+          icon={value === "Percentage" ? <PercentageOutlined /> : <DollarOutlined />}
+          color={value === "Percentage" ? "orange" : "cyan"} 
+          className="rounded-full px-3 py-0.5 border-none font-medium"
+        >
           {value === "Percentage" ? "Percentage" : "Fixed Amount"}
         </Tag>
       ),
@@ -217,32 +243,31 @@ const DiscountList: React.FC = () => {
       key: "value",
       sorter: (a, b) => a.value - b.value,
       ...getColumnSearchProps("value"),
-      render: (value, record) => (
-        <span className="font-medium text-gray-700">
-          {record.discountStrategy === "Percentage" ? `${value}%` : formatPrice(value)}
-        </span>
+      render: (value, record: any) => (
+        <div className="flex flex-col">
+          <span className="font-bold text-gray-800 text-lg">
+            {record.discountStrategy === "Percentage" ? `${value}%` : formatPrice(value)}
+          </span>
+          <span className="text-[10px] text-gray-400 uppercase font-medium">Discount</span>
+        </div>
       ),
     },
     {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      sorter: (a, b) => a.startDate.length - b.startDate.length,
-      render: (value) => (
-        <span className="text-gray-600">
-          {value ? dayjs(value).format("MMM DD, YYYY") : "N/A"}
-        </span>
-      ),
-    },
-    {
-      title: "End Date",
-      dataIndex: "endDate",
-      key: "endDate",
-      sorter: (a, b) => a.endDate.length - b.endDate.length,
-      render: (value) => (
-        <span className="text-gray-600">
-          {value ? dayjs(value).format("MMM DD, YYYY") : "N/A"}
-        </span>
+      title: "Campaign Duration",
+      key: "duration",
+      render: (_, record: any) => (
+        <div className="flex flex-col gap-1 min-w-[140px]">
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <CalendarOutlined className="text-gray-400" />
+            <span className="font-medium">Starts:</span>
+            <span>{record.startDate ? dayjs(record.startDate).format("MMM DD, YYYY") : "N/A"}</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <CalendarOutlined className="text-gray-400" />
+            <span className="font-medium">Ends:</span>
+            <span>{record.endDate ? dayjs(record.endDate).format("MMM DD, YYYY") : "N/A"}</span>
+          </div>
+        </div>
       ),
     },
     {
@@ -253,8 +278,9 @@ const DiscountList: React.FC = () => {
         return (
           <Tag
             color={isExpired ? "red" : "green"}
-            className="font-medium"
+            className="rounded-full px-3 py-0.5 border-none font-medium"
           >
+            <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${isExpired ? 'bg-red-500' : 'bg-green-500'}`} />
             {isExpired ? "Expired" : "Active"}
           </Tag>
         );
@@ -267,9 +293,10 @@ const DiscountList: React.FC = () => {
       sortDirections: ["descend", "ascend"],
       render: (value) => (
         <Tag
-          color={value.status === "Active" ? "green" : "red"}
-          className="font-medium"
+          color={value.status === "Active" ? "success" : "error"}
+          className="rounded-full px-3 py-0.5 border-none font-medium"
         >
+          <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${value.status === "Active" ? 'bg-green-500' : 'bg-red-500'}`} />
           {value.status}
         </Tag>
       ),
@@ -283,9 +310,10 @@ const DiscountList: React.FC = () => {
         <div className="flex gap-2 justify-end">
           <Tooltip title="View Details">
             <Button
-              size="small"
-              icon={<EyeOutlined />}
-              className="hover:!bg-blue-50 hover:!text-blue-600"
+              size="middle"
+              type="text"
+              icon={<EyeOutlined className="text-blue-500" />}
+              className="hover:!bg-blue-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -300,18 +328,20 @@ const DiscountList: React.FC = () => {
 
           <Tooltip title="Edit Discount">
             <Button
-              size="small"
-              icon={<EditOutlined />}
-              className="hover:!bg-green-50 hover:!text-green-600"
+              size="middle"
+              type="text"
+              icon={<EditOutlined className="text-green-500" />}
+              className="hover:!bg-green-50"
               onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
             />
           </Tooltip>
 
           <Tooltip title="Change Status">
             <Button
-              size="small"
-              icon={<TbStatusChange />}
-              className="hover:!bg-purple-50 hover:!text-purple-600"
+              size="middle"
+              type="text"
+              icon={<TbStatusChange className="text-purple-500" />}
+              className="hover:!bg-purple-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -331,15 +361,16 @@ const DiscountList: React.FC = () => {
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
-            placement="left"
+            placement="bottomRight"
             okText="Yes"
             okType="danger"
             cancelText="No"
-            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            icon={<QuestionCircleOutlined className="text-red-500" />}
           >
             <Tooltip title="Delete Discount">
               <Button
-                size="small"
+                size="middle"
+                type="text"
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}

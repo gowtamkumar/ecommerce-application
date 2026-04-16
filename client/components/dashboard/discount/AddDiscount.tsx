@@ -22,10 +22,20 @@ import {
   Input,
   InputNumber,
   Select,
+  Space,
   Spin,
   Typography,
   Upload,
 } from "antd";
+import { 
+  ArrowLeftOutlined, 
+  InfoCircleOutlined, 
+  TagsOutlined, 
+  CalendarOutlined, 
+  DeploymentUnitOutlined, 
+  PictureOutlined,
+  AlignLeftOutlined
+} from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
@@ -199,15 +209,22 @@ const AddDiscount = () => {
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <Title level={2} className="!mb-0">
-            {isEditMode ? "Edit Discount" : "Create Discount"}
-          </Title>
-          <Text type="secondary">
-            {isEditMode
-              ? "Update discount details and campaign settings"
-              : "Set up a new discount campaign for your products"}
-          </Text>
+        <div className="flex items-center gap-4">
+          <Button 
+            icon={<ArrowLeftOutlined />} 
+            onClick={() => route.push("/dashboard/discounts")}
+            className="hover:!text-red-600 hover:!border-red-600 rounded-lg"
+          />
+          <div>
+            <Title level={2} className="!mb-0 !text-gray-800">
+              {isEditMode ? "Edit Discount" : "Create Discount"}
+            </Title>
+            <Text type="secondary" className="text-sm">
+              {isEditMode
+                ? "Update discount details and campaign settings"
+                : "Set up a new discount campaign for your products"}
+            </Text>
+          </div>
         </div>
         <div className="flex gap-3">
           <Button
@@ -254,8 +271,15 @@ const AddDiscount = () => {
 
         {/* Basic Information Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Basic Information</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-red-50 rounded-lg">
+                <InfoCircleOutlined className="text-red-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">General Information</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -340,8 +364,15 @@ const AddDiscount = () => {
 
         {/* Campaign Duration Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Campaign Duration</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <CalendarOutlined className="text-blue-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Campaign Duration</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -355,7 +386,7 @@ const AddDiscount = () => {
               ]}
               className="!mb-0"
             >
-              <DatePicker className="w-full" size="large" />
+              <DatePicker className="w-full !rounded-lg" size="large" />
             </Form.Item>
 
             <Form.Item
@@ -369,15 +400,22 @@ const AddDiscount = () => {
               ]}
               className="!mb-0"
             >
-              <DatePicker className="w-full" size="large" />
+              <DatePicker className="w-full !rounded-lg" size="large" />
             </Form.Item>
           </div>
         </Card>
 
         {/* Discount Configuration Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Discount Configuration</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <TagsOutlined className="text-orange-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Discount Configuration</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -414,7 +452,7 @@ const AddDiscount = () => {
             >
               <InputNumber
                 placeholder="Enter discount value"
-                className="w-full"
+                className="w-full !rounded-lg"
                 size="large"
                 min={0}
               />
@@ -427,8 +465,15 @@ const AddDiscount = () => {
           formValues?.scope === "Brand" ||
           formValues?.scope === "Category") && (
             <Card
-              title={<Title level={4} className="!mb-0">Applicability</Title>}
-              className="shadow-sm border border-gray-100 rounded-2xl"
+              title={
+                <Space className="py-1">
+                  <div className="p-2 bg-indigo-50 rounded-lg">
+                    <DeploymentUnitOutlined className="text-indigo-600" />
+                  </div>
+                  <span className="text-base font-bold text-gray-700">Applicability</span>
+                </Space>
+              }
+              className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
             >
               {formValues?.scope === "Products" && (
                 <Form.Item
@@ -536,8 +581,15 @@ const AddDiscount = () => {
 
         {/* Media Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Campaign Media</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-cyan-50 rounded-lg">
+                <PictureOutlined className="text-cyan-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Campaign Media</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <Form.Item
             name="fileList"
@@ -573,8 +625,15 @@ const AddDiscount = () => {
 
         {/* Additional Details Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Additional Details</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <AlignLeftOutlined className="text-gray-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Additional Details</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden"
         >
           <Form.Item
             name="description"
