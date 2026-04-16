@@ -15,7 +15,8 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
+import { TagsOutlined } from "@ant-design/icons";
+import { Button, Form, Image, Input, Modal, Select, Space, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -86,9 +87,10 @@ const AddBrand = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Brand" : "Create Brand"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <TagsOutlined className="text-orange-500" />
+          <span>{type === ActionType.UPDATE ? "Update Brand" : "Create Brand"}</span>
+        </Space>
       }
       width={550}
       zIndex={1050}
@@ -98,9 +100,11 @@ const AddBrand = () => {
         (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button
             size="large"
             onClick={() => resetFormData(payload)}
@@ -132,13 +136,13 @@ const AddBrand = () => {
         onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Name */}
           <Form.Item
             name="name"
@@ -154,20 +158,6 @@ const AddBrand = () => {
             <Input placeholder="Enter brand name" size="large" />
           </Form.Item>
 
-          {/* Status */}
-          {/* <Form.Item
-            name="status"
-            label="Status"
-            valuePropName="checked"
-            className="!mb-0"
-          >
-            <Switch
-              checkedChildren="Active"
-              unCheckedChildren="Inactive"
-              defaultChecked
-            />
-          </Form.Item> */}
-
           <Form.Item
             name="status"
             label="Status"
@@ -177,8 +167,9 @@ const AddBrand = () => {
                 message: "Status is required",
               },
             ]}
+            className="!mb-0"
           >
-            <Select placeholder="Select Status">
+            <Select placeholder="Select Status" size="large">
               <Select.Option value="Active">Active</Select.Option>
               <Select.Option value="Inactive">Inactive</Select.Option>
             </Select>

@@ -14,6 +14,7 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { PictureOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -21,6 +22,7 @@ import {
   Input,
   Modal,
   Select,
+  Space,
   Switch,
   Upload,
 } from "antd";
@@ -93,9 +95,10 @@ const AddBanner = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Banner" : "Create Banner"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <PictureOutlined className="text-violet-500" />
+          <span>{type === ActionType.UPDATE ? "Update Banner" : "Create Banner"}</span>
+        </Space>
       }
       width={700}
       zIndex={1050}
@@ -103,9 +106,11 @@ const AddBanner = () => {
         banner && (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button
             size="large"
             onClick={() => resetFormData(payload)}
@@ -120,7 +125,7 @@ const AddBanner = () => {
             disabled={global.loading.save}
             loading={global.loading.save}
             className="!px-8"
-            style={{ 
+            style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
             }}
@@ -137,13 +142,13 @@ const AddBanner = () => {
         onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           {/* Type */}
           <Form.Item
             name="type"
@@ -193,7 +198,7 @@ const AddBanner = () => {
           </Form.Item>
         </div>
 
-        <div className="space-y-4 mt-4">
+        <div className="space-y-6 mt-6">
           {/* Title */}
           <Form.Item
             name="title"

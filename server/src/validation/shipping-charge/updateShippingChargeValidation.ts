@@ -8,6 +8,6 @@ export const updateShippingChargeValidationSchema = z.object({
   shippingCharge: z.number({
     required_error: 'shipping Amount is required',
   }),
-  note: z.string().optional(),
+  note: z.string().nullable().optional(),
   status: z.boolean().optional(),
 });

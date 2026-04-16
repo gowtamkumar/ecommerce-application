@@ -8,7 +8,8 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Input, Modal, Rate, Select, Tag } from "antd";
+import { StarOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Rate, Select, Space, Tag } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
@@ -67,9 +68,10 @@ const AddReview = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Review" : "Create Review"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <StarOutlined className="text-yellow-500" />
+          <span>{type === ActionType.UPDATE ? "Update Review" : "Create Review"}</span>
+        </Space>
       }
       width={600}
       zIndex={1050}
@@ -77,8 +79,10 @@ const AddReview = () => {
         review && (type === ActionType.CREATE || type === ActionType.UPDATE)
       }
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button size="large" onClick={resetFormData} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
@@ -105,13 +109,13 @@ const AddReview = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Product Selection */}
           <Form.Item
             name="productId"

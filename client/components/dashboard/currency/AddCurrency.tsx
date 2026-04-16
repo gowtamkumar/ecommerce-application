@@ -9,7 +9,8 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Input, InputNumber, Modal } from "antd";
+import { DollarOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Modal, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
@@ -63,17 +64,20 @@ const AddCurrency = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Currency" : "Create Currency"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <DollarOutlined className="text-emerald-500" />
+          <span>{type === ActionType.UPDATE ? "Update Currency" : "Create Currency"}</span>
+        </Space>
       }
       width={550}
       zIndex={1050}
       open={global?.action?.currency && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button size="large" onClick={() => resetFormData(payload)} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
@@ -107,7 +111,7 @@ const AddCurrency = () => {
           <Input />
         </Form.Item>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <Form.Item
             name="name"
             label="Currency Name"

@@ -5,7 +5,8 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
-import { Button, Form, Input, Modal } from "antd";
+import { GoldOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Space } from "antd";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionType } from "../../../constants/constants";
@@ -49,17 +50,20 @@ const AddUnit = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Unit" : "Create Unit"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <GoldOutlined className="text-amber-500" />
+          <span>{type === ActionType.UPDATE ? "Update Unit" : "Create Unit"}</span>
+        </Space>
       }
       width={500}
       zIndex={1050}
       open={unit && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button size="large" onClick={resetFormData} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
@@ -86,7 +90,7 @@ const AddUnit = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-6"
       >
         <Form.Item name="id" hidden>
           <Input />

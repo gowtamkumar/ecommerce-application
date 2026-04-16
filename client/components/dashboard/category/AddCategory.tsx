@@ -138,7 +138,7 @@ const AddCategory = () => {
   return (
     <Modal
       title={
-        <div className="flex items-center gap-3 pb-4 border-b">
+        <div className="flex items-center gap-3 pb-4">
           <div
             className={`w-10 h-10 rounded-lg flex items-center justify-center ${isEditMode ? "bg-blue-50" : "bg-green-50"
               }`}
@@ -341,7 +341,7 @@ const AddCategory = () => {
         </Modal>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t">
+        <div className="flex items-center justify-end gap-3 mt-6 pt-6">
           <Button
             size="large"
             icon={<UndoOutlined />}

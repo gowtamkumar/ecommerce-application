@@ -225,6 +225,7 @@ const ShippingChargeList: React.FC = () => {
                   setAction({
                     type: ActionType.UPDATE,
                     payload: value,
+                    shippingCharge: true,
                   })
                 )
               }

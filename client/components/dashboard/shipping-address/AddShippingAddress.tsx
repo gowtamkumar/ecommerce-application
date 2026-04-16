@@ -103,7 +103,7 @@ const AddShippingAddress = () => {
       onCancel={handleClose}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button
             size="large"
             onClick={resetFormData}

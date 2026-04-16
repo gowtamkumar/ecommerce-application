@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Switch } from "antd";
+import { ColumnWidthOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Space, Switch } from "antd";
+import { useEffect } from "react";
 import { ActionType } from "../../../constants/constants";
 import { saveSize, updateSize } from "@/lib/apis/size";
 import {
@@ -48,17 +49,20 @@ const AddSize = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Size" : "Create Size"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <ColumnWidthOutlined className="text-blue-500" />
+          <span>{type === ActionType.UPDATE ? "Update Size" : "Create Size"}</span>
+        </Space>
       }
       width={500}
       zIndex={1050}
       open={size && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button size="large" onClick={resetFormData} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
@@ -91,7 +95,7 @@ const AddSize = () => {
           <Input />
         </Form.Item>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <Form.Item
             name="name"
             label="Size Name"

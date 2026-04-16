@@ -1,20 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Button, Form, Input, InputNumber, Modal, Select, Switch } from "antd";
-import { ActionType } from "../../../constants/constants";
+import { getDistricts } from "@/lib/apis/geo-location/district";
+import {
+  saveShippingCharge,
+  updateShippingCharge,
+} from "@/lib/apis/shipping-charge";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import { errorNotification } from "@/lib/utils/notification";
 import {
   selectGlobal,
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { CarOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Modal, Select, Space, Switch } from "antd";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  saveShippingCharge,
-  updateShippingCharge,
-} from "@/lib/apis/shipping-charge";
-import { getDistricts } from "@/lib/apis/geo-location/district";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
-import { errorNotification } from "@/lib/utils/notification";
+import { ActionType } from "../../../constants/constants";
 
 const AddShippingCharge = () => {
   const [districts, setDistricts] = useState([]);
@@ -22,7 +23,7 @@ const AddShippingCharge = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const { payload, type } = global.action;
+  const { payload, type, shippingCharge } = global.action;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,7 +46,12 @@ const AddShippingCharge = () => {
   }, [dispatch, form, payload, type]);
 
   const handleSubmit = async (values: any) => {
-    const newData = { ...values };
+    const newData = {
+      ...values,
+      id: values.id ? Number(values.id) : undefined,
+      districtId: values.districtId ? Number(values.districtId) : undefined,
+      shippingCharge: values.shippingCharge ? Number(values.shippingCharge) : 0,
+    };
 
     const result = newData.id
       ? () => updateShippingCharge(newData)
@@ -71,19 +77,27 @@ const AddShippingCharge = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE
-            ? "Update Shipping Charge"
-            : "Create Shipping Charge"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <CarOutlined className="text-blue-500" />
+          <span>
+            {type === ActionType.UPDATE
+              ? "Update Shipping Charge"
+              : "Create Shipping Charge"}
+          </span>
+        </Space>
       }
       width={600}
       zIndex={1050}
-      open={type === ActionType.CREATE || type === ActionType.UPDATE}
+      open={
+        shippingCharge &&
+        (type === ActionType.CREATE || type === ActionType.UPDATE)
+      }
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button size="large" onClick={resetFormData} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
@@ -94,7 +108,7 @@ const AddShippingCharge = () => {
             disabled={global.loading.save}
             loading={global.loading.save}
             className="!px-8"
-            style={{ 
+            style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
             }}
@@ -110,17 +124,13 @@ const AddShippingCharge = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        {/* Location Section */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-            Location
-          </h3>
+        <div className="space-y-6">
           <Form.Item
             name="districtId"
             label="District"
@@ -153,48 +163,42 @@ const AddShippingCharge = () => {
           </Form.Item>
         </div>
 
-        {/* Charge Configuration */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-            Charge Configuration
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Form.Item
-              name="shippingCharge"
-              label="Shipping Charge"
-              rules={[
-                {
-                  required: true,
-                  message: "Shipping charge is required",
-                },
-              ]}
-              className="!mb-0"
-            >
-              <InputNumber
-                placeholder="Enter amount"
-                size="large"
-                min={0}
-                className="!w-full"
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") as any
-                }
-                parser={(value) => value!.replace(/\$\s?|(,*)/g, "") as any}
-              />
-            </Form.Item>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Form.Item
+            name="shippingCharge"
+            label="Shipping Charge"
+            rules={[
+              {
+                required: true,
+                message: "Shipping charge is required",
+              },
+            ]}
+            className="!mb-0"
+          >
+            <InputNumber
+              placeholder="Enter amount"
+              size="large"
+              min={0}
+              className="!w-full"
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") as any
+              }
+              parser={(value) => value!.replace(/\$\s?|(,*)/g, "") as any}
+            />
+          </Form.Item>
 
-            <Form.Item
-              name="status"
-              label="Status"
-              valuePropName="checked"
-              className="!mb-0"
-            >
-              <Switch
-                checkedChildren="Active"
-                unCheckedChildren="Inactive"
-                defaultChecked
-              />
-            </Form.Item>
-          </div>
+          <Form.Item
+            name="status"
+            label="Status"
+            valuePropName="checked"
+            className="!mb-0"
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked
+            />
+          </Form.Item>
         </div>
 
         {/* Additional Notes */}

@@ -40,6 +40,7 @@ export default function ShippingCharge() {
             dispatch(
               setAction({
                 type: ActionType.CREATE,
+                shippingCharge: true,
               })
             )
           }

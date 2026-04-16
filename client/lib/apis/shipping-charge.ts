@@ -13,6 +13,7 @@ interface ShippingCharge {
 
 // Define the response structure
 interface ApiResponse<T> {
+  success: boolean;
   data?: T;
   message?: string;
   status?: string;
@@ -28,7 +29,7 @@ export async function saveShippingCharge(
     cache: "no-cache",
     headers,
     body: JSON.stringify(data),
-  });
+  } as any);
 
   return await handleResponse(res);
 }

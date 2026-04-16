@@ -1,6 +1,5 @@
-'use client'
-import React, { useEffect } from "react";
-import { Button, Form, Input, InputNumber, Modal, Switch } from "antd";
+import { PercentageOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Modal, Space, Switch } from "antd";
 import { ActionType } from "../../../constants/constants";
 import {
   selectGlobal,
@@ -10,6 +9,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { saveTax, updateTax } from "@/lib/apis/tax";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+
+import { useEffect } from "react";
 
 const AddTax = () => {
   const global = useSelector(selectGlobal);
@@ -49,17 +50,20 @@ const AddTax = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update Tax" : "Create Tax"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <PercentageOutlined className="text-rose-500" />
+          <span>{type === ActionType.UPDATE ? "Update Tax" : "Create Tax"}</span>
+        </Space>
       }
       width={500}
       zIndex={1050}
       open={tax && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button
             size="large"
             onClick={() => resetFormData(global.action?.payload)}
@@ -96,7 +100,7 @@ const AddTax = () => {
           <Input />
         </Form.Item>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <Form.Item
             name="name"
             label="Tax Name"

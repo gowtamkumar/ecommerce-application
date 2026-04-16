@@ -14,6 +14,7 @@ import {
   setAction,
   setLoading,
 } from "@/redux/features/global/globalSlice";
+import { UserOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -22,6 +23,7 @@ import {
   Input,
   Modal,
   Select,
+  Space,
   Switch,
   Upload,
 } from "antd";
@@ -100,17 +102,20 @@ const AddUser = () => {
   return (
     <Modal
       title={
-        <span className="text-xl font-semibold">
-          {type === ActionType.UPDATE ? "Update User" : "Create User"}
-        </span>
+        <Space className="text-xl font-semibold">
+          <UserOutlined className="text-indigo-500" />
+          <span>{type === ActionType.UPDATE ? "Update User" : "Create User"}</span>
+        </Space>
       }
       width={700}
       zIndex={1050}
       open={user && (type === ActionType.CREATE || type === ActionType.UPDATE)}
       onCancel={handleClose}
+      centered
+      maskClosable={false}
       forceRender
       footer={
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4">
           <Button size="large" onClick={() => resetFormData(payload)} style={{ borderRadius: "var(--button-border-radius)" }}>
             Reset
           </Button>
@@ -121,7 +126,7 @@ const AddUser = () => {
             loading={global.loading.save}
             disabled={global.loading.save}
             className="!px-8"
-            style={{ 
+            style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
             }}
@@ -138,13 +143,13 @@ const AddUser = () => {
         onValuesChange={(_v, values) => setFormValues(values)}
         autoComplete="off"
         scrollToFirstError={true}
-        className="mt-6"
+        className="mt-6 space-y-6"
       >
         <Form.Item name="id" hidden>
           <Input />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           {/* Name */}
           <Form.Item
             name="name"
@@ -177,7 +182,7 @@ const AddUser = () => {
         </div>
 
         {!payload?.id && (
-          <div className="mt-4">
+          <div className="mt-6">
             <Form.Item
               hidden={payload?.id}
               name="password"
@@ -195,7 +200,7 @@ const AddUser = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-6 mt-6">
           {/* Email */}
           <Form.Item
             name="email"
@@ -225,7 +230,7 @@ const AddUser = () => {
           </Form.Item>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-6 mt-6">
           {/* User Type */}
           <Form.Item name="type" label="User Type" className="!mb-0">
             <Select
