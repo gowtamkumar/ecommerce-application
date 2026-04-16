@@ -109,41 +109,53 @@ const PageLayoutSettings = () => {
 
     const columns = (pageKey: string) => [
         {
-            title: "Section Name",
+            title: "Section Block Name",
             dataIndex: "name",
             key: "name",
-            render: (text: string) => <Text className="font-medium">{text}</Text>
+            render: (text: string) => <div className="font-semibold text-gray-800">{text}</div>
         },
         {
-            title: "Slug",
+            title: "Internal Identifier",
             dataIndex: "slug",
             key: "slug",
-            render: (text: string) => <Text type="secondary" className="font-mono text-xs">{text}</Text>
+            width: 250,
+            render: (text: string) => (
+                <span className="px-3 py-1 bg-gray-50 text-gray-500 rounded-md font-mono text-xs border border-gray-200">
+                    {text}
+                </span>
+            )
         },
         {
-            title: "Sequence",
+            title: "Display Order",
             dataIndex: "sequence",
             key: "sequence",
-            width: 120,
+            width: 180,
+            align: 'center' as const,
             render: (value: number, record: any) => (
                 <InputNumber
                     min={1}
                     value={value}
                     onChange={(val) => handleUpdateSection(pageKey, record.slug, "sequence", val)}
-                    className="w-full"
+                    className="w-24 text-center rounded-md"
                 />
             )
         },
         {
-            title: "Status",
+            title: "Visibility",
             dataIndex: "status",
             key: "status",
-            width: 100,
+            width: 150,
+            align: 'right' as const,
             render: (value: boolean, record: any) => (
-                <Switch
-                    checked={value}
-                    onChange={(val) => handleUpdateSection(pageKey, record.slug, "status", val)}
-                />
+                <div className="flex items-center justify-end gap-3">
+                    <span className={`text-xs font-bold uppercase tracking-wider ${value ? 'text-global-primary' : 'text-gray-400'}`}>
+                        {value ? 'Visible' : 'Hidden'}
+                    </span>
+                    <Switch
+                        checked={value}
+                        onChange={(val) => handleUpdateSection(pageKey, record.slug, "status", val)}
+                    />
+                </div>
             )
         }
     ];
@@ -170,6 +182,9 @@ const PageLayoutSettings = () => {
                                         columns={columns("home")} 
                                         pagination={false} 
                                         rowKey="slug"
+                                        bordered
+                                        size="middle"
+                                        className="border-x border-t border-gray-100 rounded-xl overflow-hidden shadow-sm"
                                     />
                                 </div>
                             )
@@ -184,6 +199,9 @@ const PageLayoutSettings = () => {
                                         columns={columns("about")} 
                                         pagination={false} 
                                         rowKey="slug"
+                                        bordered
+                                        size="middle"
+                                        className="border-x border-t border-gray-100 rounded-xl overflow-hidden shadow-sm"
                                     />
                                 </div>
                             )
@@ -198,6 +216,9 @@ const PageLayoutSettings = () => {
                                         columns={columns("contact")} 
                                         pagination={false} 
                                         rowKey="slug"
+                                        bordered
+                                        size="middle"
+                                        className="border-x border-t border-gray-100 rounded-xl overflow-hidden shadow-sm"
                                     />
                                 </div>
                             )
@@ -212,6 +233,9 @@ const PageLayoutSettings = () => {
                                         columns={columns("support")} 
                                         pagination={false} 
                                         rowKey="slug"
+                                        bordered
+                                        size="middle"
+                                        className="border-x border-t border-gray-100 rounded-xl overflow-hidden shadow-sm"
                                     />
                                 </div>
                             )

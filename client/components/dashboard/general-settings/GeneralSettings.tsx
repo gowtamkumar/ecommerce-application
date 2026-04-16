@@ -1,5 +1,5 @@
 "use client";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { MailOutlined, MinusCircleOutlined, PhoneOutlined, PlusOutlined, ShopOutlined, EnvironmentOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -36,6 +36,7 @@ import {
   setSetting,
 } from "@/redux/features/global/globalSlice";
 import TextArea from "antd/es/input/TextArea";
+import { SettingsHeader } from "./CommonComponents";
 
 const { Title, Text } = Typography;
 
@@ -155,15 +156,10 @@ const GeneralSettings = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <Title level={4} className="!mb-1">
-          Basic Information
-        </Title>
-        <Text type="secondary">
-          Configure your store's basic details and contact information
-        </Text>
-      </div>
+      <SettingsHeader 
+         title="Basic Information" 
+         description="Configure your store's foundational details, contact information, and core branding."
+      />
 
       <Card className="shadow-sm border border-gray-100 rounded-2xl">
         <Form
@@ -177,142 +173,155 @@ const GeneralSettings = () => {
             <Input />
           </Form.Item>
 
-          <div className="space-y-4">
-            {/* Site Name */}
-            <Form.Item
-              name="siteName"
-              label={<span className="text-base font-medium">Site Name</span>}
-              rules={[{ required: true, message: "Site name is required" }]}
-              className="!mb-0"
-            >
-              <Input
-                size="large"
-                placeholder="Enter your store name"
-                className="max-w-xl"
-              />
-            </Form.Item>
+          <div className="space-y-10">
+            {/* General Site Data */}
+            <div className="space-y-4">
+              <SettingsHeader title="Store Details" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-50/50 p-6 rounded-xl border border-gray-100">
+                {/* Site Name */}
+                <Form.Item
+                  name="siteName"
+                  label={<span className="text-base font-medium">Site Name</span>}
+                  rules={[{ required: true, message: "Site name is required" }]}
+                  className="!mb-0"
+                >
+                  <Input size="large" prefix={<ShopOutlined className="text-gray-400 mr-1" />} placeholder="Enter your store name" />
+                </Form.Item>
 
+                {/* Email */}
+                <Form.Item
+                  name="email"
+                  label={<span className="text-base font-medium">Email Address</span>}
+                  rules={[{ type: "email", message: "Please enter a valid email" }]}
+                  className="!mb-0"
+                >
+                  <Input size="large" prefix={<MailOutlined className="text-gray-400 mr-1" />} placeholder="contact@yourstore.com" />
+                </Form.Item>
 
+                {/* Phone */}
+                <Form.Item
+                  name="phone"
+                  label={<span className="text-base font-medium">Phone Number</span>}
+                  className="!mb-0"
+                >
+                  <Input size="large" prefix={<PhoneOutlined className="text-gray-400 mr-1" />} placeholder="+1 (555) 123-4567" />
+                </Form.Item>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-xl border border-gray-100">
+                {/* Description */}
+                <Form.Item
+                  name="description"
+                  label={(
+                    <Space size="small">
+                      <span className="text-base font-medium">Description</span>
+                      <InfoCircleOutlined className="text-gray-400" title="A brief description of your store used for SEO and about sections." />
+                    </Space>
+                  )}
+                  className="!mb-0"
+                >
+                  <Input.TextArea
+                    size="large"
+                    placeholder="Enter your store description and bio..."
+                    rows={4}
+                  />
+                </Form.Item>
 
-            {/* Email */}
-            <Form.Item
-              name="email"
-              label={<span className="text-base font-medium">Email Address</span>}
-              rules={[
-                { type: "email", message: "Please enter a valid email" },
-              ]}
-              className="!mb-0"
-            >
-              <Input
-                size="large"
-                placeholder="contact@yourstore.com"
-              // className="max-w-xl"
-              />
-            </Form.Item>
-
-            {/* Phone */}
-            <Form.Item
-              name="phone"
-              label={<span className="text-base font-medium">Phone Number</span>}
-              className="!mb-0"
-            >
-              <Input
-                size="large"
-                placeholder="+1 (555) 123-4567"
-                className="max-w-xl"
-              />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label={<span className="text-base font-medium">Description</span>}
-              className="!mb-0"
-            >
-              <TextArea
-                size="large"
-                placeholder="Enter your store description"
-              />
-            </Form.Item>
-
-            {/* Address */}
-            <Form.Item
-              name="address"
-              label={<span className="text-base font-medium">Store Address</span>}
-              className="!mb-0"
-            >
-              <Input.TextArea
-                size="large"
-                placeholder="Enter your store address"
-                rows={3}
-                className="max-w-xl"
-              />
-            </Form.Item>
-
-
-
-            {/* Branding Section */}
-            <div className="pt-6 border-t mt-6">
-              <Title level={5} className="!mb-3">
-                Branding
-              </Title>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FileUploadField name="image" label="Store Logo" fileListKey="fileList" />
-                <FileUploadField
-                  name="favicon"
-                  label="Favicon"
-                  fileListKey="faviconfileList"
-                />
+                {/* Address */}
+                <Form.Item
+                  name="address"
+                  label={(
+                    <Space size="small">
+                      <span className="text-base font-medium">Store Address</span>
+                      <EnvironmentOutlined className="text-gray-400" title="The physical location of your store." />
+                    </Space>
+                  )}
+                  className="!mb-0"
+                >
+                  <Input.TextArea
+                    size="large"
+                    placeholder="E.g., 123 Commerce Avenue, New York, NY 10001"
+                    rows={4}
+                  />
+                </Form.Item>
+              </div>
+            </div>            {/* Branding Section */}
+            <div>
+              <SettingsHeader title="Brand Assets" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-xl border border-gray-100">
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                   <FileUploadField name="image" label="Store Logo" fileListKey="fileList" />
+                   <div className="text-xs text-gray-400 mt-2">Recommended size: 512x512px. Used for main site branding.</div>
+                </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                   <FileUploadField
+                     name="favicon"
+                     label="Favicon (Tab Icon)"
+                     fileListKey="faviconfileList"
+                   />
+                   <div className="text-xs text-gray-400 mt-2">Recommended: .ico or .png format. Used for browser tabs.</div>
+                </div>
               </div>
             </div>
 
             {/* Return Settings Section */}
-            <div className="pt-6 border-t mt-6">
-              <Title level={5} className="!mb-3 text-orange-600">
-                Return Settings
-              </Title>
-              <div className="space-y-4 max-w-xl">
+            <div>
+              <SettingsHeader title="Default Returns & Policies" />
+              <div className="space-y-6 bg-gray-50/50 p-6 rounded-xl border border-gray-100 max-w-3xl">
                 <Form.Item
                   name={["returnSetting", "returnWindowDays"]}
-                  label={<span className="text-base font-medium">Return Window (Days)</span>}
+                  label={<span className="text-base font-medium">Standard Return Window</span>}
                   tooltip="Number of days after delivery a customer can request a return."
                   rules={[{ required: true, message: "Return window is required" }]}
                 >
-                  <InputNumber size="large" min={0} placeholder="e.g. 7" style={{ width: "100%" }} />
+                  <InputNumber 
+                      size="large" 
+                      min={0} 
+                      placeholder="e.g. 7" 
+                      addonAfter="Days" 
+                      style={{ width: "100%", maxWidth: "300px" }} 
+                      className="rounded-md"
+                  />
                 </Form.Item>
 
-                <div className="space-y-2">
-                  <span className="text-base font-medium block">Predefined Return Reasons</span>
-                  <Text type="secondary" className="block !mb-4">
-                    Common reasons shown to customers in the return request dropdown.
-                  </Text>
+                <div className="space-y-3">
+                  <div>
+                    <span className="text-base font-medium block text-gray-800">Predefined Return Reasons</span>
+                    <Text type="secondary" className="block text-sm">
+                      Common reasons shown to customers in the return request dropdown.
+                    </Text>
+                  </div>
 
                   <Form.List name={["returnSetting", "predefinedReasons"]}>
                     {(fields, { add, remove }) => (
-                      <div className="space-y-3">
+                      <div className="space-y-3 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                         {fields.map(({ key, name, ...restField }) => (
-                          <Space key={key} style={{ display: "flex", marginBottom: 8 }} align="baseline">
+                          <Space key={key} style={{ display: "flex", width: "100%" }} align="center">
                             <Form.Item
                               {...restField}
                               name={[name]}
                               rules={[{ required: true, message: "Reason text is required" }]}
-                              className="!mb-0"
+                              className="!mb-0 w-full"
                             >
-                              <Input size="large" placeholder="e.g. Defective Item" style={{ width: "300px" }} />
+                              <Input size="large" placeholder="E.g., Defective item, Ordered by mistake..." className="min-w-[300px]" />
                             </Form.Item>
-                            <MinusCircleOutlined onClick={() => remove(name)} className="text-red-500 hover:text-red-700" />
+                            <Button 
+                                type="text" 
+                                danger 
+                                icon={<MinusCircleOutlined />} 
+                                onClick={() => remove(name)} 
+                                className="!px-2 ml-1 opacity-70 hover:opacity-100"
+                            />
                           </Space>
                         ))}
-                        <Form.Item>
-                          <Button
-                            type="dashed"
-                            onClick={() => add()}
-                            block
-                            icon={<PlusOutlined />}
-                            className="mt-2"
-                          >
-                            Add Reason
-                          </Button>
-                        </Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                          className="mt-2 text-global-primary border-global-primary/30 hover:border-global-primary hover:text-global-primary w-fit"
+                        >
+                          Add New Reason
+                        </Button>
                       </div>
                     )}
                   </Form.List>
