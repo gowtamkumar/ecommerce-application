@@ -360,9 +360,66 @@ const navbarRoute = [
   {
     key: "other_module",
     icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/other-modules?tab=sizes">Other Module</Link>,
+    label: "Other Module",
     route: "true",
+    children: [
+      {
+        key: "size",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/size">Size</Link>,
+        route: "true",
+      },
+      {
+        key: "unit",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/unit">Unit</Link>,
+        route: "true",
+      },
+      {
+        key: "color",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/color">Color</Link>,
+        route: "true",
+      },
+      {
+        key: "taxs",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/taxs">Taxs</Link>,
+        route: "true",
+      },
+      {
+        key: "banner",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/banner">Banner</Link>,
+        route: "true",
+      },
+      {
+        key: "brands",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/other-modules?tab=brand">Brands</Link>,
+        route: "true",
+      },
+      {
+        key: "review",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/review">Review</Link>,
+        route: "true",
+      },
+      {
+        key: "leads",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/other-modules?tab=leads">Leads</Link>,
+        route: "true",
+      },
+      {
+        key: "currencies",
+        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/other-modules?tab=currencies">Currencies</Link>,
+        route: "true",
+      },
+    ],
   },
+
 
   {
     key: "general_setting",
