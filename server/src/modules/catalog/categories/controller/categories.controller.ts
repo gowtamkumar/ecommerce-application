@@ -17,11 +17,21 @@ export const getPublicCategories = asyncHandler(async (req: Request, res: Respon
   const connection = await getDBConnection();
   const repository = connection.getRepository(CategoriesEntity);
 
-  const categories = await repository.find();
+  const page = Number(req.query.page) || 1;
+  const perPage = Number(req.query.perPage) || 10;
+  const skip = (page - 1) * perPage;
+
+  const [categories, total] = await repository.findAndCount({
+    skip,
+    take: perPage,
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all categories',
+    totalItem: total,
+    page,
+    perPage,
     data: categories,
   });
 });
@@ -99,11 +109,21 @@ export const getCategories = asyncHandler(async (req: Request, res: Response) =>
   const connection = await getDBConnection();
   const repository = connection.getRepository(CategoriesEntity);
 
-  const user = await repository.find();
+  const page = Number(req.query.page) || 1;
+  const perPage = Number(req.query.perPage) || 10;
+  const skip = (page - 1) * perPage;
+
+  const [user, total] = await repository.findAndCount({
+    skip,
+    take: perPage,
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all categories',
+    totalItem: total,
+    page,
+    perPage,
     data: user,
   });
 });

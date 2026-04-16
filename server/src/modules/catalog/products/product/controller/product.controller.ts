@@ -324,17 +324,24 @@ export const getProducts = async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const productRepository = connection.getRepository(ProductEntity);
 
+  const { page = 1, perPage = 10 } = req.query;
+  const skip = (Number(page) - 1) * Number(perPage);
+
   try {
     const qb = productRepository.createQueryBuilder('product');
     qb.select(['product', 'productVariants']);
     qb.leftJoin('product.productVariants', 'productVariants');
+    qb.skip(skip);
+    qb.take(Number(perPage));
 
-    const results = await qb.getMany();
+    const [results, total] = await qb.getManyAndCount();
 
     res.status(200).json({
       success: true,
-      message: 'Fetched all products successfully',
-      totalItem: results.length,
+      message: 'Fetched products successfully',
+      totalItem: total,
+      page: Number(page),
+      perPage: Number(perPage),
       data: results,
     });
   } catch (error: any) {
@@ -765,12 +772,21 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
       );
     }
 
-    const results = await qb.getMany();
+    const page = Number(req.query.page) || 1;
+    const perPage = Number(req.query.perPage) || 10;
+    const skip = (page - 1) * perPage;
+
+    qb.skip(skip);
+    qb.take(perPage);
+
+    const [results, total] = await qb.getManyAndCount();
 
     res.status(200).json({
       success: true,
-      message: 'Fetched all products successfully',
-      totalItem: results.length,
+      message: 'Fetched products successfully',
+      totalItem: total,
+      page,
+      perPage,
       data: results,
     });
   } catch (error: any) {

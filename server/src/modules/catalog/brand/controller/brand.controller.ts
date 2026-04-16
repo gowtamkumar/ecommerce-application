@@ -18,11 +18,21 @@ export const getBrands = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = connection.getRepository(BrandEntity);
 
-  const result = await repository.find();
+  const page = Number(req.query.page) || 1;
+  const perPage = Number(req.query.perPage) || 10;
+  const skip = (page - 1) * perPage;
+
+  const [result, total] = await repository.findAndCount({
+    skip,
+    take: perPage,
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Brands',
+    totalItem: total,
+    page,
+    perPage,
     data: result,
   });
 });

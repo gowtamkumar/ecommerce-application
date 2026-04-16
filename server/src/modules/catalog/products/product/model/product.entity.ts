@@ -33,6 +33,7 @@ export class ProductEntity {
   @Column()
   name!: string;
 
+  @Index()
   @Column()
   slug!: string;
 
@@ -56,6 +57,7 @@ export class ProductEntity {
   @Column({ name: 'short_description' })
   shortDescription?: string;
 
+  @Index()
   @Column({ name: 'tax_id' })
   taxId?: number;
   @ManyToOne((_type) => TaxEntity, (tax) => tax.products)
@@ -83,6 +85,7 @@ export class ProductEntity {
   // @Column({ name: "discount_value" })
   // discountValue!: number;
 
+  @Index()
   @Column({ type: 'enum', enum: Status, default: Status.Active })
   status!: Status;
 
@@ -111,6 +114,7 @@ export class ProductEntity {
   @Column({ type: 'simple-array' })
   images!: string[];
 
+  @Index()
   @Column({ name: 'user_id' })
   userId!: number;
   @ManyToOne((_type) => UserEntity, (user) => user.products)

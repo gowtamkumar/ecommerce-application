@@ -41,6 +41,7 @@ import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useMemo } from "react";
 
 const { Title, Text } = Typography;
 
@@ -133,19 +134,39 @@ const AddDiscount = () => {
 
   const fetchInitialData = async () => {
     try {
-      const [categories, brands, products] = await Promise.all([
+      // Fetch larger limit for admin dropdowns, but still bounded
+      const [categoriesRes, brandsRes, productsRes] = await Promise.all([
         getCategories(),
         getBrands(),
-        getProducts(),
+        getProducts({ perPage: 1000 }), 
       ]);
 
-      setCategories(categories.data);
-      setBrands(brands.data);
-      setProducts(products.data);
+      setCategories(categoriesRes.data);
+      setBrands(brandsRes.data);
+      setProducts(productsRes.data);
     } catch (error) {
       console.error("Failed to fetch initial data:", error);
     }
   };
+
+  // Memoize options for Select components to prevent expensive re-mapping on every render
+  const productOptions = useMemo(() => 
+    (products || []).map((item: any) => ({
+      value: item.id,
+      label: item.name,
+    })), [products]);
+
+  const brandOptions = useMemo(() => 
+    (brands || []).map((item: any) => ({
+      value: item.id,
+      label: item.name,
+    })), [brands]);
+
+  const categoryOptions = useMemo(() => 
+    (categories || []).map((item: any) => ({
+      value: item.id,
+      label: item.name,
+    })), [categories]);
 
   const handleSubmit = async (values: any) => {
     const newData = { ...values };
@@ -493,19 +514,12 @@ const AddDiscount = () => {
                     placeholder="Search and select products"
                     mode="multiple"
                     size="large"
-                    optionFilterProp="children"
+                    optionFilterProp="label"
                     filterOption={(input, option) =>
-                      (option?.children as any)
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
+                      (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
                     }
-                  >
-                    {(products || []).map((item: any) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    options={productOptions}
+                  />
                 </Form.Item>
               )}
 
@@ -527,19 +541,12 @@ const AddDiscount = () => {
                     placeholder="Search and select brands"
                     mode="multiple"
                     size="large"
-                    optionFilterProp="children"
+                    optionFilterProp="label"
                     filterOption={(input, option) =>
-                      (option?.children as any)
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
+                      (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
                     }
-                  >
-                    {(brands || []).map((item: any) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    options={brandOptions}
+                  />
                 </Form.Item>
               )}
 
@@ -561,19 +568,12 @@ const AddDiscount = () => {
                     placeholder="Search and select categories"
                     mode="multiple"
                     size="large"
-                    optionFilterProp="children"
+                    optionFilterProp="label"
                     filterOption={(input, option) =>
-                      (option?.children as any)
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
+                      (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
                     }
-                  >
-                    {(categories || []).map((item: any) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                    options={categoryOptions}
+                  />
                 </Form.Item>
               )}
             </Card>

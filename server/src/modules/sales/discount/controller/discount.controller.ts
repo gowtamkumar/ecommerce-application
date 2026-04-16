@@ -38,11 +38,22 @@ export const getDiscounts = asyncHandler(async (req: Request, res: Response) => 
   if (endDate) {
     whereClause.endDate = MoreThan(endDate);
   }
-  const result = await repository.find({ where: whereClause });
+  const page = Number(req.query.page) || 1;
+  const perPage = Number(req.query.perPage) || 10;
+  const skip = (page - 1) * perPage;
+
+  const [result, total] = await repository.findAndCount({
+    where: whereClause,
+    skip,
+    take: perPage,
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Discounts',
+    totalItem: total,
+    page,
+    perPage,
     data: result,
   });
 });
