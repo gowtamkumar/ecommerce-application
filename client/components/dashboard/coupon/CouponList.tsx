@@ -14,11 +14,16 @@ import {
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
+  BarcodeOutlined,
+  CalendarOutlined,
   DeleteOutlined,
+  DollarOutlined,
   EditOutlined,
   EyeOutlined,
+  PercentageOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
+  TeamOutlined
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
 import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
@@ -184,7 +189,14 @@ const CouponList: React.FC = () => {
       key: "code",
       sorter: (a, b) => a.code.length - b.code.length,
       ...getColumnSearchProps("code"),
-      render: (text) => <span className="font-mono font-semibold text-gray-900 uppercase">{text}</span>,
+      render: (text) => (
+        <div className="flex items-center gap-2">
+          <BarcodeOutlined className="text-gray-400" />
+          <span className="font-mono px-2 py-1 bg-gray-100 rounded border border-gray-200 text-purple-700 font-bold uppercase tracking-wider text-xs">
+            {text}
+          </span>
+        </div>
+      ),
     },
     {
       title: "Type",
@@ -193,7 +205,9 @@ const CouponList: React.FC = () => {
       sorter: (a, b) => a.type.length - b.type.length,
       ...getColumnSearchProps("type"),
       render: (value) => (
-        <Tag color={value === "Order" ? "purple" : "blue"}>{value}</Tag>
+        <Tag color={value === "Order" ? "blue" : "cyan"} className="rounded-full px-3 font-medium border-none py-0.5">
+          {value}
+        </Tag>
       ),
     },
     {
@@ -203,66 +217,70 @@ const CouponList: React.FC = () => {
       sorter: (a, b) => a.discountType.length - b.discountType.length,
       ...getColumnSearchProps("discountType"),
       render: (value) => (
-        <Tag color={value === "Percentage" ? "blue" : "green"}>
-          {value === "Percentage" ? "Percentage" : "Fixed"}
+        <Tag
+          icon={value === "Percentage" ? <PercentageOutlined /> : <DollarOutlined />}
+          color={value === "Percentage" ? "orange" : "green"}
+          className="rounded-full px-3 font-medium border-none py-0.5"
+        >
+          {value}
         </Tag>
       ),
     },
     {
-      title: "Value",
-      dataIndex: "value",
-      key: "value",
-      sorter: (a, b) => a.value.length - b.value.length,
-      ...getColumnSearchProps("value"),
-      render: (value, record) => (
-        <span className="font-medium text-gray-700">
-          {record.discountType === "Percentage" ? `${value}%` : formatPrice(value)}
-        </span>
+      title: "Discount Value",
+      key: "value_display",
+      render: (_, record: any) => (
+        <div className="flex flex-col">
+          <span className="font-bold text-gray-800 text-lg">
+            {record.discountType === "Percentage" ? `${record.value}%` : formatPrice(record.value)}
+          </span>
+          <span className="text-[10px] text-gray-400 uppercase font-medium">Off total</span>
+        </div>
       ),
     },
     {
-      ...getColumnSearchProps("startDate"),
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      sorter: (a, b) => a.startDate.length - b.startDate.length,
-      render: (value) => (
-        <span className="text-gray-600">
-          {value && dayjs(value).format("MMM DD, YYYY")}
-        </span>
-      ),
-    },
-    {
-      ...getColumnSearchProps("expiryDate"),
-      title: "Expiry Date",
-      dataIndex: "expiryDate",
-      key: "expiryDate",
-      sorter: (a, b) => a.expiryDate.length - b.expiryDate.length,
-      render: (value) => (
-        <span className="text-gray-600">
-          {value && dayjs(value).format("MMM DD, YYYY")}
-        </span>
+      title: "Validity Period",
+      key: "validity",
+      render: (_, record) => (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <CalendarOutlined className="text-gray-400" />
+            <span className="font-medium">From:</span>
+            <span>{record.startDate && dayjs(record.startDate).format("MMM DD, YYYY")}</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <CalendarOutlined className="text-red-400" />
+            <span className="font-medium">To:</span>
+            <span className="text-red-600 font-medium">{record.expiryDate && dayjs(record.expiryDate).format("MMM DD, YYYY")}</span>
+          </div>
+        </div>
       ),
     },
     {
       ...getColumnSearchProps("usageLimit"),
-      title: "Usage Limit",
-      dataIndex: "usageLimit",
-      key: "usageLimit",
-      render: (value) => <span className="text-gray-600">{value}</span>,
+      title: "Usage",
+      key: "usage",
+      render: (value) => (
+        <div className="flex items-center gap-2">
+          <TeamOutlined className="text-gray-400" />
+          <span className="text-gray-700 font-medium">{value.usageLimit}</span>
+          <span className="text-xs text-gray-400">Limit</span>
+        </div>
+      ),
     },
     {
       title: "Status",
       key: "active",
       ...getColumnSearchProps("active"),
       sortDirections: ["descend", "ascend"],
-      render: (value) => {
+      render: (record) => {
         return (
           <Tag
-            color={value.active ? "green" : "red"}
-            className="font-medium"
+            color={record.active ? "success" : "error"}
+            className="rounded-full px-3 font-medium border-none py-0.5"
           >
-            {value.active ? "Active" : "Inactive"}
+            <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${record.active ? 'bg-green-500' : 'bg-red-500'}`} />
+            {record.active ? "Active" : "Inactive"}
           </Tag>
         );
       },
@@ -276,9 +294,10 @@ const CouponList: React.FC = () => {
         <div className="flex gap-2 justify-end">
           <Tooltip title="View Details">
             <Button
-              size="small"
-              icon={<EyeOutlined />}
-              className="hover:!bg-blue-50 hover:!text-blue-600"
+              size="middle"
+              type="text"
+              icon={<EyeOutlined className="text-blue-500" />}
+              className="hover:!bg-blue-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -293,9 +312,10 @@ const CouponList: React.FC = () => {
 
           <Tooltip title="Edit Coupon">
             <Button
-              size="small"
-              icon={<EditOutlined />}
-              className="hover:!bg-green-50 hover:!text-green-600"
+              size="middle"
+              type="text"
+              icon={<EditOutlined className="text-green-500" />}
+              className="hover:!bg-green-50"
               onClick={() => route.push(`/dashboard/coupons/${value.id}`)}
             />
           </Tooltip>
@@ -308,15 +328,16 @@ const CouponList: React.FC = () => {
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
-            placement="left"
+            placement="bottomRight"
             okText="Yes"
             okType="danger"
             cancelText="No"
-            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            icon={<QuestionCircleOutlined className="text-red-500" />}
           >
             <Tooltip title="Delete Coupon">
               <Button
-                size="small"
+                size="middle"
+                type="text"
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
@@ -338,7 +359,6 @@ const CouponList: React.FC = () => {
       dataSource={coupons}
       pagination={{
         pageSize: 10,
-
         showSizeChanger: true,
       }}
       size="middle"

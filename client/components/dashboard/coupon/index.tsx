@@ -1,7 +1,7 @@
 "use client";
 import CouponDetails from "@/components/dashboard/coupon/CouponDetails";
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Typography } from "antd";
+import { ScissorOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Space, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,13 +21,18 @@ export default function Coupon() {
     <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div>
-          <Title level={2} className="!mb-1">
-            Coupons Management
-          </Title>
-          <Text type="secondary">
-            Manage coupon codes and promotional discounts for customers
-          </Text>
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-purple-50 rounded-xl">
+            <ScissorOutlined className="text-2xl text-purple-600" />
+          </div>
+          <div>
+            <Title level={2} className="!mb-0 !text-gray-800">
+              Coupons Management
+            </Title>
+            <Text type="secondary" className="text-sm">
+              Manage coupon codes and promotional discounts for customers
+            </Text>
+          </div>
         </div>
         <Button
           type="primary"

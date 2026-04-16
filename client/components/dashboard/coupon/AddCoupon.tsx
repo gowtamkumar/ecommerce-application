@@ -3,7 +3,17 @@ import { getCoupon, saveCoupon, updateCoupon } from "@/lib/apis/admin/coupon";
 import { getProducts } from "@/lib/apis/admin/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
-import { Button, Card, DatePicker, Form, Input, Select, Spin, Typography } from "antd";
+import { Button, Card, DatePicker, Form, Input, InputNumber, Select, Space, Spin, Typography } from "antd";
+import { 
+  ArrowLeftOutlined, 
+  InfoCircleOutlined, 
+  TagsOutlined, 
+  CalendarOutlined, 
+  DeploymentUnitOutlined, 
+  DashboardOutlined,
+  ScissorOutlined,
+  GiftOutlined
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -123,15 +133,22 @@ const AddCoupon = () => {
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <Title level={2} className="!mb-0">
-            {isEditMode ? "Edit Coupon" : "Create Coupon"}
-          </Title>
-          <Text type="secondary">
-            {isEditMode
-              ? "Update coupon details and restrictions"
-              : "Set up a new coupon code for discounts"}
-          </Text>
+        <div className="flex items-center gap-4">
+          <Button 
+            icon={<ArrowLeftOutlined />} 
+            onClick={() => route.push("/dashboard/coupons")}
+            className="hover:!text-purple-600 hover:!border-purple-600 rounded-lg"
+          />
+          <div>
+            <Title level={2} className="!mb-0 !text-gray-800">
+              {isEditMode ? "Edit Coupon" : "Create Coupon"}
+            </Title>
+            <Text type="secondary" className="text-sm">
+              {isEditMode
+                ? "Update coupon details and restrictions"
+                : "Set up a new coupon code for discounts"}
+            </Text>
+          </div>
         </div>
         <div className="flex gap-3">
           <Button
@@ -172,8 +189,15 @@ const AddCoupon = () => {
 
         {/* Basic Information Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Basic Information</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-purple-50 rounded-lg">
+                <InfoCircleOutlined className="text-purple-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">General Information</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -248,8 +272,15 @@ const AddCoupon = () => {
 
         {/* Discount Configuration Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Discount Configuration</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <TagsOutlined className="text-orange-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Discount Configuration</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -280,15 +311,27 @@ const AddCoupon = () => {
               ]}
               className="!mb-0"
             >
-              <Input placeholder="Enter discount value" size="large" type="number" min={0} />
+              <InputNumber 
+                placeholder="Enter discount value" 
+                size="large" 
+                min={0} 
+                className="w-full !rounded-lg"
+              />
             </Form.Item>
           </div>
         </Card>
 
         {/* Validity Period Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Validity Period</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <CalendarOutlined className="text-blue-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Validity Period</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -302,7 +345,7 @@ const AddCoupon = () => {
               ]}
               className="!mb-0"
             >
-              <DatePicker className="w-full" size="large" />
+              <DatePicker className="w-full !rounded-lg" size="large" />
             </Form.Item>
 
             <Form.Item
@@ -316,15 +359,22 @@ const AddCoupon = () => {
               ]}
               className="!mb-0"
             >
-              <DatePicker className="w-full" size="large" />
+              <DatePicker className="w-full !rounded-lg" size="large" />
             </Form.Item>
           </div>
         </Card>
 
         {/* Usage Restrictions Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Usage Restrictions</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-cyan-50 rounded-lg">
+                <DeploymentUnitOutlined className="text-cyan-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Usage Restrictions</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -339,7 +389,7 @@ const AddCoupon = () => {
               className="!mb-0"
               extra="Minimum order value to apply coupon"
             >
-              <Input placeholder="Enter amount" size="large" type="number" min={0} />
+              <InputNumber placeholder="0.00" size="large" min={0} className="w-full !rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -354,7 +404,7 @@ const AddCoupon = () => {
               className="!mb-0"
               extra="Maximum number of unique users"
             >
-              <Input placeholder="Enter number" size="large" type="number" min={0} />
+              <InputNumber placeholder="0" size="large" min={0} className="w-full !rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -369,7 +419,7 @@ const AddCoupon = () => {
               className="!mb-0"
               extra="Minimum cart total required"
             >
-              <Input placeholder="Enter amount" size="large" type="number" min={0} />
+              <InputNumber placeholder="0.00" size="large" min={0} className="w-full !rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -384,15 +434,22 @@ const AddCoupon = () => {
               className="!mb-0"
               extra="Maximum discount amount cap"
             >
-              <Input placeholder="Enter amount" size="large" type="number" min={0} />
+              <InputNumber placeholder="0.00" size="large" min={0} className="w-full !rounded-lg" />
             </Form.Item>
           </div>
         </Card>
 
         {/* Usage Limits Card */}
         <Card
-          title={<Title level={4} className="!mb-0">Usage Limits</Title>}
-          className="shadow-sm border border-gray-100 rounded-2xl"
+          title={
+            <Space className="py-1">
+              <div className="p-2 bg-indigo-50 rounded-lg">
+                <DashboardOutlined className="text-indigo-600" />
+              </div>
+              <span className="text-base font-bold text-gray-700">Usage Limits</span>
+            </Space>
+          }
+          className="shadow-sm border-gray-100 rounded-2xl overflow-hidden"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Form.Item
@@ -407,7 +464,7 @@ const AddCoupon = () => {
               className="!mb-0"
               extra="Total times coupon can be used"
             >
-              <Input placeholder="Enter number" size="large" type="number" min={0} />
+              <InputNumber placeholder="0" size="large" min={0} className="w-full !rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -422,7 +479,7 @@ const AddCoupon = () => {
               className="!mb-0"
               extra="Times each user can use this coupon"
             >
-              <Input placeholder="Enter number" size="large" type="number" min={0} />
+              <InputNumber placeholder="0" size="large" min={0} className="w-full !rounded-lg" />
             </Form.Item>
           </div>
         </Card>
