@@ -71,7 +71,7 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-global-primary/30 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full transform hover:-translate-y-1.5">
+    <div className="group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-sm ring-1 ring-inset ring-gray-900/5 dark:ring-white/10 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_-12px_rgba(255,255,255,0.05)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex flex-col h-full transform hover:-translate-y-1.5">
       {/* Image Area */}
       <div className="relative aspect-[4/5] overflow-hidden bg-gray-50/50 mix-blend-multiply dark:mix-blend-normal">
         <Link href={`/products/${item.slug}`} className="block w-full h-full relative z-0">
@@ -101,7 +101,7 @@ export default function Card({ item }: { item: any }) {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
           {+item.discountAmount > 0 && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/90 dark:bg-black/90 backdrop-blur-md text-global-primary shadow-sm tracking-wider">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/80 dark:bg-black/80 backdrop-blur-md text-global-primary shadow-sm tracking-wider">
               SAVE {item.discountValue}
               {item.discountStrategy === "Percentage"
                 ? "%"
@@ -134,7 +134,7 @@ export default function Card({ item }: { item: any }) {
       <div className="p-5 flex flex-col flex-1 relative bg-white dark:bg-transparent z-10 transition-colors duration-300">
         
         {/* Title */}
-        <h3 className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base leading-snug group-hover:text-global-primary transition-colors duration-300 line-clamp-2 min-h-[44px] mb-2">
+        <h3 className="font-medium text-gray-700 dark:text-gray-200 text-sm sm:text-base leading-tight group-hover:text-global-primary transition-colors duration-300 line-clamp-2 min-h-[40px] mb-2">
           <Link href={`/products/${item.slug}`}>{item.name}</Link>
         </h3>
 

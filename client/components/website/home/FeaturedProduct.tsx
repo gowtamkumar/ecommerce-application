@@ -38,7 +38,7 @@ const FeaturedProduct = ({ products }: any) => {
         },
       }}
       pagination={{ clickable: true }}
-      className="!pb-12 !pt-4 !px-4 -mx-4"
+      className="!pb-16 !pt-4 !px-4 -mx-4"
     >
       {products?.map((item: any, index: number) => (
         <SwiperSlide key={index} className="!h-auto flex">

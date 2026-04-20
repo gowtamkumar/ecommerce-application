@@ -67,27 +67,28 @@ export default function Slider({ banners }: any) {
                 />
 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 
                 {/* Content Container */}
-                <div className="relative z-10 h-full container mx-auto px-4 md:px-8 flex flex-col justify-center items-start">
+                <div className="relative z-10 h-full container mx-auto px-4 md:px-8 lg:px-12 flex flex-col justify-center items-start">
                   <div className="max-w-3xl space-y-6 animate-fade-up">
-                    <h1 className="text-4xl md:text-7xl font-bold !text-white leading-tight tracking-tight drop-shadow-lg">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold !text-white leading-[1.1] tracking-tighter drop-shadow-2xl">
                       {title}
                     </h1>
-                    <p className="text-lg md:text-2xl text-gray-200 font-light max-w-2xl leading-relaxed drop-shadow-md">
+                    <p className="text-lg md:text-xl lg:text-2xl text-gray-200 font-medium max-w-2xl leading-relaxed drop-shadow-lg opacity-90">
                       {description}
                     </p>
 
-                    <div className="pt-4">
+                    <div className="pt-6">
                       <Link href={url || "/products"}>
                         <Button
                           type="primary"
                           size="large"
-                          className="!h-14 !px-10 !text-lg !font-medium flex items-center gap-2 group/btn"
+                          className="!h-14 !px-10 !text-base md:!text-lg !font-semibold flex items-center gap-3 group/btn !bg-white/10 !border !border-white/20 !text-white hover:!bg-white hover:!text-black !backdrop-blur-md !rounded-full transition-all duration-500 hover:!scale-105 shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_40px_rgba(255,255,255,0.2)]"
                         >
-                          Shop Now
-                          <ArrowRightOutlined className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                          Shop Collection
+                          <ArrowRightOutlined className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                         </Button>
                       </Link>
                     </div>

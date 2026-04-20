@@ -20,24 +20,24 @@ const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
 // Common Section Title Component for consistency
 const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-  <div className="relative mb-10 md:mb-12 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
-    <div className="relative z-10 space-y-2 flex-1 text-center md:text-left">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-global-text tracking-tight capitalize leading-tight">
+  <div className="relative mb-8 md:mb-10 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
+    <div className="relative z-10 flex-1 w-full text-center md:text-left">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight leading-snug mb-1.5">
         {title}
       </h2>
-      <div className="h-1.5 w-16 bg-gradient-to-r from-global-primary to-transparent rounded-full mx-auto md:mx-0" />
+      <div className="h-1 w-16 bg-gradient-to-r from-global-primary to-transparent rounded-full mx-auto md:mx-0 opacity-80" />
     </div>
 
     {link && (
       <Link
         href={link}
-        className="group relative flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-global-text/5 hover:bg-global-primary hover:text-white hover:shadow-lg hover:shadow-global-primary/30 transition-all duration-300 z-10 overflow-hidden"
+        className="group relative inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors duration-300 shadow-sm z-10"
       >
-        <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-global-text/70 group-hover:text-white transition-colors">
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white transition-colors duration-300">
           View All
         </span>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-global-primary group-hover:text-white transform group-hover:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transform transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </Link>
     )}
@@ -80,7 +80,7 @@ export default async function Home() {
     ),
     categories: () => (
       categories ? (
-        <section className="py-12 sm:py-20 bg-global-bg relative overflow-hidden">
+        <section className="py-10 sm:py-16 bg-gradient-to-b from-global-bg to-white dark:to-gray-900 relative overflow-hidden">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <SectionHeader title="Shop by Category" link="/categories" />
             <CategoryCard categories={categories} />
@@ -90,7 +90,7 @@ export default async function Home() {
     ),
     featured_products: () => (
       products?.data ? (
-        <section className="py-12 sm:py-20 bg-global-card-bg border-y border-global-header-text/5 relative">
+        <section className="py-10 sm:py-16 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800 relative">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Featured Collections" link="/products" />
             <FeaturedProduct products={featuredProducts} />
@@ -100,7 +100,7 @@ export default async function Home() {
     ),
     promo_banners: () => (
       HomeBanners?.length > 0 ? (
-        <section className="py-12 sm:py-20 bg-global-bg">
+        <section className="py-10 sm:py-16 bg-global-bg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <PromoBanners banners={HomeBanners} />
           </div>
@@ -109,7 +109,7 @@ export default async function Home() {
     ),
     top_selling: () => (
       topSellingProducts?.length > 0 ? (
-        <section className="py-12 sm:py-20 bg-global-bg relative overflow-hidden">
+        <section className="py-10 sm:py-16 bg-gradient-to-t from-global-bg to-white dark:to-gray-900 relative overflow-hidden border-b border-gray-100 dark:border-gray-800">
           <div className="absolute top-0 right-0 w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-global-primary/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <SectionHeader title="Best Sellers" link="/products" />
@@ -120,7 +120,7 @@ export default async function Home() {
     ),
     new_arrivals: () => (
       products?.data ? (
-        <section className="py-12 sm:py-20 bg-global-card-bg border-y border-global-header-text/5">
+        <section className="py-10 sm:py-16 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="New Arrivals" link="/products" />
             <FeaturedProduct products={isNewArrivalProducts} />
@@ -129,7 +129,7 @@ export default async function Home() {
       ) : null
     ),
     category_tabs: () => (
-      <section className="py-12 sm:py-20 bg-global-bg">
+      <section className="py-10 sm:py-16 bg-global-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Browse by Category" link="/products" />
           <CategoryTab categories={categories} />
@@ -137,7 +137,7 @@ export default async function Home() {
       </section>
     ),
     blog: () => (
-      <section className="py-16 sm:py-24 bg-gradient-to-b from-global-bg to-global-card-bg border-t border-global-header-text/5">
+      <section className="py-12 sm:py-20 bg-gradient-to-b from-white dark:from-gray-900/50 to-global-card-bg border-t border-gray-100 dark:border-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Latest from our Blog" link="/blog" />
           <BlogTab posts={posts || []} />
