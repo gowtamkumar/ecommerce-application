@@ -189,8 +189,8 @@ export default async function RootLayout({
             __html: `
 :root {
   ${Object.entries(cssVars)
-    .map(([key, value]) => `${key}: ${value};`)
-    .join("\n")}
+                .map(([key, value]) => `${key}: ${value};`)
+                .join("\n")}
 }
 body {
   background-color: var(--background-color);
@@ -333,7 +333,6 @@ body {
                   />
                   <AnnouncementBar marketing={setting?.marketing} />
                   <ScrollToTop />
-
                   {children}
                   <CookieBanner />
                   <MarketingPopup marketing={setting?.marketing} />

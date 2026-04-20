@@ -27,7 +27,7 @@ const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
       </h2>
       <div className="h-1.5 w-16 bg-gradient-to-r from-global-primary to-transparent rounded-full mx-auto md:mx-0" />
     </div>
-    
+
     {link && (
       <Link
         href={link}

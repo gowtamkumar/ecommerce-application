@@ -15,7 +15,7 @@ export default async function ProfileLayout({
 }>) {
   const session: any = await auth();
 
-  if (!session?.token) {
+  if (!session?.user) {
     redirect("/");
   }
 

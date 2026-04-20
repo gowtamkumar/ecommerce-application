@@ -8,7 +8,7 @@ import {
   CheckCircleOutlined,
   RightOutlined
 } from "@ant-design/icons";
-import { Badge, Button, List, Popover, Spin, Typography } from "antd";
+import { Badge, Button, Popover, Spin, Typography } from "antd";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
@@ -28,11 +28,11 @@ const NotificationDropdown = () => {
 
   const fetchNotifications = async () => {
     if (session.status !== "authenticated") return;
-    
+
     setLoading(true);
     try {
       const res = await getNotificationsForAdmin();
-      
+
       // If unauthorized, don't attempt to process data
       if (res?.status === 401) {
         console.warn("Notification fetch failed: Session expired");
@@ -84,8 +84,8 @@ const NotificationDropdown = () => {
             </span>
           )}
         </div>
-        <Link 
-          href="/dashboard/notifications" 
+        <Link
+          href="/dashboard/notifications"
           onClick={() => setOpen(false)}
           className="group flex items-center gap-1 text-xs font-medium hover:text-global-button-primary transition-colors"
           style={{ color: "#6b7280" }}>
@@ -109,11 +109,10 @@ const NotificationDropdown = () => {
             <Text className="text-gray-400 text-xs mt-1">You're all caught up!</Text>
           </div>
         ) : (
-          <List
-            dataSource={notifications.slice(0, 5)} // Show latest 5
-            split={false}
-            renderItem={(item) => (
+          <div className="flex flex-col">
+            {notifications.slice(0, 5).map((item) => (
               <div
+                key={item.id}
                 className={`
                   group relative p-4 transition-all duration-200 cursor-pointer border-b border-gray-50 last:border-0
                   ${!item.isRead ? "hover:bg-global-button-primary/10" : "bg-white hover:bg-gray-50"}
@@ -127,7 +126,7 @@ const NotificationDropdown = () => {
                     mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
                     ${!item.isRead ? 'text-global-button-text' : 'bg-gray-100 text-gray-400'}
                   `}
-                  style={!item.isRead ? { backgroundColor: "var(--button-primary-color)" } : {}}>
+                    style={!item.isRead ? { backgroundColor: "var(--button-primary-color)" } : {}}>
                     {!item.isRead ? (
                       <BellOutlined className="text-sm" />
                     ) : (
@@ -146,22 +145,22 @@ const NotificationDropdown = () => {
                         {dayjs(item.createdAt).fromNow(true)}
                       </span>
                     </div>
-                    
+
                     <Text className={`text-xs block line-clamp-2 leading-relaxed ${!item.isRead ? "text-gray-600" : "text-gray-400"}`}>
                       {item.message}
                     </Text>
 
                     {!item.isRead && (
                       <div className="mt-2 flex items-center gap-1 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity text-global-button-primary">
-                         <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-global-button-primary" />
-                         Mark as read
+                        <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-global-button-primary" />
+                        Mark as read
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-            )}
-          />
+            ))}
+          </div>
         )}
       </div>
 
@@ -177,10 +176,10 @@ const NotificationDropdown = () => {
             onClick={() => setOpen(false)}
             className="block"
           >
-            <Button 
-              type="primary" 
-              block 
-              ghost 
+            <Button
+              type="primary"
+              block
+              ghost
               className="!h-9 !text-xs !font-medium !rounded-lg !border-global-button-primary !text-global-button-primary hover:!bg-global-button-primary/5 transition-colors"
             >
               View all {notifications.length} notifications
@@ -209,22 +208,22 @@ const NotificationDropdown = () => {
       className="notification-popover"
     >
       <Badge
-      count={unreadCount}
-      overflowCount={99}
-      size="small"
-      offset={[-4, 4]}
-      styles={{
-        indicator: {
-          backgroundColor: "var(--global-primary)",
-          boxShadow: "0 2px 4px rgba(239, 68, 68, 0.4)",
-          border: "2px solid white",
-          fontWeight: "bold",
-          width: "20px",
-          height: "20px",
-          borderRadius: "50%",
-        },
-      }}
->
+        count={unreadCount}
+        overflowCount={99}
+        size="small"
+        offset={[-4, 4]}
+        styles={{
+          indicator: {
+            backgroundColor: "var(--global-primary)",
+            boxShadow: "0 2px 4px rgba(239, 68, 68, 0.4)",
+            border: "2px solid white",
+            fontWeight: "bold",
+            width: "20px",
+            height: "20px",
+            borderRadius: "50%",
+          },
+        }}
+      >
 
         <Button
           type="primary"

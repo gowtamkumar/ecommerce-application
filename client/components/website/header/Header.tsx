@@ -72,7 +72,7 @@ export default function Header() {
       <header
         className={`${isScrolled
           ? "fixed top-0 left-0 bg-global-header-bg/95 backdrop-blur-lg shadow-lg"
-          : "relative bg-global-header-bg border-b border-global-secondary/5"
+          : "relative bg-global-header-bg border-b border-gray-200 border-global-secondary/5"
           } w-full transition-all duration-500 ease-in-out z-40 text-global-header-text`}
       >
         {!global.mobile ? (

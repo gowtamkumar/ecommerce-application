@@ -18,7 +18,7 @@ export default async function CheckOut() {
 
   const session: any = await auth();
 
-  if (!session?.token) {
+  if (!session?.user) {
     redirect("/login");
   }
 
