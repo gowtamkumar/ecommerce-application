@@ -10,10 +10,12 @@ import {
   getResetSignJwtToken,
   getResetVerifyJwtToken,
   getSignJwtToken,
+  getRefreshToken,
   hashedPassword,
   matchPassword,
   sendCookiesResponse,
 } from '@/middlewares/auth.middleware';
+import jwt from 'jsonwebtoken';
 import { logger } from '@/middlewares/logger';
 import { sendEmail } from '@/utils/sendMail';
 import { updateUserValidationSchema, userValidationSchema } from '@/validation';
@@ -119,18 +121,23 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   }
 
   const token = getSignJwtToken(user);
-  const cookies = sendCookiesResponse(token, res);
+  const refreshToken = getRefreshToken(user);
 
-  if (!cookies) {
-    throw new Error('Token not set in cookies');
-  }
+  // Save refresh token to DB
+  user.refreshToken = refreshToken;
+  await userRepository.save(user);
+
+  sendCookiesResponse(res, token, refreshToken);
 
   delete user.password;
+  delete user.refreshToken;
+
   return res.status(200).json({
     success: true,
     message: 'User Registered Successfully. Please check your email for verification.',
     data: user,
     accessToken: token,
+    refreshToken: refreshToken,
   });
 });
 
@@ -200,12 +207,18 @@ export const getUserByEmail = asyncHandler(
     }
 
     const token = getSignJwtToken(user);
-    const cookies = await sendCookiesResponse(token, res);
+    const refreshToken = getRefreshToken(user);
+
+    // Save refresh token to DB
+    user.refreshToken = refreshToken;
+    await userRepository.save(user);
+
+    sendCookiesResponse(res, token, refreshToken);
 
     return res.status(200).json({
       success: true,
       message: 'user create by email successfully',
-      data: { ...user, accessToken: token },
+      data: { ...user, accessToken: token, refreshToken: refreshToken },
     });
   },
 );
@@ -321,12 +334,13 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   // oldUser.lastLogin updated below...
 
   const token = getSignJwtToken(oldUser);
-  const cookies = sendCookiesResponse(token, res);
+  const refreshToken = getRefreshToken(oldUser);
 
-  if (!cookies) {
-    res.status(500);
-    throw new Error('Token not set in cookies');
-  }
+  // Save refresh token to DB
+  oldUser.refreshToken = refreshToken;
+  await userRepository.save(oldUser);
+
+  sendCookiesResponse(res, token, refreshToken);
 
   oldUser.lastLogin = new Date();
   oldUser.ipAddress = ip;
@@ -342,12 +356,14 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   // user activity end
 
   delete oldUser.password;
+  delete oldUser.refreshToken;
 
   return res.status(200).json({
     success: true,
     message: 'Login Successful',
     data: oldUser,
     accessToken: token,
+    refreshToken: refreshToken,
   });
 });
 
@@ -382,21 +398,67 @@ export const logout = asyncHandler(
     const connection = await getDBConnection();
     const userRepository = await connection.getRepository(UserEntity);
 
-    Object.entries(req.cookies).forEach(([key, value]) => res.clearCookie(key));
-
     const user = await userRepository.findOne({ where: { id: req.id } });
 
-    if (!user) {
-      throw new Error('User is not found');
+    if (user) {
+      user.refreshToken = null as any;
+      await userRepository.save({ id: user.id, lastLogout: new Date(), refreshToken: null });
     }
 
-    await userRepository.save({ id: user.id, lastLogout: new Date() });
+    Object.entries(req.cookies).forEach(([key, value]) => res.clearCookie(key));
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
 
     return res.status(200).json({
       success: true,
       message: 'Logout Successful',
       data: null,
     });
+  },
+);
+
+// @desc Refresh Token
+// @route POST /api/v1/auth/refresh-token
+// @access Public
+export const refreshAccessToken = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({ success: false, message: 'Refresh token is missing' });
+    }
+
+    try {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET || (process.env.JWT_SECRET! + '_refresh'),
+      ) as any;
+
+      const connection = await getDBConnection();
+      const userRepository = connection.getRepository(UserEntity);
+      const user = await userRepository.findOne({ where: { id: decoded.id } });
+
+      if (!user || user.refreshToken !== refreshToken) {
+        return res.status(401).json({ success: false, message: 'Invalid refresh token' });
+      }
+
+      const newAccessToken = getSignJwtToken(user);
+      const newRefreshToken = getRefreshToken(user);
+
+      // Rotate refresh token
+      user.refreshToken = newRefreshToken;
+      await userRepository.save(user);
+
+      sendCookiesResponse(res, newAccessToken, newRefreshToken);
+
+      return res.status(200).json({
+        success: true,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      });
+    } catch (error) {
+      return res.status(401).json({ success: false, message: 'Invalid or expired refresh token' });
+    }
   },
 );
 

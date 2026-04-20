@@ -89,6 +89,9 @@ export class UserEntity {
   @Column({ name: 'reset_token', nullable: true })
   resetToken?: string;
 
+  @Column({ name: 'refresh_token', nullable: true })
+  refreshToken?: string;
+
   @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
   failedLoginAttempts!: number;
 

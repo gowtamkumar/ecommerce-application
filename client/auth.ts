@@ -21,7 +21,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const user = await res.json();
         try {
           if (res.ok && user.data) {
-            const newuser = { ...user.data, accessToken: user.accessToken };
+            const newuser = { ...user.data, accessToken: user.accessToken, refreshToken: user.refreshToken };
             return newuser;
           } else {
             throw new Error("Invalid Login Credentials");
@@ -98,21 +98,66 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   }, // Matches backend JWT_EXPIRES (default 24h)
   // debug: true,
   callbacks: {
-    async session({ session, token, user }) {
-      return {
-        ...session,
-        user: token.user,
-        token: { exp: token.exp, iat: token.iat, jti: token.jti },
-      };
+    async session({ session, token }: any) {
+      if (token) {
+        session.user = token.user;
+        session.accessToken = token.accessToken;
+        session.error = token.error;
+      }
+      return session;
     },
-    async jwt({ token, user, account, profile }) {
-      if (typeof user !== "undefined") {
+    async jwt({ token, user, account }: any) {
+      // Initial sign in
+      if (user && account) {
         return {
-          ...token,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          accessTokenExpires: Date.now() + 15 * 60 * 1000, // 15 minutes
           user,
         };
       }
-      return token;
+
+      // Return previous token if the access token has not expired yet
+      if (Date.now() < (token.accessTokenExpires as number)) {
+        return token;
+      }
+
+      // Access token has expired, try to update it
+      return refreshAccessToken(token);
     },
   },
 });
+
+async function refreshAccessToken(token: any) {
+  try {
+    const response = await fetch(`${appConfig.apiUrl}/auth/refresh-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        refreshToken: token.refreshToken,
+      }),
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.accessToken,
+      accessTokenExpires: Date.now() + 15 * 60 * 1000,
+      refreshToken: refreshedTokens.refreshToken ?? token.refreshToken, // Fallback to old refresh token
+    };
+  } catch (error) {
+    console.error("RefreshAccessTokenError", error);
+
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}

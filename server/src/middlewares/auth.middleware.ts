@@ -76,19 +76,48 @@ const isAuthorize = (roles: string[] | string) => {
 };
 // Function to send cookies response
 
-const sendCookiesResponse = (token: string, res: Response) => {
-  const maxAge = Number(process.env.JWT_EXPIRES) * 60 * 60 * 1000; // would expire in 1 day
-  const options = {
-    maxAge,
-    httpOnly: true, // The cookie is only accessible by the web server
-    secure: false, // Set to true if you're using HTTPS
+const sendCookiesResponse = (res: Response, accessToken: string, refreshToken?: string) => {
+  const jwtExpires = process.env.JWT_EXPIRES || '1'; // Default to 1 hour if missing
+  const refreshExpires = process.env.JWT_REFRESH_EXPIRES || '7d'; // Default to 7 days if missing
+
+  // Calculate maxAge in milliseconds for cookies
+  // If numeric, assume hours. If string with unit, let cookie handle it OR parse it.
+  // For simplicity, we'll assume JWT_EXPIRES is in hours if it's numeric.
+  const isNumeric = (val: string) => /^\d+$/.test(val);
+  
+  const accessTokenMaxAge = isNumeric(jwtExpires) 
+    ? Number(jwtExpires) * 60 * 60 * 1000 
+    : 15 * 60 * 1000; // Default access token to 15 mins if not numeric (recommended)
+    
+  const refreshTokenMaxAge = 7 * 24 * 60 * 60 * 1000; // Default refresh token to 7 days
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
   };
-  // Set the cookie
-  return res.cookie(process.env.COOKIE_NAME!, token, options);
+
+  res.cookie(process.env.COOKIE_NAME || 'accessToken', accessToken, {
+    ...cookieOptions,
+    maxAge: accessTokenMaxAge,
+  });
+
+  if (refreshToken) {
+    res.cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: refreshTokenMaxAge,
+    });
+  }
+
+  return res;
 };
 
 // Function to generate signed JWT token
 const getSignJwtToken = (user: any): string => {
+  const expiresIn = process.env.JWT_EXPIRES 
+    ? ( /^\d+$/.test(process.env.JWT_EXPIRES) ? process.env.JWT_EXPIRES + 'h' : process.env.JWT_EXPIRES )
+    : '1h';
+
   return jwt.sign(
     {
       id: user.id,
@@ -99,14 +128,25 @@ const getSignJwtToken = (user: any): string => {
     },
     process.env.JWT_SECRET!,
     {
-      expiresIn: (process.env.JWT_EXPIRES + 'h') as jwt.SignOptions['expiresIn'],
+      expiresIn: expiresIn as jwt.SignOptions['expiresIn'],
     },
+  );
+};
+
+// Function to generate refresh token
+const getRefreshToken = (user: any): string => {
+  return jwt.sign(
+    { id: user.id },
+    process.env.JWT_REFRESH_SECRET || (process.env.JWT_SECRET! + '_refresh'),
+    {
+      expiresIn: process.env.JWT_REFRESH_EXPIRES || '7d',
+    } as jwt.SignOptions,
   );
 };
 
 const getResetSignJwtToken = (email: string) => {
   return jwt.sign({ user: email }, process.env.RESET_SECRET!, {
-    expiresIn: process.env.REST_EXPIRESIN as jwt.SignOptions['expiresIn'],
+    expiresIn: (process.env.REST_EXPIRESIN as jwt.SignOptions['expiresIn']) || '10m',
   });
 };
 
@@ -137,6 +177,7 @@ export {
   getResetSignJwtToken,
   getResetVerifyJwtToken,
   getSignJwtToken,
+  getRefreshToken,
   hashedPassword,
   isAuthorize,
   matchPassword,

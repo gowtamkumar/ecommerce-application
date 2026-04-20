@@ -13,6 +13,7 @@ import {
   resetPassword,
   updatePassword,
   updateUser,
+  refreshAccessToken,
   verifyEmail,
 } from '../controller/auth.controller';
 
@@ -21,6 +22,7 @@ const router: Router = express.Router();
 router.route('/register').post(register);
 router.route('/verify-email/:token').post(verifyEmail);
 router.route('/login').post(login);
+router.route('/refresh-token').post(refreshAccessToken);
 router.route('/me').get(AuthGuard, getMe);
 router.route('/update-password').patch(AuthGuard, updatePassword);
 router.route('/forgot-password').post(forgotPassword);
