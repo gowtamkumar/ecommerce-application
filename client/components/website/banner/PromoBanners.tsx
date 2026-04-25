@@ -1,8 +1,8 @@
 "use client";
-import Link from "next/link";
-import { Button } from "antd";
-import { ArrowRightOutlined } from "@ant-design/icons";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { ArrowRightOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import Link from "next/link";
 
 export default function PromoBanners({ banners }: { banners: any[] }) {
   if (!banners?.length) return null;
@@ -31,22 +31,22 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-xl overflow-hidden relative">
                 {/* Shine Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
-                
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 drop-shadow-sm tracking-tight">
+
+                <h3 className="text-xl sm:text-2xl font-bold mb-2">
                   {item.title}
                 </h3>
-                
+
                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
                   <div className="overflow-hidden">
-                    <p className="text-white/80 text-sm mb-4 line-clamp-2 font-medium leading-relaxed">
+                    <p className="text-white text-sm mb-4 line-clamp-2 font-medium leading-relaxed">
                       {item.description}
                     </p>
-                    
+
                     <Link href={item.url ? `/offers${item.url}` : "/products"} className="inline-block w-full">
-                      <Button 
+                      <Button
                         block
                         size="large"
-                        className="!font-bold !h-12 !bg-global-primary !text-white !border-none flex items-center justify-center gap-2 hover:!bg-opacity-90 transition-all rounded-lg"
+                        className="!font-bold !h-12 !bg-global-primary !border-none flex items-center justify-center gap-2 hover:!bg-opacity-90 transition-all rounded-lg"
                       >
                         Shop Now <ArrowRightOutlined className="text-xs transition-transform group-hover:translate-x-1" />
                       </Button>

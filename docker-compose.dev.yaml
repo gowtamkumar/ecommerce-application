@@ -15,7 +15,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - main_network
-    # mem_limit: 212m
+    mem_limit: 256m
+    cpus: '0.5'
     logging:
       driver: "json-file"
       options:
@@ -58,7 +59,8 @@ services:
         condition: service_healthy
     networks:
       - main_network
-    # mem_limit: 712m
+    mem_limit: 768m
+    cpus: '1.0'
     logging:
       driver: "json-file"
       options:
@@ -74,6 +76,8 @@ services:
       - "3100:3100"
     env_file:
       - ./client/.env.local
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=2560
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -82,7 +86,8 @@ services:
       - server
     networks:
       - main_network
-    # mem_limit: 712m
+    mem_limit: 3g
+    cpus: '2.0'
 
 networks:
   main_network:

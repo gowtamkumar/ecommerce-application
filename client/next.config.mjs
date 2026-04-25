@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
-  experimental: {},
+  experimental: {
+    optimizePackageImports: ['react-icons', 'antd', '@ant-design/icons', 'recharts'],
+  },
 
   images: {
     remotePatterns: [
