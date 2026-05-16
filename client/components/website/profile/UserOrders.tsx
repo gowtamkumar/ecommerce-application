@@ -166,7 +166,7 @@ const UserOrders = () => {
       {global.loading.loading ? (
         <div className="flex flex-col gap-4">
           {[1, 2, 3].map((i) => (
-            <Card key={i} loading bordered={false} className="shadow-sm rounded-2xl" />
+            <Card key={i} loading variant="borderless" className="shadow-sm rounded-2xl" />
           ))}
         </div>
       ) : orders.length === 0 ? (
@@ -180,7 +180,7 @@ const UserOrders = () => {
           {orders.map((order) => (
             <Card
               key={order.id}
-              bordered={false}
+              variant="borderless"
               className="shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl overflow-hidden border border-gray-100"
               styles={{ body: { padding: 0 } }}
             >
