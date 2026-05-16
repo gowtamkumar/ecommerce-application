@@ -10,36 +10,14 @@ import {
   selectGlobal,
   setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
-import { Rate } from "antd";
+import { Rate, Tag } from "antd";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import ModalLogin from "../website/login/ModalLogin";
 import AddToCartButton from "./AddToCartButton";
-interface CardItems {
-  id: number;
-  name: string;
-  hoverImage: string;
-  discountAmount: number;
-  taxAmount: number;
-  thumbnailImage: string;
-  unitPrice: string | number;
-  discountId: number;
-  averageRating: string;
-  reviewsCount: string;
-  discountValue: string;
-  discountStrategy: string;
-  slug: string;
-  color: any;
-  defaultProduct?: {
-    id: string;
-    unitPrice: number;
-    purchasePrice: number;
-    size: any;
-  };
-}
 
 export default function Card({ item }: { item: any }) {
   const global = useSelector(selectGlobal);
@@ -71,102 +49,98 @@ export default function Card({ item }: { item: any }) {
   );
 
   return (
-    <div className="group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-sm ring-1 ring-inset ring-gray-900/5 dark:ring-white/10 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_-12px_rgba(255,255,255,0.05)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex flex-col h-full transform hover:-translate-y-1.5">
+    <div className="group relative bg-white rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden border border-gray-50 hover:border-blue-50 hover:shadow-2xl hover:shadow-gray-200 transition-all duration-700 flex flex-col h-full transform hover:-translate-y-2">
       {/* Image Area */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50/50 mix-blend-multiply dark:mix-blend-normal">
-        <Link href={`/products/${item.slug}`} className="block w-full h-full relative z-0">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
+        <Link href={`/products/${item.slug}`} className="block w-full h-full">
           <Image
             src={thumbnailUrl}
             alt={item.name}
             fill
-            className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+            sizes="(max-width: 768px) 50vw, 300px"
           />
-          {/* Hover Image */}
           {hoverUrl && (
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-white">
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
               <Image
                 src={hoverUrl}
                 alt={item.name}
                 fill
-                className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                sizes="(max-width: 768px) 50vw, 300px"
               />
             </div>
           )}
-          {/* Subtle bottom gradient to ensure overlay items contrast nicely */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         </Link>
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
-          {+item.discountAmount > 0 && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/80 dark:bg-black/80 backdrop-blur-md text-global-primary shadow-sm tracking-wider">
-              SAVE {item.discountValue}
-              {item.discountStrategy === "Percentage"
-                ? "%"
-                : selectedCurrency?.symbol}
-            </span>
-          )}
+        {/* Floating Discount Tag */}
+        {+item.discountValue > 0 && (
+          <div className="absolute top-4 left-4 z-10">
+            <div className="bg-red-600 text-white px-3 py-1 rounded-full font-black text-[9px] uppercase tracking-wider shadow-lg">
+               -{item.discountValue}{item.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
+            </div>
+          </div>
+        )}
+
+        {/* Action Overlay */}
+        <div className="absolute bottom-4 left-4 right-4 translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20 hidden sm:block">
+           <AddToCartButton item={{ ...item, qty: 1 }} className="!h-10 !rounded-xl !text-[10px] !font-black !tracking-widest shadow-xl shadow-blue-200" />
         </div>
 
-        {/* Floating Actions - Slides in smoothly from Right */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out z-30">
+        {/* Wishlist Button */}
+        <div className="absolute top-4 right-4 z-20">
           <button
-            className="w-9 h-9 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-global-primary/30 hover:bg-global-primary hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
             onClick={(e) => {
               e.preventDefault();
-              e.stopPropagation();
               if (session.status === "unauthenticated") {
                 dispatch(setUnAuthorize(true));
               } else {
                 AddToWishlist(item.id);
               }
             }}
-            title="Add to Wishlist"
+            className="w-10 h-10 bg-white/90 backdrop-blur-sm text-gray-400 rounded-xl flex items-center justify-center shadow-sm hover:text-red-500 hover:scale-110 transition-all"
           >
-            <FaRegHeart size={15} />
+            <FaRegHeart size={16} />
           </button>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="p-5 flex flex-col flex-1 relative bg-white dark:bg-transparent z-10 transition-colors duration-300">
+      <div className="p-4 sm:p-6 flex flex-col flex-1 bg-white">
         
+        {/* Category / Brand (Small tag) */}
+        <div className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500 mb-2 truncate">
+           {item?.brand?.name || "Premium Collection"}
+        </div>
+
         {/* Title */}
-        <h3 className="font-medium text-gray-700 dark:text-gray-200 text-sm sm:text-base leading-tight group-hover:text-global-primary transition-colors duration-300 line-clamp-2 min-h-[40px] mb-2">
+        <h3 className="font-black text-gray-900 text-xs sm:text-sm leading-tight group-hover:text-blue-600 transition-colors duration-300 line-clamp-2 min-h-[32px] sm:min-h-[40px] mb-3">
           <Link href={`/products/${item.slug}`}>{item.name}</Link>
         </h3>
 
-        {/* Ratings */}
-        <div className="flex items-center gap-2 mb-3">
-          <Rate
-            disabled
-            value={+item.avgRating || 0}
-            className="text-xs text-yellow-400"
-            style={{ fontSize: 12 }}
-          />
-          <span className="text-[11px] text-gray-500 font-medium">
-            ({item.reviewsCount || 0})
-          </span>
-        </div>
+        {/* Price & Rating */}
+        <div className="mt-auto flex flex-col gap-3">
+           <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                 <span className="text-sm sm:text-lg font-black text-gray-900 tracking-tighter">
+                   {formatPrice(item.finalPrice)}
+                 </span>
+                 {+item?.discountValue > 0 && (
+                   <span className="text-[10px] text-gray-300 font-bold line-through">
+                     {formatPrice(item.salePrice)}
+                   </span>
+                 )}
+              </div>
+              <div className="flex items-center gap-1">
+                 <Rate disabled value={+item.avgRating || 0} className="text-[8px] sm:text-[10px] text-amber-400" />
+                 <span className="text-[10px] font-bold text-gray-400">({item.reviewsCount || 0})</span>
+              </div>
+           </div>
 
-        {/* Price & Cart */}
-        <div className="mt-auto flex flex-col gap-4">
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-              {formatPrice(item.finalPrice)}
-            </span>
-            {+item?.discountValue > 0 && (
-              <span className="text-xs sm:text-sm text-gray-400 font-medium line-through decoration-gray-300">
-                {formatPrice(item.salePrice)}
-              </span>
-            )}
-          </div>
-
-          <div className="w-full transform transition-all duration-300 group-hover:-translate-y-1">
-            <AddToCartButton item={{ ...item, qty: 1 }} />
-          </div>
+           {/* Mobile-Only Cart Button (Icon Style) */}
+           <div className="sm:hidden mt-2">
+              <AddToCartButton item={{ ...item, qty: 1 }} className="!h-10 !rounded-xl !text-[10px] !font-black" />
+           </div>
         </div>
       </div>
 

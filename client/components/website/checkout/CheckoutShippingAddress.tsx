@@ -1,3 +1,4 @@
+"use client";
 import { ActionType } from "@/constants/constants";
 import { getCartLists } from "@/lib/apis/cart";
 import { getShippingCharges } from "@/lib/apis/shipping-charge";
@@ -13,6 +14,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { CiEdit } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
+import { EnvironmentOutlined, PlusOutlined } from "@ant-design/icons";
 
 const AddShippingAddress = dynamic(
   () => import("@/components/dashboard/shipping-address/AddShippingAddress"),
@@ -23,7 +25,6 @@ export default function CheckoutShippingAddress() {
   const dispatch = useDispatch();
   const checkout = useSelector(selectCheckout);
   const { shippingAddress, checkoutFormData } = checkout || {};
-
 
   return (
     <div className="space-y-6">
@@ -41,7 +42,7 @@ export default function CheckoutShippingAddress() {
             (item: { id: number }) => item.id === target.value
           );
 
-          if (activeShippingAddress.districtId) {
+          if (activeShippingAddress?.districtId) {
             const getShippingCharge = await getShippingCharges({
               districtId: activeShippingAddress.districtId,
             });
@@ -54,7 +55,6 @@ export default function CheckoutShippingAddress() {
               )
             );
 
-            // Sync backend cart API using selected districtId and existing coupon code 
             const newCartList = await getCartLists({
               districtId: activeShippingAddress.districtId,
               couponCode: checkoutFormData?.couponCode,
@@ -71,90 +71,67 @@ export default function CheckoutShippingAddress() {
             (
               item: { id: number; type: string; status: boolean; name: string; phoneNo: string; address: string },
               idx: number
-            ) => (
-              <label
-                key={idx}
-                className={`
-                  relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all h-full
-                  ${checkoutFormData.shippingAddressId === item.id
-                    ? "border-global-primary ring-1 ring-global-primary bg-global-primary/5"
-                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                  }
-                `}
-              >
-                <Radio value={item.id} className="sr-only" />
-                <div className="flex w-full flex-col justify-between gap-2">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-sm font-bold uppercase tracking-wider px-2 py-0.5 rounded text-[10px] ${checkoutFormData.shippingAddressId === item.id
-                        ? "bg-global-primary/10 text-global-primary"
-                        : "bg-gray-100 text-gray-600"
-                        }`}>
-                        {item.type}
-                      </span>
+            ) => {
+              const isSelected = checkoutFormData.shippingAddressId === item.id;
+              return (
+                <label
+                  key={idx}
+                  className={`
+                    relative flex cursor-pointer rounded-3xl border-2 p-6 transition-all h-full
+                    ${isSelected
+                      ? "border-gray-900 bg-white shadow-xl shadow-gray-200"
+                      : "border-gray-100 bg-gray-50/50 hover:border-gray-200"
+                    }
+                  `}
+                >
+                  <Radio value={item.id} className="sr-only" />
+                  <div className="flex w-full flex-col gap-4">
+                    <div className="flex justify-between items-center">
+                       <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isSelected ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-500"}`}>
+                          {item.type}
+                       </span>
+                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "border-blue-600 bg-blue-600 shadow-sm shadow-blue-200" : "border-gray-200"}`}>
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                       </div>
                     </div>
-                    <div
-                      className={`h-5 w-5 rounded-full border flex items-center justify-center flex-shrink-0
-                        ${checkoutFormData.shippingAddressId === item.id
-                          ? "border-global-primary bg-global-primary"
-                          : "border-gray-300"
-                        }
-                      `}
-                    >
-                      {checkoutFormData.shippingAddressId === item.id && (
-                        <div className="h-2.5 w-2.5 rounded-full bg-white" />
-                      )}
+
+                    <div className="space-y-1">
+                       <div className="text-sm font-black text-gray-900 leading-tight truncate">{item.name}</div>
+                       <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.phoneNo}</div>
+                       <div className="text-xs text-gray-500 line-clamp-2 italic pt-1">{item.address}</div>
+                    </div>
+
+                    <div className="pt-2 mt-auto border-t border-gray-100 flex justify-between items-center">
+                       <button
+                         onClick={(e) => {
+                           e.preventDefault();
+                           dispatch(setAction({ type: ActionType.UPDATE, payload: item }))
+                         }}
+                         className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 flex items-center gap-2 transition-colors"
+                       >
+                         <CiEdit size={16} /> Edit Address
+                       </button>
                     </div>
                   </div>
-
-                  <div className="space-y-1 text-sm">
-                    <p className="font-semibold text-gray-900">{item.name}</p>
-                    <p className="text-gray-600">{item.phoneNo}</p>
-                    <p className="text-gray-600 line-clamp-2">{item.address}</p>
-                  </div>
-
-                  <div className="pt-2 mt-auto flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault(); // Prevent radio selection when clicking edit
-                        dispatch(
-                          setAction({
-                            type: ActionType.UPDATE,
-                            payload: item,
-                          })
-                        )
-                      }}
-                      className="text-xs font-medium text-gray-500 hover:text-global-primary flex items-center gap-1 transition-colors"
-                    >
-                      <CiEdit size={14} /> Edit
-                    </button>
-                  </div>
-                </div>
-              </label>
-            )
+                </label>
+              );
+            }
           )}
 
-          {/* Add New Address Button Card */}
           <button
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.CREATE,
-                })
-              )
-            }
-            className="relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-4 hover:border-global-primary/50 hover:bg-global-primary/5 transition-all min-h-[160px] group"
+            onClick={() => dispatch(setAction({ type: ActionType.CREATE }))}
+            className="relative flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 p-6 hover:border-gray-900 hover:bg-gray-50 transition-all min-h-[180px] group"
           >
-            <div className="h-10 w-10 rounded-full bg-gray-50 group-hover:bg-global-primary/10 flex items-center justify-center mb-2 transition-colors">
-              <span className="text-2xl text-gray-400 group-hover:text-global-primary">+</span>
+            <div className="w-12 h-12 rounded-2xl bg-gray-50 group-hover:bg-gray-900 group-hover:text-white flex items-center justify-center mb-4 transition-all shadow-sm">
+               <PlusOutlined className="text-xl" />
             </div>
-            <span className="text-sm font-medium text-gray-600 group-hover:text-global-primary">Add New Address</span>
+            <span className="text-xs font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900">Add Destination</span>
           </button>
         </div>
       </Radio.Group>
 
-      <div className="flex justify-end">
-        <Link href="/profile" className="text-sm text-global-primary hover:underline">
+      <div className="flex justify-end pt-2">
+        <Link href="/profile?tab=address" className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:underline">
           Manage all addresses
         </Link>
       </div>

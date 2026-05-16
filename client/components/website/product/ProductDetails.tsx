@@ -16,8 +16,8 @@ import {
   selectProduct,
   setProduct,
 } from "@/redux/features/products/productSlice";
-import { CheckOutlined } from "@ant-design/icons";
-import { Button, Rate } from "antd";
+import { CheckOutlined, ShoppingCartOutlined, HeartFilled } from "@ant-design/icons";
+import { Button, Rate, Tag, Divider } from "antd";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -105,224 +105,184 @@ const ProductDetails = ({
       : "0.0";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start font-sans">
-      {/* Gallery Section */}
-      <div className="col-span-1 md:col-span-6 lg:col-span-7 sticky top-24">
-        <ProductImageGallery images={images} />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+      {/* LEFT: GALLERY SECTION */}
+      <div className="col-span-1 lg:col-span-7 sticky top-28">
+        <div className="relative group">
+           <ProductImageGallery images={images} />
+           
+           {/* Floating Discount Tag */}
+           {+discountValue > 0 && (
+             <div className="absolute top-6 left-6 z-30">
+               <div className="bg-red-600 text-white px-4 py-2 rounded-full font-black text-sm shadow-xl shadow-red-500/30 animate-bounce">
+                  -{discountValue}{discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol} OFF
+               </div>
+             </div>
+           )}
+        </div>
       </div>
 
-      {/* Details Section - "More Design" Premium Style */}
-      <div className="col-span-1 md:col-span-6 lg:col-span-5 flex flex-col">
-        <div className="relative bg-white rounded-3xl p-6 lg:p-8 shadow-xl shadow-indigo-500/5 border border-white ring-1 ring-gray-100 overflow-hidden">
-          {/* Subtle Background Pattern */}
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-b from-indigo-50/50 to-transparent rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-
-          {/* Brand & Stock Status */}
-          <div className="relative flex items-center justify-between mb-6 z-10">
-            {brand?.name && (
-              <span className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-global-text text-global-bg text-xs font-bold uppercase tracking-widest shadow-lg shadow-global-text/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-global-primary" />
+      {/* RIGHT: CONTENT SECTION */}
+      <div className="col-span-1 lg:col-span-5 flex flex-col space-y-8 py-2">
+        
+        {/* Brand & Stats Header */}
+        <div className="flex items-center justify-between">
+           {brand?.name ? (
+             <div className="flex items-center gap-2 px-4 py-1.5 bg-gray-900 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
                 {brand.name}
-              </span>
-            )}
-            {checkStock > 0 ? (
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-global-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-global-primary"></span>
-                </span>
-                <span className="text-global-primary font-bold text-sm tracking-wide">
-                  In Stock
-                </span>
+             </div>
+           ) : (
+             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100">
+                <ShoppingCartOutlined className="text-gray-400" />
+             </div>
+           )}
+           <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                 <Rate disabled allowHalf value={+averageRating} className="text-amber-400 text-xs" />
+                 <span className="text-xs font-black text-gray-900">{averageRating}</span>
               </div>
-            ) : (
-              <span className="text-global-primary font-bold text-sm tracking-wide bg-global-primary/10 px-3 py-1 rounded-full">
-                Out of Stock
-              </span>
-            )}
-          </div>
+              <Divider type="vertical" className="bg-gray-200 h-4" />
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{+reviewsCount || 0} REVIEWS</span>
+           </div>
+        </div>
 
-          {/* Title - Gradient Typography */}
-          <h1 className="relative text-4xl lg:text-5xl font-black mb-4 leading-[1.1] tracking-tight text-global-text z-10">
-            {name}
-          </h1>
+        {/* Title Section */}
+        <div>
+           <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-[1.1] tracking-tight mb-4">
+              {name}
+           </h1>
+           <div className="flex items-center gap-4">
+              {checkStock > 0 ? (
+                <Tag color="success" className="rounded-full px-3 py-0.5 border-none font-bold uppercase text-[9px] tracking-widest bg-green-50 text-green-600">IN STOCK</Tag>
+              ) : (
+                <Tag color="error" className="rounded-full px-3 py-0.5 border-none font-bold uppercase text-[9px] tracking-widest bg-red-50 text-red-600">OUT OF STOCK</Tag>
+              )}
+              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">SKU: {slug?.slice(0, 8).toUpperCase()}</span>
+           </div>
+        </div>
 
-          {/* Ratings */}
-          <div className="relative flex items-center gap-4 mb-8 pb-8 border-b border-gray-100 z-10">
-            <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-              <Rate
-                disabled
-                allowHalf
-                defaultValue={0}
-                value={+averageRating}
-                className="text-amber-400 text-sm"
-              />
-              <span className="text-gray-900 font-bold text-sm pt-0.5">
-                {averageRating}
-              </span>
-            </div>
-            <span className="text-gray-400 text-sm font-medium">
-              Based on{" "}
-              <strong className="text-gray-900">
-                {+reviewsCount || 0} reviews
-              </strong>
-            </span>
-          </div>
-
-          {/* Price - Vibrant & Big */}
-          <div className="relative mb-10 z-10">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-end gap-3 flex-wrap">
-                <span className="text-5xl lg:text-6xl font-black text-global-primary tracking-tighter leading-none">
-                  {formatPrice(product.finalPrice)}
-                </span>
-                {+discountValue > 0 && (
-                  <div className="flex flex-col mb-1.5">
-                    <span className="text-xl text-global-text/40 line-through font-semibold">
-                      {formatPrice(salePrice)}
-                    </span>
-                    <span className="text-xs font-bold text-global-button-text bg-global-primary px-2 py-0.5 rounded uppercase tracking-wide">
-                      Save {discountValue}
-                      {discountStrategy === "Percentage"
-                        ? "%"
-                        : selectedCurrency?.symbol}
-                    </span>
-                  </div>
-                )}
+        {/* Price & Savings */}
+        <div className="p-8 rounded-[2.5rem] bg-gray-50 border border-gray-100 relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+           <div className="relative z-10">
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mb-3">Best Offer Price</div>
+              <div className="flex items-end gap-4">
+                 <span className="text-5xl lg:text-6xl font-black text-gray-900 tracking-tighter">
+                    {formatPrice(product.finalPrice)}
+                 </span>
+                 {+discountValue > 0 && (
+                    <div className="flex flex-col mb-1.5">
+                       <span className="text-lg text-gray-300 line-through font-bold">
+                          {formatPrice(salePrice)}
+                       </span>
+                    </div>
+                 )}
               </div>
-            </div>
-          </div>
+           </div>
+        </div>
 
-          {/* Short Description */}
-          <div
-            className="relative prose prose-sm text-global-text/70 mb-10 leading-loose z-10"
-            dangerouslySetInnerHTML={{
-              __html: shortDescription,
-            }}
-          />
+        {/* Short Description */}
+        <div 
+          className="text-gray-500 text-sm sm:text-base leading-relaxed line-clamp-3"
+          dangerouslySetInnerHTML={{ __html: shortDescription }}
+        />
 
-          {/* Variants */}
-          {variant && (
-            <div className="relative space-y-6 mb-10 z-10">
-              <div className="space-y-4">
-                <span className="text-sm font-extrabold text-gray-900 uppercase tracking-widest">
-                  Select Variant
-                </span>
-                <div className="flex flex-wrap gap-3">
-                  {(productVariants || []).map((item: any, idx: number) => {
+        {/* Variants - High End Chips */}
+        {variant && (
+           <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                 <span className="text-xs font-black uppercase tracking-widest text-gray-900">Select Options</span>
+                 <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest cursor-pointer hover:underline">Size Guide</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                 {(productVariants || []).map((item: any, idx: number) => {
                     const isSelected = defaultProduct?.id === item.id;
                     return (
-                      <button
-                        key={idx}
-                        onClick={async () => {
-                          setSelectVariant({ productVariantId: item.id });
-                          dispatch(
-                            setProduct({
-                              ...product,
-                              defaultProduct: item,
-                            })
-                          );
-                          setCheckStock(item.stockQty);
-                        }}
-                        className={`group relative flex items-center gap-3 pl-3 pr-5 py-3 border-2 rounded-global-button-radius transition-all duration-300 min-w-[150px]
-                          ${isSelected
-                            ? "border-global-button-primary bg-global-button-primary/5 shadow-lg shadow-global-button-primary/10 ring-1 ring-global-button-primary"
-                            : "border-global-header-text/5 bg-global-bg hover:border-global-button-primary/30 hover:shadow-md"
-                          }`}
-                      >
-                        {item?.color?.value ? (
-                          <div
-                            className={`p-1 rounded-full border ${isSelected
-                              ? "border-global-button-primary/30"
-                              : "border-global-header-text/5"
-                              }`}
-                          >
-                            <div
-                              className="w-5 h-5 rounded-full shadow-sm"
-                              style={{ backgroundColor: item.color.value }}
-                            />
+                       <button
+                         key={idx}
+                         disabled={item.stockQty <= 0}
+                         onClick={async () => {
+                           setSelectVariant({ productVariantId: item.id });
+                           dispatch(setProduct({ ...product, defaultProduct: item }));
+                           setCheckStock(item.stockQty);
+                         }}
+                         className={`relative p-4 rounded-2xl border-2 transition-all duration-300 text-left overflow-hidden ${
+                           isSelected 
+                             ? "border-gray-900 bg-white shadow-xl shadow-gray-200" 
+                             : "border-gray-100 bg-gray-50/50 hover:border-gray-300"
+                         } ${item.stockQty <= 0 ? "opacity-50 grayscale cursor-not-allowed" : ""}`}
+                       >
+                          <div className="flex items-center gap-3">
+                             {item?.color?.value && (
+                                <div className="w-4 h-4 rounded-full border border-gray-200 shadow-inner" style={{ backgroundColor: item.color.value }} />
+                             )}
+                             <div>
+                                <div className={`text-xs font-black ${isSelected ? "text-gray-900" : "text-gray-500"}`}>{item?.size?.name}</div>
+                                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">{item?.color?.name}</div>
+                             </div>
                           </div>
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-global-header-text/5 flex items-center justify-center font-bold text-xs text-global-header-text/40">
-                            ?
-                          </div>
-                        )}
-
-                        <div className="flex flex-col items-start">
-                          <span
-                            className={`font-bold text-sm ${isSelected ? "text-global-primary" : "text-global-text/80"
-                              }`}
-                          >
-                            {item?.size?.name}
-                          </span>
-                          <span className="text-[10px] font-semibold text-global-text/40 uppercase tracking-wider">
-                            {item?.color?.name}
-                          </span>
-                        </div>
-
-                        {isSelected && (
-                          <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-global-button-primary text-global-button-text rounded-full p-1 shadow-md shadow-global-button-primary/20">
-                            <CheckOutlined className="text-xs" />
-                          </div>
-                        )}
-                      </button>
+                          {isSelected && (
+                             <div className="absolute top-0 right-0 p-1.5 bg-gray-900 text-white rounded-bl-xl">
+                                <CheckOutlined className="text-[8px]" />
+                             </div>
+                          )}
+                       </button>
                     );
-                  })}
-                </div>
+                 })}
               </div>
-            </div>
-          )}
+           </div>
+        )}
 
-          {/* Actions */}
-          <div className="relative space-y-6 pt-8 border-t border-gray-100 z-10">
-            <div className="flex flex-col sm:flex-row gap-4 h-[60px]">
-              {/* Quantity - Pill Style */}
-              <div className="flex items-center justify-between px-2 py-1 bg-global-header-text/5 rounded-full w-full sm:w-40 border border-transparent hover:border-global-header-text/10 transition-colors">
-                <button
-                  onClick={() => setQty((pre) => Math.max(1, pre - 1))}
-                  disabled={qty <= 1}
-                  className="w-10 h-10 flex items-center justify-center bg-global-bg rounded-full shadow-sm text-global-text hover:text-global-primary hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  <HiOutlineMinus size={16} />
-                </button>
-                <span className="font-bold text-xl text-global-text">{qty}</span>
-                <button
-                  onClick={() => setQty((pre) => pre + 1)}
-                  disabled={qty >= checkStock}
-                  className="w-10 h-10 flex items-center justify-center bg-global-bg rounded-full shadow-sm text-global-text hover:text-global-primary hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  <AiOutlinePlus size={16} />
-                </button>
+        {/* Add to Cart Footer */}
+        <div className="space-y-6 pt-6 border-t border-gray-100">
+           <div className="flex flex-col sm:flex-row gap-4">
+              {/* Modern Quantity Selector */}
+              <div className="flex items-center justify-between p-1 bg-gray-100 rounded-2xl w-full sm:w-44 border border-gray-200">
+                 <button
+                   onClick={() => setQty((pre) => Math.max(1, pre - 1))}
+                   className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm text-gray-900 hover:bg-gray-900 hover:text-white transition-all disabled:opacity-30"
+                   disabled={qty <= 1}
+                 >
+                   <HiOutlineMinus size={14} />
+                 </button>
+                 <span className="font-black text-lg text-gray-900 w-8 text-center">{qty}</span>
+                 <button
+                   onClick={() => setQty((pre) => pre + 1)}
+                   className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm text-gray-900 hover:bg-gray-900 hover:text-white transition-all disabled:opacity-30"
+                   disabled={qty >= checkStock}
+                 >
+                   <AiOutlinePlus size={14} />
+                 </button>
               </div>
 
-              {/* Add to Cart / Checkout - "More Design" Gradient */}
-              <div className="flex-1 h-full">
-                {findProduct ? (
-                  <Button
-                    type="primary"
-                    onClick={() => route.push("/checkout")}
-                    className="w-full h-full text-lg font-bold rounded-[var(--button-border-radius)] flex items-center justify-center gap-2 !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text"
-                  >
-                    <span className="tracking-wide">CHECKOUT NOW</span>
-                  </Button>
-                ) : (
-                  <div className="w-full h-full">
-                    <AddToCartButton
-                      className="!h-full !rounded-[var(--button-border-radius)] !text-lg !font-bold flex items-center justify-center gap-3"
-                      item={{
-                        ...product,
-                        productVariantId: defaultProduct?.id,
-                        qty,
-                      }}
-                    />
-                  </div>
-                )}
+              {/* Main Action Button */}
+              <div className="flex-1">
+                 {findProduct ? (
+                   <Button
+                     type="primary"
+                     size="large"
+                     onClick={() => route.push("/checkout")}
+                     className="w-full h-12 sm:h-14 rounded-2xl text-sm font-black tracking-widest !bg-gray-900 border-none shadow-xl shadow-gray-200"
+                   >
+                     CHECKOUT NOW
+                   </Button>
+                 ) : (
+                   <AddToCartButton
+                     className="!h-12 sm:!h-14 !rounded-2xl !text-sm !font-black !tracking-widest shadow-xl shadow-blue-200"
+                     item={{
+                       ...product,
+                       productVariantId: defaultProduct?.id,
+                       qty,
+                     }}
+                   />
+                 )}
               </div>
-            </div>
+           </div>
 
-            <div className="flex items-center justify-between gap-4 pt-2">
+           {/* Wishlist & Share */}
+           <div className="flex items-center justify-between gap-4">
               <button
-                className="flex items-center gap-2.5 text-sm font-bold text-global-text/60 hover:text-global-primary transition-all group py-2"
+                className="flex items-center gap-3 group transition-all"
                 onClick={() => {
                   if (session.status === "unauthenticated") {
                     dispatch(setUnAuthorize(true));
@@ -331,29 +291,49 @@ const ProductDetails = ({
                   }
                 }}
               >
-                <div className="w-10 h-10 rounded-full bg-global-primary/10 flex items-center justify-center group-hover:bg-global-primary/20 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center shadow-sm group-hover:border-red-100 group-hover:bg-red-50/50 transition-all">
                   <CiHeart
-                    size={22}
-                    className="group-hover:scale-110 text-global-primary transition-transform"
+                    size={24}
+                    className="group-hover:scale-125 group-hover:text-red-500 text-gray-400 transition-all"
                   />
                 </div>
-                <span>Add to Wishlist</span>
+                <span className="text-xs font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900 transition-colors">Wishlist</span>
               </button>
 
-              <div className="flex items-center gap-3 bg-global-header-text/5 px-4 py-2 rounded-full">
-                <span className="text-xs font-bold text-global-text/40 uppercase tracking-wider">
-                  Share
-                </span>
+              <div className="flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Share Product</span>
                 <Share
                   value={{
-                    url: `${appConfig.publicUrl}/product/${slug}`,
+                    url: `${appConfig.publicUrl}/products/${slug}`,
                     name: name,
                   }}
                 />
               </div>
-            </div>
-          </div>
+           </div>
         </div>
+
+        {/* Benefits Badges */}
+        <div className="grid grid-cols-3 gap-4 py-8 border-y border-gray-50">
+           <div className="text-center space-y-2">
+              <div className="w-10 h-10 mx-auto bg-gray-50 rounded-xl flex items-center justify-center text-blue-600">
+                 <CheckOutlined />
+              </div>
+              <div className="text-[9px] font-black uppercase tracking-widest text-gray-900">Genuine Product</div>
+           </div>
+           <div className="text-center space-y-2">
+              <div className="w-10 h-10 mx-auto bg-gray-50 rounded-xl flex items-center justify-center text-blue-600">
+                 <ShoppingCartOutlined />
+              </div>
+              <div className="text-[9px] font-black uppercase tracking-widest text-gray-900">Fast Delivery</div>
+           </div>
+           <div className="text-center space-y-2">
+              <div className="w-10 h-10 mx-auto bg-gray-50 rounded-xl flex items-center justify-center text-blue-600">
+                 <CiHeart />
+              </div>
+              <div className="text-[9px] font-black uppercase tracking-widest text-gray-900">7 Days Return</div>
+           </div>
+        </div>
+
         <ModalLogin />
       </div>
     </div>

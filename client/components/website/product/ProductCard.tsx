@@ -46,7 +46,6 @@ const ProductCard: React.FC = () => {
   const { products } = useSelector(selectProduct);
   const dispatch = useDispatch<AppDispatch>();
   const session = useSession();
-  const params = useParams();
   const { formatPrice, selectedCurrency } = useCurrency();
 
   const {
@@ -117,135 +116,124 @@ const ProductCard: React.FC = () => {
   }, [fetchProducts]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full">
       <div
-        className={`grid gap-1 ${global.productView ? "grid-cols-1" : "md:grid-cols-5 grid-cols-2"
-          }`}
+        className={`grid ${
+          global.productView 
+            ? "grid-cols-1 gap-6" 
+            : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8"
+        }`}
       >
         {products?.map((item: any) => {
-          const url = `/product/${item.slug}`;
+          const url = `/products/${item.slug}`;
           const { thumbnailUrl, hoverUrl } = getProductImageUrls(
             item?.thumbnailImage,
             item?.hoverImage
           );
+          
           return (
-            <div key={item.id}>
+            <div key={item.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {global.productView ? (
-                <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 h-full flex flex-col md:flex-row">
-                    {/* Image Section */}
-                    <div className="relative w-full md:w-72 md:shrink-0 aspect-[4/5] md:aspect-auto overflow-hidden bg-gray-50">
+                <div className="group bg-white rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-2xl hover:shadow-gray-200 transition-all duration-500 flex flex-col md:flex-row h-full">
+                    {/* List View Image */}
+                    <div className="relative w-full md:w-80 md:shrink-0 aspect-[4/3] md:aspect-auto overflow-hidden bg-gray-50">
                       <Link href={url} className="block w-full h-full">
                          <Image
                             src={thumbnailUrl}
                             alt={item.name}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            sizes="(max-width: 768px) 100vw, 300px"
+                            sizes="(max-width: 768px) 100vw, 400px"
                           />
-                          {/* Hover Image Overlay */}
                           {hoverUrl && (
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-white">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                                 <Image
-                                src={hoverUrl}
-                                alt={item.name}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                sizes="(max-width: 768px) 100vw, 300px"
+                                  src={hoverUrl}
+                                  alt={item.name}
+                                  fill
+                                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                  sizes="(max-width: 768px) 100vw, 400px"
                                 />
                             </div>
                           )}
                       </Link>
-
+                      
                       {/* Discount Badge */}
-                      <div className="absolute top-3 left-3 z-10">
-                        {item?.discountId && (
-                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-global-primary text-global-button-text shadow-sm">
-                           -{item.discountValue}
-                           {item?.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol}
-                         </span>
-                        )}
-                      </div>
-
-                       {/* Wishlist Button - visible on mobile, hover on desktop */}
-                       <div className="absolute top-3 right-3 z-20 md:opacity-0 md:group-hover:opacity-100 md:translate-x-4 md:group-hover:translate-x-0 transition-all duration-300">
-                         <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (session.status === "unauthenticated") {
-                                dispatch(setUnAuthorize(true));
-                              } else {
-                                AddToWishlist(item.id);
-                              }
-                            }}
-                            className="w-10 h-10 bg-global-header-bg/80 backdrop-blur text-global-header-text rounded-full flex items-center justify-center shadow-sm hover:bg-global-primary hover:text-global-button-text transition-all duration-300 transform hover:scale-110"
-                            title="Add to Wishlist"
-                          >
-                            <FaRegHeart size={16} />
-                          </button>
-                       </div>
+                      {item?.discountId && (
+                        <div className="absolute top-4 left-4 z-10">
+                           <span className="bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg">
+                              -{item.discountValue}{item?.discountStrategy === "Percentage" ? "%" : selectedCurrency?.symbol} OFF
+                           </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Product Details Section */}
-                    <div className="flex-1 p-6 md:p-8 flex flex-col">
-                        <div className="flex-1">
-                            {/* Rating */}
-                             <div className="flex items-center gap-2 mb-3">
-                                <Rate disabled value={+item.avgRating || 0} className="text-sm text-amber-400" />
-                                <span className="text-sm text-gray-400 font-medium">
-                                    ({item.reviewsCount} {item.reviewsCount === 1 ? 'review' : 'reviews'})
-                                </span>
-                            </div>
+                    {/* List View Details */}
+                    <div className="flex-1 p-6 sm:p-8 flex flex-col justify-center">
+                        <div className="mb-4 flex items-center gap-2">
+                           <Rate disabled value={+item.avgRating || 0} className="text-[10px] text-amber-400" />
+                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.reviewsCount} Reviews</span>
+                        </div>
+                        
+                        <Link href={url} className="block group/title mb-4">
+                           <h3 className="text-xl sm:text-3xl font-black text-gray-900 group-hover/title:text-blue-600 transition-colors leading-tight">
+                              {item.name}
+                           </h3>
+                        </Link>
 
-                            {/* Product Name */}
-                            <Link href={url} className="block mb-3 group/title">
-                                <h3 className="text-xl md:text-2xl font-bold text-gray-900 group-hover/title:text-indigo-600 transition-colors">
-                                    {item.name}
-                                </h3>
-                            </Link>
-
-                            {/* Price Section */}
-                            <div className="mb-6 flex items-baseline gap-3">
-                                <span className="text-2xl md:text-3xl font-bold text-global-text tracking-tight">
-                                    {formatPrice(item.finalPrice)}
-                                </span>
-                                {item?.discountId && (
-                                    <span className="text-lg text-global-text/40 line-through decoration-global-text/20">
-                                        {formatPrice(item.salePrice)}
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Description */}
-                            <div
-                                className="text-base text-gray-600 leading-relaxed mb-6 line-clamp-3 md:line-clamp-4"
-                                dangerouslySetInnerHTML={{
-                                    __html: item?.shortDescription,
-                                }}
-                            />
+                        <div className="flex items-center gap-4 mb-6">
+                           <span className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tighter">
+                              {formatPrice(item.finalPrice)}
+                           </span>
+                           {item?.discountId && (
+                              <span className="text-lg text-gray-300 line-through font-bold">
+                                 {formatPrice(item.salePrice)}
+                              </span>
+                           )}
                         </div>
 
-                      {/* Add to Cart Button */}
-                      <div className="mt-auto md:w-fit">
-                        <div className="w-full md:min-w-[200px]">
-                           <AddToCartButton item={{ ...item, qty: 1 }} />
+                        <div
+                          className="text-gray-500 text-sm sm:text-base leading-relaxed mb-8 line-clamp-2 sm:line-clamp-3"
+                          dangerouslySetInnerHTML={{ __html: item?.shortDescription }}
+                        />
+
+                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                           <div className="w-full sm:w-48">
+                              <AddToCartButton item={{ ...item, qty: 1 }} className="!h-12 !rounded-xl !font-black !text-xs !tracking-widest" />
+                           </div>
+                           <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (session.status === "unauthenticated") {
+                                  dispatch(setUnAuthorize(true));
+                                } else {
+                                  AddToWishlist(item.id);
+                                }
+                              }}
+                              className="w-full sm:w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                            >
+                              <FaRegHeart size={18} />
+                           </button>
                         </div>
-                      </div>
                     </div>
                 </div>
               ) : (
-
                 <Card item={item} />
               )}
             </div>
           );
         })}
       </div>
+
+      {/* Pagination Container */}
       {+pagination.total > +pagination.perPage && (
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          onPageChange={setCurrentPage}
-        />
+        <div className="mt-16 flex justify-center">
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       )}
     </div>
   );

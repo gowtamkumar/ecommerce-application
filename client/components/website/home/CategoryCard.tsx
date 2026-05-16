@@ -1,16 +1,15 @@
 "use client";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
+  A11y,
+  Autoplay,
   Navigation,
   Pagination,
-  Scrollbar,
-  A11y,
-  EffectFade,
-  Autoplay,
+  Scrollbar
 } from "swiper/modules";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function CategoryCard({ categories }: any) {
   const router = useRouter();

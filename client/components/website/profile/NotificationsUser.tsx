@@ -45,10 +45,7 @@ const NotificationsUser = () => {
   };
 
   const handleRowClick = async (value: any) => {
-    // If opening details for a specific notification
     setNotification(value);
-
-    // Mark as read if not already
     if (!value.isRead) {
       const res = await readNotification({ id: value.id } as any);
       if (res.success) {
@@ -68,7 +65,6 @@ const NotificationsUser = () => {
     setNotification({});
   };
 
-  // Render Loading Skeletons
   if (global.loading.notification) {
     return (
       <div className="space-y-4 pt-2">
@@ -87,12 +83,12 @@ const NotificationsUser = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <Title level={4} className="!mb-0">
             Notifications
           </Title>
-          <Text type="secondary">Stay updated with your latest activities</Text>
+          <Text type="secondary" className="text-xs sm:text-sm">Stay updated with your latest activities</Text>
         </div>
         {notifications.length > 0 && (
           <Button
@@ -100,6 +96,7 @@ const NotificationsUser = () => {
             type="text"
             icon={<DeleteOutlined />}
             onClick={clearAll}
+            className="text-xs sm:text-sm p-0"
           >
             Clear all
           </Button>
@@ -122,54 +119,45 @@ const NotificationsUser = () => {
                 router.push(`${item.offerUrl}`);
               }}
               className={`
-                        group relative p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md
+                        group relative p-3 sm:p-4 rounded-xl border transition-all cursor-pointer hover:shadow-md
                         ${item.isRead
                   ? "bg-white border-gray-100"
-                  : "bg-global-primary/5 border-global-primary/20"
+                  : "bg-blue-50/50 border-blue-100"
                 }
                     `}
             >
-              <div className="flex gap-4 items-start">
+              <div className="flex gap-3 sm:gap-4 items-start">
                 <div
                   className={`
-                             mt-1 p-2 rounded-full shrink-0
+                             mt-1 p-2 rounded-full shrink-0 text-sm sm:text-base
                              ${item.isRead
                       ? "bg-gray-100 text-gray-400"
-                      : "bg-global-primary/10 text-global-primary"
+                      : "bg-blue-100 text-blue-600"
                     }
                           `}
                 >
                   <BellOutlined />
                 </div>
 
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start gap-2">
                     <Text
                       strong={!item.isRead}
-                      className="text-base mb-1 block"
+                      className="text-sm sm:text-base mb-1 block truncate sm:whitespace-normal"
                     >
                       {item.title}
                     </Text>
                     <Text
                       type="secondary"
-                      className="text-xs whitespace-nowrap ml-2"
+                      className="text-[10px] sm:text-xs whitespace-nowrap pt-1"
                     >
                       {dayjs(item.createdAt).fromNow()}
                     </Text>
                   </div>
-                  <Text type="secondary" className="line-clamp-2">
+                  <Text type="secondary" className="text-xs sm:text-sm line-clamp-2 leading-relaxed">
                     {item.message}
                   </Text>
                 </div>
-
-                {!item.isRead && (
-                  <div
-                    className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => handleRowClick(item)}
-                  >
-                    <Tag color="var(--global-primary)">Mark as Read</Tag>
-                  </div>
-                )}
               </div>
             </div>
           ))}
@@ -180,7 +168,7 @@ const NotificationsUser = () => {
       <Modal
         title={
           <div className="flex items-center gap-2">
-            <InfoCircleOutlined className="text-global-primary" />
+            <InfoCircleOutlined className="text-blue-600" />
             <span>Notification Details</span>
           </div>
         }
@@ -193,33 +181,34 @@ const NotificationsUser = () => {
           </Button>,
         ]}
         centered
+        width={500}
       >
         <div className="space-y-4 py-2">
           <div>
-            <Text type="secondary" className="text-xs uppercase tracking-wide">
+            <Text type="secondary" className="text-[10px] uppercase tracking-wider font-bold">
               Title
             </Text>
-            <div className="font-medium text-lg">{notification.title}</div>
+            <div className="font-bold text-base sm:text-lg text-gray-900">{notification.title}</div>
           </div>
 
           <div>
-            <Text type="secondary" className="text-xs uppercase tracking-wide">
+            <Text type="secondary" className="text-[10px] uppercase tracking-wider font-bold">
               Date
             </Text>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
               <ClockCircleOutlined />
               {dayjs(notification.createdAt).format("MMMM D, YYYY h:mm A")}
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-md border border-gray-100">
+          <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
             <Text
               type="secondary"
-              className="text-xs uppercase tracking-wide block mb-2"
+              className="text-[10px] uppercase tracking-wider font-bold block mb-2"
             >
               Message
             </Text>
-            <Paragraph className="!mb-0 text-gray-800">
+            <Paragraph className="!mb-0 text-gray-800 leading-relaxed text-sm sm:text-base">
               {notification.message}
             </Paragraph>
           </div>

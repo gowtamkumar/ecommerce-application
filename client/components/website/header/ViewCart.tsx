@@ -4,11 +4,12 @@ import { deleteCart, getCartLists } from "@/lib/apis/cart";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import { selectGlobal, setDrawarCart } from "@/redux/features/global/globalSlice";
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FiArrowRight, FiShoppingBag, FiTrash2 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
+import { ShoppingCartOutlined, DeleteOutlined, ArrowRightOutlined } from "@ant-design/icons";
 
 export default function ViewCart() {
   const cart = useSelector(selectCart);
@@ -29,148 +30,129 @@ export default function ViewCart() {
   const cartList = cart?.carts?.cartList || [];
   const subTotal = cart?.carts?.cartSummary?.subTotal || 0;
 
-  // Get free shipping threshold from settings (fallback to 5000 if not set)
   const freeShippingThreshold = global.setting?.orderFreeShippingAmount || 5000;
   const progress = Math.min((subTotal / freeShippingThreshold) * 100, 100);
   const remainingForFreeShipping = freeShippingThreshold - subTotal;
 
   if (cartList.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-8 space-y-6 animate-in fade-in duration-500">
+      <div className="flex flex-col items-center justify-center h-full text-center p-10 space-y-8 animate-in fade-in duration-700">
         <div className="relative">
-          <div className="absolute inset-0 bg-global-primary/10 rounded-full blur-xl opacity-50"></div>
-          <div className="w-28 h-28 bg-white/80 backdrop-blur-sm rounded-full border border-white/50 shadow-xl flex items-center justify-center relative z-10">
-            <FiShoppingBag className="h-10 w-10 text-global-primary/40" />
-          </div>
+           <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-inner">
+              <ShoppingCartOutlined className="text-4xl text-gray-200" />
+           </div>
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Your bag is empty</h3>
-          <p className="text-gray-500 text-sm mt-2 max-w-[200px] mx-auto leading-relaxed">
-            Looks like you haven't added anything to your bag yet.
-          </p>
+           <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-900 mb-2">Your Bag is Empty</h3>
+           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest max-w-[180px] mx-auto leading-relaxed">
+              Discover our latest premium collection today.
+           </p>
         </div>
         <Button
           type="primary"
           size="large"
-          className="h-10 px-8 rounded-global-button-radius font-medium !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text !border-none"
-          onClick={() => router.push("/products")} // Assuming /shop exists, or keep empty if handled by drawer close logic
+          className="h-12 px-10 rounded-2xl font-black text-[10px] uppercase tracking-widest !bg-gray-900 !border-none shadow-xl shadow-gray-200"
+          onClick={() => {
+            dispatch(setDrawarCart(false));
+            router.push("/products");
+          }}
         >
-          Start Shopping
+          Start Exploring
         </Button>
       </div>
     );
   }
 
   return (
-    // <ConfigProvider
-    //   theme={{
-    //     token: {
-    //       colorPrimary: '#000000',
-    //     },
-    //   }}
-    // >
-    <div className="flex flex-col h-full bg-gray-50/50">
-      {/* Free Shipping Bar */}
-      <div className="px-6 py-4 bg-white/70 backdrop-blur-md border-b border-gray-100 shadow-sm sticky top-0 z-10">
-        <div className="flex justify-between items-center text-xs font-medium mb-2">
-          <span className="text-gray-900">
-
-            {progress === 100 ? "You've unlocked free shipping!" : `Spend ${formatPrice(remainingForFreeShipping)} more for free shipping`}
+    <div className="flex flex-col h-full bg-white">
+      {/* Free Shipping Indicator */}
+      <div className="px-8 py-6 bg-gray-50/50 border-b border-gray-50">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+            {progress === 100 ? "Free Shipping Unlocked" : `Add ${formatPrice(remainingForFreeShipping)} for Free Shipping`}
           </span>
-          <span className="text-gray-500">{Math.round(progress)}%</span>
+          <span className="text-[10px] font-black text-gray-900">{Math.round(progress)}%</span>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+        <div className="w-full bg-white rounded-full h-1 p-0.5 border border-gray-100 overflow-hidden">
           <div
-            className="bg-global-primary h-full rounded-full transition-all duration-1000 ease-out"
+            className={`h-full rounded-full transition-all duration-1000 ease-out ${progress === 100 ? 'bg-green-500' : 'bg-gray-900'}`}
             style={{ width: `${progress}%` }}
           ></div>
         </div>
       </div>
 
-      {/* Cart Items */}
-      <div className="flex-grow overflow-y-auto p-4 space-y-3">
+      {/* Cart Items List */}
+      <div className="flex-grow overflow-y-auto px-6 py-4 space-y-4">
         {cartList.map((item: any, index: number) => (
           <div
             key={item.id}
-            className="group relative flex gap-4 p-3 bg-white border border-transparent hover:border-gray-200 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-gray-100/50"
-            style={{ animationDelay: `${index * 50}ms` }}
+            className="group relative flex gap-4 p-4 rounded-[1.5rem] bg-white border border-gray-50 hover:border-gray-200 hover:shadow-xl hover:shadow-gray-100/50 transition-all duration-500"
+            style={{ animationDelay: `${index * 100}ms` }}
           >
-            {/* Product Image */}
-            <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
+            {/* Thumbnail */}
+            <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-2xl bg-gray-50 border border-gray-100">
               <Image
                 src={getUploadImageUrl(item.thumbnailImage)}
                 alt={item.name}
                 fill
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                sizes="96px"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="80px"
               />
             </div>
 
-            {/* Content */}
+            {/* Info */}
             <div className="flex flex-1 flex-col justify-between py-1">
-              <div className="flex justify-between items-start gap-3">
-                <h3 className="text-sm font-medium text-gray-900 leading-snug line-clamp-2">
-                  <a href={`/products/${item.slug || '#'}`} className="hover:text-gray-600 transition-colors">
-                    {item.name}
-                  </a>
-                </h3>
-                <button
-                  onClick={() => handleRemove(item)}
-                  className="text-gray-300 hover:text-red-500 transition-colors p-2 -mr-2 -mt-2 rounded-full hover:bg-red-50"
-                  aria-label="Remove item"
-                >
-                  <FiTrash2 size={16} />
-                </button>
+              <div>
+                 <div className="flex justify-between items-start">
+                    <h3 className="text-xs font-black text-gray-900 uppercase tracking-tight leading-tight line-clamp-2 pr-4">
+                       {item.name}
+                    </h3>
+                    <button
+                      onClick={() => handleRemove(item)}
+                      className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                    >
+                      <DeleteOutlined size={14} />
+                    </button>
+                 </div>
+                 <div className="flex gap-2 mt-2">
+                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded">Qty: {item.qty}</span>
+                    {item?.size?.name && <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded">{item.size.name}</span>}
+                 </div>
               </div>
 
-              <div className="flex items-end justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-50 border border-gray-100 text-xs font-medium text-gray-600">
-                    Qty: {item.qty}
-                  </span>
-                  {/* Unit price could go here if needed */}
-                </div>
-                <p className="text-base font-semibold text-gray-900 tracking-tight">
-                  {formatPrice(item.subTotal)}
-                </p>
+              <div className="text-sm font-black text-gray-900 tracking-tighter">
+                {formatPrice(item.subTotal)}
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Footer */}
-      <div className="p-6 bg-white/80 backdrop-blur-xl border-t border-gray-100 space-y-4 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)] z-20">
-        <div className="space-y-2">
-          <div className="flex justify-between items-center text-sm">
-            <p className="text-gray-500">Subtotal</p>
-            <p className="font-semibold text-gray-900">
-              {formatPrice(subTotal)}
-            </p>
-          </div>
-          {/* Can add styling/discount breakdown here */}
+      {/* Drawer Footer */}
+      <div className="p-8 bg-gray-50 border-t border-gray-100 space-y-6">
+        <div className="flex justify-between items-end">
+           <div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Subtotal</div>
+              <div className="text-2xl font-black text-gray-900 tracking-tighter">
+                {formatPrice(subTotal)}
+              </div>
+           </div>
+           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Taxes calculated at checkout</div>
         </div>
 
         <Button
           size="large"
           type="primary"
-          className="w-full h-14 text-base font-medium flex items-center justify-center gap-2 group !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text !border-none"
-          style={{ borderRadius: "var(--button-border-radius)" }}
+          className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] !bg-gray-900 border-none shadow-xl shadow-gray-200 flex items-center justify-center gap-3"
           onClick={() => {
             dispatch(setDrawarCart(false))
             router.push("/checkout")
-          }
-          }
+          }}
         >
-          <span>Proceed to Checkout</span>
-          <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+          <span>Begin Checkout</span>
+          <ArrowRightOutlined className="text-xs" />
         </Button>
-        {/* 
-          <p className="text-[10px] mt-2 text-gray-400 text-center font-medium uppercase tracking-wider">
-            Secure Checkout
-          </p> */}
       </div>
     </div>
-    // </ConfigProvider>
   );
 }

@@ -1,3 +1,4 @@
+// Premium Redesigned Blog Page
 import { getPosts } from "@/lib/apis/posts";
 import dynamic from "next/dynamic";
 

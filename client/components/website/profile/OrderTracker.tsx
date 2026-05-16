@@ -63,15 +63,12 @@ export default function OrderTracker() {
 
     try {
       const result = await getOrderQuery({ trackingNo: values.trackingNo });
-      console.log("result", result);
       if (result.success) {
-        // Simulate a brief delay for UI smoothness or real fetch
         setTimeout(() => {
           setOrder(result.data);
           setLoading(false);
         }, 800);
       } else {
-        // Handle not found or error
         setOrder({});
         setLoading(false);
       }
@@ -102,121 +99,57 @@ export default function OrderTracker() {
       dataIndex: "product",
       key: "product",
       render: (v: { name: string }, record: any) => (
-        <Space orientation="vertical" size={0}>
-          <Text strong>{v.name}</Text>
-          {/* Show item level return status if any */}
+        <div className="flex flex-col gap-1 min-w-[200px]">
+          <Text strong className="text-sm">{v.name}</Text>
           {record.requestedQty > 0 && (
-            <Tag color="orange" className="mt-1">
-              Return Requested: {record.requestedQty}
-            </Tag>
+            <Tag color="orange" className="w-fit text-[10px]">Return Requested: {record.requestedQty}</Tag>
           )}
           {record.approvedQty > 0 && (
-            <Tag color="blue" className="mt-1">
-              Return Approved: {record.approvedQty}
-            </Tag>
-          )}
-        </Space>
-      ),
-    },
-    {
-      title: "Variant",
-      key: "variant",
-      render: (_: any, record: any) => (
-        <div className="text-xs text-gray-500">
-          {record?.productVariant?.color && (
-            <div>Color: {record.productVariant.color.name}</div>
-          )}
-          {record?.productVariant?.size && (
-            <div>Size: {record.productVariant.size.name}</div>
+            <Tag color="blue" className="w-fit text-[10px]">Return Approved: {record.approvedQty}</Tag>
           )}
         </div>
       ),
     },
     {
       title: "Price",
-      dataIndex: "unitPrice",
-      key: "unitPrice",
-      render: (val: any, record: any) => formatPrice(+val + +record.taxAmount),
-    },
-    {
-      title: "Discount",
-      dataIndex: "totalDiscountAmount",
-      key: "totalDiscountAmount",
-      render: (val: any) => val > 0 ? <Text type="success">-{formatPrice(+val)}</Text> : "-",
+      align: "right" as const,
+      render: (_: any, record: any) => <span className="text-xs">{formatPrice(+record.unitPrice + +record.taxAmount)}</span>,
     },
     {
       title: "Qty",
       dataIndex: "qty",
-      key: "qty",
       align: "center" as const,
+      render: (val: any) => <span className="text-xs">{val}</span>
     },
     {
       title: "Total",
-      dataIndex: "subTotal",
-      key: "subTotal",
       align: "right" as const,
-      render: (val: any) => <Text strong>{formatPrice(val)}</Text>,
-    },
-    {
-      title: "Action",
-      key: "action",
-      align: "center" as const,
-      render: (_: any, record: any) => {
-        // Only show return button if order is delivered AND product is returnable AND not fully returned yet
-        const canReturn = order.status === "Delivered" &&
-          record.product.isReturnable &&
-          (record.qty - (record.requestedQty || 0)) > 0;
-
-        return canReturn ? (
-          <Button
-            size="small"
-            icon={<UndoOutlined />}
-            onClick={() => {
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  returnOrderItem: true,
-                  payload: {
-                    orderId: order.id,
-                    orderItemId: record.id,
-                    qty: record.qty, // Pass max qty, user can adjust in modal
-                  },
-                })
-              );
-            }}
-          >
-            Return
-          </Button>
-        ) : null;
-      }
+      render: (_: any, record: any) => <Text strong className="text-xs">{formatPrice(record.subTotal)}</Text>,
     },
   ];
 
-  // Calculate generic status index
   const getStatusIndex = () => {
     if (!order.status) return 0;
     const statuses = ["Pending", "Processing", "Shipped", "Delivered"];
-    // If returned, we might want to show that separately or as a final state if full return
     if (order.status === "Returned") return 4;
     const idx = statuses.indexOf(order.status);
     return idx === -1 ? 0 : idx;
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-12">
+    <div className="max-w-6xl mx-auto px-2 sm:px-4 pb-12">
       {/* Search Section */}
-      <div className="text-center mb-12 pt-8">
-        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 mb-4">
+      <div className="text-center mb-8 sm:mb-12 pt-4 sm:pt-8">
+        <h1 className="text-2xl sm:text-4xl font-black text-gray-900 mb-3 tracking-tight">
           Track Your Order
         </h1>
-        <p className="text-gray-500 mb-8 max-w-lg mx-auto">
-          Enter your order tracking number below to verify status, manage returns, and view delivery updates.
+        <p className="text-gray-500 text-xs sm:text-base mb-6 sm:mb-8 max-w-lg mx-auto px-4">
+          Verify status, manage returns, and view delivery updates.
         </p>
 
         <Card
-          variant="borderless"
-          className="max-w-2xl mx-auto shadow-lg bg-white/50 backdrop-blur-sm border border-white/50"
-          styles={{ body: { padding: '2rem' } }}
+          bordered={false}
+          className="max-w-2xl mx-auto shadow-sm rounded-3xl bg-white border border-gray-100"
         >
           <Form
             form={form}
@@ -224,17 +157,17 @@ export default function OrderTracker() {
             layout="vertical"
             className="w-full"
           >
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Form.Item
                 name="trackingNo"
                 className="flex-grow mb-0"
-                rules={[{ required: true, message: "Please enter tracking number" }]}
+                rules={[{ required: true, message: "Enter tracking number" }]}
               >
                 <Input
                   prefix={<SearchOutlined className="text-gray-400" />}
-                  placeholder="Order ID (e.g. ORD-2023-1234)"
+                  placeholder="Order ID (e.g. ORD-2023...)"
                   size="large"
-                  className="rounded-lg"
+                  className="rounded-xl h-12"
                 />
               </Form.Item>
               <Form.Item className="mb-0">
@@ -244,9 +177,9 @@ export default function OrderTracker() {
                   htmlType="submit"
                   loading={loading}
                   icon={<TruckOutlined />}
-                  className="w-full sm:w-auto rounded-lg bg-indigo-600 hover:bg-indigo-700 h-10"
+                  className="w-full sm:w-auto rounded-xl font-bold h-12 px-8"
                 >
-                  Track Order
+                  Track Now
                 </Button>
               </Form.Item>
             </div>
@@ -255,316 +188,234 @@ export default function OrderTracker() {
       </div>
 
       {loading ? (
-        <Card loading variant="borderless" className="shadow-sm rounded-xl" />
+        <Card loading bordered={false} className="shadow-sm rounded-3xl" />
       ) : order.trackingNo ? (
-        <div className="animate-fade-in space-y-8">
+        <div className="animate-in fade-in duration-500 space-y-6 sm:space-y-8">
 
           {/* Order Status & Summary Banner */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Status Steps */}
-            <Card variant="borderless" className="md:col-span-2 shadow-sm rounded-xl overflow-hidden">
-              <div className="bg-gray-50 -m-6 mb-6 p-4 border-b border-gray-100 flex justify-between items-center">
-                <div className="font-semibold text-gray-700">Order Status: <span className="text-indigo-600">{order.status}</span></div>
-                <div className="text-sm text-gray-500">Last Updated: {dayjs(order.updatedAt).format('MMM D, h:mm A')}</div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card bordered={false} className="lg:col-span-2 shadow-sm rounded-3xl overflow-hidden border border-gray-100">
+              <div className="bg-gray-50 -m-6 mb-6 p-4 px-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div className="font-black text-gray-900 text-sm sm:text-base">Status: <span className="text-blue-600">{order.status}</span></div>
+                <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">Updated: {dayjs(order.updatedAt).format('MMM D, h:mm A')}</div>
               </div>
 
-              <div className="py-2 px-2">
-                <Steps
-                  current={getStatusIndex()}
-                  items={[
-                    { title: "Placed", icon: <FileTextOutlined /> },
-                    { title: "Processing", icon: <SyncOutlined spin={order.status === "Processing"} /> },
-                    { title: "Shipped", icon: <TruckOutlined /> },
-                    { title: "Delivered", icon: <CheckCircleOutlined /> },
-                  ]}
-                  status={order.status === "Canceled" ? "error" : "process"}
-                />
+              <div className="py-4 overflow-x-auto no-scrollbar scrollbar-hide">
+                <div className="min-w-[400px]">
+                  <Steps
+                    current={getStatusIndex()}
+                    size="small"
+                    items={[
+                      { title: "Placed", icon: <FileTextOutlined /> },
+                      { title: "Process", icon: <SyncOutlined spin={order.status === "Processing"} /> },
+                      { title: "Shipped", icon: <TruckOutlined /> },
+                      { title: "Done", icon: <CheckCircleOutlined /> },
+                    ]}
+                    status={order.status === "Canceled" ? "error" : "process"}
+                  />
+                </div>
               </div>
 
-              {/* Return Status Banner if applicable */}
+              {/* Return Status Banner */}
               {(order.returnedStatus || order.refundStatus) && (
-                <div className="mt-8 bg-orange-50 rounded-lg p-4 border border-orange-100">
-                  <h4 className="font-semibold text-orange-900 flex items-center gap-2 mb-3">
+                <div className="mt-8 bg-orange-50/50 rounded-2xl p-4 sm:p-6 border border-orange-100">
+                  <h4 className="font-black text-orange-900 flex items-center gap-2 mb-4 text-xs uppercase tracking-widest">
                     <UndoOutlined /> Return & Refund Status
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-white p-3 rounded border border-orange-100">
-                      <div className="text-xs text-gray-500">Return Status</div>
-                      <div className="font-medium text-orange-700">{order.returnedStatus || 'None'}</div>
+                    <div className="bg-white p-3 rounded-xl border border-orange-100">
+                      <div className="text-[10px] text-gray-400 font-bold uppercase mb-1">Return</div>
+                      <div className="font-bold text-orange-700 text-sm">{order.returnedStatus || 'None'}</div>
                     </div>
-                    <div className="bg-white p-3 rounded border border-orange-100">
-                      <div className="text-xs text-gray-500">Refund Status</div>
-                      <div className="font-medium text-orange-700">{order.refundStatus || 'None'}</div>
+                    <div className="bg-white p-3 rounded-xl border border-orange-100">
+                      <div className="text-[10px] text-gray-400 font-bold uppercase mb-1">Refund</div>
+                      <div className="font-bold text-orange-700 text-sm">{order.refundStatus || 'None'}</div>
                     </div>
-                    <div className="bg-white p-3 rounded border border-orange-100">
-                      <div className="text-xs text-gray-500">Total Refunded</div>
-                      <div className="font-medium text-green-600">{formatPrice(order.totalRefuned || 0)}</div>
+                    <div className="bg-white p-3 rounded-xl border border-orange-100">
+                      <div className="text-[10px] text-gray-400 font-bold uppercase mb-1">Refunded</div>
+                      <div className="font-bold text-green-600 text-sm">{formatPrice(order.totalRefuned || 0)}</div>
                     </div>
                   </div>
                 </div>
               )}
             </Card>
 
-            {/* Quick Actions / Key Info */}
-            <Card variant="borderless" className="shadow-sm rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white">
-              <div className="h-full flex flex-col justify-between">
+            <Card bordered={false} className="shadow-lg rounded-3xl bg-gray-900 text-white relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600 rounded-full opacity-20 blur-3xl -mr-16 -mt-16"></div>
+               <div className="relative z-10 h-full flex flex-col justify-between py-2">
                 <div>
-                  <div className="text-indigo-200 text-sm mb-1">Total Amount</div>
-                  <div className="text-3xl font-bold mb-4">{formatPrice(order.grandTotal)}</div>
+                  <div className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Grand Total</div>
+                  <div className="text-3xl font-black mb-4 text-blue-400">{formatPrice(order.grandTotal)}</div>
 
-                  <div className="text-indigo-200 text-sm mb-1">Payment Status</div>
-                  <Tag color={order.paymentStatus === "Paid" ? "success" : "warning"} className="border-none px-3 py-1">
+                  <div className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Payment</div>
+                  <Tag color={order.paymentStatus === "Paid" ? "success" : "warning"} className="border-none px-4 py-1 rounded-lg font-black text-[10px]">
                     {order.paymentStatus || "Unpaid"}
                   </Tag>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-indigo-500/30">
-                  <div className="text-indigo-200 text-xs mb-2">Order Date</div>
-                  <div className="font-medium">{dayjs(order.createdAt).format("MMMM D, YYYY")}</div>
+                <div className="mt-8 pt-6 border-t border-gray-800">
+                  <div className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Order Date</div>
+                  <div className="font-bold text-sm">{dayjs(order.createdAt).format("MMM D, YYYY")}</div>
                 </div>
               </div>
             </Card>
           </div>
 
           <Row gutter={[24, 24]}>
-            {/* Left: Info */}
             <Col xs={24} lg={16}>
               <Card
-                title={<span className="font-bold text-gray-800">Order Items</span>}
-                variant="borderless"
-                className="shadow-sm rounded-xl h-full"
+                title={<span className="font-black text-gray-900 text-sm uppercase tracking-widest">Order Items</span>}
+                bordered={false}
+                className="shadow-sm rounded-3xl border border-gray-100 h-full"
               >
-                <Table
-                  columns={columns}
-                  dataSource={order.orderItems}
-                  pagination={false}
-                  // size="small"
-                  scroll={{ x: true }}
-                  rowKey="id"
-                />
+                {/* Desktop Table View */}
+                <div className="hidden sm:block">
+                  <Table
+                    columns={columns}
+                    dataSource={order.orderItems}
+                    pagination={false}
+                    scroll={{ x: true }}
+                    rowKey="id"
+                    size="small"
+                  />
+                </div>
 
-                {/* Delivery Address Box */}
-                <div className="mt-8 grid md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      <EnvironmentOutlined className="text-indigo-500" /> Delivery Address
-                    </h4>
-                    <div className="text-gray-600 text-sm space-y-1">
-                      <p className="font-medium text-gray-900">{order.shippingAddress?.name} ({order.shippingAddress?.type})</p>
-                      <p>{order.shippingAddress?.address}</p>
-                      <p>{order.shippingAddress?.phoneNo}</p>
+                {/* Mobile Item List */}
+                <div className="sm:hidden space-y-4">
+                  {order.orderItems.map((item: any, idx: number) => (
+                    <div key={idx} className="bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
+                      <div className="flex justify-between items-start mb-2">
+                        <Text strong className="text-xs flex-1 pr-2">{item.product?.name}</Text>
+                        <Text strong className="text-xs text-blue-600">{formatPrice(item.subTotal)}</Text>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                         <span>Qty: {item.qty}</span>
+                         <span>{formatPrice(item.unitPrice)} / unit</span>
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                  <h4 className="font-black text-gray-900 mb-4 flex items-center gap-2 text-xs uppercase tracking-widest">
+                    <EnvironmentOutlined className="text-blue-600" /> Delivery
+                  </h4>
+                  <div className="text-gray-600 text-sm space-y-2">
+                    <p className="font-black text-gray-900 text-sm">{order.shippingAddress?.name} <Tag className="ml-2 rounded-md">{order.shippingAddress?.type}</Tag></p>
+                    <p className="italic text-xs">{order.shippingAddress?.address}</p>
+                    <p className="font-bold text-xs">{order.shippingAddress?.phoneNo}</p>
                   </div>
                 </div>
               </Card>
             </Col>
 
-            {/* Right: Timeline & Payment */}
             <Col xs={24} lg={8}>
               <div className="space-y-6">
                 <Card
-                  title={<span className="font-bold text-gray-800">Payment Summary</span>}
-                  variant="borderless"
-                  className="shadow-sm rounded-xl"
+                  title={<span className="font-black text-gray-900 text-sm uppercase tracking-widest">Payment Summary</span>}
+                  bordered={false}
+                  className="shadow-sm rounded-3xl border border-gray-100"
                 >
                   <div className="space-y-3">
-                    <div className="flex justify-between text-gray-600">
+                    <div className="flex justify-between text-xs sm:text-sm text-gray-500">
                       <span>Subtotal</span>
                       <span>{formatPrice(order.subTotal)}</span>
                     </div>
-                    <div className="flex justify-between text-gray-600">
+                    <div className="flex justify-between text-xs sm:text-sm text-gray-500">
                       <span>Shipping</span>
                       <span>+{formatPrice(order.shippingCharge)}</span>
                     </div>
-                    <div className="flex justify-between text-gray-600">
+                    <div className="flex justify-between text-xs sm:text-sm text-gray-500">
                       <span>Tax</span>
-                      <span>+{formatPrice(order.totalTax)}</span>
+                      <span>+{formatPrice(order.totalTax || 0)}</span>
                     </div>
                     {+order.totalItemsDiscount > 0 && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Item Discount</span>
+                      <div className="flex justify-between text-xs sm:text-sm text-green-600 font-medium">
+                        <span>Discount</span>
                         <span>-{formatPrice(order.totalItemsDiscount)}</span>
                       </div>
                     )}
-                    {+order.couponDiscount > 0 && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Coupon Discount</span>
-                        <span>-{formatPrice(order.couponDiscount)}</span>
-                      </div>
-                    )}
+                    
+                    <Divider className="my-4" />
 
-                    <Divider className="my-3" />
-
-                    <div className="flex justify-between font-bold text-lg text-gray-900">
+                    <div className="flex justify-between font-black text-base sm:text-lg text-gray-900">
                       <span>Grand Total</span>
-                      <span>{formatPrice(order.grandTotal)}</span>
+                      <span className="text-blue-600">{formatPrice(order.grandTotal)}</span>
                     </div>
 
-
-                    <div className="flex justify-between font-bold text-lg text-gray-900">
+                    <div className="flex justify-between text-xs sm:text-sm text-gray-400 font-bold">
                       <span>Paid</span>
-                      <span>{formatPrice(order.paid)}</span>
+                      <span>{formatPrice(order.paid || 0)}</span>
                     </div>
 
                     {order.due > 0 && (
-                      <div className="flex justify-between text-orange-600 font-medium text-sm">
-                        <span>Due Amount</span>
+                      <div className="flex justify-between text-orange-600 font-black text-sm pt-2">
+                        <span>Balance Due</span>
                         <span>{formatPrice(order.due)}</span>
                       </div>
                     )}
 
-                    {/* Return Calculation */}
-                    {(order.totalReturned > 0 || order.totalRefuned > 0) && (
-                      <>
-                        <Divider className="my-3" />
-                        <div className="bg-red-50 p-3 rounded-lg space-y-2">
-                          {order.totalReturned > 0 && (
-                            <div className="flex justify-between text-gray-600 text-sm">
-                              <span>Total Returned Value</span>
-                              <span>{formatPrice(order.totalReturned)}</span>
-                            </div>
-                          )}
-                          {order.totalRefuned > 0 && (
-                            <div className="flex justify-between text-green-600 font-bold">
-                              <span>Refunded Amount</span>
-                              <span>{formatPrice(order.totalRefuned)}</span>
-                            </div>
-                          )}
-                        </div>
-                      </>
+                    {order.due > 0 && order.paymentStatus !== "Paid" && order.status !== "Canceled" && order.paymentMethod !== paymentMethods[0].value && (
+                      <div className="mt-6 space-y-3">
+                        <Select
+                          size="large"
+                          className="w-full"
+                          placeholder="Payment Method"
+                          onChange={setpayMethod}
+                          options={paymentMethods.filter(m => m.value !== paymentMethods[0].value)}
+                        />
+                        <Button
+                          type="primary"
+                          block
+                          size="large"
+                          icon={<BankOutlined />}
+                          onClick={handleOnlinePayment}
+                          className="h-12 rounded-xl font-black bg-blue-600"
+                        >
+                          Pay {formatPrice(order.due)}
+                        </Button>
+                      </div>
                     )}
-
-                    {order.due > 0 &&
-                      order.paymentStatus !== "Paid" &&
-                      order.status !== "Canceled" &&
-                      order.paymentMethod !== paymentMethods[0].value && (
-                        <div className="mt-6 pt-4 border-t border-gray-100">
-                          <Select
-                            size="large"
-                            className="w-full mb-3"
-                            placeholder="Select Payment Method"
-                            onChange={setpayMethod}
-                          >
-                            {paymentMethods
-                              .filter((m) => m.value !== paymentMethods[0].value)
-                              .map((m: any) => (
-                                <Select.Option key={m.value} value={m.value}>
-                                  {m.label}
-                                </Select.Option>
-                              ))}
-                          </Select>
-                          <Button
-                            type="primary"
-                            block
-                            size="large"
-                            icon={<BankOutlined />}
-                            onClick={handleOnlinePayment}
-                            className="bg-green-600 hover:bg-green-700 h-10"
-                          >
-                            Pay {formatPrice(order.due)} Now
-                          </Button>
-                        </div>
-                      )}
                   </div>
                 </Card>
 
                 <Card
-                  title={<span className="font-bold text-gray-800">Timeline</span>}
-                  variant="borderless"
-                  className="shadow-sm rounded-xl"
-                  styles={{ body: { maxHeight: '400px', overflowY: 'auto' } }}
+                  title={<span className="font-black text-gray-900 text-sm uppercase tracking-widest">History</span>}
+                  bordered={false}
+                  className="shadow-sm rounded-3xl border border-gray-100"
+                  styles={{ body: { maxHeight: '350px', overflowY: 'auto' } }}
                 >
-                  <div className="relative border-l-2 border-indigo-100 ml-3 space-y-6 pb-2">
-                    {(order.orderTrackings || []).map(
-                      (track: any, idx: number) => (
-                        <div key={idx} className="ml-6 relative group">
-                          <div className="absolute -left-[31px] bg-white h-3 w-3 rounded-full border-2 border-indigo-500 group-hover:scale-125 transition-transform"></div>
-                          <div className="text-sm font-semibold text-gray-900">
+                  <Timeline
+                    className="mt-2 ml-2"
+                    items={(order.orderTrackings || []).map((track: any) => ({
+                      color: track.status === order.status ? "#2563eb" : "#e5e7eb",
+                      children: (
+                        <div className="pb-4">
+                          <div className={`text-xs font-black ${track.status === order.status ? 'text-gray-900' : 'text-gray-400'}`}>
                             {track.status}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-[10px] text-gray-400 font-medium">
                             {dayjs(track.createdAt).format("MMM D, h:mm A")}
                           </div>
-                          {track.location && (
-                            <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                              <EnvironmentOutlined /> {track.location}
-                            </div>
-                          )}
                         </div>
                       )
-                    )}
-                  </div>
+                    }))}
+                  />
                 </Card>
-
-                {/* Actions */}
-                {order.status === "Delivered" && (
-                  <Card
-                    variant="borderless"
-                    className="shadow-sm rounded-xl"
-                  >
-                    <Space orientation="vertical" className="w-full">
-                      <Button
-                        block
-                        type="default"
-                        icon={<CheckCircleOutlined />}
-                        onClick={() =>
-                          dispatch(
-                            setProductRating({
-                              type: ActionType.CREATE,
-                              productRating: true,
-                              payload: { orderItems: order.orderItems },
-                            })
-                          )
-                        }
-                      >
-                        Write a Review
-                      </Button>
-
-                      {(() => {
-                        const eligibleItems = order.orderItems.filter((item: any) =>
-                          item.product.isReturnable && (item.qty - (item.requestedQty || 0)) > 0
-                        );
-                        const isFullyReturned = eligibleItems.length === 0;
-
-                        return (
-                          <Button
-                            block
-                            danger
-                            icon={<UndoOutlined />}
-                            disabled={isFullyReturned}
-                            onClick={() =>
-                              dispatch(
-                                setAction({
-                                  type: ActionType.UPDATE,
-                                  returnAllOrder: true,
-                                  payload: { orderId: order.id },
-                                })
-                              )
-                            }
-                          >
-                            {isFullyReturned ? "All items returned" : "Return Full Order"}
-                          </Button>
-                        );
-                      })()}
-                      <NewReview />
-                    </Space>
-                  </Card>
-                )}
               </div>
             </Col>
           </Row>
         </div>
       ) : (
-        tracker.trackingNo &&
-        !loading && (
+        tracker.trackingNo && !loading && (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={
-              <span className="text-gray-500">
-                No order found with tracking number <span className="font-mono font-bold text-gray-700">{tracker.trackingNo}</span>
+              <span className="text-gray-500 text-xs sm:text-sm">
+                No order found: <span className="font-black text-gray-900">{tracker.trackingNo}</span>
               </span>
             }
-            className="mt-12 bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-lg mx-auto"
+            className="mt-12 bg-white p-12 rounded-3xl border border-gray-100 max-w-lg mx-auto shadow-sm"
           />
         )
       )}

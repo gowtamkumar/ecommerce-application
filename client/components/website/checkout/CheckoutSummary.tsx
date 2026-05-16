@@ -18,8 +18,9 @@ import {
   setLoading,
 } from "@/redux/features/global/globalSlice";
 import { onlineOrderValidationSchema } from "@/validation/order/onlineOrderValidation";
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { ShoppingOutlined, LockOutlined } from "@ant-design/icons";
 
 export default function CheckoutSummary() {
   const cart = useSelector(selectCart);
@@ -43,15 +44,9 @@ export default function CheckoutSummary() {
   const { checkoutFormData } = checkout || {};
   const { loading } = global || {};
 
-  console.log("cartSummary", cart?.carts?.cartSummary);
-
-
-
-  // State for form inputs
   const handleOrder = async () => {
     try {
       dispatch(setLoading({ save: true }));
-
 
       const validatedFields = onlineOrderValidationSchema.safeParse({
         totalQty,
@@ -70,16 +65,11 @@ export default function CheckoutSummary() {
       });
 
       if (!validatedFields.success) {
-        const formattedErrors = validatedFields.error.issues.map((issue) => {
+        validatedFields.error.issues.forEach((issue) => {
           errorNotification({ message: issue.message });
-          return {
-            path: issue.path.join("."),
-            message: issue.message,
-          };
         });
-
         dispatch(setLoading({ save: false }));
-        return { errors: formattedErrors };
+        return;
       }
 
       const res = await saveOrder(validatedFields.data);
@@ -110,54 +100,72 @@ export default function CheckoutSummary() {
     }
   };
 
-
   return (
-    <div className="space-y-4">
-      <div className="space-y-3 text-sm text-gray-600">
-        <div className="flex justify-between">
-          <span>Total Quantity</span>
-          <span className="font-medium text-gray-900">{+totalQty || 0}</span>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center text-gray-500">
+          <span className="text-xs font-bold uppercase tracking-widest">Total Quantity</span>
+          <span className="text-sm font-black text-gray-900">{+totalQty || 0} Items</span>
         </div>
 
-        <div className="flex justify-between">
-          <span>Subtotal</span>
-          <span className="font-medium text-gray-900">{formatPrice(+subTotal + +totalDiscount)}</span>
+        <div className="flex justify-between items-center text-gray-500">
+          <span className="text-xs font-bold uppercase tracking-widest">Subtotal</span>
+          <span className="text-sm font-black text-gray-900">{formatPrice(+subTotal + +totalDiscount)}</span>
         </div>
 
-        <div className="flex justify-between">
-          <span>Discount</span>
-          <span className="text-global-primary font-medium">- {formatPrice(totalItemsDiscount)}</span>
+        <div className="flex justify-between items-center">
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Item Discount</span>
+          <span className="text-sm font-black text-green-600">-{formatPrice(totalItemsDiscount)}</span>
         </div>
 
         {+couponDiscount > 0 && (
-          <div className="flex justify-between">
-            <span>Coupon Discount</span>
-            <span className="text-global-primary font-medium">- {formatPrice(couponDiscount)}</span>
+          <div className="flex justify-between items-center bg-blue-50/50 p-3 rounded-xl border border-blue-100">
+            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Coupon Savings</span>
+            <span className="text-sm font-black text-blue-600">-{formatPrice(couponDiscount)}</span>
           </div>
         )}
 
-        <div className="flex justify-between">
-          <span>Shipping Cost</span>
-          <span className="font-medium text-gray-900">{formatPrice(shippingCharge)}</span>
+        <div className="flex justify-between items-center text-gray-500">
+          <span className="text-xs font-bold uppercase tracking-widest">Tax (Estimated)</span>
+          <span className="text-sm font-black text-gray-900">+{formatPrice(totalTax || 0)}</span>
+        </div>
+
+        <div className="flex justify-between items-center text-gray-500">
+          <span className="text-xs font-bold uppercase tracking-widest">Shipping Fee</span>
+          <span className="text-sm font-black text-gray-900">{formatPrice(shippingCharge)}</span>
         </div>
       </div>
 
-      <div className="pt-4 border-t border-gray-100">
-        <div className="flex justify-between items-end mb-6">
-          <span className="text-base font-bold text-gray-800">Total Payable</span>
-          <span className="text-2xl font-bold text-global-primary">{formatPrice(grandTotal)}</span>
+      <Divider className="my-6 border-gray-100" />
+
+      <div>
+        <div className="flex justify-between items-end mb-8">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Grand Total</div>
+            <div className="text-3xl font-black text-gray-900 tracking-tighter">
+              {formatPrice(grandTotal)}
+            </div>
+          </div>
+          <div className="text-[10px] font-bold text-green-600 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full mb-2">
+             Savings: {formatPrice(+totalItemsDiscount + +couponDiscount)}
+          </div>
         </div>
 
         <Button
           type="primary"
           size="large"
-          className="w-full h-12 text-base font-semibold"
+          className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] !bg-gray-900 border-none shadow-xl shadow-gray-200"
           onClick={handleOrder}
           loading={loading.save}
           disabled={loading.save}
+          icon={<LockOutlined />}
         >
-          Confirm Order
+          Finalize Order
         </Button>
+        
+        <p className="mt-4 text-[10px] text-center text-gray-400 font-medium uppercase tracking-widest">
+           Tax and Shipping calculated at this step.
+        </p>
       </div>
     </div>
   );

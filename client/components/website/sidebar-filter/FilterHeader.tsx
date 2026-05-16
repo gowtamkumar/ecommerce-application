@@ -9,12 +9,12 @@ import { selectProduct } from "@/redux/features/products/productSlice";
 import {
   AppstoreOutlined,
   BarsOutlined,
-  FilterOutlined
+  FilterOutlined,
+  SortAscendingOutlined
 } from "@ant-design/icons";
 import { Badge, Button, Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import FilterSidebar from "./FilterSidebar";
-
 
 export default function FilterHeader() {
   const global = useSelector(selectGlobal);
@@ -43,89 +43,79 @@ export default function FilterHeader() {
   };
 
   return (
-    <div className="mb-5">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+    <div className="py-4 border-b border-gray-100 mb-6 bg-white">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
+        
+        {/* Left: Product Info */}
+        <div className="flex items-center gap-4">
+           <div className="bg-gray-900 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+              {products?.length || 0} Results
+           </div>
+           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Showing global collection</span>
+        </div>
 
-          {/* Left: Results Count */}
-          <div className="flex items-center gap-2">
-            <Badge
-              count={products?.length || 0}
-              showZero
-              style={{ backgroundColor: 'var(--global-primary)' }}
-              className="[&_.ant-badge-count]:px-2 [&_.ant-badge-count]:h-6 [&_.ant-badge-count]:leading-6"
-            />
-            <span className="text-gray-600 font-medium">Products</span>
-          </div>
-
-          {/* Right: Controls */}
-          <div className="flex items-center gap-4 flex-wrap">
-
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 font-medium">Sort:</span>
+        {/* Right: Controls Group */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+           
+           {/* Sort with Icon */}
+           <div className="flex-1 sm:flex-initial relative group">
               <Select
                 defaultValue="default"
-                style={{ width: 160 }}
+                className="w-full sm:w-48 h-10 premium-select"
                 onChange={(value) => handleSort(value)}
+                suffixIcon={<SortAscendingOutlined className="text-gray-900" />}
                 options={[
-                  { value: 'default', label: 'Default' },
-                  { value: 'lowPrice', label: 'Price: Low to High' },
-                  { value: 'highPrice', label: 'Price: High to Low' },
+                  { value: 'default', label: 'Recommended' },
+                  { value: 'lowPrice', label: 'Price: Low-High' },
+                  { value: 'highPrice', label: 'Price: High-Low' },
                 ]}
               />
-            </div>
+           </div>
 
-            {/* Mobile: Filter Button */}
-            {global.mobile ? (
-              <Button
-                icon={<FilterOutlined />}
-                onClick={() => dispatch(setOpen(true))}
-                className="flex items-center gap-1"
-              >
-                Filters
-              </Button>
-            ) : (
-              /* Desktop: View Toggle */
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 font-medium">View:</span>
-                <div className="flex border border-gray-300 rounded-md overflow-hidden">
-                  <button
-                    onClick={() => dispatch(setProductView(false))}
-                    className={`p-2 transition-colors ${!global.productView
-                      ? 'bg-global-primary text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
-                      }`}
-                    title="List View"
-                  >
-                    <BarsOutlined className="text-base" />
-                  </button>
-                  <button
-                    onClick={() => dispatch(setProductView(true))}
-                    className={`p-2 border-l border-gray-300 transition-colors ${global.productView
-                      ? 'bg-global-primary text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
-                      }`}
-                    title="Grid View"
-                  >
-                    <AppstoreOutlined className="text-base" />
-                  </button>
-                </div>
+           {/* View Toggle - Only on Desktop */}
+           {!global.mobile && (
+              <div className="flex p-1 bg-gray-50 rounded-xl border border-gray-100">
+                <button
+                  onClick={() => dispatch(setProductView(true))}
+                  className={`p-2 rounded-lg transition-all ${global.productView ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-900'}`}
+                >
+                  <AppstoreOutlined className="text-lg" />
+                </button>
+                <button
+                  onClick={() => dispatch(setProductView(false))}
+                  className={`p-2 rounded-lg transition-all ${!global.productView ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-900'}`}
+                >
+                  <BarsOutlined className="text-lg" />
+                </button>
               </div>
-            )}
-          </div>
+           )}
+
+           {/* Mobile: Filter Modal Trigger */}
+           {global.mobile && (
+              <button
+                onClick={() => dispatch(setOpen(true))}
+                className="h-10 px-6 rounded-xl bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-gray-800 transition-colors"
+              >
+                <FilterOutlined />
+                <span>Filters</span>
+              </button>
+           )}
         </div>
       </div>
 
       {/* Mobile Filter Modal */}
       <Modal
-        title="Filters"
+        title={<span className="text-xs font-black uppercase tracking-widest">Apply Filters</span>}
         open={layout.open}
         onCancel={() => dispatch(setOpen(false))}
         footer={null}
         width={400}
+        className="premium-modal"
+        styles={{ body: { padding: 0 } }}
       >
-        <FilterSidebar />
+        <div className="max-h-[80vh] overflow-y-auto">
+           <FilterSidebar />
+        </div>
       </Modal>
     </div>
   );

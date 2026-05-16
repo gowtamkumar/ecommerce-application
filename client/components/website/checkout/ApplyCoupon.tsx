@@ -9,6 +9,7 @@ import { selectCheckout, setCheckoutFormData } from "@/redux/features/checkout/c
 import { Button, Input, Space } from "antd";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { TagOutlined } from "@ant-design/icons";
 
 export default function ApplyCoupon() {
   const [data, setData] = useState("");
@@ -28,7 +29,6 @@ export default function ApplyCoupon() {
     });
 
     if (coupon.success) {
-      // Save coupon into Redux to persist correctly across shipping address switches!
       dispatch(setCheckoutFormData({ ...checkoutFormData, couponCode: data }));
       successNotification({ message: coupon.message });
       dispatch(replaceCart(coupon.data));
@@ -47,28 +47,29 @@ export default function ApplyCoupon() {
 
   return (
     <div className="w-full">
-      <Space.Compact block size="large" className="w-full">
-        <Input
-          type="text"
-          placeholder="Enter Coupon Code"
-          className="hover:!border-global-primary/50 focus:!border-global-primary rounded-l-xl"
-          onChange={(value) => setData(value.target.value)}
-          prefix={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-            </svg>
-          }
-        />
-        <Button
-          type="primary"
-          onClick={handleCoupon}
-          loading={loading}
-          disabled={loading || !data}
-          className="px-6"
-        >
-          Apply
-        </Button>
-      </Space.Compact>
+      <div className="flex flex-col gap-3">
+         <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400">
+            <TagOutlined />
+            <span>Promotional Code</span>
+         </div>
+         <Space.Compact block size="large" className="w-full">
+           <Input
+             type="text"
+             placeholder="SUMMER20..."
+             className="!rounded-l-2xl h-12 text-sm font-bold uppercase tracking-widest border-2 border-gray-100 hover:!border-gray-900 focus:!border-gray-900 transition-all px-4"
+             onChange={(value) => setData(value.target.value)}
+           />
+           <Button
+             type="primary"
+             onClick={handleCoupon}
+             loading={loading}
+             disabled={loading || !data}
+             className="h-12 !rounded-r-2xl px-8 !bg-gray-900 border-none font-black text-xs uppercase tracking-widest"
+           >
+             APPLY
+           </Button>
+         </Space.Compact>
+      </div>
     </div>
   );
 }

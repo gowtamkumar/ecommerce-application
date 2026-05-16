@@ -106,17 +106,17 @@ export default function MyAccount() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
+    <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-gray-50 pb-6">
         <div>
-          <Title level={3} style={{ margin: 0 }}>Personal Information</Title>
-          <Text type="secondary">Manage your personal details and preferences.</Text>
+          <Title level={4} className="!mb-0 text-gray-900 font-black">Personal Info</Title>
+          <Text type="secondary" className="text-xs sm:text-sm">Manage your profile details and preferences.</Text>
         </div>
         <Button
           type={edit ? "default" : "primary"}
           icon={edit ? <EyeOutlined /> : <EditOutlined />}
           onClick={() => setEdit(!edit)}
-          className="items-center flex"
+          className="items-center flex w-full sm:w-auto h-10 rounded-xl font-bold"
         >
           {edit ? "View Mode" : "Edit Profile"}
         </Button>
@@ -128,6 +128,7 @@ export default function MyAccount() {
         onFinish={handleSubmit}
         scrollToFirstError
         requiredMark={edit ? "optional" : false}
+        className="premium-form"
       >
         <Form.Item name="id" hidden>
           <Input />
@@ -153,94 +154,68 @@ export default function MyAccount() {
                 onRemove={handleRemove}
                 customRequest={customUploadRequest}
                 maxCount={1}
-                className="avatar-uploader-circle"
+                className="avatar-uploader-circle shadow-sm"
                 showUploadList={{ showPreviewIcon: false }}
               >
                 {formValues?.fileList?.length >= 1 ? null : (
                   <div className="flex flex-col items-center justify-center text-gray-400">
                     <UploadOutlined className="text-xl mb-1" />
-                    <span className="text-xs">Upload</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Upload</span>
                   </div>
                 )}
               </Upload>
             </ImgCrop>
           </Form.Item>
-          <Text type="secondary" className="text-xs mt-2">Allowed: PNG, JPG, JPEG (Max 1MB)</Text>
+          <Text type="secondary" className="text-[10px] mt-3 font-medium uppercase tracking-wider text-gray-400">PNG, JPG (Max 1MB)</Text>
         </div>
 
-        <Row gutter={[24, 16]}>
-          {/* Column 1 */}
+        <Row gutter={[24, 0]}>
           <Col xs={24} md={12}>
             <Form.Item
               name="name"
-              label="Full Name"
+              label={<span className="text-xs font-bold uppercase tracking-widest text-gray-500">Full Name</span>}
               rules={[{ required: true, message: "Name is required" }]}
             >
-              <Input placeholder="Enter your full name" disabled={!edit} size="large" />
-            </Form.Item>
-
-            <Form.Item
-              name="email"
-              label="Email Address"
-              rules={[{ required: true, message: "E-mail is required", type: "email" }]}
-            >
-              <Input placeholder="name@example.com" disabled={!edit} size="large" />
-            </Form.Item>
-
-            <Form.Item
-              name="phone"
-              label="Phone Number"
-              rules={[{ required: true, message: "Phone is required" }]}
-            >
-              <Input placeholder="+1 234 567 890" disabled={!edit} size="large" />
-            </Form.Item>
-
-            <Form.Item name="gender" label="Gender">
-              <Radio.Group disabled={!edit} className="w-full">
-                <div className="flex gap-4">
-                  <Radio value="Male" className="border px-4 py-2 rounded-lg flex-1 text-center hover:bg-gray-50 transition-colors">Male</Radio>
-                  <Radio value="Female" className="border px-4 py-2 rounded-lg flex-1 text-center hover:bg-gray-50 transition-colors">Female</Radio>
-                </div>
-              </Radio.Group>
+              <Input placeholder="John Doe" disabled={!edit} size="large" className="rounded-xl h-12" />
             </Form.Item>
           </Col>
-
-          {/* Column 2 */}
           <Col xs={24} md={12}>
-            <Form.Item name="username" label="Username">
-              <Input placeholder="username" disabled size="large" className="bg-gray-50 text-gray-500" />
+            <Form.Item
+              name="email"
+              label={<span className="text-xs font-bold uppercase tracking-widest text-gray-500">Email Address</span>}
+              rules={[{ required: true, message: "E-mail is required", type: "email" }]}
+            >
+              <Input placeholder="name@example.com" disabled={!edit} size="large" className="rounded-xl h-12" />
             </Form.Item>
-
-            <Form.Item name="dob" label="Date of Birth">
-              <DatePicker placeholder="Select date" disabled={!edit} className="w-full" size="large" format="YYYY-MM-DD" />
+          </Col>
+          <Col xs={24} md={12}>
+            <Form.Item
+              name="phone"
+              label={<span className="text-xs font-bold uppercase tracking-widest text-gray-500">Phone Number</span>}
+              rules={[{ required: true, message: "Phone is required" }]}
+            >
+              <Input placeholder="+1 234..." disabled={!edit} size="large" className="rounded-xl h-12" />
             </Form.Item>
-
-            <Form.Item name="address" label="Address">
+          </Col>
+          <Col xs={24} md={12}>
+            <Form.Item name="dob" label={<span className="text-xs font-bold uppercase tracking-widest text-gray-500">Birthday</span>}>
+              <DatePicker placeholder="Select date" disabled={!edit} className="w-full rounded-xl h-12" size="large" format="YYYY-MM-DD" />
+            </Form.Item>
+          </Col>
+          <Col xs={24}>
+            <Form.Item name="address" label={<span className="text-xs font-bold uppercase tracking-widest text-gray-500">Address</span>}>
               <Input.TextArea
-                placeholder="Enter your delivery address"
+                placeholder="Enter your address"
                 disabled={!edit}
-                rows={4}
-                className="resize-none"
+                rows={3}
+                className="rounded-xl p-4 resize-none"
               />
             </Form.Item>
-
-            {global.action.payload?.id && (
-              <Form.Item name="status" label="Status">
-                <Select
-                  disabled={!edit}
-                  size="large"
-                  options={[
-                    { value: 'Active', label: 'Active' },
-                    { value: 'Inactive', label: 'Inactive' },
-                  ]}
-                />
-              </Form.Item>
-            )}
           </Col>
         </Row>
 
         {edit && (
-          <div className="mt-6 flex justify-end pt-6 border-t border-gray-100">
+          <div className="mt-8 flex justify-end pt-6 border-t border-gray-50">
             <Button
               size="large"
               type="primary"
@@ -248,9 +223,9 @@ export default function MyAccount() {
               icon={<SaveOutlined />}
               loading={global.loading.save}
               disabled={global.loading.save}
-              className="px-8"
+              className="w-full sm:w-auto px-12 h-12 rounded-xl font-bold bg-blue-600"
             >
-              {global.action.payload?.id ? "Update Profile" : "Save Changes"}
+              Save Changes
             </Button>
           </div>
         )}

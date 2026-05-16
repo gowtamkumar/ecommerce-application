@@ -102,35 +102,55 @@ export default function SingleProduct({ slug }: { slug: string }) {
 
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      {/* Main Product Hero Section */}
-      <div className="mb-16 lg:mb-24">
-        <ProductDetails
-          setSelectVariant={setSelectVariant}
-          productRating={productRating}
-          checkStock={checkStock}
-          setCheckStock={setCheckStock}
-        />
-      </div>
-
-      {/* Product Description & Info */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-16 lg:mb-24">
-        <div className="lg:col-span-8 space-y-12">
-          <ProductDescription />
-          <div id="reviews" className="scroll-mt-24">
-            {product.reviews && <RatingProduct productRating={productRating} />}
-            <ReviewTable />
+    <div className="bg-[#FDFDFD]">
+       {/* Breadcrumb / Top Nav Placeholder */}
+       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400">
+             <span className="hover:text-gray-900 cursor-pointer">Home</span>
+             <span>/</span>
+             <span className="hover:text-gray-900 cursor-pointer">Shop</span>
+             <span>/</span>
+             <span className="text-gray-900">Product Detail</span>
           </div>
-        </div>
-      </div>
+       </div>
 
-      {/* Related Products */}
-      <section className="border-t border-gray-100 pt-16">
-        <h3 className="text-2xl lg:text-3xl font-bold mb-8 font-global-primary-fontfamily text-gray-900">
-          You Might Also Like
-        </h3>
-        <ProductCard />
-      </section>
+       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+          {/* Main Product Hero Section */}
+          <div className="mb-20 sm:mb-28">
+            <ProductDetails
+              setSelectVariant={setSelectVariant}
+              productRating={productRating}
+              checkStock={checkStock}
+              setCheckStock={setCheckStock}
+            />
+          </div>
+
+          {/* Product Description & Info */}
+          <div className="max-w-5xl mx-auto space-y-20">
+            <div id="description">
+              <ProductDescription />
+            </div>
+            
+            <div id="reviews" className="scroll-mt-24">
+               {product.reviews && <RatingProduct productRating={productRating} />}
+               <ReviewTable />
+            </div>
+          </div>
+
+          {/* Related Products */}
+          <section className="mt-32 pt-20 border-t border-gray-100">
+             <div className="flex flex-col sm:flex-row justify-between items-end gap-4 mb-12">
+                <div>
+                   <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Discovery</h3>
+                   <h2 className="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight">You Might Also Like</h2>
+                </div>
+                <div className="hidden sm:block pb-2">
+                   <div className="h-0.5 w-24 bg-gray-900"></div>
+                </div>
+             </div>
+             <ProductCard />
+          </section>
+       </div>
     </div>
   );
 }
