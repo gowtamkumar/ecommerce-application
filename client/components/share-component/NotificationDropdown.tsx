@@ -27,15 +27,17 @@ const NotificationDropdown = () => {
   const session = useSession();
 
   const fetchNotifications = async () => {
-    if (session.status !== "authenticated") return;
+    // 1. STOP if not authenticated or session is in a loading/error state
+    if (session.status !== "authenticated" || (session.data as any)?.error === "RefreshAccessTokenError") {
+       return;
+    }
 
     setLoading(true);
     try {
       const res = await getNotificationsForAdmin();
 
-      // If unauthorized, don't attempt to process data
+      // 2. If the server returns 401, it means the session is definitely dead
       if (res?.status === 401) {
-        console.warn("Notification fetch failed: Session expired");
         return;
       }
 
@@ -43,20 +45,20 @@ const NotificationDropdown = () => {
         setNotifications(res.data);
       }
     } catch (error) {
-      console.error("Failed to fetch notifications", error);
+      // Avoid logging errors that are just auth timeouts
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (session.status === "authenticated") {
+    // Only start polling if we are truly authenticated and have no errors
+    if (session.status === "authenticated" && (session.data as any)?.error !== "RefreshAccessTokenError") {
       fetchNotifications();
-      // Optional: Poll for new notifications every 60s
       const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
-  }, [session.status]);
+  }, [session.status, (session.data as any)?.error]);
 
   const handleRead = async (id: string) => {
     try {

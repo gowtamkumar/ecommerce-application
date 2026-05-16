@@ -1,7 +1,7 @@
 "use client";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   A11y,
   Autoplay,
@@ -12,8 +12,6 @@ import {
 import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function CategoryCard({ categories }: any) {
-  const router = useRouter();
-
   return (
     <div className="w-full">
       <Swiper
@@ -32,11 +30,9 @@ export default function CategoryCard({ categories }: any) {
         {(categories || []).map((item: any, idx: number) => {
           return (
             <SwiperSlide key={idx}>
-              <div
-                className="flex flex-col items-center justify-center cursor-pointer group"
-                onClick={() => {
-                  router.push(`/products?categoryId=${item.id}&`);
-                }}
+              <Link
+                href={`/products?categoryId=${item.id}`}
+                className="flex flex-col items-center justify-center group"
               >
                 <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] group-hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.12)] group-hover:scale-105 bg-white dark:bg-gray-800/80 flex items-center justify-center relative p-3">
                   <Image
@@ -52,7 +48,7 @@ export default function CategoryCard({ categories }: any) {
                 <p className="mt-5 text-sm md:text-base font-semibold text-gray-600 dark:text-gray-300 group-hover:text-global-primary text-center truncate w-full px-2 transition-colors duration-300">
                   {item.name}
                 </p>
-              </div>
+              </Link>
             </SwiperSlide>
           );
         })}

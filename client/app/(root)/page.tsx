@@ -20,7 +20,7 @@ const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
 // Common Section Title Component for consistency
 const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-  <div className="relative mb-8 md:mb-10 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
+  <div className="relative mb-4 md:mb-6 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
     <div className="relative z-10 flex-1 w-full text-center md:text-left">
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight leading-snug mb-1.5">
         {title}
@@ -80,7 +80,7 @@ export default async function Home() {
     ),
     categories: () => (
       categories ? (
-        <section className="py-10 sm:py-16 bg-gradient-to-b from-global-bg to-white dark:to-gray-900 relative overflow-hidden">
+        <section className="py-6 sm:py-10 bg-gradient-to-b from-global-bg to-white dark:to-gray-900 relative overflow-hidden">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <SectionHeader title="Shop by Category" link="/categories" />
             <CategoryCard categories={categories} />
@@ -90,7 +90,7 @@ export default async function Home() {
     ),
     featured_products: () => (
       products?.data ? (
-        <section className="py-10 sm:py-16 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800 relative">
+        <section className="py-6 sm:py-10 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800 relative">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="Featured Collections" link="/products" />
             <FeaturedProduct products={featuredProducts} />
@@ -100,7 +100,7 @@ export default async function Home() {
     ),
     promo_banners: () => (
       HomeBanners?.length > 0 ? (
-        <section className="py-10 sm:py-16 bg-global-bg">
+        <section className="py-6 sm:py-10 bg-global-bg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <PromoBanners banners={HomeBanners} />
           </div>
@@ -109,7 +109,7 @@ export default async function Home() {
     ),
     top_selling: () => (
       topSellingProducts?.length > 0 ? (
-        <section className="py-10 sm:py-16 bg-gradient-to-t from-global-bg to-white dark:to-gray-900 relative overflow-hidden border-b border-gray-100 dark:border-gray-800">
+        <section className="py-6 sm:py-10 bg-gradient-to-t from-global-bg to-white dark:to-gray-900 relative overflow-hidden border-b border-gray-100 dark:border-gray-800">
           <div className="absolute top-0 right-0 w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-global-primary/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <SectionHeader title="Best Sellers" link="/products" />
@@ -120,7 +120,7 @@ export default async function Home() {
     ),
     new_arrivals: () => (
       products?.data ? (
-        <section className="py-10 sm:py-16 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800">
+        <section className="py-6 sm:py-10 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader title="New Arrivals" link="/products" />
             <FeaturedProduct products={isNewArrivalProducts} />
@@ -129,7 +129,7 @@ export default async function Home() {
       ) : null
     ),
     category_tabs: () => (
-      <section className="py-10 sm:py-16 bg-global-bg">
+      <section className="py-6 sm:py-10 bg-global-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Browse by Category" link="/products" />
           <CategoryTab categories={categories} />
@@ -137,7 +137,7 @@ export default async function Home() {
       </section>
     ),
     blog: () => (
-      <section className="py-12 sm:py-20 bg-gradient-to-b from-white dark:from-gray-900/50 to-global-card-bg border-t border-gray-100 dark:border-gray-800">
+      <section className="py-6 sm:py-10 bg-gradient-to-b from-white dark:from-gray-900/50 to-global-card-bg border-t border-gray-100 dark:border-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Latest from our Blog" link="/blog" />
           <BlogTab posts={posts || []} />
