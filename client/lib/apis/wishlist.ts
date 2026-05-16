@@ -22,8 +22,8 @@ export async function saveWishlist(data: any) {
   });
 }
 
-export async function getWishlists() {
-  return await fetchWithAuth(`${appConfig.apiUrl}/wishlists`, {
+export async function getWishlists(page: number = 1, limit: number = 10) {
+  return await fetchWithAuth(`${appConfig.apiUrl}/wishlists?page=${page}&limit=${limit}`, {
     cache: "no-cache",
   });
 }

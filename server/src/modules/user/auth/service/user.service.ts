@@ -1,14 +1,25 @@
-import { userRepository } from '../repository/user.repository';
 import { UserEntity } from '../model/user.entity';
+import { userRepository } from '../repository/user.repository';
+
+import { ILike } from 'typeorm';
 
 export class UserService {
-  async getAllUsers(page: number = 1, limit: number = 10) {
+  async getAllUsers(page: number = 1, limit: number = 10, filters?: { role?: string; search?: string }) {
     const skip = (page - 1) * limit;
     const take = limit;
+
+    const where: any = {};
+    if (filters?.role) {
+      where.role = filters.role;
+    }
+    if (filters?.search) {
+      where.name = ILike(`%${filters.search}%`); // Or email, or username depending on logic
+    }
 
     const { data, total } = await userRepository.findAll({
       skip,
       take,
+      where,
       select: {
         id: true,
         name: true,

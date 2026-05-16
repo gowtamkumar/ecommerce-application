@@ -14,7 +14,7 @@ export async function saveDiscount(data: any) {
   return await handleResponse(res);
 }
 
-export async function getDiscounts(params?: { scope: string, status: string, endDate: string }) {
+export async function getDiscounts(params?: { scope?: string; status?: string; endDate?: string }) {
   const scope = params?.scope;
   const status = params?.status;
   // const startDate = params?.startDate;

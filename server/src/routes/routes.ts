@@ -29,7 +29,6 @@ import sizeRoute from '@/modules/catalog/size/route/size.route';
 import taxRoute from '@/modules/system/tax/route/tax.route';
 import unitRoute from '@/modules/catalog/unit/route/unit.route';
 import wishlistRoutes from '@/modules/sales/wishlist/route/wishlist.route';
-// import visitorRoute from "../modules/visitor/route/visitor.route";
 import { AuthGuard, isAuthorize } from '../middlewares/auth.middleware';
 import auditLogRoute from '@/modules/system/audit-log/route/audit-log.route';
 import postRoute from '@/modules/content/blog/post/route/post.route';
@@ -79,7 +78,6 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/refunds', AuthGuard, refundRoute);
   // public route
   app.use('/api/v1/home', homeRoute);
-  // app.use("/api/v1/visitors", visitorRoute);
   app.use('/api/v1/leads', leadRoute);
   app.use('/api/v1/posts', postRoute);
   app.use('/api/v1/divisions', divisionRoute);

@@ -23,8 +23,10 @@ import {
   MdViewModule,
 } from "react-icons/md";
 import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
-import { SiWish } from "react-icons/si";
+import { RxDashboard } from "react-icons/rx";
 import { TbReport } from "react-icons/tb";
+import { SiWish } from "react-icons/si";
+import { LineChartOutlined } from "@ant-design/icons";
 import appConfig from "./appConfig";
 
 const handleBackup = async (): Promise<void> => {
@@ -512,63 +514,55 @@ const userProfileRoute: MenuProps["items"] = [
 
 const webSiteNavbarItems: MenuProps["items"] = [
   {
-    label: "Home",
+    label: <Link href="/">Home</Link>,
     key: "home",
-    icon: <FaRegUser />,
   },
   {
-    label: "About us",
+    label: <Link href="/about">About us</Link>,
     key: "about",
-    icon: <FaRegUser />,
-    // disabled: true,
   },
   {
-    label: "Contract",
+    label: <Link href="/contact">Contact</Link>,
     key: "contact",
-    icon: <FaRegUser />,
-    // disabled: true,
   },
 
   {
-    label: "Category",
+    label: "Categories",
     key: "category",
-    icon: <FaRegUser />,
     children: [
       {
-        label: (
-          <a
-            href="https://ant.design"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Option 1
-          </a>
-        ),
-        key: "alipay",
+        label: <Link href="/products?categoryId=5">Fashion</Link>,
+        key: "fashion",
       },
       {
-        type: "group",
-        label: "Item 2",
-        children: [
-          {
-            label: "Option 3",
-            key: "setting:3",
-          },
-          {
-            label: "Option 4",
-            key: "setting:4",
-          },
-        ],
+        label: <Link href="/products?categoryId=10">Kitchen Fittings</Link>,
+        key: "kitchen",
+      },
+      {
+        label: <Link href="/products?categoryId=1">Honda</Link>,
+        key: "honda",
+      },
+      {
+        label: <Link href="/products?categoryId=2">Yamaha</Link>,
+        key: "yamaha",
+      },
+      {
+        label: <Link href="/products?categoryId=9">Projector Accessories</Link>,
+        key: "projector",
+      },
+      {
+        label: <Link href="/products?categoryId=8">Monoculars</Link>,
+        key: "monoculars",
       },
     ],
   },
   {
-    label: (
-      <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-        Navigation Four - Link
-      </a>
-    ),
-    key: "alipay",
+    label: <Link href="/blog">Blog</Link>,
+    key: "blog",
+  },
+  {
+    label: <Link href="/offers">Offers</Link>,
+    key: "offers",
   },
 ];
 

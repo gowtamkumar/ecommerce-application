@@ -1,10 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { wishListhValidationSchema } from '@/validation';
-import { WishListEntity } from '../model/wishlist.entity';
-import { logger } from '@/middlewares/logger';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
+import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
+import { wishListhValidationSchema } from '@/validation';
+import { NextFunction, Request, Response } from 'express';
+import { WishListEntity } from '../model/wishlist.entity';
 
 // @desc Get all Wishlists
 // @route GET /api/v1/Wishlists
@@ -12,19 +13,35 @@ import { CustomRequest } from '@/enums/custom-request-type';
 export const getWishlists = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getWishlists ${req.method} ${req.url}`);
 
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(WishListEntity);
 
-  const result = await repository.find({
+  const [data, total] = await repository.findAndCount({
     relations: {
       product: true,
+      user: true,
     },
+    order: {
+      createdAt: 'DESC',
+    },
+    skip,
+    take: limit,
   });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Wishlists',
-    data: result,
+    data,
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
   });
 });
 
@@ -245,9 +262,13 @@ export const getUserWishlist = asyncHandler(
 export const createWishlist = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createWishlist ${req.method} ${req.url}`);
 
+  const userId = (req.role === RoleEnum.Admin || req.role === RoleEnum.Admin) && req.body.userId 
+    ? req.body.userId 
+    : req.id;
+
   const validation = wishListhValidationSchema.safeParse({
     ...req.body,
-    userId: req.id,
+    userId: userId,
   });
 
   if (!validation.success) {

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Avatar } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,9 +13,10 @@ import {
   setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  FormOutlined,
   RestOutlined,
   QuestionCircleOutlined,
+  UserOutlined,
+  PictureOutlined
 } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
 
@@ -25,8 +26,10 @@ import {
   errorNotification,
   successNotification,
 } from "@/lib/utils/notification";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 
 interface DataType {
+  id: string;
   key: string;
   product: any;
   user: any;
@@ -36,16 +39,22 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const WishlistsList: React.FC = () => {
-  const [wishlists, setWishLists] = useState([]);
+  const [wishlists, setWishLists] = useState<DataType[]>([]);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (page: number, limit: number) => {
     dispatch(setLoading({ loading: true }));
     try {
-      const res = await getWishlists();
-      setWishLists(res.data);
+      const res = await getWishlists(page, limit);
+      if (res?.success) {
+        setWishLists(res.data);
+        setTotal(res.meta?.total || 0);
+      }
     } catch (err: any) {
       errorNotification({ message: err.message });
     } finally {
@@ -54,15 +63,15 @@ const WishlistsList: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchData(currentPage, pageSize);
+  }, [fetchData, currentPage, pageSize, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
     try {
       await deleteWishlist(id);
       successNotification({ message: "Successfully deleted" });
-      fetchData();
+      fetchData(currentPage, pageSize);
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -154,11 +163,19 @@ const WishlistsList: React.FC = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex]
+    onFilter: (value, record) => {
+      // Custom filter logic based on nested objects
+      const textToSearch = dataIndex === "product" 
+        ? record.product?.name || ""
+        : dataIndex === "user"
+        ? record.user?.name || ""
+        : record[dataIndex];
+        
+      return textToSearch
         .toString()
         .toLowerCase()
-        .includes((value as string).toLowerCase()),
+        .includes((value as string).toLowerCase());
+    },
     filterDropdownProps: {
       onOpenChange: (visible) => {
         if (visible) {
@@ -166,17 +183,22 @@ const WishlistsList: React.FC = () => {
         }
       },
     },
-    render: (text) =>
-      global.searchedColumn === dataIndex ? (
+    render: (text, record) => {
+      let displayText = text;
+      if (dataIndex === "product") displayText = record.product?.name || "Unknown Product";
+      if (dataIndex === "user") displayText = record.user?.name || "Unknown User";
+
+      return global.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
           searchWords={[global.searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ""}
+          textToHighlight={displayText ? displayText.toString() : ""}
         />
       ) : (
-        text
-      ),
+        displayText
+      );
+    }
   });
 
   const columns: TableColumnsType<DataType> = [
@@ -184,52 +206,98 @@ const WishlistsList: React.FC = () => {
       title: "Product",
       dataIndex: "product",
       key: "product",
-      sorter: (a, b) => a.product.length - b.product.length,
+      width: 300,
+      sorter: (a, b) => (a.product?.name || "").localeCompare(b.product?.name || ""),
       ...getColumnSearchProps("product"),
-      render: (value) => <span>{value.name}</span>,
+      render: (value, record) => {
+        const displayText = record.product?.name || "Unknown Product";
+        return (
+          <div className="flex items-center gap-3">
+             <Avatar
+              shape="square"
+              size={48}
+              src={record.product?.thumbnailImage ? getUploadImageUrl(record.product.thumbnailImage) : undefined}
+              icon={!record.product?.thumbnailImage && <PictureOutlined />}
+              className="border border-gray-200"
+            />
+            <div className="font-semibold text-gray-800">
+               {global.searchedColumn === "product" ? (
+                  <Highlighter
+                    highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                    searchWords={[global.searchText]}
+                    autoEscape
+                    textToHighlight={displayText.toString()}
+                  />
+                ) : (
+                  displayText
+                )}
+            </div>
+          </div>
+        );
+      },
     },
     {
       ...getColumnSearchProps("user"),
       title: "User",
       dataIndex: "user",
       key: "user",
-      sorter: (a, b) => a.user.length - b.user.length,
+      width: 250,
+      sorter: (a, b) => (a.user?.name || "").localeCompare(b.user?.name || ""),
+      render: (value, record) => {
+        const displayText = record.user?.name || "Unknown User";
+        return (
+          <div className="flex items-center gap-3">
+             <Avatar
+              size={40}
+              src={record.user?.image ? getUploadImageUrl(record.user.image) : undefined}
+              icon={!record.user?.image && <UserOutlined />}
+              className="border border-gray-200"
+            />
+            <div>
+              <div className="font-medium text-gray-900">
+                {global.searchedColumn === "user" ? (
+                    <Highlighter
+                      highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                      searchWords={[global.searchText]}
+                      autoEscape
+                      textToHighlight={displayText.toString()}
+                    />
+                  ) : (
+                    displayText
+                  )}
+              </div>
+              <div className="text-xs text-gray-500">{record.user?.email || ""}</div>
+            </div>
+          </div>
+        );
+      },
     },
     {
-      ...getColumnSearchProps("createdAt"),
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      sorter: (a, b) => a.createdAt.length - b.createdAt.length,
-      render: (value) => <p>{dayjs(value).format("DD-MM-YYYY h:mm A")}</p>,
+      width: 180,
+      sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      render: (value) => (
+         <div className="text-sm">
+            <div className="text-gray-900">{dayjs(value).format("DD MMM YYYY")}</div>
+            <div className="text-gray-500">{dayjs(value).format("h:mm A")}</div>
+          </div>
+      ),
     },
 
     {
       title: "Action",
       key: "action",
-      sortDirections: ["descend", "ascend"],
+      width: 100,
       className: "text-end",
-      width: "8%",
       render: (value) => (
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            icon={<FormOutlined />}
-            title="Edit"
-            onClick={() =>
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  payload: value,
-                })
-              )
-            }
-          />
+        <div className="flex gap-2 justify-end">
           <Popconfirm
             title={
               <span>
-                Are you sure <span className="text-danger fw-bold">delete</span>{" "}
-                this Wishlist?
+                Are you sure <span className="text-red-600 font-bold">delete</span>{" "}
+                this Wishlist item?
               </span>
             }
             onConfirm={() => handleDelete(value.id)}
@@ -244,12 +312,18 @@ const WishlistsList: React.FC = () => {
               danger
               loading={global.loading?.delete}
               icon={<RestOutlined />}
+              className="hover:!bg-red-50"
             />
           </Popconfirm>
         </div>
       ),
     },
   ];
+
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
 
   return (
     <Table
@@ -258,9 +332,16 @@ const WishlistsList: React.FC = () => {
       columns={columns}
       rowKey="id"
       dataSource={wishlists}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
+      pagination={{
+        current: currentPage,
+        pageSize: pageSize,
+        total: total,
+        showSizeChanger: true,
+      }}
+      onChange={handleTableChange}
+      size="middle"
+      className="modern-table"
+      rowClassName="hover:bg-gray-50 transition-colors"
     />
   );
 };

@@ -13,7 +13,7 @@ export class UserRepository {
     return this.repository!;
   }
 
-  async findAll(options: { skip?: number; take?: number; relations?: any; select?: any }) {
+  async findAll(options: { skip?: number; take?: number; relations?: any; select?: any; where?: any; order?: any }) {
     const repository = await this.getRepository();
     const [data, total] = await repository.findAndCount({
       ...options,

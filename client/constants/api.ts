@@ -39,5 +39,4 @@ export const taxsApi = `${appConfig.apiUrl}/taxs`;
 export const unionsApi = `${appConfig.apiUrl}/unions`;
 export const unitsApi = `${appConfig.apiUrl}/units`;
 export const upazilasApi = `${appConfig.apiUrl}/upazilas`;
-export const visitorsApi = `${appConfig.apiUrl}/visitors`;
 export const wishlistsApi = `${appConfig.apiUrl}/wishlists`;

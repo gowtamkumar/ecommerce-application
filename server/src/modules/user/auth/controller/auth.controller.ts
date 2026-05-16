@@ -149,8 +149,10 @@ export const getUsers = asyncHandler(async (req: Request, res: Response, next: N
 
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
+  const role = req.query.role as string;
+  const search = req.query.search as string;
 
-  const { users, meta } = await userService.getAllUsers(page, limit);
+  const { users, meta } = await userService.getAllUsers(page, limit, { role, search });
 
   return res.status(200).json({
     success: true,

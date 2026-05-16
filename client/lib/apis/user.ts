@@ -43,10 +43,19 @@ export async function getMe() {
   return await handleResponse(res);
 }
 
-// Function to get all users with pagination
-export async function getUsers(page: number = 1, limit: number = 10) {
+// Function to get all users with pagination and optional filters
+export async function getUsers(
+  page: number = 1,
+  limit: number = 10,
+  options?: { role?: string; search?: string }
+) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/auth/users?page=${page}&limit=${limit}`, {
+  
+  let url = `${appConfig.apiUrl}/auth/users?page=${page}&limit=${limit}`;
+  if (options?.role) url += `&role=${options.role}`;
+  if (options?.search) url += `&search=${options.search}`;
+
+  const res = await fetch(url, {
     cache: "no-cache",
     headers,
   });
