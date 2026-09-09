@@ -224,8 +224,14 @@ const RefundList: React.FC = () => {
       width: 100,
       render: (record) => (
         <div className="flex gap-2">
-          {record.status === "Pending" ? (
-            <Tooltip title="Complete Refund">
+          {record.status === "Pending" || record.status === "Failed" ? (
+            <Tooltip
+              title={
+                record.status === "Failed"
+                  ? "Retry / Complete Manual Refund"
+                  : "Complete Refund"
+              }
+            >
               <Button
                 type="primary"
                 size="small"
@@ -280,7 +286,11 @@ const RefundList: React.FC = () => {
         size="middle"
         className="modern-table"
         rowClassName={(record) =>
-          record.status === "Pending" ? "bg-orange-50/10" : ""
+          record.status === "Pending"
+            ? "bg-orange-50/10"
+            : record.status === "Failed"
+              ? "bg-red-50/20"
+              : ""
         }
       />
       <RefundCompleteModal />

@@ -3,4 +3,5 @@ export enum RefundMethod {
   BankTransfer = 'BankTransfer',
   MobileBanking = 'MobileBanking',
   Wallet = 'Wallet',
+  SSLCommerz = 'SSLCommerz',
 }

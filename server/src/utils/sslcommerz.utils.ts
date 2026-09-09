@@ -72,3 +72,104 @@ export const initiateSSLCommerzPayment = async (data: PaymentData): Promise<stri
     throw new Error(result.failedreason || 'No GatewayPageURL in SSLCommerz response');
   }
 };
+
+export interface SSLCommerzRefundInput {
+  bankTranId: string;
+  refundAmount: number;
+  refundRemarks: string;
+  /** Unique id for this refund attempt (your system) */
+  refundTransId: string;
+  /** Optional merchant reference (e.g. order tran_id) */
+  refeId?: string;
+}
+
+export interface SSLCommerzRefundResult {
+  success: boolean;
+  status?: string;
+  refundRefId?: string;
+  errorReason?: string;
+  raw?: unknown;
+}
+
+/**
+ * Initiate a refund via SSLCommerz Refund API.
+ * Requires server IP whitelisted in the SSLCommerz merchant panel.
+ */
+export const initiateSSLCommerzRefund = async (
+  data: SSLCommerzRefundInput,
+): Promise<SSLCommerzRefundResult> => {
+  const store_id = process.env.STORE_ID;
+  const store_passwd = process.env.STORE_PASSWD;
+  const is_live = process.env.IS_LIVE === 'true';
+
+  if (!store_id || !store_passwd) {
+    return {
+      success: false,
+      errorReason: 'SSLCommerz store credentials are not configured',
+    };
+  }
+
+  const apiUrl = is_live
+    ? 'https://securepay.sslcommerz.com/validator/api/merchantTransIDvalidationAPI.php'
+    : 'https://sandbox.sslcommerz.com/validator/api/merchantTransIDvalidationAPI.php';
+
+  const params = new URLSearchParams({
+    bank_tran_id: data.bankTranId,
+    refund_trans_id: data.refundTransId,
+    store_id,
+    store_passwd,
+    refund_amount: Number(data.refundAmount).toFixed(2),
+    refund_remarks: data.refundRemarks || 'Order return refund',
+    format: 'json',
+  });
+
+  if (data.refeId) {
+    params.append('refe_id', data.refeId);
+  }
+
+  const response = await fetch(`${apiUrl}?${params.toString()}`, {
+    method: 'GET',
+  });
+
+  const result = await response.json();
+
+  const apiConnect = String(result?.APIConnect || '').toUpperCase();
+  const status = String(result?.status || '').toLowerCase();
+
+  if (
+    apiConnect.includes('INVALID_SOURCE') ||
+    apiConnect.includes('REQUEST_FROM_INVALID_SOURCE')
+  ) {
+    return {
+      success: false,
+      status,
+      errorReason: 'Server IP not whitelisted in SSLCommerz merchant panel',
+      raw: result,
+    };
+  }
+
+  if (apiConnect && apiConnect !== 'DONE') {
+    return {
+      success: false,
+      status,
+      errorReason: result?.errorReason || `APIConnect: ${apiConnect}`,
+      raw: result,
+    };
+  }
+
+  if (status === 'success' || status === 'processing') {
+    return {
+      success: true,
+      status,
+      refundRefId: result?.refund_ref_id,
+      raw: result,
+    };
+  }
+
+  return {
+    success: false,
+    status,
+    errorReason: result?.errorReason || 'SSLCommerz refund request failed',
+    raw: result,
+  };
+};

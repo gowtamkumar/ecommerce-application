@@ -60,6 +60,10 @@ export class PaymentEntity {
   @Column({ name: 'tran_id', nullable: true })
   tranId!: string;
 
+  /** SSLCommerz bank-side transaction id required for gateway refunds */
+  @Column({ name: 'bank_tran_id', nullable: true })
+  bankTranId?: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt?: string;
 

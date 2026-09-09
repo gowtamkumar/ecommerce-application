@@ -272,6 +272,11 @@ export const deletePayment = asyncHandler(async (req: Request, res: Response) =>
 export const sslcommerzSuccessHandler = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: sslcommerzSuccessHandler ${req.method} ${req.url}`);
   const { tranId } = req.params;
+  // SSLCommerz posts bank_tran_id (and related fields) on success redirect
+  const bankTranId =
+    (req.body?.bank_tran_id as string | undefined) ||
+    (req.query?.bank_tran_id as string | undefined) ||
+    undefined;
 
   const connection = await getDBConnection();
   const orderRepo = connection.getRepository(OrderEntity);
@@ -292,29 +297,48 @@ export const sslcommerzSuccessHandler = asyncHandler(async (req: CustomRequest, 
 
     const paymentRepo = connection.getRepository(PaymentEntity);
 
-    const newPayment = paymentRepo.create({
-      tranId,
-      orderId: order.id,
-      userId: order.userId,
-      paymentDate: new Date().toISOString(),
-      paymentType: PaymentType.Debit,
-      paymentMethod: PaymentMethod.SSLCOMMERZ,
-      amount: order.grandTotal,
+    const existingPayment = await paymentRepo.findOne({
+      where: { tranId, orderId: order.id },
+      order: { id: 'DESC' },
     });
 
-    const save = await paymentRepo.save(newPayment);
+    let save: PaymentEntity;
+    let isNewPayment = false;
+    if (existingPayment) {
+      if (bankTranId && !existingPayment.bankTranId) {
+        existingPayment.bankTranId = bankTranId;
+        save = await paymentRepo.save(existingPayment);
+      } else {
+        save = existingPayment;
+      }
+    } else {
+      const newPayment = paymentRepo.create({
+        tranId,
+        bankTranId,
+        orderId: order.id,
+        userId: order.userId,
+        paymentDate: new Date().toISOString(),
+        paymentType: PaymentType.Debit,
+        paymentMethod: PaymentMethod.SSLCOMMERZ,
+        amount: order.grandTotal,
+      });
+      save = await paymentRepo.save(newPayment);
+      isNewPayment = true;
+    }
 
-    // Notification to User (Payment Success)
-    const notificationRepo = connection.getRepository(NotificationEntity);
-    const notification: NotificationEntity = notificationRepo.create({
-      type: NotificationType.PaymentSuccess,
-      title: 'Payment Successful',
-      message: `Your payment of ${order.grandTotal} for Order #${order.id} was successful. Transaction ID: ${tranId}`,
-      userId: order.userId,
-      orderId: order.id,
-      isRead: false,
-    });
-    await notificationRepo.save(notification);
+    // Notification to User (Payment Success) — only on first successful payment record
+    if (isNewPayment) {
+      const notificationRepo = connection.getRepository(NotificationEntity);
+      const notification: NotificationEntity = notificationRepo.create({
+        type: NotificationType.PaymentSuccess,
+        title: 'Payment Successful',
+        message: `Your payment of ${order.grandTotal} for Order #${order.id} was successful. Transaction ID: ${tranId}`,
+        userId: order.userId,
+        orderId: order.id,
+        isRead: false,
+      });
+      await notificationRepo.save(notification);
+    }
 
     if (save) {
       return res.redirect(`${process.env.FRONT_END_URL}/sslcommerz/success/${tranId}`);
