@@ -4,20 +4,20 @@ import AddToCartButton from "@/components/share-component/AddToCartButton";
 import { useCurrency } from "@/context/CurrencyContext";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import { selectCart } from "@/redux/features/cart/cartSlice";
 import {
-  setResponse,
-  setUnAuthorize,
+    setResponse,
+    setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
 import {
-  selectProduct,
-  setProduct,
+    selectProduct,
+    setProduct,
 } from "@/redux/features/products/productSlice";
-import { CheckOutlined, ShoppingCartOutlined, HeartFilled } from "@ant-design/icons";
-import { Button, Rate, Tag, Divider } from "antd";
+import { CheckOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { Button, Divider, Rate, Tag } from "antd";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,7 +25,6 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { CiHeart } from "react-icons/ci";
 import { HiOutlineMinus } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
-import ModalLogin from "../login/ModalLogin";
 import ProductImageGallery from "./ProductImageGallery";
 import Share from "./Share";
 
@@ -333,8 +332,6 @@ const ProductDetails = ({
               <div className="text-[9px] font-black uppercase tracking-widest text-gray-900">7 Days Return</div>
            </div>
         </div>
-
-        <ModalLogin />
       </div>
     </div>
   );

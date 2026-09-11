@@ -1,15 +1,15 @@
-import {
-  selectGlobal,
-  setLoading,
-  setResponse,
-  setUnAuthorize,
-} from "@/redux/features/global/globalSlice";
-import { Alert, Button, Form, Input, Modal } from "antd";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "next-auth/react";
+"use client";
 import { fetchCartData } from "@/lib/utils/cart";
 import { replaceCart } from "@/redux/features/cart/cartSlice";
+import {
+    selectGlobal,
+    setLoading,
+    setResponse,
+    setUnAuthorize,
+} from "@/redux/features/global/globalSlice";
+import { Alert, Button, Form, Input, Modal } from "antd";
+import { signIn } from "next-auth/react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ModalLogin() {
   const global = useSelector(selectGlobal);

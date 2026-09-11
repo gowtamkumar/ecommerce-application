@@ -4,6 +4,7 @@ import Header from "@/components/website/header/Header";
 import dynamic from "next/dynamic";
 
 const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
+const ModalLogin = dynamic(() => import("@/components/website/login/ModalLogin"));
 
 export default function RootLayout({
   children,
@@ -16,6 +17,7 @@ export default function RootLayout({
       {children}
       <WhatsAppWidget />
       <ScrollToCart />
+      <ModalLogin />
       <WebFooter />
     </>
   );

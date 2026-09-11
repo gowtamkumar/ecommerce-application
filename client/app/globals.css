@@ -1,7 +1,12 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 
 /* CSS Custom Properties for Footer & Global Design System */
 :root {
+  /* Default Surfaces & Body */
+  --background-color: #ffffff;
+  --card-background: #ffffff;
+  --text-color: #1f2937;
   /* Footer Background Colors */
   --footer-bg-primary: #0f172a;
   --footer-bg-secondary: #1e293b;

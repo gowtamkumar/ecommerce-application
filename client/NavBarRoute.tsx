@@ -3,30 +3,32 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
 import {
-  FaBeer,
-  FaProductHunt,
-  FaRegCircle,
-  FaRegUser,
-  FaUser,
+    FaDatabase,
+    FaProductHunt,
+    FaRegCircle,
+    FaUser
 } from "react-icons/fa";
 import { IoNotifications, IoReorderFour } from "react-icons/io5";
 import {
-  MdCategory,
-  MdDashboard,
-  MdHistory,
-  MdLocalShipping,
-  MdOutlineContactPhone,
-  MdOutlineDiscount,
-  MdOutlinePermMedia,
-  MdOutlineSpatialTracking,
-  MdPayment,
-  MdViewModule,
+    MdArticle,
+    MdCategory,
+    MdDashboard,
+    MdHistory,
+    MdLocalShipping,
+    MdOutlineArticle,
+    MdOutlineContactPhone,
+    MdOutlineDiscount,
+    MdOutlinePermMedia,
+    MdOutlineSettings,
+    MdOutlineSpatialTracking,
+    MdPayment,
+    MdPostAdd,
+    MdTune,
+    MdViewModule,
 } from "react-icons/md";
-import { RiAccountCircleLine, RiBatteryChargeFill } from "react-icons/ri";
-import { RxDashboard } from "react-icons/rx";
-import { TbReport } from "react-icons/tb";
+import { RiAccountCircleLine } from "react-icons/ri";
 import { SiWish } from "react-icons/si";
-import { LineChartOutlined } from "@ant-design/icons";
+import { TbReport } from "react-icons/tb";
 import appConfig from "./appConfig";
 
 const handleBackup = async (): Promise<void> => {
@@ -100,24 +102,6 @@ const navbarRoute = [
     label: <Link href="/dashboard/media">Media</Link>,
     route: "true",
   },
-  // {
-  //   key: "size",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/size">Size</Link>,
-  //   route: "true",
-  // },
-  // {
-  //   key: "unit",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/unit">Unit</Link>,
-  //   route: "true",
-  // },
-  // {
-  //   key: "color",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/color">Color</Link>,
-  //   route: "true",
-  // },
 
   {
     key: "category",
@@ -125,31 +109,6 @@ const navbarRoute = [
     label: <Link href="/dashboard/category">Category</Link>,
     route: "true",
   },
-  // {
-  //   key: "brands",
-  //   icon: <MdBrandingWatermark className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/brands">Brands</Link>,
-  //   route: "true",
-  // },
-  // {
-  //   key: "taxs",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/taxs">Taxs</Link>,
-  //   route: "true",
-  // },
-
-  // {
-  //   key: "wishlists",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/wishlists">Wishlists</Link>,
-  //   route: "true",
-  // },
-  // {
-  //   key: "status",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/status">Status</Link>,
-  //   route: "true",
-  // },
   {
     key: "payment_manage",
     icon: <MdPayment className="h-5 w-5 text-blue-500" />,
@@ -205,19 +164,19 @@ const navbarRoute = [
 
   {
     key: "blog",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdOutlineArticle className="h-5 w-5 text-blue-500" />,
     label: "Blog Manage",
     route: "true",
     children: [
       {
         key: "new_post",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        icon: <MdPostAdd className="h-4 w-4 text-blue-500" />,
         label: <Link href="/dashboard/post/new">New Post</Link>,
         route: "true",
       },
       {
         key: "posts",
-        icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+        icon: <MdArticle className="h-4 w-4 text-blue-500" />,
         label: <Link href="/dashboard/post">Posts</Link>,
         route: "true",
       },
@@ -295,7 +254,7 @@ const navbarRoute = [
 
   {
     key: "shipping_charge",
-    icon: <RiBatteryChargeFill className="h-5 w-5 text-blue-500" />,
+    icon: <MdLocalShipping className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/shipping-charges">Shipping Charge</Link>,
     route: "true",
   },
@@ -309,7 +268,7 @@ const navbarRoute = [
 
   {
     key: "stock_adjust",
-    icon: <RiBatteryChargeFill className="h-5 w-5 text-blue-500" />,
+    icon: <MdTune className="h-5 w-5 text-blue-500" />,
     label: <Link href="/dashboard/stock-adjust">Stock Adjust</Link>,
     route: "true",
   },
@@ -344,13 +303,6 @@ const navbarRoute = [
     label: <Link href="/dashboard/contacts">Contacts</Link>,
     route: "true",
   },
-  // {
-  //   key: "review",
-  //   icon: <FaBeer className="h-5 w-5 text-blue-500" />,
-  //   label: <Link href="/dashboard/review">Review</Link>,
-  //   route: "true",
-  // },
-
 
   {
     key: "setting",
@@ -425,7 +377,7 @@ const navbarRoute = [
 
   {
     key: "general_setting",
-    icon: <FaUser className="h-5 w-5 text-blue-500" />,
+    icon: <MdOutlineSettings className="h-5 w-5 text-blue-500" />,
     label: (
       <Link href="/dashboard/general-setting?tab=site_settings">
         General Setting
@@ -461,12 +413,12 @@ const profileRoute: MenuProps["items"] = [
   {
     key: "order_track",
     label: <Link href="/profile">Order Track</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <MdOutlineSpatialTracking className="h-5 w-5 text-blue-500" />,
   },
   {
     key: "logout",
     label: <Link href="/">Logout</Link>,
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <CiLogout className="h-5 w-5 text-blue-500" />,
     onClick: () => {
       signOut();
     },
@@ -474,7 +426,7 @@ const profileRoute: MenuProps["items"] = [
   {
     key: "3",
     label: "Database Backup",
-    icon: <FaBeer className="h-5 w-5 text-blue-500" />,
+    icon: <FaDatabase className="h-5 w-5 text-blue-500" />,
     onClick: () => {
       handleBackup();
     },

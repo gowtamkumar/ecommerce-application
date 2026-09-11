@@ -3,20 +3,19 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { getProductImageUrls } from "@/lib/utils/imageUrl";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setUnAuthorize,
+    selectGlobal,
+    setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
-import { Rate, Tag } from "antd";
+import { Rate } from "antd";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaRegHeart, FaShoppingCart } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import ModalLogin from "../website/login/ModalLogin";
 import AddToCartButton from "./AddToCartButton";
 
 export default function Card({ item }: { item: any }) {
@@ -143,8 +142,6 @@ export default function Card({ item }: { item: any }) {
            </div>
         </div>
       </div>
-
-      {global.unAuthorize && <ModalLogin />}
     </div>
   );
 }

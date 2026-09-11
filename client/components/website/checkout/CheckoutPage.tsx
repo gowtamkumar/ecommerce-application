@@ -1,20 +1,34 @@
 "use client";
-import Link from "next/link";
-import { useDispatch } from "react-redux";
-import { setLoading } from "@/redux/features/global/globalSlice";
-import { useEffect } from "react";
-import { getShippingCharges } from "@/lib/apis/shipping-charge";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getCartLists } from "@/lib/apis/cart";
-import { replaceCart } from "@/redux/features/cart/cartSlice";
-import dynamic from "next/dynamic";
-import {
-  setCheckoutFormData,
-  setShippingAddress,
-  setShippingCharge,
-} from "@/redux/features/checkout/checkoutSlice";
-import ApplyCoupon from "./ApplyCoupon";
 import { getUserShippingAddresses } from "@/lib/apis/shipping-address";
-import { ShoppingOutlined, ArrowLeftOutlined, SafetyCertificateOutlined } from "@ant-design/icons";
+import { getShippingCharges } from "@/lib/apis/shipping-charge";
+import { getImageUrl } from "@/lib/utils/imageUrl";
+import { errorNotification } from "@/lib/utils/notification";
+import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
+import {
+    selectCheckout,
+    setCheckoutFormData,
+    setShippingAddress,
+    setShippingCharge,
+} from "@/redux/features/checkout/checkoutSlice";
+import { setLoading } from "@/redux/features/global/globalSlice";
+import {
+    ArrowLeftOutlined,
+    ArrowRightOutlined,
+    CheckCircleFilled,
+    CheckOutlined,
+    EditOutlined,
+    EnvironmentOutlined,
+    LockOutlined,
+    SafetyCertificateOutlined
+} from "@ant-design/icons";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ApplyCoupon from "./ApplyCoupon";
 
 const CheckoutSummary = dynamic(() => import("./CheckoutSummary"), {
   ssr: false,
@@ -27,13 +41,25 @@ const CheckoutShippingAddress = dynamic(
 );
 
 export default function CheckoutPage() {
+  const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
   const dispatch = useDispatch();
+  const checkout = useSelector(selectCheckout);
+  const cart = useSelector(selectCart);
+  const { formatPrice } = useCurrency();
+
+  const { shippingAddress, checkoutFormData } = checkout || {};
+  const cartList = cart?.carts?.cartList || [];
+  const cartSummary = cart?.carts?.cartSummary || {};
+
+  const selectedAddress = shippingAddress?.find(
+    (item: any) => item.id === checkoutFormData?.shippingAddressId
+  );
 
   useEffect(() => {
     async function fetchData() {
-      const shippingAddress = await getUserShippingAddresses();
+      const addressRes = await getUserShippingAddresses();
 
-      const activeShippingAddress = shippingAddress.data?.find(
+      const activeShippingAddress = addressRes.data?.find(
         (item: { status: boolean }) => item.status
       );
 
@@ -48,20 +74,24 @@ export default function CheckoutPage() {
           )
         );
 
-        const cartData = await getCartLists({ districtId: activeShippingAddress.districtId });
+        const cartData = await getCartLists({
+          districtId: activeShippingAddress.districtId,
+        });
         if (cartData.success) {
-           dispatch(replaceCart(cartData.data));
+          dispatch(replaceCart(cartData.data));
         }
       }
 
-      dispatch(setShippingAddress(shippingAddress.data));
+      dispatch(setShippingAddress(addressRes.data || []));
       dispatch(
         setCheckoutFormData({
           paymentMethod: "Cash",
           shippingAddressId: activeShippingAddress?.id,
+          termsAndConditions: false,
         })
       );
     }
+
     fetchData();
     return () => {
       dispatch(setLoading({ save: false }));
@@ -69,114 +99,473 @@ export default function CheckoutPage() {
     };
   }, [dispatch]);
 
+  const handleStep1Continue = () => {
+    if (!checkoutFormData?.shippingAddressId) {
+      errorNotification({ message: "Please select or create a shipping address first." });
+      return;
+    }
+    setActiveStep(2);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleStep2Continue = () => {
+    if (!cartList || cartList.length === 0) {
+      errorNotification({ message: "Your cart is empty. Please add items to checkout." });
+      return;
+    }
+    setActiveStep(3);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Premium Checkout Header */}
-      <div className="bg-gray-900 py-10 sm:py-16 mb-8 sm:mb-12 relative overflow-hidden">
-         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-10 -mr-32 -mt-32"></div>
-         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4 flex items-center justify-center gap-4">
-               Secure Checkout
-            </h1>
-            <div className="flex items-center justify-center gap-6 text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-500">
-               <div className="flex items-center gap-2 text-blue-400">
-                  <span className="w-6 h-6 rounded-full border border-blue-400 flex items-center justify-center">1</span>
-                  <span>Review</span>
-               </div>
-               <div className="w-12 h-[1px] bg-gray-800"></div>
-               <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full border border-gray-800 flex items-center justify-center">2</span>
-                  <span>Payment</span>
-               </div>
-               <div className="w-12 h-[1px] bg-gray-800"></div>
-               <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full border border-gray-800 flex items-center justify-center">3</span>
-                  <span>Done</span>
-               </div>
-            </div>
-         </div>
+    <div className="min-h-screen bg-[#fafbfc]">
+      {/* Premium Checkout Banner & Stepper */}
+      <div className="bg-gray-900 py-10 sm:py-14 relative overflow-hidden border-b border-gray-800">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-40 -mt-40" />
+        <div className="absolute bottom-0 left-0 w-60 h-60 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none -ml-30 -mb-30" />
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight mb-6">
+            Secure Checkout
+          </h1>
+
+          {/* Interactive Stepper Bar */}
+          <div className="flex items-center justify-center max-w-xl mx-auto">
+            {/* Step 1 Pill */}
+            <button
+              onClick={() => setActiveStep(1)}
+              className="flex items-center gap-2.5 transition-all text-left group cursor-pointer"
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all ${
+                  activeStep === 1
+                    ? "bg-blue-600 text-white ring-4 ring-blue-500/20"
+                    : activeStep > 1
+                    ? "bg-emerald-500 text-white"
+                    : "bg-gray-800 text-gray-400"
+                }`}
+              >
+                {activeStep > 1 ? <CheckOutlined className="text-xs" /> : "1"}
+              </div>
+              <div className="hidden sm:block">
+                <span
+                  className={`text-xs font-black uppercase tracking-wider block leading-tight ${
+                    activeStep === 1
+                      ? "text-white"
+                      : activeStep > 1
+                      ? "text-emerald-400 group-hover:text-emerald-300"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Shipping
+                </span>
+                <span className="text-[10px] text-gray-400 font-medium">Destination</span>
+              </div>
+            </button>
+
+            {/* Connector Line 1-2 */}
+            <div
+              className={`flex-1 h-[2px] mx-3 sm:mx-4 transition-colors ${
+                activeStep > 1 ? "bg-emerald-500" : "bg-gray-800"
+              }`}
+            />
+
+            {/* Step 2 Pill */}
+            <button
+              onClick={() => {
+                if (checkoutFormData?.shippingAddressId) setActiveStep(2);
+              }}
+              disabled={!checkoutFormData?.shippingAddressId}
+              className={`flex items-center gap-2.5 transition-all text-left ${
+                checkoutFormData?.shippingAddressId ? "cursor-pointer group" : "cursor-not-allowed opacity-50"
+              }`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all ${
+                  activeStep === 2
+                    ? "bg-blue-600 text-white ring-4 ring-blue-500/20"
+                    : activeStep > 2
+                    ? "bg-emerald-500 text-white"
+                    : "bg-gray-800 text-gray-400"
+                }`}
+              >
+                {activeStep > 2 ? <CheckOutlined className="text-xs" /> : "2"}
+              </div>
+              <div className="hidden sm:block">
+                <span
+                  className={`text-xs font-black uppercase tracking-wider block leading-tight ${
+                    activeStep === 2
+                      ? "text-white"
+                      : activeStep > 2
+                      ? "text-emerald-400 group-hover:text-emerald-300"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Review
+                </span>
+                <span className="text-[10px] text-gray-400 font-medium">Items ({cartList.length})</span>
+              </div>
+            </button>
+
+            {/* Connector Line 2-3 */}
+            <div
+              className={`flex-1 h-[2px] mx-3 sm:mx-4 transition-colors ${
+                activeStep > 2 ? "bg-emerald-500" : "bg-gray-800"
+              }`}
+            />
+
+            {/* Step 3 Pill */}
+            <button
+              onClick={() => {
+                if (checkoutFormData?.shippingAddressId && cartList.length > 0) setActiveStep(3);
+              }}
+              disabled={!checkoutFormData?.shippingAddressId || cartList.length === 0}
+              className={`flex items-center gap-2.5 transition-all text-left ${
+                checkoutFormData?.shippingAddressId && cartList.length > 0
+                  ? "cursor-pointer group"
+                  : "cursor-not-allowed opacity-50"
+              }`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all ${
+                  activeStep === 3
+                    ? "bg-blue-600 text-white ring-4 ring-blue-500/20"
+                    : "bg-gray-800 text-gray-400"
+                }`}
+              >
+                3
+              </div>
+              <div className="hidden sm:block">
+                <span
+                  className={`text-xs font-black uppercase tracking-wider block leading-tight ${
+                    activeStep === 3 ? "text-white" : "text-gray-500"
+                  }`}
+                >
+                  Payment
+                </span>
+                <span className="text-[10px] text-gray-400 font-medium">Confirm & Pay</span>
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-24">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
           
-          {/* LEFT: PROGRESSIVE STEPS */}
-          <div className="flex-1 space-y-10">
+          {/* LEFT COLUMN: PROGRESSIVE DISCLOSURE STEPS */}
+          <div className="flex-1 w-full space-y-6">
             
-            {/* Step 1: Shipping */}
-            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-               <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center font-black">01</div>
-                  <h2 className="text-xl font-black text-gray-900 uppercase tracking-widest">Shipping Destination</h2>
-               </div>
-               <div className="p-8 rounded-[2rem] bg-gray-50 border border-gray-100">
-                  <CheckoutShippingAddress />
-               </div>
-            </section>
+            {/* ================= STEP 1: SHIPPING ADDRESS ================= */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all">
+              {/* Step Header */}
+              <div
+                onClick={() => {
+                  if (activeStep > 1) setActiveStep(1);
+                }}
+                className={`p-6 sm:p-7 flex items-center justify-between transition-colors ${
+                  activeStep > 1 ? "cursor-pointer hover:bg-gray-50/70" : ""
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all ${
+                      activeStep === 1
+                        ? "bg-gray-900 text-white shadow-md shadow-gray-900/20"
+                        : "bg-emerald-50 text-emerald-600"
+                    }`}
+                  >
+                    {activeStep > 1 ? <CheckCircleFilled className="text-lg" /> : "01"}
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-black text-gray-900 uppercase tracking-wide">
+                      Shipping Destination
+                    </h2>
+                    <p className="text-xs text-gray-400 font-medium">
+                      Select where you want your products delivered
+                    </p>
+                  </div>
+                </div>
 
-            {/* Step 2: Items Review */}
-            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-               <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center font-black">02</div>
-                  <h2 className="text-xl font-black text-gray-900 uppercase tracking-widest">Review Order</h2>
-               </div>
-               <div className="rounded-[2rem] bg-white border border-gray-100 overflow-hidden shadow-sm">
-                  <OrderSummary />
-               </div>
-            </section>
+                {activeStep > 1 && (
+                  <button
+                    onClick={() => setActiveStep(1)}
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-blue-50 transition-colors uppercase tracking-wider"
+                  >
+                    <EditOutlined />
+                    <span>Change</span>
+                  </button>
+                )}
+              </div>
 
-            {/* Step 3: Payment */}
-            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-               <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center font-black">03</div>
-                  <h2 className="text-xl font-black text-gray-900 uppercase tracking-widest">Payment Strategy</h2>
-               </div>
-               <div className="p-8 rounded-[2rem] bg-gray-50 border border-gray-100">
-                  <PaymentMethod />
-               </div>
-            </section>
+              {/* Step 1 Expanded Content */}
+              {activeStep === 1 && (
+                <div className="p-6 sm:p-7 pt-0 border-t border-gray-100 space-y-6 animate-in fade-in duration-300">
+                  <div className="pt-4">
+                    <CheckoutShippingAddress />
+                  </div>
 
-            <div className="pt-10 flex items-center justify-between border-t border-gray-100">
-               <Link href="/products" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors">
-                  <ArrowLeftOutlined />
-                  <span>Return to Gallery</span>
-               </Link>
-               <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                  <SafetyCertificateOutlined className="text-blue-500" />
-                  <span>256-Bit SSL Encrypted</span>
-               </div>
+                  <div className="pt-4 flex justify-end">
+                    <button
+                      onClick={handleStep1Continue}
+                      className="px-8 py-3.5 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-gray-900/10 hover:shadow-gray-900/20 transition-all active:scale-[0.98]"
+                    >
+                      <span>Continue to Order Review</span>
+                      <ArrowRightOutlined className="text-xs" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 1 Compact Summary (when completed) */}
+              {activeStep > 1 && selectedAddress && (
+                <div className="px-6 sm:px-7 pb-6 pt-0 border-t border-gray-100">
+                  <div className="mt-4 p-4 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-700 shrink-0">
+                      <EnvironmentOutlined className="text-sm" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-gray-900 truncate">
+                          {selectedAddress.name}
+                        </span>
+                        <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-gray-200 text-gray-700">
+                          {selectedAddress.type || "Default"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 truncate mt-0.5">
+                        {selectedAddress.address}
+                      </p>
+                      <p className="text-[11px] text-gray-400 font-medium">
+                        Contact: {selectedAddress.phoneNo}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ================= STEP 2: REVIEW ORDER ITEMS ================= */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all">
+              {/* Step Header */}
+              <div
+                onClick={() => {
+                  if (activeStep > 2) setActiveStep(2);
+                }}
+                className={`p-6 sm:p-7 flex items-center justify-between transition-colors ${
+                  activeStep > 2 ? "cursor-pointer hover:bg-gray-50/70" : ""
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all ${
+                      activeStep === 2
+                        ? "bg-gray-900 text-white shadow-md shadow-gray-900/20"
+                        : activeStep > 2
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {activeStep > 2 ? <CheckCircleFilled className="text-lg" /> : "02"}
+                  </div>
+                  <div>
+                    <h2
+                      className={`text-base sm:text-lg font-black uppercase tracking-wide ${
+                        activeStep >= 2 ? "text-gray-900" : "text-gray-400"
+                      }`}
+                    >
+                      Review Order Items
+                    </h2>
+                    <p className="text-xs text-gray-400 font-medium">
+                      {activeStep < 2
+                        ? "Complete shipping destination first"
+                        : `${cartList.length} items in your bag`}
+                    </p>
+                  </div>
+                </div>
+
+                {activeStep > 2 && (
+                  <button
+                    onClick={() => setActiveStep(2)}
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-blue-50 transition-colors uppercase tracking-wider"
+                  >
+                    <EditOutlined />
+                    <span>Edit Items</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Step 2 Expanded Content */}
+              {activeStep === 2 && (
+                <div className="p-6 sm:p-7 pt-0 border-t border-gray-100 space-y-6 animate-in fade-in duration-300">
+                  <div className="pt-4">
+                    <OrderSummary />
+                  </div>
+
+                  <div className="pt-4 flex items-center justify-between border-t border-gray-100">
+                    <button
+                      onClick={() => setActiveStep(1)}
+                      className="text-xs font-bold text-gray-500 hover:text-gray-900 flex items-center gap-2 px-4 py-2 rounded-xl transition-colors uppercase tracking-wider"
+                    >
+                      <ArrowLeftOutlined className="text-xs" />
+                      <span>Back to Shipping</span>
+                    </button>
+                    <button
+                      onClick={handleStep2Continue}
+                      className="px-8 py-3.5 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-gray-900/10 hover:shadow-gray-900/20 transition-all active:scale-[0.98]"
+                    >
+                      <span>Proceed to Payment</span>
+                      <ArrowRightOutlined className="text-xs" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2 Compact Summary (when completed) */}
+              {activeStep > 2 && cartList.length > 0 && (
+                <div className="px-6 sm:px-7 pb-6 pt-0 border-t border-gray-100">
+                  <div className="mt-4 p-4 rounded-2xl bg-gray-50/80 border border-gray-100 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex -space-x-3 overflow-hidden">
+                        {cartList.slice(0, 4).map((item: any, i: number) => (
+                          <div
+                            key={i}
+                            className="relative w-11 h-11 rounded-xl overflow-hidden border-2 border-white bg-gray-100 shadow-xs shrink-0"
+                          >
+                            <Image
+                              src={getImageUrl(item.thumbnailImage)}
+                              fill
+                              alt={item.name}
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div>
+                        <div className="text-xs font-black text-gray-900">
+                          {cartSummary?.totalQty || cartList.length} items reviewed
+                        </div>
+                        <div className="text-[11px] text-gray-400 font-semibold">
+                          Subtotal: {formatPrice(cartSummary?.grandTotal || 0)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ================= STEP 3: PAYMENT STRATEGY ================= */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all">
+              {/* Step Header */}
+              <div className="p-6 sm:p-7 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all ${
+                      activeStep === 3
+                        ? "bg-gray-900 text-white shadow-md shadow-gray-900/20"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    03
+                  </div>
+                  <div>
+                    <h2
+                      className={`text-base sm:text-lg font-black uppercase tracking-wide ${
+                        activeStep === 3 ? "text-gray-900" : "text-gray-400"
+                      }`}
+                    >
+                      Payment Method
+                    </h2>
+                    <p className="text-xs text-gray-400 font-medium">
+                      {activeStep === 3
+                        ? "Choose your preferred payment method & accept terms"
+                        : "Review your items to select payment"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 Expanded Content */}
+              {activeStep === 3 && (
+                <div className="p-6 sm:p-7 pt-0 border-t border-gray-100 space-y-6 animate-in fade-in duration-300">
+                  <div className="pt-4">
+                    <PaymentMethod />
+                  </div>
+
+                  <div className="pt-4 flex items-center justify-between border-t border-gray-100">
+                    <button
+                      onClick={() => setActiveStep(2)}
+                      className="text-xs font-bold text-gray-500 hover:text-gray-900 flex items-center gap-2 px-4 py-2 rounded-xl transition-colors uppercase tracking-wider"
+                    >
+                      <ArrowLeftOutlined className="text-xs" />
+                      <span>Back to Review Items</span>
+                    </button>
+                    <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <LockOutlined className="text-emerald-500" />
+                      <span>Review summary to finalize</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Navigation Links */}
+            <div className="pt-6 flex items-center justify-between border-t border-gray-200/60">
+              <Link
+                href="/products"
+                className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-gray-400 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeftOutlined />
+                <span>Return to Shopping</span>
+              </Link>
+              <div className="flex items-center gap-2 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                <SafetyCertificateOutlined className="text-emerald-500 text-xs" />
+                <span>256-Bit SSL Encrypted Checkout</span>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT: FLOATING SUMMARY */}
-          <aside className="lg:w-[420px] shrink-0">
+          {/* RIGHT COLUMN: FLOATING ORDER SUMMARY */}
+          <aside className="lg:w-[420px] w-full shrink-0">
             <div className="sticky top-28 space-y-6">
-               <div className="p-8 sm:p-10 rounded-[2.5rem] bg-white border-2 border-gray-900 shadow-2xl shadow-gray-200 relative overflow-hidden">
-                  {/* Decorative Background Accent */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gray-900/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                  
-                  <h2 className="text-2xl font-black text-gray-900 mb-8 uppercase tracking-tighter">Order Summary</h2>
-                  
-                  <div className="space-y-6">
-                     <CheckoutSummary />
-                     
-                     <div className="pt-8 border-t border-gray-100">
-                        <ApplyCoupon />
-                     </div>
-                  </div>
-               </div>
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 shadow-xl shadow-gray-200/40 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-36 h-36 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
-               {/* Trust Badges */}
-               <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 text-center">
-                     <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Guaranteed</div>
-                     <div className="text-xs font-bold text-gray-900 italic">Safe Delivery</div>
+                <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight">
+                  Order Summary
+                </h2>
+
+                <div className="space-y-6 relative z-10">
+                  <CheckoutSummary
+                    activeStep={activeStep}
+                    onStepChange={(step) => {
+                      setActiveStep(step);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  />
+
+                  <div className="pt-6 border-t border-gray-100">
+                    <ApplyCoupon />
                   </div>
-                  <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 text-center">
-                     <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Authentic</div>
-                     <div className="text-xs font-bold text-gray-900 italic">Genuine Items</div>
+                </div>
+              </div>
+
+              {/* Trust & Guarantee Badges */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs text-center">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">
+                    Free Return
                   </div>
-               </div>
+                  <div className="text-xs font-bold text-gray-800">30-Day Policy</div>
+                </div>
+                <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-xs text-center">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1">
+                    Authentic
+                  </div>
+                  <div className="text-xs font-bold text-gray-800">100% Genuine Items</div>
+                </div>
+              </div>
             </div>
           </aside>
 
@@ -185,3 +574,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
