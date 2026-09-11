@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
+  transpilePackages: [
+    "antd",
+    "@ant-design/icons",
+    "@ant-design/icons-svg",
+    "@ant-design/cssinjs",
+    "@ant-design/nextjs-registry",
+  ],
   experimental: {
-    optimizePackageImports: ['react-icons', 'antd', '@ant-design/icons', 'recharts'],
+    optimizePackageImports: ["react-icons", "recharts"],
   },
 
   images: {
@@ -23,7 +30,7 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     // Allow loading images from localhost and Docker internal IPs
     // This is necessary for development with Docker
-    unoptimized: process.env.NODE_ENV === 'development',
+    unoptimized: process.env.NODE_ENV === "development",
   },
 };
 

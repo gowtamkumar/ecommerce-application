@@ -1,38 +1,34 @@
 "use client";
-import { ActionType, paymentMethods } from "@/constants/constants";
+import { paymentMethods } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getOrderQuery } from "@/lib/apis/orders";
 import { onlinePayment } from "@/lib/apis/payment";
 import { errorNotification } from "@/lib/utils/notification";
 import {
-  setAction,
-  setProductRating,
-} from "@/redux/features/global/globalSlice";
-import {
-  BankOutlined,
-  CheckCircleOutlined,
-  EnvironmentOutlined,
-  FileTextOutlined,
-  SearchOutlined,
-  SyncOutlined,
-  TruckOutlined,
-  UndoOutlined
+    BankOutlined,
+    CheckCircleOutlined,
+    EnvironmentOutlined,
+    FileTextOutlined,
+    SearchOutlined,
+    SyncOutlined,
+    TruckOutlined,
+    UndoOutlined
 } from "@ant-design/icons";
 import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Empty,
-  Form,
-  Input,
-  Row,
-  Select,
-  Space,
-  Steps,
-  Table,
-  Tag,
-  Typography
+    Button,
+    Card,
+    Col,
+    Divider,
+    Empty,
+    Form,
+    Input,
+    Row,
+    Select,
+    Steps,
+    Table,
+    Tag,
+    Timeline,
+    Typography
 } from "antd";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";

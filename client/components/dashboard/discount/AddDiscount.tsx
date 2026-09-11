@@ -6,42 +6,39 @@ import { getCategories } from "@/lib/apis/categories";
 import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
-  handleAsyncAction,
-  handlePreview,
-  normFile,
+    handleAsyncAction,
+    handlePreview,
+    normFile,
 } from "@/lib/utils/commonFunctions";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { imageSetFile } from "@/lib/utils/imageSetFile";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Space,
-  Spin,
-  Typography,
-  Upload,
-} from "antd";
-import { 
-  ArrowLeftOutlined, 
-  InfoCircleOutlined, 
-  TagsOutlined, 
-  CalendarOutlined, 
-  DeploymentUnitOutlined, 
-  PictureOutlined,
-  AlignLeftOutlined
+    AlignLeftOutlined,
+    ArrowLeftOutlined,
+    CalendarOutlined,
+    DeploymentUnitOutlined,
+    InfoCircleOutlined,
+    PictureOutlined,
+    TagsOutlined
 } from "@ant-design/icons";
-import ImgCrop from "antd-img-crop";
+import {
+    Button,
+    Card,
+    DatePicker,
+    Form,
+    Input,
+    InputNumber,
+    Select,
+    Space,
+    Spin,
+    Typography,
+    Upload,
+} from "antd";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useMemo } from "react";
 
 const { Title, Text } = Typography;
 
@@ -138,7 +135,7 @@ const AddDiscount = () => {
       const [categoriesRes, brandsRes, productsRes] = await Promise.all([
         getCategories(),
         getBrands(),
-        getProducts({ perPage: 1000 }), 
+        getProducts(), 
       ]);
 
       setCategories(categoriesRes.data);

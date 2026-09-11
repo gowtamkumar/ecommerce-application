@@ -1,9 +1,9 @@
 import {
-  setAction,
-  setLoading,
-  setPreviewImage,
-  setPreviewOpen,
-  setPreviewTitle,
+    setAction,
+    setLoading,
+    setPreviewImage,
+    setPreviewOpen,
+    setPreviewTitle,
 } from "@/redux/features/global/globalSlice";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../authOption";
@@ -12,9 +12,9 @@ import { errorNotification, successNotification } from "./notification";
 
 export interface ApiResponse<T = any> {
   success: boolean;
-  message: string;
+  message?: string;
   data?: T;
-  status?: number;
+  status?: number | string;
 }
 
 export type AsyncActionOptions = {
@@ -91,7 +91,7 @@ export const handleAsyncDeleteAction = async (
     const res = await asyncFn();
 
     if (res.success) {
-      successNotification({ message: successMessage || res.message });
+      successNotification({ message: successMessage || res.message || "Deleted successfully" });
       dispatch(setAction({}));
     } else {
       errorNotification({ message: res.message || "Delete failed" });
@@ -105,7 +105,7 @@ export const handleAsyncDeleteAction = async (
   }
 };
 
-export async function getAuthHeaders() {
+export async function getAuthHeaders(): Promise<Record<string, string>> {
   const session = await auth();
   if (!session?.user?.accessToken) {
     return {
@@ -124,7 +124,7 @@ export async function getPostPutHeaders({
 }: {
   method: string;
   body: any;
-}) {
+}): Promise<RequestInit> {
   const session = await auth();
   return {
     method,
@@ -137,7 +137,7 @@ export async function getPostPutHeaders({
   };
 }
 
-export async function getHeaders({ method }: { method: string }) {
+export async function getHeaders({ method }: { method: string }): Promise<RequestInit> {
   const session = await auth();
   return {
     method,

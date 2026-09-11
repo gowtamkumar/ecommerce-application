@@ -1,13 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
-import {
-  GlobalOutlined,
-  RocketOutlined,
-  TeamOutlined,
-  TrophyOutlined
-} from "@ant-design/icons";
+ 
+import { getSettings } from "@/lib/apis/setting";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getSettings } from "@/lib/apis/setting";
+import {
+    FaGlobeAmericas,
+    FaRocket,
+    FaTrophy,
+    FaUsers
+} from "react-icons/fa";
 
 export const metadata: Metadata = {
   title: "About Us | Our Story & Mission",
@@ -15,10 +15,10 @@ export const metadata: Metadata = {
 };
 
 const stats = [
-  { label: "Years of Excellence", value: "10+", icon: <TrophyOutlined /> },
-  { label: "Happy Customers", value: "50k+", icon: <TeamOutlined /> },
-  { label: "Countries Served", value: "30+", icon: <GlobalOutlined /> },
-  { label: "Products Delivered", value: "1M+", icon: <RocketOutlined /> },
+  { label: "Years of Excellence", value: "10+", icon: <FaTrophy /> },
+  { label: "Happy Customers", value: "50k+", icon: <FaUsers /> },
+  { label: "Countries Served", value: "30+", icon: <FaGlobeAmericas /> },
+  { label: "Products Delivered", value: "1M+", icon: <FaRocket /> },
 ];
 
 export default async function About() {
@@ -118,7 +118,7 @@ export default async function About() {
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
             <div className="bg-white/5 backdrop-blur-md rounded-3xl p-10 border border-white/10 hover:bg-white/10 transition-colors duration-500">
               <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center text-3xl mb-8 text-blue-400">
-                <RocketOutlined />
+                <FaRocket />
               </div>
               <h3 className="text-3xl font-bold font-global-primary-fontfamily mb-4">Our Mission</h3>
               <p className="text-gray-400 text-lg leading-relaxed">
@@ -127,7 +127,7 @@ export default async function About() {
             </div>
             <div className="bg-white/5 backdrop-blur-md rounded-3xl p-10 border border-white/10 hover:bg-white/10 transition-colors duration-500">
               <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center text-3xl mb-8 text-purple-400">
-                <GlobalOutlined />
+                <FaGlobeAmericas />
               </div>
               <h3 className="text-3xl font-bold font-global-primary-fontfamily mb-4">Our Vision</h3>
               <p className="text-gray-400 text-lg leading-relaxed">

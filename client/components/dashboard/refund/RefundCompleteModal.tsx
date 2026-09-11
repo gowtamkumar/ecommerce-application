@@ -1,13 +1,13 @@
 "use client";
 import { completeRefund } from "@/lib/apis/refund";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
+    selectGlobal,
+    setAction,
+    setLoading,
 } from "@/redux/features/global/globalSlice";
 import { Form, Input, Modal, Typography } from "antd";
 import React, { useEffect } from "react";
@@ -30,7 +30,7 @@ const RefundCompleteModal: React.FC = () => {
   }, [isModalOpen, form]);
 
   const handleCancel = () => {
-    dispatch(setAction(null));
+    dispatch(setAction({}));
   };
 
   const onFinish = async (values: any) => {
