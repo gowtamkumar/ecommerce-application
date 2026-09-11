@@ -69,328 +69,308 @@ const handleBackup = async (): Promise<void> => {
 
 const navbarRoute = [
   {
-    key: "dashboard",
-    icon: <MdDashboard className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard">Dashboard</Link>,
-    route: "true",
-  },
-
-  {
-    key: "product",
-    icon: <FaProductHunt className="h-5 w-5 text-blue-500" />,
-    label: "Product Manage",
-    route: "true",
+    type: "group",
+    label: "Dashboard & Insights",
     children: [
       {
-        key: "new_product",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/product/new">New Product</Link>,
+        key: "dashboard",
+        icon: <MdDashboard className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard">Dashboard</Link>,
         route: "true",
       },
       {
-        key: "products",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/product">Products</Link>,
+        key: "report",
+        icon: <TbReport className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/report">Report & Analytics</Link>,
+        route: "true",
+      },
+      {
+        key: "audit_logs",
+        icon: <MdHistory className="h-5 w-5 text-purple-500" />,
+        label: <Link href="/dashboard/audit-logs">Audit Logs</Link>,
+        route: "true",
+      },
+      {
+        key: "notifications",
+        icon: <IoNotifications className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/notifications">Notifications</Link>,
         route: "true",
       },
     ],
   },
 
   {
-    key: "media",
-    icon: <MdOutlinePermMedia className="h-4 w-2 text-blue-500" />,
-    label: <Link href="/dashboard/media">Media</Link>,
-    route: "true",
-  },
-
-  {
-    key: "category",
-    icon: <MdCategory className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/category">Category</Link>,
-    route: "true",
-  },
-  {
-    key: "payment_manage",
-    icon: <MdPayment className="h-5 w-5 text-blue-500" />,
-    label: "Payment Manage",
-    route: "true",
+    type: "group",
+    label: "Catalog & Inventory",
     children: [
       {
-        key: "new_payment",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/payments/new">New payment</Link>,
+        key: "product",
+        icon: <FaProductHunt className="h-5 w-5 text-blue-500" />,
+        label: "Products",
+        route: "true",
+        children: [
+          {
+            key: "new_product",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/product/new">New Product</Link>,
+            route: "true",
+          },
+          {
+            key: "products",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/product">All Products</Link>,
+            route: "true",
+          },
+        ],
+      },
+      {
+        key: "category",
+        icon: <MdCategory className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/category">Categories</Link>,
         route: "true",
       },
       {
-        key: "Payment",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/payments">Payments</Link>,
+        key: "media",
+        icon: <MdOutlinePermMedia className="h-4 w-2 text-blue-500" />,
+        label: <Link href="/dashboard/media">Media Library</Link>,
+        route: "true",
+      },
+      {
+        key: "stock_adjust",
+        icon: <MdTune className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/stock-adjust">Stock Adjust</Link>,
+        route: "true",
+      },
+      {
+        key: "other_module",
+        icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
+        label: "Attributes & Specs",
+        route: "true",
+        children: [
+          {
+            key: "brands",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/other-modules?tab=brand">Brands</Link>,
+            route: "true",
+          },
+          {
+            key: "color",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/color">Colors</Link>,
+            route: "true",
+          },
+          {
+            key: "size",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/size">Sizes</Link>,
+            route: "true",
+          },
+          {
+            key: "unit",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/unit">Units</Link>,
+            route: "true",
+          },
+          {
+            key: "taxs",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/taxs">Taxes</Link>,
+            route: "true",
+          },
+          {
+            key: "banner",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/banner">Banners</Link>,
+            route: "true",
+          },
+          {
+            key: "review",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/review">Reviews</Link>,
+            route: "true",
+          },
+          {
+            key: "leads",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/other-modules?tab=leads">Leads</Link>,
+            route: "true",
+          },
+          {
+            key: "currencies",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/other-modules?tab=currencies">Currencies</Link>,
+            route: "true",
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    type: "group",
+    label: "Orders & Fulfillment",
+    children: [
+      {
+        key: "order",
+        icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/orders">Orders</Link>,
+        route: "true",
+      },
+      {
+        key: "return_request",
+        icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/return">Returns</Link>,
+        route: "true",
+      },
+      {
+        key: "refund_manage",
+        icon: <MdPayment className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/refunds">Refunds</Link>,
+        route: "true",
+      },
+      {
+        key: "shipping_manage",
+        icon: <MdLocalShipping className="h-5 w-5 text-blue-500" />,
+        label: "Shipping",
+        route: "true",
+        children: [
+          {
+            key: "shipping_address",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/shipping-address">Addresses</Link>,
+            route: "true",
+          },
+          {
+            key: "shipping_charge",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/shipping-charges">Shipping Charges</Link>,
+            route: "true",
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    type: "group",
+    label: "Marketing & Content",
+    children: [
+      {
+        key: "discount",
+        icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
+        label: "Discounts",
+        route: "true",
+        children: [
+          {
+            key: "new_discount",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/discounts/new">New Discount</Link>,
+            route: "true",
+          },
+          {
+            key: "discounts",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/discounts">All Discounts</Link>,
+            route: "true",
+          },
+        ],
+      },
+      {
+        key: "coupon",
+        icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
+        label: "Coupons",
+        route: "true",
+        children: [
+          {
+            key: "new_coupon",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/coupons/new">New Coupon</Link>,
+            route: "true",
+          },
+          {
+            key: "coupons",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/coupons">All Coupons</Link>,
+            route: "true",
+          },
+        ],
+      },
+      {
+        key: "blog",
+        icon: <MdOutlineArticle className="h-5 w-5 text-blue-500" />,
+        label: "Blog Posts",
+        route: "true",
+        children: [
+          {
+            key: "new_post",
+            icon: <MdPostAdd className="h-4 w-4 text-blue-500" />,
+            label: <Link href="/dashboard/post/new">New Post</Link>,
+            route: "true",
+          },
+          {
+            key: "posts",
+            icon: <MdArticle className="h-4 w-4 text-blue-500" />,
+            label: <Link href="/dashboard/post">All Posts</Link>,
+            route: "true",
+          },
+        ],
+      },
+      {
+        key: "pages",
+        icon: <MdOutlinePermMedia className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/pages">Pages</Link>,
         route: "true",
       },
     ],
   },
 
   {
-    key: "order_manage",
-    label: "Order Manage",
-    disabled: "true",
-    route: "true",
-  },
-  {
-    key: "order",
-    icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/orders">Orders</Link>,
-    route: "true",
-  },
-  {
-    key: "return_manage",
-    label: "Return Manage",
-    disabled: "true",
-    route: "true",
-  },
-
-  {
-    key: "return_request",
-    icon: <IoReorderFour className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/return">Return</Link>,
-    route: "true",
-  },
-  {
-    key: "refund_manage",
-    icon: <MdPayment className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/refunds">Refunds</Link>,
-    route: "true",
-  },
-
-  {
-    key: "blog",
-    icon: <MdOutlineArticle className="h-5 w-5 text-blue-500" />,
-    label: "Blog Manage",
-    route: "true",
+    type: "group",
+    label: "Store & Users",
     children: [
       {
-        key: "new_post",
-        icon: <MdPostAdd className="h-4 w-4 text-blue-500" />,
-        label: <Link href="/dashboard/post/new">New Post</Link>,
+        key: "contacts",
+        icon: <MdOutlineContactPhone className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/contacts">Customer Messages</Link>,
         route: "true",
       },
       {
-        key: "posts",
-        icon: <MdArticle className="h-4 w-4 text-blue-500" />,
-        label: <Link href="/dashboard/post">Posts</Link>,
+        key: "user",
+        icon: <FaUser className="h-5 w-5 text-blue-500" />,
+        label: <Link href="/dashboard/user">Users & Staff</Link>,
+        route: "true",
+      },
+      {
+        key: "payment_manage",
+        icon: <MdPayment className="h-5 w-5 text-blue-500" />,
+        label: "Payments",
+        route: "true",
+        children: [
+          {
+            key: "new_payment",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/payments/new">New Payment</Link>,
+            route: "true",
+          },
+          {
+            key: "Payment",
+            icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
+            label: <Link href="/dashboard/payments">Payments</Link>,
+            route: "true",
+          },
+        ],
+      },
+      {
+        key: "general_setting",
+        icon: <MdOutlineSettings className="h-5 w-5 text-blue-500" />,
+        label: (
+          <Link href="/dashboard/general-setting?tab=site_settings">
+            General Settings
+          </Link>
+        ),
         route: "true",
       },
     ],
-  },
-  {
-    key: "pages",
-    icon: <MdOutlinePermMedia className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/pages">Pages</Link>,
-    route: "true",
-  },
-
-  {
-    key: "discount_manage",
-    label: "Manage Discount",
-    disabled: "true",
-    route: "true",
-  },
-
-  {
-    key: "discount",
-    icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
-    label: "Discount Manage",
-    route: "true",
-    children: [
-      {
-        key: "new_discount",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/discounts/new">New discount</Link>,
-        route: "true",
-      },
-      {
-        key: "discounts",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/discounts">Discounts</Link>,
-        route: "true",
-      },
-    ],
-  },
-
-  {
-    key: "coupon",
-    icon: <MdOutlineDiscount className="h-5 w-5 text-blue-500" />,
-    label: "Coupon",
-    route: "true",
-    children: [
-      {
-        key: "new_coupon",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/coupons/new">New coupon</Link>,
-        route: "true",
-      },
-      {
-        key: "coupons",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/coupons">Coupons</Link>,
-        route: "true",
-      },
-    ],
-  },
-
-  {
-    key: "Shipping_managment",
-    label: "Shipping",
-    disabled: "true",
-    route: "true",
-  },
-
-  {
-    key: "shipping_address",
-    icon: <MdLocalShipping className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/shipping-address">Shipping Address</Link>,
-    route: "true",
-  },
-
-  {
-    key: "shipping_charge",
-    icon: <MdLocalShipping className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/shipping-charges">Shipping Charge</Link>,
-    route: "true",
-  },
-
-  {
-    key: "stock_module",
-    label: "Stock Adjust",
-    disabled: "true",
-    route: "true",
-  },
-
-  {
-    key: "stock_adjust",
-    icon: <MdTune className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/stock-adjust">Stock Adjust</Link>,
-    route: "true",
-  },
-  {
-    key: "report_section",
-    label: "Report",
-    disabled: "true",
-    route: "true",
-  },
-  {
-    key: "report",
-    icon: <TbReport className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/report">Report</Link>,
-    route: "true",
-  },
-  {
-    key: "audit_logs",
-    icon: <MdHistory className="h-5 w-5 text-purple-500" />,
-    label: <Link href="/dashboard/audit-logs">Audit Logs</Link>,
-    route: "true",
-  },
-
-  {
-    key: "notifications",
-    icon: <IoNotifications className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/notifications">Notifications</Link>,
-    route: "true",
-  },
-  {
-    key: "contacts",
-    icon: <MdOutlineContactPhone className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/contacts">Contacts</Link>,
-    route: "true",
-  },
-
-  {
-    key: "setting",
-    label: "Setting",
-    disabled: "true",
-    route: "true",
-  },
-
-  {
-    key: "other_module",
-    icon: <MdViewModule className="h-5 w-5 text-blue-500" />,
-    label: "Other Module",
-    route: "true",
-    children: [
-      {
-        key: "size",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/size">Size</Link>,
-        route: "true",
-      },
-      {
-        key: "unit",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/unit">Unit</Link>,
-        route: "true",
-      },
-      {
-        key: "color",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/color">Color</Link>,
-        route: "true",
-      },
-      {
-        key: "taxs",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/taxs">Taxs</Link>,
-        route: "true",
-      },
-      {
-        key: "banner",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/banner">Banner</Link>,
-        route: "true",
-      },
-      {
-        key: "brands",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/other-modules?tab=brand">Brands</Link>,
-        route: "true",
-      },
-      {
-        key: "review",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/review">Review</Link>,
-        route: "true",
-      },
-      {
-        key: "leads",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/other-modules?tab=leads">Leads</Link>,
-        route: "true",
-      },
-      {
-        key: "currencies",
-        icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-        label: <Link href="/dashboard/other-modules?tab=currencies">Currencies</Link>,
-        route: "true",
-      },
-    ],
-  },
-
-
-  {
-    key: "general_setting",
-    icon: <MdOutlineSettings className="h-5 w-5 text-blue-500" />,
-    label: (
-      <Link href="/dashboard/general-setting?tab=site_settings">
-        General Setting
-      </Link>
-    ),
-    route: "true",
-  },
-
-  {
-    key: "user",
-    icon: <FaUser className="h-5 w-5 text-blue-500" />,
-    label: <Link href="/dashboard/user">User</Link>,
-    route: "true",
   },
 ];
 

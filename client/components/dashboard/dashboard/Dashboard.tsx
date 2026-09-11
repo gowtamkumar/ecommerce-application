@@ -17,6 +17,9 @@ const TotalOrderSummaryDashboard = dynamic(() => import("./TodayOrderSummary"));
 const TopSellingProduct = dynamic(
   () => import("./components/TopSallingProduct")
 );
+const RevenueAnalyticsChart = dynamic(() => import("./RevenueAnalyticsChart"), {
+  ssr: false,
+});
 
 const Dashboard = () => {
   const [dashboardReports, setDashboardReports] = useState({});
@@ -122,7 +125,10 @@ const Dashboard = () => {
       {/* Summary Cards */}
       <TotalOrderSummaryDashboard dashboardReports={dashboardReports} />
 
-      {/* Stock Report */}
+      {/* Interactive Revenue & Volume Analytics Chart */}
+      <RevenueAnalyticsChart dashboardReports={dashboardReports} />
+
+      {/* Recent Orders Overview */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-900 font-global-primary-fontfamily mb-4">

@@ -1,10 +1,10 @@
 "use client";
 import { navbarRoute } from "@/NavBarRoute";
 import {
-  selectLayout,
-  setCollapsed,
-  setOpen,
-  setScreenWidth,
+    selectLayout,
+    setCollapsed,
+    setOpen,
+    setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { Drawer, Input, Layout, Menu } from "antd";
@@ -62,40 +62,49 @@ const Sidebar = () => {
     return "";
   };
 
-  const filteredChildren = navbarRoute
-    ?.filter((item: any) => checkPermission(item))
-    .map((item: any) => {
-      const itemText = getLabelText(item.label);
-      const hasMatchingChild = item.children?.some((child: any) =>
-        getLabelText(child.label)
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
-      const matchesSearch = itemText
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+  const filterMenuItem = (item: any): any => {
+    if (!checkPermission(item)) return null;
 
-      if (searchTerm && !matchesSearch && !hasMatchingChild) return null;
+    // Handle Ant Design Menu Group
+    if (item.type === "group") {
+      const filteredGroupChildren = item.children
+        ?.map((child: any) => filterMenuItem(child))
+        .filter(Boolean);
 
+      if (!filteredGroupChildren || filteredGroupChildren.length === 0) {
+        return null;
+      }
       return {
         ...item,
-        children: item?.children?.filter((child: any) => {
-          const childText = getLabelText(child.label);
-          // If parent matches, show all kids? Or just matching kids?
-          // Usually showing matching kids is better, but if parent matches, maybe show all.
-          // Let's stick to strict matching for now: show child if it matches OR if parent matches.
-          // Actually, if parent matched (matchesSearch=true), we generally show all children logic often varies.
-          // Let's go with: Only show children that match, UNLESS the search term matches the parent strictly, then maybe show all?
-          // Let's Keep it simple: Filter children by search term too.
-          if (matchesSearch) return checkPermission(child); // If parent matches, return all permitted children
-          return (
-            checkPermission(child) &&
-            childText.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        }),
+        children: filteredGroupChildren,
       };
-    })
-    .filter(Boolean); // Remote nulls from map -> null return
+    }
+
+    const itemText = getLabelText(item.label);
+    const matchesSearch = !searchTerm || itemText
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    if (item.children && item.children.length > 0) {
+      const filteredKids = item.children
+        .map((child: any) => filterMenuItem(child))
+        .filter(Boolean);
+
+      if (matchesSearch || (filteredKids && filteredKids.length > 0)) {
+        return {
+          ...item,
+          children: matchesSearch ? item.children : filteredKids,
+        };
+      }
+      return null;
+    }
+
+    return matchesSearch ? item : null;
+  };
+
+  const filteredChildren = navbarRoute
+    .map(filterMenuItem)
+    .filter(Boolean);
 
   return (
     <div className="bg-[#001529]">

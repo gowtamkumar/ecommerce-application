@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Button, Card, Divider, Form, Input, InputNumber, Select, Tabs } from "antd";
-import { 
-    BgColorsOutlined, 
-    FontSizeOutlined, 
-    AppstoreOutlined, 
-    ShareAltOutlined,
-    GlobalOutlined 
-} from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
 import { selectGlobal, setAction, setSetting } from "@/redux/features/global/globalSlice";
-import { SettingsHeader, FileUploadField, PreviewModal } from "./CommonComponents";
+import {
+    AppstoreOutlined,
+    BgColorsOutlined,
+    FontSizeOutlined,
+    GlobalOutlined
+} from "@ant-design/icons";
+import { Button, Card, Form, Input, InputNumber, Select, Tabs } from "antd";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FileUploadField, PreviewModal, SettingsHeader } from "./CommonComponents";
 
 const fontOptions = [
     { label: "Poppins (Default)", value: "var(--font-poppins)" },
@@ -21,11 +20,114 @@ const fontOptions = [
     { label: "System Sans", value: "system-ui, -apple-system, sans-serif" },
 ];
 
+const THEME_PRESETS = [
+  {
+    name: "Classic Amber",
+    description: "Warm gold accent with clean slate footer",
+    preview: { primary: "#F7AA0E", secondary: "#000000", header: "#ffffff", footer: "#0f172a" },
+    values: {
+      primaryColor: "#F7AA0E",
+      primaryHoverColor: "#e59a0d",
+      secondaryColor: "#000000",
+      linkColor: "#F7AA0E",
+      accentColor: "#F7AA0E",
+      buttonPrimaryColor: "#F7AA0E",
+      buttonHoverColor: "#e59a0d",
+      buttonTextColor: "#ffffff",
+      headerBg: "#ffffff",
+      headerText: "#1f2937",
+      footerBg: "#0f172a",
+      footerText: "#ffffff",
+    },
+  },
+  {
+    name: "Nordic Minimal",
+    description: "Sleek slate and monochrome aesthetic",
+    preview: { primary: "#18181b", secondary: "#71717a", header: "#ffffff", footer: "#18181b" },
+    values: {
+      primaryColor: "#18181b",
+      primaryHoverColor: "#27272a",
+      secondaryColor: "#71717a",
+      linkColor: "#18181b",
+      accentColor: "#27272a",
+      buttonPrimaryColor: "#18181b",
+      buttonHoverColor: "#27272a",
+      buttonTextColor: "#ffffff",
+      headerBg: "#ffffff",
+      headerText: "#18181b",
+      footerBg: "#18181b",
+      footerText: "#ffffff",
+    },
+  },
+  {
+    name: "Emerald Luxe",
+    description: "Rich botanical green with gold highlights",
+    preview: { primary: "#059669", secondary: "#064e3b", header: "#ffffff", footer: "#064e3b" },
+    values: {
+      primaryColor: "#059669",
+      primaryHoverColor: "#047857",
+      secondaryColor: "#064e3b",
+      linkColor: "#059669",
+      accentColor: "#10b981",
+      buttonPrimaryColor: "#059669",
+      buttonHoverColor: "#047857",
+      buttonTextColor: "#ffffff",
+      headerBg: "#ffffff",
+      headerText: "#064e3b",
+      footerBg: "#064e3b",
+      footerText: "#ffffff",
+    },
+  },
+  {
+    name: "Cobalt Tech",
+    description: "Vibrant royal blue and high-contrast dark accents",
+    preview: { primary: "#2563eb", secondary: "#1e3a8a", header: "#ffffff", footer: "#0f172a" },
+    values: {
+      primaryColor: "#2563eb",
+      primaryHoverColor: "#1d4ed8",
+      secondaryColor: "#1e3a8a",
+      linkColor: "#2563eb",
+      accentColor: "#3b82f6",
+      buttonPrimaryColor: "#2563eb",
+      buttonHoverColor: "#1d4ed8",
+      buttonTextColor: "#ffffff",
+      headerBg: "#ffffff",
+      headerText: "#1e293b",
+      footerBg: "#0f172a",
+      footerText: "#ffffff",
+    },
+  },
+  {
+    name: "Cyber Purple",
+    description: "Creative violet & indigo for modern brands",
+    preview: { primary: "#7c3aed", secondary: "#4c1d95", header: "#ffffff", footer: "#1e1b4b" },
+    values: {
+      primaryColor: "#7c3aed",
+      primaryHoverColor: "#6d28d9",
+      secondaryColor: "#4c1d95",
+      linkColor: "#7c3aed",
+      accentColor: "#8b5cf6",
+      buttonPrimaryColor: "#7c3aed",
+      buttonHoverColor: "#6d28d9",
+      buttonTextColor: "#ffffff",
+      headerBg: "#ffffff",
+      headerText: "#1e1b4b",
+      footerBg: "#1e1b4b",
+      footerText: "#ffffff",
+    },
+  },
+];
+
 const AppearanceSettings = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const global = useSelector(selectGlobal);
+
+    const handleApplyPreset = (preset: typeof THEME_PRESETS[0]) => {
+        form.setFieldsValue(preset.values);
+        successNotification({ message: `Applied "${preset.name}" preset colors into form!` });
+    };
 
     const initialData = React.useMemo(() => ({
         id: global.setting?.id,
@@ -232,6 +334,52 @@ const AppearanceSettings = () => {
                 title="Appearance Settings" 
                 description="Manage your website's colors, typography, branding, and social media integrations" 
             />
+
+            {/* Theme Studio Presets Bar */}
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-5 sm:p-6 rounded-3xl text-white shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="relative z-10 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-white tracking-tight flex items-center gap-2">
+                    <BgColorsOutlined className="text-amber-400" /> Theme Studio Presets
+                  </h3>
+                  <p className="text-xs text-gray-400 font-medium">
+                    1-click curated design palettes that instantly populate storefront design tokens.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 relative z-10">
+                {THEME_PRESETS.map((preset) => (
+                  <div
+                    key={preset.name}
+                    onClick={() => handleApplyPreset(preset)}
+                    className="bg-white/10 hover:bg-white/15 border border-white/10 hover:border-amber-400/40 rounded-2xl p-3.5 cursor-pointer transition-all duration-200 group flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <span className="w-4 h-4 rounded-full border border-white/20 shadow-sm shrink-0" style={{ backgroundColor: preset.preview.primary }} />
+                        <span className="w-4 h-4 rounded-full border border-white/20 shadow-sm shrink-0" style={{ backgroundColor: preset.preview.secondary }} />
+                        <span className="w-4 h-4 rounded-full border border-white/20 shadow-sm shrink-0" style={{ backgroundColor: preset.preview.footer }} />
+                      </div>
+                      <h4 className="font-extrabold text-xs text-white group-hover:text-amber-300 transition-colors">
+                        {preset.name}
+                      </h4>
+                      <p className="text-[10px] text-gray-300 line-clamp-2 mt-0.5 leading-snug">
+                        {preset.description}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="mt-3 w-full py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-white/15 group-hover:bg-amber-400 group-hover:text-gray-900 text-white transition-all text-center"
+                    >
+                      Apply Preset
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             <Card className="shadow-sm border border-gray-100 rounded-2xl">
                 <Form

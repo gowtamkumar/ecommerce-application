@@ -4,37 +4,39 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { deleteOrder, getOrders } from "@/lib/apis/orders";
 import { getStatus } from "@/lib/utils/getStatus";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
-  setSearchedColumn,
-  setSearchText,
+    selectGlobal,
+    setAction,
+    setLoading,
+    setSearchedColumn,
+    setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  CheckOutlined,
-  ClockCircleOutlined,
-  DeleteOutlined,
-  EnvironmentOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
-  UserOutlined
+    CheckOutlined,
+    ClockCircleOutlined,
+    DeleteOutlined,
+    EnvironmentOutlined,
+    EyeOutlined,
+    PrinterOutlined,
+    QuestionCircleOutlined,
+    SearchOutlined,
+    UserOutlined
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType, TabsProps } from "antd";
 import {
-  Badge,
-  Button,
-  Card,
-  Descriptions,
-  Divider,
-  Input,
-  Popconfirm,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Timeline,
-  Tooltip,
-  Typography
+    Badge,
+    Button,
+    Card,
+    Descriptions,
+    Divider,
+    Input,
+    Popconfirm,
+    Select,
+    Space,
+    Table,
+    Tag,
+    Timeline,
+    Tooltip,
+    Typography
 } from "antd";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
@@ -45,6 +47,8 @@ import Highlighter from "react-highlight-words";
 import { FaAmazonPay } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import OrderDrawer from "./OrderDrawer";
+import OrderInvoiceModal from "./OrderInvoiceModal";
 
 const { Title, Text } = Typography;
 
@@ -66,6 +70,10 @@ const Order = () => {
   const [tabKey, setTabKey] = useState("Pending");
   const [orders, setOrders] = useState([]);
   const [searchInput, setSearchInput] = useState(null) as any;
+  const [selectedOrderForDrawer, setSelectedOrderForDrawer] = useState<any>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState<any>(null);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
@@ -534,7 +542,31 @@ const Order = () => {
       fixed: "right",
       width: 200,
       render: (value) => (
-        <div className="flex gap-2 justify-end">
+        <div className="flex gap-1.5 justify-end">
+          <Tooltip title="View Order Details">
+            <Button
+              size="small"
+              icon={<EyeOutlined />}
+              className="hover:!bg-blue-50 hover:!text-blue-600"
+              onClick={() => {
+                setSelectedOrderForDrawer(value);
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip title="Print Invoice">
+            <Button
+              size="small"
+              icon={<PrinterOutlined />}
+              className="hover:!bg-gray-100 hover:!text-gray-900"
+              onClick={() => {
+                setSelectedOrderForInvoice(value);
+                setInvoiceOpen(true);
+              }}
+            />
+          </Tooltip>
+
           <Tooltip title="Payment">
             <Button
               size="small"
@@ -691,6 +723,21 @@ const Order = () => {
       </Card>
 
       {global.action.orderStatusUpdate && <OrderStatusChange />}
+
+      <OrderDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        order={selectedOrderForDrawer}
+        onStatusUpdated={() => {
+          dispatch(setAction({}));
+        }}
+      />
+
+      <OrderInvoiceModal
+        open={invoiceOpen}
+        onClose={() => setInvoiceOpen(false)}
+        order={selectedOrderForInvoice}
+      />
     </div>
   );
 };

@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
-import Loading from "./loading";
 import { useSelector } from "react-redux";
 
 const { Content } = Layout;
@@ -50,14 +49,11 @@ export default function DashboardLayout({
         }}
       >
         <DashboardHeader />
-        <Content
-          style={{
-            padding: "0 24px",
-            minHeight: "calc(100vh - 64px - 70px)", // viewport - header - footer
-          }}
-        >
-          <BreadCrumb />
-          <div style={{ padding: "24px 0" }}>
+        <Content className="px-3 sm:px-6 min-h-[calc(100vh-64px-70px)] bg-gray-50/50">
+          <div className="pt-3">
+            <BreadCrumb />
+          </div>
+          <div className="py-4 sm:py-6">
             {children}
           </div>
         </Content>
