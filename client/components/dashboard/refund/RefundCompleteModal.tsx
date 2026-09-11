@@ -54,7 +54,11 @@ const RefundCompleteModal: React.FC = () => {
 
   return (
     <Modal
-      title="Complete Manual Refund"
+      title={
+        refundData?.status === "Failed"
+          ? "Complete Failed Refund (Manual)"
+          : "Complete Manual Refund"
+      }
       open={isModalOpen}
       onOk={() => form.submit()}
       onCancel={handleCancel}
@@ -75,6 +79,12 @@ const RefundCompleteModal: React.FC = () => {
           <Text type="secondary">Order Tracking:</Text>
           <Text strong className="text-blue-600">#{refundData?.order?.trackingNo || "N/A"}</Text>
         </div>
+        {refundData?.note && (
+          <div className="mb-2 pt-2 border-t border-blue-200">
+            <Text type="secondary" className="text-xs block mb-1">Previous note:</Text>
+            <Text className="text-xs text-orange-700">{refundData.note}</Text>
+          </div>
+        )}
         <div className="flex justify-between pt-2 border-t border-blue-200 mt-2">
           <Text type="secondary">Refund Amount:</Text>
           <Text strong className="text-red-600 text-lg">{refundData?.amount}</Text>

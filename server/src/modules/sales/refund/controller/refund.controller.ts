@@ -97,10 +97,25 @@ export const completeRefund = asyncHandler(async (req: Request, res: Response) =
       });
     }
 
-    // Update Refund Record
+    if (
+      refund.status !== RefundStatus.Pending &&
+      refund.status !== RefundStatus.Failed
+    ) {
+      await queryRunner.rollbackTransaction();
+      return res.status(400).json({
+        success: false,
+        message: `Refund cannot be completed from status ${refund.status}`,
+      });
+    }
+
+    // Update Refund Record (manual COD / failed auto-refund fallback)
     refund.status = RefundStatus.Completed;
     refund.transactionId = transactionId;
-    refund.note = note;
+    refund.note = note
+      ? note
+      : refund.note
+        ? `${refund.note} | Manually completed`
+        : 'Manually completed';
     await refundRepository.save(refund);
 
     // Update Order Refund Status

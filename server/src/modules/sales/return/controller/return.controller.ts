@@ -6,8 +6,10 @@ import { ProductVariantEntity } from '@/modules/catalog/products/product-variant
 import { OrderStatus, RefundStatus } from '@/modules/sales/order/enums';
 import { OrderItemEntity } from '@/modules/sales/order/model/order-item.entity';
 import { OrderEntity } from '@/modules/sales/order/model/order.entity';
-import { RefundStatus as LocalRefundStatus } from '@/modules/sales/refund/enums/refund-status.enum';
-import { RefundEntity } from '@/modules/sales/refund/model/refund.entity';
+import {
+  attemptAutoRefundAfterCommit,
+  createPendingRefundRecord,
+} from '@/modules/sales/refund/service/process-refund.service';
 import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
 import { returnFullOrderValidationSchema } from '@/validation/return/returnfullOrderValidation';
 import { returnValidationSchema } from '@/validation/return/returnValidation';
@@ -322,6 +324,7 @@ export const singleProductReturn = asyncHandler(async (req: CustomRequest, res: 
     }
 
     let order: OrderEntity | null = null;
+    let pendingRefundId: number | null = null;
 
     if (status === ReturnStatus.Completed) {
       const orderRepository = queryRunner.manager.getRepository(OrderEntity);
@@ -404,16 +407,17 @@ export const singleProductReturn = asyncHandler(async (req: CustomRequest, res: 
         approvedQty: approved_qty,
       });
 
-      // Create a manual refund record
-      const refundRepository = queryRunner.manager.getRepository(RefundEntity);
-      const newRefund = refundRepository.create({
-        orderId: order.id,
-        userId: userId,
-        amount: totalRefund,
-        status: LocalRefundStatus.Pending,
-        reason: result.reason || 'Product Return',
-      });
-      await refundRepository.save(newRefund);
+      // Create Pending refund (SSL auto / COD manual resolved after commit)
+      pendingRefundId = (
+        await createPendingRefundRecord({
+          orderId: order.id,
+          userId: Number(userId),
+          amount: totalRefund,
+          reason: result.reason || 'Product Return',
+          paymentMethod: order.paymentMethod,
+          manager: queryRunner.manager,
+        })
+      ).id;
     }
 
     // Fallback: if status is not `Completed`, only update `returnedStatus`
@@ -431,6 +435,10 @@ export const singleProductReturn = asyncHandler(async (req: CustomRequest, res: 
     await returnRepository.save(updatedReturn);
 
     await queryRunner.commitTransaction();
+
+    if (pendingRefundId) {
+      await attemptAutoRefundAfterCommit(pendingRefundId);
+    }
 
     return res.status(200).json({
       success: true,
@@ -490,6 +498,8 @@ export const updateReturn = asyncHandler(async (req: CustomRequest, res: Respons
         message: `Return has already been completed.`,
       });
     }
+
+    let pendingRefundId: number | null = null;
 
     if (status === ReturnStatus.Completed) {
       const orderRepository = queryRunner.manager.getRepository(OrderEntity);
@@ -573,16 +583,16 @@ export const updateReturn = asyncHandler(async (req: CustomRequest, res: Respons
         approvedQty: approved_val,
       });
 
-      // Create a manual refund record
-      const refundRepository = queryRunner.manager.getRepository(RefundEntity);
-      const newRefund = refundRepository.create({
-        orderId: order.id,
-        userId: userId,
-        amount: totalRefund,
-        status: LocalRefundStatus.Pending,
-        reason: result.reason || 'Product Return',
-      });
-      await refundRepository.save(newRefund);
+      pendingRefundId = (
+        await createPendingRefundRecord({
+          orderId: order.id,
+          userId: Number(userId),
+          amount: totalRefund,
+          reason: result.reason || 'Product Return',
+          paymentMethod: order.paymentMethod,
+          manager: queryRunner.manager,
+        })
+      ).id;
     }
 
     // Update return record
@@ -593,6 +603,10 @@ export const updateReturn = asyncHandler(async (req: CustomRequest, res: Respons
     await returnRepository.save(updated);
 
     await queryRunner.commitTransaction();
+
+    if (pendingRefundId) {
+      await attemptAutoRefundAfterCommit(pendingRefundId);
+    }
 
     return res.status(200).json({
       success: true,
@@ -838,20 +852,21 @@ export const completeFullOrderReturn = asyncHandler(async (req: Request, res: Re
       returnedStatus: ReturnStatus.Completed,
     });
 
-    // Create a manual refund record for the full order return
-    const refundRepository = queryRunner.manager.getRepository(RefundEntity);
-    const newRefund = refundRepository.create({
+    // Create Pending refund (SSL auto / COD manual resolved after commit)
+    const pendingRefund = await createPendingRefundRecord({
       orderId: Number(orderId),
-      userId: order.userId,
+      userId: Number(order.userId),
       amount: totalRefund,
-      status: LocalRefundStatus.Pending,
       reason: 'Full Order Return',
+      paymentMethod: order.paymentMethod,
+      manager: queryRunner.manager,
     });
-    await refundRepository.save(newRefund);
 
     console.log('requestedQty', requestedQty);
 
     await queryRunner.commitTransaction();
+
+    await attemptAutoRefundAfterCommit(pendingRefund.id);
 
     return res.status(200).json({
       success: true,
