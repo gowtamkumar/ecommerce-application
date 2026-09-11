@@ -1,16 +1,17 @@
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+"use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getPublicProducts } from "@/lib/apis/product";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { setOpen } from "@/redux/features/layout/layoutSlice";
+import { CloseCircleFilled, SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { SearchOutlined, CloseCircleFilled } from "@ant-design/icons";
+import { useCallback, useEffect, useState } from "react";
 import { HiSparkles } from "react-icons/hi";
-import { useCurrency } from "@/context/CurrencyContext";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function SearchEngine() {
   const [query, setQuery] = useState("");

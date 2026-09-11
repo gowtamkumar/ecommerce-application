@@ -6,39 +6,37 @@ import { getStatus } from "@/lib/utils/getStatus";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
+    selectGlobal,
+    setAction,
+    setLoading,
 } from "@/redux/features/global/globalSlice";
 import {
-  CalendarOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  ShoppingOutlined,
-  SyncOutlined,
-  InfoCircleOutlined
+    CalendarOutlined,
+    CheckCircleOutlined,
+    CheckOutlined,
+    ClockCircleOutlined,
+    CloseCircleOutlined,
+    ShoppingOutlined,
+    SyncOutlined,
+    TruckOutlined
 } from "@ant-design/icons";
 import type { TabsProps } from "antd";
 import {
-  Button,
-  Card,
-  Col,
-  Descriptions,
-  Divider,
-  Empty,
-  Modal,
-  Row,
-  Space,
-  Steps,
-  Table,
-  Tabs,
-  Tag,
-  Timeline,
-  Typography,
+    Button,
+    Card,
+    Divider,
+    Empty,
+    Modal,
+    Space,
+    Table,
+    Tabs,
+    Tag,
+    Timeline,
+    Typography
 } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CancelOrder from "./CancelOrder";
@@ -71,7 +69,25 @@ interface DataType {
   returnedStatus: string;
 }
 
+const ORDER_STAGES = [
+  { key: "Pending", label: "Placed" },
+  { key: "Processing", label: "Processing" },
+  { key: "Shipped", label: "Shipped" },
+  { key: "Delivered", label: "Delivered" },
+];
+
+const getStageIndex = (status: string) => {
+  const map: Record<string, number> = {
+    Pending: 0,
+    Processing: 1,
+    Shipped: 2,
+    Delivered: 3,
+  };
+  return map[status] ?? 0;
+};
+
 const UserOrders = () => {
+  const router = useRouter();
   const [tabKey, setTabKey] = useState("Pending");
   const [orders, setOrders] = useState<DataType[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<DataType | null>(null);
@@ -224,7 +240,71 @@ const UserOrders = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                {/* Visual Order Progress Stepper */}
+                {order.status !== "Canceled" ? (
+                  <div className="my-4 pt-3 pb-2 px-3 sm:px-6 bg-gradient-to-r from-gray-50/90 via-blue-50/30 to-gray-50/90 rounded-2xl border border-gray-100">
+                    <div className="flex items-center justify-between relative">
+                      {/* Connecting line */}
+                      <div className="absolute left-6 right-6 top-3 -translate-y-1/2 h-1 bg-gray-200 z-0">
+                        <div
+                          className="h-full bg-blue-600 transition-all duration-500 rounded-full"
+                          style={{
+                            width:
+                              order.status === "Delivered"
+                                ? "100%"
+                                : order.status === "Shipped"
+                                ? "66%"
+                                : order.status === "Processing"
+                                ? "33%"
+                                : "0%",
+                          }}
+                        />
+                      </div>
+
+                      {/* Step Nodes */}
+                      {ORDER_STAGES.map((stage, idx) => {
+                        const currentIdx = getStageIndex(order.status);
+                        const isPassed = currentIdx >= idx;
+                        const isCurrent = currentIdx === idx;
+                        return (
+                          <div key={stage.key} className="flex flex-col items-center relative z-10">
+                            <div
+                              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all ${
+                                isCurrent
+                                  ? "bg-blue-600 text-white ring-4 ring-blue-100 shadow-sm scale-110"
+                                  : isPassed
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-white border-2 border-gray-300 text-gray-400"
+                              }`}
+                            >
+                              {isPassed ? <CheckOutlined className="text-[9px] sm:text-[10px]" /> : idx + 1}
+                            </div>
+                            <span
+                              className={`text-[9px] sm:text-[11px] mt-1.5 font-bold tracking-tight whitespace-nowrap ${
+                                isCurrent
+                                  ? "text-blue-600 font-extrabold"
+                                  : isPassed
+                                  ? "text-gray-900"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              {stage.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="my-3 py-2 px-3.5 bg-red-50/80 rounded-xl border border-red-100 flex items-center justify-between text-xs font-semibold text-red-600">
+                    <span className="flex items-center gap-2">
+                      <CloseCircleOutlined /> Order was canceled
+                    </span>
+                    <span className="text-[10px] text-red-400 font-medium">Refund / Cancellation processed</span>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-4">
                   {/* Product Thumbnails - Enhanced for mobile */}
                   <div className="w-full flex-1 overflow-x-auto pb-2 no-scrollbar scrollbar-hide">
                     <div className="flex gap-2 sm:gap-3">
@@ -248,10 +328,17 @@ const UserOrders = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                  <div className="flex flex-wrap sm:flex-col gap-2 w-full sm:w-36 mt-2 sm:mt-0 flex-shrink-0">
+                    <Button
+                      icon={<TruckOutlined />}
+                      className="flex-1 sm:w-full h-10 rounded-xl font-bold text-xs border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                      onClick={() => router.push(`/profile?tab=track_order&trackingNo=${order.trackingNo}`)}
+                    >
+                      Track Order
+                    </Button>
                     <Button
                       type="primary"
-                      className="flex-1 sm:w-32 h-10 rounded-xl font-bold text-xs"
+                      className="flex-1 sm:w-full h-10 rounded-xl font-bold text-xs"
                       onClick={() => handleOpenDetails(order)}
                     >
                       Details
@@ -259,7 +346,7 @@ const UserOrders = () => {
                     {["Pending", "Processing"].includes(order.status) && (
                       <Button
                         danger
-                        className="flex-1 sm:w-32 h-10 rounded-xl font-bold text-xs"
+                        className="flex-1 sm:w-full h-10 rounded-xl font-bold text-xs"
                         onClick={() => handleCancelOrder(order.id)}
                       >
                         Cancel

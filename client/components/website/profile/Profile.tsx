@@ -3,14 +3,14 @@ import { getUserOrders } from "@/lib/apis/orders";
 import { getUserWishlists } from "@/lib/apis/wishlist";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
-  BellOutlined,
-  ClockCircleOutlined,
-  CreditCardOutlined,
-  EnvironmentOutlined,
-  HeartOutlined,
-  KeyOutlined,
-  ShoppingOutlined,
-  UserOutlined
+    BellOutlined,
+    ClockCircleOutlined,
+    CreditCardOutlined,
+    EnvironmentOutlined,
+    HeartOutlined,
+    KeyOutlined,
+    ShoppingOutlined,
+    UserOutlined
 } from "@ant-design/icons";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
@@ -95,12 +95,14 @@ export default function Profile() {
       key: "orders",
       label: "My Orders",
       icon: <ShoppingOutlined />,
+      count: stats.orders,
       component: <UserOrders />,
     },
     {
       key: "wishlist",
       label: "My Wishlist",
       icon: <HeartOutlined />,
+      count: stats.wishlist,
       component: <MyWishlist />,
     },
     {
@@ -211,34 +213,54 @@ export default function Profile() {
                 </div>
 
                 <div className="px-4 pb-4 sm:px-6 sm:pb-8 -mt-8 sm:-mt-10 relative z-10 text-center">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-xl sm:rounded-2xl border-4 border-white shadow-md overflow-hidden bg-gray-50 mb-2 sm:mb-4">
-                    <Image
-                      src={getImageUrl(userImage)}
-                      alt={session?.user?.name || "User"}
-                      width={80}
-                      height={80}
-                      className="object-cover h-full w-full"
-                    />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-xl sm:rounded-2xl border-4 border-white shadow-md overflow-hidden bg-gray-100 mb-2 sm:mb-4 relative">
+                    {userImage ? (
+                      <Image
+                        src={getImageUrl(userImage)}
+                        alt={session?.user?.name || "User"}
+                        width={80}
+                        height={80}
+                        className="object-cover h-full w-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-600 text-xl sm:text-2xl font-black">
+                        {session?.user?.name?.charAt(0) || "U"}
+                      </div>
+                    )}
                   </div>
                   <h3 className="font-black text-gray-900 text-base sm:text-lg leading-tight mb-0.5 sm:mb-1">{session?.user?.name}</h3>
-                  <p className="text-gray-400 text-[10px] sm:text-xs font-medium uppercase tracking-widest">{session?.user?.email}</p>
+                  <p className="text-gray-400 text-[10px] sm:text-xs font-medium uppercase tracking-widest truncate">{session?.user?.email}</p>
                 </div>
               </div>
 
               {/* Navigation Menu - Horizontal Scroll on Mobile */}
               <nav className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm p-2 sm:p-3">
                 <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 sm:gap-1.5 scrollbar-hide no-scrollbar">
-                  {menuItems.map((item) => (
+                  {menuItems.map((item: any) => (
                     <button
                       key={item.key}
                       onClick={() => handleTabChange(item.key)}
-                      className={`flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-4 px-4 py-2.5 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${tabKey === item.key
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-200 lg:translate-x-1"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                        }`}
+                      className={`flex-shrink-0 lg:w-full flex items-center justify-between gap-2 sm:gap-4 px-4 py-2.5 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+                        tabKey === item.key
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-200 lg:translate-x-1"
+                          : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
                     >
-                      <span className="text-base sm:text-xl">{item.icon}</span>
-                      <span>{item.label}</span>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <span className="text-base sm:text-lg">{item.icon}</span>
+                        <span>{item.label}</span>
+                      </div>
+                      {Boolean(item.count && item.count > 0) && (
+                        <span
+                          className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                            tabKey === item.key
+                              ? "bg-white/20 text-white"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {item.count}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

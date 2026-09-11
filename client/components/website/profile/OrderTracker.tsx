@@ -32,7 +32,8 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import ReturnRequestAllOrder from "./ReturnRequestAllOrder";
 import ReturnRequestOrderItem from "./ReturnRequestOrderItem";
@@ -44,6 +45,9 @@ const NewReview = dynamic(() => import("../product/review-rating/NewReview"), {
 const { Title, Text } = Typography;
 
 export default function OrderTracker() {
+  const searchParams = useSearchParams();
+  const urlTrackingNo = searchParams.get("trackingNo");
+
   const [order, setOrder] = useState({} as any);
   const [payMethod, setpayMethod] = useState("");
   const [tracker, setTracker] = useState({} as { trackingNo: string });
@@ -51,6 +55,13 @@ export default function OrderTracker() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const { formatPrice } = useCurrency();
+
+  useEffect(() => {
+    if (urlTrackingNo) {
+      form.setFieldsValue({ trackingNo: urlTrackingNo });
+      handleOrderTracking({ trackingNo: urlTrackingNo });
+    }
+  }, [urlTrackingNo]);
 
   async function handleOrderTracking(values: any) {
     if (!values.trackingNo) return;
@@ -192,20 +203,29 @@ export default function OrderTracker() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Card bordered={false} className="lg:col-span-2 shadow-sm rounded-3xl overflow-hidden border border-gray-100">
               <div className="bg-gray-50 -m-6 mb-6 p-4 px-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div className="font-black text-gray-900 text-sm sm:text-base">Status: <span className="text-blue-600">{order.status}</span></div>
-                <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">Updated: {dayjs(order.updatedAt).format('MMM D, h:mm A')}</div>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className="font-black text-gray-900 text-sm sm:text-base">
+                    Order <Text copyable className="font-mono text-blue-600">{order.trackingNo}</Text>
+                  </div>
+                  <Tag color={order.status === "Delivered" ? "success" : order.status === "Canceled" ? "error" : "processing"} className="font-bold uppercase text-[10px] rounded-md">
+                    {order.status}
+                  </Tag>
+                </div>
+                <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">
+                  Updated: {dayjs(order.updatedAt).format('MMM D, YYYY · h:mm A')}
+                </div>
               </div>
 
               <div className="py-4 overflow-x-auto no-scrollbar scrollbar-hide">
-                <div className="min-w-[400px]">
+                <div className="min-w-[480px]">
                   <Steps
                     current={getStatusIndex()}
                     size="small"
                     items={[
-                      { title: "Placed", icon: <FileTextOutlined /> },
-                      { title: "Process", icon: <SyncOutlined spin={order.status === "Processing"} /> },
-                      { title: "Shipped", icon: <TruckOutlined /> },
-                      { title: "Done", icon: <CheckCircleOutlined /> },
+                      { title: "Order Placed", description: "Order confirmed", icon: <FileTextOutlined /> },
+                      { title: "Processing", description: "Packing items", icon: <SyncOutlined spin={order.status === "Processing"} /> },
+                      { title: "Shipped", description: "In transit", icon: <TruckOutlined /> },
+                      { title: "Delivered", description: "Completed", icon: <CheckCircleOutlined /> },
                     ]}
                     status={order.status === "Canceled" ? "error" : "process"}
                   />

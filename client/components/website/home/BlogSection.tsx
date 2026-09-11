@@ -1,16 +1,13 @@
 import { getImageUrl } from "@/lib/utils/imageUrl";
-import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
-import { Card } from "antd";
 import Image from "next/image";
 import Link from "next/link";
+import { FiArrowRight, FiCalendar, FiUser } from "react-icons/fi";
 
 interface BlogSectionProps {
   posts: any[];
 }
 
-const BlogSection = ({ posts }: BlogSectionProps) => {
-  const Meta = Card?.Meta;
-
+export default function BlogSection({ posts }: BlogSectionProps) {
   if (!posts || posts.length === 0) {
     return null;
   }
@@ -21,68 +18,64 @@ const BlogSection = ({ posts }: BlogSectionProps) => {
         <Link
           href={`/blog/${post.slug}`}
           key={post.id}
-          className="block group"
+          className="group block h-full"
         >
-          <Card
-            hoverable
-            cover={
-              <div className="h-56 lg:h-64 overflow-hidden relative">
-                <Image
-                  alt={post.title}
-                  src={getImageUrl(post.image)}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
-            }
-            className="h-full border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden"
-            actions={[
-              <div
-                className="flex items-center justify-center gap-2 text-gray-500 font-medium"
-                key="date"
-              >
-                <CalendarOutlined className="text-global-primary" />
-                <span className="text-xs">
-                  {post.createdAt
-                    ? new Date(post.createdAt).toLocaleDateString()
-                    : "Recent"}
-                </span>
-              </div>,
-              <div
-                className="flex items-center justify-center gap-2 text-gray-500 font-medium"
-                key="author"
-              >
-                <UserOutlined className="text-global-primary" />
-                <span className="text-xs">{post?.user?.name || "Admin"}</span>
-              </div>,
-            ]}
-          >
-
-            {Meta ? (
-              <Meta
-                title={
-                  <h3 className="text-lg font-bold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2 leading-tight">
-                    {post.title}
-                  </h3>
-                }
-                description={
-                  <p className="line-clamp-3 text-gray-500 text-sm mt-3 leading-relaxed"> {post?.content}</p>
-                }
+          <article className="h-full bg-white rounded-2xl sm:rounded-3xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-xl hover:border-gray-200 hover:-translate-y-1 transition-all duration-300 flex flex-col">
+            {/* Image Frame */}
+            <div className="h-52 sm:h-60 overflow-hidden relative bg-gray-50">
+              <Image
+                alt={post.title}
+                src={getImageUrl(post.image)}
+                fill
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
-            ) : (
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-gray-800 group-hover:text-global-primary transition-colors line-clamp-2 leading-tight">
-                  {post.title}
-                </h3>
-                <p className="line-clamp-3 text-gray-500 text-sm mt-3 leading-relaxed">{post?.content}</p>
+            </div>
+
+            {/* Article Content */}
+            <div className="p-5 sm:p-6 flex flex-col flex-1">
+              {/* Meta Info */}
+              <div className="flex items-center gap-4 text-xs font-medium text-gray-400 mb-3">
+                <span className="flex items-center gap-1.5">
+                  <FiCalendar className="text-blue-600" />
+                  <span>
+                    {post.createdAt
+                      ? new Date(post.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "Recent"}
+                  </span>
+                </span>
+                <span className="w-1 h-1 rounded-full bg-gray-300" />
+                <span className="flex items-center gap-1.5 truncate">
+                  <FiUser className="text-blue-600" />
+                  <span className="truncate">{post?.user?.name || "Admin"}</span>
+                </span>
               </div>
-            )}
-          </Card>
+
+              {/* Title */}
+              <h3 className="text-base sm:text-lg font-black text-gray-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2 leading-snug mb-2">
+                {post.title}
+              </h3>
+
+              {/* Excerpt */}
+              {post.content && (
+                <p className="line-clamp-2 sm:line-clamp-3 text-xs sm:text-sm text-gray-500 leading-relaxed mb-4">
+                  {post.content}
+                </p>
+              )}
+
+              {/* Read More Link */}
+              <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <span className="uppercase tracking-wider text-[11px]">Read Article</span>
+                <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </article>
         </Link>
       ))}
     </div>
   );
-};
-
-export default BlogSection;
+}

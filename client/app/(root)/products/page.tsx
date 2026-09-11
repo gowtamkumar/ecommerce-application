@@ -1,7 +1,7 @@
 "use client";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
-import { selectGlobal } from "@/redux/features/global/globalSlice";
 
 const CategoryHeader = dynamic(
   () => import("@/components/website/sidebar-filter/FilterHeader")
@@ -38,13 +38,11 @@ export default function Products() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
 
           {/* Left: Sidebar Filters - Sticky and only visible on desktop by default */}
-          {!global.mobile && (
-            <aside className="w-full lg:w-72 shrink-0">
-              <div className="sticky top-28">
-                <FilterSidebar />
-              </div>
-            </aside>
-          )}
+          <aside className="hidden lg:block w-72 shrink-0">
+            <div className="sticky top-28">
+              <FilterSidebar />
+            </div>
+          </aside>
 
           {/* Right: Product Listing */}
           <div className="flex-1 min-w-0">
