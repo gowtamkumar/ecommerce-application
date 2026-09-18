@@ -1,12 +1,12 @@
 "use client";
 import {
-  getNotificationsForAdmin,
-  readNotification,
+    getNotificationsForAdmin,
+    readNotification,
 } from "@/lib/apis/notification";
 import {
-  BellOutlined,
-  CheckCircleOutlined,
-  RightOutlined
+    BellOutlined,
+    CheckCircleOutlined,
+    RightOutlined
 } from "@ant-design/icons";
 import { Badge, Button, Popover, Spin, Typography } from "antd";
 import dayjs from "dayjs";
@@ -75,7 +75,7 @@ const NotificationDropdown = () => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const content = (
-    <div className="w-[380px] flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden font-sans">
+    <div className="flex flex-col bg-white rounded-xl overflow-hidden font-sans">
       {/* Header */}
       <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-2">
