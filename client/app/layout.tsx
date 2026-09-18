@@ -1,3 +1,4 @@
+import appConfig from "@/appConfig";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
@@ -8,7 +9,6 @@ import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "../lib/SessionProvider";
-import appConfig from "@/appConfig";
 // Global styles
 import { auth } from "@/auth";
 import "antd/dist/reset.css";
@@ -31,6 +31,7 @@ const ScrollToTop = dynamic(() => import("@/components/share-component/ScrollToT
 const CookieBanner = dynamic(() => import("@/components/share-component/CookieBanner"));
 const AnnouncementBar = dynamic(() => import("@/components/share-component/AnnouncementBar"));
 const MarketingPopup = dynamic(() => import("@/components/share-component/MarketingPopup"));
+const ThemeVariableSync = dynamic(() => import("@/components/share-component/ThemeVariableSync"));
 
 // Custom font (Poppins)
 const poppinsFont = localFont({
@@ -142,6 +143,8 @@ export default async function RootLayout({
     "--footer-bg": appearance.footerBg || "#0f172a",
     "--footer-text": appearance.footerText || "#ffffff",
     "--text-color": textColor,
+    "--heading-font-weight": `${appearance.headingWeight || 700}`,
+    "--body-font-weight": `${appearance.bodyWeight || 400}`,
   };
 
   const googleFonts = [
@@ -165,7 +168,7 @@ export default async function RootLayout({
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
             <link
               href={`https://fonts.googleapis.com/css2?${googleFonts
-                .map((f) => `family=${f.replace(" ", "+")}:wght@400;500;600;700;900`)
+                .map((f) => `family=${f.replace(/\s+/g, "+")}:wght@400;500;600;700;800;900`)
                 .join("&")}&display=swap`}
               rel="stylesheet"
             />
@@ -323,6 +326,7 @@ body {
                     pauseOnHover
                     theme="colored"
                   />
+                  <ThemeVariableSync />
                   <AnnouncementBar marketing={setting?.marketing} />
                   <ScrollToTop />
                   {children}

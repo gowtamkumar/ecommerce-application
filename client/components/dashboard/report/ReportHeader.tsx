@@ -44,8 +44,8 @@ export default function ReportHeader({
             <TbReportAnalytics />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-lg sm:text-2xl font-black text-gray-900 tracking-tight break-words">
                 Report & Business Intelligence
               </h1>
               <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-global-primary/10 text-global-primary border border-global-primary/30">

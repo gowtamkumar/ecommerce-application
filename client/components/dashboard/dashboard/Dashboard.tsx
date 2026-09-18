@@ -136,8 +136,8 @@ const Dashboard = () => {
       {/* ========================================================================= */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight break-words">
               Store Performance & Operations
             </h1>
             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-global-primary/10 text-global-primary border border-global-primary/30">

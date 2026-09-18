@@ -42,7 +42,7 @@ export default function PaymentSettlementCard({ payments }: PaymentSettlementCar
         </div>
 
         {/* Net Settled Hero Banner */}
-        <div className="p-4 rounded-xl bg-gradient-to-br from-global-primary to-global-hover text-white shadow-md shadow-global-primary/20 mb-5">
+        <div className="p-4 rounded-xl bg-linear-to-br from-global-primary to-global-hover text-white shadow-md shadow-global-primary/20 mb-5">
           <span className="text-xs font-semibold text-white/90 uppercase tracking-wider block">
             Net Settled Cash Flow
           </span>

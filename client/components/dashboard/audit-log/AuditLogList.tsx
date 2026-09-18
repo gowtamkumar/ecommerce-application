@@ -358,7 +358,7 @@ export default function AuditLogList() {
               <span className="text-[10px] font-bold text-gray-600 font-mono bg-gray-100 px-1.5 py-0.5 rounded">
                 {method}
               </span>
-              <span className="text-gray-500 truncate max-w-[130px]" title={record.metadata?.path}>
+              <span className="text-gray-500 truncate max-w-32.5" title={record.metadata?.path}>
                 {record.metadata?.path || "-"}
               </span>
             </div>

@@ -164,10 +164,10 @@ const ProductDetails = ({
 
           {/* Title Section */}
           <div>
-            <h1 className="text-3xl lg:text-4xl font-black text-gray-900 leading-tight tracking-tight mb-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 leading-tight tracking-tight mb-3 break-words">
               {name}
             </h1>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {checkStock > 5 ? (
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                   In Stock
@@ -192,8 +192,8 @@ const ProductDetails = ({
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
             <div className="relative z-10">
               <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Special Price</div>
-              <div className="flex items-baseline gap-3">
-                <span className="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
+              <div className="flex flex-wrap items-baseline gap-3">
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
                   {formatPrice(product.finalPrice)}
                 </span>
                 {+discountValue > 0 && (

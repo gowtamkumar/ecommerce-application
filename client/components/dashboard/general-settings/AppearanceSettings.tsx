@@ -12,12 +12,257 @@ import { useDispatch, useSelector } from "react-redux";
 import { FileUploadField, PreviewModal, SettingsHeader } from "./CommonComponents";
 
 const fontOptions = [
-    { label: "Poppins (Default)", value: "var(--font-poppins)" },
-    { label: "Inter", value: "Inter, sans-serif" },
-    { label: "Roboto", value: "Roboto, sans-serif" },
-    { label: "Outfit", value: "Outfit, sans-serif" },
-    { label: "System Sans", value: "system-ui, -apple-system, sans-serif" },
+    {
+        label: "Modern Sans-Serif (High Legibility)",
+        options: [
+            { label: "Poppins (Default Local)", value: "var(--font-poppins)" },
+            { label: "Plus Jakarta Sans", value: "Plus Jakarta Sans, sans-serif" },
+            { label: "Inter", value: "Inter, sans-serif" },
+            { label: "DM Sans", value: "DM Sans, sans-serif" },
+            { label: "Outfit", value: "Outfit, sans-serif" },
+            { label: "Montserrat", value: "Montserrat, sans-serif" },
+            { label: "Manrope", value: "Manrope, sans-serif" },
+            { label: "Roboto", value: "Roboto, sans-serif" },
+            { label: "System Sans", value: "system-ui, -apple-system, sans-serif" },
+        ],
+    },
+    {
+        label: "Editorial & Luxury Serif",
+        options: [
+            { label: "Playfair Display", value: "Playfair Display, serif" },
+            { label: "Lora", value: "Lora, serif" },
+            { label: "Cinzel (Boutique Luxury)", value: "Cinzel, serif" },
+            { label: "Merriweather", value: "Merriweather, serif" },
+        ],
+    },
 ];
+
+const headingWeightOptions = [
+    { label: "600 — SemiBold", value: 600 },
+    { label: "700 — Bold (Recommended)", value: 700 },
+    { label: "800 — ExtraBold", value: 800 },
+    { label: "900 — Black", value: 900 },
+];
+
+const bodyWeightOptions = [
+    { label: "400 — Regular (Standard)", value: 400 },
+    { label: "500 — Medium (Higher Contrast)", value: 500 },
+];
+
+const TYPOGRAPHY_PRESETS = [
+    {
+        name: "Modern Commerce (Default)",
+        description: "Bold Poppins headings with ultra-readable Inter body",
+        preview: { heading: "Poppins", body: "Inter", size: "16px" },
+        values: {
+            primaryFont: "var(--font-poppins)",
+            secondaryFont: "Inter, sans-serif",
+            baseFontSize: 16,
+            headingWeight: 700,
+            bodyWeight: 400,
+        },
+    },
+    {
+        name: "Tech & Clean SaaS",
+        description: "Plus Jakarta Sans paired with crisp, sharp Inter",
+        preview: { heading: "Plus Jakarta", body: "Inter", size: "16px" },
+        values: {
+            primaryFont: "Plus Jakarta Sans, sans-serif",
+            secondaryFont: "Inter, sans-serif",
+            baseFontSize: 16,
+            headingWeight: 700,
+            bodyWeight: 400,
+        },
+    },
+    {
+        name: "Editorial & Luxury",
+        description: "Regal Playfair Display serif with sleek Plus Jakarta",
+        preview: { heading: "Playfair", body: "Plus Jakarta", size: "16px" },
+        values: {
+            primaryFont: "Playfair Display, serif",
+            secondaryFont: "Plus Jakarta Sans, sans-serif",
+            baseFontSize: 16,
+            headingWeight: 700,
+            bodyWeight: 400,
+        },
+    },
+    {
+        name: "Nordic Minimalist",
+        description: "Geometric Outfit with friendly, modern DM Sans",
+        preview: { heading: "Outfit", body: "DM Sans", size: "15px" },
+        values: {
+            primaryFont: "Outfit, sans-serif",
+            secondaryFont: "DM Sans, sans-serif",
+            baseFontSize: 15,
+            headingWeight: 600,
+            bodyWeight: 400,
+        },
+    },
+    {
+        name: "Heritage & Premium",
+        description: "Classical Cinzel roman serif with structured Montserrat",
+        preview: { heading: "Cinzel", body: "Montserrat", size: "15px" },
+        values: {
+            primaryFont: "Cinzel, serif",
+            secondaryFont: "Montserrat, sans-serif",
+            baseFontSize: 15,
+            headingWeight: 600,
+            bodyWeight: 400,
+        },
+    },
+    {
+        name: "Warm Editorial",
+        description: "Warm literary Lora with humanistic, legible Manrope",
+        preview: { heading: "Lora", body: "Manrope", size: "16px" },
+        values: {
+            primaryFont: "Lora, serif",
+            secondaryFont: "Manrope, sans-serif",
+            baseFontSize: 16,
+            headingWeight: 700,
+            bodyWeight: 400,
+        },
+    },
+];
+
+interface TypographyLivePreviewProps {
+    form: any;
+}
+
+const TypographyLivePreview: React.FC<TypographyLivePreviewProps> = ({ form }) => {
+    const primaryFont = Form.useWatch("primaryFont", form) || "var(--font-poppins)";
+    const secondaryFont = Form.useWatch("secondaryFont", form) || "Inter, sans-serif";
+    const baseFontSize = Form.useWatch("baseFontSize", form) || 16;
+    const headingWeight = Form.useWatch("headingWeight", form) || 700;
+    const bodyWeight = Form.useWatch("bodyWeight", form) || 400;
+    const primaryColor = Form.useWatch("primaryColor", form) || "#F7AA0E";
+    const buttonBorderRadius = Form.useWatch("buttonBorderRadius", form) || 8;
+
+    // Dynamically inject link in head to load Google Fonts preview live
+    useEffect(() => {
+        const fontsToLoad = [primaryFont, secondaryFont]
+            .filter(Boolean)
+            .filter((f) => typeof f === "string" && !f.includes("var(--font-poppins)") && !f.includes("system-ui"))
+            .map((f) => f.split(",")[0].trim())
+            .filter((v, i, a) => a.indexOf(v) === i);
+
+        if (fontsToLoad.length > 0 && typeof document !== "undefined") {
+            const id = "admin-typography-preview-link";
+            let link = document.getElementById(id) as HTMLLinkElement;
+            if (!link) {
+                link = document.createElement("link");
+                link.id = id;
+                link.rel = "stylesheet";
+                document.head.appendChild(link);
+            }
+            link.href = `https://fonts.googleapis.com/css2?${fontsToLoad
+                .map((f) => `family=${f.replace(/\s+/g, "+")}:wght@400;500;600;700;800;900`)
+                .join("&")}&display=swap`;
+        }
+    }, [primaryFont, secondaryFont]);
+
+    const primaryFontName = primaryFont.includes("var(--font-poppins)")
+        ? "Poppins"
+        : primaryFont.split(",")[0].trim();
+
+    const secondaryFontName = secondaryFont.includes("var(--font-poppins)")
+        ? "Poppins"
+        : secondaryFont.split(",")[0].trim();
+
+    return (
+        <div className="bg-white p-4 sm:p-6 md:p-7 rounded-2xl border border-gray-200 shadow-sm mt-6 overflow-hidden">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-global-primary">
+                        Live Storefront Typography Preview
+                    </span>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                        Interactive preview of headings, body copy, and UI controls using your active typography
+                    </p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-global-primary/10 text-global-primary border border-global-primary/25 break-words">
+                        Headings: {primaryFontName} ({headingWeight})
+                    </span>
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 break-words">
+                        Body: {secondaryFontName} ({baseFontSize}px)
+                    </span>
+                </div>
+            </div>
+
+            {/* Content preview */}
+            <div className="space-y-4">
+                <h1
+                    style={{
+                        fontFamily: primaryFont,
+                        fontWeight: headingWeight,
+                    }}
+                    className="text-xl sm:text-2xl md:text-3xl text-gray-900 leading-tight tracking-tight m-0 break-words"
+                >
+                    The New Standard in Modern E-Commerce
+                </h1>
+                <h2
+                    style={{
+                        fontFamily: primaryFont,
+                        fontWeight: Math.min(headingWeight, 600),
+                    }}
+                    className="text-base sm:text-lg md:text-xl text-gray-700 font-medium m-0 break-words"
+                >
+                    Curated collections engineered for effortless style and lasting quality
+                </h2>
+                <p
+                    style={{
+                        fontFamily: secondaryFont,
+                        fontWeight: bodyWeight,
+                        fontSize: `${baseFontSize}px`,
+                    }}
+                    className="text-gray-600 leading-relaxed max-w-3xl m-0 break-words"
+                >
+                    Discover our latest seasonal lookbook featuring sustainably sourced textiles, handcrafted details, and an obsession with functional elegance. Designed for high conversion and effortless customer readability across mobile and desktop displays.
+                </p>
+
+                {/* Mini Product Card & CTA preview */}
+                <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <div
+                            style={{
+                                fontFamily: primaryFont,
+                                fontWeight: headingWeight,
+                            }}
+                            className="text-sm sm:text-base text-gray-900 font-bold"
+                        >
+                            Signature Linen Overshirt
+                        </div>
+                        <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            In Stock • Best Seller
+                        </span>
+                        <span
+                            style={{
+                                fontFamily: secondaryFont,
+                                fontWeight: 700,
+                            }}
+                            className="text-xs sm:text-sm font-black text-gray-900"
+                        >
+                            $189.00
+                        </span>
+                    </div>
+
+                    <button
+                        type="button"
+                        style={{
+                            backgroundColor: primaryColor,
+                            borderRadius: `${buttonBorderRadius}px`,
+                            fontFamily: secondaryFont,
+                            fontWeight: 600,
+                        }}
+                        className="w-full sm:w-auto px-5 py-2.5 text-xs text-white shadow-sm hover:opacity-95 transition-opacity cursor-pointer text-center"
+                    >
+                        Add to Cart — $189.00
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const THEME_PRESETS = [
     {
@@ -128,6 +373,11 @@ const AppearanceSettings = () => {
         successNotification({ message: `Applied "${preset.name}" preset` });
     };
 
+    const handleApplyTypographyPreset = (preset: (typeof TYPOGRAPHY_PRESETS)[0]) => {
+        form.setFieldsValue(preset.values);
+        successNotification({ message: `Applied "${preset.name}" typography preset` });
+    };
+
     const initialData = React.useMemo(
         () => ({
             id: global.setting?.id,
@@ -142,8 +392,10 @@ const AppearanceSettings = () => {
     useEffect(() => {
         form.setFieldsValue({
             primaryFont: "var(--font-poppins)",
-            secondaryFont: "var(--font-poppins)",
+            secondaryFont: "Inter, sans-serif",
             baseFontSize: 16,
+            headingWeight: 700,
+            bodyWeight: 400,
             buttonBorderRadius: 8,
             primaryColor: "#F7AA0E",
             primaryHoverColor: "#e59a0d",
@@ -174,6 +426,8 @@ const AppearanceSettings = () => {
             primaryFont,
             secondaryFont,
             baseFontSize,
+            headingWeight,
+            bodyWeight,
             buttonBorderRadius,
             primaryColor,
             primaryHoverColor,
@@ -192,7 +446,9 @@ const AppearanceSettings = () => {
         const appearance = {
             primaryFont,
             secondaryFont,
-            baseFontSize,
+            baseFontSize: Number(baseFontSize) || 16,
+            headingWeight: Number(headingWeight) || 700,
+            bodyWeight: Number(bodyWeight) || 400,
             buttonBorderRadius,
             primaryColor,
             primaryHoverColor,
@@ -251,7 +507,7 @@ const AppearanceSettings = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
                     {THEME_PRESETS.map((preset) => (
                         <button
                             key={preset.name}
@@ -373,25 +629,112 @@ const AppearanceSettings = () => {
                                     </span>
                                 ),
                                 children: (
-                                    <div className="pt-4">
+                                    <div className="space-y-8 pt-4">
+                                        {/* Curated Typography Presets */}
+                                        <div className="bg-slate-900 p-5 sm:p-6 rounded-2xl text-white shadow-sm">
+                                            <div className="mb-4">
+                                                <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
+                                                    <FontSizeOutlined className="text-amber-400" /> Curated Font Pairings
+                                                </h3>
+                                                <p className="text-xs text-gray-400 mt-1">
+                                                    One-click typography systems combining commanding heading presence with effortless body readability.
+                                                </p>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+                                                {TYPOGRAPHY_PRESETS.map((preset) => (
+                                                    <div
+                                                        key={preset.name}
+                                                        className="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between hover:border-amber-400/50 transition-all duration-200"
+                                                    >
+                                                        <div>
+                                                            <div className="flex items-center justify-between gap-2">
+                                                                <h4 className="font-semibold text-sm text-white m-0">
+                                                                    {preset.name}
+                                                                </h4>
+                                                                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-700 text-amber-300 shrink-0">
+                                                                    {preset.preview.size}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-xs text-gray-400 mt-1.5 line-clamp-2">
+                                                                {preset.description}
+                                                            </p>
+                                                            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+                                                                <span className="px-2 py-0.5 rounded bg-slate-700/70 text-slate-200 border border-slate-600 font-medium">
+                                                                    H: {preset.preview.heading}
+                                                                </span>
+                                                                <span className="text-gray-500">+</span>
+                                                                <span className="px-2 py-0.5 rounded bg-slate-700/70 text-slate-300 border border-slate-600">
+                                                                    Body: {preset.preview.body}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <Button
+                                                            size="small"
+                                                            type="dashed"
+                                                            onClick={() => handleApplyTypographyPreset(preset)}
+                                                            className="mt-4 !bg-transparent !text-amber-400 !border-amber-400/40 hover:!border-amber-400 hover:!text-amber-300 text-xs w-full rounded-lg font-semibold"
+                                                        >
+                                                            Apply Pairing
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Font Family & Hierarchy Controls */}
                                         <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-                                            <SettingsHeader title="Fonts" />
+                                            <SettingsHeader
+                                                title="Font Families & Hierarchy"
+                                                description="Configure primary display headings, secondary body typography, and base scaling"
+                                            />
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                                                <Form.Item name="primaryFont" label="Primary Font (Headings)">
+                                                <Form.Item
+                                                    name="primaryFont"
+                                                    label="Primary Font (Headings & Titles)"
+                                                    extra="Used for H1-H6, category titles, and banner headings"
+                                                >
                                                     <Select size="large" options={fontOptions} />
                                                 </Form.Item>
-                                                <Form.Item name="secondaryFont" label="Secondary Font (Body)">
+
+                                                <Form.Item
+                                                    name="headingWeight"
+                                                    label="Heading Font Weight"
+                                                    extra="Visual weight of titles and headers"
+                                                >
+                                                    <Select size="large" options={headingWeightOptions} />
+                                                </Form.Item>
+
+                                                <Form.Item
+                                                    name="secondaryFont"
+                                                    label="Secondary Font (Body & UI Copy)"
+                                                    extra="Used for descriptions, navigation, buttons, and product details"
+                                                >
                                                     <Select size="large" options={fontOptions} />
                                                 </Form.Item>
+
+                                                <Form.Item
+                                                    name="bodyWeight"
+                                                    label="Body Text Font Weight"
+                                                    extra="Standard weight for descriptions and paragraphs"
+                                                >
+                                                    <Select size="large" options={bodyWeightOptions} />
+                                                </Form.Item>
+
                                                 <Form.Item
                                                     name="baseFontSize"
                                                     label="Base Font Size (px)"
-                                                    extra="Site-wide scale"
+                                                    extra="Site-wide typography base scale (default: 16px)"
+                                                    className="md:col-span-2"
                                                 >
                                                     <InputNumber size="large" className="w-full h-11" min={12} max={20} />
                                                 </Form.Item>
                                             </div>
                                         </div>
+
+                                        {/* Live WYSIWYG Typography Preview */}
+                                        <TypographyLivePreview form={form} />
                                     </div>
                                 ),
                             },
@@ -469,7 +812,7 @@ const AppearanceSettings = () => {
                             htmlType="submit"
                             loading={loading}
                             size="large"
-                            className="!h-12 !px-10 !rounded-xl !font-semibold"
+                            className="h-12 px-10 rounded-xl font-semibold"
                         >
                             Save Settings
                         </Button>

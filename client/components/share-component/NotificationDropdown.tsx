@@ -79,7 +79,7 @@ const NotificationDropdown = () => {
       {/* Header */}
       <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-2">
-          <Title level={5} className="!mb-0 !text-gray-800">Notifications</Title>
+          <Title level={5} className="mb-0 text-gray-800!">Notifications</Title>
           {unreadCount > 0 && (
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-global-button-primary text-global-button-text">
               {unreadCount} New
@@ -96,7 +96,7 @@ const NotificationDropdown = () => {
       </div>
 
       {/* List */}
-      <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+      <div className="max-h-100 overflow-y-auto custom-scrollbar">
         {loading && notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 gap-3">
             <Spin size="default" />
@@ -182,7 +182,7 @@ const NotificationDropdown = () => {
               type="primary"
               block
               ghost
-              className="!h-9 !text-xs !font-medium !rounded-lg !border-global-button-primary !text-global-button-primary hover:!bg-global-button-primary/5 transition-colors"
+              className="h-9 text-xs font-medium rounded-lg border-global-button-primary text-global-button-primary hover:bg-global-button-primary/5 transition-colors"
             >
               View all {notifications.length} notifications
             </Button>
@@ -230,11 +230,11 @@ const NotificationDropdown = () => {
         <Button
           type="primary"
           className={`
-            !w-10 !h-10 !flex !items-center !justify-center !rounded-global-button-radius !border-0
-            !bg-global-button-primary !text-global-button-text
+            w-10 h-10 flex items-center justify-center rounded-global-button-radius border-0
+            bg-global-button-primary text-global-button-text
             transition-all duration-300 transform active:scale-95 shadow-md hover:shadow-lg
-            hover:!bg-global-button-hover hover:scale-105
-            ${open ? "!scale-105 !shadow-lg" : ""}
+            hover:bg-global-button-hover hover:scale-105
+            ${open ? "scale-105 shadow-lg" : ""}
           `}
           icon={<BellOutlined style={{ fontSize: "20px" }} />}
         />

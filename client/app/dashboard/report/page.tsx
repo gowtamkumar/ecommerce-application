@@ -164,7 +164,7 @@ export default function ReportPage() {
       </div>
 
       {loading && !refreshing ? (
-        <div className="min-h-[400px] flex flex-col items-center justify-center gap-3">
+        <div className="min-h-100 flex flex-col items-center justify-center gap-3">
           <Spin size="large" />
           <span className="text-xs font-medium text-gray-500">
             Synthesizing accounting and business intelligence...
