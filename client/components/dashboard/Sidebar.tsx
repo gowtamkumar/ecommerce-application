@@ -150,6 +150,7 @@ const Sidebar = () => {
 
       {/* Desktop Sidebar */}
       <Sider
+        trigger={null}
         collapsible
         collapsed={layout.collapsed}
         onCollapse={(value) => dispatch(setCollapsed(value))}
