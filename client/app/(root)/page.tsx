@@ -26,9 +26,11 @@ const SectionHeader = ({
 }) => (
   <div className="mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 w-full">
     <div className="space-y-1.5">
-      <h2 className="type-h2 text-gray-900 !m-0">{title}</h2>
+      <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
+        {title}
+      </h2>
       {subtitle ? (
-        <p className="type-body-sm text-gray-500 max-w-xl !mb-0">{subtitle}</p>
+        <p className="text-sm text-gray-500 max-w-xl">{subtitle}</p>
       ) : (
         <div className="h-0.5 w-12 bg-global-primary rounded-full" />
       )}
@@ -37,7 +39,7 @@ const SectionHeader = ({
     {link && (
       <Link
         href={link}
-        className="group inline-flex items-center gap-1.5 type-body-sm font-medium text-gray-600 hover:text-global-primary transition-colors"
+        className="group inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-global-primary transition-colors"
       >
         View all
         <svg

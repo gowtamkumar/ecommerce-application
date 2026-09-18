@@ -69,11 +69,11 @@ export default function Slider({ banners }: any) {
 
                 <div className="relative z-10 h-full container mx-auto px-4 md:px-8 lg:px-12 flex flex-col justify-center items-start">
                   <div className="max-w-2xl space-y-5 md:space-y-6">
-                    <h1 className="type-display !text-white !m-0">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.12] tracking-tight">
                       {title}
                     </h1>
                     {description ? (
-                      <p className="type-body text-white/85 max-w-xl !mb-0">
+                      <p className="text-base md:text-lg text-white/85 font-normal max-w-xl leading-relaxed">
                         {description}
                       </p>
                     ) : null}
@@ -81,7 +81,7 @@ export default function Slider({ banners }: any) {
                     <div className="pt-2">
                       <Link
                         href={url || "/products"}
-                        className="type-cta inline-flex items-center gap-2.5 h-12 px-7 rounded-full bg-global-primary text-white shadow-lg shadow-black/20 hover:brightness-110 transition-all duration-300"
+                        className="inline-flex items-center gap-2.5 h-12 px-7 rounded-full bg-global-primary text-white text-sm md:text-base font-semibold shadow-lg shadow-black/20 hover:brightness-110 transition-all duration-300"
                       >
                         Shop Collection
                         <ArrowRightOutlined className="text-xs" />

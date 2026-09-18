@@ -117,18 +117,6 @@ const THEME_PRESETS = [
     },
 ];
 
-const TYPE_SCALE_PRESET = {
-    headingWeight: 600,
-    typeDisplay: 48,
-    typeH1: 36,
-    typeH2: 28,
-    typeH3: 20,
-    typeBody: 16,
-    typeBodySm: 14,
-    typeCaption: 12,
-    typeOverline: 11,
-};
-
 const AppearanceSettings = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
@@ -138,11 +126,6 @@ const AppearanceSettings = () => {
     const handleApplyPreset = (preset: (typeof THEME_PRESETS)[0]) => {
         form.setFieldsValue(preset.values);
         successNotification({ message: `Applied "${preset.name}" preset` });
-    };
-
-    const handleApplyTypeScale = () => {
-        form.setFieldsValue(TYPE_SCALE_PRESET);
-        successNotification({ message: "Applied recommended type scale" });
     };
 
     const initialData = React.useMemo(
@@ -161,15 +144,6 @@ const AppearanceSettings = () => {
             primaryFont: "var(--font-poppins)",
             secondaryFont: "var(--font-poppins)",
             baseFontSize: 16,
-            headingWeight: 600,
-            typeDisplay: 48,
-            typeH1: 36,
-            typeH2: 28,
-            typeH3: 20,
-            typeBody: 16,
-            typeBodySm: 14,
-            typeCaption: 12,
-            typeOverline: 11,
             buttonBorderRadius: 8,
             primaryColor: "#F7AA0E",
             primaryHoverColor: "#e59a0d",
@@ -200,15 +174,6 @@ const AppearanceSettings = () => {
             primaryFont,
             secondaryFont,
             baseFontSize,
-            headingWeight,
-            typeDisplay,
-            typeH1,
-            typeH2,
-            typeH3,
-            typeBody,
-            typeBodySm,
-            typeCaption,
-            typeOverline,
             buttonBorderRadius,
             primaryColor,
             primaryHoverColor,
@@ -223,19 +188,11 @@ const AppearanceSettings = () => {
             textColor,
         } = values;
 
+        // Button colors always follow brand primary
         const appearance = {
             primaryFont,
             secondaryFont,
             baseFontSize,
-            headingWeight,
-            typeDisplay,
-            typeH1,
-            typeH2,
-            typeH3,
-            typeBody,
-            typeBodySm,
-            typeCaption,
-            typeOverline,
             buttonBorderRadius,
             primaryColor,
             primaryHoverColor,
@@ -416,12 +373,9 @@ const AppearanceSettings = () => {
                                     </span>
                                 ),
                                 children: (
-                                    <div className="space-y-8 pt-4">
+                                    <div className="pt-4">
                                         <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-                                            <SettingsHeader
-                                                title="Fonts"
-                                                description="Primary for headings, secondary for body copy"
-                                            />
+                                            <SettingsHeader title="Fonts" />
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                                                 <Form.Item name="primaryFont" label="Primary Font (Headings)">
                                                     <Select size="large" options={fontOptions} />
@@ -431,80 +385,11 @@ const AppearanceSettings = () => {
                                                 </Form.Item>
                                                 <Form.Item
                                                     name="baseFontSize"
-                                                    label="Root Font Size (px)"
-                                                    extra="Browser default scale (html font-size)"
+                                                    label="Base Font Size (px)"
+                                                    extra="Site-wide scale"
                                                 >
-                                                    <InputNumber size="large" className="w-full h-11" min={14} max={18} />
+                                                    <InputNumber size="large" className="w-full h-11" min={12} max={20} />
                                                 </Form.Item>
-                                                <Form.Item
-                                                    name="headingWeight"
-                                                    label="Heading Weight"
-                                                    extra="Applied to display, H1–H3"
-                                                >
-                                                    <Select
-                                                        size="large"
-                                                        options={[
-                                                            { label: "Medium (500)", value: 500 },
-                                                            { label: "Semi Bold (600) — recommended", value: 600 },
-                                                            { label: "Bold (700)", value: 700 },
-                                                        ]}
-                                                    />
-                                                </Form.Item>
-                                            </div>
-                                        </div>
-
-                                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-                                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-                                                <SettingsHeader
-                                                    title="Type Scale"
-                                                    description="Sizes in px. Storefront uses: type-display, type-h1, type-h2, type-h3, type-body, type-body-sm, type-caption, type-overline"
-                                                />
-                                                <Button type="default" onClick={handleApplyTypeScale} className="!rounded-full shrink-0">
-                                                    Reset to recommended
-                                                </Button>
-                                            </div>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
-                                                <Form.Item name="typeDisplay" label="Display" extra="Hero titles">
-                                                    <InputNumber size="large" className="w-full h-11" min={32} max={72} />
-                                                </Form.Item>
-                                                <Form.Item name="typeH1" label="H1" extra="Page titles">
-                                                    <InputNumber size="large" className="w-full h-11" min={24} max={56} />
-                                                </Form.Item>
-                                                <Form.Item name="typeH2" label="H2" extra="Section titles">
-                                                    <InputNumber size="large" className="w-full h-11" min={20} max={40} />
-                                                </Form.Item>
-                                                <Form.Item name="typeH3" label="H3" extra="Cards / subheads">
-                                                    <InputNumber size="large" className="w-full h-11" min={16} max={28} />
-                                                </Form.Item>
-                                                <Form.Item name="typeBody" label="Body" extra="Main copy">
-                                                    <InputNumber size="large" className="w-full h-11" min={14} max={20} />
-                                                </Form.Item>
-                                                <Form.Item name="typeBodySm" label="Body Small" extra="Secondary text">
-                                                    <InputNumber size="large" className="w-full h-11" min={12} max={16} />
-                                                </Form.Item>
-                                                <Form.Item name="typeCaption" label="Caption" extra="Meta / labels">
-                                                    <InputNumber size="large" className="w-full h-11" min={10} max={14} />
-                                                </Form.Item>
-                                                <Form.Item name="typeOverline" label="Overline" extra="Eyebrows / badges">
-                                                    <InputNumber size="large" className="w-full h-11" min={9} max={13} />
-                                                </Form.Item>
-                                            </div>
-
-                                            <div className="mt-6 p-4 rounded-xl bg-white border border-gray-100 space-y-3">
-                                                <p className="type-overline text-gray-400 !m-0">Overline sample</p>
-                                                <p className="type-display text-gray-900 !m-0">Display</p>
-                                                <p className="type-h1 text-gray-900 !m-0">Heading 1</p>
-                                                <p className="type-h2 text-gray-900 !m-0">Heading 2</p>
-                                                <p className="type-h3 text-gray-900 !m-0">Heading 3</p>
-                                                <p className="type-body text-gray-600 !m-0">
-                                                    Body — primary reading text for product details and paragraphs.
-                                                </p>
-                                                <p className="type-body-sm text-gray-500 !m-0">
-                                                    Body small — supporting copy and meta descriptions.
-                                                </p>
-                                                <p className="type-caption text-gray-400 !m-0">
-                                                    Caption — prices helpers, timestamps, fine print.
-                                                </p>
                                             </div>
                                         </div>
                                     </div>

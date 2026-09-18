@@ -26,17 +26,17 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
 
             <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 flex flex-col items-start gap-3">
               <div>
-                <h3 className="type-h3 text-white !m-0">
+                <h3 className="text-xl sm:text-2xl font-semibold text-white leading-snug">
                   {item.title}
                 </h3>
                 {item.description ? (
-                  <p className="mt-1.5 type-body-sm text-white/80 line-clamp-2 !mb-0">
+                  <p className="mt-1.5 text-sm text-white/80 line-clamp-2 leading-relaxed">
                     {item.description}
                   </p>
                 ) : null}
               </div>
 
-              <span className="type-cta inline-flex items-center gap-2 text-white border-b border-white/40 pb-0.5 group-hover:border-global-primary group-hover:text-global-primary transition-colors duration-300">
+              <span className="inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-white/40 pb-0.5 group-hover:border-global-primary group-hover:text-global-primary transition-colors duration-300">
                 Shop now
                 <ArrowRightOutlined className="text-[10px] transition-transform duration-300 group-hover:translate-x-1" />
               </span>

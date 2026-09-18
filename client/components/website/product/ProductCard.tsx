@@ -199,7 +199,7 @@ const ProductCard: React.FC = () => {
 
                         <div className="flex flex-col sm:flex-row items-center gap-4">
                            <div className="w-full sm:w-48">
-                              <AddToCartButton item={{ ...item, qty: 1 }} className="!h-12 !rounded-xl !font-black !text-xs !tracking-widest" />
+                              <AddToCartButton item={{ ...item, qty: 1 }} className="!h-12 !rounded-xl !font-semibold !text-xs !tracking-wide" />
                            </div>
                            <button
                               onClick={(e) => {

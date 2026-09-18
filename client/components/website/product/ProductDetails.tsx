@@ -293,13 +293,13 @@ const ProductDetails = ({
                     type="primary"
                     size="large"
                     onClick={() => route.push("/checkout")}
-                    className="w-full h-12 sm:h-14 rounded-2xl text-xs font-black uppercase tracking-widest !bg-gray-900 hover:!bg-black border-none shadow-xl shadow-gray-200"
+                    className="w-full h-12 sm:h-14 rounded-2xl text-xs font-black uppercase tracking-widest !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text border-none shadow-xl shadow-global-button-primary/20"
                   >
                     Proceed to Checkout
                   </Button>
                 ) : (
                   <AddToCartButton
-                    className="!h-12 sm:!h-14 !rounded-2xl !text-xs !font-black !tracking-widest !bg-gray-900 hover:!bg-black shadow-xl shadow-gray-900/10"
+                    className="!h-12 sm:!h-14 !rounded-2xl !text-xs !font-semibold !tracking-wide shadow-xl shadow-global-button-primary/20"
                     item={{
                       ...product,
                       productVariantId: defaultProduct?.id,
@@ -407,13 +407,13 @@ const ProductDetails = ({
               <Button
                 type="primary"
                 onClick={() => route.push("/checkout")}
-                className="w-full !h-11 !rounded-xl !text-xs !font-black !tracking-wider !bg-gray-900 border-none shadow-md shadow-gray-900/10"
+                className="w-full !h-11 !rounded-xl !text-xs !font-semibold !tracking-wide !bg-global-button-primary hover:!bg-global-button-hover !text-global-button-text border-none shadow-md shadow-global-button-primary/20"
               >
                 Checkout
               </Button>
             ) : (
               <AddToCartButton
-                className="!h-11 !rounded-xl !text-xs !font-black !tracking-wider !bg-gray-900 hover:!bg-black shadow-md shadow-gray-900/10"
+                className="!h-11 !rounded-xl !text-xs !font-semibold !tracking-wide shadow-md shadow-global-button-primary/20"
                 item={{
                   ...product,
                   productVariantId: defaultProduct?.id,

@@ -130,18 +130,18 @@ export default function Card({ item }: { item: any }) {
         <div className="absolute bottom-2.5 left-2.5 right-2.5 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20 hidden sm:block">
           <AddToCartButton
             item={{ ...item, qty: 1 }}
-            className="!h-10 !rounded-lg !text-[11px] !font-semibold !tracking-wide !bg-gray-900 hover:!bg-black shadow-md"
+            className="!h-10 !rounded-lg !text-[11px] !font-semibold !tracking-wide shadow-md"
           />
         </div>
       </div>
 
       <div className="p-3 sm:p-4 flex flex-col flex-1 bg-white justify-between">
         <div>
-          <div className="type-overline text-gray-400 mb-1 truncate">
+          <div className="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1 truncate">
             {item?.brand?.name || "Brand"}
           </div>
 
-          <h3 className="type-body text-gray-900 group-hover:text-global-primary transition-colors duration-200 line-clamp-2 min-h-[2.5rem] mb-2 !font-medium">
+          <h3 className="font-medium text-gray-900 text-xs sm:text-sm leading-snug group-hover:text-global-primary transition-colors duration-200 line-clamp-2 min-h-[2.5rem] mb-2">
             <Link href={`/products/${item.slug}`}>{item.name}</Link>
           </h3>
         </div>
@@ -149,11 +149,11 @@ export default function Card({ item }: { item: any }) {
         <div className="mt-1 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-baseline gap-1.5 flex-wrap">
-              <span className="type-body text-gray-900 tracking-tight !font-semibold !mb-0">
+              <span className="text-sm sm:text-[15px] font-semibold text-gray-900 tracking-tight">
                 {formatPrice(item.finalPrice)}
               </span>
               {discountVal > 0 && (
-                <span className="type-caption text-gray-400 line-through !mb-0">
+                <span className="text-[11px] text-gray-400 line-through">
                   {formatPrice(item.salePrice)}
                 </span>
               )}
@@ -165,7 +165,7 @@ export default function Card({ item }: { item: any }) {
                 value={Number(item.avgRating) || 0}
                 className="text-[9px] text-amber-400"
               />
-              <span className="type-caption text-gray-400 !mb-0">
+              <span className="text-[10px] font-medium text-gray-400">
                 ({item.reviewsCount || 0})
               </span>
             </div>
@@ -174,7 +174,7 @@ export default function Card({ item }: { item: any }) {
           <div className="sm:hidden pt-0.5">
             <AddToCartButton
               item={{ ...item, qty: 1 }}
-              className="!h-9 !rounded-lg !text-[10px] !font-semibold !bg-gray-900 hover:!bg-black"
+              className="!h-9 !rounded-lg !text-[10px] !font-semibold"
             />
           </div>
         </div>
