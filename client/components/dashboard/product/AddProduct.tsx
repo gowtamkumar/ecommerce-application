@@ -12,10 +12,9 @@ import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button, Form, Input, Skeleton } from "antd";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { FiArrowLeft, FiBox, FiRefreshCw, FiSave } from "react-icons/fi";
+import { FiBox, FiRefreshCw, FiSave } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
 const ProductRightTopSection = dynamic(
@@ -278,21 +277,6 @@ const AddProduct = ({
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* ── Page Header ── */}
         <div className="mb-8">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-global-secondary mb-3">
-            <Link
-              href="/dashboard/product"
-              className="flex items-center gap-1 hover:text-global-primary transition-colors"
-            >
-              <FiArrowLeft className="w-3.5 h-3.5" />
-              Products
-            </Link>
-            <span>/</span>
-            <span className="text-global-primary font-medium">
-              {isEditing ? "Edit Product" : "New Product"}
-            </span>
-          </div>
-
           {/* Title + Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
