@@ -32,7 +32,7 @@ export default function BlogSection({ posts }: BlogSectionProps) {
             </div>
 
             <div className="p-5 flex flex-col flex-1">
-              <div className="flex items-center gap-3 text-xs font-medium text-gray-400 mb-3">
+              <div className="flex items-center gap-3 type-caption text-gray-400 mb-3">
                 <span className="flex items-center gap-1.5">
                   <FiCalendar className="text-global-primary" />
                   <span>
@@ -52,21 +52,19 @@ export default function BlogSection({ posts }: BlogSectionProps) {
                 </span>
               </div>
 
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 group-hover:text-global-primary transition-colors duration-200 line-clamp-2 leading-snug mb-2">
+              <h3 className="type-h3 text-gray-900 group-hover:text-global-primary transition-colors duration-200 line-clamp-2 !m-0 mb-2">
                 {post.title}
               </h3>
 
               {post.content && (
-                <p className="line-clamp-2 sm:line-clamp-3 text-sm text-gray-500 leading-relaxed mb-4">
+                <p className="line-clamp-2 sm:line-clamp-3 type-body-sm text-gray-500 !mb-4">
                   {post.content}
                 </p>
               )}
 
-              <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-gray-700 group-hover:text-global-primary transition-colors">
-                <span className="uppercase tracking-wider text-[11px]">
-                  Read Article
-                </span>
-                <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" />
+              <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between type-overline text-gray-700 group-hover:text-global-primary transition-colors">
+                <span>Read Article</span>
+                <FiArrowRight className="transform group-hover:translate-x-1 transition-transform normal-case tracking-normal" />
               </div>
             </div>
           </article>

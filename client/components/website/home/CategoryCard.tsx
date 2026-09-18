@@ -42,7 +42,7 @@ export default function CategoryCard({ categories }: any) {
                   sizes="(max-width: 768px) 80px, 112px"
                 />
               </div>
-              <p className="mt-3 text-xs md:text-sm font-medium text-gray-700 group-hover:text-global-primary text-center line-clamp-2 w-full px-1 transition-colors duration-300">
+              <p className="mt-3 type-caption text-gray-700 group-hover:text-global-primary text-center line-clamp-2 w-full px-1 transition-colors duration-300 !mb-0">
                 {item.name}
               </p>
             </Link>

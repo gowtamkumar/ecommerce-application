@@ -111,11 +111,25 @@ export default async function RootLayout({
   const textColor = appearance.textColor || "#1f2937";
   const backgroundColor = appearance.backgroundColor || "#ffffff";
   const buttonBorderRadius = appearance.buttonBorderRadius || 8;
+  const baseFontSize = appearance.baseFontSize || 16;
+  const headingWeight = appearance.headingWeight || 600;
 
+  // Type scale from dashboard (px) — independent of root size for predictable control
   const cssVars = {
     "--primary-font": appearance.primaryFont || "var(--font-poppins)",
     "--secondary-font": appearance.secondaryFont || "var(--font-poppins)",
-    "--base-font-size": `${appearance.baseFontSize || 16}px`,
+    "--base-font-size": `${baseFontSize}px`,
+    "--type-display": `${appearance.typeDisplay || 48}px`,
+    "--type-h1": `${appearance.typeH1 || 36}px`,
+    "--type-h2": `${appearance.typeH2 || 28}px`,
+    "--type-h3": `${appearance.typeH3 || 20}px`,
+    "--type-body": `${appearance.typeBody || 16}px`,
+    "--type-body-sm": `${appearance.typeBodySm || 14}px`,
+    "--type-caption": `${appearance.typeCaption || 12}px`,
+    "--type-overline": `${appearance.typeOverline || 11}px`,
+    "--type-heading-weight": headingWeight,
+    "--type-body-weight": 400,
+    "--type-caption-weight": 500,
     "--button-border-radius": `${buttonBorderRadius}px`,
     "--button-primary-color": primaryColor,
     "--button-hover-color": primaryHoverColor,
@@ -264,22 +278,23 @@ body {
                 theme={{
                   token: {
                     fontFamily: appearance.secondaryFont || "var(--font-poppins)",
-                    fontSize: appearance.baseFontSize || 16,
+                    fontSize: baseFontSize,
                     borderRadius: buttonBorderRadius,
                     colorPrimary: primaryColor,
                     colorPrimaryHover: primaryHoverColor,
                     colorBgTextHover: `rgba(${parseInt(primaryColor.slice(1, 3), 16)}, ${parseInt(primaryColor.slice(3, 5), 16)}, ${parseInt(primaryColor.slice(5, 7), 16)}, 0.1)`,
                     colorText: textColor,
                     colorBgBase: backgroundColor,
-                    fontSizeHeading1: 48,
-                    fontSizeHeading2: 36,
-                    fontSizeHeading3: 24,
+                    fontSizeHeading1: appearance.typeH1 || 36,
+                    fontSizeHeading2: appearance.typeH2 || 28,
+                    fontSizeHeading3: appearance.typeH3 || 20,
+                    fontWeightStrong: headingWeight,
                   },
                   components: {
                     Button: {
-                      fontSize: 14,
+                      fontSize: appearance.typeBodySm || 14,
                       borderRadius: buttonBorderRadius,
-                      fontWeight: 500,
+                      fontWeight: 600,
                       paddingInline: 16,
                       controlHeight: 40,
                       colorPrimary: primaryColor,
@@ -293,6 +308,7 @@ body {
                     },
                     Typography: {
                       fontFamily: appearance.primaryFont || "var(--font-poppins)",
+                      fontWeightStrong: headingWeight,
                     },
                   },
                 }}

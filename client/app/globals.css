@@ -92,14 +92,32 @@
 
 /*global font*/
 html {
-  font-size: var(--base-font-size);
+  font-size: var(--base-font-size, 16px);
 }
 
 body {
   font-family: var(--secondary-font);
   color: var(--text-color);
+  font-size: var(--type-body, 1rem);
+  font-weight: 400;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Type scale defaults (overridden by Appearance via layout) */
+:root {
+  --type-display: 48px;
+  --type-h1: 36px;
+  --type-h2: 28px;
+  --type-h3: 20px;
+  --type-body: 16px;
+  --type-body-sm: 14px;
+  --type-caption: 12px;
+  --type-overline: 11px;
+  --type-heading-weight: 600;
+  --type-body-weight: 400;
+  --type-caption-weight: 500;
 }
 
 h1,
@@ -112,28 +130,112 @@ h4,
 h5,
 h6 {
   font-family: var(--primary-font);
-  color: var(
-    --secondary-font
-  ); /* Keep headings dark or based on secondary/primary config if needed */
+  font-weight: var(--type-heading-weight);
+  color: var(--text-color);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 p {
-  font-size: inherit;
+  font-size: var(--type-body);
+  font-weight: var(--type-body-weight);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
 
 h1,
 .h1 {
-  font-size: 3rem;
+  font-size: var(--type-h1);
 }
 h2,
 .h2 {
-  font-size: 2.25rem;
+  font-size: var(--type-h2);
 }
 h3,
 .h3 {
-  font-size: 1.5rem;
+  font-size: var(--type-h3);
+}
+
+/* Semantic type utilities — use these instead of ad-hoc text-* sizes */
+.type-display {
+  font-family: var(--primary-font);
+  font-size: var(--type-display);
+  font-weight: var(--type-heading-weight);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+@media (max-width: 640px) {
+  .type-display {
+    font-size: min(var(--type-display), 32px);
+  }
+  .type-h1 {
+    font-size: min(var(--type-h1), 28px);
+  }
+  .type-h2 {
+    font-size: min(var(--type-h2), 24px);
+  }
+}
+
+.type-h1 {
+  font-family: var(--primary-font);
+  font-size: var(--type-h1);
+  font-weight: var(--type-heading-weight);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.type-h2 {
+  font-family: var(--primary-font);
+  font-size: var(--type-h2);
+  font-weight: var(--type-heading-weight);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.type-h3 {
+  font-family: var(--primary-font);
+  font-size: var(--type-h3);
+  font-weight: var(--type-heading-weight);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.type-body {
+  font-family: var(--secondary-font);
+  font-size: var(--type-body);
+  font-weight: var(--type-body-weight);
+  line-height: 1.6;
+}
+
+.type-body-sm {
+  font-family: var(--secondary-font);
+  font-size: var(--type-body-sm);
+  font-weight: var(--type-body-weight);
+  line-height: 1.5;
+}
+
+.type-caption {
+  font-family: var(--secondary-font);
+  font-size: var(--type-caption);
+  font-weight: var(--type-caption-weight);
+  line-height: 1.4;
+}
+
+.type-overline {
+  font-family: var(--secondary-font);
+  font-size: var(--type-overline);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.type-cta {
+  font-family: var(--secondary-font);
+  font-size: var(--type-body-sm);
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 /* Ensure all elements inherit the secondary font by default unless overridden */
