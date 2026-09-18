@@ -19,7 +19,7 @@ export default async function CheckOut() {
   const session: any = await auth();
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/login?callbackUrl=/checkout");
   }
 
   return (
