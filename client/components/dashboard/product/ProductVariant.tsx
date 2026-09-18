@@ -1,13 +1,16 @@
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+"use client";
+import { PlusOutlined } from "@ant-design/icons";
 import {
-  Button,
-  Checkbox,
-  Divider,
-  Form,
-  Input,
-  InputNumber,
-  Select,
+    Button,
+    Checkbox,
+    Form,
+    Input,
+    InputNumber,
+    Select,
+    Tag,
+    Tooltip,
 } from "antd";
+import { FiDollarSign, FiPackage, FiTrash2 } from "react-icons/fi";
 
 export default function ProductVariant({
   formValues,
@@ -18,182 +21,239 @@ export default function ProductVariant({
   const productType = Form.useWatch("type", form);
   const variants = Form.useWatch("productVariants", form);
 
+  if (!formValues.variant) return null;
+
   return (
-    <div>
-      {formValues.variant && (
+    <div className="space-y-4">
+      {/* Header row */}
+      <div className="flex items-center justify-between">
         <div>
-          <Form.List name="productVariants">
-            {(fields, { add, remove }) => (
-              <div>
-                <div className="grid grid-cols-4 justify-center items-center gap-1">
-                  <div className="col-span-3">
-                    <Divider
-                      orientation={"center" as any}
-                      style={{ margin: "0px", padding: "0px" }}
-                    >
-                      Product Variants
-                    </Divider>
-                  </div>
-                  <div className="col-span-1">
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                        disabled={
-                          productType === "SimpleProduct" &&
-                          variants?.length === 1
-                        }
+          <p className="text-sm font-medium text-global-primary">
+            Variant Rows
+          </p>
+          <p className="text-xs text-global-secondary mt-0.5">
+            Each row is a distinct size/color/material combination with its own
+            stock & price.
+          </p>
+        </div>
+        <Form.List name="productVariants">
+          {(_, { add }) => (
+            <Button
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() => add()}
+              disabled={productType === "SimpleProduct" && variants?.length === 1}
+              className="!border-global-primary !text-global-primary flex items-center gap-1"
+              style={{ borderRadius: "var(--button-border-radius)" }}
+            >
+              Add Variant
+            </Button>
+          )}
+        </Form.List>
+      </div>
+
+      {/* Variant cards */}
+      <Form.List name="productVariants">
+        {(fields, { add, remove }) => (
+          <div className="space-y-3">
+            {fields.map(({ key, name, ...restField }, index) => (
+              <div
+                key={key}
+                className="relative border border-global-primary rounded-xl p-4 bg-global-secondary/5"
+              >
+                {/* Variant badge + remove */}
+                <div className="flex items-center justify-between mb-3">
+                  <Tag
+                    color="blue"
+                    className="!text-xs !font-semibold !px-2 !py-0.5"
+                  >
+                    Variant #{index + 1}
+                  </Tag>
+                  {fields.length > 1 && (
+                    <Tooltip title="Remove variant">
+                      <button
+                        type="button"
+                        onClick={() => remove(name)}
+                        className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                       >
-                        Add
-                      </Button>
-                    </Form.Item>
-                  </div>
+                        <FiTrash2 className="w-4 h-4" />
+                      </button>
+                    </Tooltip>
+                  )}
                 </div>
 
-                <table width="100%">
-                  <thead className="mb-1">
-                    <tr className="text-start">
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Unit Price
-                      </th>
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Purchase Price
-                      </th>
-                      <th className="text-start w-1/6">Size</th>
-                      <th className="text-start w-1/6">Color</th>
-                      <th className="text-start w-1/6">material</th>
+                {/* Hidden id */}
+                <Form.Item {...restField} name={[name, "id"]} hidden>
+                  <Input />
+                </Form.Item>
 
-                      <th className="text-start w-1/6">
-                        <label className="text-red-500">*</label>Qty
-                      </th>
-                      <th className="text-start w-1/6">Default</th>
-                    </tr>
-                  </thead>
+                {/* Price + qty row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+                  <Form.Item
+                    {...restField}
+                    name={[name, "unitPrice"]}
+                    label={
+                      <span className="flex items-center gap-1 text-xs font-medium text-global-primary">
+                        <FiDollarSign className="w-3 h-3 text-global-secondary" />
+                        Unit Price <span className="text-red-500">*</span>
+                      </span>
+                    }
+                    rules={[{ required: true, message: "Required" }]}
+                    className="!mb-0"
+                  >
+                    <InputNumber
+                      placeholder="0.00"
+                      min={0}
+                      step={0.01}
+                      className="!w-full"
+                      size="middle"
+                      prefix="$"
+                    />
+                  </Form.Item>
 
-                  {fields.map(({ key, name, ...restField }) => (
-                    <tbody key={key}>
-                      <tr>
-                        <td hidden>
-                          <Form.Item {...restField} name={[name, "id"]}>
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "unitPrice"]}
-                            rules={[{ required: true, message: "Unit Price" }]}
-                          >
-                            <InputNumber
-                              placeholder="Unit Price"
-                              min={1}
-                              className="!w-full"
-                            />
-                          </Form.Item>
-                        </td>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "purchasePrice"]}
+                    label={
+                      <span className="flex items-center gap-1 text-xs font-medium text-global-primary">
+                        <FiDollarSign className="w-3 h-3 text-global-secondary" />
+                        Purchase Price <span className="text-red-500">*</span>
+                      </span>
+                    }
+                    rules={[{ required: true, message: "Required" }]}
+                    className="!mb-0"
+                  >
+                    <InputNumber
+                      placeholder="0.00"
+                      min={0}
+                      step={0.01}
+                      className="!w-full"
+                      size="middle"
+                      prefix="$"
+                    />
+                  </Form.Item>
 
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "purchasePrice"]}
-                            rules={[
-                              { required: true, message: "Purchase Price" },
-                            ]}
-                          >
-                            <InputNumber
-                              placeholder="Purchase Price"
-                              min={1}
-                              className="!w-full"
-                            />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item {...restField} name={[name, "sizeId"]}>
-                            <Select allowClear showSearch placeholder="Select">
-                              {(sizes || []).map((item: any) => (
-                                <Select.Option key={item.id} value={item.id}>
-                                  {`${item.id} ${item.name}`}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </td>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "stockQty"]}
+                    label={
+                      <span className="flex items-center gap-1 text-xs font-medium text-global-primary">
+                        <FiPackage className="w-3 h-3 text-global-secondary" />
+                        Stock Qty <span className="text-red-500">*</span>
+                      </span>
+                    }
+                    rules={[{ required: true, message: "Required" }]}
+                    className="!mb-0"
+                  >
+                    <InputNumber
+                      placeholder="0"
+                      min={0}
+                      className="!w-full"
+                      size="middle"
+                    />
+                  </Form.Item>
+                </div>
 
-                        <td>
-                          <Form.Item {...restField} name={[name, "colorId"]}>
-                            <Select allowClear showSearch placeholder="Select">
-                              {(colors || []).map((item: any) => (
-                                <Select.Option key={item.id} value={item.id}>
-                                  {`${item.id} ${item.name}`}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        </td>
+                {/* Attributes row */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                  <Form.Item
+                    {...restField}
+                    name={[name, "sizeId"]}
+                    label={
+                      <span className="text-xs font-medium text-global-primary">
+                        Size
+                      </span>
+                    }
+                    className="!mb-0"
+                  >
+                    <Select allowClear showSearch placeholder="Select size" size="middle">
+                      {(sizes || []).map((item: any) => (
+                        <Select.Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
 
-                        <td>
-                          <Form.Item {...restField} name={[name, "material"]}>
-                            <Input placeholder="Enter" />
-                          </Form.Item>
-                        </td>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "colorId"]}
+                    label={
+                      <span className="text-xs font-medium text-global-primary">
+                        Color
+                      </span>
+                    }
+                    className="!mb-0"
+                  >
+                    <Select allowClear showSearch placeholder="Select color" size="middle">
+                      {(colors || []).map((item: any) => (
+                        <Select.Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
 
-                        <td>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "stockQty"]}
-                            rules={[{ required: true, message: "Stock Qty" }]}
-                          >
-                            <InputNumber
-                              placeholder="Enter"
-                              min={1}
-                              className="!w-full"
-                            />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2">
-                          <Form.Item
-                            {...restField}
-                            name={[name, "default"]}
-                            valuePropName="checked"
-                          >
-                            <Checkbox
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  fields.forEach((field, index) => {
-                                    if (index !== key) {
-                                      form.setFields([
-                                        {
-                                          name: [
-                                            "productVariants",
-                                            index,
-                                            "default",
-                                          ],
-                                          value: false,
-                                        },
-                                      ]);
-                                    }
-                                  });
-                                }
-                              }}
-                            />
-                          </Form.Item>
-                        </td>
-                        <td>
-                          <Form.Item>
-                            <MinusCircleOutlined onClick={() => remove(name)} />
-                          </Form.Item>
-                        </td>
-                      </tr>
-                    </tbody>
-                  ))}
-                </table>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "material"]}
+                    label={
+                      <span className="text-xs font-medium text-global-primary">
+                        Material
+                      </span>
+                    }
+                    className="!mb-0"
+                  >
+                    <Input placeholder="e.g. Cotton" size="middle" />
+                  </Form.Item>
+                </div>
+
+                {/* Default variant toggle */}
+                <div className="flex items-center gap-2 pt-2 border-t border-global-primary">
+                  <Form.Item
+                    {...restField}
+                    name={[name, "default"]}
+                    valuePropName="checked"
+                    className="!mb-0"
+                  >
+                    <Checkbox
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          fields.forEach((field, idx) => {
+                            if (idx !== key) {
+                              form.setFields([
+                                {
+                                  name: ["productVariants", idx, "default"],
+                                  value: false,
+                                },
+                              ]);
+                            }
+                          });
+                        }
+                      }}
+                    >
+                      <span className="text-xs text-global-primary font-medium">
+                        Set as default variant
+                      </span>
+                    </Checkbox>
+                  </Form.Item>
+                </div>
               </div>
+            ))}
+
+            {fields.length === 0 && (
+              <button
+                type="button"
+                onClick={() => add()}
+                className="w-full rounded-xl border-2 border-dashed border-global-primary py-6 flex flex-col items-center gap-2 text-global-secondary hover:border-global-secondary hover:text-global-primary transition-colors"
+              >
+                <PlusOutlined className="text-xl" />
+                <span className="text-sm font-medium">Add First Variant</span>
+              </button>
             )}
-          </Form.List>
-        </div>
-      )}
+          </div>
+        )}
+      </Form.List>
     </div>
   );
 }

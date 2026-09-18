@@ -1,50 +1,104 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import {
-  getProduct,
-  saveProduct,
-  updateProduct,
+    getProduct,
+    saveProduct,
+    updateProduct,
 } from "@/lib/apis/admin/product";
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { generateFile } from "@/lib/utils/imageSetFile";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Skeleton } from "antd";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { FiArrowLeft, FiBox, FiRefreshCw, FiSave } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
 const ProductRightTopSection = dynamic(
   () => import("./ProductRightTopSection"),
   {
     ssr: false,
-    loading: () => "Product Right Top Section............",
+    loading: () => (
+      <div className="space-y-4 p-2">
+        <Skeleton active paragraph={{ rows: 5 }} />
+      </div>
+    ),
   }
 );
 const ProductTopSecton = dynamic(() => import("./ProductTopSecton"), {
   ssr: false,
-  loading: () => "Product Top Sectoin............",
+  loading: () => (
+    <div className="space-y-4 p-2">
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </div>
+  ),
 });
 const TaxDiscountSectoin = dynamic(() => import("./TaxDiscountSectoin"), {
   ssr: false,
-  loading: () => "TaxDiscount Sectoin............",
+  loading: () => (
+    <div className="space-y-4 p-2">
+      <Skeleton active paragraph={{ rows: 2 }} />
+    </div>
+  ),
 });
 
 const WithOutVariant = dynamic(() => import("./WithOutVariant"), {
   ssr: false,
-  loading: () => "With Out Variant............",
+  loading: () => (
+    <div className="space-y-4 p-2">
+      <Skeleton active paragraph={{ rows: 3 }} />
+    </div>
+  ),
 });
 const ImageUpload = dynamic(() => import("./ImageUpload"), {
   ssr: false,
-  loading: () => "Image Upload............",
+  loading: () => (
+    <div className="space-y-4 p-2">
+      <Skeleton active paragraph={{ rows: 3 }} />
+    </div>
+  ),
 });
 
 const ProductVariant = dynamic(() => import("./ProductVariant"), {
   ssr: false,
-  loading: () => "new product ProductVariant............",
+  loading: () => (
+    <div className="space-y-4 p-2">
+      <Skeleton active paragraph={{ rows: 4 }} />
+    </div>
+  ),
 });
+
+// Section card wrapper with accent border
+function SectionCard({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-global-primary rounded-2xl shadow-sm border border-global-primary p-6 lg:p-8">
+      <div className="flex items-start gap-3 mb-6 pb-4 border-b border-global-primary">
+        <div className="w-1 h-8 rounded-full bg-global-secondary shrink-0 mt-0.5" />
+        <div>
+          <h2 className="text-base font-semibold text-global-primary leading-tight">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-xs text-global-secondary mt-0.5">{subtitle}</p>
+          )}
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
 
 const AddProduct = ({
   sizes,
@@ -66,17 +120,12 @@ const AddProduct = ({
     fileThumbnailList: [],
   }) as any;
 
-  // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  // const params = useParams<{ new: string }>();
   const route = useRouter();
 
   const fetchData = useCallback(async () => {
-   
-
-
     try {
       if (!productId) {
         form.resetFields();
@@ -89,7 +138,6 @@ const AddProduct = ({
         const result = await getProduct(id);
         const productData = { ...result.data };
 
-        // Populate variant data if no variant is selected
         if (!productData.variant && productData.productVariants?.length) {
           const [firstVariant] = productData.productVariants;
           Object.assign(productData, {
@@ -100,12 +148,10 @@ const AddProduct = ({
           });
         }
 
-        // Map categories
         const productCategories = productData.productCategories?.map(
           (category: any) => category.categoryId
         );
 
-        // Handle images, thumbnails, and hover images
         productData.fileList =
           productData.images?.map((image: string, idx: number) =>
             generateFile(image, idx)
@@ -123,7 +169,6 @@ const AddProduct = ({
           ];
         }
 
-        // Update form and state
         form.setFieldsValue({
           ...productData,
           productCategories,
@@ -135,16 +180,10 @@ const AddProduct = ({
     } catch (err) {
       console.error("Error fetching product data:", err);
     }
-    //  finally {
-    //   dispatch(setLoading({}));
-    // }
   }, [form, productId]);
 
   useEffect(() => {
-    // dispatch(setLoading({ loading: true }));
-    // Call the async function
     fetchData();
-    // Cleanup function
     return () => {
       if (!productId) {
         form.resetFields();
@@ -156,9 +195,6 @@ const AddProduct = ({
   const handleSubmit = async () => {
     const newData = await form.validateFields();
 
-    // console.log("newData", newData);
-
-    // return
     delete newData.fileList;
     delete newData.fileThumbnailList;
     delete newData.fileHoverList;
@@ -174,8 +210,6 @@ const AddProduct = ({
     }
 
     newData.tags = tags;
-
-    // return console.log("ee", newData);
 
     const result = newData.id
       ? () => updateProduct(newData)
@@ -239,40 +273,73 @@ const AddProduct = ({
     dispatch(setLoading({ save: false }));
   };
 
+  const isEditing = !!product?.id;
 
   return (
     <>
-      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 font-global-primary-fontfamily">
-              {product?.id ? "Edit Product" : "Create Product"}
-            </h1>
-            <p className="text-gray-500 mt-1">Manage your product details, pricing, and media.</p>
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {/* ── Page Header ── */}
+        <div className="mb-8">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm text-global-secondary mb-3">
+            <Link
+              href="/dashboard/product"
+              className="flex items-center gap-1 hover:text-global-primary transition-colors"
+            >
+              <FiArrowLeft className="w-3.5 h-3.5" />
+              Products
+            </Link>
+            <span>/</span>
+            <span className="text-global-primary font-medium">
+              {isEditing ? "Edit Product" : "New Product"}
+            </span>
           </div>
-          <div className="flex gap-3">
-            <Button
-              size="large"
-              onClick={() => resetFormData(product)}
-              className="!border-gray-300 !text-gray-600 hover:!text-gray-900 hover:!border-gray-400"
-              style={{ borderRadius: "var(--button-border-radius)" }}
-            >
-              Reset Changes
-            </Button>
-            <Button
-              size="large"
-              type="primary"
-              onClick={handleSubmit}
-              loading={global.loading.save}
-              disabled={global.loading.save}
-              className="!border-none !px-8 !font-medium"
-              style={{ borderRadius: "var(--button-border-radius)" }}
-            >
-              {product?.id ? "Update Product" : "Save Product"}
-            </Button>
+
+          {/* Title + Actions */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-global-secondary/10 flex items-center justify-center shrink-0">
+                <FiBox className="w-5 h-5 text-global-secondary" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-global-primary leading-tight break-words">
+                  {isEditing ? "Edit Product" : "Create New Product"}
+                </h1>
+                <p className="text-sm text-global-secondary mt-0.5">
+                  {isEditing
+                    ? "Update product details, pricing, and media."
+                    : "Fill in details below to publish a new product."}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <Button
+                size="large"
+                icon={<FiRefreshCw className="w-4 h-4" />}
+                onClick={() => resetFormData(product)}
+                className="!border-global-primary !text-global-primary hover:!bg-global-secondary/10 flex items-center gap-1.5"
+                style={{ borderRadius: "var(--button-border-radius)" }}
+              >
+                Reset
+              </Button>
+              <Button
+                size="large"
+                type="primary"
+                icon={<FiSave className="w-4 h-4" />}
+                onClick={handleSubmit}
+                loading={global.loading.save}
+                disabled={global.loading.save}
+                className="!border-none !px-6 !font-medium flex items-center gap-1.5"
+                style={{ borderRadius: "var(--button-border-radius)" }}
+              >
+                {isEditing ? "Update Product" : "Save Product"}
+              </Button>
+            </div>
           </div>
         </div>
 
+        {/* ── Form ── */}
         <Form
           layout="vertical"
           form={form}
@@ -288,7 +355,7 @@ const AddProduct = ({
             hoverImage: "",
             fileHoverList: [],
           }}
-          className="space-y-8"
+          className="space-y-6"
         >
           <Form.Item name="id" hidden>
             <Input />
@@ -297,44 +364,49 @@ const AddProduct = ({
             <Input />
           </Form.Item>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            {/* Left Column - Main Info */}
-            <div className="lg:col-span-3 space-y-8">
-              {/* Basic Details Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Basic Information</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* ── Left Column ── */}
+            <div className="lg:col-span-3 space-y-6">
+              <SectionCard
+                title="Basic Information"
+                subtitle="Product name, slug, and description"
+              >
                 <ProductTopSecton form={form} />
-              </div>
+              </SectionCard>
 
-              {/* Pricing & Tax Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Pricing & Tax</h2>
+              <SectionCard
+                title="Pricing & Tax"
+                subtitle="Apply tax rate and optional discount"
+              >
                 <TaxDiscountSectoin discounts={discounts} taxs={taxs} />
-              </div>
+              </SectionCard>
 
-              {/* Inventory Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Inventory</h2>
+              <SectionCard
+                title="Inventory"
+                subtitle="Stock quantities and variant options"
+              >
                 <WithOutVariant form={form} />
-              </div>
+              </SectionCard>
 
-              {/* Variants Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Product Variants</h2>
+              <SectionCard
+                title="Product Variants"
+                subtitle="Size, color, material and pricing per variant"
+              >
                 <ProductVariant
                   formValues={formValues}
                   form={form}
                   sizes={sizes}
                   colors={colors}
                 />
-              </div>
+              </SectionCard>
             </div>
 
-            {/* Right Column - Sidebar */}
-            <div className="lg:col-span-1 space-y-8">
-              {/* Organization Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Organization</h2>
+            {/* ── Right Sidebar ── */}
+            <div className="lg:col-span-1 space-y-6">
+              <SectionCard
+                title="Organization"
+                subtitle="Status, category, brand & tags"
+              >
                 <ProductRightTopSection
                   inputValue={inputValue}
                   setInputValue={setInputValue}
@@ -344,16 +416,49 @@ const AddProduct = ({
                   tags={tags}
                   setTags={setTags}
                 />
-              </div>
+              </SectionCard>
 
-              {/* Media Card */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-                <h2 className="text-xl font-bold mb-6 text-gray-800 border-b border-gray-100 pb-4">Media</h2>
+              <SectionCard
+                title="Media"
+                subtitle="Thumbnail, hover, and gallery images"
+              >
                 <ImageUpload
                   formValues={formValues}
                   form={form}
                   setFormValues={setFormValues}
                 />
+              </SectionCard>
+            </div>
+          </div>
+
+          {/* ── Bottom Action Bar ── */}
+          <div className="sticky bottom-4 z-10">
+            <div className="bg-global-primary border border-global-primary rounded-2xl shadow-lg px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <p className="text-sm text-global-secondary">
+                All required fields must be completed before saving.
+              </p>
+              <div className="flex items-center gap-3">
+                <Button
+                  size="large"
+                  icon={<FiRefreshCw className="w-4 h-4" />}
+                  onClick={() => resetFormData(product)}
+                  className="!border-global-primary !text-global-primary flex items-center gap-1.5"
+                  style={{ borderRadius: "var(--button-border-radius)" }}
+                >
+                  Reset
+                </Button>
+                <Button
+                  size="large"
+                  type="primary"
+                  icon={<FiSave className="w-4 h-4" />}
+                  onClick={handleSubmit}
+                  loading={global.loading.save}
+                  disabled={global.loading.save}
+                  className="!border-none !px-8 !font-semibold flex items-center gap-1.5"
+                  style={{ borderRadius: "var(--button-border-radius)" }}
+                >
+                  {isEditing ? "Update Product" : "Save Product"}
+                </Button>
               </div>
             </div>
           </div>
