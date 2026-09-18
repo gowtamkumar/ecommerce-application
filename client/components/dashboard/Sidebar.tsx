@@ -2,7 +2,6 @@
 import { navbarRoute } from "@/NavBarRoute";
 import {
     selectLayout,
-    setCollapsed,
     setOpen,
     setScreenWidth,
 } from "@/redux/features/layout/layoutSlice";
@@ -153,7 +152,6 @@ const Sidebar = () => {
         trigger={null}
         collapsible
         collapsed={layout.collapsed}
-        onCollapse={(value) => dispatch(setCollapsed(value))}
         hidden={layout.screenWidth <= 820}
         width={260}
         collapsedWidth={80}
