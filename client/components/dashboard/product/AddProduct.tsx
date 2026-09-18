@@ -27,7 +27,7 @@ const ProductRightTopSection = dynamic(
         <Skeleton active paragraph={{ rows: 5 }} />
       </div>
     ),
-  }
+  },
 );
 const ProductTopSecton = dynamic(() => import("./ProductTopSecton"), {
   ssr: false,
@@ -83,16 +83,14 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-global-primary rounded-2xl shadow-sm border border-global-primary p-6 lg:p-8">
-      <div className="flex items-start gap-3 mb-6 pb-4 border-b border-global-primary">
-        <div className="w-1 h-8 rounded-full bg-global-secondary shrink-0 mt-0.5" />
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 lg:p-8">
+      <div className="flex items-start gap-3 mb-6 pb-4 border-b border-gray-100">
+        <div className="w-1 h-8 rounded-full bg-gray-800 shrink-0 mt-0.5" />
         <div>
           <h2 className="text-base font-semibold text-global-primary leading-tight">
             {title}
           </h2>
-          {subtitle && (
-            <p className="text-xs text-global-secondary mt-0.5">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-xs text-global-secondary mt-0.5">{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -149,12 +147,12 @@ const AddProduct = ({
         }
 
         const productCategories = productData.productCategories?.map(
-          (category: any) => category.categoryId
+          (category: any) => category.categoryId,
         );
 
         productData.fileList =
           productData.images?.map((image: string, idx: number) =>
-            generateFile(image, idx)
+            generateFile(image, idx),
           ) || [];
 
         if (productData.thumbnailImage) {
@@ -298,7 +296,7 @@ const AddProduct = ({
           {/* Title + Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-global-secondary/10 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
                 <FiBox className="w-5 h-5 text-global-secondary" />
               </div>
               <div>
@@ -318,7 +316,7 @@ const AddProduct = ({
                 size="large"
                 icon={<FiRefreshCw className="w-4 h-4" />}
                 onClick={() => resetFormData(product)}
-                className="!border-global-primary !text-global-primary hover:!bg-global-secondary/10 flex items-center gap-1.5"
+                className="!border-gray-300 !text-global-secondary hover:!border-gray-400 hover:!text-global-primary flex items-center gap-1.5"
                 style={{ borderRadius: "var(--button-border-radius)" }}
               >
                 Reset
@@ -433,7 +431,7 @@ const AddProduct = ({
 
           {/* ── Bottom Action Bar ── */}
           <div className="sticky bottom-4 z-10">
-            <div className="bg-global-primary border border-global-primary rounded-2xl shadow-lg px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
               <p className="text-sm text-global-secondary">
                 All required fields must be completed before saving.
               </p>
@@ -442,7 +440,7 @@ const AddProduct = ({
                   size="large"
                   icon={<FiRefreshCw className="w-4 h-4" />}
                   onClick={() => resetFormData(product)}
-                  className="!border-global-primary !text-global-primary flex items-center gap-1.5"
+                  className="!border-gray-300 !text-global-secondary hover:!border-gray-400 hover:!text-global-primary flex items-center gap-1.5"
                   style={{ borderRadius: "var(--button-border-radius)" }}
                 >
                   Reset
@@ -454,7 +452,7 @@ const AddProduct = ({
                   onClick={handleSubmit}
                   loading={global.loading.save}
                   disabled={global.loading.save}
-                  className="!border-none !px-8 !font-semibold flex items-center gap-1.5"
+                  className="px-8 font-semibold flex items-center gap-1.5"
                   style={{ borderRadius: "var(--button-border-radius)" }}
                 >
                   {isEditing ? "Update Product" : "Save Product"}

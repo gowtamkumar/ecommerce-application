@@ -43,7 +43,7 @@ export default function ProductVariant({
               icon={<PlusOutlined />}
               onClick={() => add()}
               disabled={productType === "SimpleProduct" && variants?.length === 1}
-              className="!border-global-primary !text-global-primary flex items-center gap-1"
+              className="!border-gray-400 !text-gray-600 hover:!border-gray-600 hover:!text-global-primary flex items-center gap-1"
               style={{ borderRadius: "var(--button-border-radius)" }}
             >
               Add Variant
@@ -59,7 +59,7 @@ export default function ProductVariant({
             {fields.map(({ key, name, ...restField }, index) => (
               <div
                 key={key}
-                className="relative border border-global-primary rounded-xl p-4 bg-global-secondary/5"
+                className="relative border border-gray-200 rounded-xl p-4 bg-gray-50"
               >
                 {/* Variant badge + remove */}
                 <div className="flex items-center justify-between mb-3">
@@ -209,7 +209,7 @@ export default function ProductVariant({
                 </div>
 
                 {/* Default variant toggle */}
-                <div className="flex items-center gap-2 pt-2 border-t border-global-primary">
+                <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
                   <Form.Item
                     {...restField}
                     name={[name, "default"]}
@@ -245,7 +245,7 @@ export default function ProductVariant({
               <button
                 type="button"
                 onClick={() => add()}
-                className="w-full rounded-xl border-2 border-dashed border-global-primary py-6 flex flex-col items-center gap-2 text-global-secondary hover:border-global-secondary hover:text-global-primary transition-colors"
+                className="w-full rounded-xl border-2 border-dashed border-gray-300 py-6 flex flex-col items-center gap-2 text-gray-400 hover:border-gray-500 hover:text-gray-600 transition-colors"
               >
                 <PlusOutlined className="text-xl" />
                 <span className="text-sm font-medium">Add First Variant</span>

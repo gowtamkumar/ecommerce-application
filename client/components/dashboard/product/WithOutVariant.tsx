@@ -47,9 +47,9 @@ export default function WithOutVariant({ form }: any) {
       </div>
 
       {/* Variant toggle card */}
-      <div className="flex items-center justify-between rounded-xl border border-global-primary bg-global-secondary/5 px-4 py-3">
+      <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-global-secondary/10 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
             <FiLayers className="w-4 h-4 text-global-secondary" />
           </div>
           <div>

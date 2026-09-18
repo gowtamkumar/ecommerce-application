@@ -174,7 +174,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
         <p className="text-xs text-global-secondary mb-3">
           Upload up to 5 images. Drag to reorder. Recommended: 800×800px.
         </p>
-        <div className="border-2 border-dashed border-global-primary/40 rounded-xl p-3 hover:border-global-secondary/60 transition-colors">
+        <div className="border-2 border-dashed border-gray-200 rounded-xl p-3 hover:border-gray-400 transition-colors">
           <Form.Item
             name="fileList"
             valuePropName="fileList"

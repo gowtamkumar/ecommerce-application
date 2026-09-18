@@ -23,9 +23,9 @@ function FlagToggleCard({
   description: string;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-global-primary bg-global-secondary/5 px-3 py-2.5 gap-2">
+    <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 gap-2">
       <div className="flex items-center gap-2.5 min-w-0">
-        <div className="w-8 h-8 rounded-lg bg-global-secondary/10 flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-global-secondary" />
         </div>
         <div className="min-w-0">
