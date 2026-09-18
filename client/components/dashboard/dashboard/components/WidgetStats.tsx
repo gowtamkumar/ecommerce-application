@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
-import { Card, Statistic } from "antd";
 import { useCurrency } from "@/context/CurrencyContext";
+import { Card, Statistic } from "antd";
+import React from "react";
 
 interface WidgetStatsProps {
   title: string;
@@ -10,7 +10,7 @@ interface WidgetStatsProps {
   color?: string;
 }
 
-const WidgetStats: React.FC<WidgetStatsProps> = ({ title, value, icon, color }: any) => {
+const WidgetStats: React.FC<WidgetStatsProps> = ({ title, value, icon }: WidgetStatsProps) => {
   const { formatPrice } = useCurrency();
   
   // const formatter = (value: any) => <CountUp end={value} separator="," />;

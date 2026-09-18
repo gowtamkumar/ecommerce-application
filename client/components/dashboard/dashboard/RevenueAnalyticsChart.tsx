@@ -1,31 +1,60 @@
 "use client";
 import { useCurrency } from "@/context/CurrencyContext";
-import { Card, Radio, Typography } from "antd";
+import { Radio } from "antd";
 import { useState } from "react";
+import { FiCreditCard } from "react-icons/fi";
 import {
-    Area,
-    AreaChart,
     Bar,
     BarChart,
     CartesianGrid,
-    Legend,
+    Cell,
     ResponsiveContainer,
     Tooltip,
     XAxis,
     YAxis,
 } from "recharts";
 
-const { Text } = Typography;
-
 interface RevenueAnalyticsChartProps {
   dashboardReports: any;
 }
+
+const CustomTooltip = ({ active, payload, label, data, formatPrice }: any) => {
+  if (active && payload && payload.length) {
+    const current = (data || []).find((d: any) => d.stage === label);
+    return (
+      <div className="bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-gray-100 text-xs">
+        <p className="font-extrabold text-gray-900 mb-1.5 flex items-center gap-2">
+          <span
+            className="w-2.5 h-2.5 rounded-full"
+            style={{ backgroundColor: current?.color || "#3b82f6" }}
+          />
+          {label} Orders
+        </p>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-6 text-gray-600">
+            <span>Gross Value:</span>
+            <span className="font-bold text-gray-900">
+              {formatPrice(current?.revenue || 0)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-6 text-gray-600">
+            <span>Total Orders:</span>
+            <span className="font-bold text-gray-900">
+              {current?.orders || 0} orders
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function RevenueAnalyticsChart({
   dashboardReports,
 }: RevenueAnalyticsChartProps) {
   const { formatPrice } = useCurrency();
-  const [chartView, setChartView] = useState<"area" | "bar">("area");
+  const [metric, setMetric] = useState<"revenue" | "orders">("revenue");
 
   const {
     total_delivered_order_amount = 0,
@@ -39,165 +68,236 @@ export default function RevenueAnalyticsChart({
     total_processing_order_count = 0,
     total_pending_order_count = 0,
     total_canceled_order_count = 0,
+
+    payments = {},
   } = dashboardReports || {};
 
-  // Construct chart data based on fulfillment stages
+  const STAGE_COLORS = {
+    Pending: "#f59e0b",
+    Processing: "#3b82f6",
+    Shipped: "#6366f1",
+    Delivered: "var(--global-primary)",
+    Canceled: "#f43f5e",
+  };
+
   const data = [
     {
       stage: "Pending",
       revenue: Number(total_pending_order_amount) || 0,
       orders: Number(total_pending_order_count) || 0,
+      color: STAGE_COLORS.Pending,
     },
     {
       stage: "Processing",
       revenue: Number(total_processing_order_amount) || 0,
       orders: Number(total_processing_order_count) || 0,
+      color: STAGE_COLORS.Processing,
     },
     {
       stage: "Shipped",
       revenue: Number(total_shipped_order_amount) || 0,
       orders: Number(total_shipped_order_count) || 0,
+      color: STAGE_COLORS.Shipped,
     },
     {
       stage: "Delivered",
       revenue: Number(total_delivered_order_amount) || 0,
       orders: Number(total_delivered_order_count) || 0,
+      color: STAGE_COLORS.Delivered,
     },
     {
       stage: "Canceled",
       revenue: Number(total_canceled_order_amount) || 0,
       orders: Number(total_canceled_order_count) || 0,
+      color: STAGE_COLORS.Canceled,
     },
   ];
 
   const totalGrossRevenue = data.reduce((acc, curr) => acc + curr.revenue, 0);
   const totalOrdersCount = data.reduce((acc, curr) => acc + curr.orders, 0);
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-gray-100 text-xs">
-          <p className="font-extrabold text-gray-900 mb-1">{label} Stage</p>
-          <div className="space-y-1">
-            <p className="text-blue-600 font-bold flex items-center justify-between gap-4">
-              <span>Revenue:</span>
-              <span>{formatPrice(payload[0]?.value || 0)}</span>
-            </p>
-            {payload[1] && (
-              <p className="text-purple-600 font-bold flex items-center justify-between gap-4">
-                <span>Orders:</span>
-                <span>{payload[1]?.value} units</span>
-              </p>
-            )}
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
+  // Payment method calculations
+  const codAmount = Number(payments?.cash_debit_amount) || 0;
+  const sslAmount = Number(payments?.ssl_debit_amount) || 0;
+  const totalCollections = codAmount + sslAmount;
+  const digitalPercent =
+    totalCollections > 0 ? Math.round((sslAmount / totalCollections) * 100) : 0;
+  const codPercent = totalCollections > 0 ? 100 - digitalPercent : 0;
 
   return (
-    <Card
-      variant="borderless"
-      className="shadow-sm rounded-2xl border border-gray-100 p-2 sm:p-4 bg-white"
-    >
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Left: Interactive Fulfillment Distribution Chart (8 cols) */}
+      <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
         <div>
-          <h2 className="text-lg font-black text-gray-900 tracking-tight">
-            Revenue & Order Pipeline
-          </h2>
-          <p className="text-xs text-gray-400 font-medium mt-0.5">
-            Real-time breakdown of volume and gross transaction value by stage
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-4 mr-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
             <div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold block">Pipeline Total</span>
-              <span className="text-sm font-black text-blue-600">{formatPrice(totalGrossRevenue)}</span>
+              <h2 className="text-lg font-bold text-gray-900 tracking-tight">
+                Fulfillment Distribution & Value
+              </h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Comparison of pipeline revenue vs volume across order fulfillment stages
+              </p>
             </div>
-            <div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold block">Total Orders</span>
-              <span className="text-sm font-black text-purple-600">{totalOrdersCount}</span>
+
+            <div className="flex items-center gap-3">
+              <Radio.Group
+                value={metric}
+                onChange={(e) => setMetric(e.target.value)}
+                size="small"
+                buttonStyle="solid"
+              >
+                <Radio.Button value="revenue">Gross Value ($)</Radio.Button>
+                <Radio.Button value="orders">Volume (Units)</Radio.Button>
+              </Radio.Group>
             </div>
           </div>
 
-          <Radio.Group
-            value={chartView}
-            onChange={(e) => setChartView(e.target.value)}
-            size="small"
-            buttonStyle="solid"
-          >
-            <Radio.Button value="area">Area</Radio.Button>
-            <Radio.Button value="bar">Bar</Radio.Button>
-          </Radio.Group>
+          {/* Chart View */}
+          <div className="h-72 w-full pt-3">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={data}
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f1f5f9"
+                />
+                <XAxis
+                  dataKey="stage"
+                  stroke="#94a3b8"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={{ stroke: "#e2e8f0" }}
+                />
+                <YAxis
+                  stroke="#94a3b8"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) =>
+                    metric === "revenue"
+                      ? `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`
+                      : `${v}`
+                  }
+                />
+                <Tooltip
+                  content={(props) => (
+                    <CustomTooltip
+                      {...props}
+                      data={data}
+                      formatPrice={formatPrice}
+                    />
+                  )}
+                />
+                <Bar
+                  dataKey={metric}
+                  name={metric === "revenue" ? "Gross Value" : "Units"}
+                  radius={[8, 8, 0, 0]}
+                >
+                  {data.map((entry) => (
+                    <Cell key={`cell-${entry.stage}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Chart Summary Footnote */}
+        <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+          <span>
+            Pipeline Total:{" "}
+            <strong className="text-gray-900">
+              {formatPrice(totalGrossRevenue)}
+            </strong>
+          </span>
+          <span>
+            Total Volume:{" "}
+            <strong className="text-gray-900">{totalOrdersCount} orders</strong>
+          </span>
         </div>
       </div>
 
-      <div className="h-72 w-full pt-2">
-        <ResponsiveContainer width="100%" height="100%">
-          {chartView === "area" ? (
-            <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="stage" stroke="#94a3b8" fontSize={11} tickLine={false} />
-              <YAxis
-                stroke="#94a3b8"
-                fontSize={11}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                name="Revenue"
-                stroke="#2563eb"
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#colorRevenue)"
-              />
-              <Area
-                type="monotone"
-                dataKey="orders"
-                name="Orders"
-                stroke="#8b5cf6"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorOrders)"
-              />
-            </AreaChart>
-          ) : (
-            <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="stage" stroke="#94a3b8" fontSize={11} tickLine={false} />
-              <YAxis
-                stroke="#94a3b8"
-                fontSize={11}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
-              <Bar dataKey="revenue" name="Revenue" fill="#2563eb" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="orders" name="Order Volume" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          )}
-        </ResponsiveContainer>
+      {/* Right: Payment Gateways & Collections (4 cols) */}
+      <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900 tracking-tight">
+              Payment Gateways
+            </h2>
+            <div className="w-8 h-8 rounded-lg bg-global-primary/15 text-global-primary flex items-center justify-center text-sm font-bold">
+              <FiCreditCard />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mb-6">
+            Settlement and collection breakdown across active payment methods
+          </p>
+
+          {/* Total Collections Box */}
+          <div className="p-4 rounded-xl bg-gradient-to-br from-global-primary to-global-hover text-white shadow-md shadow-global-primary/20 mb-5">
+            <span className="text-xs font-semibold text-white/90 uppercase tracking-wider block">
+              Total Realized Collections
+            </span>
+            <div className="text-2xl font-black mt-1">
+              {formatPrice(totalCollections)}
+            </div>
+            <div className="text-[11px] text-white/80 mt-1 flex items-center gap-1">
+              <span>Debit settlements credited in period</span>
+            </div>
+          </div>
+
+          {/* Payment Gateways Breakdown */}
+          <div className="space-y-4">
+            {/* SSLCommerz / Digital */}
+            <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                <span className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                  SSLCommerz (Online Gateway)
+                </span>
+                <span>{formatPrice(sslAmount)}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
+                <span>Share of collections</span>
+                <span className="font-bold text-blue-600">{digitalPercent}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1.5 overflow-hidden">
+                <div
+                  className="bg-blue-600 h-full rounded-full"
+                  style={{ width: `${digitalPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Cash on Delivery (COD) */}
+            <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                <span className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-global-primary" />
+                  Cash on Delivery (COD)
+                </span>
+                <span>{formatPrice(codAmount)}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
+                <span>Share of collections</span>
+                <span className="font-bold text-global-primary">{codPercent}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1.5 overflow-hidden">
+                <div
+                  className="bg-global-primary h-full rounded-full"
+                  style={{ width: `${codPercent}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-gray-100 text-center text-xs text-gray-400">
+          Reconciliation matches connected payment accounts
+        </div>
       </div>
-    </Card>
+    </div>
   );
 }
-

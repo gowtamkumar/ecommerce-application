@@ -1,9 +1,10 @@
 "use client";
 import EnterpriseTable, { renderStatusTag } from "@/components/dashboard/shared/EnterpriseTable";
 import { useCurrency } from "@/context/CurrencyContext";
-import { Avatar, Typography } from "antd";
+import { Avatar, Button, Typography } from "antd";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { FiArrowRight } from "react-icons/fi";
 
 const { Text } = Typography;
 
@@ -85,6 +86,17 @@ const DataTable = ({ orders }: any) => {
       columns={columns}
       dataSource={newOrders}
       pagination={{ pageSize: 5 }}
+      extraActions={
+        <Link href="/dashboard/orders">
+          <Button
+            size="small"
+            className="rounded-lg text-xs font-semibold border-gray-200 hover:border-global-primary hover:text-global-primary flex items-center gap-1"
+          >
+            <span>View All Orders</span>
+            <FiArrowRight className="text-xs" />
+          </Button>
+        </Link>
+      }
       exportFileName="recent-orders"
       searchPlaceholder="Filter orders..."
     />
