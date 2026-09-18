@@ -1,345 +1,485 @@
 "use client";
-import { getAuditLogs } from "@/lib/apis/audit-log";
+import AuditLogDetailModal from "@/components/dashboard/audit-log/AuditLogDetailModal";
+import AuditLogFilterBar from "@/components/dashboard/audit-log/AuditLogFilterBar";
+import AuditLogHeader, { AuditDatePreset } from "@/components/dashboard/audit-log/AuditLogHeader";
+import AuditLogKpiCards from "@/components/dashboard/audit-log/AuditLogKpiCards";
+import { getAuditLogs, getAuditLogStatistics } from "@/lib/apis/audit-log";
+import { getSettings } from "@/lib/apis/setting";
 import type { IAuditLog } from "@/lib/types/audit-log";
 import { errorNotification } from "@/lib/utils/notification";
-import { EyeOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
-import type { TableColumnsType } from "antd";
-import {
-  Button,
-  Card,
-  DatePicker,
-  Descriptions,
-  Input,
-  Modal,
-  Select,
-  Space,
-  Table,
-  Tag,
-} from "antd";
-import dayjs from "dayjs";
-import React, { useCallback, useEffect, useState } from "react";
+import { setSetting } from "@/redux/features/global/globalSlice";
+import { Avatar, Button, Table } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import dayjs, { Dayjs } from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { FiEye } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 
-const AuditLogList: React.FC = () => {
+dayjs.extend(relativeTime);
+
+export default function AuditLogList() {
   const [logs, setLogs] = useState<IAuditLog[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
+  const [stats, setStats] = useState<{
+    totalLogs: number;
+    byAction: { action: string; count: number }[];
+  }>({ totalLogs: 0, byAction: [] });
+
+  // Pagination & Filtering state
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(15);
+  const [search, setSearch] = useState<string>("");
+  const [action, setAction] = useState<string | undefined>(undefined);
+  const [resourceType, setResourceType] = useState<string | undefined>(undefined);
+  const [activePreset, setActivePreset] = useState<AuditDatePreset>("all");
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
+    null,
+    null,
+  ]);
+
+  // Live Auto-Refresh (every 20 seconds)
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(false);
+
+  // Inspector Modal State
   const [selectedLog, setSelectedLog] = useState<IAuditLog | null>(null);
-  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-  const { RangePicker } = DatePicker;
-  const { Option } = Select;
+  const dispatch = useDispatch();
 
-  // Filters
-  const [filters, setFilters] = useState({
-    action: undefined as string | undefined,
-    resourceType: undefined as string | undefined,
-    search: "",
-    startDate: undefined as string | undefined,
-    endDate: undefined as string | undefined,
-  });
+  // 1. Sync global store settings (theme variables) on mount
+  useEffect(() => {
+    const syncSettings = async () => {
+      try {
+        const setting = await getSettings();
+        if (setting?.data) {
+          dispatch(setSetting(setting.data));
+        }
+      } catch (e) {
+        console.error("Failed to sync settings:", e);
+      }
+    };
+    syncSettings();
+  }, [dispatch]);
 
-  const fetchLogs = useCallback(async () => {
-    setLoading(true);
+  // 2. Fetch statistics
+  const fetchStats = useCallback(async () => {
     try {
-      const response = await getAuditLogs({
-        ...filters,
-        page,
-        limit,
-      });
-      setLogs(response.data || []);
-      setTotal(response.total || 0);
-    } catch (error: any) {
-      errorNotification({
-        message: error.message || "Failed to fetch audit logs",
-      });
-    } finally {
-      setLoading(false);
+      const res = await getAuditLogStatistics(30);
+      if (res?.success && res.data) {
+        setStats({
+          totalLogs: res.data.totalLogs || 0,
+          byAction: res.data.byAction || [],
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to load audit statistics:", e);
     }
-  }, [filters, page, limit]);
+  }, []);
 
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  // 3. Main logs query - instantly reactive to any change
+  const fetchLogs = useCallback(
+    async (isSilent = false) => {
+      if (isSilent) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      try {
+        const params: any = {
+          page,
+          limit,
+        };
+
+        if (search && search.trim()) {
+          params.search = search.trim();
+        }
+        if (action) {
+          params.action = action;
+        }
+        if (resourceType) {
+          params.resourceType = resourceType;
+        }
+        if (dateRange[0]) {
+          params.startDate = dateRange[0].toISOString();
+        }
+        if (dateRange[1]) {
+          params.endDate = dateRange[1].toISOString();
+        }
+
+        const res = await getAuditLogs(params);
+        if (res.data) {
+          setLogs(res.data);
+          setTotal(res.total || 0);
+        }
+      } catch (err: any) {
+        console.error("Audit log fetch error:", err);
+        errorNotification({
+          message: err?.message || "Failed to load audit logs.",
+        });
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [page, limit, search, action, resourceType, dateRange]
+  );
+
+  // Trigger fetch on any filter or page change
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
 
-  const handleFilterChange = (key: string, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    setPage(1); // Reset to first page
+  // Auto-refresh interval (every 20s if enabled)
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(() => {
+      fetchLogs(true);
+      fetchStats();
+    }, 20000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, fetchLogs, fetchStats]);
+
+  // Handle Date Presets
+  const handlePresetChange = (preset: AuditDatePreset) => {
+    setActivePreset(preset);
+    setPage(1);
+
+    if (preset === "all") {
+      setDateRange([null, null]);
+    } else if (preset === "today") {
+      setDateRange([dayjs().startOf("day"), dayjs().endOf("day")]);
+    } else if (preset === "7d") {
+      setDateRange([dayjs().subtract(7, "day").startOf("day"), dayjs().endOf("day")]);
+    } else if (preset === "30d") {
+      setDateRange([dayjs().subtract(30, "day").startOf("day"), dayjs().endOf("day")]);
+    }
   };
 
-  const handleDateRangeChange = (dates: any) => {
-    if (dates) {
-      setFilters((prev) => ({
-        ...prev,
-        startDate: dates[0].toISOString(),
-        endDate: dates[1].toISOString(),
-      }));
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        startDate: undefined,
-        endDate: undefined,
-      }));
-    }
+  const handleRangeChange = (values: [Dayjs, Dayjs] | null) => {
+    setActivePreset(values ? "custom" : "all");
+    setDateRange(values ? [values[0].startOf("day"), values[1].endOf("day")] : [null, null]);
     setPage(1);
   };
 
-  const getActionColor = (action: string) => {
-    const colors: Record<string, string> = {
-      CREATE: "green",
-      UPDATE: "blue",
-      DELETE: "red",
-      LOGIN: "cyan",
-      LOGOUT: "default",
-      FAILED_LOGIN: "orange",
-    };
-    return colors[action] || "default";
+  const handleResetFilters = () => {
+    setSearch("");
+    setAction(undefined);
+    setResourceType(undefined);
+    setActivePreset("all");
+    setDateRange([null, null]);
+    setPage(1);
   };
 
-  const showDetails = (log: IAuditLog) => {
-    setSelectedLog(log);
-    setDetailsVisible(true);
+  const isFiltered = useMemo(() => {
+    return Boolean(
+      search ||
+        action ||
+        resourceType ||
+        activePreset !== "all" ||
+        dateRange[0] !== null
+    );
+  }, [search, action, resourceType, activePreset, dateRange]);
+
+  // Export CSV handler
+  const handleExportCSV = () => {
+    if (!logs || logs.length === 0) return;
+
+    const headers = [
+      "Log ID",
+      "Timestamp",
+      "User Name",
+      "User Email",
+      "Role",
+      "Action",
+      "Resource Type",
+      "Resource ID",
+      "Resource Name",
+      "HTTP Method",
+      "API Path",
+      "Client IP",
+    ];
+
+    const rows = logs.map((log) => [
+      `"${log.id || ""}"`,
+      `"${dayjs(log.createdAt).format("YYYY-MM-DD HH:mm:ss")}"`,
+      `"${(log.userName || "").replace(/"/g, '""')}"`,
+      `"${log.userEmail || ""}"`,
+      `"${log.userRole || ""}"`,
+      `"${log.action || ""}"`,
+      `"${log.resourceType || ""}"`,
+      `"${log.resourceId || ""}"`,
+      `"${(log.resourceName || "").replace(/"/g, '""')}"`,
+      `"${log.metadata?.method || ""}"`,
+      `"${(log.metadata?.path || "").replace(/"/g, '""')}"`,
+      `"${log.metadata?.ip || ""}"`,
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join(
+      "\n"
+    );
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `audit-logs-${dayjs().format("YYYY-MM-DD")}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const columns: TableColumnsType<IAuditLog> = [
+  const getActionTag = (act: string) => {
+    const a = (act || "").toUpperCase();
+    if (a === "CREATE") {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          CREATE
+        </span>
+      );
+    }
+    if (a === "UPDATE") {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-global-primary/10 text-global-primary border border-global-primary/30">
+          UPDATE
+        </span>
+      );
+    }
+    if (a === "DELETE") {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+          DELETE
+        </span>
+      );
+    }
+    if (a.includes("LOGIN")) {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          {act}
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-700">
+        {act}
+      </span>
+    );
+  };
+
+  const columns: ColumnsType<IAuditLog> = [
     {
       title: "Timestamp",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 180,
+      width: 170,
       render: (date: string) => (
         <div className="flex flex-col">
-          <span className="font-medium">
+          <span className="text-xs font-bold text-gray-900">
             {dayjs(date).format("MMM DD, YYYY")}
           </span>
-          <span className="text-xs text-gray-500">
-            {dayjs(date).format("HH:mm:ss")}
+          <span className="text-[11px] text-gray-400 font-medium">
+            {dayjs(date).format("HH:mm:ss")} ({dayjs(date).fromNow()})
           </span>
         </div>
       ),
     },
     {
-      title: "User",
-      dataIndex: "userName",
-      key: "userName",
+      title: "Actor / User",
+      key: "user",
       width: 200,
-      render: (name: string, record: IAuditLog) => (
-        <div className="flex flex-col">
-          <span className="font-semibold text-gray-900">{name}</span>
-          <span className="text-xs text-gray-500">{record.userRole}</span>
-        </div>
-      ),
+      render: (_, record: IAuditLog) => {
+        const initial = (record.userName || "U").charAt(0).toUpperCase();
+        return (
+          <div className="flex items-center gap-2.5">
+            <Avatar
+              size="small"
+              className="bg-global-primary/15 text-global-primary font-bold text-xs shrink-0"
+            >
+              {initial}
+            </Avatar>
+            <div className="min-w-0">
+              <span className="text-xs font-bold text-gray-900 block truncate">
+                {record.userName || "System Operator"}
+              </span>
+              <span className="text-[10px] text-gray-500 block">
+                {record.userRole || "Admin"}
+              </span>
+            </div>
+          </div>
+        );
+      },
     },
     {
       title: "Action",
       dataIndex: "action",
       key: "action",
-      width: 120,
-      render: (action: string) => (
-        <Tag color={getActionColor(action)} className="font-medium">
-          {action}
-        </Tag>
-      ),
+      width: 110,
+      render: (act: string) => getActionTag(act),
     },
     {
       title: "Resource",
       key: "resource",
-      width: 250,
+      width: 220,
       render: (_, record: IAuditLog) => (
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900">
-            {record.resourceType}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold text-gray-900">
+              {record.resourceType}
+            </span>
+            {record.resourceId && (
+              <span className="text-[10px] text-gray-400 font-mono">
+                #{record.resourceId}
+              </span>
+            )}
+          </div>
           {record.resourceName && (
-            <span className="text-sm text-gray-600">{record.resourceName}</span>
+            <span className="text-xs text-gray-600 line-clamp-1">
+              {record.resourceName}
+            </span>
           )}
         </div>
       ),
     },
     {
-      title: "Details",
-      key: "details",
-      width: 100,
+      title: "Endpoint & IP",
+      key: "endpoint",
+      width: 190,
+      render: (_, record: IAuditLog) => {
+        const method = record.metadata?.method || (record.action === "CREATE" ? "POST" : record.action === "DELETE" ? "DELETE" : "PUT");
+        return (
+          <div className="flex flex-col text-[11px]">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-gray-600 font-mono bg-gray-100 px-1.5 py-0.5 rounded">
+                {method}
+              </span>
+              <span className="text-gray-500 truncate max-w-[130px]" title={record.metadata?.path}>
+                {record.metadata?.path || "-"}
+              </span>
+            </div>
+            <span className="text-[10px] text-gray-400 font-mono mt-0.5">
+              {record.metadata?.ip || "Local/Loopback"}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      title: "Inspect",
+      key: "actions",
+      width: 90,
       align: "center",
       render: (_, record: IAuditLog) => (
         <Button
-          type="text"
           size="small"
-          icon={<EyeOutlined />}
-          onClick={() => showDetails(record)}
-          className="hover:!text-blue-600"
+          type="text"
+          onClick={() => {
+            setSelectedLog(record);
+            setModalOpen(true);
+          }}
+          className="rounded-lg text-xs font-semibold text-gray-700 hover:text-global-primary hover:border-global-primary flex items-center gap-1"
         >
-          View
+          <FiEye className="text-xs" />
+          <span>View</span>
         </Button>
       ),
     },
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Audit Logs</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Track all admin actions and system events
-          </p>
-        </div>
-      </div>
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* 1. Header with Controls & Presets */}
+      <AuditLogHeader
+        activePreset={activePreset}
+        dateRange={dateRange}
+        onPresetChange={handlePresetChange}
+        onRangeChange={handleRangeChange}
+        onRefresh={() => {
+          fetchLogs(true);
+          fetchStats();
+        }}
+        loading={loading}
+        refreshing={refreshing}
+        autoRefresh={autoRefresh}
+        onToggleAutoRefresh={setAutoRefresh}
+        totalLogs={stats.totalLogs || total}
+      />
 
-      {/* Filters */}
-      <Card className="shadow-sm">
-        <Space wrap size="middle" className="w-full">
-          <Input
-            prefix={<SearchOutlined className="text-gray-400" />}
-            placeholder="Search users or resources..."
-            className="w-64"
-            onChange={(e) => handleFilterChange("search", e.target.value)}
-            allowClear
-          />
+      {/* 2. Executive Telemetry KPI Cards */}
+      <AuditLogKpiCards
+        totalLogs={stats.totalLogs || total}
+        byAction={stats.byAction}
+        loading={loading}
+      />
 
-          <Select
-            placeholder="Action"
-            className="w-40"
-            onChange={(value) => handleFilterChange("action", value)}
-            allowClear
-          >
-            <Option value="CREATE">Create</Option>
-            <Option value="UPDATE">Update</Option>
-            <Option value="DELETE">Delete</Option>
-            <Option value="LOGIN">Login</Option>
-            <Option value="LOGOUT">Logout</Option>
-          </Select>
+      {/* 3. Instant Reactive Filter Bar */}
+      <AuditLogFilterBar
+        search={search}
+        action={action}
+        resourceType={resourceType}
+        onSearchChange={(val) => {
+          setSearch(val);
+          setPage(1);
+        }}
+        onActionChange={(val) => {
+          setAction(val);
+          setPage(1);
+        }}
+        onResourceTypeChange={(val) => {
+          setResourceType(val);
+          setPage(1);
+        }}
+        onResetFilters={handleResetFilters}
+        onExportCSV={handleExportCSV}
+        isFiltered={isFiltered}
+        totalFiltered={total}
+      />
 
-          <Select
-            placeholder="Resource Type"
-            className="w-48"
-            onChange={(value) => handleFilterChange("resourceType", value)}
-            allowClear
-          >
-            <Option value="Product">Product</Option>
-            <Option value="Order">Order</Option>
-            <Option value="User">User</Option>
-            <Option value="Category">Category</Option>
-            <Option value="Discount">Discount</Option>
-            <Option value="Coupon">Coupon</Option>
-          </Select>
-
-          <RangePicker
-            onChange={handleDateRangeChange}
-            format="YYYY-MM-DD"
-            className="w-72"
-          />
-
-          <Button type="primary" icon={<FilterOutlined />} onClick={fetchLogs}>
-            Apply Filters
-          </Button>
-        </Space>
-      </Card>
-
-      {/* Table */}
-      <Card className="shadow-sm">
+      {/* 4. Audit Log Table */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
         <Table
-          loading={loading}
+          loading={loading && !refreshing}
           columns={columns}
           dataSource={logs}
           rowKey="id"
           pagination={{
             current: page,
             pageSize: limit,
-            total: total,
-            onChange: (newPage, newPageSize) => {
-              setPage(newPage);
-              if (newPageSize !== limit) {
-                setLimit(newPageSize);
+            total,
+            size: "small",
+            showSizeChanger: true,
+            pageSizeOptions: ["10", "15", "25", "50", "100"],
+            onChange: (p, l) => {
+              setPage(p);
+              if (l !== limit) {
+                setLimit(l);
               }
             },
-            showSizeChanger: true,
-            showTotal: (total) => `Total ${total} logs`,
-
+            showTotal: (totalCount, range) => (
+              <span className="text-xs text-gray-500">
+                Showing <strong>{range[0]}-{range[1]}</strong> of <strong>{totalCount}</strong> logs
+              </span>
+            ),
           }}
-          scroll={{ x: 900 }}
-          className="modern-table"
+          scroll={{ x: 950 }}
+          className="overflow-x-auto"
         />
-      </Card>
+      </div>
 
-      {/* Details Modal */}
-      <Modal
-        title="Audit Log Details"
-        open={detailsVisible}
-        onCancel={() => setDetailsVisible(false)}
-        width={800}
-        footer={[
-          <Button key="close" onClick={() => setDetailsVisible(false)}>
-            Close
-          </Button>,
-        ]}
-      >
-        {selectedLog && (
-          <div className="space-y-4">
-            <Descriptions column={2} bordered size="small">
-              <Descriptions.Item label="Timestamp">
-                {dayjs(selectedLog.createdAt).format("YYYY-MM-DD HH:mm:ss")}
-              </Descriptions.Item>
-              <Descriptions.Item label="Action">
-                <Tag color={getActionColor(selectedLog.action)}>
-                  {selectedLog.action}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="User">
-                {selectedLog.userName}
-              </Descriptions.Item>
-              <Descriptions.Item label="Role">
-                {selectedLog.userRole}
-              </Descriptions.Item>
-              <Descriptions.Item label="Resource Type">
-                {selectedLog.resourceType}
-              </Descriptions.Item>
-              <Descriptions.Item label="Resource ID">
-                {selectedLog.resourceId || "-"}
-              </Descriptions.Item>
-              <Descriptions.Item label="Resource Name" span={2}>
-                {selectedLog.resourceName || "-"}
-              </Descriptions.Item>
-              <Descriptions.Item label="API Endpoint" span={2}>
-                <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                  {selectedLog.metadata?.method || "N/A"}{" "}
-                  {selectedLog.metadata?.path || "-"}
-                </code>
-              </Descriptions.Item>
-              <Descriptions.Item label="IP Address" span={2}>
-                {selectedLog.metadata?.ip || "-"}
-              </Descriptions.Item>
-              <Descriptions.Item label="User Agent" span={2}>
-                <span className="text-xs break-all">
-                  {selectedLog.metadata?.userAgent || "-"}
-                </span>
-              </Descriptions.Item>
-            </Descriptions>
-
-            {selectedLog.oldValues && (
-              <div>
-                <h3 className="font-semibold mb-2">Old Values:</h3>
-                <pre className="bg-gray-50 p-3 rounded text-sm overflow-auto">
-                  {JSON.stringify(selectedLog.oldValues, null, 2)}
-                </pre>
-              </div>
-            )}
-
-            {selectedLog.newValues && (
-              <div>
-                <h3 className="font-semibold mb-2">New Values:</h3>
-                <pre className="bg-gray-50 p-3 rounded text-sm overflow-auto">
-                  {JSON.stringify(selectedLog.newValues, null, 2)}
-                </pre>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+      {/* 5. Detail & Payload Diff Inspector Modal */}
+      <AuditLogDetailModal
+        log={selectedLog}
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedLog(null);
+        }}
+      />
     </div>
   );
-};
-
-export default AuditLogList;
+}
