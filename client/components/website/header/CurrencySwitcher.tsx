@@ -11,7 +11,7 @@ const CurrencySwitcher = () => {
   const items: MenuProps["items"] = currencies.map((currency) => ({
     key: currency.id,
     label: (
-      <span className="flex items-center gap-2.5 font-medium px-2 py-1.5 hover:text-global-button-primary transition-colors">
+      <span className="flex items-center gap-2.5 font-medium px-2 py-1.5 hover:text-global-primary transition-colors">
         <span className="text-base">{currency.symbol}</span>
         <span>{currency.name}</span>
       </span>
@@ -27,21 +27,17 @@ const CurrencySwitcher = () => {
       classNames={{ root: "pt-2 profile-dropdown-overlay" }}
     >
       <Button
-        type="primary"
-        className="!bg-gradient-to-r !from-global-hover !to-global-hover
-                             hover:!from-global-primary hover:!to-global-hover
-                             !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm 
-                             flex items-center gap-1 !shadow-lg hover:!shadow-xl
-                             !transition-all !duration-300 hover:!scale-105 group"
+        type="default"
+        className="!h-10 !px-3 !rounded-full !font-medium !text-sm
+                   !border-gray-200 !bg-white !text-gray-800
+                   hover:!border-global-primary hover:!text-global-primary
+                   !shadow-none flex items-center gap-1.5 !transition-colors duration-200"
       >
-        <GlobalOutlined className="text-global-button-text/70 group-hover:text-global-button-text transition-colors" />
-        <span className="hidden sm:inline-block font-semibold">
+        <GlobalOutlined className="text-gray-500" />
+        <span className="hidden sm:inline-block">
           {selectedCurrency?.symbol || "$"} {selectedCurrency?.name || "USD"}
         </span>
-        <DownOutlined
-          className="text-[10px] text-global-button-text/70 group-hover:text-global-button-text 
-                               transition-all duration-300 group-hover:translate-y-0.5"
-        />
+        <DownOutlined className="text-[10px] text-gray-400" />
       </Button>
     </Dropdown>
   );

@@ -8,8 +8,7 @@ interface CategoryTabProps {
 }
 
 const CategoryTab = ({ categories: initialCategories }: CategoryTabProps) => {
-
-  const [categories, setCategories] = useState<any[]>(initialCategories || []);
+  const [categories] = useState<any[]>(initialCategories || []);
 
   const [activeKey, setActiveKey] = useState<string | undefined>(
     initialCategories && initialCategories.length > 0
@@ -17,13 +16,12 @@ const CategoryTab = ({ categories: initialCategories }: CategoryTabProps) => {
       : undefined
   );
 
-
-
   return (
     <Tabs
       activeKey={activeKey}
       onChange={setActiveKey}
       tabPlacement="top"
+      className="home-category-tabs"
       items={categories.map((item: any) => ({
         label: item.name,
         key: item.id.toString(),

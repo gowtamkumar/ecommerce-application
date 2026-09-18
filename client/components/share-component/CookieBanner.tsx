@@ -11,16 +11,33 @@ const CookieWebsite: React.FC = () => {
       buttonText="Accept"
       declineButtonText="Decline"
       cookieName="WebsiteCookieConsent"
-      style={{ background: "#000", color: "#ffffff" }}
-      buttonStyle={{
-        color: "#4e503b",
+      style={{
+        background: "#111827",
+        color: "#e5e7eb",
+        padding: "12px 20px",
+        alignItems: "center",
         fontSize: "13px",
+        lineHeight: "1.5",
+        boxShadow: "0 -4px 24px rgba(0,0,0,0.12)",
+      }}
+      buttonStyle={{
+        color: "#111827",
+        fontSize: "13px",
+        fontWeight: 600,
         backgroundColor: "#ffffff",
+        borderRadius: "9999px",
+        padding: "8px 18px",
+        margin: "4px",
       }}
       declineButtonStyle={{
-        color: "#ffffff",
+        color: "#e5e7eb",
         fontSize: "13px",
-        backgroundColor: "#ff6b6b",
+        fontWeight: 500,
+        backgroundColor: "transparent",
+        border: "1px solid rgba(255,255,255,0.25)",
+        borderRadius: "9999px",
+        padding: "8px 18px",
+        margin: "4px",
       }}
       expires={150}
       enableDeclineButton
@@ -31,13 +48,14 @@ const CookieWebsite: React.FC = () => {
         console.log("Cookies declined");
       }}
     >
-      This website uses cookies to enhance the user experience. By clicking
-      &quot;Accept,&quot; you agree to our use of cookies. To learn more, read
-      our{" "}
-      <Link href="/privacy-policy" style={{ color: "#ffd700" }}>
+      This website uses cookies to enhance your experience. By continuing, you
+      agree to our use of cookies.{" "}
+      <Link
+        href="/privacy-policy"
+        style={{ color: "var(--global-primary, #f7aa0e)", fontWeight: 600 }}
+      >
         Privacy Policy
       </Link>
-      .
     </CookieConsent>
   );
 };

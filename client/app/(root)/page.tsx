@@ -3,11 +3,9 @@ import { getHome } from "@/lib/apis/home";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-// Dynamically loaded components
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
 );
-const SellerAds = dynamic(() => import("@/components/website/home/SellerAds"));
 const Slider = dynamic(() => import("@/components/website/banner/Slider"));
 const PromoBanners = dynamic(
   () => import("@/components/website/banner/PromoBanners")
@@ -15,29 +13,48 @@ const PromoBanners = dynamic(
 const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
-
 const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
 
-// Common Section Title Component for consistency
-const SectionHeader = ({ title, link }: { title: string; link?: string }) => (
-  <div className="relative mb-4 md:mb-6 flex flex-col md:flex-row justify-between items-center gap-5 w-full">
-    <div className="relative z-10 flex-1 w-full text-center md:text-left">
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight leading-snug mb-1.5">
+const SectionHeader = ({
+  title,
+  subtitle,
+  link,
+}: {
+  title: string;
+  subtitle?: string;
+  link?: string;
+}) => (
+  <div className="mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 w-full">
+    <div className="space-y-1.5">
+      <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
         {title}
       </h2>
-      <div className="h-1 w-16 bg-gradient-to-r from-global-primary to-transparent rounded-full mx-auto md:mx-0 opacity-80" />
+      {subtitle ? (
+        <p className="text-sm text-gray-500 max-w-xl">{subtitle}</p>
+      ) : (
+        <div className="h-0.5 w-12 bg-global-primary rounded-full" />
+      )}
     </div>
 
     {link && (
       <Link
         href={link}
-        className="group relative inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors duration-300 shadow-sm z-10"
+        className="group inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-global-primary transition-colors"
       >
-        <span className="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white transition-colors duration-300">
-          View All
-        </span>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transform transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        View all
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
         </svg>
       </Link>
     )}
@@ -69,96 +86,121 @@ export default async function Home() {
   const homePageData = home.data?.homePage;
   const sectionsConfig = homePageData?.sections || [];
 
-  // Define available sections and their render functions
   const sectionMap: Record<string, () => React.ReactNode> = {
-    slider: () => (
+    slider: () =>
       sliderBanners?.length > 0 ? (
         <div className="w-full relative z-0">
           <Slider banners={sliderBanners} />
         </div>
-      ) : null
-    ),
-    categories: () => (
+      ) : null,
+    categories: () =>
       categories ? (
-        <section className="py-6 sm:py-10 bg-gradient-to-b from-global-bg to-white dark:to-gray-900 relative overflow-hidden">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <SectionHeader title="Shop by Category" link="/categories" />
+        <section className="py-12 sm:py-16 bg-white border-b border-gray-100">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              title="Shop by Category"
+              subtitle="Find what you need, faster"
+              link="/categories"
+            />
             <CategoryCard categories={categories} />
           </div>
         </section>
-      ) : null
-    ),
-    featured_products: () => (
+      ) : null,
+    featured_products: () =>
       products?.data ? (
-        <section className="py-6 sm:py-10 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800 relative">
+        <section className="py-12 sm:py-16 bg-[#fafafa]">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeader title="Featured Collections" link="/products" />
+            <SectionHeader
+              title="Featured Collections"
+              subtitle="Handpicked pieces worth exploring"
+              link="/products"
+            />
             <FeaturedProduct products={featuredProducts} />
           </div>
         </section>
-      ) : null
-    ),
-    promo_banners: () => (
+      ) : null,
+    promo_banners: () =>
       HomeBanners?.length > 0 ? (
-        <section className="py-6 sm:py-10 bg-global-bg">
+        <section className="py-12 sm:py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <PromoBanners banners={HomeBanners} />
           </div>
         </section>
-      ) : null
-    ),
-    top_selling: () => (
+      ) : null,
+    top_selling: () =>
       topSellingProducts?.length > 0 ? (
-        <section className="py-6 sm:py-10 bg-gradient-to-t from-global-bg to-white dark:to-gray-900 relative overflow-hidden border-b border-gray-100 dark:border-gray-800">
-          <div className="absolute top-0 right-0 w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-global-primary/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <SectionHeader title="Best Sellers" link="/products" />
+        <section className="py-12 sm:py-16 bg-[#fafafa] border-y border-gray-100">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              title="Best Sellers"
+              subtitle="Customer favorites this season"
+              link="/products"
+            />
             <FeaturedProduct products={topSellingProducts} />
           </div>
         </section>
-      ) : null
-    ),
-    new_arrivals: () => (
+      ) : null,
+    new_arrivals: () =>
       products?.data ? (
-        <section className="py-6 sm:py-10 bg-white dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-800">
+        <section className="py-12 sm:py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <SectionHeader title="New Arrivals" link="/products" />
+            <SectionHeader
+              title="New Arrivals"
+              subtitle="Just landed in the store"
+              link="/products"
+            />
             <FeaturedProduct products={isNewArrivalProducts} />
           </div>
         </section>
-      ) : null
-    ),
+      ) : null,
     category_tabs: () => (
-      <section className="py-6 sm:py-10 bg-global-bg">
+      <section className="py-12 sm:py-16 bg-[#fafafa] border-y border-gray-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader title="Browse by Category" link="/products" />
+          <SectionHeader
+            title="Browse by Category"
+            subtitle="Explore products by department"
+            link="/products"
+          />
           <CategoryTab categories={categories} />
         </div>
       </section>
     ),
     blog: () => (
-      <section className="py-6 sm:py-10 bg-gradient-to-b from-white dark:from-gray-900/50 to-global-card-bg border-t border-gray-100 dark:border-gray-800">
+      <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader title="Latest from our Blog" link="/blog" />
+          <SectionHeader
+            title="From the Journal"
+            subtitle="Stories, tips, and inspiration"
+            link="/blog"
+          />
           <BlogTab posts={posts || []} />
         </div>
       </section>
     ),
   };
 
-  const orderedSections = sectionsConfig.length > 0
-    ? [...sectionsConfig]
-      .filter((s: any) => s.status !== false)
-      .sort((a: any, b: any) => (a.sequence || 0) - (b.sequence || 0))
-      .map((s: any) => s.slug)
-    : ["slider", "categories", "featured_products", "promo_banners", "top_selling", "new_arrivals", "category_tabs", "footer_banners", "blog"];
+  const orderedSections =
+    sectionsConfig.length > 0
+      ? [...sectionsConfig]
+          .filter((s: any) => s.status !== false)
+          .sort((a: any, b: any) => (a.sequence || 0) - (b.sequence || 0))
+          .map((s: any) => s.slug)
+      : [
+          "slider",
+          "categories",
+          "featured_products",
+          "promo_banners",
+          "top_selling",
+          "new_arrivals",
+          "category_tabs",
+          "footer_banners",
+          "blog",
+        ];
 
   return (
-    <main className="bg-global-bg">
-      {orderedSections.map(slug => (
-        <div key={slug}>
-          {sectionMap[slug] ? sectionMap[slug]() : null}
-        </div>
+    <main className="bg-white">
+      {orderedSections.map((slug) => (
+        <div key={slug}>{sectionMap[slug] ? sectionMap[slug]() : null}</div>
       ))}
     </main>
   );

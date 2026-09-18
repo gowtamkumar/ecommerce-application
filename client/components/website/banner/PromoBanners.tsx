@@ -1,7 +1,6 @@
 "use client";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Button } from "antd";
 import Link from "next/link";
 
 export default function PromoBanners({ banners }: { banners: any[] }) {
@@ -9,53 +8,40 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {banners.map((item: any, index: number) => (
-          <div
+          <Link
             key={index}
-            className="group relative h-[380px] lg:h-[400px] rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl transition-all duration-500"
+            href={item.url ? `/offers${item.url}` : "/products"}
+            className="group relative h-[300px] sm:h-[340px] rounded-xl overflow-hidden block"
           >
-            {/* Background Image */}
             <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
               style={{
                 backgroundImage: `url(${getUploadImageUrl(item.image)})`,
               }}
             />
 
-            {/* Dark Gradient Overlay for better text contrast */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 group-hover:opacity-60 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
 
-            {/* Glassmorphic Content Panel */}
-            <div className="absolute bottom-5 left-5 right-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-xl overflow-hidden relative">
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
-
-                <h3 className="text-xl sm:text-2xl font-bold mb-2">
+            <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 flex flex-col items-start gap-3">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-semibold text-white leading-snug">
                   {item.title}
                 </h3>
-
-                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
-                  <div className="overflow-hidden">
-                    <p className="text-white text-sm mb-4 line-clamp-2 font-medium leading-relaxed">
-                      {item.description}
-                    </p>
-
-                    <Link href={item.url ? `/offers${item.url}` : "/products"} className="inline-block w-full">
-                      <Button
-                        block
-                        size="large"
-                        className="!font-bold !h-12 !bg-global-primary !border-none flex items-center justify-center gap-2 hover:!bg-opacity-90 transition-all rounded-lg"
-                      >
-                        Shop Now <ArrowRightOutlined className="text-xs transition-transform group-hover:translate-x-1" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
+                {item.description ? (
+                  <p className="mt-1.5 text-sm text-white/80 line-clamp-2 leading-relaxed">
+                    {item.description}
+                  </p>
+                ) : null}
               </div>
+
+              <span className="inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-white/40 pb-0.5 group-hover:border-global-primary group-hover:text-global-primary transition-colors duration-300">
+                Shop now
+                <ArrowRightOutlined className="text-[10px] transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

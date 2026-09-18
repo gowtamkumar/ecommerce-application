@@ -139,7 +139,7 @@ export default async function Offers() {
                         <Button
                           type="primary"
                           className="!h-10 !px-6 !rounded-global-button-radius !bg-global-button-primary !text-global-button-text
-                                     !border-none !font-global-button-weight !text-global-button-size
+                                     !border-none !font-medium !text-sm
                                      hover:!scale-105 transition-all duration-300 flex items-center gap-2 group/btn"
                         >
                           <span>View Offer</span>

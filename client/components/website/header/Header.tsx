@@ -80,7 +80,7 @@ export default function Header() {
             className={`container mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? "py-3" : "py-5"
               }`}
           >
-            <div className="flex items-center justify-between gap-8">
+            <div className="flex items-center justify-between gap-4 lg:gap-6">
               {/* Logo */}
               <div className="flex-shrink-0">
                 <Logo />
@@ -92,12 +92,12 @@ export default function Header() {
               </div>
 
               {/* Search Bar - Desktop */}
-              <div className="flex-1 max-w-2xl hidden xl:block">
+              <div className="flex-1 max-w-xl hidden xl:block">
                 <SearchEngine />
               </div>
 
               {/* Right Section */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-3">
                 {/* Currency Switcher */}
                 <div className="hidden md:block">
                   <CurrencySwitcher />
@@ -114,11 +114,11 @@ export default function Header() {
                 {/* Special Offers Button */}
                 <Link href="/offers">
                   <Button
-                    type="primary"
-                    className="!bg-gradient-to-r !from-global-hover !to-global-hover hover:!from-global-primary hover:!to-global-hover !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm flex items-center gap-2 !shadow-lg hover:!shadow-xl !transition-all !duration-300 hover:!scale-105 group"
+                    type="default"
+                    className="!h-10 !px-4 !rounded-full !font-medium !text-sm flex items-center gap-2 !border-gray-200 !bg-white !text-gray-800 hover:!border-global-primary hover:!text-global-primary !shadow-none !transition-colors duration-200 group"
                   >
-                    <HiSparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                    <span>Special Offers</span>
+                    <HiSparkles className="w-4 h-4 text-global-primary" />
+                    <span>Offers</span>
                   </Button>
                 </Link>
               </div>

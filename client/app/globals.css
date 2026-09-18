@@ -5,7 +5,6 @@
 :root {
   /* Default Surfaces & Body */
   --background-color: #ffffff;
-  --card-background: #ffffff;
   --text-color: #1f2937;
   /* Footer Background Colors */
   --footer-bg-primary: #0f172a;
@@ -119,22 +118,22 @@ h6 {
 }
 
 p {
-  font-size: var(--p-size);
+  font-size: inherit;
   line-height: 1.6;
   margin-bottom: 1rem;
 }
 
 h1,
 .h1 {
-  font-size: var(--h1-size);
+  font-size: 3rem;
 }
 h2,
 .h2 {
-  font-size: var(--h2-size);
+  font-size: 2.25rem;
 }
 h3,
 .h3 {
-  font-size: var(--h3-size);
+  font-size: 1.5rem;
 }
 
 /* Ensure all elements inherit the secondary font by default unless overridden */
@@ -152,9 +151,9 @@ h3,
   color: var(--button-text-color) !important;
   border: none !important;
   border-radius: var(--button-border-radius) !important;
-  font-size: var(--button-font-size) !important;
-  font-weight: var(--button-font-weight) !important;
-  padding: var(--button-padding-y) var(--button-padding-x) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -336,4 +335,25 @@ a:hover {
 
 .text-global-header-text {
   color: var(--header-text) !important;
+}
+
+/* Homepage category tabs */
+.home-category-tabs .ant-tabs-nav {
+  margin-bottom: 1.5rem !important;
+}
+
+.home-category-tabs .ant-tabs-tab {
+  padding: 10px 16px !important;
+  font-weight: 500 !important;
+  color: #6b7280 !important;
+}
+
+.home-category-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--global-primary) !important;
+  font-weight: 600 !important;
+}
+
+.home-category-tabs .ant-tabs-ink-bar {
+  background: var(--global-primary) !important;
+  height: 2px !important;
 }

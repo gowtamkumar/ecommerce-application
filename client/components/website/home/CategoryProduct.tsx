@@ -30,14 +30,14 @@ export default function CategoryProduct({ id }: { id: string }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[200px]">
+      <div className="flex justify-center items-center min-h-[220px]">
         <Spin />
       </div>
     );
   }
 
   return (
-    <div className="grid gap-1 justify-center  grid-cols-2 md:grid-cols-5">
+    <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
       {products.length > 0 ? (
         products.map((item: any) => (
           <div key={item.id} className="!h-auto">

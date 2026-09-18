@@ -87,9 +87,10 @@ export default function SearchEngine() {
                   )}
                   <button
                     type="submit"
-                    className="!h-9 !w-9 flex items-center justify-center !rounded-full bg-global-button-primary text-global-button-text hover:bg-global-button-hover transition-colors"
+                    aria-label="Search"
+                    className="!h-8 !w-8 flex items-center justify-center !rounded-full bg-gray-900 text-white hover:bg-global-primary transition-colors"
                   >
-                    <SearchOutlined className="text-base" />
+                    <SearchOutlined className="text-sm" />
                   </button>
                 </div>
               }

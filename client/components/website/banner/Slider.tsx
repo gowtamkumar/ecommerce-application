@@ -1,7 +1,6 @@
 "use client";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Button } from "antd";
 import Link from "next/link";
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -20,26 +19,26 @@ export default function Slider({ banners }: any) {
   if (!banners?.length) return null;
 
   return (
-    <div className="relative group w-full overflow-hidden">
+    <div className="relative group w-full overflow-hidden bg-gray-900">
       <Swiper
         modules={[Pagination, Navigation, A11y, EffectFade, Autoplay]}
         spaceBetween={0}
         slidesPerView={1}
         pagination={{
           clickable: true,
-          bulletActiveClass: "!bg-white !opacity-100 !w-8 !rounded-full",
+          bulletActiveClass: "!bg-white !opacity-100 !w-7 !rounded-full",
           bulletClass:
-            "swiper-pagination-bullet !bg-white/50 !opacity-100 !w-2.5 !h-2.5 !transition-all !duration-300",
+            "swiper-pagination-bullet !bg-white/40 !opacity-100 !w-2 !h-2 !mx-1 !transition-all !duration-300",
         }}
         navigation={{
           nextEl: ".swiper-button-next-custom",
           prevEl: ".swiper-button-prev-custom",
         }}
-        autoplay={{ delay: 6000, disableOnInteraction: false }}
+        autoplay={{ delay: 6500, disableOnInteraction: false }}
         loop
         effect="fade"
-        speed={1000}
-        className="w-full h-[65vh] md:h-[750px]"
+        speed={900}
+        className="w-full h-[55vh] min-h-[420px] max-h-[640px] md:h-[70vh] md:max-h-[720px]"
       >
         {banners.map(
           (
@@ -58,38 +57,34 @@ export default function Slider({ banners }: any) {
           ) => (
             <SwiperSlide key={`${image}-${index}`}>
               <div className="relative w-full h-full">
-                {/* Background Image with Zoom Effect */}
                 <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-linear transform scale-100 hover:scale-105"
+                  className="absolute inset-0 bg-cover bg-center scale-100 transition-transform duration-[12s] ease-out group-hover:scale-[1.03]"
                   style={{
                     backgroundImage: `url(${getUploadImageUrl(image)})`,
                   }}
                 />
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/15" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-                {/* Content Container */}
                 <div className="relative z-10 h-full container mx-auto px-4 md:px-8 lg:px-12 flex flex-col justify-center items-start">
-                  <div className="max-w-3xl space-y-6 animate-fade-up">
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold !text-white leading-[1.1] tracking-tighter drop-shadow-2xl">
+                  <div className="max-w-2xl space-y-5 md:space-y-6">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.12] tracking-tight">
                       {title}
                     </h1>
-                    <p className="text-lg md:text-xl lg:text-2xl text-gray-200 font-medium max-w-2xl leading-relaxed drop-shadow-lg opacity-90">
-                      {description}
-                    </p>
+                    {description ? (
+                      <p className="text-base md:text-lg text-white/85 font-normal max-w-xl leading-relaxed">
+                        {description}
+                      </p>
+                    ) : null}
 
-                    <div className="pt-6">
-                      <Link href={url || "/products"}>
-                        <Button
-                          type="primary"
-                          size="large"
-                          className="!h-14 !px-10 !text-base md:!text-lg !font-semibold flex items-center gap-3 group/btn !bg-white/10 !border !border-white/20 !text-white hover:!bg-white hover:!text-black !backdrop-blur-md !rounded-full transition-all duration-500 hover:!scale-105 shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_40px_rgba(255,255,255,0.2)]"
-                        >
-                          Shop Collection
-                          <ArrowRightOutlined className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
-                        </Button>
+                    <div className="pt-2">
+                      <Link
+                        href={url || "/products"}
+                        className="inline-flex items-center gap-2.5 h-12 px-7 rounded-full bg-global-primary text-white text-sm md:text-base font-semibold shadow-lg shadow-black/20 hover:brightness-110 transition-all duration-300"
+                      >
+                        Shop Collection
+                        <ArrowRightOutlined className="text-xs" />
                       </Link>
                     </div>
                   </div>
@@ -99,13 +94,26 @@ export default function Slider({ banners }: any) {
           )
         )}
 
-        {/* Custom Navigation Buttons */}
-        <div className="swiper-button-prev-custom absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white hover:text-black transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="rotate-180"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-        </div>
-        <div className="swiper-button-next-custom absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white hover:text-black transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-        </div>
+        <button
+          type="button"
+          aria-label="Previous slide"
+          className="swiper-button-prev-custom absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="rotate-180">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          aria-label="Next slide"
+          className="swiper-button-next-custom absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </button>
       </Swiper>
     </div>
   );

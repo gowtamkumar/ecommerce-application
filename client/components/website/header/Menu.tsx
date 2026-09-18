@@ -61,18 +61,15 @@ const MainMenu = () => {
         classNames={{ root: "pt-2 profile-dropdown-overlay" }}
       >
         <Button
-          type="primary"
-          className="!bg-gradient-to-r !from-global-hover !to-global-hover
-                             hover:!from-global-primary hover:!to-global-hover
-                             !border-none !h-11 !px-6 !rounded-full !font-semibold !text-sm 
-                             flex items-center gap-2 !shadow-lg hover:!shadow-xl
-                             !transition-all !duration-300 hover:!scale-105 group"
+          type="default"
+          className="!h-10 !px-4 !rounded-full !font-medium !text-sm
+                     !border-gray-200 !bg-white !text-gray-800
+                     hover:!border-global-primary hover:!text-global-primary
+                     !shadow-none flex items-center gap-2 !transition-colors duration-200 group"
         >
-          <CiMenuFries className="text-lg group-hover:rotate-90 transition-transform duration-300" />
-          <span className="font-semibold tracking-wide text-sm font-global-primary-fontfamily">
-            Categories
-          </span>
-          <HiChevronDown className="text-sm group-hover:translate-y-0.5 transition-transform duration-300" />
+          <CiMenuFries className="text-base" />
+          <span className="tracking-wide text-sm">Categories</span>
+          <HiChevronDown className="text-sm text-gray-400 group-hover:text-global-primary transition-colors" />
         </Button>
       </Dropdown>
     </div>

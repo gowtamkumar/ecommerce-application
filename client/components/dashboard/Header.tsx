@@ -1,13 +1,13 @@
 "use client";
 import {
-  selectLayout,
-  setCollapsed,
-  setOpen,
+    selectLayout,
+    setCollapsed,
+    setOpen,
 } from "@/redux/features/layout/layoutSlice";
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
 import { Button, Layout } from "antd";
 import { useSession } from "next-auth/react";
@@ -23,9 +23,7 @@ export default function DashboardHeader() {
   const dispatch = useDispatch();
   const session = useSession();
   const profileImage = session.data?.user?.image;
-  const userName = session.data?.user?.name || "Admin User";
-  const userRole = session.data?.user?.role || "Administrator";
-
+  
   return (
     <Header
       style={{

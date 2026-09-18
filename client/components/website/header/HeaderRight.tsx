@@ -41,72 +41,48 @@ export default function HeaderRight() {
   const cartCount = cart?.carts?.cartSummary?.totalQty || 0;
 
   return (
-    <div className="flex items-center gap-4">
-      {/* Wishlist Icon */}
+    <div className="flex items-center gap-1.5 sm:gap-2">
       <Link
         href="/profile?tab=wishlist"
         className="cursor-pointer md:inline hidden group relative"
+        aria-label="Wishlist"
       >
-        <div className="relative w-10 h-10 flex items-center justify-center rounded-global-button-radius 
-                     bg-global-button-primary text-global-button-text
-                     transition-all duration-300 shadow-md hover:shadow-lg hover:bg-global-button-hover
-                     hover:scale-105">
-          <CiHeart
-            size={22}
-            className="transition-all duration-300"
-          />
-
-          {/* Tooltip */}
-          <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 
-                         text-[10px] font-medium px-2 py-1 rounded
-                         opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-50 bg-global-button-primary text-global-button-text shadow-xl">
-            Wishlist
-          </span>
+        <div
+          className="relative w-10 h-10 flex items-center justify-center rounded-full
+                     border border-gray-200 bg-white text-gray-700
+                     transition-colors duration-200 hover:border-global-primary hover:text-global-primary"
+        >
+          <CiHeart size={22} />
         </div>
       </Link>
 
-
-      {/* Shopping Cart Icon */}
       <div className="relative group">
-        <div
+        <button
+          type="button"
           onClick={showLoading}
-          className="group cursor-pointer relative w-10 h-10 flex items-center justify-center 
-                   rounded-global-button-radius bg-global-button-primary text-global-button-text
-                   transition-all duration-300 shadow-md hover:shadow-lg hover:bg-global-button-hover
-                   hover:scale-105"
+          aria-label="Shopping cart"
+          className="relative w-10 h-10 flex items-center justify-center rounded-full
+                   border border-gray-200 bg-white text-gray-700
+                   transition-colors duration-200 hover:border-global-primary hover:text-global-primary"
         >
-          <FiShoppingBag
-            size={20}
-            className="transition-all duration-300"
-            style={{ color: "inherit" }}
-          />
+          <FiShoppingBag size={18} />
 
-          {/* Cart Badge */}
           {cartCount > 0 && (
-            <div className="absolute -top-1.5 -right-1.5 text-global-button-primary text-[10px] font-bold min-w-[18px] h-[18px] 
-                           flex items-center justify-center rounded-full
-                           shadow-md animate-pulse bg-global-button-text border border-global-button-primary">
-              {cartCount > 99 ? '99+' : cartCount}
-            </div>
+            <span
+              className="absolute -top-1 -right-1 bg-global-primary text-white text-[10px] font-semibold min-w-[18px] h-[18px]
+                           flex items-center justify-center rounded-full border-2 border-white"
+            >
+              {cartCount > 99 ? "99+" : cartCount}
+            </span>
           )}
+        </button>
 
-          {/* Tooltip */}
-          <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 
-                         text-[10px] font-medium px-2 py-1 rounded
-                         opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
-                         pointer-events-none z-50 bg-global-button-primary text-global-button-text shadow-xl">
-            Shopping Cart
-          </span>
-        </div>
-
-        {/* Cart Drawer */}
         <Drawer
           closable
           title={
             <div className="flex items-center gap-2">
-              <FiShoppingBag className="text-xl text-global-primary " />
-              <span className="font-bold text-lg">Shopping Cart</span>
+              <FiShoppingBag className="text-xl text-global-primary" />
+              <span className="font-semibold text-lg">Shopping Cart</span>
               {cartCount > 0 && (
                 <span className="text-sm text-gray-500">({cartCount} items)</span>
               )}
@@ -123,7 +99,6 @@ export default function HeaderRight() {
         </Drawer>
       </div>
 
-      {/* User Profile */}
       {session.status === "authenticated" && (
         <>
           <NotificationDropdown />
