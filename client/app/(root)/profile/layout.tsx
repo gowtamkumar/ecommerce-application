@@ -20,9 +20,5 @@ export default async function ProfileLayout({
     redirect("/");
   }
 
-  return (
-    <main>
-      <div className="w-4/5 mx-auto md:p-10">{children}</div>
-    </main>
-  );
+  return <main>{children}</main>;
 }

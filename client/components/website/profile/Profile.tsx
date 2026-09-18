@@ -1,22 +1,23 @@
 "use client";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getUserOrders } from "@/lib/apis/orders";
 import { getUserWishlists } from "@/lib/apis/wishlist";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
     BellOutlined,
     ClockCircleOutlined,
-    CreditCardOutlined,
     EnvironmentOutlined,
     HeartOutlined,
     KeyOutlined,
     ShoppingOutlined,
-    UserOutlined
+    UserOutlined,
 } from "@ant-design/icons";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FiCreditCard, FiHeart, FiShoppingBag } from "react-icons/fi";
 import "./notification.css";
 import NotificationsUser from "./NotificationsUser";
 import ChangePassword from "./PasswordChange";
@@ -40,43 +41,39 @@ const MyShippingAddress = dynamic(
   () => import("./shipping-address/ShippingAddressList"),
   { ssr: false }
 );
-const OrderTracker = dynamic(() => import("./OrderTracker"), {
-  ssr: false,
-});
+
+const OrderTracker = dynamic(() => import("./OrderTracker"), { ssr: false });
 
 export default function Profile() {
-  const [tabKey, setTabKey] = useState("my_account");
   const [stats, setStats] = useState({ orders: 0, wishlist: 0, spending: 0 });
   const searchQuery = useSearchParams();
   const categoryIdParams = searchQuery.get("tab");
   const route = useRouter();
   const { data: session } = useSession();
+  const { formatPrice } = useCurrency();
 
+  const tabKey = categoryIdParams ?? "my_account";
   const userImage = session?.user?.image;
-
-  useEffect(() => {
-    setTabKey(categoryIdParams ?? "my_account");
-  }, [categoryIdParams]);
+  const userName = session?.user?.name || "User";
+  const userInitial = userName.charAt(0).toUpperCase();
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const [ordersRes, wishlistRes] = await Promise.all([
           getUserOrders(""),
-          getUserWishlists()
+          getUserWishlists(),
         ]);
-
         const orders = ordersRes.data || [];
         const wishlist = wishlistRes.data || [];
         const totalSpending = orders
           .filter((o: any) => o.status === "Delivered")
-          .reduce((acc: number, o: any) => acc + (Number(o.grandTotal) - Number(o.totalReturned)), 0);
-
-        setStats({
-          orders: orders.length,
-          wishlist: wishlist.length,
-          spending: totalSpending
-        });
+          .reduce(
+            (acc: number, o: any) =>
+              acc + (Number(o.grandTotal) - Number(o.totalReturned)),
+            0
+          );
+        setStats({ orders: orders.length, wishlist: wishlist.length, spending: totalSpending });
       } catch (err) {
         console.error("Failed to fetch profile stats", err);
       }
@@ -85,210 +82,175 @@ export default function Profile() {
   }, [session]);
 
   const menuItems = [
-    {
-      key: "my_account",
-      label: "My Account",
-      icon: <UserOutlined />,
-      component: <MyAccount />,
-    },
-    {
-      key: "orders",
-      label: "My Orders",
-      icon: <ShoppingOutlined />,
-      count: stats.orders,
-      component: <UserOrders />,
-    },
-    {
-      key: "wishlist",
-      label: "My Wishlist",
-      icon: <HeartOutlined />,
-      count: stats.wishlist,
-      component: <MyWishlist />,
-    },
-    {
-      key: "shipping_address",
-      label: "Shipping Address",
-      icon: <EnvironmentOutlined />,
-      component: <MyShippingAddress />,
-    },
-    {
-      key: "track_order",
-      label: "Track Order",
-      icon: <ClockCircleOutlined />,
-      component: <OrderTracker />,
-    },
-    {
-      key: "notification",
-      label: "Notifications",
-      icon: <BellOutlined />,
-      component: <NotificationsUser />,
-    },
-    {
-      key: "change_password",
-      label: "Security",
-      icon: <KeyOutlined />,
-      component: <ChangePassword />,
-    },
+    { key: "my_account", label: "My Account", icon: <UserOutlined />, component: <MyAccount /> },
+    { key: "orders", label: "My Orders", icon: <ShoppingOutlined />, count: stats.orders, component: <UserOrders /> },
+    { key: "wishlist", label: "My Wishlist", icon: <HeartOutlined />, count: stats.wishlist, component: <MyWishlist /> },
+    { key: "shipping_address", label: "Shipping Address", icon: <EnvironmentOutlined />, component: <MyShippingAddress /> },
+    { key: "track_order", label: "Track Order", icon: <ClockCircleOutlined />, component: <OrderTracker /> },
+    { key: "notification", label: "Notifications", icon: <BellOutlined />, component: <NotificationsUser /> },
+    { key: "change_password", label: "Security", icon: <KeyOutlined />, component: <ChangePassword /> },
   ];
 
-  const activeComponent = menuItems.find((item) => item.key === tabKey)?.component;
+  const activeItem = menuItems.find((i) => i.key === tabKey);
 
   const handleTabChange = (key: string) => {
     route.replace(`/profile?tab=${key}`, { scroll: false });
-    setTabKey(key);
   };
 
-  const StatCard = ({ icon, label, value, color }: any) => (
-    <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm flex items-center gap-4 group hover:shadow-md transition-all duration-300">
-      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-lg sm:text-xl transition-colors ${color}`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-gray-500 text-[10px] sm:text-xs font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-lg sm:text-xl font-extrabold text-gray-900">{value}</p>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-6 sm:py-10 lg:py-16">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* ── Hero Banner ── */}
+      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
+        {/* Amber accent top line */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-global-primary via-amber-300 to-global-primary" />
 
-        {/* Header Section */}
-        <div className="mb-8 sm:mb-10">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-1 sm:mb-2">Account Dashboard</h1>
-              <p className="text-gray-500 text-sm sm:text-base flex items-center gap-2">
-                Welcome back, <span className="font-bold text-gray-900">{session?.user?.name}</span> 👋
-              </p>
-            </div>
-            {/* <button 
-              onClick={() => signOut()}
-              className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors w-full sm:w-auto justify-center"
-            >
-              <LogoutOutlined /> Sign Out
-            </button> */}
-          </div>
-        </div>
+        {/* Subtle dot pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+            backgroundSize: "32px 32px",
+          }}
+        />
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
-          <StatCard
-            icon={<ShoppingOutlined />}
-            label="Total Orders"
-            value={stats.orders}
-            color="bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white"
-          />
-          <StatCard
-            icon={<HeartOutlined />}
-            label="Wishlist Items"
-            value={stats.wishlist}
-            color="bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white"
-          />
-          <StatCard
-            icon={<CreditCardOutlined />}
-            label="Total Spent"
-            value={`$${stats.spending.toLocaleString()}`}
-            color="bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white"
-          />
-        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-14 relative z-10">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-8">
 
-        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-start">
-
-          {/* Sidebar / Mobile Nav */}
-          <aside className="w-full lg:w-80 flex-shrink-0">
-            <div className="lg:sticky lg:top-24 space-y-4 sm:space-y-6">
-
-              {/* Profile Card - More compact on mobile */}
-              <div className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-100 shadow-sm group">
-                <div className="h-16 sm:h-24 w-full relative">
+            {/* Avatar */}
+            <div className="relative shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white/20 shadow-2xl overflow-hidden ring-4 ring-global-primary/40">
+                {userImage ? (
                   <Image
-                    src="/images/profile_hero_bg.png"
-                    alt="bg"
-                    fill
-                    className="object-cover opacity-80 group-hover:scale-110 transition-transform duration-700"
+                    src={getImageUrl(userImage)}
+                    alt={userName}
+                    width={96}
+                    height={96}
+                    className="object-cover w-full h-full"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
-                </div>
-
-                <div className="px-4 pb-4 sm:px-6 sm:pb-8 -mt-8 sm:-mt-10 relative z-10 text-center">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-xl sm:rounded-2xl border-4 border-white shadow-md overflow-hidden bg-gray-100 mb-2 sm:mb-4 relative">
-                    {userImage ? (
-                      <Image
-                        src={getImageUrl(userImage)}
-                        alt={session?.user?.name || "User"}
-                        width={80}
-                        height={80}
-                        className="object-cover h-full w-full"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-600 text-xl sm:text-2xl font-black">
-                        {session?.user?.name?.charAt(0) || "U"}
-                      </div>
-                    )}
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-global-primary text-white text-2xl sm:text-3xl font-black">
+                    {userInitial}
                   </div>
-                  <h3 className="font-black text-gray-900 text-base sm:text-lg leading-tight mb-0.5 sm:mb-1">{session?.user?.name}</h3>
-                  <p className="text-gray-400 text-[10px] sm:text-xs font-medium uppercase tracking-widest truncate">{session?.user?.email}</p>
+                )}
+              </div>
+              {/* Online dot */}
+              <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900" />
+            </div>
+
+            {/* User info + stat chips */}
+            <div className="flex-1 text-center sm:text-left">
+              <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">
+                Member Account
+              </p>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight mb-0.5">
+                {userName}
+              </h1>
+              <p className="text-white/60 text-xs sm:text-sm font-medium mb-5 sm:mb-6">
+                {session?.user?.email}
+              </p>
+
+              {/* Stats */}
+              <div className="flex items-center justify-center sm:justify-start gap-3 flex-wrap">
+                <button
+                  onClick={() => handleTabChange("orders")}
+                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl px-3 sm:px-4 py-2 cursor-pointer transition-all duration-200"
+                >
+                  <FiShoppingBag className="text-global-primary text-sm shrink-0" />
+                  <div className="text-left">
+                    <p className="text-white font-black text-sm sm:text-base leading-none">{stats.orders}</p>
+                    <p className="text-white/50 text-[9px] font-semibold uppercase tracking-wider leading-none mt-0.5">Orders</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleTabChange("wishlist")}
+                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl px-3 sm:px-4 py-2 cursor-pointer transition-all duration-200"
+                >
+                  <FiHeart className="text-rose-400 text-sm shrink-0" />
+                  <div className="text-left">
+                    <p className="text-white font-black text-sm sm:text-base leading-none">{stats.wishlist}</p>
+                    <p className="text-white/50 text-[9px] font-semibold uppercase tracking-wider leading-none mt-0.5">Wishlist</p>
+                  </div>
+                </button>
+
+                <div className="flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2">
+                  <FiCreditCard className="text-green-400 text-sm shrink-0" />
+                  <div className="text-left">
+                    <p className="text-white font-black text-sm sm:text-base leading-none">{formatPrice(stats.spending)}</p>
+                    <p className="text-white/50 text-[9px] font-semibold uppercase tracking-wider leading-none mt-0.5">Total Spent</p>
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              {/* Navigation Menu - Horizontal Scroll on Mobile */}
-              <nav className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm p-2 sm:p-3">
-                <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 sm:gap-1.5 scrollbar-hide no-scrollbar">
-                  {menuItems.map((item: any) => (
-                    <button
-                      key={item.key}
-                      onClick={() => handleTabChange(item.key)}
-                      className={`flex-shrink-0 lg:w-full flex items-center justify-between gap-2 sm:gap-4 px-4 py-2.5 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
-                        tabKey === item.key
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-200 lg:translate-x-1"
-                          : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="text-base sm:text-lg">{item.icon}</span>
-                        <span>{item.label}</span>
-                      </div>
-                      {Boolean(item.count && item.count > 0) && (
-                        <span
-                          className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                            tabKey === item.key
-                              ? "bg-white/20 text-white"
-                              : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {item.count}
-                        </span>
-                      )}
-                    </button>
-                  ))}
+      {/* ── Main Layout ── */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-start">
+
+          {/* Sidebar — Nav Only */}
+          <aside className="w-full lg:w-72 flex-shrink-0">
+            <div className="lg:sticky lg:top-24">
+              <nav className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2">
+                <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-1 no-scrollbar pb-1 lg:pb-0">
+                  {menuItems.map((item) => {
+                    const isActive = tabKey === item.key;
+                    return (
+                      <button
+                        key={item.key}
+                        onClick={() => handleTabChange(item.key)}
+                        className={`flex-shrink-0 lg:w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap cursor-pointer ${
+                          isActive
+                            ? "bg-global-primary text-white shadow-md shadow-amber-200/60 lg:translate-x-0.5"
+                            : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={`text-base transition-colors ${isActive ? "text-white" : "text-gray-400"}`}>
+                            {item.icon}
+                          </span>
+                          <span>{item.label}</span>
+                        </div>
+                        {"count" in item && item.count && item.count > 0 ? (
+                          <span
+                            className={`text-[10px] font-black px-2 py-0.5 rounded-full leading-none ${
+                              isActive ? "bg-white/25 text-white" : "bg-gray-100 text-gray-600"
+                            }`}
+                          >
+                            {item.count}
+                          </span>
+                        ) : null}
+                      </button>
+                    );
+                  })}
                 </div>
               </nav>
-
             </div>
           </aside>
 
-          {/* Main Content Area */}
+          {/* Content Panel */}
           <main className="flex-1 w-full min-w-0">
-            <div className="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-gray-100 p-5 sm:p-8 md:p-12 min-h-[400px] sm:min-h-[600px] relative overflow-hidden">
-              {/* Decorative Circle - Hidden on smallest mobile */}
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-50 rounded-full opacity-50 blur-3xl hidden sm:block"></div>
-
-              <div className="relative z-10">
-                <header className="mb-6 sm:mb-10">
-                  <h2 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2 sm:gap-3">
-                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gray-900 text-white flex items-center justify-center text-sm sm:text-lg">
-                      {menuItems.find(i => i.key === tabKey)?.icon}
-                    </span>
-                    {menuItems.find(i => i.key === tabKey)?.label}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden min-h-[480px]">
+              {/* Section header strip */}
+              <div className="flex items-center gap-3 px-5 sm:px-8 py-4 sm:py-5 border-b border-gray-100 bg-gray-50/60">
+                <span className="w-8 h-8 rounded-lg bg-global-primary text-white flex items-center justify-center text-base shadow-sm">
+                  {activeItem?.icon}
+                </span>
+                <div>
+                  <h2 className="text-sm sm:text-base font-bold text-gray-900 leading-none">
+                    {activeItem?.label}
                   </h2>
-                </header>
-
-                {/* Content with smoother animation */}
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-x-auto sm:overflow-visible">
-                  {activeComponent}
+                  <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                    Manage your {activeItem?.label?.toLowerCase()}
+                  </p>
                 </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-5 sm:p-8 animate-in fade-in slide-in-from-bottom-3 duration-400 overflow-x-auto sm:overflow-visible">
+                {activeItem?.component}
               </div>
             </div>
           </main>

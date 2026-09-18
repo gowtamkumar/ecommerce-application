@@ -1,25 +1,28 @@
+"use client";
 
-import React, { useEffect } from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { orderStatusUpdateApi } from "@/lib/apis/orders";
+import { handleAsyncAction } from "@/lib/utils/commonFunctions";
+import {
+    selectGlobal,
+    setAction,
+    setLoading,
+} from "@/redux/features/global/globalSlice";
+import { Button, Form, Input, Modal } from "antd";
+import { useEffect } from "react";
+import { FiAlertTriangle } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "../../../constants/constants";
 
 const CancelOrder = () => {
   const global = useSelector(selectGlobal);
   const { payload, cancelOrder, type } = global.action;
-  // hook
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    form.setFieldsValue(global.action.payload);
+    if (global.action.payload) {
+      form.setFieldsValue(global.action.payload);
+    }
     return () => {
       form.resetFields();
     };
@@ -35,23 +38,30 @@ const CancelOrder = () => {
     dispatch(setLoading({}));
   };
 
-  const resetFormData = () => {
-    if (payload?.id) {
-      form.setFieldsValue(payload);
-    } else {
-      form.resetFields();
-    }
-  };
-
   return (
     <Modal
-      title={`Cancel Order`}
-      width={500}
+      title={
+        <div className="flex items-center gap-2.5 text-gray-900 pb-2 border-b border-gray-100">
+          <div className="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+            <FiAlertTriangle className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-gray-900 leading-tight">
+              Cancel Order
+            </h3>
+            <p className="text-[11px] font-normal text-gray-400">
+              Please tell us why you want to cancel this order
+            </p>
+          </div>
+        </div>
+      }
+      width={480}
       zIndex={1050}
       open={type === ActionType.UPDATE && cancelOrder}
       onCancel={handleClose}
       footer={null}
-      forceRender
+      centered
+      className="premium-modal"
     >
       <Form
         layout="vertical"
@@ -59,6 +69,7 @@ const CancelOrder = () => {
         onFinish={handleSubmit}
         autoComplete="off"
         scrollToFirstError={true}
+        className="pt-3"
       >
         <Form.Item name="id" hidden>
           <Input />
@@ -70,33 +81,41 @@ const CancelOrder = () => {
 
         <Form.Item
           name="cancelResson"
-          label="Reason"
+          label={
+            <span className="text-xs font-semibold text-gray-700">
+              Cancellation Reason <span className="text-rose-500">*</span>
+            </span>
+          }
           rules={[
             {
               required: true,
-              message: "Cancel Resson is required",
+              message: "Please provide a reason for cancellation",
             },
           ]}
         >
-          <Input.TextArea role="alert" placeholder="Enter Reason" />
+          <Input.TextArea
+            rows={4}
+            placeholder="e.g., Ordered by mistake, found a better price, shipping took too long..."
+            className="!rounded-xl !p-3 resize-none !border-gray-200 focus:!border-rose-400"
+          />
         </Form.Item>
 
-        <div className="text-end">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-gray-100 mt-6">
           <Button
-            className="mx-2 capitalize"
-            size="small"
-            onClick={resetFormData}
+            className="!h-10 !px-5 !rounded-xl !font-semibold !text-xs !border-gray-200 hover:!bg-gray-50"
+            onClick={handleClose}
           >
-            Reset
+            Keep Order
           </Button>
           <Button
-            size="small"
-            color="primary"
+            danger
+            type="primary"
             htmlType="submit"
             loading={global.loading.save}
             disabled={!payload?.id}
+            className="!h-10 !px-5 !rounded-xl !font-semibold !text-xs !bg-rose-600 hover:!bg-rose-700 !border-none"
           >
-            Save
+            Confirm Cancellation
           </Button>
         </div>
       </Form>
