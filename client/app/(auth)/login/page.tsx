@@ -9,6 +9,7 @@ const Login = dynamic(() => import("@/components/website/login/Login"));
 export const metadata: Metadata = {
   title: "Login | Secure Member Sign In",
   description: "Sign in to access your account, track orders, and unlock member rewards.",
+  robots: { index: false, follow: false },
 };
 
 export default function page() {

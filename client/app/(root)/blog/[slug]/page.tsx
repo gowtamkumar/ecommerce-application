@@ -1,13 +1,15 @@
 import appConfig from "@/appConfig";
+import { ArticleSchema, BreadcrumbSchema } from "@/components/seo";
+import { stripHtml } from "@/lib/utils/seo";
 import PostContent from "@/components/website/blog/PostContent";
 import Share from "@/components/website/product/Share";
 import { getPost } from "@/lib/apis/posts";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import dayjs from "dayjs";
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { FaCalendar, FaClock } from "react-icons/fa";
-
 const Subscribe = dynamic(
   () => import("@/components/website/footer/Subscribe")
 );
@@ -34,9 +36,57 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const slug = (await params).slug;
+  const { data: post } = await getPost(slug);
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
+
+  if (!post) {
+    return {
+      title: "Post Not Found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = post.title || "Blog Post";
+  const description =
+    stripHtml(post.excerpt || post.content)?.slice(0, 160) ||
+    `Read ${title}`;
+  const canonicalUrl = `${baseUrl}/blog/${slug}`;
+  const image = getUploadImageUrl(post.image);
+
+  return {
+    title,
+    description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: "article",
+      images: image ? [{ url: image, alt: title }] : [],
+      publishedTime: post.createdAt,
+      modifiedTime: post.updatedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : [],
+    },
+    robots: { index: true, follow: true },
+  };
+}
+
 export default async function page({ params, searchParams }: PageProps) {
   const slug = (await params).slug;
   const { data: post } = await getPost(slug);
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
+  const canonicalUrl = `${baseUrl}/blog/${slug}`;
 
   // Calculate read time
   const wordsPerMinute = 200;
@@ -45,6 +95,26 @@ export default async function page({ params, searchParams }: PageProps) {
 
   return (
     <>
+      {post && (
+        <>
+          <ArticleSchema
+            title={post.title}
+            description={post.excerpt || post.content}
+            image={getUploadImageUrl(post.image)}
+            url={canonicalUrl}
+            datePublished={post.createdAt}
+            dateModified={post.updatedAt}
+            authorName={post?.user?.name || "Admin"}
+          />
+          <BreadcrumbSchema
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Blog", url: "/blog" },
+              { name: post.title, url: `/blog/${slug}` },
+            ]}
+          />
+        </>
+      )}
       {/* Premium Hero Section */}
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-end justify-center overflow-hidden">
         {/* Background Image with Parallax-like effect */}

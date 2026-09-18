@@ -22,16 +22,18 @@ interface BreadcrumbSchemaProps {
  * ]} />
  */
 export default function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
-  const baseUrl = appConfig.baseUrl
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
 
   const breadcrumbData = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${baseUrl}${item.url}`,
+      item: item.url.startsWith("http")
+        ? item.url
+        : `${baseUrl}${item.url.startsWith("/") ? item.url : `/${item.url}`}`,
     })),
   };
 

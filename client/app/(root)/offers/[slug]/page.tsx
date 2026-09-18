@@ -12,8 +12,6 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  console.log("generateMetadata", slug);
-
   const discountRes = await getDiscountBySlug(slug);
   const discount = discountRes?.data;
   const baseUrl = appConfig.baseUrl;
@@ -27,14 +25,14 @@ export async function generateMetadata({
     };
   }
   const { name, description, image, tags } = discount;
-  const canonicalUrl = `${baseUrl}/discounts/${slug}`;
+  const canonicalUrl = `${baseUrl}/offers/${slug}`;
   const imageUrl = image ? `${appConfig.baseApiUrl}/uploads/${image}` : null;
   return {
     metadataBase: new URL(`${baseUrl}`),
-    title: `Offer: ${name}`,
+    title: name,
     description: description || "Check out this special discount offer.",
     keywords: tags ? tags.join(", ") : name,
-    robots: "index, follow",
+    robots: { index: true, follow: true },
     openGraph: {
       title: name,
       description: description,
@@ -51,10 +49,6 @@ export async function generateMetadata({
       images: imageUrl ? [imageUrl] : [],
     },
     alternates: { canonical: canonicalUrl },
-    additionalMetaTags: [
-      { name: "author", content: "ecommerce" },
-      { name: "canonical", content: canonicalUrl },
-    ],
   };
 }
 

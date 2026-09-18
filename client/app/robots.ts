@@ -1,32 +1,34 @@
 import appConfig from "@/appConfig";
-import { getSettings } from "@/lib/apis/setting";
 import type { MetadataRoute } from "next";
 
-export default async function robots(): Promise<MetadataRoute.Robots> {
-  const settingRes = await getSettings();
-  const seo = settingRes?.data?.seo || {};
+/**
+ * Single source of truth for crawler rules (do not keep a conflicting public/robots.txt).
+ */
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = (appConfig.baseUrl || "https://ecommerce.com").replace(
+    /\/$/,
+    ""
+  );
 
-  // If robotsTxt is provided in settings, we can return it as a raw string if Next allowed, 
-  // but MetadataRoute.Robots expects a structured object.
-  // For simplicity, if robotsTxt is provided, we can parse it if it follows a simple format, 
-  // but better to just return the default if not provided and maybe just the 'disallow' list.
-  
-  // Actually, let's keep it simple for now as MetadataRoute.Robots is structured.
-  // If we wanted full control, we would use a route handler for /robots.txt.
-  
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: [
-        "/dashboard",
-        "/cookie-policy",
-        "/privacy-policy",
-        "/profile",
-        "/cart",
-        "/checkout",
-      ],
-    },
-    sitemap: `${appConfig.baseUrl}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: [
+          "/dashboard/",
+          "/api/",
+          "/profile/",
+          "/checkout",
+          "/login",
+          "/register",
+          "/forgot-password",
+          "/reset-password/",
+          "/sslcommerz/",
+        ],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }

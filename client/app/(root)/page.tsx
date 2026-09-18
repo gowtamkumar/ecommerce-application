@@ -1,7 +1,11 @@
-import CategoryTab from "@/components/website/home/CategoryTab";
+import appConfig from "@/appConfig";
 import { getHome } from "@/lib/apis/home";
+import { getSettings } from "@/lib/apis/setting";
+import { getImageUrl } from "@/lib/utils/imageUrl";
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import CategoryTab from "@/components/website/home/CategoryTab";
 
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
@@ -14,6 +18,43 @@ const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
 const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settingRes = await getSettings();
+  const setting = settingRes?.data || {};
+  const seo = setting.seo || {};
+  const siteName = setting.siteName || "Store";
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
+  const title = seo.metaTitle || siteName;
+  const description =
+    seo.metaDescription ||
+    setting.description ||
+    `Shop quality products at ${siteName}.`;
+
+  return {
+    title: { absolute: title },
+    description,
+    keywords: seo.metaKeywords || undefined,
+    alternates: {
+      canonical: baseUrl || undefined,
+    },
+    openGraph: {
+      title,
+      description,
+      url: baseUrl || undefined,
+      type: "website",
+      siteName,
+      images: seo.metaImage ? [getImageUrl(seo.metaImage)] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: seo.metaImage ? [getImageUrl(seo.metaImage)] : [],
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 const SectionHeader = ({
   title,

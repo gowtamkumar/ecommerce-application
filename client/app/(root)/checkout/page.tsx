@@ -11,7 +11,8 @@ const WebFooter = dynamic(() => import("@/components/website/footer/Footer"));
 
 export const metadata: Metadata = {
   title: "Checkout",
-  description: "...",
+  description: "Complete your order securely.",
+  robots: { index: false, follow: false },
 };
 
 export default async function CheckOut() {

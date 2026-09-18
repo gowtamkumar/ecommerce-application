@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "../lib/SessionProvider";
-
+import appConfig from "@/appConfig";
 // Global styles
 import { auth } from "@/auth";
 import "antd/dist/reset.css";
@@ -66,29 +66,40 @@ const poppinsFont = localFont({
 
 export async function generateMetadata() {
   const settingRes = await getSettings();
-  const seo = settingRes?.data?.seo || {};
+  const setting = settingRes?.data || {};
+  const seo = setting?.seo || {};
+  const siteName = setting?.siteName || "Store";
 
   return {
-    title: seo.metaTitle || "Ecommerce Store",
-    description: seo.metaDescription || "Best products online",
-    keywords: seo.metaKeywords || [],
-    alternates: {
-      canonical: seo.canonicalUrl || undefined,
+    metadataBase: appConfig.baseUrl
+      ? new URL(appConfig.baseUrl)
+      : undefined,
+    title: {
+      default: seo.metaTitle || siteName,
+      template: `%s | ${siteName}`,
     },
+    description: seo.metaDescription || `Shop at ${siteName}`,
+    keywords: seo.metaKeywords || [],
+    // Do not set a sitewide canonical — each page owns its own
     openGraph: {
-      title: seo.metaTitle,
-      description: seo.metaDescription,
+      title: seo.metaTitle || siteName,
+      description: seo.metaDescription || `Shop at ${siteName}`,
       type: seo.ogType || "website",
+      siteName,
       images: seo.metaImage ? [getImageUrl(seo.metaImage)] : [],
     },
     twitter: {
       card: seo.twitterCard || "summary_large_image",
-      title: seo.metaTitle,
-      description: seo.metaDescription,
+      title: seo.metaTitle || siteName,
+      description: seo.metaDescription || `Shop at ${siteName}`,
       images: seo.metaImage ? [getImageUrl(seo.metaImage)] : [],
     },
     verification: {
-      google: seo.googleSearchConsoleId,
+      google: seo.googleSearchConsoleId || undefined,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
@@ -181,9 +192,11 @@ body {
 
         {/* Structured Data for SEO */}
         <OrganizationSchema
-          name={setting?.name || "ecommerce"}
-          logo={getImageUrl(setting?.logo, "")}
-          description={setting?.description}
+          name={setting?.siteName || setting?.name || "Store"}
+          logo={getImageUrl(setting?.logo || setting?.image, "")}
+          description={setting?.seo?.metaDescription || setting?.description}
+          email={setting?.email}
+          phone={setting?.phone}
           socialLinks={[
             setting?.socialLink?.facebookUrl,
             setting?.socialLink?.twitterUrl,
@@ -192,8 +205,8 @@ body {
           ].filter(Boolean)}
         />
         <WebSiteSchema
-          name={setting?.name || "ecommerce"}
-          description={setting?.description}
+          name={setting?.siteName || setting?.name || "Store"}
+          description={setting?.seo?.metaDescription || setting?.description}
         />
 
         {/* Custom header code (Analytics, etc.) */}

@@ -1,44 +1,47 @@
 import appConfig from "@/appConfig";
+import { BreadcrumbSchema } from "@/components/seo";
 import Caregory from "@/components/website/categories/Caregory";
 import { getPublicCategories } from "@/lib/apis/categories";
+import { getSettings } from "@/lib/apis/setting";
+import type { Metadata } from "next";
 
-export async function generateMetadata() {
-  const categoriesRes = await getPublicCategories();
+export async function generateMetadata(): Promise<Metadata> {
+  const [categoriesRes, settingRes] = await Promise.all([
+    getPublicCategories(),
+    getSettings(),
+  ]);
   const categories = categoriesRes?.data;
+  const siteName = settingRes?.data?.siteName || "Store";
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
 
-  const baseUrl = appConfig.baseUrl;
-
-  // Fallback metadata if categories not available
   if (!Array.isArray(categories) || categories.length === 0) {
     return {
-      metadataBase: new URL(`${baseUrl}`),
-      title: "Ecommerce Categories",
-      description: "Explore a wide range of product categories.",
-      keywords: "categories, products, shop",
-      robots: "index, follow",
+      title: "Categories",
+      description: `Explore product categories at ${siteName}.`,
+      robots: { index: true, follow: true },
+      alternates: { canonical: `${baseUrl}/categories` },
     };
   }
 
-  // Extract category names for SEO keywords and description
   const categoryNames = categories.map((cat: any) => cat.name).join(", ");
-  const topDescription = `Shop by category: ${categoryNames}`;
+  const topDescription = `Shop by category at ${siteName}: ${categoryNames}`;
 
   return {
-    metadataBase: new URL(`${baseUrl}`),
     title: "Shop by Category",
-    description: topDescription,
+    description: topDescription.slice(0, 160),
     keywords: categoryNames,
-    robots: "index, follow",
+    robots: { index: true, follow: true },
+    alternates: { canonical: `${baseUrl}/categories` },
     openGraph: {
-      title: "Explore Product Categories",
-      description: topDescription,
+      title: `Categories | ${siteName}`,
+      description: topDescription.slice(0, 160),
       url: `${baseUrl}/categories`,
       type: "website",
     },
     twitter: {
       card: "summary",
-      title: "Browse Categories",
-      description: topDescription,
+      title: `Categories | ${siteName}`,
+      description: topDescription.slice(0, 160),
     },
   };
 }
@@ -48,6 +51,12 @@ export default async function Categories() {
 
   return (
     <div className="py-10">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Categories", url: "/categories" },
+        ]}
+      />
       <Caregory categories={categories.data} />
     </div>
   );

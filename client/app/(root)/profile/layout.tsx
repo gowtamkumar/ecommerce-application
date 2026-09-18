@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Profile",
-  description: "...",
+  description: "Manage your account, orders, and wishlist.",
+  robots: { index: false, follow: false },
 };
 
 

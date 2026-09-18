@@ -14,11 +14,26 @@ export default function Caregory({ categories }: any) {
               key={item.id}
               className="py-5 flex flex-col items-center gap-2 justify-center bg-gray-100 cursor-pointer rounded-lg"
               onClick={() => {
-                router.push(`/products?categoryId=${item.id}&`);
+                router.push(
+                  item.slug
+                    ? `/categories/${item.slug}`
+                    : `/products?categoryId=${item.id}`
+                );
+              }}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  router.push(
+                    item.slug
+                      ? `/categories/${item.slug}`
+                      : `/products?categoryId=${item.id}`
+                  );
+                }
               }}
             >
               <Image
-                alt={item.name || "image"}
+                alt={item.name || "category"}
                 src={getImageUrl(item.image)}
                 loading="lazy"
                 width={70}

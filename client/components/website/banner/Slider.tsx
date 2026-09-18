@@ -69,9 +69,15 @@ export default function Slider({ banners }: any) {
 
                 <div className="relative z-10 h-full container mx-auto px-4 md:px-8 lg:px-12 flex flex-col justify-center items-start">
                   <div className="max-w-2xl space-y-5 md:space-y-6">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.12] tracking-tight">
-                      {title}
-                    </h1>
+                    {index === 0 ? (
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.12] tracking-tight">
+                        {title}
+                      </h1>
+                    ) : (
+                      <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.12] tracking-tight">
+                        {title}
+                      </h2>
+                    )}
                     {description ? (
                       <p className="text-base md:text-lg text-white/85 font-normal max-w-xl leading-relaxed">
                         {description}

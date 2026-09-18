@@ -1,159 +1,143 @@
-import appConfig from "@/appConfig";
+import {
+  BreadcrumbSchema,
+  ProductSchema,
+} from "@/components/seo";
+import { stripHtml } from "@/lib/utils/seo";
 import { getProductBySlug } from "@/lib/apis/product";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+import appConfig from "@/appConfig";
 const SingleProduct = dynamic(
   () => import("@/components/website/product/SingleProduct")
 );
 
-interface Product {
-  name: string;
-  productCategories: any;
-  description: string;
-  thumbnailImage: string;
-  images: any;
-  reviews: any[];
-  tags: any;
-  colors: any;
-  brand: any;
-  rating: string;
-  finalPrice: number | string;
-}
-
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const slug = (await params).slug;
-  const product = await getProductBySlug({
-    slug,
-  });
+  const product = await getProductBySlug({ slug });
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
 
-  const urlGet = appConfig.baseUrl;
-  const imageUrl = appConfig.baseApiUrl;
-
-  if (!product || !product.data) {
+  if (!product?.data) {
     return {
-      metadataBase: new URL(`${urlGet}`), // Dynamically set base URL
-      title: "ecommerce",
+      title: "Product Not Found",
       description: "The requested product could not be found.",
-      robots: "noindex, nofollow",
+      robots: { index: false, follow: false },
     };
   }
 
-  const {
-    name,
-    description,
-    thumbnailImage,
-    images,
-    reviews,
-    rating,
-    tags,
-    finalPrice,
-  } = (product.data as Product) || {};
-  const canonicalUrl = `${urlGet}/products/${slug}`;
-
-  // Ensure images URLs are absolute
-  const absoluteMetaImgUrl =
-    thumbnailImage && `${imageUrl}/uploads/${thumbnailImage}`;
-
-  const absolutePhotosUrls = images
-    ?.split(",")
-    .map((image: string) => `${imageUrl}/uploads/${image}`);
-
-  const reviewsSchema = reviews?.map((item: any) => ({
-    "@type": "Review",
-    reviewBody: item.comment,
-    author: {
-      "@type": "Person",
-      name: item?.user?.name ? item?.user?.name : " ",
-    },
-    datePublished: item.createdAt,
-    reviewRating: {
-      "@type": "Rating",
-      ratingValue: item?.rating,
-      bestRating: "5",
-    },
-  }));
-
-  const productSchema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: name || "Default Product Name",
-    description: description || "Default product description",
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "BDT",
-      price: finalPrice || "0.00",
-      url: `${appConfig.baseUrl}/products/${slug}`,
-      availability: "https://schema.org/InStock",
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: rating || "0",
-      reviewCount: reviews?.length || "0",
-    },
-    review: reviewsSchema,
-  };
+  const data = product.data;
+  const name = data.name || "Product";
+  const description =
+    stripHtml(data.description)?.slice(0, 160) ||
+    `Buy ${name} online.`;
+  const canonicalUrl = `${baseUrl}/products/${slug}`;
+  const image = getImageUrl(data.thumbnailImage);
 
   return {
-    metadataBase: new URL(urlGet as string), // Ensuring base URL is set correctly for image links
-    title: `Buy Now | ${name}`,
-    description: description,
-    keywords: `${name}, ${tags}`,
-    robots: "index, follow",
+    metadataBase: baseUrl ? new URL(baseUrl) : undefined,
+    title: name,
+    description,
+    keywords: [name, data.brand?.name, ...(data.tags || [])]
+      .filter(Boolean)
+      .join(", "),
+    robots: { index: true, follow: true },
     openGraph: {
       title: name,
-      description: description,
+      description,
       url: canonicalUrl,
       type: "website",
-      images: [
-        {
-          url: absoluteMetaImgUrl,
-          width: 800,
-          height: 600,
-          alt: name,
-        },
-      ],
+      images: image
+        ? [{ url: image, width: 800, height: 600, alt: name }]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: name,
-      description: description,
-      images: absolutePhotosUrls,
+      description,
+      images: image ? [image] : [],
     },
     alternates: {
       canonical: canonicalUrl,
     },
-    additionalMetaTags: [
-      {
-        name: "author",
-        content: "ecommerce",
-      },
-      {
-        name: "canonical",
-        content: canonicalUrl,
-      },
-    ],
-    other: {
-      "application/ld+json": JSON.stringify(productSchema),
-    },
   };
 }
 
-export default async function Product({ params }: { params: Promise<{ slug: string }> }) {
-
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const slug = (await params).slug;
+
   if (!slug) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-          <p className="text-gray-500">The product you are looking for does not exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Product Not Found
+          </h1>
+          <p className="text-gray-500">
+            The product you are looking for does not exist.
+          </p>
         </div>
       </div>
     );
   }
 
+  const productRes = await getProductBySlug({ slug });
+  const product = productRes?.data;
+  const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
+  const canonicalUrl = `${baseUrl}/products/${slug}`;
+
+  const defaultVariant =
+    product?.productVariants?.find((v: any) => v.isDefault) ||
+    product?.productVariants?.[0];
+
+  const images = [
+    getImageUrl(product?.thumbnailImage),
+    ...(typeof product?.images === "string"
+      ? product.images
+          .split(",")
+          .filter(Boolean)
+          .map((img: string) => getImageUrl(img.trim()))
+      : []),
+  ].filter(Boolean);
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {product && (
+        <>
+          <ProductSchema
+            name={product.name}
+            description={product.description}
+            image={images}
+            url={canonicalUrl}
+            sku={defaultVariant?.sku || product.sku}
+            brand={product.brand?.name}
+            price={product.finalPrice}
+            currency="BDT"
+            stockQty={
+              defaultVariant?.stockQty ?? product.stockQty ?? product.qty
+            }
+            ratingValue={product.avgRating || product.rating}
+            reviewCount={
+              product.reviewsCount || product.reviews?.length || 0
+            }
+            reviews={product.reviews || []}
+          />
+          <BreadcrumbSchema
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Products", url: "/products" },
+              { name: product.name, url: `/products/${slug}` },
+            ]}
+          />
+        </>
+      )}
       <SingleProduct slug={slug} />
     </div>
   );

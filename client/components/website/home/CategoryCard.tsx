@@ -28,10 +28,14 @@ export default function CategoryCard({ categories }: any) {
       >
         {(categories || []).map((item: any, idx: number) => (
           <SwiperSlide key={item.id || idx}>
-            <Link
-              href={`/products?categoryId=${item.id}`}
-              className="flex flex-col items-center justify-center group"
-            >
+              <Link
+                href={
+                  item.slug
+                    ? `/categories/${item.slug}`
+                    : `/products?categoryId=${item.id}`
+                }
+                className="flex flex-col items-center justify-center group"
+              >
               <div className="relative w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-50 ring-1 ring-gray-200/80 group-hover:ring-global-primary/40 transition-all duration-300 group-hover:shadow-md">
                 <Image
                   alt={item.name || "category"}

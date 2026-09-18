@@ -9,6 +9,7 @@ const Register = dynamic(() => import("@/components/website/register/Register"))
 export const metadata: Metadata = {
   title: "Register | Create Your Account",
   description: "Join us today to unlock exclusive member discounts, real-time order tracking, and express checkout.",
+  robots: { index: false, follow: false },
 };
 
 export default function page() {
