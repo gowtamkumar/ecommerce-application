@@ -1,125 +1,242 @@
-'use client';
-import { getDashboardStats } from '@/lib/apis/report';
-import { errorNotification } from '@/lib/utils/notification';
-import { ArrowDownOutlined, ArrowUpOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Spin, Statistic, Typography } from 'antd';
-import { useEffect, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+"use client";
+import FinancialSummaryCards from "@/components/dashboard/report/FinancialSummaryCards";
+import FulfillmentAuditCard from "@/components/dashboard/report/FulfillmentAuditCard";
+import PaymentSettlementCard from "@/components/dashboard/report/PaymentSettlementCard";
+import ReportHeader, { ReportPreset } from "@/components/dashboard/report/ReportHeader";
+import { getDashboardReports } from "@/lib/apis/reports";
+import { getSettings } from "@/lib/apis/setting";
+import { errorNotification } from "@/lib/utils/notification";
+import { setSetting } from "@/redux/features/global/globalSlice";
+import { Spin } from "antd";
+import dayjs, { Dayjs } from "dayjs";
+import dynamic from "next/dynamic";
+import React, { useCallback, useEffect, useState } from "react";
+import { FiDollarSign, FiPackage, FiTruck, FiUsers } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 
-const { Title } = Typography;
+// Dynamic imports for chart and heavy tables
+const SalesReportChart = dynamic(
+  () => import("@/components/dashboard/report/SalesReportChart"),
+  { ssr: false }
+);
+const ProductProfitabilityTable = dynamic(
+  () => import("@/components/dashboard/report/ProductProfitabilityTable")
+);
+const CustomerContributionTable = dynamic(
+  () => import("@/components/dashboard/report/CustomerContributionTable")
+);
+const StockAlert = dynamic(
+  () => import("@/components/dashboard/dashboard/components/StockAlert")
+);
+
+type ActiveTab = "overview" | "products" | "customers" | "inventory";
 
 export default function ReportPage() {
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<any>(null);
+  const [dashboardReports, setDashboardReports] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
+  const [activePreset, setActivePreset] = useState<ReportPreset>("month");
+  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
+    dayjs().startOf("month"),
+    dayjs().endOf("month"),
+  ]);
 
-  const fetchStats = async () => {
-    setLoading(true);
-    try {
-      const res = await getDashboardStats();
-      if (res.success) {
-        setStats(res.data);
+  const dispatch = useDispatch();
+
+  const {
+    top_selling_product = [],
+    top_customers = [],
+    product_alert_stock_report = [],
+    loss_profit = [],
+    orders = [],
+    payments = {},
+  } = dashboardReports || {};
+
+  const fetchReports = useCallback(
+    async (start: Dayjs, end: Dayjs, isRefresh = false) => {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
       }
-    } catch (error: any) {
-      errorNotification({ message: error.message || 'Failed to fetch report data' });
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      try {
+        const results = await getDashboardReports({
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
+        });
+
+        const setting = await getSettings();
+        if (setting?.data) {
+          dispatch(setSetting(setting.data));
+        }
+
+        if (!results.success) {
+          errorNotification({
+            message: results.message || "Failed to fetch report data",
+          });
+          return;
+        }
+
+        setDashboardReports(results.data || {});
+      } catch (err: any) {
+        console.error("Report fetch error:", err);
+        errorNotification({
+          message: err?.message || "Failed to load reports.",
+        });
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    fetchReports(dateRange[0], dateRange[1]);
+  }, [fetchReports, dateRange]);
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-96"><Spin size="large" /></div>;
-  }
+  const handlePresetChange = (preset: ReportPreset) => {
+    setActivePreset(preset);
+    let start = dayjs().startOf("day");
+    let end = dayjs().endOf("day");
 
-  if (!stats) return null;
+    if (preset === "today") {
+      start = dayjs().startOf("day");
+      end = dayjs().endOf("day");
+    } else if (preset === "7d") {
+      start = dayjs().subtract(7, "day").startOf("day");
+      end = dayjs().endOf("day");
+    } else if (preset === "month") {
+      start = dayjs().startOf("month");
+      end = dayjs().endOf("month");
+    } else if (preset === "quarter") {
+      const currentMonth = dayjs().month();
+      const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
+      start = dayjs().month(quarterStartMonth).startOf("month");
+      end = dayjs().endOf("month");
+    } else if (preset === "year") {
+      start = dayjs().startOf("year");
+      end = dayjs().endOf("year");
+    }
+
+    setDateRange([start, end]);
+  };
+
+  const handleRangeChange = (values: [Dayjs, Dayjs]) => {
+    setActivePreset("custom");
+    setDateRange(values);
+  };
+
+  // Financial calculations
+  const { saleAmount, purchaseAmount } = (loss_profit || []).reduce(
+    (
+      pre: { saleAmount: number; purchaseAmount: number },
+      curr: { total_sale_amount: number; total_purchase_amount: number }
+    ) => ({
+      saleAmount: +pre.saleAmount + +(curr.total_sale_amount || 0),
+      purchaseAmount: +pre.purchaseAmount + +(curr.total_purchase_amount || 0),
+    }),
+    { saleAmount: 0, purchaseAmount: 0 }
+  );
+
+  const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
+    { id: "overview", label: "Financials & Sales", icon: <FiDollarSign /> },
+    { id: "products", label: "Product Unit Economics", icon: <FiPackage /> },
+    { id: "customers", label: "Customer Value & VIPs", icon: <FiUsers /> },
+    { id: "inventory", label: "Inventory & Alerts", icon: <FiTruck /> },
+  ];
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-      <div className="mb-6">
-        <Title level={2}>Dashboard Overview</Title>
-        <p className="text-gray-500">Real-time update of your business performance</p>
+    <div className="max-w-7xl mx-auto space-y-8 print:p-0">
+      {/* 1. Header with Controls */}
+      <div className="print:hidden">
+        <ReportHeader
+          activePreset={activePreset}
+          dateRange={dateRange}
+          onPresetChange={handlePresetChange}
+          onRangeChange={handleRangeChange}
+          onRefresh={() => fetchReports(dateRange[0], dateRange[1], true)}
+          loading={loading}
+          refreshing={refreshing}
+        />
       </div>
 
-      {/* Statistics Cards */}
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title="Total Revenue"
-              value={stats.totalRevenue}
-              precision={2}
-              styles={{ content: { color: "#3f8600" } }}
-              prefix={<DollarOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title="Total Profit"
-              value={stats.totalProfit}
-              precision={2}
-              styles={{ content: { color: stats.totalProfit >= 0 ? "#3f8600" : "#cf1322" } }}
-              prefix={stats.totalProfit >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-              
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title="Total Sales"
-              value={stats.totalSales}
-              prefix={<ShoppingCartOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title="Total Customers"
-              value={stats.totalCustomers}
-              prefix={<UserOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card variant='borderless' className="shadow-sm hover:shadow-md transition-shadow">
-            <Statistic
-              title="Low Stock Alert"
-              value={stats.lowStockCount}
-              styles={{ content: { color: "#cf1322" } }}
-              prefix={<WarningOutlined />}
-            />
-          </Card>
-        </Col>
-      </Row>
+      {loading && !refreshing ? (
+        <div className="min-h-[400px] flex flex-col items-center justify-center gap-3">
+          <Spin size="large" />
+          <span className="text-xs font-medium text-gray-500">
+            Synthesizing accounting and business intelligence...
+          </span>
+        </div>
+      ) : (
+        <>
+          {/* 2. Executive 6-Card Financial Summary */}
+          <FinancialSummaryCards
+            dashboardReports={dashboardReports}
+            saleAmount={saleAmount}
+            purchaseAmount={purchaseAmount}
+          />
 
-      {/* Charts Section */}
-      <Row gutter={[16, 16]}>
-        <Col xs={24} lg={16}>
-          <Card title="Sales Trend (Last 7 Days)" variant='borderless' className="shadow-sm">
-            <div style={{ height: 400 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={stats.chartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          {/* 3. Navigation Tabs */}
+          <div className="flex items-center gap-2 border-b border-gray-200/80 pb-3 overflow-x-auto print:hidden">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? "bg-global-primary text-white shadow-sm"
+                      : "bg-white text-gray-600 hover:text-gray-900 border border-gray-100 hover:border-global-primary/30"
+                  }`}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="sales" name="Sales ($)" fill="#1677ff" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+                  <span className="text-sm">{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 4. Tab Views */}
+          {activeTab === "overview" && (
+            <div className="space-y-6">
+              {/* Sales Revenue Velocity Timeline Chart */}
+              <SalesReportChart orders={orders} />
+
+              {/* Payment Settlement & Fulfillment Audit Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-6">
+                  <PaymentSettlementCard payments={payments} />
+                </div>
+                <div className="lg:col-span-6">
+                  <FulfillmentAuditCard dashboardReports={dashboardReports} />
+                </div>
+              </div>
             </div>
-          </Card>
-        </Col>
-      </Row>
+          )}
+
+          {activeTab === "products" && (
+            <ProductProfitabilityTable
+              lossProfit={loss_profit}
+              topSellingProducts={top_selling_product}
+            />
+          )}
+
+          {activeTab === "customers" && (
+            <CustomerContributionTable topCustomers={top_customers} />
+          )}
+
+          {activeTab === "inventory" && (
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <StockAlert productAlertStockReport={product_alert_stock_report} />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
