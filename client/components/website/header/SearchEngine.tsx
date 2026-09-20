@@ -397,7 +397,7 @@ export default function SearchEngine() {
                 )}
 
                 {/* Loading Skeleton */}
-                {isSearching ? (
+                {isSearching && (
                   <div className="p-3 space-y-2">
                     {[1, 2, 3].map((i) => (
                       <div
@@ -412,7 +412,9 @@ export default function SearchEngine() {
                       </div>
                     ))}
                   </div>
-                ) : results.length > 0 ? (
+                )}
+
+                {!isSearching && results.length > 0 && (
                   /* Products Result List */
                   <div className="p-2 space-y-1">
                     <div className="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
@@ -498,7 +500,9 @@ export default function SearchEngine() {
                       );
                     })}
                   </div>
-                ) : (
+                )}
+
+                {!isSearching && results.length === 0 && (
                   /* Empty State */
                   <div className="p-8 text-center space-y-3">
                     <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-xl">

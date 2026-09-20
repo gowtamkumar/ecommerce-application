@@ -1,17 +1,17 @@
 "use client";
 import {
-  clearNotifications,
-  getNotifications,
-  readNotification,
+    clearNotifications,
+    getNotifications,
+    readNotification,
 } from "@/lib/apis/notification";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import {
-  BellOutlined,
-  ClockCircleOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
+    BellOutlined,
+    ClockCircleOutlined,
+    DeleteOutlined,
+    InfoCircleOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Empty, Modal, Skeleton, Tag, Typography } from "antd";
+import { Button, Card, Empty, Modal, Skeleton, Typography } from "antd";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/navigation";
@@ -168,20 +168,21 @@ const NotificationsUser = () => {
       <Modal
         title={
           <div className="flex items-center gap-2">
-            <InfoCircleOutlined className="text-blue-600" />
-            <span>Notification Details</span>
+            <InfoCircleOutlined className="text-global-primary" />
+            <span className="font-bold">Notification Details</span>
           </div>
         }
         open={!!notification?.title}
         onOk={handleOk}
         onCancel={handleOk}
         footer={[
-          <Button key="close" onClick={handleOk}>
+          <Button key="close" type="primary" onClick={handleOk} className="rounded-xl font-bold text-xs bg-global-primary hover:bg-global-hover border-none">
             Close
           </Button>,
         ]}
         centered
-        width={500}
+        width={420}
+        style={{ maxWidth: "calc(100vw - 32px)" }}
       >
         <div className="space-y-4 py-2">
           <div>

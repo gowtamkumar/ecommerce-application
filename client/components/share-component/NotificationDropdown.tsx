@@ -75,7 +75,7 @@ const NotificationDropdown = () => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const content = (
-    <div className="flex flex-col bg-white rounded-xl overflow-hidden font-sans">
+    <div className="flex flex-col w-[340px] sm:w-[380px] max-w-[calc(100vw-32px)] bg-white rounded-xl overflow-hidden font-sans">
       {/* Header */}
       <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-2">

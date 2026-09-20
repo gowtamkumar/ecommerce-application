@@ -82,7 +82,8 @@ export default function NotificationDetailModal({
       onCancel={onClose}
       footer={null}
       centered
-      width={600}
+      width={460}
+      style={{ maxWidth: "calc(100vw - 32px)" }}
       className="modern-alert-modal"
     >
       <div className="pt-2">
