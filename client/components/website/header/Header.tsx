@@ -2,10 +2,10 @@
 import { getCategoriesForMenu } from "@/lib/apis/categories";
 import { getSettings } from "@/lib/apis/setting";
 import {
-  selectGlobal,
-  setCategories,
-  setMobile,
-  setSetting,
+    selectGlobal,
+    setCategories,
+    setMobile,
+    setSetting,
 } from "@/redux/features/global/globalSlice";
 import { Button } from "antd";
 import dynamic from "next/dynamic";
@@ -91,21 +91,16 @@ export default function Header() {
                 <MainMenu />
               </div>
 
-              {/* Search Bar - Desktop */}
-              <div className="flex-1 max-w-xl hidden xl:block">
+              {/* Search Bar - Desktop & Tablet */}
+              <div className="flex-1 max-w-lg hidden md:block mx-2 lg:mx-4">
                 <SearchEngine />
               </div>
 
               {/* Right Section */}
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 {/* Currency Switcher */}
-                <div className="hidden md:block">
+                <div className="hidden lg:block">
                   <CurrencySwitcher />
-                </div>
-
-                {/* Search - Tablet */}
-                <div className="xl:hidden">
-                  <SearchEngine />
                 </div>
 
                 {/* Action Icons */}
@@ -125,11 +120,16 @@ export default function Header() {
             </div>
           </div>
         ) : (
-          // Mobile Header
-          <div className="container mx-auto py-3 px-4 flex justify-between items-center">
-            <Logo />
-            <div className="flex items-center gap-4">
-              <HeaderRight />
+          // Mobile Header with Integrated Search
+          <div className="container mx-auto py-2.5 px-4 space-y-2">
+            <div className="flex justify-between items-center">
+              <Logo />
+              <div className="flex items-center gap-3">
+                <HeaderRight />
+              </div>
+            </div>
+            <div className="w-full pt-0.5">
+              <SearchEngine />
             </div>
           </div>
         )}
