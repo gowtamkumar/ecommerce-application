@@ -1,11 +1,11 @@
 import appConfig from "@/appConfig";
+import CategoryTab from "@/components/website/home/CategoryTab";
 import { getHome } from "@/lib/apis/home";
 import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import CategoryTab from "@/components/website/home/CategoryTab";
 
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
@@ -65,7 +65,7 @@ const SectionHeader = ({
   subtitle?: string;
   link?: string;
 }) => (
-  <div className="mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 w-full">
+  <div className="mb-8 md:mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
     <div className="space-y-1.5">
       <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
         {title}
@@ -78,7 +78,7 @@ const SectionHeader = ({
     </div>
 
     {link && (
-      <Link
+    <Link
         href={link}
         className="group inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-global-primary transition-colors"
       >
@@ -234,7 +234,6 @@ export default async function Home() {
           "top_selling",
           "new_arrivals",
           "category_tabs",
-          "footer_banners",
           "blog",
         ];
 

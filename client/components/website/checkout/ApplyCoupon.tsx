@@ -87,7 +87,7 @@ export default function ApplyCoupon() {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gray-500">
           <span className="flex items-center gap-2">
-            <TagOutlined className="text-blue-600" />
+            <TagOutlined className="text-global-primary" />
             <span>Promotional Code</span>
           </span>
           {isCouponApplied && (
@@ -143,7 +143,7 @@ export default function ApplyCoupon() {
               onClick={handleApplyCoupon}
               loading={loading}
               disabled={loading || !couponInput.trim()}
-              className="h-12 !rounded-r-2xl px-6 !bg-gray-900 hover:!bg-black border-none font-black text-xs uppercase tracking-widest transition-all"
+              className="h-12 !rounded-r-2xl px-6 !bg-global-primary hover:!bg-global-hover border-none font-black text-xs uppercase tracking-widest transition-all"
             >
               Apply
             </Button>

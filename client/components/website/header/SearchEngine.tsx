@@ -76,7 +76,7 @@ export default function SearchEngine() {
               onChange={(e: any) => setQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               placeholder="Search for products..."
-              className="!h-11 !rounded-full !pl-12 !bg-global-header-bg/5 !border-global-header-text/10 hover:!bg-global-bg hover:!border-global-header-text/20 focus:!bg-global-bg focus:!border-global-primary focus:!shadow-[0_0_0_3px_var(--global-primary-alpha-10)] !transition-all !duration-300 placeholder:!text-global-header-text/40"
+              className="h-11 rounded-full pl-12 bg-global-header-bg/5 border-global-header-text/10 hover:bg-global-bg hover:!border-global-header-text/20 focus:!bg-global-bg focus:!border-global-primary focus:!shadow-[0_0_0_3px_var(--global-primary-alpha-10)] !transition-all !duration-300 placeholder:!text-global-header-text/40"
               suffix={
                 <div className="flex items-center gap-2">
                   {query && (
@@ -88,7 +88,7 @@ export default function SearchEngine() {
                   <button
                     type="submit"
                     aria-label="Search"
-                    className="!h-8 !w-8 flex items-center justify-center !rounded-full bg-gray-900 text-white hover:bg-global-primary transition-colors"
+                    className="h-8 w-8 flex items-center justify-center rounded-full text-white hover:bg-global-primary transition-colors"
                   >
                     <SearchOutlined className="text-sm" />
                   </button>

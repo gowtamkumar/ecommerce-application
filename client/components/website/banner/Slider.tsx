@@ -38,7 +38,7 @@ export default function Slider({ banners }: any) {
         loop
         effect="fade"
         speed={900}
-        className="w-full h-[55vh] min-h-[420px] max-h-[640px] md:h-[70vh] md:max-h-[720px]"
+        className="w-full h-[55vh] min-h-105 max-h-160 md:h-[70vh] md:max-h-180"
       >
         {banners.map(
           (
@@ -53,7 +53,7 @@ export default function Slider({ banners }: any) {
               description: string;
               url: string;
             },
-            index: number
+            index: number,
           ) => (
             <SwiperSlide key={`${image}-${index}`}>
               <div className="relative w-full h-full">
@@ -64,13 +64,13 @@ export default function Slider({ banners }: any) {
                   }}
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/15" />
+                <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/45 to-black/15" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
                 <div className="relative z-10 h-full container mx-auto px-4 md:px-8 lg:px-12 flex flex-col justify-center items-start">
                   <div className="max-w-2xl space-y-5 md:space-y-6">
                     {index === 0 ? (
-                      <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.15] tracking-tight break-words">
+                      <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-[1.15] tracking-tight break-words">
                         {title}
                       </h1>
                     ) : (
@@ -97,7 +97,7 @@ export default function Slider({ banners }: any) {
                 </div>
               </div>
             </SwiperSlide>
-          )
+          ),
         )}
 
         <button
@@ -105,7 +105,17 @@ export default function Slider({ banners }: any) {
           aria-label="Previous slide"
           className="swiper-button-prev-custom absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="rotate-180">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="rotate-180"
+          >
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
           </svg>
@@ -115,7 +125,16 @@ export default function Slider({ banners }: any) {
           aria-label="Next slide"
           className="swiper-button-next-custom absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
           </svg>

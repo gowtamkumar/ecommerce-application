@@ -156,7 +156,7 @@ export default function CheckoutSummary({
         )}
 
         {+couponDiscount > 0 && (
-          <div className="flex justify-between items-center text-blue-600 bg-blue-50/60 px-3 py-2 rounded-xl">
+          <div className="flex justify-between items-center text-global-primary bg-global-primary/5 px-3 py-2 rounded-xl">
             <span className="text-xs font-bold">Coupon Savings</span>
             <span className="text-xs font-black">-{formatPrice(couponDiscount)}</span>
           </div>
@@ -201,7 +201,7 @@ export default function CheckoutSummary({
         <Button
           type="primary"
           size="large"
-          className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] !bg-gray-900 hover:!bg-black border-none shadow-xl shadow-gray-200 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] !bg-global-primary hover:!bg-global-hover border-none shadow-xl shadow-global-primary/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           onClick={handlePrimaryAction}
           loading={loading?.save}
           disabled={loading?.save}
@@ -227,7 +227,7 @@ export default function CheckoutSummary({
         </Button>
 
         <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-gray-400 font-medium">
-          <SafetyCertificateOutlined className="text-emerald-500 text-xs" />
+          <SafetyCertificateOutlined className="text-global-primary text-xs" />
           <span>Encrypted 256-Bit Checkout · Money-back Guarantee</span>
         </div>
       </div>

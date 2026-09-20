@@ -1,13 +1,13 @@
 "use client";
 import { paymentMethods } from "@/constants/constants";
 import {
-  selectCheckout,
-  setCheckoutFormData,
+    selectCheckout,
+    setCheckoutFormData,
 } from "@/redux/features/checkout/checkoutSlice";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
+import { BankOutlined, CheckCircleOutlined, WalletOutlined } from "@ant-design/icons";
 import { Alert, Checkbox, Radio } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { BankOutlined, WalletOutlined, CheckCircleOutlined } from "@ant-design/icons";
 
 export default function PaymentMethod() {
   const global = useSelector(selectGlobal);
@@ -47,7 +47,7 @@ export default function PaymentMethod() {
                 <Radio value={method.value} className="sr-only" />
                 <div className="flex w-full items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isSelected ? "bg-gray-900 text-white" : "bg-white text-gray-400 border border-gray-100"}`}>
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isSelected ? "bg-global-primary text-white" : "bg-white text-gray-400 border border-gray-100"}`}>
                        {method.value === 'Cash' ? <WalletOutlined className="text-xl" /> : <BankOutlined className="text-xl" />}
                     </div>
                     <div>
@@ -59,7 +59,7 @@ export default function PaymentMethod() {
                       </p>
                     </div>
                   </div>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "border-blue-600 bg-blue-600 shadow-sm" : "border-gray-200"}`}>
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "border-global-primary bg-global-primary shadow-sm" : "border-gray-200"}`}>
                     {isSelected && <CheckCircleOutlined className="text-[10px] text-white" />}
                   </div>
                 </div>
@@ -88,11 +88,11 @@ export default function PaymentMethod() {
 
             <span className="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition-colors uppercase tracking-widest leading-relaxed">
               I certify that I have read and agree to the{" "}
-              <a href="/terms-conditions" className="text-blue-600 hover:underline decoration-blue-600 underline-offset-4">
+              <a href="/terms-conditions" className="text-global-primary hover:underline decoration-global-primary underline-offset-4">
                 Terms of Service
               </a>
               {" "}and{" "}
-              <a href="/return-policy" className="text-blue-600 hover:underline decoration-blue-600 underline-offset-4">
+              <a href="/return-policy" className="text-global-primary hover:underline decoration-global-primary underline-offset-4">
                 Return Policy
               </a>
             </span>
