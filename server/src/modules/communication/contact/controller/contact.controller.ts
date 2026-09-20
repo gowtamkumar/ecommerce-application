@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { ContactEntity } from '../model/contact.entity';
-import { logger } from '@/middlewares/logger';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
 import { contactCreateValidation } from '@/validation/contact/contactCreateValidation';
+import { NextFunction, Request, Response } from 'express';
+import { ContactEntity } from '../model/contact.entity';
 
 // @desc Get all Contact
 // @route GET /api/v1/Contact
