@@ -119,134 +119,171 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#fafbfc]">
-      {/* Premium Checkout Banner & Stepper */}
-      <div className="bg-gray-900 py-10 sm:py-14 relative overflow-hidden border-b border-gray-800">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-global-primary/10 rounded-full blur-3xl pointer-events-none -mr-40 -mt-40" />
-        <div className="absolute bottom-0 left-0 w-60 h-60 bg-global-primary/5 rounded-full blur-3xl pointer-events-none -ml-30 -mb-30" />
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight mb-6">
-            Secure Checkout
-          </h1>
-
-          {/* Interactive Stepper Bar */}
-          <div className="flex items-center justify-center max-w-xl mx-auto">
-            {/* Step 1 Pill */}
-            <button
-              onClick={() => setActiveStep(1)}
-              className="flex items-center gap-2.5 transition-all text-left group cursor-pointer"
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all ${
-                  activeStep === 1
-                    ? "bg-global-primary text-white ring-4 ring-global-primary/20"
-                    : activeStep > 1
-                    ? "bg-emerald-500 text-white"
-                    : "bg-gray-800 text-gray-400"
-                }`}
-              >
-                {activeStep > 1 ? <CheckOutlined className="text-xs" /> : "1"}
+      {/* Refined Luxury Checkout Header & Stepper */}
+      <div className="bg-white border-b border-gray-200/70 shadow-2xs">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          
+          {/* Top Row: Page Title + Trust Badges */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-gray-100">
+            <div className="flex items-center gap-3.5 text-center sm:text-left">
+              <div className="w-11 h-11 rounded-2xl bg-global-primary/10 text-global-primary flex items-center justify-center text-xl shadow-xs shrink-0">
+                <LockOutlined />
               </div>
-              <div className="hidden sm:block">
-                <span
-                  className={`text-xs font-black uppercase tracking-wider block leading-tight ${
-                    activeStep === 1
-                      ? "text-white"
-                      : activeStep > 1
-                      ? "text-emerald-400 group-hover:text-emerald-300"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Shipping
-                </span>
-                <span className="text-[10px] text-gray-400 font-medium">Destination</span>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2 justify-center sm:justify-start">
+                  <span>Secure Checkout</span>
+                </h1>
+                <p className="text-xs text-gray-500 font-medium mt-0.5">
+                  Fast, encrypted & protected purchase
+                </p>
               </div>
-            </button>
+            </div>
 
-            {/* Connector Line 1-2 */}
-            <div
-              className={`flex-1 h-[2px] mx-3 sm:mx-4 transition-colors ${
-                activeStep > 1 ? "bg-global-primary" : "bg-gray-800"
-              }`}
-            />
-
-            {/* Step 2 Pill */}
-            <button
-              onClick={() => {
-                if (checkoutFormData?.shippingAddressId) setActiveStep(2);
-              }}
-              disabled={!checkoutFormData?.shippingAddressId}
-              className={`flex items-center gap-2.5 transition-all text-left ${
-                checkoutFormData?.shippingAddressId ? "cursor-pointer group" : "cursor-not-allowed opacity-50"
-              }`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all ${
-                  activeStep === 2
-                    ? "bg-global-primary text-white ring-4 ring-global-primary/20"
-                    : activeStep > 2
-                    ? "bg-emerald-500 text-white"
-                    : "bg-gray-800 text-gray-400"
-                }`}
-              >
-                {activeStep > 2 ? <CheckOutlined className="text-xs" /> : "2"}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
+                <SafetyCertificateOutlined className="text-emerald-600 text-sm" />
+                <span>256-Bit SSL Encrypted</span>
               </div>
-              <div className="hidden sm:block">
-                <span
-                  className={`text-xs font-black uppercase tracking-wider block leading-tight ${
-                    activeStep === 2
-                      ? "text-white"
-                      : activeStep > 2
-                      ? "text-emerald-400 group-hover:text-emerald-300"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Review
-                </span>
-                <span className="text-[10px] text-gray-400 font-medium">Items ({cartList.length})</span>
+              <div className="hidden md:flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-200/80 px-3.5 py-1.5 rounded-full">
+                <CheckCircleFilled className="text-emerald-500 text-xs" />
+                <span>Money-Back Guarantee</span>
               </div>
-            </button>
-
-            {/* Connector Line 2-3 */}
-            <div
-              className={`flex-1 h-[2px] mx-3 sm:mx-4 transition-colors ${
-                activeStep > 2 ? "bg-global-primary" : "bg-gray-800"
-              }`}
-            />
-
-            {/* Step 3 Pill */}
-            <button
-              onClick={() => {
-                if (checkoutFormData?.shippingAddressId && cartList.length > 0) setActiveStep(3);
-              }}
-              disabled={!checkoutFormData?.shippingAddressId || cartList.length === 0}
-              className={`flex items-center gap-2.5 transition-all text-left ${
-                checkoutFormData?.shippingAddressId && cartList.length > 0
-                  ? "cursor-pointer group"
-                  : "cursor-not-allowed opacity-50"
-              }`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs transition-all ${
-                  activeStep === 3
-                    ? "bg-global-primary text-white ring-4 ring-global-primary/20"
-                    : "bg-gray-800 text-gray-400"
-                }`}
-              >
-                3
-              </div>
-              <div className="hidden sm:block">
-                <span
-                  className={`text-xs font-black uppercase tracking-wider block leading-tight ${
-                    activeStep === 3 ? "text-white" : "text-gray-500"
-                  }`}
-                >
-                  Payment
-                </span>
-                <span className="text-[10px] text-gray-400 font-medium">Confirm & Pay</span>
-              </div>
-            </button>
+            </div>
           </div>
+
+          {/* Stepper Card */}
+          <div className="max-w-2xl mx-auto pt-2">
+            <div className="grid grid-cols-3 relative">
+              
+              {/* Connector Bar Background */}
+              <div className="absolute top-5 left-[16.6%] right-[16.6%] h-[3px] bg-gray-100 rounded-full overflow-hidden">
+                {/* Active fill */}
+                <div 
+                  className="h-full bg-linear-to-r from-global-primary to-global-hover rounded-full transition-all duration-500"
+                  style={{
+                    width: activeStep === 1 ? "0%" : activeStep === 2 ? "50%" : "100%",
+                  }}
+                />
+              </div>
+
+              {/* Step 1 */}
+              <button
+                type="button"
+                onClick={() => setActiveStep(1)}
+                className="flex flex-col items-center text-center group cursor-pointer relative z-10 transition-all focus:outline-hidden"
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
+                    activeStep === 1
+                      ? "bg-global-primary text-white ring-4 ring-global-primary/20 shadow-md shadow-global-primary/30 scale-105"
+                      : activeStep > 1
+                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
+                      : "bg-white text-gray-400 border-2 border-gray-200 group-hover:border-gray-300"
+                  }`}
+                >
+                  {activeStep > 1 ? <CheckOutlined className="text-xs" /> : "1"}
+                </div>
+                <div className="mt-2.5 space-y-0.5">
+                  <span
+                    className={`text-xs font-black uppercase tracking-wider block transition-colors ${
+                      activeStep === 1
+                        ? "text-global-primary"
+                        : activeStep > 1
+                        ? "text-gray-900"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    Shipping
+                  </span>
+                  <span className="text-[11px] text-gray-400 font-medium hidden sm:block">
+                    Destination
+                  </span>
+                </div>
+              </button>
+
+              {/* Step 2 */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (checkoutFormData?.shippingAddressId) setActiveStep(2);
+                }}
+                disabled={!checkoutFormData?.shippingAddressId}
+                className={`flex flex-col items-center text-center relative z-10 transition-all focus:outline-hidden ${
+                  checkoutFormData?.shippingAddressId
+                    ? "cursor-pointer group"
+                    : "cursor-not-allowed opacity-60"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
+                    activeStep === 2
+                      ? "bg-global-primary text-white ring-4 ring-global-primary/20 shadow-md shadow-global-primary/30 scale-105"
+                      : activeStep > 2
+                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
+                      : "bg-white text-gray-400 border-2 border-gray-200 group-hover:border-gray-300"
+                  }`}
+                >
+                  {activeStep > 2 ? <CheckOutlined className="text-xs" /> : "2"}
+                </div>
+                <div className="mt-2.5 space-y-0.5">
+                  <span
+                    className={`text-xs font-black uppercase tracking-wider block transition-colors ${
+                      activeStep === 2
+                        ? "text-global-primary"
+                        : activeStep > 2
+                        ? "text-gray-900"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    Review
+                  </span>
+                  <span className="text-[11px] text-gray-400 font-medium hidden sm:block">
+                    {cartList.length} {cartList.length === 1 ? "Item" : "Items"}
+                  </span>
+                </div>
+              </button>
+
+              {/* Step 3 */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (checkoutFormData?.shippingAddressId && cartList.length > 0) setActiveStep(3);
+                }}
+                disabled={!checkoutFormData?.shippingAddressId || cartList.length === 0}
+                className={`flex flex-col items-center text-center relative z-10 transition-all focus:outline-hidden ${
+                  checkoutFormData?.shippingAddressId && cartList.length > 0
+                    ? "cursor-pointer group"
+                    : "cursor-not-allowed opacity-60"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
+                    activeStep === 3
+                      ? "bg-global-primary text-white ring-4 ring-global-primary/20 shadow-md shadow-global-primary/30 scale-105"
+                      : "bg-white text-gray-400 border-2 border-gray-200 group-hover:border-gray-300"
+                  }`}
+                >
+                  3
+                </div>
+                <div className="mt-2.5 space-y-0.5">
+                  <span
+                    className={`text-xs font-black uppercase tracking-wider block transition-colors ${
+                      activeStep === 3
+                        ? "text-global-primary"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    Payment
+                  </span>
+                  <span className="text-[11px] text-gray-400 font-medium hidden sm:block">
+                    Confirm & Pay
+                  </span>
+                </div>
+              </button>
+
+            </div>
+          </div>
+
         </div>
       </div>
 
