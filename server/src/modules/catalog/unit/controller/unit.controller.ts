@@ -1,25 +1,49 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { UnitEntity } from '../model/unit.entity';
-import { unitValidationSchema } from '@/validation';
-import { logger } from '@/middlewares/logger';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
+import { unitValidationSchema } from '@/validation';
+import { NextFunction, Request, Response } from 'express';
+import { UnitEntity } from '../model/unit.entity';
 
 // @desc Get all Unit
 // @route GET /api/v1/Unit
 // @access Public
 export const getUnits = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getUnits ${req.method} ${req.url}`);
-
+  const { page, limit } = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(UnitEntity);
 
-  const result = await repository.find();
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Unit',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    order: { createdAt: 'DESC' },
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Unit',
+    total: result.length,
     data: result,
   });
 });

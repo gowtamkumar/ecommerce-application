@@ -21,7 +21,7 @@ interface ApiResponse<T> {
 
 // Function to save a shipping charge
 export async function saveShippingCharge(
-  data: ShippingCharge
+  data: ShippingCharge,
 ): Promise<ApiResponse<ShippingCharge>> {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/shipping-charges`, {
@@ -37,26 +37,31 @@ export async function saveShippingCharge(
 // Function to get shipping charges with optional parameters
 export async function getShippingCharges(params?: {
   districtId?: string;
+  page?: number;
+  limit?: number;
 }): Promise<ApiResponse<ShippingCharge[]>> {
   let queryData = "";
   if (params?.districtId) {
-    queryData += `districtId=${params.districtId}`;
+    queryData += `districtId=${params.districtId}&`;
+  }
+  if (params?.page) {
+    queryData += `page=${params.page}&`;
+  }
+  if (params?.limit) {
+    queryData += `limit=${params.limit}&`;
   }
 
   const headers = await getAuthHeaders();
-  const res = await fetch(
-    `${appConfig.apiUrl}/shipping-charges?${queryData}`,
-    {
-      cache: "no-cache",
-      headers,
-    }
-  );
+  const res = await fetch(`${appConfig.apiUrl}/shipping-charges?${queryData}`, {
+    cache: "no-cache",
+    headers,
+  });
   return await handleResponse(res);
 }
 
 // Function to get a specific shipping charge by ID
 export async function getShippingCharge(
-  id: string
+  id: string,
 ): Promise<ApiResponse<ShippingCharge>> {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/shipping-charges/${id}`, {
@@ -68,24 +73,21 @@ export async function getShippingCharge(
 
 // Function to update a shipping charge
 export async function updateShippingCharge(
-  data: ShippingCharge
+  data: ShippingCharge,
 ): Promise<ApiResponse<ShippingCharge>> {
   const headers = await getAuthHeaders();
-  const res = await fetch(
-    `${appConfig.apiUrl}/shipping-charges/${data.id}`,
-    {
-      method: "PATCH",
-      cache: "no-cache",
-      headers,
-      body: JSON.stringify(data),
-    }
-  );
+  const res = await fetch(`${appConfig.apiUrl}/shipping-charges/${data.id}`, {
+    method: "PATCH",
+    cache: "no-cache",
+    headers,
+    body: JSON.stringify(data),
+  });
   return await handleResponse(res);
 }
 
 // Function to delete a shipping charge by ID
 export async function deleteShippingCharge(
-  id: string
+  id: string,
 ): Promise<ApiResponse<null>> {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/shipping-charges/${id}`, {

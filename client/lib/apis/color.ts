@@ -14,12 +14,20 @@ export async function saveColor(data: any) {
   return await handleResponse(res);
 }
 
-export async function getColors() {
+export async function getColors(params?: { page?: number; limit?: number }) {
+  const { page, limit } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/colors`, {
-    cache: "no-cache",
-    headers,
-  });
+  const res = await fetch(
+    `${appConfig.apiUrl}/colors${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    },
+  );
 
   return await handleResponse(res);
 }

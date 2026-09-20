@@ -12,18 +12,26 @@ export async function saveUnit(data: any) {
     body: JSON.stringify(data),
   });
 
-  return await handleResponse(res)
+  return await handleResponse(res);
 }
 
 // Function to get all units
-export async function getUnits() {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/units`, {
-    cache: "no-cache",
-    headers,
-  });
+export async function getUnits(params?: { page?: number; limit?: number }) {
+  const { page, limit } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
 
-  return await handleResponse(res)
+  const headers = await getAuthHeaders();
+  const res = await fetch(
+    `${appConfig.apiUrl}/units${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    },
+  );
+
+  return await handleResponse(res);
 }
 
 // Function to update a unit
@@ -36,7 +44,7 @@ export async function updateUnit(data: any) {
     body: JSON.stringify(data),
   });
 
-  return await handleResponse(res)
+  return await handleResponse(res);
 }
 
 // Function to delete a unit by ID
@@ -48,5 +56,5 @@ export async function deleteUnit(id: string) {
     headers,
   });
 
-  return await handleResponse(res)
+  return await handleResponse(res);
 }

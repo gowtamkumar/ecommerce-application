@@ -3,7 +3,6 @@
 import appConfig from "@/appConfig";
 import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
-
 // Function to save a new size
 export async function saveSize(data: any) {
   const headers = await getAuthHeaders();
@@ -14,17 +13,25 @@ export async function saveSize(data: any) {
     body: JSON.stringify(data),
   });
 
-  return await handleResponse(res)
+  return await handleResponse(res);
 }
 
 // Function to get all sizes
-export async function getSizes() {
+export async function getSizes(params?: { page?: number; limit?: number }) {
+  const { page, limit } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/sizes`, {
-    cache: "no-cache",
-    headers,
-  });
-  return await handleResponse(res)
+  const res = await fetch(
+    `${appConfig.apiUrl}/sizes${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    },
+  );
+  return await handleResponse(res);
 }
 
 // Function to get a specific size by ID
@@ -35,7 +42,7 @@ export async function getSize(id: string) {
     headers,
   });
 
-  return await handleResponse(res)
+  return await handleResponse(res);
 }
 
 // Function to update a size
@@ -47,7 +54,7 @@ export async function updateSize(data: any) {
     headers,
     body: JSON.stringify(data),
   });
-  return await handleResponse(res)
+  return await handleResponse(res);
 }
 
 // Function to delete a size by ID
@@ -58,5 +65,5 @@ export async function deleteSize(id: string) {
     cache: "no-cache",
     headers,
   });
-  return await handleResponse(res)
+  return await handleResponse(res);
 }

@@ -17,7 +17,7 @@ export const getShippingCharges = asyncHandler(async (req: Request, res: Respons
   const connection = await getDBConnection();
   const repository = connection.getRepository(ShippingChargeEntity);
 
-  const { districtId } = req.query;
+  const { districtId, page, limit } = req.query;
 
   const customQuery = {} as any;
 
@@ -25,14 +25,39 @@ export const getShippingCharges = asyncHandler(async (req: Request, res: Respons
     customQuery.districtId = districtId;
   }
 
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      relations: ['district'],
+      where: customQuery.districtId ? { districtId: customQuery.districtId } : {},
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all shippingCharge',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
   const result = await repository.find({
     relations: ['district'],
-    where: { districtId: customQuery.districtId },
+    where: customQuery.districtId ? { districtId: customQuery.districtId } : {},
+    order: { createdAt: 'DESC' },
   });
 
   return res.status(200).json({
     success: true,
     message: 'Get all shippingCharge',
+    total: result.length,
     data: result,
   });
 });
