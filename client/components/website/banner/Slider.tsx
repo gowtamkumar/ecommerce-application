@@ -15,11 +15,15 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-export default function Slider({ banners }: any) {
+const DEFAULT_HEIGHT_CLASS = "h-[55vh] min-h-105 max-h-160 md:h-[70vh] md:max-h-180";
+
+export default function Slider({ banners, heightClass, className }: any) {
   if (!banners?.length) return null;
 
   return (
-    <div className="relative group w-full overflow-hidden bg-gray-900">
+    <div
+      className={`relative group w-full overflow-hidden bg-gray-100 ${className || ""}`}
+    >
       <Swiper
         modules={[Pagination, Navigation, A11y, EffectFade, Autoplay]}
         spaceBetween={0}
@@ -38,7 +42,9 @@ export default function Slider({ banners }: any) {
         loop
         effect="fade"
         speed={900}
-        className="w-full h-[55vh] min-h-105 max-h-160 md:h-[70vh] md:max-h-180"
+        className={`w-full ${
+          heightClass || DEFAULT_HEIGHT_CLASS
+        }`}
       >
         {banners.map(
           (
@@ -64,30 +70,30 @@ export default function Slider({ banners }: any) {
                   }}
                 />
 
-                <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/45 to-black/15" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/45 to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                <div className="relative z-10 h-full container mx-auto px-4 md:px-8 lg:px-12 flex flex-col justify-center items-start">
-                  <div className="max-w-2xl space-y-5 md:space-y-6">
+                <div className="relative z-10 h-full container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-end items-start pb-16 md:pb-20 lg:pb-24">
+                  <div className="max-w-2xl space-y-4 md:space-y-5">
                     {index === 0 ? (
-                      <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-[1.15] tracking-tight break-words">
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-semibold text-white leading-[1.1] tracking-tight break-words drop-shadow-sm">
                         {title}
                       </h1>
                     ) : (
-                      <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-[1.15] tracking-tight break-words">
+                      <h2 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-semibold text-white leading-[1.1] tracking-tight break-words drop-shadow-sm">
                         {title}
                       </h2>
                     )}
                     {description ? (
-                      <p className="text-base md:text-lg text-white/85 font-normal max-w-xl leading-relaxed">
+                      <p className="text-sm sm:text-base md:text-lg text-white/85 font-normal max-w-xl leading-relaxed">
                         {description}
                       </p>
                     ) : null}
 
-                    <div className="pt-2">
+                    <div className="pt-1.5 md:pt-2">
                       <Link
                         href={url || "/products"}
-                        className="inline-flex items-center gap-2.5 h-12 px-7 rounded-full bg-global-primary text-white text-sm md:text-base font-semibold shadow-lg shadow-black/20 hover:brightness-110 transition-all duration-300"
+                        className="inline-flex items-center gap-2.5 h-11 md:h-12 px-6 md:px-7 rounded-full bg-global-primary text-white text-sm md:text-base font-semibold shadow-lg shadow-black/25 ring-1 ring-white/20 hover:brightness-110 hover:shadow-xl hover:shadow-black/30 hover:-translate-y-0.5 transition-all duration-300"
                       >
                         Shop Collection
                         <ArrowRightOutlined className="text-xs" />
@@ -103,7 +109,7 @@ export default function Slider({ banners }: any) {
         <button
           type="button"
           aria-label="Previous slide"
-          className="swiper-button-prev-custom absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
+          className="swiper-button-prev-custom absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md ring-1 ring-black/5"
         >
           <svg
             width="18"
@@ -123,7 +129,7 @@ export default function Slider({ banners }: any) {
         <button
           type="button"
           aria-label="Next slide"
-          className="swiper-button-next-custom absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
+          className="swiper-button-next-custom absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/90 text-gray-900 flex items-center justify-center cursor-pointer hover:bg-white transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md ring-1 ring-black/5"
         >
           <svg
             width="18"

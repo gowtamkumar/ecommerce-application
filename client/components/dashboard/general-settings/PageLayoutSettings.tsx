@@ -1,14 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Button, Card, Divider, Form, Input, InputNumber, Switch, Table, Tabs, Typography } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Card, Divider, InputNumber, Radio, Space, Switch, Table, Tabs, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
 import { selectGlobal, setAction, setSetting } from "@/redux/features/global/globalSlice";
 import { SettingsHeader } from "./CommonComponents";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
+
+const BANNER_LAYOUT_OPTIONS = [
+  {
+    value: "slider",
+    title: "Full-width Slider",
+    description:
+      "A single full-width hero slider runs across the top of the page.",
+  },
+  {
+    value: "slider_side",
+    title: "Slider + Side Banner",
+    description:
+      "The slider sits on the left with stacked side banners on the right. Uses \"Slider Right\" banners, falling back to promotional banners if none exist.",
+  },
+];
 
 const DEFAULT_SECTIONS = {
     home: [
@@ -47,7 +62,7 @@ const PageLayoutSettings = () => {
     const global = useSelector(selectGlobal);
     const [activeTab, setActiveTab] = useState("home");
 
-    const getSectionsForPage = (pageKey: string) => {
+    const getSectionsForPage = useCallback((pageKey: string) => {
         const pageData = global.setting?.[pageKey === 'support' ? 'helpSupport' : `${pageKey}Page`];
         const existingSections = pageData?.sections || [];
         
@@ -57,7 +72,7 @@ const PageLayoutSettings = () => {
             const existing = existingSections.find((s: any) => s.slug === def.slug);
             return existing ? { ...def, ...existing } : def;
         }).sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
-    };
+    }, [global.setting]);
 
     const [sections, setSections] = useState({
         home: getSectionsForPage("home"),
@@ -66,6 +81,10 @@ const PageLayoutSettings = () => {
         support: getSectionsForPage("support"),
     });
 
+    const [bannerLayout, setBannerLayout] = useState<string>(
+        global.setting?.homePage?.bannerLayout || "slider"
+    );
+
     useEffect(() => {
         setSections({
             home: getSectionsForPage("home"),
@@ -73,7 +92,8 @@ const PageLayoutSettings = () => {
             contact: getSectionsForPage("contact"),
             support: getSectionsForPage("support"),
         });
-    }, [global.setting]);
+        setBannerLayout(global.setting?.homePage?.bannerLayout || "slider");
+    }, [getSectionsForPage, global.setting]);
 
     const handleUpdateSection = (pageKey: string, slug: string, field: string, value: any) => {
         setSections(prev => ({
@@ -89,7 +109,7 @@ const PageLayoutSettings = () => {
         const id = global.setting?.id;
 
         const payload: any = { id };
-        payload.homePage = { ...global.setting?.homePage, sections: sections.home };
+        payload.homePage = { ...global.setting?.homePage, bannerLayout, sections: sections.home };
         payload.aboutPage = { ...global.setting?.aboutPage, sections: sections.about };
         payload.contactPage = { ...global.setting?.contactPage, sections: sections.contact };
         payload.helpSupport = { ...global.setting?.helpSupport, sections: sections.support };
@@ -177,6 +197,34 @@ const PageLayoutSettings = () => {
                             key: "home",
                             children: (
                                 <div className="py-4">
+                                    <div className="mb-6 p-5 rounded-xl border border-gray-100 bg-gray-50/50 space-y-4">
+                                        <div>
+                                            <Text strong className="text-gray-800">Banner Section Layout</Text>
+                                            <Text type="secondary" className="block text-sm mt-0.5">
+                                                Choose how the hero banner section is displayed on the home page.
+                                            </Text>
+                                        </div>
+                                        <Radio.Group
+                                            value={bannerLayout}
+                                            onChange={(e) => setBannerLayout(e.target.value)}
+                                            className="w-full"
+                                        >
+                                            <Space direction="vertical" className="w-full">
+                                                {BANNER_LAYOUT_OPTIONS.map((opt) => (
+                                                    <Radio
+                                                        key={opt.value}
+                                                        value={opt.value}
+                                                        className="w-full p-4 rounded-xl border border-gray-200 bg-white"
+                                                    >
+                                                        <div className="pr-2">
+                                                            <Text strong className="block">{opt.title}</Text>
+                                                            <Text type="secondary" className="block text-xs mt-0.5">{opt.description}</Text>
+                                                        </div>
+                                                    </Radio>
+                                                ))}
+                                            </Space>
+                                        </Radio.Group>
+                                    </div>
                                     <Table 
                                         dataSource={sections.home} 
                                         columns={columns("home")} 

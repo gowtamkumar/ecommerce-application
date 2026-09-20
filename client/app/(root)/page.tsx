@@ -1,4 +1,5 @@
 import appConfig from "@/appConfig";
+import { resolveBannerGroups } from "@/components/website/banner/bannerGroups";
 import CategoryTab from "@/components/website/home/CategoryTab";
 import { getHome } from "@/lib/apis/home";
 import { getSettings } from "@/lib/apis/setting";
@@ -10,7 +11,9 @@ import Link from "next/link";
 const CategoryCard = dynamic(
   () => import("@/components/website/home/CategoryCard")
 );
-const Slider = dynamic(() => import("@/components/website/banner/Slider"));
+const BannerSection = dynamic(
+  () => import("@/components/website/banner/BannerSection")
+);
 const PromoBanners = dynamic(
   () => import("@/components/website/banner/PromoBanners")
 );
@@ -110,9 +113,6 @@ export default async function Home() {
   const { banners, posts, categories, products, topSellingProducts } =
     home.data || {};
 
-  const sliderBanners =
-    banners?.filter((item: { type: string }) => item.type === "Slider") || [];
-
   const HomeBanners =
     banners?.filter((item: { type: string }) => item.type === "Banner") || [];
 
@@ -126,12 +126,14 @@ export default async function Home() {
 
   const homePageData = home.data?.homePage;
   const sectionsConfig = homePageData?.sections || [];
+  const bannerLayout = homePageData?.bannerLayout || "slider";
+  const { usedPromoIds } = resolveBannerGroups(banners, bannerLayout);
 
   const sectionMap: Record<string, () => React.ReactNode> = {
     slider: () =>
-      sliderBanners?.length > 0 ? (
+      banners?.length > 0 ? (
         <div className="w-full relative z-0">
-          <Slider banners={sliderBanners} />
+          <BannerSection banners={banners} layout={bannerLayout} />
         </div>
       ) : null,
     categories: () =>
@@ -160,14 +162,18 @@ export default async function Home() {
           </div>
         </section>
       ) : null,
-    promo_banners: () =>
-      HomeBanners?.length > 0 ? (
+    promo_banners: () => {
+      const availableBanners = HomeBanners.filter(
+        (item: any) => !usedPromoIds.has(item.id)
+      );
+      return availableBanners?.length > 0 ? (
         <section className="py-12 sm:py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <PromoBanners banners={HomeBanners} />
+            <PromoBanners banners={availableBanners} />
           </div>
         </section>
-      ) : null,
+      ) : null;
+    },
     top_selling: () =>
       topSellingProducts?.length > 0 ? (
         <section className="py-12 sm:py-16 bg-[#fafafa] border-y border-gray-100">

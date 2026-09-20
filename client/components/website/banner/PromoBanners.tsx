@@ -6,9 +6,17 @@ import Link from "next/link";
 export default function PromoBanners({ banners }: { banners: any[] }) {
   if (!banners?.length) return null;
 
+  const count = banners.length;
+  const gridClass =
+    count === 1
+      ? "grid grid-cols-1"
+      : count === 2
+        ? "grid grid-cols-1 md:grid-cols-2"
+        : "grid grid-cols-1 md:grid-cols-3";
+
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+      <div className={`${gridClass} gap-4 md:gap-6`}>
         {banners.map((item: any, index: number) => (
           <Link
             key={index}
