@@ -1,10 +1,16 @@
-import { Request, Response } from 'express';
-import { Repository } from 'typeorm';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { CartEntity } from '@/modules/sales/cart/model/cart.entity';
+import { AppliedCouponEntity } from '@/modules/sales/coupon/model/applied-coupon.entity';
+import { OrderTrackingStatusEnum } from '@/modules/sales/order-tracking/enums/order-tracking-status.enum';
+import { OrderTrackingEntity } from '@/modules/sales/order-tracking/model/order-tracking.entity';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import { sendSms } from '@/utils/sendSms';
 import { initiateSSLCommerzPayment } from '@/utils/sslcommerz.utils';
 import {
@@ -13,14 +19,8 @@ import {
   orderStatusUpdateValidationSchema,
   orderUpdateValidationSchema,
 } from '@/validation';
-import { RoleEnum } from '@/modules/user/auth/enums/role.enum';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
-import { CartEntity } from '@/modules/sales/cart/model/cart.entity';
-import { AppliedCouponEntity } from '@/modules/sales/coupon/model/applied-coupon.entity';
-import { OrderTrackingStatusEnum } from '@/modules/sales/order-tracking/enums/order-tracking-status.enum';
-import { OrderTrackingEntity } from '@/modules/sales/order-tracking/model/order-tracking.entity';
-import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
-import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { Request, Response } from 'express';
+import { Repository } from 'typeorm';
 import { OrderStatus, PaymentMethod, PaymentStatus } from '../enums';
 import { OrderItemEntity } from '../model/order-item.entity';
 import { OrderEntity } from '../model/order.entity';
@@ -279,7 +279,7 @@ export const sendOrderNotification = async (
 export const getOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getOrders ${req.method} ${req.url}`);
 
-  const { status, returnedStatus } = req.query;
+  const { status, returnedStatus, page, limit } = req.query;
 
   const connection = await getDBConnection();
   const orderRepository = connection.getRepository(OrderEntity);
@@ -326,18 +326,37 @@ export const getOrders = asyncHandler(async (req: CustomRequest, res: Response) 
       status: status.toString().split(','),
     });
 
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+    qb.skip((pageNum - 1) * pageSize).take(pageSize);
+
+    const [results, total] = await qb.getManyAndCount();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Order',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: results,
+    });
+  }
+
   const results = await qb.getMany();
 
   return res.status(200).json({
     success: true,
     message: 'Get all Order',
+    total: results.length,
     data: results,
   });
 });
 
 export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getUserOrders ${req.method} ${req.url}`);
-  const { status } = req.query;
+  const { status, page, limit } = req.query;
   const userId = req.id;
   const connection = await getDBConnection();
   const orderRepository = connection.getRepository(OrderEntity);
@@ -377,11 +396,31 @@ export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Respon
     qb.andWhere('order.status IN (:...status)', {
       status: status.toString().split(','),
     });
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+    qb.skip((pageNum - 1) * pageSize).take(pageSize);
+
+    const [results, total] = await qb.getManyAndCount();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Order',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: results,
+    });
+  }
+
   const results = await qb.getMany();
 
   return res.status(200).json({
     success: true,
     message: 'Get all Order',
+    total: results.length,
     data: results,
   });
 });

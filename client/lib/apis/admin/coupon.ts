@@ -12,11 +12,24 @@ export async function saveCoupon(data: any) {
   return res.json();
 }
 
-export async function getCoupons() {
-  const res = await fetch(`${appConfig.apiUrl}/coupons`, {
-    method: "GET",
-    cache: "no-cache",
-  });
+export async function getCoupons(params?: {
+  type?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const { type, page, limit } = params || {};
+  let queryString = "";
+  if (type) queryString += `type=${type}&`;
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+
+  const res = await fetch(
+    `${appConfig.apiUrl}/coupons${queryString ? `?${queryString}` : ""}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+    },
+  );
   return res.json();
 }
 

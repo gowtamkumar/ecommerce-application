@@ -41,18 +41,31 @@ export async function singleProductReturn(params: any) {
       cache: "no-cache",
       headers,
       body: JSON.stringify({ status, approvedQty }),
-    }
+    },
   );
   return await handleResponse(res);
 }
 
-export async function getReturns() {
+export async function getReturns(params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+}) {
+  const { page, limit, status } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+  if (status) queryString += `status=${status}&`;
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/returns`, {
-    method: "GET",
-    cache: "no-cache",
-    headers,
-  });
+  const res = await fetch(
+    `${appConfig.apiUrl}/returns${queryString ? `?${queryString}` : ""}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+      headers,
+    },
+  );
   return await res.json();
 }
 

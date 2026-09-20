@@ -15,12 +15,25 @@ export async function saveStockAdjust(data: any) {
   return await handleResponse(res);
 }
 
-export async function getStockAdjusts() {
+export async function getStockAdjusts(params?: {
+  page?: number;
+  limit?: number;
+  type?: string;
+}) {
+  const { page, limit, type } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+  if (type) queryString += `type=${type}&`;
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/stock-adjusts`, {
-    method: "GET",
-    headers,
-  });
+  const res = await fetch(
+    `${appConfig.apiUrl}/stock-adjusts${queryString ? `?${queryString}` : ""}`,
+    {
+      method: "GET",
+      headers,
+    },
+  );
   return await handleResponse(res);
 }
 

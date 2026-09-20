@@ -24,14 +24,47 @@ import { ReturnEntity } from '../model/return.entity';
 export const getReturns = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getReturns ${req.method} ${req.url}`);
 
+  const { page, limit, status } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(ReturnEntity);
 
-  const result = await repository.find();
+  const whereClause: any = {};
+  if (status) {
+    whereClause.status = status;
+  }
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Return',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    where: whereClause,
+    order: { createdAt: 'DESC' },
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Return',
+    total: result.length,
     data: result,
   });
 });
@@ -101,7 +134,7 @@ export const createReturn = asyncHandler(async (req: CustomRequest, res: Respons
 
     const totalAlreadyRequested = existingReturns.reduce(
       (sum: number, ret: ReturnEntity) => sum + (ret.requestedQty || 0),
-      0
+      0,
     );
 
     const order = await repositoryOrder
@@ -133,11 +166,14 @@ export const createReturn = asyncHandler(async (req: CustomRequest, res: Respons
     const deliveredAt = order.updatedAt;
     const now = new Date();
     const returnWindowLimit = dayjs(deliveredAt).add(returnWindowDays, 'day');
-    if (dayjs(now).isAfter(returnWindowLimit)) throw new Error(`Return window (${returnWindowDays} days) expired`);
+    if (dayjs(now).isAfter(returnWindowLimit))
+      throw new Error(`Return window (${returnWindowDays} days) expired`);
 
     const availableQty = item.qty - totalAlreadyRequested;
     if (requestedQty > availableQty) {
-      throw new Error(`You can only return up to ${availableQty} more units. (Total ordered: ${item.qty}, Already requested: ${totalAlreadyRequested})`);
+      throw new Error(
+        `You can only return up to ${availableQty} more units. (Total ordered: ${item.qty}, Already requested: ${totalAlreadyRequested})`,
+      );
     }
 
     const newReturn = repositoryReturn.create({
@@ -645,61 +681,61 @@ export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, re
     });
   }
 
-    const { orderId, reason, phone, images, comments } = validation.data;
+  const { orderId, reason, phone, images, comments } = validation.data;
 
-    const connection = await getDBConnection();
-    const queryRunner = connection.createQueryRunner();
+  const connection = await getDBConnection();
+  const queryRunner = connection.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
 
-    try {
-      const orderRepository = queryRunner.manager.getRepository(OrderEntity);
-      const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
-      const repositorySetting = queryRunner.manager.getRepository(SettingEntity);
+  try {
+    const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+    const returnRepository = queryRunner.manager.getRepository(ReturnEntity);
+    const repositorySetting = queryRunner.manager.getRepository(SettingEntity);
 
-      // Fetch settings for dynamic return window
-      const settings = await repositorySetting.createQueryBuilder('setting').getOne();
-      const returnSetting = settings?.returnSetting || {};
-      const returnWindowDays = returnSetting.returnWindowDays || 7;
+    // Fetch settings for dynamic return window
+    const settings = await repositorySetting.createQueryBuilder('setting').getOne();
+    const returnSetting = settings?.returnSetting || {};
+    const returnWindowDays = returnSetting.returnWindowDays || 7;
 
-      const order = await orderRepository
-        .createQueryBuilder('order')
-        .leftJoinAndSelect('order.orderItems', 'orderItem')
-        .leftJoinAndSelect('orderItem.product', 'product')
-        .where('order.id = :orderId', { orderId })
-        .andWhere('order.userId = :userId', { userId })
-        .getOne();
+    const order = await orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderItems', 'orderItem')
+      .leftJoinAndSelect('orderItem.product', 'product')
+      .where('order.id = :orderId', { orderId })
+      .andWhere('order.userId = :userId', { userId })
+      .getOne();
 
-      if (!order) {
-        await queryRunner.rollbackTransaction();
-        return res.status(404).json({
-          success: false,
-          message: 'Order not found or not owned by user',
-        });
-      }
+    if (!order) {
+      await queryRunner.rollbackTransaction();
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found or not owned by user',
+      });
+    }
 
-      if (order.status !== OrderStatus.Delivered) {
-        await queryRunner.rollbackTransaction();
-        return res.status(400).json({
-          success: false,
-          message: 'Only completed orders can be returned',
-        });
-      }
+    if (order.status !== OrderStatus.Delivered) {
+      await queryRunner.rollbackTransaction();
+      return res.status(400).json({
+        success: false,
+        message: 'Only completed orders can be returned',
+      });
+    }
 
-      const deliveredAt = order.updatedAt;
-      const now = new Date();
-      const returnWindowLimit = dayjs(deliveredAt).add(returnWindowDays, 'day');
-      if (dayjs(now).isAfter(returnWindowLimit)) {
-        await queryRunner.rollbackTransaction();
-        return res.status(400).json({
-          success: false,
-          message: `Return window (${returnWindowDays} days) expired`,
-        });
-      }
+    const deliveredAt = order.updatedAt;
+    const now = new Date();
+    const returnWindowLimit = dayjs(deliveredAt).add(returnWindowDays, 'day');
+    if (dayjs(now).isAfter(returnWindowLimit)) {
+      await queryRunner.rollbackTransaction();
+      return res.status(400).json({
+        success: false,
+        message: `Return window (${returnWindowDays} days) expired`,
+      });
+    }
 
-    const eligibleItems = order.orderItems.filter((item:any) => item.product.isReturnable);
-    
+    const eligibleItems = order.orderItems.filter((item: any) => item.product.isReturnable);
+
     if (eligibleItems.length === 0) {
       await queryRunner.rollbackTransaction();
       return res.status(400).json({
@@ -718,17 +754,17 @@ export const requestFullOrderReturn = asyncHandler(async (req: CustomRequest, re
 
       if (alreadyReturned) continue;
 
-        const newReturn = returnRepository.create({
-          userId,
-          orderId: order.id,
-          reason,
-          phone,
-          images,
-          comments,
-          orderItemId: item.id,
-          requestedQty: +item.qty,
-          status: ReturnStatus.Requested,
-        });
+      const newReturn = returnRepository.create({
+        userId,
+        orderId: order.id,
+        reason,
+        phone,
+        images,
+        comments,
+        orderItemId: item.id,
+        requestedQty: +item.qty,
+        status: ReturnStatus.Requested,
+      });
 
       const saved = await returnRepository.save(newReturn);
       createdReturns.push(saved);

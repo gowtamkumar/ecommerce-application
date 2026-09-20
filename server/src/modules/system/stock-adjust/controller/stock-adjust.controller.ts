@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { createStockAdjustValidation } from '@/validation/stock-adjust/stockAdjustValidation';
 import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { createStockAdjustValidation } from '@/validation/stock-adjust/stockAdjustValidation';
+import { NextFunction, Request, Response } from 'express';
 import { StockAdjustTypeEnum } from '../enum/stock-adjust-type.status.enum';
 import { StockAdjustEntity } from '../model/stock-adjust.entity';
 
@@ -14,25 +14,62 @@ import { StockAdjustEntity } from '../model/stock-adjust.entity';
 export const getStockAdjusts = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getStockAdjusts ${req.method} ${req.url}`);
 
+  const { page, limit, type } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(StockAdjustEntity);
 
-  const result = await repository.find({
-    relations: ['product'],
-    select: {
-      // id:true,
-      qty: true,
-      type: true,
+  const whereClause: any = {};
+  if (type) {
+    whereClause.type = type;
+  }
 
-      product: {
-        name: true,
-      },
+  const selectFields: any = {
+    id: true,
+    qty: true,
+    type: true,
+    createdAt: true,
+    product: {
+      id: true,
+      name: true,
     },
+  };
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      relations: ['product'],
+      select: selectFields,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all StockAdjust',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    where: whereClause,
+    relations: ['product'],
+    select: selectFields,
+    order: { createdAt: 'DESC' },
   });
 
   return res.status(200).json({
     success: true,
     message: 'Get all StockAdjust',
+    total: result.length,
     data: result,
   });
 });

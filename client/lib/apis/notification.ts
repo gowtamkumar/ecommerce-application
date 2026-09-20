@@ -3,33 +3,63 @@ import appConfig from "@/appConfig";
 import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 
 // Get all notifications for the current user
-export async function getNotifications() {
+export async function getNotifications(params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  type?: string;
+}) {
+  const { page, limit, status, type } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+  if (status) queryString += `status=${status}&`;
+  if (type) queryString += `type=${type}&`;
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/notifications`, {
-    cache: "no-cache",
-    headers,
-  } as any);
+  const res = await fetch(
+    `${appConfig.apiUrl}/notifications${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    } as any,
+  );
   return await handleResponse(res);
 }
 
-// Get all notifications for the current user
-export async function getNotificationsForAdmin() {
+// Get all notifications for the admin
+export async function getNotificationsForAdmin(params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  type?: string;
+}) {
   const headers: any = await getAuthHeaders();
-  
+
   // If no token, skip the request to avoid backend errors
   if (!headers.Authorization) {
     return {
       success: false,
       message: "Authentication required",
       status: 401,
-      data: []
+      data: [],
     };
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/notifications/admin`, {
-    cache: "no-cache",
-    headers,
-  });
+  const { page, limit, status, type } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+  if (status) queryString += `status=${status}&`;
+  if (type) queryString += `type=${type}&`;
+
+  const res = await fetch(
+    `${appConfig.apiUrl}/notifications/admin${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    },
+  );
   return await handleResponse(res);
 }
 

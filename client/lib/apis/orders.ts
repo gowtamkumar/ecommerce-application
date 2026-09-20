@@ -16,7 +16,7 @@ export async function saveOrder(data: any) {
 }
 
 export async function getOrders(params?: any) {
-  const { status, returnedStatus } = params;
+  const { status, returnedStatus, page, limit } = params || {};
 
   let queryString = "";
 
@@ -25,6 +25,12 @@ export async function getOrders(params?: any) {
   }
   if (returnedStatus) {
     queryString += `returnedStatus=${returnedStatus}&`;
+  }
+  if (page) {
+    queryString += `page=${page}&`;
+  }
+  if (limit) {
+    queryString += `limit=${limit}&`;
   }
 
   const headers = await getAuthHeaders();
@@ -102,7 +108,7 @@ export async function orderStatusUpdateApi(data: any) {
       cache: "no-cache",
       headers,
       body: JSON.stringify(data),
-    }
+    },
   );
   return await handleResponse(res);
 }

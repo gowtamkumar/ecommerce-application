@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { notificationValidationSchema } from '@/validation';
 import { UserEntity } from '@/modules/user/auth/model/user.entity';
+import { notificationValidationSchema } from '@/validation';
+import { NextFunction, Request, Response } from 'express';
 import { NotificationEntity } from '../model/notification.entity';
 
 // @desc Get all Notification
@@ -14,17 +14,50 @@ import { NotificationEntity } from '../model/notification.entity';
 export const getNotifications = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getNotifications ${req.method} ${req.url}`);
 
+  const { page, limit, status, type } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(NotificationEntity);
 
+  const whereClause: any = { userId: req.id };
+  if (status) {
+    whereClause.status = status;
+  }
+  if (type) {
+    whereClause.type = type;
+  }
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '20') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Notification',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
   const result = await repository.find({
-    where: { userId: req.id },
+    where: whereClause,
     order: { createdAt: 'DESC' },
   });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Notification',
+    total: result.length,
     data: result,
   });
 });
@@ -35,16 +68,50 @@ export const getNotifications = asyncHandler(async (req: CustomRequest, res: Res
 export const getNotificationsForAdmin = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getNotifications ${req.method} ${req.url}`);
 
+  const { page, limit, status, type } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(NotificationEntity);
 
+  const whereClause: any = {};
+  if (status) {
+    whereClause.status = status;
+  }
+  if (type) {
+    whereClause.type = type;
+  }
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '20') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Notification',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
   const result = await repository.find({
+    where: whereClause,
     order: { createdAt: 'DESC' },
   });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Notification',
+    total: result.length,
     data: result,
   });
 });

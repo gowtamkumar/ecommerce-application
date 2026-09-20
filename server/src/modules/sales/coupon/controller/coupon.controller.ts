@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { NextFunction, Request, Response } from 'express';
 import { CouponProductEntity } from '../model/coupon-product.entity';
 import { CouponEntity } from '../model/coupon.entity';
 
@@ -12,14 +12,39 @@ import { CouponEntity } from '../model/coupon.entity';
 export const getCoupons = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getCoupons ${req.method} ${req.url}`);
 
-  const { type } = req.query;
+  const { type, page, limit } = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(CouponEntity);
   const newQuery = {} as any;
   if (type) newQuery.type = type;
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: newQuery,
+      relations: ['products'],
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Coupons',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
   const result = await repository.find({
     where: newQuery,
     relations: ['products'],
+    order: { createdAt: 'DESC' },
   });
   return res.status(200).json({
     success: true,

@@ -13,10 +13,42 @@ import { RefundEntity } from '../model/refund.entity';
 export const getRefunds = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getRefunds ${req.method} ${req.url}`);
 
+  const { page, limit, status } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(RefundEntity);
 
+  const whereClause: any = {};
+  if (status) {
+    whereClause.status = status;
+  }
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      relations: ['order', 'user'],
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Refunds',
+      total,
+      count: result.length,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
   const result = await repository.find({
+    where: whereClause,
     relations: ['order', 'user'],
     order: { createdAt: 'DESC' },
   });
@@ -24,6 +56,7 @@ export const getRefunds = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
     message: 'Get all Refunds',
+    total: result.length,
     count: result.length,
     data: result,
   });
@@ -97,10 +130,7 @@ export const completeRefund = asyncHandler(async (req: Request, res: Response) =
       });
     }
 
-    if (
-      refund.status !== RefundStatus.Pending &&
-      refund.status !== RefundStatus.Failed
-    ) {
+    if (refund.status !== RefundStatus.Pending && refund.status !== RefundStatus.Failed) {
       await queryRunner.rollbackTransaction();
       return res.status(400).json({
         success: false,
@@ -121,16 +151,16 @@ export const completeRefund = asyncHandler(async (req: Request, res: Response) =
     // Update Order Refund Status
     const order = refund.order;
     if (order) {
-        order.totalRefunded = (Number(order.totalRefunded) || 0) + Number(refund.amount);
-        
-        // Determine order refund status
-        if (order.totalRefunded >= order.totalReturned) {
-            order.refundStatus = OrderRefundStatus.Full;
-        } else {
-            order.refundStatus = OrderRefundStatus.Partial;
-        }
-        
-        await orderRepository.save(order);
+      order.totalRefunded = (Number(order.totalRefunded) || 0) + Number(refund.amount);
+
+      // Determine order refund status
+      if (order.totalRefunded >= order.totalReturned) {
+        order.refundStatus = OrderRefundStatus.Full;
+      } else {
+        order.refundStatus = OrderRefundStatus.Partial;
+      }
+
+      await orderRepository.save(order);
     }
 
     await queryRunner.commitTransaction();
