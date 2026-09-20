@@ -17,7 +17,6 @@ import {
     AlignLeftOutlined,
     ArrowLeftOutlined,
     CalendarOutlined,
-    DeploymentUnitOutlined,
     InfoCircleOutlined,
     PictureOutlined,
     TagsOutlined
@@ -37,8 +36,9 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import DiscountScopeRender from "./DiscountScopeRender";
 
 const { Title, Text } = Typography;
 
@@ -54,6 +54,7 @@ const AddDiscount = () => {
 
   // hook
   const [form] = Form.useForm();
+  const watchedScope = Form.useWatch("scope", form) || formValues?.scope;
   const dispatch = useDispatch();
   const params = useParams<{ new: string }>();
   const global = useSelector(selectGlobal);
@@ -146,30 +147,45 @@ const AddDiscount = () => {
     }
   };
 
-  // Memoize options for Select components to prevent expensive re-mapping on every render
-  const productOptions = useMemo(() => 
-    (products || []).map((item: any) => ({
-      value: item.id,
-      label: item.name,
-    })), [products]);
-
-  const brandOptions = useMemo(() => 
-    (brands || []).map((item: any) => ({
-      value: item.id,
-      label: item.name,
-    })), [brands]);
-
-  const categoryOptions = useMemo(() => 
-    (categories || []).map((item: any) => ({
-      value: item.id,
-      label: item.name,
-    })), [categories]);
-
   const handleSubmit = async (values: any) => {
     const newData = { ...values };
     newData.startDate = new Date(values.startDate).toISOString();
     newData.endDate = new Date(values.endDate).toISOString();
     newData.value = +values.value;
+
+    // Normalize applicable fields based on active scope
+    if (newData.scope === "Product" || newData.scope === "Products") {
+      newData.applicableBrands = [];
+      newData.applicableCategories = [];
+      if (!Array.isArray(newData.applicableProducts)) {
+        newData.applicableProducts =
+          newData.applicableProducts !== undefined && newData.applicableProducts !== null
+            ? [newData.applicableProducts]
+            : [];
+      }
+    } else if (newData.scope === "Category") {
+      newData.applicableProducts = [];
+      newData.applicableBrands = [];
+      if (!Array.isArray(newData.applicableCategories)) {
+        newData.applicableCategories =
+          newData.applicableCategories !== undefined && newData.applicableCategories !== null
+            ? [newData.applicableCategories]
+            : [];
+      }
+    } else if (newData.scope === "Brand") {
+      newData.applicableProducts = [];
+      newData.applicableCategories = [];
+      if (!Array.isArray(newData.applicableBrands)) {
+        newData.applicableBrands =
+          newData.applicableBrands !== undefined && newData.applicableBrands !== null
+            ? [newData.applicableBrands]
+            : [];
+      }
+    } else if (newData.scope === "Global") {
+      newData.applicableProducts = [];
+      newData.applicableBrands = [];
+      newData.applicableCategories = [];
+    }
 
     const result = newData.id
       ? () => updateDiscount(newData)
@@ -478,103 +494,14 @@ const AddDiscount = () => {
           </div>
         </Card>
 
-        {/* Applicability Card - Conditional */}
-        {(formValues?.scope === "Products" ||
-          formValues?.scope === "Brand" ||
-          formValues?.scope === "Category") && (
-            <Card
-              title={
-                <Space className="py-1">
-                  <div className="p-2 bg-indigo-50 rounded-lg">
-                    <DeploymentUnitOutlined className="text-indigo-600" />
-                  </div>
-                  <span className="text-base font-bold text-gray-700">Applicability</span>
-                </Space>
-              }
-              className="shadow-sm border-gray-100 rounded-2xl overflow-hidden mb-6"
-            >
-              {formValues?.scope === "Products" && (
-                <Form.Item
-                  name="applicableProducts"
-                  label="Select Products"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select at least one product",
-                    },
-                  ]}
-                  className="mb-0"
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Search and select products"
-                    mode="multiple"
-                    size="large"
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={productOptions}
-                  />
-                </Form.Item>
-              )}
-
-              {formValues?.scope === "Brand" && (
-                <Form.Item
-                  name="applicableBrands"
-                  label="Select Brands"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select at least one brand",
-                    },
-                  ]}
-                  className="mb-0"
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Search and select brands"
-                    mode="multiple"
-                    size="large"
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={brandOptions}
-                  />
-                </Form.Item>
-              )}
-
-              {formValues?.scope === "Category" && (
-                <Form.Item
-                  name="applicableCategories"
-                  label="Select Categories"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select at least one category",
-                    },
-                  ]}
-                  className="mb-0"
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Search and select categories"
-                    mode="multiple"
-                    size="large"
-                    optionFilterProp="label"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={categoryOptions}
-                  />
-                </Form.Item>
-              )}
-            </Card>
-          )}
+        {/* Scope-by-Render Component */}
+        <DiscountScopeRender
+          scope={watchedScope}
+          form={form}
+          products={products}
+          categories={categories}
+          brands={brands}
+        />
 
         {/* Media Card */}
         <Card

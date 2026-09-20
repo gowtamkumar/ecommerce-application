@@ -167,7 +167,10 @@ export const createDiscount = asyncHandler(async (req: CustomRequest, res: Respo
 
   const promises = [];
 
-  if (applicableProducts?.length > 0 && validation.data.scope === ScopeEnum.Products) {
+  if (
+    applicableProducts?.length > 0 &&
+    (validation.data.scope === ScopeEnum.Products || validation.data.scope === ScopeEnum.Product)
+  ) {
     const applicationProductRepository = connection.getRepository(ApplicableProductEntity);
     const applicableProductEntities = applicableProducts.map((item: number | string) => ({
       productId: item,
