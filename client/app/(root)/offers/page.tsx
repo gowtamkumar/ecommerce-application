@@ -1,193 +1,62 @@
 import appConfig from "@/appConfig";
-import Breadcrumb from "@/components/share-component/Breadcrumb";
+import OffersPageClient from "@/components/website/offers/OffersPageClient";
 import { getDiscounts } from "@/lib/apis/discount";
-import { getImageUrl } from "@/lib/utils/imageUrl";
-import { Button, Empty } from "antd";
-import Link from "next/link";
+import type { Metadata } from "next";
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = appConfig.baseUrl;
   const discountsRes = await getDiscounts({
-    scope: "Global,Products,Brand,Category",
+    scope: "Global,Product,Products,Brand,Category",
     status: "Active",
-    // startDate: new Date().toISOString(),
     endDate: new Date().toISOString(),
   });
 
-  const discounts = discountsRes.data;
+  const discounts = discountsRes?.data;
 
-  const baseUrl = appConfig.baseUrl;
-
-  // Fallback if API doesn't return expected data
   if (!Array.isArray(discounts) || discounts.length === 0) {
     return {
-      metadataBase: new URL(`${baseUrl}`),
-      title: "Ecommerce Discounts",
-      description: "Check out our latest discounts and offers.",
-      keywords: "discounts, deals, offers",
-      robots: "index, follow",
+      metadataBase: baseUrl ? new URL(`${baseUrl}`) : undefined,
+      title: "Special Offers & Discounts | Exclusive Deals",
+      description: "Discover the latest discounts, seasonal promotions, and deals.",
+      keywords: "discounts, deals, offers, promotions, sales",
+      robots: { index: true, follow: true },
+      alternates: { canonical: `${baseUrl}/offers` },
     };
   }
 
-  // Optional: Map discounts to keywords or description
-  const discountNames = discounts.map((d: any) => d.name).join(", ");
-  const topDescription = `Discover amazing offers: ${discountNames}`;
+  const discountNames = discounts
+    .slice(0, 5)
+    .map((d: any) => d.name)
+    .join(", ");
+  const topDescription = `Discover exclusive promotional discounts and deals: ${discountNames}`;
 
   return {
-    metadataBase: new URL(`${baseUrl}`),
-    title: "Latest Discounts & Deals",
-    description: topDescription,
+    metadataBase: baseUrl ? new URL(`${baseUrl}`) : undefined,
+    title: "Exclusive Offers & Discounts | Limited Time Deals",
+    description: topDescription.slice(0, 160),
     keywords: discountNames,
-    robots: "index, follow",
+    robots: { index: true, follow: true },
+    alternates: { canonical: `${baseUrl}/offers` },
     openGraph: {
-      title: "Best Ecommerce Offers",
-      description: topDescription,
+      title: "Exclusive Offers & Discounts",
+      description: topDescription.slice(0, 160),
       url: `${baseUrl}/offers`,
       type: "website",
     },
     twitter: {
-      card: "summary",
-      title: "Top Discounts Available",
-      description: topDescription,
+      card: "summary_large_image",
+      title: "Exclusive Offers & Discounts",
+      description: topDescription.slice(0, 160),
     },
   };
 }
 
-export default async function Offers() {
+export default async function OffersPage() {
   const offers = await getDiscounts({
-    scope: "Global,Products,Brand,Category",
+    scope: "Global,Product,Products,Brand,Category",
     status: "Active",
-    // startDate: new Date().toISOString(),
     endDate: new Date().toISOString(),
   });
 
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-global-header-bg">
-      {/* Subtle Theme-aware Background Elements */}
-      <div className="absolute inset-0 bg-global-primary/5 animate-pulse"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--global-primary)_0%,_transparent_70%)] opacity-20"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--global-hover)_0%,_transparent_70%)] opacity-10"></div>
-
-      {/* Content */}
-      <div className="relative z-10">
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/" },
-            { label: "Exclusive Offers" },
-          ]}
-        />
-        {/* Premium Header Section */}
-        <div className="container mx-auto px-4 py-8 sm:py-14">
-          <div className="text-center mb-12">
-            <div className="inline-block mb-4">
-              <span className="px-6 py-2 bg-global-primary text-global-button-text text-sm font-semibold rounded-full shadow-lg">
-                🎉 Exclusive Offers
-              </span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-global-header-text leading-tight">
-              Latest Discounts & Deals
-            </h1>
-            <p className="text-xl text-global-header-text/60 max-w-2xl mx-auto">
-              Discover amazing offers and save big on your favorite products
-            </p>
-          </div>
-
-          {offers?.data?.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {offers?.data?.map((item: any, index: number) => (
-                <Link
-                  key={index}
-                  href={`/offers/${item.slug}`}
-                  className="group"
-                >
-                  <div className="relative h-[360px] md:h-[400px] rounded-2xl overflow-hidden transition-all duration-500 shadow-md hover:shadow-2xl hover:-translate-y-1.5 border border-white/5">
-                    {/* Background Image */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                      style={{
-                        backgroundImage: `url(${getImageUrl(item.image)})`,
-                      }}
-                    >
-                      {/* Dark Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500"></div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
-                      {/* Discount Badge */}
-                      {item.discountPercent && (
-                        <div className="absolute top-6 right-6 z-20">
-                          <div className="bg-global-primary text-global-button-text px-4 py-1.5 rounded-full font-bold text-sm shadow-md border border-global-primary/20 backdrop-blur-sm">
-                            {item.discountPercent}% OFF
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Scope Badge */}
-                      <div className="mb-4 z-20">
-                        <span className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
-                          {item.scope || 'Special Offer'}
-                        </span>
-                      </div>
-
-                      {/* Offer Name */}
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight drop-shadow-sm transition-transform duration-300">
-                        {item.name}
-                      </h3>
-
-                      {/* Description if available */}
-                      {item.description && (
-                        <p className="text-white/80 text-sm line-clamp-2 mb-4 font-medium leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
-                          {item.description}
-                        </p>
-                      )}
-
-                      {/* CTA Button */}
-                      <div className="mt-4">
-                        <Button
-                          type="primary"
-                          className="h-10 px-6 rounded-global-button-radius bg-global-button-primary text-global-button-text
-                                     border-none font-medium text-sm
-                                     hover:!scale-105 transition-all duration-300 flex items-center gap-2 group/btn"
-                        >
-                          <span>View Offer</span>
-                          <svg
-                            className="w-4 h-4 transform transition-transform duration-300 group-hover/btn:translate-x-1"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 8l4 4m0 0l-4 4m4-4H3"
-                            />
-                          </svg>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <div className="mb-8 inline-block p-8 bg-global-header-bg/40 backdrop-blur-lg rounded-3xl border border-global-header-text/10 shadow-xl">
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={
-                      <span className="text-global-header-text/60 text-lg">
-                        No offers available at the moment. Check back soon!
-                      </span>
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  return <OffersPageClient initialOffers={offers?.data || []} />;
 }
