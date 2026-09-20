@@ -1,13 +1,13 @@
+import appConfig from "@/appConfig";
 import {
-  BreadcrumbSchema,
-  ProductSchema,
+    BreadcrumbSchema,
+    ProductSchema,
 } from "@/components/seo";
-import { stripHtml } from "@/lib/utils/seo";
 import { getProductBySlug } from "@/lib/apis/product";
 import { getImageUrl } from "@/lib/utils/imageUrl";
-import dynamic from "next/dynamic";
+import { stripHtml } from "@/lib/utils/seo";
 import type { Metadata } from "next";
-import appConfig from "@/appConfig";
+import dynamic from "next/dynamic";
 const SingleProduct = dynamic(
   () => import("@/components/website/product/SingleProduct")
 );
@@ -138,7 +138,7 @@ export default async function ProductPage({
           />
         </>
       )}
-      <SingleProduct slug={slug} />
+      <SingleProduct slug={slug} initialProduct={product} />
     </div>
   );
 }

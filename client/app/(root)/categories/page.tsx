@@ -46,17 +46,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-import PageBanner from "@/components/share-component/PageBanner";
+import Breadcrumb from "@/components/share-component/Breadcrumb";
 
 export default async function Categories() {
   const categories = await getPublicCategories();
 
   return (
     <div>
-      <PageBanner
-        title="All Categories"
-        subtitle="Explore our catalog across multiple categories and collections"
-        breadcrumbs={[
+      <Breadcrumb
+        items={[
           { label: "Home", href: "/" },
           { label: "Categories" },
         ]}

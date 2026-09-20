@@ -1,4 +1,5 @@
 "use client";
+import Breadcrumb from "@/components/share-component/Breadcrumb";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getCartLists } from "@/lib/apis/cart";
 import { getUserShippingAddresses } from "@/lib/apis/shipping-address";
@@ -119,6 +120,16 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#fafbfc]">
+      {/* Global Breadcrumb */}
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Shopping Cart", href: "/products" },
+          { label: "Checkout" },
+        ]}
+        className="mb-0 bg-white/70"
+      />
+
       {/* Refined Luxury Checkout Header & Stepper */}
       <div className="bg-white border-b border-gray-200/70 shadow-2xs">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">

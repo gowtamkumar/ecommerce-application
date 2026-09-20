@@ -14,14 +14,13 @@ const ScrollToCart = dynamic(
   () => import("@/components/share-component/ScrollToCart")
 );
 
-import PageBanner from "@/components/share-component/PageBanner";
+import Breadcrumb from "@/components/share-component/Breadcrumb";
 
 export default function ProductsPageClient() {
   return (
     <main className="bg-white min-h-screen">
-      <PageBanner
-        title="Explore Collections"
-        breadcrumbs={[
+      <Breadcrumb
+        items={[
           { label: "Home", href: "/" },
           { label: "All Products" },
         ]}

@@ -1,10 +1,11 @@
 "use client";
+import Breadcrumb from "@/components/share-component/Breadcrumb";
 import { getProductBySlug } from "@/lib/apis/product";
 import { errorNotification } from "@/lib/utils/notification";
 import { setLoading } from "@/redux/features/global/globalSlice";
 import {
-  selectProduct,
-  setProduct,
+    selectProduct,
+    setProduct,
 } from "@/redux/features/products/productSlice";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
@@ -22,12 +23,18 @@ const ProductDetails = dynamic(() => import("./ProductDetails"), {
   ssr: false,
 });
 
-export default function SingleProduct({ slug }: { slug: string }) {
+export default function SingleProduct({
+  slug,
+  initialProduct,
+}: {
+  slug: string;
+  initialProduct?: any;
+}) {
   const [selectVariant, setSelectVariant] = useState<any>({});
   const [checkStock, setCheckStock] = useState(0);
   const dispatch = useDispatch();
   const products = useSelector(selectProduct);
-  const { product } = products;
+  const product = products?.product || initialProduct;
 
   const fetchProductData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -103,16 +110,22 @@ export default function SingleProduct({ slug }: { slug: string }) {
 
   return (
     <div className="bg-[#FDFDFD]">
-       {/* Breadcrumb / Top Nav Placeholder */}
-       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400">
-             <span className="hover:text-gray-900 cursor-pointer">Home</span>
-             <span>/</span>
-             <span className="hover:text-gray-900 cursor-pointer">Shop</span>
-             <span>/</span>
-             <span className="text-gray-900">Product Detail</span>
-          </div>
-       </div>
+        {/* Global Breadcrumb */}
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Products", href: "/products" },
+            ...(product?.category?.name
+              ? [
+                  {
+                    label: product.category.name,
+                    href: `/products?categoryId=${product.category.id}`,
+                  },
+                ]
+              : []),
+            { label: product?.name || "Product Details" },
+          ]}
+        />
 
        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           {/* Main Product Hero Section */}

@@ -5,6 +5,7 @@ const ContactForm = dynamic(
   () => import("@/components/website/contact/ContactForm")
 );
 
+import Breadcrumb from "@/components/share-component/Breadcrumb";
 import { getSettings } from "@/lib/apis/setting";
 
 export const metadata: Metadata = {
@@ -67,6 +68,12 @@ export default async function page() {
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Contact Us" },
+        ]}
+      />
       {sections.map((section: any) => sectionMap[section.slug])}
     </>
   );

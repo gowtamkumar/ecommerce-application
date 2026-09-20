@@ -1,4 +1,5 @@
 import appConfig from "@/appConfig";
+import Breadcrumb from "@/components/share-component/Breadcrumb";
 import { getDiscounts } from "@/lib/apis/discount";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { Button, Empty } from "antd";
@@ -68,8 +69,14 @@ export default async function Offers() {
 
       {/* Content */}
       <div className="relative z-10">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Exclusive Offers" },
+          ]}
+        />
         {/* Premium Header Section */}
-        <div className="container mx-auto px-4 py-12 sm:py-20">
+        <div className="container mx-auto px-4 py-8 sm:py-14">
           <div className="text-center mb-12">
             <div className="inline-block mb-4">
               <span className="px-6 py-2 bg-global-primary text-global-button-text text-sm font-semibold rounded-full shadow-lg">

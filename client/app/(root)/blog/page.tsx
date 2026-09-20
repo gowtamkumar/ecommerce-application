@@ -26,6 +26,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import Breadcrumb from "@/components/share-component/Breadcrumb";
+
 export default async function BlogPage(props: {
   searchParams: Promise<any>;
 }) {
@@ -34,6 +36,12 @@ export default async function BlogPage(props: {
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Blog" },
+        ]}
+      />
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "/" },
