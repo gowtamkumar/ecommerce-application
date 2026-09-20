@@ -14,27 +14,18 @@ const ScrollToCart = dynamic(
   () => import("@/components/share-component/ScrollToCart")
 );
 
+import PageBanner from "@/components/share-component/PageBanner";
+
 export default function ProductsPageClient() {
   return (
     <main className="bg-white min-h-screen">
-      <div className="bg-gray-900 py-10 sm:py-16 mb-8 sm:mb-12 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-global-primary/30 rounded-full blur-[100px] opacity-40 -mr-32 -mt-32" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <h1 className="text-3xl sm:text-5xl font-semibold text-white tracking-tight mb-4 text-center sm:text-left">
-            Explore Collections
-          </h1>
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-gray-400 justify-center sm:justify-start"
-          >
-            <a href="/" className="hover:text-white transition-colors">
-              Home
-            </a>
-            <span className="text-gray-700">/</span>
-            <span className="text-global-primary">All Products</span>
-          </nav>
-        </div>
-      </div>
+      <PageBanner
+        title="Explore Collections"
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "All Products" },
+        ]}
+      />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">

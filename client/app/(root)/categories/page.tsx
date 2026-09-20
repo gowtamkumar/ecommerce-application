@@ -46,18 +46,30 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import PageBanner from "@/components/share-component/PageBanner";
+
 export default async function Categories() {
   const categories = await getPublicCategories();
 
   return (
-    <div className="py-10">
+    <div>
+      <PageBanner
+        title="All Categories"
+        subtitle="Explore our catalog across multiple categories and collections"
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "Categories" },
+        ]}
+      />
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "/" },
           { name: "Categories", url: "/categories" },
         ]}
       />
-      <Caregory categories={categories.data} />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <Caregory categories={categories.data} />
+      </div>
     </div>
   );
 }
