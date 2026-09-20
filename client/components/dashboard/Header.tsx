@@ -1,102 +1,183 @@
 "use client";
+
 import {
-  selectLayout,
-  setCollapsed,
-  setOpen,
+    selectLayout,
+    setCollapsed,
+    setOpen,
 } from "@/redux/features/layout/layoutSlice";
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
+    ExportOutlined,
+    FullscreenExitOutlined,
+    FullscreenOutlined,
+    HomeOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    RightOutlined,
+    SettingOutlined,
+    ShopOutlined,
 } from "@ant-design/icons";
-import { Button, Layout } from "antd";
+import { Layout, Tooltip } from "antd";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationDropdown from "../share-component/NotificationDropdown";
-import ProfileDropdown from "../share-component/ProfileDropdown";
+import AdminProfileDropdown from "./AdminProfileDropdown";
+import DashboardQuickSearch from "./DashboardQuickSearch";
+
+const { Header } = Layout;
 
 export default function DashboardHeader() {
-  const { Header } = Layout;
   const layout = useSelector(selectLayout);
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
   const session = useSession();
-  const profileImage = session.data?.user?.image;
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const pageLabel =
-    pathname
-      ?.split("/")
-      .filter(Boolean)
-      .slice(1)
-      .map((s) => s.replace(/-/g, " "))
-      .join(" / ") || "Overview";
+  // Monitor fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
+  const handleToggleSidebar = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 820) {
+      dispatch(setOpen(!layout.open));
+    } else {
+      dispatch(setCollapsed(!layout.collapsed));
+    }
+  };
+
+  // Format breadcrumbs from path
+  const pathSegments = (pathname || "")
+    .split("/")
+    .filter(Boolean)
+    .slice(1); // skip 'dashboard'
+
+  const currentModule = pathSegments[0] ? pathSegments[0].replace(/-/g, " ") : "Overview";
+  const currentSubpage = pathSegments.slice(1).map((s) => s.replace(/-/g, " ")).join(" / ");
 
   return (
-    <Header className="bg-white/95 backdrop-blur-md px-4 sm:px-6 h-16 leading-[64px] sticky top-0 z-[100] flex items-center justify-between border-b border-gray-200/80 shadow-none">
-      <div className="flex items-center gap-3 min-w-0">
-        <div hidden={layout.screenWidth < 820}>
-          <Button
-            type="text"
-            aria-label="Toggle sidebar"
-            icon={
-              layout.collapsed ? (
-                <MenuUnfoldOutlined className="text-gray-700 text-lg" />
-              ) : (
-                <MenuFoldOutlined className="text-gray-700 text-lg" />
-              )
-            }
-            onClick={() => dispatch(setCollapsed(!layout.collapsed))}
-            className="w-10 h-10 inline-flex items-center justify-center rounded-lg hover:bg-gray-100"
-          />
-        </div>
+    <Header className="bg-white/95 backdrop-blur-md px-3 sm:px-6 h-16 sticky top-0 z-[100] flex items-center justify-between border-b border-gray-200/80 shadow-2xs leading-normal">
+      {/* ── Left: Sidebar Toggle & Breadcrumb ── */}
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <Tooltip
+          title={layout.collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          placement="bottom"
+        >
+          <button
+            type="button"
+            onClick={handleToggleSidebar}
+            aria-label="Toggle navigation menu"
+            className="w-9.5 h-9.5 inline-flex items-center justify-center rounded-xl bg-gray-50/90 hover:bg-gray-100 border border-gray-200/80 text-gray-700 hover:text-global-primary transition-all cursor-pointer shadow-2xs shrink-0"
+          >
+            {layout.collapsed ? (
+              <MenuUnfoldOutlined className="text-base" />
+            ) : (
+              <MenuFoldOutlined className="text-base" />
+            )}
+          </button>
+        </Tooltip>
 
-        <div hidden={layout.screenWidth > 820}>
-          <Button
-            type="text"
-            aria-label="Open menu"
-            icon={<MenuUnfoldOutlined className="text-gray-700 text-lg" />}
-            onClick={() => dispatch(setOpen(true))}
-            className="w-10 h-10 inline-flex items-center justify-center rounded-lg hover:bg-gray-100"
-          />
-        </div>
+        {/* Breadcrumb Path & Page Title */}
+        <div className="min-w-0 hidden md:flex items-center gap-1.5 text-xs">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1 text-gray-400 hover:text-global-primary transition-colors font-medium"
+          >
+            <HomeOutlined className="text-xs" />
+            <span>Dashboard</span>
+          </Link>
 
-        <div className="min-w-0 hidden sm:block">
-          <p className="text-[11px] uppercase tracking-wider text-gray-400 font-medium m-0 leading-none">
-            Admin
-          </p>
-          <p className="text-sm font-semibold text-gray-900 capitalize truncate m-0 leading-tight mt-0.5">
-            {pageLabel}
-          </p>
+          <RightOutlined className="text-[10px] text-gray-300 shrink-0" />
+
+          <span className="font-bold text-gray-900 capitalize truncate">
+            {currentModule}
+          </span>
+
+          {currentSubpage && (
+            <>
+              <RightOutlined className="text-[10px] text-gray-300 shrink-0" />
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80 capitalize truncate">
+                {currentSubpage}
+              </span>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        <Link
-          href="/"
-          target="_blank"
-          className="hidden md:inline-flex text-xs font-medium text-gray-600 hover:text-global-primary px-3 py-1.5 rounded-lg border border-gray-200 hover:border-global-primary/40 transition-colors"
+      {/* ── Center: Quick Search Command Palette ── */}
+      <div className="mx-2 sm:mx-4 flex-1 max-w-md hidden md:flex justify-center">
+        <DashboardQuickSearch />
+      </div>
+
+      {/* ── Right: Action Buttons & Profile ── */}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* View Live Store */}
+        <Tooltip title="View customer-facing storefront" placement="bottom">
+          <Link
+            href="/"
+            target="_blank"
+            className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-global-primary bg-gray-50/80 hover:bg-global-primary/5 border border-gray-200/80 hover:border-global-primary/30 rounded-xl transition-all shadow-2xs group"
+          >
+            <ShopOutlined className="text-sm text-gray-400 group-hover:text-global-primary transition-colors" />
+            <span>Live Store</span>
+            <ExportOutlined className="text-[10px] text-gray-400 group-hover:text-global-primary transition-colors ml-0.5" />
+          </Link>
+        </Tooltip>
+
+        {/* Fullscreen Toggle */}
+        <Tooltip
+          title={isFullscreen ? "Exit Fullscreen" : "Toggle Fullscreen"}
+          placement="bottom"
         >
-          View store
-        </Link>
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            aria-label="Toggle Fullscreen"
+            className="w-9.5 h-9.5 hidden sm:inline-flex items-center justify-center rounded-xl bg-gray-50/80 hover:bg-gray-100 border border-gray-200/80 text-gray-600 hover:text-gray-900 transition-all cursor-pointer shadow-2xs"
+          >
+            {isFullscreen ? (
+              <FullscreenExitOutlined className="text-base" />
+            ) : (
+              <FullscreenOutlined className="text-base" />
+            )}
+          </button>
+        </Tooltip>
 
-        <Button
-          type="text"
-          aria-label="Settings"
-          onClick={() =>
-            router.push("/dashboard/general-setting?tab=site_settings")
-          }
-          icon={<SettingOutlined className="text-gray-500 text-base" />}
-          className="w-9 h-9 inline-flex items-center justify-center rounded-lg hover:bg-gray-100"
-        />
+        {/* Quick Settings */}
+        <Tooltip title="General Store Settings" placement="bottom">
+          <button
+            type="button"
+            onClick={() => router.push("/dashboard/general-setting?tab=site_settings")}
+            aria-label="Settings"
+            className="w-9.5 h-9.5 inline-flex items-center justify-center rounded-xl bg-gray-50/80 hover:bg-gray-100 border border-gray-200/80 text-gray-600 hover:text-gray-900 transition-all cursor-pointer shadow-2xs"
+          >
+            <SettingOutlined className="text-base" />
+          </button>
+        </Tooltip>
 
-        <NotificationDropdown />
+        {/* Notification Bell */}
+        <NotificationDropdown variant="dashboard" />
 
-        <div className="w-px h-6 bg-gray-200 mx-1" />
+        {/* Vertical Divider */}
+        <div className="w-px h-6 bg-gray-200/80 mx-1 hidden sm:block" />
 
-        <ProfileDropdown profileImage={profileImage} />
+        {/* Executive Admin Profile */}
+        <AdminProfileDropdown user={session.data?.user} />
       </div>
     </Header>
   );

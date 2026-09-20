@@ -31,7 +31,7 @@ import { SiWish } from "react-icons/si";
 import { TbReport } from "react-icons/tb";
 import appConfig from "./appConfig";
 
-const handleBackup = async (): Promise<void> => {
+export const handleBackup = async (): Promise<void> => {
   const date = new Date();
   const pad = (num: number): string => num.toString().padStart(2, "0");
   const currentDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(

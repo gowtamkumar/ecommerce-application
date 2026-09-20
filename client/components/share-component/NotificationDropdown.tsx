@@ -19,7 +19,12 @@ dayjs.extend(relativeTime);
 
 const { Text, Title } = Typography;
 
-const NotificationDropdown = () => {
+interface NotificationDropdownProps {
+  variant?: "default" | "dashboard";
+  className?: string;
+}
+
+const NotificationDropdown = ({ variant = "default", className }: NotificationDropdownProps = {}) => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -227,17 +232,34 @@ const NotificationDropdown = () => {
         }}
       >
 
-        <Button
-          type="primary"
-          className={`
-            w-10 h-10 flex items-center justify-center rounded-global-button-radius border-0
-            bg-global-button-primary text-global-button-text
-            transition-all duration-300 transform active:scale-95 shadow-md hover:shadow-lg
-            hover:bg-global-button-hover hover:scale-105
-            ${open ? "scale-105 shadow-lg" : ""}
-          `}
-          icon={<BellOutlined style={{ fontSize: "20px" }} />}
-        />
+        {variant === "dashboard" ? (
+          <button
+            type="button"
+            aria-label="Notifications"
+            className={`
+              w-9.5 h-9.5 flex items-center justify-center rounded-xl border transition-all cursor-pointer
+              ${open
+                ? "bg-global-primary/10 border-global-primary/40 text-global-primary shadow-xs"
+                : "bg-gray-50/80 hover:bg-gray-100 border-gray-200/80 text-gray-600 hover:text-gray-900"
+              }
+              ${className || ""}
+            `}
+          >
+            <BellOutlined className="text-base" />
+          </button>
+        ) : (
+          <Button
+            type="primary"
+            className={`
+              w-10 h-10 flex items-center justify-center rounded-global-button-radius border-0
+              bg-global-button-primary text-global-button-text
+              transition-all duration-300 transform active:scale-95 shadow-md hover:shadow-lg
+              hover:bg-global-button-hover hover:scale-105
+              ${open ? "scale-105 shadow-lg" : ""}
+            `}
+            icon={<BellOutlined style={{ fontSize: "20px" }} />}
+          />
+        )}
       </Badge>
     </Popover>
   );
