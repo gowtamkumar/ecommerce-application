@@ -33,7 +33,11 @@ interface LocationOption {
   name: string;
 }
 
-export default function AddShippingAddress() {
+interface AddShippingAddressProps {
+  onSuccess?: (savedData?: any) => void;
+}
+
+export default function AddShippingAddress({ onSuccess }: AddShippingAddressProps = {}) {
   const [divisions, setDivisions] = useState<LocationOption[]>([]);
   const [districts, setDistricts] = useState<LocationOption[]>([]);
   const [upazilas, setUpazilas] = useState<LocationOption[]>([]);
@@ -41,9 +45,10 @@ export default function AddShippingAddress() {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const { payload, type, userShippingAddress } = global.action;
+  const { payload, type, userShippingAddress, shippingAddress } = global.action || {};
 
   const isEditing = type === ActionType.UPDATE;
+  const isOpen = Boolean((userShippingAddress || shippingAddress) && (type === ActionType.CREATE || type === ActionType.UPDATE));
 
   const fetchData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -51,28 +56,41 @@ export default function AddShippingAddress() {
       const divisionRes = await getDivisions();
       setDivisions(divisionRes.data || []);
 
-      if (payload) {
-        const newData = { ...payload };
+      if (isEditing && payload) {
+        const divisionId = payload.divisionId || payload.division?.id;
+        const districtId = payload.districtId || payload.district?.id;
+        const upazilaId = payload.upazilaId || payload.upazila?.id;
+        const unionId = payload.unionId || payload.union?.id;
 
         // Pre-fetch dependent geolocation lists if editing
-        if (newData.divisionId) {
-          const dists = await getDistricts({ divisionId: newData.divisionId });
+        if (divisionId) {
+          const dists = await getDistricts({ divisionId });
           setDistricts(dists.data || []);
         }
-        if (newData.districtId) {
-          const upas = await getUpazilas({ districtId: newData.districtId });
+        if (districtId) {
+          const upas = await getUpazilas({ districtId });
           setUpazilas(upas.data || []);
         }
-        if (newData.upazilaId) {
-          const uns = await getUnions({ upazilaId: newData.upazilaId });
+        if (upazilaId) {
+          const uns = await getUnions({ upazilaId });
           setUnions(uns.data || []);
         }
 
         form.setFieldsValue({
-          ...newData,
-          status: Boolean(newData.status),
+          ...payload,
+          id: payload.id,
+          divisionId: divisionId || undefined,
+          districtId: districtId || undefined,
+          upazilaId: upazilaId || undefined,
+          unionId: unionId || undefined,
+          type: payload.type || "Home",
+          status: Boolean(payload.status),
         });
       } else {
+        form.resetFields();
+        setDistricts([]);
+        setUpazilas([]);
+        setUnions([]);
         form.setFieldsValue({
           type: "Home",
           status: false,
@@ -83,24 +101,34 @@ export default function AddShippingAddress() {
     } finally {
       dispatch(setLoading({ loading: false }));
     }
-  }, [dispatch, form, payload]);
+  }, [dispatch, form, payload, isEditing]);
 
   useEffect(() => {
-    if (userShippingAddress) {
+    if (isOpen) {
       fetchData();
     }
-  }, [fetchData, userShippingAddress]);
+  }, [fetchData, isOpen]);
 
   const handleSubmit = async (values: any) => {
     const newData = { ...values };
+    const addressId = newData.id || (isEditing ? payload?.id : undefined);
 
-    const result = newData.id
+    if (addressId) {
+      newData.id = addressId;
+    }
+
+    const result = (isEditing || addressId)
       ? () => updateShippingAddress(newData)
       : () => saveShippingAddress(newData);
 
-    await handleAsyncAction(result, dispatch);
-    form.resetFields();
-    handleClose();
+    const res = await handleAsyncAction(result, dispatch);
+    if (res) {
+      form.resetFields();
+      handleClose();
+      if (onSuccess) {
+        onSuccess(res);
+      }
+    }
   };
 
   const handleClose = () => {
@@ -113,10 +141,27 @@ export default function AddShippingAddress() {
   };
 
   const resetFormData = () => {
-    if (payload?.id) {
-      form.setFieldsValue(payload);
+    if (isEditing && payload?.id) {
+      const divisionId = payload.divisionId || payload.division?.id;
+      const districtId = payload.districtId || payload.district?.id;
+      const upazilaId = payload.upazilaId || payload.upazila?.id;
+      const unionId = payload.unionId || payload.union?.id;
+
+      form.setFieldsValue({
+        ...payload,
+        id: payload.id,
+        divisionId: divisionId || undefined,
+        districtId: districtId || undefined,
+        upazilaId: upazilaId || undefined,
+        unionId: unionId || undefined,
+        type: payload.type || "Home",
+        status: Boolean(payload.status),
+      });
     } else {
       form.resetFields();
+      setDistricts([]);
+      setUpazilas([]);
+      setUnions([]);
       form.setFieldsValue({ type: "Home", status: false });
     }
   };
@@ -139,7 +184,8 @@ export default function AddShippingAddress() {
         </div>
       }
       width={680}
-      open={Boolean(userShippingAddress)}
+      zIndex={1050}
+      open={isOpen}
       onCancel={handleClose}
       footer={null}
       centered
@@ -183,7 +229,6 @@ export default function AddShippingAddress() {
                 >
                   <Select.Option value="Home">Home</Select.Option>
                   <Select.Option value="Office">Office</Select.Option>
-                  <Select.Option value="Other">Other</Select.Option>
                 </Select>
               </Form.Item>
 
@@ -223,11 +268,10 @@ export default function AddShippingAddress() {
                 name="email"
                 label={
                   <span className="text-xs font-semibold text-gray-700">
-                    Email Address
+                    Email Address (Optional)
                   </span>
                 }
                 rules={[
-                  { required: true, message: "Email address is required" },
                   { type: "email", message: "Enter a valid email" },
                 ]}
               >

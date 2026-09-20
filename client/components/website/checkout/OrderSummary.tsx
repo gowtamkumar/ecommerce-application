@@ -108,25 +108,25 @@ export default function OrderSummary() {
                     className="object-cover"
                   />
                 </div>
-                <div className="space-y-2">
-                   <div className="text-[10px] font-black uppercase tracking-widest text-blue-600">Premium Item</div>
-                   <h3 className="font-black text-gray-900 text-sm sm:text-base leading-tight line-clamp-2">{item?.name}</h3>
-                   <div className="flex flex-wrap gap-2 pt-1">
-                      {item?.size?.name && (
-                        <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-gray-100 rounded-md text-gray-500">Size: {item.size.name}</span>
-                      )}
-                      {item?.color?.name && (
-                        <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-gray-100 rounded-md text-gray-500">Color: {item.color.name}</span>
-                      )}
-                   </div>
-                </div>
+                 <div className="space-y-2">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-global-primary">Premium Item</div>
+                    <h3 className="font-black text-gray-900 text-sm sm:text-base leading-tight line-clamp-2">{item?.name}</h3>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                       {item?.size?.name && (
+                         <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-gray-100 rounded-md text-gray-500">Size: {item.size.name}</span>
+                       )}
+                       {item?.color?.name && (
+                         <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-gray-100 rounded-md text-gray-500">Color: {item.color.name}</span>
+                       )}
+                    </div>
+                 </div>
               </div>
 
               {/* Quantity Selector */}
               <div className="sm:col-span-2 flex justify-start sm:justify-center">
                  <div className="flex items-center p-1 bg-white border border-gray-100 rounded-xl shadow-sm">
                     <button
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-900 hover:text-white transition-all disabled:opacity-20"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-global-primary hover:text-white transition-all disabled:opacity-20 cursor-pointer"
                       onClick={() => handleIncrementDecrement({ type: "Decrement", id: item.id, qty: item.qty - 1 })}
                       disabled={item?.qty <= 1}
                     >
@@ -134,7 +134,7 @@ export default function OrderSummary() {
                     </button>
                     <span className="w-8 text-center text-xs font-black text-gray-900">{item.qty}</span>
                     <button
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-900 hover:text-white transition-all disabled:opacity-20"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-global-primary hover:text-white transition-all disabled:opacity-20 cursor-pointer"
                       onClick={() => handleIncrementDecrement({ type: "Increment", id: item.id, qty: item.qty + 1 })}
                       disabled={stockCheckingAndPurchaseLimit(item)}
                     >
@@ -149,7 +149,7 @@ export default function OrderSummary() {
                   <span className="text-xs font-bold text-gray-400 sm:hidden uppercase tracking-widest mb-1">Unit Price</span>
                   <span className="text-sm sm:text-base font-black text-gray-900">{formatPrice(item.salePrice)}</span>
                   {item.totalDiscountAmount > 0 && (
-                    <Tag color="success" className="w-fit ml-auto mr-0 text-[8px] font-black uppercase tracking-tighter border-none bg-green-50 text-green-600 mt-1">
+                    <Tag color="success" className="w-fit ml-auto mr-0 text-[8px] font-black uppercase tracking-tighter border-none bg-global-primary/10 text-global-primary mt-1">
                        -{formatPrice(item.totalDiscountAmount)} Off
                     </Tag>
                   )}
@@ -160,7 +160,7 @@ export default function OrderSummary() {
               <div className="sm:col-span-2 text-left sm:text-right">
                 <div className="flex flex-col">
                    <span className="text-xs font-bold text-gray-400 sm:hidden uppercase tracking-widest mb-1">Total</span>
-                   <span className="text-base sm:text-lg font-black text-blue-600 tracking-tighter">
+                   <span className="text-base sm:text-lg font-black text-global-primary tracking-tight">
                     {formatPrice(item?.subTotal)}
                    </span>
                 </div>

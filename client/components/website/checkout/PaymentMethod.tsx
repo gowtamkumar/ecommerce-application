@@ -101,7 +101,7 @@ export default function PaymentMethod() {
                       Pay easily in cash when your order is delivered to your shipping address.
                     </p>
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] font-bold text-global-primary bg-global-primary/10 border border-global-primary/25 px-2 py-0.5 rounded-md">
                         ✓ No advance payment
                       </span>
                       <span className="text-[10px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md">

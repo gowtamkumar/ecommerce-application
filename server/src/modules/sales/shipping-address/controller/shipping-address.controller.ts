@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { shippingAddressValidationSchema } from '@/validation';
-import { ShippingAddressEntity } from '../model/shipping-address.entity';
-import { updateShippingAddressValidationSchema } from '@/validation/shipping-address/updateShippingAddressValidation';
-import { logger } from '@/middlewares/logger';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
+import { shippingAddressValidationSchema } from '@/validation';
+import { updateShippingAddressValidationSchema } from '@/validation/shipping-address/updateShippingAddressValidation';
+import { NextFunction, Request, Response } from 'express';
+import { ShippingAddressEntity } from '../model/shipping-address.entity';
 
 // @desc Get all ShippingAddress
 // @route GET /api/v1/shipping-address
@@ -139,10 +139,17 @@ export const updateShippingAddress = asyncHandler(async (req: Request, res: Resp
   }
   const connection = await getDBConnection();
   const repository = await connection.getRepository(ShippingAddressEntity);
-  const result = await repository.findOneBy({ id });
+  const result = await repository.findOneBy({ id: Number(id) as any });
 
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
+  }
+
+  if (req.body.status) {
+    const existingActive = await repository.findOneBy({ userId: result.userId, status: true });
+    if (existingActive && existingActive.id !== result.id) {
+      await repository.save({ id: existingActive.id, status: false });
+    }
   }
 
   const updateData = await repository.merge(result, req.body);

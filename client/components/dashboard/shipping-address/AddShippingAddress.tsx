@@ -1,24 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Select, Space } from "antd";
-import { EnvironmentOutlined, InfoCircleOutlined, PushpinOutlined, HomeOutlined, GlobalOutlined } from "@ant-design/icons";
-import { ActionType } from "../../../constants/constants";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  saveShippingAddress,
-  updateShippingAddress,
-} from "@/lib/apis/shipping-address";
-import { getDivisions } from "@/lib/apis/geo-location/division";
 import { getDistricts } from "@/lib/apis/geo-location/district";
-import { getUpazilas } from "@/lib/apis/geo-location/upazila";
+import { getDivisions } from "@/lib/apis/geo-location/division";
 import { getUnions } from "@/lib/apis/geo-location/union";
+import { getUpazilas } from "@/lib/apis/geo-location/upazila";
+import {
+    saveShippingAddress,
+    updateShippingAddress,
+} from "@/lib/apis/shipping-address";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { errorNotification } from "@/lib/utils/notification";
+import {
+    selectGlobal,
+    setAction,
+    setLoading,
+} from "@/redux/features/global/globalSlice";
+import { EnvironmentOutlined, GlobalOutlined, HomeOutlined, InfoCircleOutlined, PushpinOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Select, Space } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ActionType } from "../../../constants/constants";
 
 const AddShippingAddress = () => {
   const [divisions, setDivision] = useState([]);
@@ -29,7 +29,7 @@ const AddShippingAddress = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
-  const { payload, type, shippingAddress } = global.action;
+  const { payload, type, shippingAddress, userShippingAddress } = global.action || {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +70,10 @@ const AddShippingAddress = () => {
     const result = newData.id
       ? () => updateShippingAddress(newData)
       : () => saveShippingAddress(newData);
-    await handleAsyncAction(result, dispatch);
+    const res = await handleAsyncAction(result, dispatch);
+    if (res) {
+      handleClose();
+    }
   };
 
   const handleClose = () => {
@@ -103,7 +106,7 @@ const AddShippingAddress = () => {
       }
       width={800}
       zIndex={1050}
-      open={shippingAddress && (type === ActionType.CREATE || type === ActionType.UPDATE)}
+      open={Boolean((shippingAddress || userShippingAddress) && (type === ActionType.CREATE || type === ActionType.UPDATE))}
       onCancel={handleClose}
       centered
       mask={{ closable: false }}

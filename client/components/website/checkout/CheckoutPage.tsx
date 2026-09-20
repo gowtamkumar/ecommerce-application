@@ -134,34 +134,7 @@ export default function CheckoutPage() {
       <div className="bg-white border-b border-gray-200/70 shadow-2xs">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           
-          {/* Top Row: Page Title + Trust Badges */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-gray-100">
-            <div className="flex items-center gap-3.5 text-center sm:text-left">
-              <div className="w-11 h-11 rounded-2xl bg-global-primary/10 text-global-primary flex items-center justify-center text-xl shadow-xs shrink-0">
-                <LockOutlined />
-              </div>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2 justify-center sm:justify-start">
-                  <span>Secure Checkout</span>
-                </h1>
-                <p className="text-xs text-gray-500 font-medium mt-0.5">
-                  Fast, encrypted & protected purchase
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
-                <SafetyCertificateOutlined className="text-emerald-600 text-sm" />
-                <span>256-Bit SSL Encrypted</span>
-              </div>
-              <div className="hidden md:flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-200/80 px-3.5 py-1.5 rounded-full">
-                <CheckCircleFilled className="text-emerald-500 text-xs" />
-                <span>Money-Back Guarantee</span>
-              </div>
-            </div>
-          </div>
-
+        
           {/* Stepper Card */}
           <div className="max-w-2xl mx-auto pt-2">
             <div className="grid grid-cols-3 relative">
@@ -188,7 +161,7 @@ export default function CheckoutPage() {
                     activeStep === 1
                       ? "bg-global-primary text-white ring-4 ring-global-primary/20 shadow-md shadow-global-primary/30 scale-105"
                       : activeStep > 1
-                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
+                      ? "bg-global-primary text-white shadow-sm shadow-global-primary/20"
                       : "bg-white text-gray-400 border-2 border-gray-200 group-hover:border-gray-300"
                   }`}
                 >
@@ -230,7 +203,7 @@ export default function CheckoutPage() {
                     activeStep === 2
                       ? "bg-global-primary text-white ring-4 ring-global-primary/20 shadow-md shadow-global-primary/30 scale-105"
                       : activeStep > 2
-                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
+                      ? "bg-global-primary text-white shadow-sm shadow-global-primary/20"
                       : "bg-white text-gray-400 border-2 border-gray-200 group-hover:border-gray-300"
                   }`}
                 >
@@ -320,10 +293,10 @@ export default function CheckoutPage() {
                     className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all ${
                       activeStep === 1
                         ? "bg-global-primary text-white shadow-md shadow-global-primary/20"
-                        : "bg-emerald-50 text-emerald-600"
+                        : "bg-global-primary/10 text-global-primary"
                     }`}
                   >
-                    {activeStep > 1 ? <CheckCircleFilled className="text-lg" /> : "01"}
+                    {activeStep > 1 ? <CheckCircleFilled className="text-lg text-global-primary" /> : "01"}
                   </div>
                   <div>
                     <h2 className="text-base sm:text-lg font-black text-gray-900 uppercase tracking-wide">
@@ -410,11 +383,11 @@ export default function CheckoutPage() {
                       activeStep === 2
                         ? "bg-global-primary text-white shadow-md shadow-global-primary/20"
                         : activeStep > 2
-                        ? "bg-emerald-50 text-emerald-600"
+                        ? "bg-global-primary/10 text-global-primary"
                         : "bg-gray-100 text-gray-400"
                     }`}
                   >
-                    {activeStep > 2 ? <CheckCircleFilled className="text-lg" /> : "02"}
+                    {activeStep > 2 ? <CheckCircleFilled className="text-lg text-global-primary" /> : "02"}
                   </div>
                   <div>
                     <h2
