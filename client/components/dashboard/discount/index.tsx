@@ -30,7 +30,7 @@ export default function Discount() {
             <TagOutlined className="text-2xl text-red-600" />
           </div>
           <div>
-            <Title level={2} className="!mb-0 !text-gray-800">
+            <Title level={2} className="mb-0 text-gray-800">
               Discounts & Promotions
             </Title>
             <Text type="secondary" className="text-sm">
@@ -43,7 +43,7 @@ export default function Discount() {
           icon={<PlusOutlined />}
           size="large"
           onClick={() => route.push("/dashboard/discounts/new")}
-          className="!h-10 !px-6 !font-medium"
+          className="h-10 px-6 font-medium"
           style={{ borderRadius: "var(--button-border-radius)" }}
         >
           New Discount

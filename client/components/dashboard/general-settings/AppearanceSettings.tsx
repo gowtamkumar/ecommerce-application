@@ -674,7 +674,7 @@ const AppearanceSettings = () => {
                                                             size="small"
                                                             type="dashed"
                                                             onClick={() => handleApplyTypographyPreset(preset)}
-                                                            className="mt-4 !bg-transparent !text-amber-400 !border-amber-400/40 hover:!border-amber-400 hover:!text-amber-300 text-xs w-full rounded-lg font-semibold"
+                                                            className="mt-4 bg-transparent text-amber-400 border-amber-400/40 hover:border-amber-400 hover:text-amber-300 text-xs w-full rounded-lg font-semibold"
                                                         >
                                                             Apply Pairing
                                                         </Button>

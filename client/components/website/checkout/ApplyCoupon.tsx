@@ -136,14 +136,14 @@ export default function ApplyCoupon() {
               value={couponInput}
               onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
               onPressEnter={handleApplyCoupon}
-              className="!rounded-l-2xl h-12 text-xs font-bold uppercase tracking-widest border border-gray-200 hover:!border-gray-900 focus:!border-gray-900 transition-all px-4"
+              className="rounded-l-2xl h-12 text-xs font-bold uppercase tracking-widest border border-gray-200 hover:border-gray-900 focus:border-gray-900 transition-all px-4"
             />
             <Button
               type="primary"
               onClick={handleApplyCoupon}
               loading={loading}
               disabled={loading || !couponInput.trim()}
-              className="h-12 !rounded-r-2xl px-6 !bg-global-primary hover:!bg-global-hover border-none font-black text-xs uppercase tracking-widest transition-all"
+              className="h-12 rounded-r-2xl px-6 bg-global-primary hover:bg-global-hover border-none font-black text-xs uppercase tracking-widest transition-all"
             >
               Apply
             </Button>

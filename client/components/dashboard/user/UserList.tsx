@@ -283,7 +283,7 @@ const UserList = () => {
             <Button
               size="small"
               icon={<EditOutlined />}
-              className="hover:!bg-green-50 hover:!text-green-600"
+              className="hover:bg-green-50 hover:text-green-600"
               onClick={() => {
                 const newData = { ...value };
                 if (newData.image) {
@@ -319,7 +319,7 @@ const UserList = () => {
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
-                className="hover:!bg-red-50"
+                className="hover:bg-red-50"
               />
             </Tooltip>
           </Popconfirm>

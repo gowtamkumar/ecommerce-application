@@ -26,9 +26,9 @@ export default function Slider({ banners }: any) {
         slidesPerView={1}
         pagination={{
           clickable: true,
-          bulletActiveClass: "!bg-white !opacity-100 !w-7 !rounded-full",
+          bulletActiveClass: "bg-white opacity-100 w-7 rounded-full",
           bulletClass:
-            "swiper-pagination-bullet !bg-white/40 !opacity-100 !w-2 !h-2 !mx-1 !transition-all !duration-300",
+            "swiper-pagination-bullet bg-white/40 opacity-100 w-2 h-2 mx-1 transition-all duration-300",
         }}
         navigation={{
           nextEl: ".swiper-button-next-custom",
@@ -74,7 +74,7 @@ export default function Slider({ banners }: any) {
                         {title}
                       </h1>
                     ) : (
-                      <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold !text-white leading-[1.15] tracking-tight break-words">
+                      <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-[1.15] tracking-tight break-words">
                         {title}
                       </h2>
                     )}

@@ -107,7 +107,7 @@ const AddShippingCharge = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -140,7 +140,7 @@ const AddShippingCharge = () => {
                 message: "District is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Select
               showSearch
@@ -173,13 +173,13 @@ const AddShippingCharge = () => {
                 message: "Shipping charge is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <InputNumber
               placeholder="Enter amount"
               size="large"
               min={0}
-              className="!w-full"
+              className="w-full"
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") as any
               }
@@ -191,7 +191,7 @@ const AddShippingCharge = () => {
             name="status"
             label="Status"
             valuePropName="checked"
-            className="!mb-0"
+            className="mb-0"
           >
             <Switch
               checkedChildren="Active"
@@ -206,11 +206,11 @@ const AddShippingCharge = () => {
           <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
             Additional Information
           </h3>
-          <Form.Item name="note" label="Note" className="!mb-0">
+          <Form.Item name="note" label="Note" className="mb-0">
             <Input.TextArea
               placeholder="Add any notes about this shipping charge"
               rows={3}
-              className="!rounded-lg"
+              className="rounded-lg"
             />
           </Form.Item>
         </div>

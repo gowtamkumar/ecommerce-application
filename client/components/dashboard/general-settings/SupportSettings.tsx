@@ -76,16 +76,16 @@ const SupportSettings = () => {
                         <div className="space-y-4">
                             <SettingsHeader title="Store Promises & Badges" description="Configure the core guarantees displayed to customers (e.g., in the footer)." />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-xl border border-gray-100">
-                                <Form.Item name="cashDelivery" label={<span className="text-base font-medium">Cash on Delivery</span>} className="!mb-0" extra="e.g. Pay on arrival">
+                                <Form.Item name="cashDelivery" label={<span className="text-base font-medium">Cash on Delivery</span>} className="mb-0" extra="e.g. Pay on arrival">
                                     <Input size="large" prefix={<WalletOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
                                 </Form.Item>
-                                <Form.Item name="returnSupport" label={<span className="text-base font-medium">Return Policy</span>} className="!mb-0" extra="e.g. 7-day easy returns">
+                                <Form.Item name="returnSupport" label={<span className="text-base font-medium">Return Policy</span>} className="mb-0" extra="e.g. 7-day easy returns">
                                     <Input size="large" prefix={<RollbackOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
                                 </Form.Item>
-                                <Form.Item name="originalProduct" label={<span className="text-base font-medium">Product Authenticity</span>} className="!mb-0" extra="e.g. 100% Genuine">
+                                <Form.Item name="originalProduct" label={<span className="text-base font-medium">Product Authenticity</span>} className="mb-0" extra="e.g. 100% Genuine">
                                     <Input size="large" prefix={<SafetyCertificateOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
                                 </Form.Item>
-                                <Form.Item name="guarantee" label={<span className="text-base font-medium">Guarantee/Warranty</span>} className="!mb-0" extra="e.g. 1 Year Warranty">
+                                <Form.Item name="guarantee" label={<span className="text-base font-medium">Guarantee/Warranty</span>} className="mb-0" extra="e.g. 1 Year Warranty">
                                     <Input size="large" prefix={<FileProtectOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
                                 </Form.Item>
                             </div>
@@ -95,10 +95,10 @@ const SupportSettings = () => {
                         <div className="space-y-4">
                             <SettingsHeader title="WhatsApp Live Chat" description="Configure the floating WhatsApp chat widget for instant customer support." />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-green-50/30 p-6 rounded-xl border border-green-100">
-                                <Form.Item name="phone" label={<span className="text-base font-medium">WhatsApp Number</span>} className="!mb-0" extra="Format: 8801700000000 (No '+')">
+                                <Form.Item name="phone" label={<span className="text-base font-medium">WhatsApp Number</span>} className="mb-0" extra="Format: 8801700000000 (No '+')">
                                     <Input size="large" prefix={<WhatsAppOutlined className="text-green-500 mr-1" />} placeholder="880..." />
                                 </Form.Item>
-                                <Form.Item name="message" label={<span className="text-base font-medium">Default Message</span>} className="!mb-0" extra="Pre-filled text when customers click the widget">
+                                <Form.Item name="message" label={<span className="text-base font-medium">Default Message</span>} className="mb-0" extra="Pre-filled text when customers click the widget">
                                     <Input size="large" prefix={<MessageOutlined className="text-green-500 mr-1" />} placeholder="Hi, I have a query about..." />
                                 </Form.Item>
                             </div>
@@ -111,13 +111,13 @@ const SupportSettings = () => {
                                 <Form.Item
                                   name="orderFreeShippingAmount"
                                   label={<span className="text-base font-medium">Free Shipping Threshold</span>}
-                                  className="!mb-0 max-w-sm"
+                                  className="mb-0 max-w-sm"
                                   extra="Orders above this cart subtotal will automatically get free shipping."
                                 >
                                   <InputNumber
                                     size="large"
                                     placeholder="e.g. 500"
-                                    className="!w-full"
+                                    className="w-full"
                                     min={0}
                                     addonBefore={<CarOutlined className="text-gray-400" />}
                                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -158,7 +158,7 @@ const SupportSettings = () => {
                                                             <Form.Item {...restField} name={[name, "question"]} label="Question Title" rules={[{ required: true, message: "Question cannot be empty" }]}>
                                                                 <Input placeholder="E.g., How long does delivery take?" size="large" prefix={<QuestionCircleOutlined className="text-gray-400 mr-2" />} className="bg-gray-50" />
                                                             </Form.Item>
-                                                            <Form.Item {...restField} name={[name, "answer"]} label="Detailed Answer" rules={[{ required: true, message: "Answer cannot be empty" }]} className="!mb-0">
+                                                            <Form.Item {...restField} name={[name, "answer"]} label="Detailed Answer" rules={[{ required: true, message: "Answer cannot be empty" }]} className="mb-0">
                                                                 <Input.TextArea rows={4} placeholder="Write a highly descriptive answer..." className="bg-gray-50" />
                                                             </Form.Item>
                                                         </div>
@@ -172,13 +172,13 @@ const SupportSettings = () => {
                         </div>
                     </div>
 
-                    <Form.Item className="!mb-0 !mt-8">
+                    <Form.Item className="mb-0 mt-8">
                         <Button 
                             type="primary" 
                             htmlType="submit" 
                             loading={loading} 
                             size="large" 
-                            className="!h-11 !px-8 !font-medium"
+                            className="h-11 px-8 font-medium"
                             style={{ 
                                 borderRadius: "var(--button-border-radius)",
                                 backgroundColor: "var(--global-primary)"

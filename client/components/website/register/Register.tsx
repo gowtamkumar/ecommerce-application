@@ -331,7 +331,7 @@ const Register = () => {
                     </span>
                   }
                   rules={[{ required: true, message: "Please enter your full name" }]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input
                     prefix={<FiUser className="text-gray-400 mr-1.5 text-base" />}
@@ -355,7 +355,7 @@ const Register = () => {
                     { required: true, message: "Username is required" },
                     { min: 5, message: "Min 5 characters" },
                   ]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input
                     prefix={<FiUser className="text-gray-400 mr-1.5 text-base" />}
@@ -381,7 +381,7 @@ const Register = () => {
                   { required: true, message: "Email is required" },
                   { type: "email", message: "Enter a valid email address" },
                 ]}
-                className="!mb-0"
+                className="mb-0"
               >
                 <Input
                   prefix={<FiMail className="text-gray-400 mr-1.5 text-base" />}
@@ -407,7 +407,7 @@ const Register = () => {
                     { required: true, message: "Password is required" },
                     { min: 6, message: "Min 6 characters" },
                   ]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input.Password
                     prefix={<FiLock className="text-gray-400 mr-1.5 text-base" />}
@@ -439,7 +439,7 @@ const Register = () => {
                       },
                     }),
                   ]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input.Password
                     prefix={<FiLock className="text-gray-400 mr-1.5 text-base" />}
@@ -465,7 +465,7 @@ const Register = () => {
                         : Promise.reject(new Error("Please accept the terms to proceed")),
                   },
                 ]}
-                className="!mb-2 pt-1"
+                className="mb-2 pt-1"
               >
                 <Checkbox className="text-xs text-gray-600 select-none">
                   I agree to the{" "}

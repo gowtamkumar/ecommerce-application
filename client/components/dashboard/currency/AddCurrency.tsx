@@ -87,7 +87,7 @@ const AddCurrency = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -121,7 +121,7 @@ const AddCurrency = () => {
                 message: "Name is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter currency name (e.g. US Dollar)" size="large" />
           </Form.Item>
@@ -135,7 +135,7 @@ const AddCurrency = () => {
                 message: "Symbol is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter symbol (e.g. $)" size="large" />
           </Form.Item>
@@ -149,7 +149,7 @@ const AddCurrency = () => {
                 message: "Exchange Rate is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <InputNumber
               style={{ width: '100%' }}

@@ -103,7 +103,7 @@ const AddStockAdjust = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -137,7 +137,7 @@ const AddStockAdjust = () => {
                   message: "Type is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select
                 placeholder="Select action"
@@ -170,7 +170,7 @@ const AddStockAdjust = () => {
                   message: "Product is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select
                 showSearch
@@ -224,14 +224,14 @@ const AddStockAdjust = () => {
                     {fields.map(({ key, name, ...restField }) => (
                       <tr key={key} className="hover:bg-blue-50/30 transition-all duration-200">
                         <td className="p-4" hidden>
-                          <Form.Item {...restField} name={[name, "id"]} className="!mb-0">
+                          <Form.Item {...restField} name={[name, "id"]} className="mb-0">
                             <Input />
                           </Form.Item>
                         </td>
 
                         {/* Read-only display values */}
                         <td className="p-4">
-                          <Form.Item {...restField} name={[name, "color"]} className="!mb-0">
+                          <Form.Item {...restField} name={[name, "color"]} className="mb-0">
                             <div className="flex items-center gap-2">
                               {productVariants?.[name]?.color?.colorCode && (
                                 <span
@@ -247,8 +247,8 @@ const AddStockAdjust = () => {
                         </td>
 
                         <td className="p-4">
-                          <Form.Item {...restField} name={[name, "size"]} className="!mb-0">
-                            <Tag color="blue" className="!m-0 rounded-md font-medium border-none bg-blue-50 text-blue-600">
+                          <Form.Item {...restField} name={[name, "size"]} className="mb-0">
+                            <Tag color="blue" className="m-0 rounded-md font-medium border-none bg-blue-50 text-blue-600">
                               {productVariants?.[name]?.size?.name ?? "Default"}
                             </Tag>
                           </Form.Item>
@@ -262,7 +262,7 @@ const AddStockAdjust = () => {
                         </td>
 
                         <td className="p-4 text-center">
-                          <Form.Item {...restField} name={[name, "stockQty"]} className="!mb-0">
+                          <Form.Item {...restField} name={[name, "stockQty"]} className="mb-0">
                             <div className="inline-flex flex-col items-center">
                               <span className="text-lg font-bold text-gray-800 leading-tight">
                                 {productVariants?.[name]?.stockQty ?? "0"}
@@ -281,12 +281,12 @@ const AddStockAdjust = () => {
                               { required: true, message: "Required" },
                               { type: "number", min: 1, message: "> 0" }
                             ]}
-                            className="!mb-0"
+                            className="mb-0"
                           >
                             <InputNumber
                               placeholder="0"
                               min={1}
-                              className="!w-full !rounded-lg border-gray-200"
+                              className="w-full rounded-lg border-gray-200"
                               size="large"
                               style={{
                                 boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
@@ -303,7 +303,7 @@ const AddStockAdjust = () => {
                             shape="circle"
                             icon={<MinusCircleOutlined className="text-lg" />}
                             onClick={() => remove(name)}
-                            className="hover:!bg-red-50 flex items-center justify-center mx-auto"
+                            className="hover:bg-red-50 flex items-center justify-center mx-auto"
                           />
                         </td>
                       </tr>

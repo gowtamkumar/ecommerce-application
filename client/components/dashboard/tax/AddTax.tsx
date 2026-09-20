@@ -77,7 +77,7 @@ const AddTax = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{ 
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -110,7 +110,7 @@ const AddTax = () => {
                 message: "Name is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter tax name (e.g., VAT, GST)" size="large" />
           </Form.Item>
@@ -124,7 +124,7 @@ const AddTax = () => {
                 message: "Value is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <InputNumber 
               placeholder="Enter tax percentage" 
@@ -135,7 +135,7 @@ const AddTax = () => {
             />
           </Form.Item>
 
-          <Form.Item name="status" label="Status" valuePropName="checked" className="!mb-0">
+          <Form.Item name="status" label="Status" valuePropName="checked" className="mb-0">
             <Switch
               checkedChildren="Active"
               unCheckedChildren="Inactive"

@@ -23,7 +23,7 @@ export default function Category() {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          className="!h-10 !px-6 !font-medium shadow-sm transition-all"
+          className="h-10 px-6 font-medium shadow-sm transition-all"
           style={{ borderRadius: "var(--button-border-radius)" }}
           onClick={() =>
             dispatch(

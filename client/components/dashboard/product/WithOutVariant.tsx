@@ -16,11 +16,11 @@ export default function WithOutVariant({ form }: any) {
               Max Purchase Qty
             </span>
           }
-          className="!mb-0"
+          className="mb-0"
         >
           <InputNumber
             placeholder="e.g. 10"
-            className="!w-full"
+            className="w-full"
             size="large"
             min={1}
           />
@@ -35,11 +35,11 @@ export default function WithOutVariant({ form }: any) {
             </span>
           }
           rules={[{ required: true, message: "Alert Qty is required" }]}
-          className="!mb-0"
+          className="mb-0"
         >
           <InputNumber
             placeholder="e.g. 5"
-            className="!w-full"
+            className="w-full"
             size="large"
             min={1}
           />
@@ -64,7 +64,7 @@ export default function WithOutVariant({ form }: any) {
         <Form.Item
           name="variant"
           valuePropName="checked"
-          className="!mb-0 shrink-0"
+          className="mb-0 shrink-0"
         >
           <Switch />
         </Form.Item>
@@ -82,11 +82,11 @@ export default function WithOutVariant({ form }: any) {
               </span>
             }
             rules={[{ required: true, message: "Purchase price is required" }]}
-            className="!mb-0"
+            className="mb-0"
           >
             <InputNumber
               placeholder="0.00"
-              className="!w-full"
+              className="w-full"
               size="large"
               min={0}
               step={0.01}
@@ -103,11 +103,11 @@ export default function WithOutVariant({ form }: any) {
               </span>
             }
             rules={[{ required: true, message: "Unit price is required" }]}
-            className="!mb-0"
+            className="mb-0"
           >
             <InputNumber
               placeholder="0.00"
-              className="!w-full"
+              className="w-full"
               size="large"
               min={0}
               step={0.01}
@@ -124,11 +124,11 @@ export default function WithOutVariant({ form }: any) {
               </span>
             }
             rules={[{ required: true, message: "Stock Qty is required" }]}
-            className="!mb-0"
+            className="mb-0"
           >
             <InputNumber
               placeholder="0"
-              className="!w-full"
+              className="w-full"
               size="large"
               min={0}
             />

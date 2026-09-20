@@ -24,7 +24,7 @@ export default function Size() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <Title level={3} className="!mb-1">
+          <Title level={3} className="mb-1">
             Product Sizes
           </Title>
           <Text type="secondary">Manage available product sizes</Text>
@@ -41,7 +41,7 @@ export default function Size() {
               })
             )
           }
-          className="!h-10 !px-6 !font-medium"
+          className="h-10 px-6 font-medium"
           style={{ borderRadius: "var(--button-border-radius)" }}
         >
           New Size

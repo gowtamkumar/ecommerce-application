@@ -85,7 +85,7 @@ const NotificationsUser = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <Title level={4} className="!mb-0">
+          <Title level={4} className="mb-0">
             Notifications
           </Title>
           <Text type="secondary" className="text-xs sm:text-sm">Stay updated with your latest activities</Text>
@@ -208,7 +208,7 @@ const NotificationsUser = () => {
             >
               Message
             </Text>
-            <Paragraph className="!mb-0 text-gray-800 leading-relaxed text-sm sm:text-base">
+            <Paragraph className="mb-0 text-gray-800 leading-relaxed text-sm sm:text-base">
               {notification.message}
             </Paragraph>
           </div>

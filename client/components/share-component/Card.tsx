@@ -164,7 +164,7 @@ export default function Card({ item }: { item: any }) {
           <Rate
             disabled
             value={Number(item.avgRating) || 0}
-            className="!text-[11px] text-amber-400"
+            className="text-[11px] text-amber-400"
           />
           <span className="text-[10px] font-medium text-gray-400 leading-none">
             ({item.reviewsCount || 0})
@@ -195,7 +195,7 @@ export default function Card({ item }: { item: any }) {
         <div className="mt-1">
           <AddToCartButton
             item={{ ...item, qty: 1 }}
-            className="!h-9 sm:!h-10 !rounded-xl !text-[11px] sm:!text-xs !font-semibold !tracking-wide"
+            className="h-9 sm:h-10 rounded-xl text-[11px] sm:text-xs font-semibold tracking-wide"
           />
         </div>
       </div>

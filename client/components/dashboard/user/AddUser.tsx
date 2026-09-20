@@ -125,7 +125,7 @@ const AddUser = () => {
             onClick={() => form.submit()}
             loading={global.loading.save}
             disabled={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -160,7 +160,7 @@ const AddUser = () => {
                 message: "Name is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="John Doe" size="large" />
           </Form.Item>
@@ -175,7 +175,7 @@ const AddUser = () => {
                 message: "Username is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="johndoe" size="large" disabled={payload?.id} />
           </Form.Item>
@@ -193,7 +193,7 @@ const AddUser = () => {
                   message: "Password is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Input.Password placeholder="Enter secure password" size="large" />
             </Form.Item>
@@ -215,7 +215,7 @@ const AddUser = () => {
                 message: "Please enter a valid email",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="john@example.com" size="large" />
           </Form.Item>
@@ -224,7 +224,7 @@ const AddUser = () => {
           <Form.Item
             name="phone"
             label="Phone Number"
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="+1 (555) 123-4567" size="large" />
           </Form.Item>
@@ -232,7 +232,7 @@ const AddUser = () => {
 
         <div className="grid grid-cols-2 gap-6 mt-6">
           {/* User Type */}
-          <Form.Item name="type" label="User Type" className="!mb-0">
+          <Form.Item name="type" label="User Type" className="mb-0">
             <Select
               showSearch
               allowClear
@@ -256,11 +256,11 @@ const AddUser = () => {
           </Form.Item>
 
           {/* Date of Birth */}
-          <Form.Item name="dob" label="Date of Birth" className="!mb-0">
+          <Form.Item name="dob" label="Date of Birth" className="mb-0">
             <DatePicker
               placeholder="Select birth date"
               size="large"
-              className="!w-full"
+              className="w-full"
               format="DD-MM-YYYY"
             />
           </Form.Item>
@@ -272,7 +272,7 @@ const AddUser = () => {
             name="status"
             label="Account Status"
             valuePropName="checked"
-            className="!mb-0"
+            className="mb-0"
           >
             <Switch
               checkedChildren="Active"
@@ -289,7 +289,7 @@ const AddUser = () => {
             label="Profile Image"
             valuePropName="fileList"
             getValueFromEvent={normFile}
-            className="!mb-0"
+            className="mb-0"
           >
             <ImgCrop rotationSlider showReset aspect={1}>
               <Upload

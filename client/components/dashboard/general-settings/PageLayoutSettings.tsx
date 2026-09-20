@@ -243,7 +243,7 @@ const PageLayoutSettings = () => {
                     ]}
                 />
 
-                <Divider className="!my-6" />
+                <Divider className="my-6" />
 
                 <div className="flex justify-start">
                     <Button 
@@ -251,7 +251,7 @@ const PageLayoutSettings = () => {
                         onClick={handleSubmit} 
                         loading={loading}
                         size="large"
-                        className="!h-11 !px-8 !font-medium"
+                        className="h-11 px-8 font-medium"
                         style={{ 
                             borderRadius: "var(--button-border-radius)",
                             backgroundColor: "var(--global-primary)"

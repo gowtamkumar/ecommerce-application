@@ -25,7 +25,7 @@ export default function StockAdjust() {
             <SyncOutlined className="text-2xl text-blue-600" />
           </div>
           <div>
-            <Title level={2} className="!mb-0">
+            <Title level={2} className="mb-0">
               Stock Adjustments
             </Title>
             <Text type="secondary" className="text-sm">
@@ -45,7 +45,7 @@ export default function StockAdjust() {
               })
             )
           }
-          className="!h-10 !px-6 !font-medium"
+          className="h-10 px-6 font-medium"
           style={{ borderRadius: "var(--button-border-radius)" }}
         >
           New Stock Adjustment

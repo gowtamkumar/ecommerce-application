@@ -215,7 +215,7 @@ export default function NotificationSendForm({ onSuccess }: NotificationSendForm
               size="large"
               loading={loading}
               icon={<FiSend className="text-sm" />}
-              className="w-full h-12 rounded-xl text-sm font-bold !bg-global-primary hover:!brightness-110 border-0 shadow-md shadow-global-primary/20"
+              className="w-full h-12 rounded-xl text-sm font-bold bg-global-primary hover:brightness-110 border-0 shadow-md shadow-global-primary/20"
             >
               Broadcast Notification to All Users
             </Button>

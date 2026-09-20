@@ -360,7 +360,7 @@ const Order = () => {
             </Card>
 
             {/* Order Items Card */}
-            <Card title={<Title level={5} className="!mb-0">Order Items</Title>} className="shadow-sm" variant="borderless">
+            <Card title={<Title level={5} className="mb-0">Order Items</Title>} className="shadow-sm" variant="borderless">
               <Table
                 columns={childColumns}
                 size="small"
@@ -375,7 +375,7 @@ const Order = () => {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Order Timeline Card */}
-            <Card title={<Title level={5} className="!mb-0">Order History</Title>} className="shadow-sm" variant="borderless">
+            <Card title={<Title level={5} className="mb-0">Order History</Title>} className="shadow-sm" variant="borderless">
               <Timeline
                 items={(value?.orderTrackings || []).map(
                   (timeline: any, idx: number) => ({
@@ -400,7 +400,7 @@ const Order = () => {
             </Card>
 
             {/* Payment Summary Card */}
-            <Card title={<Title level={5} className="!mb-0">Payment Summary</Title>} className="shadow-sm" variant="borderless">
+            <Card title={<Title level={5} className="mb-0">Payment Summary</Title>} className="shadow-sm" variant="borderless">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Text type="secondary">Total Qty</Text>
@@ -452,7 +452,7 @@ const Order = () => {
                   </div>
                 )}
 
-                <Divider className="!my-3" />
+                <Divider className="my-3" />
 
                 <div className="flex justify-between items-center bg-gray-50 -mx-6 -mb-6 p-4 rounded-b-lg">
                   <Text strong className="text-lg">Balance Due</Text>
@@ -547,7 +547,7 @@ const Order = () => {
             <Button
               size="small"
               icon={<EyeOutlined />}
-              className="hover:!bg-blue-50 hover:!text-blue-600"
+              className="hover:bg-blue-50 hover:text-blue-600"
               onClick={() => {
                 setSelectedOrderForDrawer(value);
                 setDrawerOpen(true);
@@ -559,7 +559,7 @@ const Order = () => {
             <Button
               size="small"
               icon={<PrinterOutlined />}
-              className="hover:!bg-gray-100 hover:!text-gray-900"
+              className="hover:bg-gray-100 hover:text-gray-900"
               onClick={() => {
                 setSelectedOrderForInvoice(value);
                 setInvoiceOpen(true);
@@ -571,7 +571,7 @@ const Order = () => {
             <Button
               size="small"
               icon={<FaAmazonPay />}
-              className="hover:!bg-blue-50 hover:!text-blue-600"
+              className="hover:bg-blue-50 hover:text-blue-600"
               onClick={() => {
                 route.push(`/dashboard/payments/new?trackingNo=${value.trackingNo}`);
               }}
@@ -581,7 +581,7 @@ const Order = () => {
             <Button
               size="small"
               icon={<CheckOutlined />}
-              className="hover:!bg-green-50 hover:!text-green-600"
+              className="hover:bg-green-50 hover:text-green-600"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -617,7 +617,7 @@ const Order = () => {
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
-                className="hover:!bg-red-50"
+                className="hover:bg-red-50"
               />
             </Tooltip>
           </Popconfirm>
@@ -679,7 +679,7 @@ const Order = () => {
     <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-6">
-        <Title level={2} className="!mb-1">
+        <Title level={2} className="mb-1">
           Orders Management
         </Title>
         <Text type="secondary">
@@ -690,7 +690,7 @@ const Order = () => {
       {/* Tabs & Table Card */}
       <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white">
-          <Title level={5} className="!mb-0">Order List</Title>
+          <Title level={5} className="mb-0">Order List</Title>
           <div className="flex items-center gap-2">
             <span className="text-gray-500 text-sm">Filter by Status:</span>
             <Select

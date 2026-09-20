@@ -25,7 +25,7 @@ export default function ShippingCharge() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <Title level={2} className="!mb-1">
+          <Title level={2} className="mb-1">
             Shipping Charges
           </Title>
           <Text type="secondary">
@@ -44,7 +44,7 @@ export default function ShippingCharge() {
               })
             )
           }
-          className="!h-10 !px-6 !font-medium"
+          className="h-10 px-6 font-medium"
           style={{ borderRadius: "var(--button-border-radius)" }}
         >
           New Shipping Charge

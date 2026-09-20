@@ -64,7 +64,7 @@ export default function ContactForm() {
         >
           <Input
             placeholder="Your Name"
-            className="!px-0 !border-0 !border-b !border-gray-200 !rounded-none !bg-transparent !py-3 focus:!border-black focus:!shadow-none !text-base placeholder:!text-gray-400 font-global-secondary-fontfamily transition-all"
+            className="px-0 border-0 border-b border-gray-200 rounded-none bg-transparent py-3 focus:border-black focus:shadow-none text-base placeholder:text-gray-400 font-global-secondary-fontfamily transition-all"
           />
         </Form.Item>
 
@@ -74,7 +74,7 @@ export default function ContactForm() {
         >
           <Input
             placeholder="Email Address"
-            className="!px-0 !border-0 !border-b !border-gray-200 !rounded-none !bg-transparent !py-3 focus:!border-black focus:!shadow-none !text-base placeholder:!text-gray-400 font-global-secondary-fontfamily transition-all"
+            className="px-0 border-0 border-b border-gray-200 rounded-none bg-transparent py-3 focus:border-black focus:shadow-none text-base placeholder:text-gray-400 font-global-secondary-fontfamily transition-all"
           />
         </Form.Item>
 
@@ -85,7 +85,7 @@ export default function ContactForm() {
         >
           <Input
             placeholder="Phone Number"
-            className="!px-0 !border-0 !border-b !border-gray-200 !rounded-none !bg-transparent !py-3 focus:!border-black focus:!shadow-none !text-base placeholder:!text-gray-400 font-global-secondary-fontfamily transition-all"
+            className="px-0 border-0 border-b border-gray-200 rounded-none bg-transparent py-3 focus:border-black focus:shadow-none text-base placeholder:text-gray-400 font-global-secondary-fontfamily transition-all"
           />
         </Form.Item>
 
@@ -96,7 +96,7 @@ export default function ContactForm() {
         >
           <Input
             placeholder="Subject"
-            className="!px-0 !border-0 !border-b !border-gray-200 !rounded-none !bg-transparent !py-3 focus:!border-black focus:!shadow-none !text-base placeholder:!text-gray-400 font-global-secondary-fontfamily transition-all"
+            className="px-0 border-0 border-b border-gray-200 rounded-none bg-transparent py-3 focus:border-black focus:shadow-none text-base placeholder:text-gray-400 font-global-secondary-fontfamily transition-all"
           />
         </Form.Item>
 
@@ -108,7 +108,7 @@ export default function ContactForm() {
           <Input.TextArea
             rows={4}
             placeholder="How can we help you?"
-            className="!px-0 !border-0 !border-b !border-gray-200 !rounded-none !bg-transparent !py-3 focus:!border-black focus:!shadow-none !text-base placeholder:!text-gray-400 font-global-secondary-fontfamily transition-all resize-none"
+            className="px-0 border-0 border-b border-gray-200 rounded-none bg-transparent py-3 focus:border-black focus:shadow-none text-base placeholder:text-gray-400 font-global-secondary-fontfamily transition-all resize-none"
           />
         </Form.Item>
 
@@ -117,7 +117,7 @@ export default function ContactForm() {
             type="primary"
             htmlType="submit"
             loading={loading}
-            className="!w-full !h-12 !bg-black hover:!bg-gray-800 !text-white !text-sm !uppercase !tracking-wider !font-bold !rounded-lg !border-none shadow-lg hover:shadow-xl transition-all duration-300"
+            className="w-full h-12 bg-black hover:bg-gray-800 text-white text-sm uppercase tracking-wider font-bold rounded-lg border-none shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Send Message
           </Button>

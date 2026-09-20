@@ -15,7 +15,7 @@ const { Title, Text } = Typography;
 
 export const SettingsHeader = ({ title, description }: { title: string; description?: string }) => (
   <div className="mb-4">
-    <Title level={4} className="!mb-1">
+    <Title level={4} className="mb-1">
       {title}
     </Title>
     {description && <Text type="secondary">{description}</Text>}
@@ -77,7 +77,7 @@ export const FileUploadField = ({
         label={<span className="text-base font-medium">{label}</span>}
         valuePropName="fileList"
         extra={extra}
-        className="!mb-0"
+        className="mb-0"
       >
         <ImgCrop rotationSlider showReset aspect={aspect}>
           <Upload

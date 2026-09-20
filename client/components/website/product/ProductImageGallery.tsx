@@ -112,7 +112,7 @@ const ProductImageGallery = ({ images }: { images: string }) => {
               return (
                 <SwiperSlide
                   key={idx}
-                  className={`!w-full !h-20 lg:!h-24 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
+                  className={`w-full h-20 lg:h-24 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                     isActive
                       ? 'border-global-primary opacity-100 ring-1 ring-global-primary'
                       : 'border-transparent opacity-60 hover:opacity-100 hover:border-global-header-text/20'

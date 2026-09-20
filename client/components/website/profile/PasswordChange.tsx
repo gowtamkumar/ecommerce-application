@@ -117,12 +117,12 @@ export default function ChangePassword() {
                   message: "Please enter your current password",
                 },
               ]}
-              className="!mb-4"
+              className="mb-4"
             >
               <Input.Password
                 prefix={<FiLock className="text-gray-400 mr-1.5" />}
                 placeholder="Enter current password"
-                className="!rounded-xl !h-11 !border-gray-200 focus:!border-global-primary"
+                className="rounded-xl h-11 border-gray-200 focus:border-global-primary"
               />
             </Form.Item>
 
@@ -143,13 +143,13 @@ export default function ChangePassword() {
                   message: "Password must be at least 8 characters",
                 },
               ]}
-              className="!mb-4"
+              className="mb-4"
             >
               <Input.Password
                 prefix={<FiKey className="text-gray-400 mr-1.5" />}
                 placeholder="Create a strong password (min 8 chars)"
                 onChange={(e) => setNewPasswordValue(e.target.value)}
-                className="!rounded-xl !h-11 !border-gray-200 focus:!border-global-primary"
+                className="rounded-xl h-11 border-gray-200 focus:border-global-primary"
               />
             </Form.Item>
 
@@ -177,13 +177,13 @@ export default function ChangePassword() {
                   },
                 }),
               ]}
-              className="!mb-6"
+              className="mb-6"
             >
               <Input.Password
                 prefix={<FiLock className="text-gray-400 mr-1.5" />}
                 placeholder="Re-type your new password"
                 onChange={(e) => setConfirmPasswordValue(e.target.value)}
-                className="!rounded-xl !h-11 !border-gray-200 focus:!border-global-primary"
+                className="rounded-xl h-11 border-gray-200 focus:border-global-primary"
               />
             </Form.Item>
 
@@ -193,7 +193,7 @@ export default function ChangePassword() {
                 type="text"
                 icon={<FiRotateCcw className="w-3.5 h-3.5" />}
                 onClick={handleReset}
-                className="!text-xs !text-gray-400 hover:!text-gray-700 font-semibold"
+                className="text-xs text-gray-400 hover:text-gray-700 font-semibold"
               >
                 Reset
               </Button>
@@ -268,7 +268,7 @@ export default function ChangePassword() {
               </div>
             </div>
 
-            <Divider className="!my-3 border-gray-200/60" />
+            <Divider className="my-3 border-gray-200/60" />
 
             {/* Best practice tips */}
             <div className="space-y-2 text-xs text-gray-600 leading-relaxed">

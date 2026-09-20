@@ -257,7 +257,7 @@ export default function MyAccount() {
                       customRequest={customUploadRequest}
                       maxCount={1}
                       showUploadList={{ showPreviewIcon: false }}
-                      className="!rounded-full overflow-hidden [&_.ant-upload]:!rounded-full [&_.ant-upload-list-item]:!rounded-full [&_.ant-upload-list-picture-card]:!rounded-full"
+                      className="rounded-full overflow-hidden [&_.ant-upload]:rounded-full [&_.ant-upload-list-item]:rounded-full [&_.ant-upload-list-picture-card]:rounded-full"
                     >
                       {formValues?.fileList?.length >= 1 ? null : (
                         <div className="flex flex-col items-center justify-center text-gray-400 gap-1">
@@ -294,7 +294,7 @@ export default function MyAccount() {
                     prefix={<FiUser className="text-gray-300 mr-1" />}
                     placeholder="John Doe"
                     size="large"
-                    className="!rounded-xl !h-11"
+                    className="rounded-xl h-11"
                   />
                 </Form.Item>
 
@@ -304,7 +304,7 @@ export default function MyAccount() {
                 >
                   <DatePicker
                     placeholder="Select date"
-                    className="w-full !rounded-xl !h-11"
+                    className="w-full rounded-xl h-11"
                     size="large"
                     format="YYYY-MM-DD"
                     suffixIcon={<FiCalendar className="text-gray-400" />}
@@ -339,7 +339,7 @@ export default function MyAccount() {
                     placeholder="name@example.com"
                     disabled
                     size="large"
-                    className="!rounded-xl !h-11 !bg-gray-50"
+                    className="rounded-xl h-11 bg-gray-50"
                   />
                 </Form.Item>
 
@@ -352,7 +352,7 @@ export default function MyAccount() {
                     prefix={<FiPhone className="text-gray-300 mr-1" />}
                     placeholder="+1 234 567 890"
                     size="large"
-                    className="!rounded-xl !h-11"
+                    className="rounded-xl h-11"
                   />
                 </Form.Item>
               </div>
@@ -368,7 +368,7 @@ export default function MyAccount() {
                 <Input.TextArea
                   placeholder="Enter your full address"
                   rows={3}
-                  className="!rounded-xl !p-3 resize-none"
+                  className="rounded-xl p-3 resize-none"
                 />
               </Form.Item>
             </div>
@@ -390,7 +390,7 @@ export default function MyAccount() {
                 icon={<FiSave className="w-4 h-4" />}
                 loading={global.loading.save}
                 disabled={global.loading.save}
-                className="w-full sm:w-auto !h-11 !px-8 !rounded-xl !font-bold flex items-center justify-center gap-2"
+                className="w-full sm:w-auto h-11 px-8 rounded-xl font-bold flex items-center justify-center gap-2"
               >
                 Save Changes
               </Button>

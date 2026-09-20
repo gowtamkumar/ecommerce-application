@@ -93,7 +93,7 @@ export default function Index() {
     <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-6">
-        <Title level={2} className="!mb-1">
+        <Title level={2} className="mb-1">
           General Settings
         </Title>
         <Text type="secondary">

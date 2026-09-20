@@ -108,7 +108,7 @@ const AddColor = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{ 
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -142,7 +142,7 @@ const AddColor = () => {
                 message: "Name is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input
               placeholder="Enter color name (e.g., Red, Blue, Green)"
@@ -162,14 +162,14 @@ const AddColor = () => {
                 message: "Color is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <ColorPicker
               presets={presets}
               showText
               size="large"
               onChange={(v) => form.setFieldsValue({ color: v.toHexString() })}
-              className="!w-full"
+              className="w-full"
             />
           </Form.Item>
         </div>

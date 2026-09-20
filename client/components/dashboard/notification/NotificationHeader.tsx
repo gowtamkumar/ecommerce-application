@@ -134,7 +134,7 @@ export default function NotificationHeader({
             type="default"
             icon={<FiCheckCircle className="text-emerald-600" />}
             onClick={onMarkAllRead}
-            className="rounded-xl text-xs font-semibold h-9 !border-gray-200 hover:!border-emerald-500 hover:!text-emerald-600"
+            className="rounded-xl text-xs font-semibold h-9 border-gray-200 hover:border-emerald-500 hover:text-emerald-600"
           >
             Mark All Read
           </Button>
@@ -145,7 +145,7 @@ export default function NotificationHeader({
           icon={<FiRefreshCw className={loading ? "animate-spin text-global-primary" : "text-gray-600"} />}
           onClick={onRefresh}
           loading={loading}
-          className="rounded-xl text-xs font-semibold h-9 !border-gray-200 hover:!border-global-primary hover:!text-global-primary"
+          className="rounded-xl text-xs font-semibold h-9 border-gray-200 hover:border-global-primary hover:text-global-primary"
         >
           Refresh
         </Button>

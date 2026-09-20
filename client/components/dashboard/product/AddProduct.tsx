@@ -300,7 +300,7 @@ const AddProduct = ({
                 size="large"
                 icon={<FiRefreshCw className="w-4 h-4" />}
                 onClick={() => resetFormData(product)}
-                className="!border-gray-300 !text-global-secondary hover:!border-gray-400 hover:!text-global-primary flex items-center gap-1.5"
+                className="border-gray-300 text-global-secondary hover:border-gray-400 hover:text-global-primary flex items-center gap-1.5"
                 style={{ borderRadius: "var(--button-border-radius)" }}
               >
                 Reset
@@ -312,7 +312,7 @@ const AddProduct = ({
                 onClick={handleSubmit}
                 loading={global.loading.save}
                 disabled={global.loading.save}
-                className="!border-none !px-6 !font-medium flex items-center gap-1.5"
+                className="border-none px-6 font-medium flex items-center gap-1.5"
                 style={{ borderRadius: "var(--button-border-radius)" }}
               >
                 {isEditing ? "Update Product" : "Save Product"}
@@ -424,7 +424,7 @@ const AddProduct = ({
                   size="large"
                   icon={<FiRefreshCw className="w-4 h-4" />}
                   onClick={() => resetFormData(product)}
-                  className="!border-gray-300 !text-global-secondary hover:!border-gray-400 hover:!text-global-primary flex items-center gap-1.5"
+                  className="border-gray-300 text-global-secondary hover:border-gray-400 hover:text-global-primary flex items-center gap-1.5"
                   style={{ borderRadius: "var(--button-border-radius)" }}
                 >
                   Reset

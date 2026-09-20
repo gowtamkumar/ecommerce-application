@@ -137,10 +137,10 @@ const AddCoupon = () => {
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={() => route.push("/dashboard/coupons")}
-            className="hover:!text-purple-600 hover:!border-purple-600 rounded-lg"
+            className="hover:text-purple-600 hover:border-purple-600 rounded-lg"
           />
           <div>
-            <Title level={2} className="!mb-0 !text-gray-800">
+            <Title level={2} className="mb-0 text-gray-800">
               {isEditMode ? "Edit Coupon" : "Create Coupon"}
             </Title>
             <Text type="secondary" className="text-sm">
@@ -154,7 +154,7 @@ const AddCoupon = () => {
           <Button
             size="large"
             onClick={() => resetFormData(payload)}
-            className="!border-gray-300 !text-gray-600 hover:!text-gray-900 hover:!border-gray-400"
+            className="border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400"
             style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Reset Changes
@@ -165,7 +165,7 @@ const AddCoupon = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!border-none !px-8 !font-medium"
+            className="border-none px-8 font-medium"
             style={{ borderRadius: "var(--button-border-radius)" }}
           >
             {payload?.id ? "Update" : "Publish"}
@@ -209,7 +209,7 @@ const AddCoupon = () => {
                   message: "Coupon code is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Unique code customers will enter at checkout"
             >
               <Input placeholder="e.g., SUMMER2024" size="large" className="uppercase" />
@@ -224,7 +224,7 @@ const AddCoupon = () => {
                   message: "Type is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select placeholder="Select type" size="large">
                 <Select.Option value="Order">Order (Apply to entire order)</Select.Option>
@@ -244,7 +244,7 @@ const AddCoupon = () => {
                     message: "Please select at least one product",
                   },
                 ]}
-                className="!mb-0"
+                className="mb-0"
               >
                 <Select
                   showSearch
@@ -292,7 +292,7 @@ const AddCoupon = () => {
                   message: "Discount type is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select placeholder="Select type" size="large">
                 <Select.Option value="Percentage">Percentage (%)</Select.Option>
@@ -309,13 +309,13 @@ const AddCoupon = () => {
                   message: "Value is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <InputNumber 
                 placeholder="Enter discount value" 
                 size="large" 
                 min={0} 
-                className="w-full !rounded-lg"
+                className="w-full rounded-lg"
               />
             </Form.Item>
           </div>
@@ -343,9 +343,9 @@ const AddCoupon = () => {
                   message: "Start date is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
-              <DatePicker className="w-full !rounded-lg" size="large" />
+              <DatePicker className="w-full rounded-lg" size="large" />
             </Form.Item>
 
             <Form.Item
@@ -357,9 +357,9 @@ const AddCoupon = () => {
                   message: "Expiry date is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
-              <DatePicker className="w-full !rounded-lg" size="large" />
+              <DatePicker className="w-full rounded-lg" size="large" />
             </Form.Item>
           </div>
         </Card>
@@ -386,10 +386,10 @@ const AddCoupon = () => {
                   message: "Min order amount is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Minimum order value to apply coupon"
             >
-              <InputNumber placeholder="0.00" size="large" min={0} className="w-full !rounded-lg" />
+              <InputNumber placeholder="0.00" size="large" min={0} className="w-full rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -401,10 +401,10 @@ const AddCoupon = () => {
                   message: "Max users is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Maximum number of unique users"
             >
-              <InputNumber placeholder="0" size="large" min={0} className="w-full !rounded-lg" />
+              <InputNumber placeholder="0" size="large" min={0} className="w-full rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -416,10 +416,10 @@ const AddCoupon = () => {
                   message: "Min cart value is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Minimum cart total required"
             >
-              <InputNumber placeholder="0.00" size="large" min={0} className="w-full !rounded-lg" />
+              <InputNumber placeholder="0.00" size="large" min={0} className="w-full rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -431,10 +431,10 @@ const AddCoupon = () => {
                   message: "Max discount value is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Maximum discount amount cap"
             >
-              <InputNumber placeholder="0.00" size="large" min={0} className="w-full !rounded-lg" />
+              <InputNumber placeholder="0.00" size="large" min={0} className="w-full rounded-lg" />
             </Form.Item>
           </div>
         </Card>
@@ -461,10 +461,10 @@ const AddCoupon = () => {
                   message: "Usage limit is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Total times coupon can be used"
             >
-              <InputNumber placeholder="0" size="large" min={0} className="w-full !rounded-lg" />
+              <InputNumber placeholder="0" size="large" min={0} className="w-full rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -476,10 +476,10 @@ const AddCoupon = () => {
                   message: "Usage per user is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
               extra="Times each user can use this coupon"
             >
-              <InputNumber placeholder="0" size="large" min={0} className="w-full !rounded-lg" />
+              <InputNumber placeholder="0" size="large" min={0} className="w-full rounded-lg" />
             </Form.Item>
           </div>
         </Card>

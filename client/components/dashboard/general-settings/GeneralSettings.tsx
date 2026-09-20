@@ -183,7 +183,7 @@ const GeneralSettings = () => {
                   name="siteName"
                   label={<span className="text-base font-medium">Site Name</span>}
                   rules={[{ required: true, message: "Site name is required" }]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input size="large" prefix={<ShopOutlined className="text-gray-400 mr-1" />} placeholder="Enter your store name" />
                 </Form.Item>
@@ -193,7 +193,7 @@ const GeneralSettings = () => {
                   name="email"
                   label={<span className="text-base font-medium">Email Address</span>}
                   rules={[{ type: "email", message: "Please enter a valid email" }]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input size="large" prefix={<MailOutlined className="text-gray-400 mr-1" />} placeholder="contact@yourstore.com" />
                 </Form.Item>
@@ -202,7 +202,7 @@ const GeneralSettings = () => {
                 <Form.Item
                   name="phone"
                   label={<span className="text-base font-medium">Phone Number</span>}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input size="large" prefix={<PhoneOutlined className="text-gray-400 mr-1" />} placeholder="+1 (555) 123-4567" />
                 </Form.Item>
@@ -218,7 +218,7 @@ const GeneralSettings = () => {
                       <InfoCircleOutlined className="text-gray-400" title="A brief description of your store used for SEO and about sections." />
                     </Space>
                   )}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input.TextArea
                     size="large"
@@ -236,7 +236,7 @@ const GeneralSettings = () => {
                       <EnvironmentOutlined className="text-gray-400" title="The physical location of your store." />
                     </Space>
                   )}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Input.TextArea
                     size="large"
@@ -301,7 +301,7 @@ const GeneralSettings = () => {
                               {...restField}
                               name={[name]}
                               rules={[{ required: true, message: "Reason text is required" }]}
-                              className="!mb-0 w-full"
+                              className="mb-0 w-full"
                             >
                               <Input size="large" placeholder="E.g., Defective item, Ordered by mistake..." className="min-w-[300px]" />
                             </Form.Item>
@@ -310,7 +310,7 @@ const GeneralSettings = () => {
                                 danger 
                                 icon={<MinusCircleOutlined />} 
                                 onClick={() => remove(name)} 
-                                className="!px-2 ml-1 opacity-70 hover:opacity-100"
+                                className="px-2 ml-1 opacity-70 hover:opacity-100"
                             />
                           </Space>
                         ))}
@@ -344,13 +344,13 @@ const GeneralSettings = () => {
             />
           </Modal>
 
-          <Form.Item className="!mb-0 !mt-8">
+          <Form.Item className="mb-0 mt-8">
             <Button
               type="primary"
               htmlType="submit"
               loading={loading}
               size="large"
-              className="!h-11 !px-8 !font-medium"
+              className="h-11 px-8 font-medium"
               style={{
                 borderRadius: "var(--button-border-radius)",
                 backgroundColor: "var(--global-primary)"

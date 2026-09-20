@@ -124,7 +124,7 @@ const AddBanner = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -159,7 +159,7 @@ const AddBanner = () => {
                 message: "Type is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Select
               showSearch
@@ -188,7 +188,7 @@ const AddBanner = () => {
             name="status"
             label="Status"
             valuePropName="checked"
-            className="!mb-0"
+            className="mb-0"
           >
             <Switch
               checkedChildren="Active"
@@ -209,7 +209,7 @@ const AddBanner = () => {
                 message: "Title is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter banner title" size="large" />
           </Form.Item>
@@ -224,13 +224,13 @@ const AddBanner = () => {
                 message: "Url is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter link URL (optional)" size="large" />
           </Form.Item>
 
           {/* Description */}
-          <Form.Item name="description" label="Description" className="!mb-0">
+          <Form.Item name="description" label="Description" className="mb-0">
             <Input.TextArea
               placeholder="Enter banner description (optional)"
               rows={3}
@@ -250,7 +250,7 @@ const AddBanner = () => {
                 message: "Image is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <ImgCrop rotationSlider aspectSlider showReset aspect={18 / 6}>
               <Upload

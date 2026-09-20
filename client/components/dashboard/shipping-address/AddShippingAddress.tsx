@@ -123,7 +123,7 @@ const AddShippingAddress = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{ 
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -164,7 +164,7 @@ const AddShippingAddress = () => {
                   message: "Type is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select placeholder="Select type" size="large" className="w-full">
                 <Select.Option value="Home">
@@ -191,7 +191,7 @@ const AddShippingAddress = () => {
                   message: "Name is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Input placeholder="Enter contact name" size="large" />
             </Form.Item>
@@ -205,7 +205,7 @@ const AddShippingAddress = () => {
                   message: "Phone number is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Input placeholder="Enter phone number" size="large" />
             </Form.Item>
@@ -223,7 +223,7 @@ const AddShippingAddress = () => {
                   message: "Please enter a valid email",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Input placeholder="Enter email address" size="large" />
             </Form.Item>
@@ -239,7 +239,7 @@ const AddShippingAddress = () => {
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Form.Item name="divisionId" label="Division" className="!mb-0">
+            <Form.Item name="divisionId" label="Division" className="mb-0">
               <Select
                 showSearch
                 allowClear
@@ -269,7 +269,7 @@ const AddShippingAddress = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item name="districtId" label="District" className="!mb-0">
+            <Form.Item name="districtId" label="District" className="mb-0">
               <Select
                 showSearch
                 allowClear
@@ -298,7 +298,7 @@ const AddShippingAddress = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item name="upazilaId" label="Upazila" className="!mb-0">
+            <Form.Item name="upazilaId" label="Upazila" className="mb-0">
               <Select
                 showSearch
                 allowClear
@@ -326,7 +326,7 @@ const AddShippingAddress = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item name="unionId" label="Union" className="!mb-0">
+            <Form.Item name="unionId" label="Union" className="mb-0">
               <Select
                 showSearch
                 allowClear
@@ -366,12 +366,12 @@ const AddShippingAddress = () => {
                 message: "Address is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input.TextArea
               placeholder="Enter full street address"
               rows={3}
-              className="!rounded-lg"
+              className="rounded-lg"
             />
           </Form.Item>
         </div>

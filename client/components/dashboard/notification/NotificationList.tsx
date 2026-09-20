@@ -412,7 +412,7 @@ export default function NotificationList({
                 setInspectItem(record);
                 setInspectModalOpen(true);
               }}
-              className="hover:!text-global-primary hover:!bg-global-primary/10"
+              className="hover:text-global-primary hover:bg-global-primary/10"
             />
           </Tooltip>
 
@@ -423,7 +423,7 @@ export default function NotificationList({
                 type="text"
                 icon={<FiCheckCircle className="text-sm text-emerald-600" />}
                 onClick={() => handleMarkAsRead(record.id)}
-                className="hover:!text-emerald-700 hover:!bg-emerald-50"
+                className="hover:text-emerald-700 hover:bg-emerald-50"
               />
             </Tooltip>
           )}
@@ -442,7 +442,7 @@ export default function NotificationList({
                 type="text"
                 danger
                 icon={<FiTrash2 className="text-sm" />}
-                className="hover:!bg-rose-50"
+                className="hover:bg-rose-50"
               />
             </Tooltip>
           </Popconfirm>
@@ -521,7 +521,7 @@ export default function NotificationList({
           onClick={onRefresh}
           loading={loading}
           size="small"
-          className="rounded-xl text-xs font-semibold !border-gray-200 text-gray-600 hover:!border-global-primary hover:!text-global-primary"
+          className="rounded-xl text-xs font-semibold border-gray-200 text-gray-600 hover:border-global-primary hover:text-global-primary"
         >
           Refresh Feed
         </Button>
@@ -585,7 +585,7 @@ export default function NotificationList({
               type="text"
               icon={<FiX className="text-xs" />}
               onClick={handleResetFilters}
-              className="rounded-xl text-xs text-rose-600 hover:!bg-rose-50 font-semibold"
+              className="rounded-xl text-xs text-rose-600 hover:bg-rose-50 font-semibold"
             >
               Reset Filters
             </Button>
@@ -613,7 +613,7 @@ export default function NotificationList({
               icon={<FiCheckCircle className="text-emerald-600" />}
               onClick={handleBatchMarkAsRead}
               loading={batchLoading}
-              className="rounded-lg text-xs font-semibold !border-emerald-200 !bg-emerald-50 text-emerald-800 hover:!bg-emerald-100"
+              className="rounded-lg text-xs font-semibold border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
             >
               Mark Read
             </Button>

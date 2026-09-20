@@ -44,7 +44,7 @@ export default function ProductTopSecton({ form }: any) {
           <Input
             placeholder="auto-generated-from-name"
             size="large"
-            className="!text-global-secondary"
+            className="text-global-secondary"
           />
         </Form.Item>
       </div>

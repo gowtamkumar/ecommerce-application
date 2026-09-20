@@ -72,7 +72,7 @@ const AddSize = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{ 
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -105,7 +105,7 @@ const AddSize = () => {
                 message: "Name is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter size name (e.g., S, M, L, XL)" size="large" />
           </Form.Item>
@@ -114,7 +114,7 @@ const AddSize = () => {
             name="status"
             label="Status"
             valuePropName="checked"
-            className="!mb-0"
+            className="mb-0"
           >
             <Switch
               checkedChildren="Active"

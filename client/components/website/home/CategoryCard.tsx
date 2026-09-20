@@ -24,7 +24,7 @@ export default function CategoryCard({ categories }: any) {
           1024: { slidesPerView: 7, spaceBetween: 28 },
           1280: { slidesPerView: 8, spaceBetween: 28 },
         }}
-        className="!py-2"
+        className="py-2"
       >
         {(categories || []).map((item: any, idx: number) => (
           <SwiperSlide key={item.id || idx}>

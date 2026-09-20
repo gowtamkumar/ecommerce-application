@@ -105,7 +105,7 @@ const Index = () => {
               icon={<PlusOutlined />}
               size="large"
               block
-              className="!border-gray-300 hover:!border-blue-500 hover:!text-blue-500"
+              className="border-gray-300 hover:border-blue-500 hover:text-blue-500"
             >
               Add Sub Item
             </Button>
@@ -119,7 +119,7 @@ const Index = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <Title level={4} className="!mb-1">
+        <Title level={4} className="mb-1">
           Menu Management
         </Title>
         <Text type="secondary">
@@ -264,7 +264,7 @@ const Index = () => {
                 name="topBarMenu"
                 valuePropName="checked"
                 label={null}
-                className="!m-0"
+                className="m-0"
               >
                 <Checkbox className="text-base">Top Bar Menu</Checkbox>
               </Form.Item>
@@ -273,7 +273,7 @@ const Index = () => {
                 name="mainMenu"
                 valuePropName="checked"
                 label={null}
-                className="!m-0"
+                className="m-0"
               >
                 <Checkbox className="text-base">Main Menu</Checkbox>
               </Form.Item>
@@ -282,7 +282,7 @@ const Index = () => {
                 name="footerMenu"
                 valuePropName="checked"
                 label={null}
-                className="!m-0"
+                className="m-0"
               >
                 <Checkbox className="text-base">Footer Menu</Checkbox>
               </Form.Item>
@@ -292,7 +292,7 @@ const Index = () => {
                   name="active"
                   valuePropName="checked"
                   label={null}
-                  className="!m-0"
+                  className="m-0"
                 >
                   <Checkbox className="text-base font-medium">Active</Checkbox>
                 </Form.Item>
@@ -306,7 +306,7 @@ const Index = () => {
             loading={global.loading.save}
             disabled={global.loading.save}
             htmlType="submit"
-            className="!h-11 !px-8 !font-medium mt-6"
+            className="h-11 px-8 font-medium mt-6"
             style={{ borderRadius: "var(--button-border-radius)" }}
           >
             Save Menu

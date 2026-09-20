@@ -297,7 +297,7 @@ const CouponList: React.FC = () => {
               size="middle"
               type="text"
               icon={<EyeOutlined className="text-blue-500" />}
-              className="hover:!bg-blue-50"
+              className="hover:bg-blue-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -315,7 +315,7 @@ const CouponList: React.FC = () => {
               size="middle"
               type="text"
               icon={<EditOutlined className="text-green-500" />}
-              className="hover:!bg-green-50"
+              className="hover:bg-green-50"
               onClick={() => route.push(`/dashboard/coupons/${value.id}`)}
             />
           </Tooltip>
@@ -341,7 +341,7 @@ const CouponList: React.FC = () => {
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
-                className="hover:!bg-red-50"
+                className="hover:bg-red-50"
               />
             </Tooltip>
           </Popconfirm>

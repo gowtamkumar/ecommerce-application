@@ -137,7 +137,7 @@ const CategoryList: React.FC = () => {
             type="text"
             size="small"
             icon={<EditOutlined className="text-gray-500" />}
-            className="hover:!text-global-primary hover:bg-global-primary/5"
+            className="hover:text-global-primary hover:bg-global-primary/5"
             title="Edit"
             onClick={() => {
               const newData = { ...value };

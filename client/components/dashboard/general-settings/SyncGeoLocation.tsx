@@ -51,10 +51,10 @@ export default function SyncGeoLocation() {
                 <FiGlobe className="w-8 h-8" />
               </div>
               <div>
-                <Title level={2} className="!text-white !mb-1">
+                <Title level={2} className="text-white mb-1">
                   Geo-Location Sync
                 </Title>
-                <Text className="!text-white/80">
+                <Text className="text-white/80">
                   Synchronize location data for your application
                 </Text>
               </div>
@@ -68,7 +68,7 @@ export default function SyncGeoLocation() {
               title="What does this do?"
               description={
                 <div className="space-y-2">
-                  <Paragraph className="!mb-2">
+                  <Paragraph className="mb-2">
                     This feature synchronizes geographical location data (countries, states, cities) to ensure your application has the most up-to-date information.
                   </Paragraph>
                   <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">

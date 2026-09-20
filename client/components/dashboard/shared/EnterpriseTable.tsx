@@ -227,7 +227,7 @@ export default function EnterpriseTable<T extends object = any>({
                       Showing {range[0]}-{range[1]} of {total} records
                     </span>
                   ),
-                  className: "!px-4 !py-3 !m-0 border-t border-gray-100",
+                  className: "px-4 py-3 m-0 border-t border-gray-100",
                   ...pagination,
                 }
           }

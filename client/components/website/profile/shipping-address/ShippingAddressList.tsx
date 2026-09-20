@@ -200,9 +200,9 @@ export default function ShippingAddressList() {
                         cancelText="Cancel"
                         okButtonProps={{
                           danger: true,
-                          className: "!rounded-lg !text-xs",
+                          className: "rounded-lg text-xs",
                         }}
-                        cancelButtonProps={{ className: "!rounded-lg !text-xs" }}
+                        cancelButtonProps={{ className: "rounded-lg text-xs" }}
                       >
                         <Tooltip title="Delete Address">
                           <button

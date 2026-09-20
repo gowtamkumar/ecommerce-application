@@ -313,7 +313,7 @@ const DiscountList: React.FC = () => {
               size="middle"
               type="text"
               icon={<EyeOutlined className="text-blue-500" />}
-              className="hover:!bg-blue-50"
+              className="hover:bg-blue-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -331,7 +331,7 @@ const DiscountList: React.FC = () => {
               size="middle"
               type="text"
               icon={<EditOutlined className="text-green-500" />}
-              className="hover:!bg-green-50"
+              className="hover:bg-green-50"
               onClick={() => route.push(`/dashboard/discounts/${value.id}`)}
             />
           </Tooltip>
@@ -341,7 +341,7 @@ const DiscountList: React.FC = () => {
               size="middle"
               type="text"
               icon={<TbStatusChange className="text-purple-500" />}
-              className="hover:!bg-purple-50"
+              className="hover:bg-purple-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -374,7 +374,7 @@ const DiscountList: React.FC = () => {
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
-                className="hover:!bg-red-50"
+                className="hover:bg-red-50"
               />
             </Tooltip>
           </Popconfirm>

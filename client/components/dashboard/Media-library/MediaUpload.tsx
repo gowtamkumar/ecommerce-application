@@ -34,7 +34,7 @@ export default function MediaUpload({ setFiles }: any) {
           customRequest={customUploadRequest}
           maxCount={1}
         >
-          <button className="flex items-center gap-2 bg-blue-600 !text-white px-2 py-1 rounded-md hover:bg-blue-700">
+          <button className="flex items-center gap-2 bg-blue-600 text-white px-2 py-1 rounded-md hover:bg-blue-700">
             <FaUpload />Add new
           </button>
         </Upload>

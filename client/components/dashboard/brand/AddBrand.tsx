@@ -118,7 +118,7 @@ const AddBrand = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!h-10 !px-6 !font-medium"
+            className="h-10 px-6 font-medium"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)",
@@ -153,7 +153,7 @@ const AddBrand = () => {
                 message: "Name is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input placeholder="Enter brand name" size="large" />
           </Form.Item>
@@ -167,7 +167,7 @@ const AddBrand = () => {
                 message: "Status is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Select placeholder="Select Status" size="large">
               <Select.Option value="Active">Active</Select.Option>
@@ -181,7 +181,7 @@ const AddBrand = () => {
             label="Brand Logo"
             valuePropName="fileList"
             getValueFromEvent={normFile}
-            className="!mb-0"
+            className="mb-0"
           >
             <ImgCrop rotationSlider showReset aspect={16 / 9}>
               <Upload

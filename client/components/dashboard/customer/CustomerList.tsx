@@ -214,7 +214,7 @@ const CustomerList = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <Title level={3} className="!m-0">Customers</Title>
+        <Title level={3} className="m-0">Customers</Title>
       </div>
 
       <Card bordered={false} className="shadow-sm">

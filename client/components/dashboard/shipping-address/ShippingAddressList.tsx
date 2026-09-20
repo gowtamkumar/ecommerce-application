@@ -282,7 +282,7 @@ const ShippingAddressList: React.FC = () => {
               size="middle"
               type="text"
               icon={<EditOutlined className="text-blue-500" />}
-              className="hover:!bg-blue-50"
+              className="hover:bg-blue-50"
               onClick={() =>
                 dispatch(
                   setAction({
@@ -316,7 +316,7 @@ const ShippingAddressList: React.FC = () => {
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
-                className="hover:!bg-red-50"
+                className="hover:bg-red-50"
               />
             </Tooltip>
           </Popconfirm>

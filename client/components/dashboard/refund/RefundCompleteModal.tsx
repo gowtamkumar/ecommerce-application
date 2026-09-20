@@ -65,7 +65,7 @@ const RefundCompleteModal: React.FC = () => {
       confirmLoading={global.loading?.save}
       okText="Confirm Refund"
       okButtonProps={{
-        className: "bg-green-600 hover:!bg-green-700",
+        className: "bg-green-600 hover:bg-green-700",
         disabled: global.loading?.save
       }}
       destroyOnClose

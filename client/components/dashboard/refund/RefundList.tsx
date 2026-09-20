@@ -236,7 +236,7 @@ const RefundList: React.FC = () => {
                 type="primary"
                 size="small"
                 icon={<CheckCircleOutlined />}
-                className="bg-green-600 hover:!bg-green-700 border-none"
+                className="bg-green-600 hover:bg-green-700 border-none"
                 onClick={() =>
                   dispatch(
                     setAction({
@@ -259,7 +259,7 @@ const RefundList: React.FC = () => {
             <Button
               size="small"
               icon={<InfoCircleOutlined />}
-              className="hover:!text-blue-600"
+              className="hover:text-blue-600"
               onClick={() => {
                 // Future: show full details modal
               }}

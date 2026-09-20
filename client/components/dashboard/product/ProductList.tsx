@@ -261,7 +261,7 @@ const ProductList = () => {
       width: 120,
       render: (value) =>
         value?.value ? (
-          <Tag className="!border-0 !bg-purple-50 !text-purple-700 !rounded-full !px-2.5">
+          <Tag className="border-0 bg-purple-50 text-purple-700 rounded-full px-2.5">
             {value.value}
             {value.discountStrategy === "Percentage" ? "%" : " BDT"} OFF
           </Tag>
@@ -338,7 +338,7 @@ const ProductList = () => {
               type="text"
               size="small"
               icon={<EditOutlined className="text-gray-400" />}
-              className="hover:!text-blue-600 hover:!bg-blue-50"
+              className="hover:text-blue-600 hover:bg-blue-50"
               onClick={(e) => {
                 e.stopPropagation();
                 route.push(`/dashboard/product/${record.id}/edit`);
@@ -364,7 +364,7 @@ const ProductList = () => {
                 danger
                 loading={global.loading?.delete}
                 icon={<DeleteOutlined />}
-                className="hover:!bg-red-50"
+                className="hover:bg-red-50"
                 onClick={(e) => e.stopPropagation()}
               />
             </Tooltip>
@@ -404,7 +404,7 @@ const ProductList = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            className="!h-9 !px-5 !font-medium shrink-0"
+            className="h-9 px-5 font-medium shrink-0"
             style={{ borderRadius: "var(--button-border-radius)" }}
             onClick={() => route.push("/dashboard/product/new")}
           >
@@ -463,7 +463,7 @@ const ProductList = () => {
               setStatusFilter(v as string);
               setKpiFilter(null);
             }}
-            className="!bg-gray-100"
+            className="bg-gray-100"
           />
           {(debouncedSearch || statusFilter !== "All" || kpiFilter) && (
             <button
@@ -492,7 +492,7 @@ const ProductList = () => {
             showSizeChanger: true,
             showTotal: (total, range) =>
               `${range[0]}–${range[1]} of ${total} products`,
-            className: "!px-5 !py-3",
+            className: "px-5 py-3",
           }}
           size="middle"
           scroll={{ x: 700 }}

@@ -179,7 +179,7 @@ export default function AddShippingAddress() {
               >
                 <Select
                   placeholder="Select Type"
-                  className="!h-11 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:!leading-[42px]"
+                  className="h-11 [&_.ant-select-selector]:rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:leading-[42px]"
                 >
                   <Select.Option value="Home">Home</Select.Option>
                   <Select.Option value="Office">Office</Select.Option>
@@ -199,7 +199,7 @@ export default function AddShippingAddress() {
                 <Input
                   prefix={<FiUser className="text-gray-300 mr-1" />}
                   placeholder="e.g. John Doe"
-                  className="!rounded-xl !h-11"
+                  className="rounded-xl h-11"
                 />
               </Form.Item>
 
@@ -215,7 +215,7 @@ export default function AddShippingAddress() {
                 <Input
                   prefix={<FiPhone className="text-gray-300 mr-1" />}
                   placeholder="e.g. +880 1712 345678"
-                  className="!rounded-xl !h-11"
+                  className="rounded-xl h-11"
                 />
               </Form.Item>
 
@@ -234,7 +234,7 @@ export default function AddShippingAddress() {
                 <Input
                   prefix={<FiMail className="text-gray-300 mr-1" />}
                   placeholder="recipient@example.com"
-                  className="!rounded-xl !h-11"
+                  className="rounded-xl h-11"
                 />
               </Form.Item>
             </div>
@@ -262,7 +262,7 @@ export default function AddShippingAddress() {
                   showSearch
                   placeholder="Select Division"
                   optionFilterProp="children"
-                  className="!h-11 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:!leading-[42px]"
+                  className="h-11 [&_.ant-select-selector]:rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:leading-[42px]"
                   onChange={async (value) => {
                     form.setFieldsValue({
                       districtId: null,
@@ -298,7 +298,7 @@ export default function AddShippingAddress() {
                   showSearch
                   placeholder="Select District"
                   optionFilterProp="children"
-                  className="!h-11 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:!leading-[42px]"
+                  className="h-11 [&_.ant-select-selector]:rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:leading-[42px]"
                   onChange={async (value) => {
                     form.setFieldsValue({ upazilaId: null, unionId: null });
                     setUnions([]);
@@ -329,7 +329,7 @@ export default function AddShippingAddress() {
                   showSearch
                   placeholder="Select Upazila"
                   optionFilterProp="children"
-                  className="!h-11 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:!leading-[42px]"
+                  className="h-11 [&_.ant-select-selector]:rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:leading-[42px]"
                   onChange={async (value) => {
                     form.setFieldsValue({ unionId: null });
                     if (value) {
@@ -359,7 +359,7 @@ export default function AddShippingAddress() {
                   allowClear
                   placeholder="Select Union"
                   optionFilterProp="children"
-                  className="!h-11 [&_.ant-select-selector]:!rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:!leading-[42px]"
+                  className="h-11 [&_.ant-select-selector]:rounded-xl [&_.ant-select-selector]:!h-11 [&_.ant-select-selection-item]:leading-[42px]"
                 >
                   {unions.map((item) => (
                     <Select.Option key={item.id} value={item.id}>
@@ -381,12 +381,12 @@ export default function AddShippingAddress() {
                 </span>
               }
               rules={[{ required: true, message: "Detailed street address is required" }]}
-              className="!mb-2"
+              className="mb-2"
             >
               <Input.TextArea
                 placeholder="House No, Flat No, Road Name, Area details..."
                 rows={3}
-                className="!rounded-xl !p-3 resize-none !border-gray-200"
+                className="rounded-xl p-3 resize-none border-gray-200"
               />
             </Form.Item>
 
@@ -400,7 +400,7 @@ export default function AddShippingAddress() {
                   This address will be pre-selected during checkout
                 </p>
               </div>
-              <Form.Item name="status" valuePropName="checked" className="!mb-0">
+              <Form.Item name="status" valuePropName="checked" className="mb-0">
                 <Switch className="bg-gray-300" />
               </Form.Item>
             </div>
@@ -413,7 +413,7 @@ export default function AddShippingAddress() {
             type="text"
             icon={<FiRotateCcw className="w-3.5 h-3.5" />}
             onClick={resetFormData}
-            className="!text-xs !text-gray-400 hover:!text-gray-700 font-semibold"
+            className="text-xs text-gray-400 hover:text-gray-700 font-semibold"
           >
             Reset Form
           </Button>
@@ -421,7 +421,7 @@ export default function AddShippingAddress() {
           <div className="flex items-center gap-2.5">
             <Button
               onClick={handleClose}
-              className="!h-10 !px-5 !rounded-xl !font-semibold !text-xs !border-gray-200 hover:!bg-gray-50"
+              className="h-10 px-5 rounded-xl font-semibold text-xs border-gray-200 hover:bg-gray-50"
             >
               Cancel
             </Button>
@@ -430,7 +430,7 @@ export default function AddShippingAddress() {
               htmlType="submit"
               icon={<FiCheck className="w-4 h-4" />}
               loading={global.loading.save}
-              className="!h-10 !px-6 !rounded-xl !font-bold !text-xs flex items-center justify-center gap-1.5"
+              className="h-10 px-6 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5"
             >
               {isEditing ? "Update Address" : "Save Address"}
             </Button>

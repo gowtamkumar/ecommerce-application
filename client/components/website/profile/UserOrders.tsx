@@ -533,7 +533,7 @@ export default function UserOrders() {
           <Button
             key="close"
             onClick={() => setIsModalOpen(false)}
-            className="!h-10 !px-6 !rounded-xl !font-bold !text-xs !border-gray-200 hover:!bg-gray-50"
+            className="h-10 px-6 rounded-xl font-bold text-xs border-gray-200 hover:bg-gray-50"
           >
             Close
           </Button>,
@@ -542,7 +542,7 @@ export default function UserOrders() {
               <Button
                 key="cancel"
                 danger
-                className="!h-10 !px-6 !rounded-xl !font-bold !text-xs !bg-rose-50 !text-rose-600 !border-rose-200 hover:!bg-rose-100"
+                className="h-10 px-6 rounded-xl font-bold text-xs bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100"
                 onClick={() => {
                   handleCancelOrder(selectedOrder.id);
                   setIsModalOpen(false);
@@ -704,7 +704,7 @@ export default function UserOrders() {
                   </span>
                 </div>
               )}
-              <Divider className="border-gray-800 !my-2" />
+              <Divider className="border-gray-800 my-2" />
               <div className="flex justify-between items-center">
                 <span className="text-sm font-black tracking-tight">
                   Grand Total
@@ -726,7 +726,7 @@ export default function UserOrders() {
                 </h4>
                 <div className="bg-gray-50/70 p-4 rounded-xl border border-gray-100">
                   <Timeline
-                    className="!mb-0"
+                    className="mb-0"
                     items={(selectedOrder.orderTrackings || []).map((t: any) => ({
                       color:
                         t.status === selectedOrder.status

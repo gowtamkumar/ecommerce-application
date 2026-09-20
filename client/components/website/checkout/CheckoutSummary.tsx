@@ -201,7 +201,7 @@ export default function CheckoutSummary({
         <Button
           type="primary"
           size="large"
-          className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] !bg-global-primary hover:!bg-global-hover border-none shadow-xl shadow-global-primary/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          className="w-full h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] bg-global-primary hover:bg-global-hover border-none shadow-xl shadow-global-primary/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           onClick={handlePrimaryAction}
           loading={loading?.save}
           disabled={loading?.save}

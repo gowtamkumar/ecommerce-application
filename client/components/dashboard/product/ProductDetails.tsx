@@ -54,7 +54,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <Title level={2} className="!mb-0">{product.name}</Title>
+          <Title level={2} className="mb-0">{product.name}</Title>
           <Text type="secondary">Product Slug: {product.slug}</Text>
         </div>
         <Button

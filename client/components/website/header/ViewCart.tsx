@@ -106,7 +106,7 @@ export default function ViewCart() {
         <Button
           type="primary"
           size="large"
-          className="h-11 px-8 rounded-xl font-bold text-xs uppercase tracking-wider !bg-gray-900 hover:!bg-black !border-none shadow-md shadow-gray-200"
+          className="h-11 px-8 rounded-xl font-bold text-xs uppercase tracking-wider bg-gray-900 hover:bg-black border-none shadow-md shadow-gray-200"
           onClick={() => {
             dispatch(setDrawarCart(false));
             router.push("/products");
@@ -268,7 +268,7 @@ export default function ViewCart() {
         <Button
           size="large"
           type="primary"
-          className="w-full h-13 rounded-xl text-xs font-bold uppercase tracking-wider !bg-gray-900 hover:!bg-black border-none shadow-lg shadow-gray-300/40 flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.01]"
+          className="w-full h-13 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-900 hover:bg-black border-none shadow-lg shadow-gray-300/40 flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.01]"
           onClick={() => {
             dispatch(setDrawarCart(false));
             router.push("/checkout");

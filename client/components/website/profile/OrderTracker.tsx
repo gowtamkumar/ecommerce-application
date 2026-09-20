@@ -319,13 +319,13 @@ export default function OrderTracker() {
             <div className="flex flex-col sm:flex-row gap-2.5">
               <Form.Item
                 name="trackingNo"
-                className="flex-1 !mb-0"
+                className="flex-1 mb-0"
                 rules={[{ required: true, message: "Enter tracking number" }]}
               >
                 <Input
                   prefix={<FiSearch className="text-gray-400 mr-1" />}
                   placeholder="Order ID (e.g. ORD-1725...)"
-                  className="!rounded-xl !h-12 !text-xs sm:!text-sm !border-gray-200 focus:!border-global-primary"
+                  className="rounded-xl h-12 text-xs sm:text-sm border-gray-200 focus:border-global-primary"
                 />
               </Form.Item>
               <button
@@ -356,8 +356,8 @@ export default function OrderTracker() {
       {loading ? (
         <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
           <div className="flex justify-between items-center">
-            <Skeleton.Button active shape="round" className="!w-40" />
-            <Skeleton.Button active shape="round" className="!w-24" />
+            <Skeleton.Button active shape="round" className="w-40" />
+            <Skeleton.Button active shape="round" className="w-24" />
           </div>
           <Skeleton active paragraph={{ rows: 4 }} />
         </div>
@@ -690,7 +690,7 @@ export default function OrderTracker() {
                     </div>
                   )}
 
-                  <Divider className="!my-2 border-gray-100" />
+                  <Divider className="my-2 border-gray-100" />
 
                   <div className="flex justify-between items-center text-sm font-black text-gray-900">
                     <span>Grand Total</span>
@@ -722,7 +722,7 @@ export default function OrderTracker() {
                         </p>
                         <Select
                           size="large"
-                          className="w-full !rounded-xl"
+                          className="w-full rounded-xl"
                           placeholder="Select Payment Gateway"
                           onChange={setPayMethod}
                           options={paymentMethods.filter(
@@ -751,7 +751,7 @@ export default function OrderTracker() {
                 <div className="pt-1">
                   {(order.orderTrackings?.length || 0) > 0 ? (
                     <Timeline
-                      className="!mb-0"
+                      className="mb-0"
                       items={(order.orderTrackings || []).map(
                         (track: OrderTrackingType) => {
                           const isCurrent = track.status === order.status;

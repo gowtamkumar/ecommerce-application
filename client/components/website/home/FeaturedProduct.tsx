@@ -23,14 +23,14 @@ const FeaturedProduct = ({ products }: any) => {
         }}
         pagination={{
           clickable: true,
-          bulletActiveClass: "!bg-global-primary !opacity-100 !w-5 !rounded-full",
+          bulletActiveClass: "bg-global-primary opacity-100 w-5 rounded-full",
           bulletClass:
-            "swiper-pagination-bullet !bg-gray-300 !opacity-100 !w-2 !h-2 !mx-1 !transition-all !duration-300",
+            "swiper-pagination-bullet bg-gray-300 opacity-100 w-2 h-2 mx-1 transition-all duration-300",
         }}
-        className="!pb-12 !pt-1"
+        className="pb-12 pt-1"
       >
         {products.map((item: any, index: number) => (
-          <SwiperSlide key={item.id || index} className="!h-auto flex">
+          <SwiperSlide key={item.id || index} className="h-auto flex">
             <Card item={item} />
           </SwiperSlide>
         ))}

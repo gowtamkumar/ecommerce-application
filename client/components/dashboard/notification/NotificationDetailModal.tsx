@@ -222,7 +222,7 @@ export default function NotificationDetailModal({
                 icon={<FiCheckCircle />}
                 onClick={handleRead}
                 loading={actionLoading}
-                className="rounded-xl font-semibold text-xs !bg-global-primary hover:!brightness-110 border-0"
+                className="rounded-xl font-semibold text-xs bg-global-primary hover:brightness-110 border-0"
               >
                 Mark as Read
               </Button>

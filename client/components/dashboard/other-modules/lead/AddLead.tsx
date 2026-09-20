@@ -79,7 +79,7 @@ const AddLead = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -115,7 +115,7 @@ const AddLead = () => {
               message: "Please enter a valid email",
             },
           ]}
-          className="!mb-0"
+          className="mb-0"
         >
           <Input placeholder="Enter email address" size="large" />
         </Form.Item>

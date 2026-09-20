@@ -65,7 +65,7 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({ marketing }) => {
         )}
         <div className="p-8 text-center bg-white">
           {marketing.popupTitle && (
-            <Title level={3} className="!mb-2 !font-bold">
+            <Title level={3} className="mb-2 font-bold">
               {marketing.popupTitle}
             </Title>
           )}
@@ -80,7 +80,7 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({ marketing }) => {
                 type="primary" 
                 size="large" 
                 block 
-                className="!bg-black hover:!bg-gray-800 !h-12 !text-lg !font-semibold !rounded-xl border-none"
+                className="bg-black hover:bg-gray-800 h-12 text-lg font-semibold rounded-xl border-none"
               >
                 Learn More
               </Button>

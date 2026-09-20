@@ -76,19 +76,19 @@ export default function CouponDetails() {
             />
             <div className="relative z-10 flex justify-between items-start">
               <div>
-                <Title level={3} className="!text-white !mb-2">
+                <Title level={3} className="text-white mb-2">
                   Coupon Details
                 </Title>
                 <div className="flex items-center gap-2">
                   <FiTag className="w-4 h-4" />
-                  <Text className="!text-white/90 font-mono text-lg font-bold">
+                  <Text className="text-white/90 font-mono text-lg font-bold">
                     {coupon.code}
                   </Text>
                 </div>
               </div>
               <Tag
                 color={coupon.active ? "green" : "red"}
-                className="!text-sm !px-3 !py-1"
+                className="text-sm px-3 py-1"
               >
                 {coupon.active ? "Active" : "Inactive"}
               </Tag>
@@ -116,7 +116,7 @@ export default function CouponDetails() {
                     >
                       Discount Value
                     </Text>
-                    <Title level={2} className="!mb-0 !mt-1 text-indigo-600">
+                    <Title level={2} className="mb-0 mt-1 text-indigo-600">
                       {coupon.value}
                       {coupon.discountType === "Percentage" ? "%" : " BDT"}
                     </Title>
@@ -137,7 +137,7 @@ export default function CouponDetails() {
                     >
                       Coupon Type
                     </Text>
-                    <Title level={2} className="!mb-0 !mt-1 text-purple-600">
+                    <Title level={2} className="mb-0 mt-1 text-purple-600">
                       {coupon.type || "N/A"}
                     </Title>
                   </div>

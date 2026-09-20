@@ -23,7 +23,7 @@ export default function TaxDiscountSectoin({ discounts, taxs }: any) {
               {selectedTax && (
                 <Tag
                   color="blue"
-                  className="ml-1 !text-xs !py-0 !px-1.5 !leading-tight"
+                  className="ml-1 text-xs py-0 px-1.5 leading-tight"
                 >
                   {selectedTax.name}
                 </Tag>
@@ -31,7 +31,7 @@ export default function TaxDiscountSectoin({ discounts, taxs }: any) {
             </span>
           }
           rules={[{ required: true, message: "Tax is required" }]}
-          className="!mb-0"
+          className="mb-0"
         >
           <Select
             showSearch
@@ -65,14 +65,14 @@ export default function TaxDiscountSectoin({ discounts, taxs }: any) {
               {selectedDiscount && (
                 <Tag
                   color="green"
-                  className="ml-1 !text-xs !py-0 !px-1.5 !leading-tight"
+                  className="ml-1 text-xs py-0 px-1.5 leading-tight"
                 >
                   {selectedDiscount.value} — {selectedDiscount.discountStrategy}
                 </Tag>
               )}
             </span>
           }
-          className="!mb-0"
+          className="mb-0"
         >
           <Select
             showSearch

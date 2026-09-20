@@ -40,7 +40,7 @@ export default function CategoryProduct({ id }: { id: string }) {
     <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
       {products.length > 0 ? (
         products.map((item: any) => (
-          <div key={item.id} className="!h-auto">
+          <div key={item.id} className="h-auto">
             <Card item={item} />
           </div>
         ))

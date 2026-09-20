@@ -103,17 +103,17 @@ export default function DiscountDetails() {
             />
             <div className="relative z-10 flex justify-between items-start">
               <div>
-                <Title level={3} className="!text-white !mb-2">
+                <Title level={3} className="text-white mb-2">
                   {discount.name || 'Discount Details'}
                 </Title>
                 <div className="flex items-center gap-2">
                   <FiTag className="w-4 h-4" />
-                  <Text className="!text-white/90 font-mono text-sm">
+                  <Text className="text-white/90 font-mono text-sm">
                     {discount.key}
                   </Text>
                 </div>
               </div>
-              <Tag color={getStatusColor(discount.status)} className="!text-sm !px-3 !py-1">
+              <Tag color={getStatusColor(discount.status)} className="text-sm px-3 py-1">
                 {discount.status || 'Unknown'}
               </Tag>
             </div>
@@ -151,7 +151,7 @@ export default function DiscountDetails() {
                       <Text type="secondary" className="text-xs uppercase tracking-wider">
                         Discount Value
                       </Text>
-                      <Title level={2} className="!mb-0 !mt-1 text-indigo-600">
+                      <Title level={2} className="mb-0 mt-1 text-indigo-600">
                         {+discount.discountValue}
                         {discount.discountStrategy === "Percentage" ? "%" : " BDT"}
                       </Title>

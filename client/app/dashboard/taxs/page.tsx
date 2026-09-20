@@ -25,7 +25,7 @@ export default function Tax() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <Title level={3} className="!mb-1">
+          <Title level={3} className="mb-1">
             Tax Configuration
           </Title>
           <Text type="secondary">
@@ -44,7 +44,7 @@ export default function Tax() {
               })
             )
           }
-          className="!h-10 !px-6 !font-medium"
+          className="h-10 px-6 font-medium"
           style={{ borderRadius: "var(--button-border-radius)" }}
         >
           New Tax

@@ -43,7 +43,7 @@ export default function ProductVariant({
               icon={<PlusOutlined />}
               onClick={() => add()}
               disabled={productType === "SimpleProduct" && variants?.length === 1}
-              className="!border-gray-400 !text-gray-600 hover:!border-gray-600 hover:!text-global-primary flex items-center gap-1"
+              className="border-gray-400 text-gray-600 hover:border-gray-600 hover:text-global-primary flex items-center gap-1"
               style={{ borderRadius: "var(--button-border-radius)" }}
             >
               Add Variant
@@ -65,7 +65,7 @@ export default function ProductVariant({
                 <div className="flex items-center justify-between mb-3">
                   <Tag
                     color="blue"
-                    className="!text-xs !font-semibold !px-2 !py-0.5"
+                    className="text-xs font-semibold px-2 py-0.5"
                   >
                     Variant #{index + 1}
                   </Tag>
@@ -99,13 +99,13 @@ export default function ProductVariant({
                       </span>
                     }
                     rules={[{ required: true, message: "Required" }]}
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <InputNumber
                       placeholder="0.00"
                       min={0}
                       step={0.01}
-                      className="!w-full"
+                      className="w-full"
                       size="middle"
                       prefix="$"
                     />
@@ -121,13 +121,13 @@ export default function ProductVariant({
                       </span>
                     }
                     rules={[{ required: true, message: "Required" }]}
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <InputNumber
                       placeholder="0.00"
                       min={0}
                       step={0.01}
-                      className="!w-full"
+                      className="w-full"
                       size="middle"
                       prefix="$"
                     />
@@ -143,12 +143,12 @@ export default function ProductVariant({
                       </span>
                     }
                     rules={[{ required: true, message: "Required" }]}
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <InputNumber
                       placeholder="0"
                       min={0}
-                      className="!w-full"
+                      className="w-full"
                       size="middle"
                     />
                   </Form.Item>
@@ -164,7 +164,7 @@ export default function ProductVariant({
                         Size
                       </span>
                     }
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <Select allowClear showSearch placeholder="Select size" size="middle">
                       {(sizes || []).map((item: any) => (
@@ -183,7 +183,7 @@ export default function ProductVariant({
                         Color
                       </span>
                     }
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <Select allowClear showSearch placeholder="Select color" size="middle">
                       {(colors || []).map((item: any) => (
@@ -202,7 +202,7 @@ export default function ProductVariant({
                         Material
                       </span>
                     }
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <Input placeholder="e.g. Cotton" size="middle" />
                   </Form.Item>
@@ -214,7 +214,7 @@ export default function ProductVariant({
                     {...restField}
                     name={[name, "default"]}
                     valuePropName="checked"
-                    className="!mb-0"
+                    className="mb-0"
                   >
                     <Checkbox
                       onChange={(e) => {

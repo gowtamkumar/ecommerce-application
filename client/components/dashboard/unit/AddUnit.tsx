@@ -73,7 +73,7 @@ const AddUnit = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -105,7 +105,7 @@ const AddUnit = () => {
               message: "Name is required",
             },
           ]}
-          className="!mb-0"
+          className="mb-0"
         >
           <Input placeholder="Enter unit name (e.g., kg, liter, piece)" size="large" />
         </Form.Item>

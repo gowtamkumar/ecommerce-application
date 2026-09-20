@@ -33,10 +33,10 @@ const SellerAds = ({ banners }: any) => {
           fadeEffect={{ crossFade: true }}
           pagination={{
             clickable: true,
-            bulletActiveClass: "!bg-global-primary !opacity-100 !w-8 !rounded-full",
-            bulletClass: "swiper-pagination-bullet !bg-global-primary/20 !opacity-100 !w-2.5 !h-2.5 !transition-all !duration-300"
+            bulletActiveClass: "bg-global-primary opacity-100 w-8 rounded-full",
+            bulletClass: "swiper-pagination-bullet bg-global-primary/20 opacity-100 w-2.5 h-2.5 transition-all duration-300"
           }}
-          className="!pb-12"
+          className="pb-12"
         >
           {banners.map((item: any, idx: number) => (
             <SwiperSlide key={idx}>
@@ -64,7 +64,7 @@ const SellerAds = ({ banners }: any) => {
                     <Button
                       type="primary"
                       size="large"
-                      className="!h-14 !px-12 !text-lg !font-bold !bg-global-primary !text-global-button-text !border-none !rounded-full shadow-lg shadow-global-primary/20 hover:!bg-global-primary/90 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
+                      className="h-14 px-12 text-lg font-bold bg-global-primary text-global-button-text border-none rounded-full shadow-lg shadow-global-primary/20 hover:bg-global-primary/90 hover:-translate-y-1 transition-all duration-300 flex items-center gap-3"
                     >
                       Explore Now <ArrowRightOutlined />
                     </Button>

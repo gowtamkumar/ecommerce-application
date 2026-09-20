@@ -312,7 +312,7 @@ const WishlistsList: React.FC = () => {
               danger
               loading={global.loading?.delete}
               icon={<RestOutlined />}
-              className="hover:!bg-red-50"
+              className="hover:bg-red-50"
             />
           </Popconfirm>
         </div>

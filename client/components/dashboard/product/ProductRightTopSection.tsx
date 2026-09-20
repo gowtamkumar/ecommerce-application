@@ -35,7 +35,7 @@ function FlagToggleCard({
           <p className="text-xs text-global-secondary truncate">{description}</p>
         </div>
       </div>
-      <Form.Item name={name} valuePropName="checked" className="!mb-0 shrink-0">
+      <Form.Item name={name} valuePropName="checked" className="mb-0 shrink-0">
         <Switch size="small" />
       </Form.Item>
     </div>
@@ -60,7 +60,7 @@ export default function ProductRightTopSection({
           </span>
         }
         rules={[{ required: true, message: "Status is required" }]}
-        className="!mb-0"
+        className="mb-0"
       >
         <Select placeholder="Select status" size="large">
           <Select.Option value="Active">
@@ -120,7 +120,7 @@ export default function ProductRightTopSection({
             Brand
           </span>
         }
-        className="!mb-0"
+        className="mb-0"
       >
         <Select
           showSearch
@@ -152,7 +152,7 @@ export default function ProductRightTopSection({
           </span>
         }
         rules={[{ required: true, message: "Category is required" }]}
-        className="!mb-0"
+        className="mb-0"
       >
         <TreeSelect
           showSearch
@@ -177,7 +177,7 @@ export default function ProductRightTopSection({
           </span>
         }
         rules={[{ required: true, message: "Unit is required" }]}
-        className="!mb-0"
+        className="mb-0"
       >
         <Select
           showSearch
@@ -207,7 +207,7 @@ export default function ProductRightTopSection({
             Tags
           </span>
         }
-        className="!mb-0"
+        className="mb-0"
       >
         <Select
           mode="tags"

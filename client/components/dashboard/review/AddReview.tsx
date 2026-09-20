@@ -92,7 +92,7 @@ const AddReview = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{ 
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -126,7 +126,7 @@ const AddReview = () => {
                 message: "Product is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Select
               showSearch
@@ -160,9 +160,9 @@ const AddReview = () => {
                 message: "Rating is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
-            <Rate allowHalf className="!text-2xl" />
+            <Rate allowHalf className="text-2xl" />
           </Form.Item>
 
           {/* Comment */}
@@ -175,7 +175,7 @@ const AddReview = () => {
                 message: "Comment is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Input.TextArea
               placeholder="Enter review comment"
@@ -194,19 +194,19 @@ const AddReview = () => {
                 message: "Status is required",
               },
             ]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Select placeholder="Select status" size="large">
               <Select.Option value="Pending">
-                <Tag color="gold" className="!mr-2">Pending</Tag>
+                <Tag color="gold" className="mr-2">Pending</Tag>
                 Pending
               </Select.Option>
               <Select.Option value="Approved">
-                <Tag color="green" className="!mr-2">Approved</Tag>
+                <Tag color="green" className="mr-2">Approved</Tag>
                 Approved
               </Select.Option>
               <Select.Option value="Rejected">
-                <Tag color="red" className="!mr-2">Rejected</Tag>
+                <Tag color="red" className="mr-2">Rejected</Tag>
                 Rejected
               </Select.Option>
             </Select>

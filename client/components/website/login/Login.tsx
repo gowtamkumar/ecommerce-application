@@ -356,7 +356,7 @@ const Login = () => {
                   </span>
                 }
                 rules={[{ required: true, message: "Please enter your username" }]}
-                className="!mb-3"
+                className="mb-3"
               >
                 <Input
                   prefix={<FiUser className="text-gray-400 mr-1.5 text-base" />}
@@ -386,7 +386,7 @@ const Login = () => {
                   </div>
                 }
                 rules={[{ required: true, message: "Please enter your password" }]}
-                className="!mb-3"
+                className="mb-3"
               >
                 <Input.Password
                   prefix={<FiLock className="text-gray-400 mr-1.5 text-base" />}

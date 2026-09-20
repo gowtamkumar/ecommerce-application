@@ -28,10 +28,10 @@ const CurrencySwitcher = () => {
     >
       <Button
         type="default"
-        className="!h-10 !px-3 !rounded-full !font-medium !text-sm
-                   !border-gray-200 !bg-white !text-gray-800
-                   hover:!border-global-primary hover:!text-global-primary
-                   !shadow-none flex items-center gap-1.5 !transition-colors duration-200"
+        className="h-10 px-3 rounded-full font-medium text-sm
+                   border-gray-200 bg-white text-gray-800
+                   hover:border-global-primary hover:text-global-primary
+                   shadow-none flex items-center gap-1.5 transition-colors duration-200"
       >
         <GlobalOutlined className="text-gray-500" />
         <span className="hidden sm:inline-block">

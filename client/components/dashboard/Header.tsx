@@ -35,7 +35,7 @@ export default function DashboardHeader() {
       .join(" / ") || "Overview";
 
   return (
-    <Header className="!bg-white/95 !backdrop-blur-md !px-4 sm:!px-6 !h-16 !leading-[64px] !sticky !top-0 !z-[100] flex items-center justify-between border-b border-gray-200/80 !shadow-none">
+    <Header className="bg-white/95 backdrop-blur-md px-4 sm:px-6 h-16 leading-[64px] sticky top-0 z-[100] flex items-center justify-between border-b border-gray-200/80 shadow-none">
       <div className="flex items-center gap-3 min-w-0">
         <div hidden={layout.screenWidth < 820}>
           <Button
@@ -49,7 +49,7 @@ export default function DashboardHeader() {
               )
             }
             onClick={() => dispatch(setCollapsed(!layout.collapsed))}
-            className="!w-10 !h-10 !inline-flex !items-center !justify-center !rounded-lg hover:!bg-gray-100"
+            className="w-10 h-10 inline-flex items-center justify-center rounded-lg hover:bg-gray-100"
           />
         </div>
 
@@ -59,7 +59,7 @@ export default function DashboardHeader() {
             aria-label="Open menu"
             icon={<MenuUnfoldOutlined className="text-gray-700 text-lg" />}
             onClick={() => dispatch(setOpen(true))}
-            className="!w-10 !h-10 !inline-flex !items-center !justify-center !rounded-lg hover:!bg-gray-100"
+            className="w-10 h-10 inline-flex items-center justify-center rounded-lg hover:bg-gray-100"
           />
         </div>
 
@@ -89,7 +89,7 @@ export default function DashboardHeader() {
             router.push("/dashboard/general-setting?tab=site_settings")
           }
           icon={<SettingOutlined className="text-gray-500 text-base" />}
-          className="!w-9 !h-9 !inline-flex !items-center !justify-center !rounded-lg hover:!bg-gray-100"
+          className="w-9 h-9 inline-flex items-center justify-center rounded-lg hover:bg-gray-100"
         />
 
         <NotificationDropdown />

@@ -115,7 +115,7 @@ export default function Header() {
                 <Link href="/offers">
                   <Button
                     type="default"
-                    className="!h-10 !px-4 !rounded-full !font-medium !text-sm flex items-center gap-2 !border-gray-200 !bg-white !text-gray-800 hover:!border-global-primary hover:!text-global-primary !shadow-none !transition-colors duration-200 group"
+                    className="h-10 px-4 rounded-full font-medium text-sm flex items-center gap-2 border-gray-200 bg-white text-gray-800 hover:border-global-primary hover:text-global-primary shadow-none transition-colors duration-200 group"
                   >
                     <HiSparkles className="w-4 h-4 text-global-primary" />
                     <span>Offers</span>

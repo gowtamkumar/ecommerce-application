@@ -231,10 +231,10 @@ const AddDiscount = () => {
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={() => route.push("/dashboard/discounts")}
-            className="hover:!text-red-600 hover:!border-red-600 rounded-lg"
+            className="hover:text-red-600 hover:border-red-600 rounded-lg"
           />
           <div>
-            <Title level={2} className="!mb-0 !text-gray-800">
+            <Title level={2} className="mb-0 text-gray-800">
               {isEditMode ? "Edit Discount" : "Create Discount"}
             </Title>
             <Text type="secondary" className="text-sm">
@@ -258,7 +258,7 @@ const AddDiscount = () => {
             onClick={() => form.submit()}
             disabled={global.loading.save}
             loading={global.loading.save}
-            className="!px-8"
+            className="px-8"
             style={{ 
               borderRadius: "var(--button-border-radius)",
               backgroundColor: "var(--global-primary)"
@@ -309,7 +309,7 @@ const AddDiscount = () => {
                   message: "Name is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Input placeholder="e.g., Summer Sale 2024" size="large" />
             </Form.Item>
@@ -323,7 +323,7 @@ const AddDiscount = () => {
                   message: "Promotion Type is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select
                 allowClear
@@ -346,7 +346,7 @@ const AddDiscount = () => {
                   message: "Scope is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select
                 allowClear
@@ -370,7 +370,7 @@ const AddDiscount = () => {
             <Form.Item
               name="status"
               label="Status"
-              className="!mb-0"
+              className="mb-0"
             >
               <Select placeholder="Select status" size="large">
                 <Select.Option value="Active">Active</Select.Option>
@@ -402,9 +402,9 @@ const AddDiscount = () => {
                   message: "Start Date is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
-              <DatePicker className="w-full !rounded-lg" size="large" />
+              <DatePicker className="w-full rounded-lg" size="large" />
             </Form.Item>
 
             <Form.Item
@@ -416,9 +416,9 @@ const AddDiscount = () => {
                   message: "End Date is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
-              <DatePicker className="w-full !rounded-lg" size="large" />
+              <DatePicker className="w-full rounded-lg" size="large" />
             </Form.Item>
           </div>
         </Card>
@@ -445,7 +445,7 @@ const AddDiscount = () => {
                   message: "Discount Strategy is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <Select
                 allowClear
@@ -466,11 +466,11 @@ const AddDiscount = () => {
                   message: "Value is required",
                 },
               ]}
-              className="!mb-0"
+              className="mb-0"
             >
               <InputNumber
                 placeholder="Enter discount value"
-                className="w-full !rounded-lg"
+                className="w-full rounded-lg"
                 size="large"
                 min={0}
               />
@@ -503,7 +503,7 @@ const AddDiscount = () => {
                       message: "Please select at least one product",
                     },
                   ]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Select
                     showSearch
@@ -530,7 +530,7 @@ const AddDiscount = () => {
                       message: "Please select at least one brand",
                     },
                   ]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Select
                     showSearch
@@ -557,7 +557,7 @@ const AddDiscount = () => {
                       message: "Please select at least one category",
                     },
                   ]}
-                  className="!mb-0"
+                  className="mb-0"
                 >
                   <Select
                     showSearch
@@ -594,7 +594,7 @@ const AddDiscount = () => {
             valuePropName="fileList"
             getValueFromEvent={normFile}
             extra="Upload a banner image for this discount campaign"
-            className="!mb-0"
+            className="mb-0"
           >
           
               <Upload
@@ -636,7 +636,7 @@ const AddDiscount = () => {
             name="description"
             label="Description"
             extra="Optional description for internal reference"
-            className="!mb-0"
+            className="mb-0"
           >
             <Input.TextArea
               rows={4}

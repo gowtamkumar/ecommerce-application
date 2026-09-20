@@ -32,7 +32,7 @@ const MainMenu = () => {
           <Link
             href={`/products?categoryId=${node.id}&`}
             rel="noopener noreferrer"
-            className="block px-3 py-2 text-global-text hover:!text-global-button-primary hover:bg-global-button-primary/10 rounded-lg transition-colors font-medium"
+            className="block px-3 py-2 text-global-text hover:text-global-button-primary hover:bg-global-button-primary/10 rounded-lg transition-colors font-medium"
           >
             {node.name}
           </Link>
@@ -62,10 +62,10 @@ const MainMenu = () => {
       >
         <Button
           type="default"
-          className="!h-10 !px-4 !rounded-full !font-medium !text-sm
-                     !border-gray-200 !bg-white !text-gray-800
-                     hover:!border-global-primary hover:!text-global-primary
-                     !shadow-none flex items-center gap-2 !transition-colors duration-200 group"
+          className="h-10 px-4 rounded-full font-medium text-sm
+                     border-gray-200 bg-white text-gray-800
+                     hover:border-global-primary hover:text-global-primary
+                     shadow-none flex items-center gap-2 transition-colors duration-200 group"
         >
           <CiMenuFries className="text-base" />
           <span className="tracking-wide text-sm">Categories</span>

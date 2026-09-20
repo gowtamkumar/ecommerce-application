@@ -123,7 +123,7 @@ export default function AuditLogHeader({
             size="small"
             checked={autoRefresh}
             onChange={onToggleAutoRefresh}
-            className={autoRefresh ? "!bg-global-primary" : ""}
+            className={autoRefresh ? "bg-global-primary" : ""}
           />
         </div>
 

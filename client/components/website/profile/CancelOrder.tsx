@@ -96,13 +96,13 @@ const CancelOrder = () => {
           <Input.TextArea
             rows={4}
             placeholder="e.g., Ordered by mistake, found a better price, shipping took too long..."
-            className="!rounded-xl !p-3 resize-none !border-gray-200 focus:!border-rose-400"
+            className="rounded-xl p-3 resize-none border-gray-200 focus:border-rose-400"
           />
         </Form.Item>
 
         <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-gray-100 mt-6">
           <Button
-            className="!h-10 !px-5 !rounded-xl !font-semibold !text-xs !border-gray-200 hover:!bg-gray-50"
+            className="h-10 px-5 rounded-xl font-semibold text-xs border-gray-200 hover:bg-gray-50"
             onClick={handleClose}
           >
             Keep Order
@@ -113,7 +113,7 @@ const CancelOrder = () => {
             htmlType="submit"
             loading={global.loading.save}
             disabled={!payload?.id}
-            className="!h-10 !px-5 !rounded-xl !font-semibold !text-xs !bg-rose-600 hover:!bg-rose-700 !border-none"
+            className="h-10 px-5 rounded-xl font-semibold text-xs bg-rose-600 hover:bg-rose-700 border-none"
           >
             Confirm Cancellation
           </Button>

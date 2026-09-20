@@ -78,7 +78,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             valuePropName="fileThumbnailList"
             getValueFromEvent={normFile}
             rules={[{ required: true, message: "Thumbnail is required" }]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Upload
               name="thumbnailImage"
@@ -128,7 +128,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             valuePropName="fileHoverList"
             getValueFromEvent={normFile}
             rules={[{ required: true, message: "Hover image is required" }]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Upload
               name="hoverImage"
@@ -180,7 +180,7 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
             valuePropName="fileList"
             getValueFromEvent={normFile}
             rules={[{ required: true, message: "At least one gallery image is required" }]}
-            className="!mb-0"
+            className="mb-0"
           >
             <Upload
               name="images"
