@@ -78,7 +78,7 @@ export const createSetting = asyncHandler(async (req: CustomRequest, res: Respon
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Setting',
+    message: 'Store settings saved successfully',
     data: save,
   });
 });
@@ -107,7 +107,7 @@ export const createDashboardSetting = asyncHandler(async (req: CustomRequest, re
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Setting by dashboard',
+    message: 'Store settings saved successfully',
     data: save,
   });
 });

@@ -101,7 +101,7 @@ export const createUnit = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Unit',
+    message: 'Unit created successfully',
     data: save,
   });
 });
@@ -126,7 +126,7 @@ export const updateUnit = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Unit of id ${req.params.id}`,
+    message: 'Unit updated successfully',
     data: updateData,
   });
 });

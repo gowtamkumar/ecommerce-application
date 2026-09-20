@@ -599,7 +599,7 @@ export const cartIncrementDecrement = asyncHandler(async (req: Request, res: Res
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Cart of id ${req.params.id}`,
+    message: 'Cart quantity updated successfully',
     data: cartUpdate,
   });
 });
@@ -666,7 +666,7 @@ export const createCart = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: 'Add to Cart successfully',
+    message: 'Item added to cart successfully',
     data: added,
   });
 });
@@ -706,7 +706,7 @@ export const updateCart = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Cart of id ${req.params.id}`,
+    message: 'Cart updated successfully',
     data: updateData,
   });
 });

@@ -99,7 +99,7 @@ export const createColor = asyncHandler(async (req: CustomRequest, res: Response
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Color',
+    message: 'Color created successfully',
     data: save,
   });
 });
@@ -135,7 +135,7 @@ export const updateColor = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Color of id ${req.params.id}`,
+    message: 'Color updated successfully',
     data: updateData,
   });
 });

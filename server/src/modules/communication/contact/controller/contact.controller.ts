@@ -126,7 +126,7 @@ export const updateContact = asyncHandler(async (req: Request, res: Response) =>
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Contact of id ${req.params.id}`,
+    message: 'Contact record updated successfully',
     data: updateData,
   });
 });

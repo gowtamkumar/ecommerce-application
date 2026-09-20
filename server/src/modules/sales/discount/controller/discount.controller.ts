@@ -211,7 +211,7 @@ export const createDiscount = asyncHandler(async (req: CustomRequest, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Discount',
+    message: 'Discount campaign created successfully',
     data: saveDiscount,
   });
 });
@@ -289,7 +289,7 @@ export const updateDiscount = asyncHandler(async (req: Request, res: Response) =
 
   return res.status(200).json({
     success: true,
-    message: `Updated Discount with id ${id}`,
+    message: 'Discount campaign updated successfully',
     data: updatedDiscount,
   });
 });
@@ -329,7 +329,7 @@ export const discountStatusUpdate = asyncHandler(async (req: Request, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: `Updated Discount with id ${id}`,
+    message: 'Discount status updated successfully',
     data: result,
   });
 });

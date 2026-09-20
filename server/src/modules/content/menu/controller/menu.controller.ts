@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
 // import { memuValidationSchema } from "@/validation";
 // import { join } from "path";
 // import { FileEntity } from "@/modules/system/other/file/model/file.entity";
 // import fs from "fs";
-import { MenuEntity } from '../model/menu.entity';
+import { CustomRequest } from '@/enums/custom-request-type';
+import { logger } from '@/middlewares/logger';
 import { menuValidationSchema } from '@/validation/menu/menuValidation';
 import { updateMenuValidationSchema } from '@/validation/menu/updateMenuValidation';
-import { logger } from '@/middlewares/logger';
-import { CustomRequest } from '@/enums/custom-request-type';
+import { MenuEntity } from '../model/menu.entity';
 
 // @desc Get all memus
 // @route GET /api/v1/memus
@@ -100,12 +100,12 @@ export const createMemu = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Memu',
+    message: 'Navigation menu item created successfully',
     data: save,
   });
 });
 
-// @desc Update a single Memu
+// @desc Update a single Menu
 // @route PUT /api/v1/memus/:id
 // @access Public
 export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
@@ -143,7 +143,7 @@ export const updateMemu = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Memu of id ${req.params.id}`,
+    message: 'Navigation menu item updated successfully',
     data: updateData,
   });
 });

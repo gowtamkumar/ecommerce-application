@@ -105,7 +105,7 @@ export const createFile = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new File',
+    message: 'File saved successfully',
     data: save,
   });
 });
@@ -157,7 +157,7 @@ export const updateFile = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single File of id ${req.params.id}`,
+    message: 'File details updated successfully',
     data: updateData,
   });
 });

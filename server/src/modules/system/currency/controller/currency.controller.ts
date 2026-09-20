@@ -75,7 +75,7 @@ export const createCurrency = asyncHandler(async (req: CustomRequest, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Currency',
+    message: 'Currency created successfully',
     data: save,
   });
 });
@@ -112,7 +112,7 @@ export const updateCurrency = asyncHandler(async (req: Request, res: Response) =
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Currency of id ${req.params.id}`,
+    message: 'Currency updated successfully',
     data: updateData,
   });
 });

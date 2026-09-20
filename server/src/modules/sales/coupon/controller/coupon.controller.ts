@@ -141,7 +141,7 @@ export const createCoupon = asyncHandler(async (req: CustomRequest, res: Respons
     // Final response
     res.status(200).json({
       success: true,
-      message: 'Create a new Coupon',
+      message: 'Coupon created successfully',
       data: savedCoupon,
     });
   });
@@ -194,7 +194,7 @@ export const updateCoupon = asyncHandler(async (req: Request, res: Response) => 
 
     return res.status(200).json({
       success: true,
-      message: `Coupon with ID ${id} updated successfully`,
+      message: 'Coupon updated successfully',
       data: updatedCoupon,
     });
   } catch (error: any) {

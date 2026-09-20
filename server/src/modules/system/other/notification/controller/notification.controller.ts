@@ -194,7 +194,7 @@ export const createNotification = asyncHandler(async (req: CustomRequest, res: R
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Notification',
+    message: 'Notification sent successfully',
     data: save,
   });
 });
@@ -218,7 +218,7 @@ export const updateNotification = asyncHandler(async (req: Request, res: Respons
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Notification of id ${req.params.id}`,
+    message: 'Notification updated successfully',
     data: updateData,
   });
 });

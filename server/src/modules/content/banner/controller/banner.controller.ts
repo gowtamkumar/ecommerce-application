@@ -111,7 +111,7 @@ export const createBanner = asyncHandler(async (req: CustomRequest, res: Respons
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Banner',
+    message: 'Banner created successfully',
     data: save,
   });
 });
@@ -152,7 +152,7 @@ export const updateBanner = asyncHandler(async (req: Request, res: Response) => 
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Banner of id ${req.params.id}`,
+    message: 'Banner updated successfully',
     data: updateData,
   });
 });

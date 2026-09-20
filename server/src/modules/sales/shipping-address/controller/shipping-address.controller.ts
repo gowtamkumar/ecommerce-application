@@ -111,7 +111,7 @@ export const createShippingAddress = asyncHandler(async (req: CustomRequest, res
   const save = await repository.save(newShippingAddress);
   return res.status(200).json({
     success: true,
-    message: 'Create a new Shipping Address',
+    message: 'Shipping address saved successfully',
     data: save,
   });
 });
@@ -157,7 +157,7 @@ export const updateShippingAddress = asyncHandler(async (req: Request, res: Resp
 
   return res.status(200).json({
     success: true,
-    message: `Update a single ShippingAddress of id ${req.params.id}`,
+    message: 'Shipping address updated successfully',
     data: updateData,
   });
 });
@@ -189,7 +189,7 @@ export const activeShippingAddress = asyncHandler(async (req: CustomRequest, res
 
   return res.status(200).json({
     success: true,
-    message: `Active Shipping address of id ${req.params.id}`,
+    message: 'Default shipping address set successfully',
     data: findOneAddress,
   });
 });

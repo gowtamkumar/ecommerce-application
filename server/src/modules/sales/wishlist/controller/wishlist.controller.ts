@@ -262,9 +262,10 @@ export const getUserWishlist = asyncHandler(
 export const createWishlist = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: createWishlist ${req.method} ${req.url}`);
 
-  const userId = (req.role === RoleEnum.Admin || req.role === RoleEnum.Admin) && req.body.userId 
-    ? req.body.userId 
-    : req.id;
+  const userId =
+    (req.role === RoleEnum.Admin || req.role === RoleEnum.Admin) && req.body.userId
+      ? req.body.userId
+      : req.id;
 
   const validation = wishListhValidationSchema.safeParse({
     ...req.body,
@@ -298,7 +299,7 @@ export const createWishlist = asyncHandler(async (req: CustomRequest, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: 'Add a new Wishlist',
+    message: 'Item added to wishlist successfully',
     data: save,
   });
 });
@@ -326,7 +327,7 @@ export const updateWishlist = asyncHandler(async (req: Request, res: Response) =
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Wishlist of id ${req.params.id}`,
+    message: 'Wishlist updated successfully',
     data: updateWishdata,
   });
 });

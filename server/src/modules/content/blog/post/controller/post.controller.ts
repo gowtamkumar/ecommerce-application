@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
 import { postValidationSchema } from '@/validation';
 import { updatePostValidationSchema } from '@/validation/post/updatePostValidation';
+import { Request, Response } from 'express';
 import { PostCategoryEntity } from '../model/post-category.entity';
 import { PostEntity } from '../model/post.entity';
 
@@ -147,7 +147,7 @@ export const createPost = asyncHandler(async (req: CustomRequest, res: Response)
 
     return res.status(200).json({
       success: true,
-      message: 'Create a new Post',
+      message: 'Blog post published successfully',
       data: save,
     });
   } catch (error) {
@@ -155,7 +155,7 @@ export const createPost = asyncHandler(async (req: CustomRequest, res: Response)
     console.error('Transaction failed:', error);
     return res.status(500).json({
       success: false,
-      message: 'Failed to create Post',
+      message: 'Failed to publish blog post',
     });
   } finally {
     await queryRunner.release();
@@ -216,7 +216,7 @@ export const updatePost = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Post of id ${req.params.id}`,
+    message: 'Blog post updated successfully',
     data: updateData,
   });
 });

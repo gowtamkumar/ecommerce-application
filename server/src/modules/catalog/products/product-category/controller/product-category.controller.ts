@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { ProductCategoryEntity } from '../model/product-category.entity';
-import { productCategoryValidationSchema } from '@/validation';
-import { logger } from '@/middlewares/logger';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
+import { productCategoryValidationSchema } from '@/validation';
+import { NextFunction, Request, Response } from 'express';
+import { ProductCategoryEntity } from '../model/product-category.entity';
 
 // @desc Get all ProductCategorys
 // @route GET /api/v1/ProductCategorys
@@ -77,7 +77,7 @@ export const createProductCategory = asyncHandler(async (req: CustomRequest, res
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Product Category',
+    message: 'Product category linked successfully',
     data: save,
   });
 });
@@ -116,7 +116,7 @@ export const updateProductCategory = asyncHandler(async (req: Request, res: Resp
 
   return res.status(200).json({
     success: true,
-    message: `Update a single ProductCategory of id ${req.params.id}`,
+    message: 'Product category updated successfully',
     data: updateData,
   });
 });

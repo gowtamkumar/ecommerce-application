@@ -190,7 +190,7 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
 
     return res.status(200).json({
       success: true,
-      message: 'Order created',
+      message: 'Order placed successfully',
       data: {
         orderId: savedOrder.id,
         paymentUrl,
@@ -571,7 +571,7 @@ export const updateOrder = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Order of id ${req.params.id}`,
+    message: 'Order updated successfully',
     data: updateData,
   });
 });
@@ -636,7 +636,7 @@ export const assignDeliveryMan = asyncHandler(async (req: Request, res: Response
 
   return res.status(200).json({
     success: true,
-    message: 'Assign Delivery man',
+    message: 'Delivery person assigned successfully',
     data: save,
   });
 });
@@ -771,7 +771,7 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
 
     return res.status(200).json({
       success: true,
-      message: `Order Status Update of id ${req.params.id}`,
+      message: 'Order status updated successfully',
       data: save,
     });
   } catch (error) {

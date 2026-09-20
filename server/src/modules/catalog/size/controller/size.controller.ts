@@ -101,7 +101,7 @@ export const createSize = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Size',
+    message: 'Size created successfully',
     data: save,
   });
 });
@@ -113,20 +113,6 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: updateSize ${req.method} ${req.url}`);
 
   const { id } = req.params;
-
-  // const validation = sizeValidationSchema.safeParse(req.body);
-
-  // if (!validation.success) {
-  //   const formattedErrors = validation.error.issues.map((issue) => ({
-  //     path: issue.path.join("."),
-  //     message: issue.message,
-  //   }));
-
-  //   return res.status(400).json({
-  //     success: false,
-  //     issues: formattedErrors,
-  //   });
-  // }
 
   const connection = await getDBConnection();
   const repository = await connection.getRepository(SizeEntity);
@@ -141,7 +127,7 @@ export const updateSize = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Size of id ${req.params.id}`,
+    message: 'Size updated successfully',
     data: updateData,
   });
 });

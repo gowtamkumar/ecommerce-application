@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { productVariantValidationSchema } from '@/validation';
-import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
 import { WishListEntity } from '@/modules/sales/wishlist/model/wishlist.entity';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { productVariantValidationSchema } from '@/validation';
+import { NextFunction, Request, Response } from 'express';
 import { ProductVariantEntity } from '../model/product-variant.entity';
 
 // @desc Get all ProductVariants
@@ -79,7 +79,7 @@ export const createProductVariant = asyncHandler(async (req: CustomRequest, res:
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Product Variant',
+    message: 'Product variant created successfully',
     data: result,
   });
 });
@@ -191,7 +191,7 @@ export const updateProductVariant = asyncHandler(async (req: Request, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: `Update a single ProductVariant of id ${req.params.id}`,
+    message: 'Product variant updated successfully',
     data: updateData,
   });
 });

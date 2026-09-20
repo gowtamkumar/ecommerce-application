@@ -90,7 +90,7 @@ export const createBrand = asyncHandler(async (req: CustomRequest, res: Response
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Brand',
+    message: 'Brand created successfully',
     data: save,
   });
 });
@@ -129,7 +129,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Brand of id ${req.params.id}`,
+    message: 'Brand updated successfully',
     data: updateData,
   });
 });

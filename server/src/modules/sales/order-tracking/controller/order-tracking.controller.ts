@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { OrderTrackingEntity } from '../model/order-tracking.entity';
+import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
 import { orderTrackingValidationSchema } from '@/validation';
 import { updateOrderTrackingValidationSchema } from '@/validation/order-tracking/updateOrderTrackingValidation';
-import { logger } from '@/middlewares/logger';
-import { CustomRequest } from '@/enums/custom-request-type';
+import { NextFunction, Request, Response } from 'express';
+import { OrderTrackingEntity } from '../model/order-tracking.entity';
 
 // @desc Get all OrderTracking
 // @route GET /api/v1/OrderTracking
@@ -79,7 +79,7 @@ export const createOrderTracking = asyncHandler(async (req: CustomRequest, res: 
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new OrderTracking',
+    message: 'Tracking record added successfully',
     data: save,
   });
 });
@@ -118,7 +118,7 @@ export const updateOrderTracking = asyncHandler(async (req: Request, res: Respon
 
   return res.status(200).json({
     success: true,
-    message: `Update a single OrderTracking of id ${req.params.id}`,
+    message: 'Tracking record updated successfully',
     data: updateData,
   });
 });

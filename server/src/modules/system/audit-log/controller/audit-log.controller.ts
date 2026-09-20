@@ -205,7 +205,7 @@ export const createAuditLog = asyncHandler(
 
     return res.status(201).json({
       success: true,
-      message: 'Audit log created',
+      message: 'Audit log recorded successfully',
       data: savedLog,
     });
   },

@@ -107,12 +107,11 @@ export const createComment = asyncHandler(async (req: CustomRequest, res: Respon
   const repository = connection.getRepository(CommentEntity);
 
   const newComment = repository.create(validation.data);
-
   const save = await repository.save(newComment);
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Comment',
+    message: 'Comment posted successfully',
     data: save,
   });
 });
@@ -122,9 +121,8 @@ export const createComment = asyncHandler(async (req: CustomRequest, res: Respon
 // @access Public
 export const updateComment = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: updateComment ${req.method} ${req.url}`);
-  const { id } = req.params;
-  const connection = await getDBConnection();
 
+  const { id } = req.params;
   const validation = updateCommentValidationSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -138,17 +136,20 @@ export const updateComment = asyncHandler(async (req: Request, res: Response) =>
       issues: formattedErrors,
     });
   }
+
+  const connection = await getDBConnection();
   const repository = await connection.getRepository(CommentEntity);
   const result = await repository.findOneBy({ id });
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
-  const updateData = await repository.merge(result, validation.data);
+
+  const updateData = await repository.merge(result, req.body);
   await repository.save(updateData);
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Comment of id ${req.params.id}`,
+    message: 'Comment updated successfully',
     data: updateData,
   });
 });
@@ -158,11 +159,10 @@ export const updateComment = asyncHandler(async (req: Request, res: Response) =>
 // @access Public
 export const commentLike = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: commentLike ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(CommentEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -173,18 +173,17 @@ export const commentLike = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Comment of id ${req.params.id}`,
+    message: 'Feedback recorded successfully',
     data: result,
   });
 });
 
 export const commentDisLike = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: commentDisLike ${req.method} ${req.url}`);
+
   const { id } = req.params;
   const connection = await getDBConnection();
-
   const repository = await connection.getRepository(CommentEntity);
-
   const result = await repository.findOneBy({ id });
 
   if (!result) {
@@ -195,7 +194,7 @@ export const commentDisLike = asyncHandler(async (req: Request, res: Response) =
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Comment of id ${req.params.id}`,
+    message: 'Feedback recorded successfully',
     data: result,
   });
 });

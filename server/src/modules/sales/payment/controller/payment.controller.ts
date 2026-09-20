@@ -96,7 +96,7 @@ export const createPayment = asyncHandler(async (req: CustomRequest, res: Respon
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Payment',
+    message: 'Payment recorded successfully',
     data: save,
   });
 });
@@ -203,7 +203,7 @@ export const createDashboardPayment = asyncHandler(async (req: CustomRequest, re
 
     return res.status(200).json({
       success: true,
-      message: 'New payment created via dashboard.',
+      message: 'Payment recorded successfully',
       data: savedPayment,
     });
   } catch (error: any) {
@@ -237,7 +237,7 @@ export const updatePayment = asyncHandler(async (req: Request, res: Response) =>
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Payment of id ${req.params.id}`,
+    message: 'Payment record updated successfully',
     data: updateData,
   });
 });

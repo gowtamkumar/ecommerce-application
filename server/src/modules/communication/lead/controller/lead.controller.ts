@@ -128,7 +128,7 @@ export const createLead = asyncHandler(async (req: CustomRequest, res: Response)
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Lead',
+    message: 'Lead registered successfully',
     data: save,
   });
 });
@@ -169,7 +169,7 @@ export const updateLead = asyncHandler(async (req: Request, res: Response) => {
   await repository.save(updateData);
   return res.status(200).json({
     success: true,
-    message: `Update a single Lead of id ${req.params.id}`,
+    message: 'Lead details updated successfully',
     data: updateData,
   });
 });

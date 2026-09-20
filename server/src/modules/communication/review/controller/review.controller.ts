@@ -167,7 +167,7 @@ export const createReview = asyncHandler(async (req: CustomRequest, res: Respons
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Review',
+    message: 'Review submitted successfully',
     data: save,
   });
 });
@@ -207,7 +207,7 @@ export const updateReview = asyncHandler(async (req: Request, res: Response) => 
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Review of id ${req.params.id}`,
+    message: 'Review updated successfully',
     data: updateData,
   });
 });
@@ -233,7 +233,7 @@ export const reviewLike = asyncHandler(async (req: Request, res: Response) => {
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Review of id ${req.params.id}`,
+    message: 'Feedback recorded successfully',
     data: result,
   });
 });
@@ -256,7 +256,7 @@ export const reviewDisLike = asyncHandler(async (req: Request, res: Response) =>
 
   return res.status(200).json({
     success: true,
-    message: `Update a single Review of id ${req.params.id}`,
+    message: 'Feedback recorded successfully',
     data: result,
   });
 });
