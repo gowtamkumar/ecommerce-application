@@ -1,13 +1,19 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
 
 interface AnnouncementBarProps {
   marketing: any;
 }
 
 const AnnouncementBar: React.FC<AnnouncementBarProps> = ({ marketing }) => {
+  const pathname = usePathname();
+
+  // Never show on dashboard routes
+  if (pathname?.startsWith("/dashboard")) return null;
+
   const isEnabled = marketing?.announcementEnabled === true || marketing?.announcementEnabled === "true";
   
   if (!isEnabled || !marketing?.announcementText) {

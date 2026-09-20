@@ -10,6 +10,7 @@ import { errorNotification } from "@/lib/utils/notification";
 import {
     decrementCart,
     incrementCart,
+    removeCart,
     replaceCart,
     selectCart,
 } from "@/redux/features/cart/cartSlice";
@@ -25,7 +26,7 @@ import {
 import { Button } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { HiOutlineMinus } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,52 +37,78 @@ export default function ViewCart() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { formatPrice } = useCurrency();
-  const debouncedSyncRef = useRef<any>(null);
 
-  const debounce = (func: Function, delay: number) => {
-    let timer: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => func(...args), delay);
-    };
-  };
-
-  useEffect(() => {
-    debouncedSyncRef.current = debounce(async (item: any) => {
-      const res = await incrementDecrementCart(item);
-      if (!res?.success) {
-        errorNotification({ message: res?.message || "Failed to update quantity" });
-      }
-      const getCartList = await getCartLists();
-      if (getCartList?.success) {
-        dispatch(replaceCart(getCartList.data || []));
-      }
-    }, 400);
-  }, [dispatch]);
+  // Track pending target quantity per item id so single clicks or rapid clicks batch accurately
+  const pendingQtyRef = useRef<Record<string, number>>({});
+  const timerRef = useRef<Record<string, NodeJS.Timeout>>({});
+  const [syncingIds, setSyncingIds] = useState<Record<string, boolean>>({});
 
   const handleRemove = async (item: any) => {
-    const cartId = item.id;
-    const removeDartData = await deleteCart(cartId);
-    if (removeDartData.success) {
-      const getCartList = await getCartLists();
-      dispatch(replaceCart(getCartList.data || []));
+    const id = item.id;
+    if (timerRef.current[id]) clearTimeout(timerRef.current[id]);
+    delete pendingQtyRef.current[id];
+    dispatch(removeCart({ id }));
+    try {
+      const res = await deleteCart(id);
+      if (res.success) {
+        const getCartList = await getCartLists();
+        if (getCartList?.success) {
+          dispatch(replaceCart(getCartList.data || []));
+        }
+      }
+    } catch (err) {
+      console.error("Delete cart error:", err);
     }
   };
 
   const handleIncrementDecrement = (item: any, type: "Increment" | "Decrement") => {
-    if (type === "Decrement" && item.qty <= 1) {
+    const id = item.id;
+    const currentQty = pendingQtyRef.current[id] ?? item.qty;
+
+    if (type === "Decrement" && currentQty <= 1) {
       handleRemove(item);
       return;
     }
-    const updatedPayload = { ...item, type };
+
+    const nextQty = type === "Increment" ? currentQty + 1 : currentQty - 1;
+    pendingQtyRef.current[id] = nextQty;
+
+    // Optimistic UI update in Redux immediately
     if (type === "Decrement") {
-      dispatch(decrementCart(updatedPayload));
+      dispatch(decrementCart({ id }));
     } else {
-      dispatch(incrementCart(updatedPayload));
+      dispatch(incrementCart({ id }));
     }
-    if (debouncedSyncRef.current) {
-      debouncedSyncRef.current(updatedPayload);
-    }
+
+    // Debounce the API call (300ms)
+    // Single click sends after 300ms with targetQty; rapid clicks batch to the final quantity
+    if (timerRef.current[id]) clearTimeout(timerRef.current[id]);
+    timerRef.current[id] = setTimeout(async () => {
+      const targetQty = pendingQtyRef.current[id];
+      delete pendingQtyRef.current[id];
+      if (targetQty === undefined) return;
+
+      const syncType = targetQty >= item.qty ? "Increment" : "Decrement";
+      setSyncingIds((prev) => ({ ...prev, [id]: true }));
+      try {
+        const res = await incrementDecrementCart({
+          id,
+          type: syncType,
+          qty: targetQty,
+        });
+        if (!res?.success) {
+          errorNotification({ message: res?.message || "Failed to update quantity" });
+        }
+        const getCartList = await getCartLists();
+        if (getCartList?.success) {
+          dispatch(replaceCart(getCartList.data || []));
+        }
+      } catch (err) {
+        console.error("Cart sync error:", err);
+      } finally {
+        setSyncingIds((prev) => ({ ...prev, [id]: false }));
+      }
+    }, 300);
   };
 
   const cartList = cart?.carts?.cartList || [];
@@ -94,12 +121,12 @@ export default function ViewCart() {
   if (cartList.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-8 space-y-6 animate-in fade-in duration-500">
-        <div className="w-24 h-24 bg-gradient-to-tr from-gray-100 to-gray-50 rounded-full flex items-center justify-center border border-gray-200/80 shadow-inner">
+        <div className="w-24 h-24 bg-linear-to-tr from-gray-100 to-gray-50 rounded-full flex items-center justify-center border border-gray-200/80 shadow-inner">
           <ShoppingCartOutlined className="text-4xl text-gray-300" />
         </div>
         <div className="space-y-1.5">
           <h3 className="text-base font-bold text-gray-900">Your Cart is Empty</h3>
-          <p className="text-xs text-gray-500 max-w-[220px] mx-auto leading-relaxed">
+          <p className="text-xs text-gray-500 max-w-55 mx-auto leading-relaxed">
             Looks like you haven't added anything to your cart yet.
           </p>
         </div>
@@ -216,10 +243,10 @@ export default function ViewCart() {
 
               {/* Quantity Stepper & Price */}
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100/80">
-                <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50/80 p-0.5 shadow-sm">
+                <div className={`flex items-center border rounded-lg p-0.5 shadow-sm transition-all ${syncingIds[item.id] ? "border-global-primary/40 bg-global-primary/5" : "border-gray-200 bg-gray-50/80"}`}>
                   <button
                     onClick={() => handleIncrementDecrement(item, "Decrement")}
-                    className="w-6 h-6 rounded flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                    className="w-6 h-6 rounded flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-900 transition-colors active:scale-90"
                     aria-label="Decrease quantity"
                   >
                     <HiOutlineMinus className="w-2.5 h-2.5" />
@@ -229,7 +256,7 @@ export default function ViewCart() {
                   </span>
                   <button
                     onClick={() => handleIncrementDecrement(item, "Increment")}
-                    className="w-6 h-6 rounded flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-900 transition-colors"
+                    className="w-6 h-6 rounded flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-900 transition-colors active:scale-90"
                     aria-label="Increase quantity"
                   >
                     <AiOutlinePlus className="w-2.5 h-2.5" />

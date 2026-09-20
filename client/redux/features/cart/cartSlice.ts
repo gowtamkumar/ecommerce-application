@@ -38,7 +38,7 @@ export const cartSlice = createSlice({
     addCart: (state, action: PayloadAction<any>): any => {
       const { id } = action.payload;
       const existingProductIndex = state.carts.cartList.findIndex(
-        (item: any) => item.id === id
+        (item: any) => item.id === id,
       );
 
       if (existingProductIndex !== -1) {
@@ -55,30 +55,53 @@ export const cartSlice = createSlice({
 
     incrementCart: (state, action: PayloadAction<any>): any => {
       const existingProductIndex = state.carts.cartList.findIndex(
-        (item: any) => item.id === action.payload.id
+        (item: any) => item.id === action.payload.id,
       );
       if (existingProductIndex !== -1) {
-        state.carts.cartList[existingProductIndex].qty++;
+        const item = state.carts.cartList[existingProductIndex];
+        const oldQty = item.qty || 1;
+        item.qty++;
+        if (item.subTotal) {
+          const unitPrice = item.subTotal / oldQty;
+          item.subTotal = unitPrice * item.qty;
+          if (state.carts.cartSummary?.subTotal !== undefined) {
+            state.carts.cartSummary.subTotal += unitPrice;
+          }
+        }
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
 
     decrementCart: (state, action: PayloadAction<any>): any => {
       const existingProductIndex = state.carts.cartList.findIndex(
-        (item: any) => item.id === action.payload.id
+        (item: any) => item.id === action.payload.id,
       );
       if (existingProductIndex !== -1) {
-        state.carts.cartList[existingProductIndex].qty--;
+        const item = state.carts.cartList[existingProductIndex];
+        const oldQty = item.qty || 1;
+        if (item.qty > 1) {
+          item.qty--;
+          if (item.subTotal) {
+            const unitPrice = item.subTotal / oldQty;
+            item.subTotal = unitPrice * item.qty;
+            if (state.carts.cartSummary?.subTotal !== undefined) {
+              state.carts.cartSummary.subTotal = Math.max(
+                0,
+                state.carts.cartSummary.subTotal - unitPrice,
+              );
+            }
+          }
+        }
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     removeCart: (state, action: PayloadAction<any>): any => {
       const findProduct = state.carts.cartList.find(
-        (item: any) => item.id === action.payload.id
+        (item: any) => item.id === action.payload.id,
       );
       if (findProduct) {
         state.carts.cartList = state.carts.cartList.filter(
-          (item: any) => item.id !== findProduct.id
+          (item: any) => item.id !== findProduct.id,
         );
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
