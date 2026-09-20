@@ -12,14 +12,40 @@ import { ContactEntity } from '../model/contact.entity';
 export const getContacts = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getContacts ${req.method} ${req.url}`);
 
+  const { page, limit } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(ContactEntity);
 
-  const result = await repository.find();
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Contact',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    order: { createdAt: 'DESC' },
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Contact',
+    total: result.length,
     data: result,
   });
 });

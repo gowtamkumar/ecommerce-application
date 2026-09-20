@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
 import { commentValidationSchema } from '@/validation';
 import { updateCommentValidationSchema } from '@/validation/comment/updateCommentValidation';
+import { Request, Response } from 'express';
 import { CommentEntity } from '../model/comment.entity';
 
 // @desc Get all Comment
@@ -12,14 +12,48 @@ import { CommentEntity } from '../model/comment.entity';
 // @access Public
 export const getComments = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getComments ${req.method} ${req.url}`);
+
+  const { page, limit, postId } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(CommentEntity);
 
-  const result = await repository.find();
+  const whereClause: any = {};
+  if (postId) {
+    whereClause.postId = postId;
+  }
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Comment',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    where: whereClause,
+    order: { createdAt: 'DESC' },
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Comment',
+    total: result.length,
     data: result,
   });
 });

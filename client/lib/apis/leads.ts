@@ -17,13 +17,21 @@ export async function saveLead(data: any) {
 }
 
 // Retrieve all leads
-export async function getLeads() {
+export async function getLeads(params?: { page?: number; limit?: number }) {
+  const { page, limit } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+
   const headers = await getAuthHeaders();
 
-  const res = await fetch(`${appConfig.apiUrl}/leads`, {
-    cache: "no-cache",
-    headers,
-  });
+  const res = await fetch(
+    `${appConfig.apiUrl}/leads${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    },
+  );
 
   return await handleResponse(res);
 }

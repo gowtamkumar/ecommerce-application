@@ -13,12 +13,20 @@ export async function saveContact(data: any) {
   return await handleResponse(res);
 }
 
-export async function getContacts() {
+export async function getContacts(params?: { page?: number; limit?: number }) {
+  const { page, limit } = params || {};
+  let queryString = "";
+  if (page) queryString += `page=${page}&`;
+  if (limit) queryString += `limit=${limit}&`;
+
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/contacts`, {
-    cache: "no-cache",
-    headers,
-  });
+  const res = await fetch(
+    `${appConfig.apiUrl}/contacts${queryString ? `?${queryString}` : ""}`,
+    {
+      cache: "no-cache",
+      headers,
+    },
+  );
 
   return await handleResponse(res);
 }

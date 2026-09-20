@@ -10,13 +10,23 @@ export async function getPageBySlug(slug: string) {
   return handleResponse(res);
 }
 
-export async function getPages(params?: { status?: string }) {
+export async function getPages(params?: {
+  status?: string;
+  page?: number;
+  limit?: number;
+}) {
   const queryParams = new URLSearchParams();
   if (params?.status) {
     queryParams.append("status", params.status);
   }
-  
-  const url = `${appConfig.apiUrl}/pages${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  if (params?.page) {
+    queryParams.append("page", params.page.toString());
+  }
+  if (params?.limit) {
+    queryParams.append("limit", params.limit.toString());
+  }
+
+  const url = `${appConfig.apiUrl}/pages${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
   const res = await fetch(url, {
     method: "GET",
     cache: "no-cache",

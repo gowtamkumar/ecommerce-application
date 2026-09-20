@@ -1,14 +1,14 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { reviewValidationSchema } from '@/validation';
-import { updateReviewValidationSchema } from '@/validation/review/updateReviewValidation';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
 import { RoleEnum } from '@/modules/user/auth/enums';
 import { UserEntity } from '@/modules/user/auth/model/user.entity';
-import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { reviewValidationSchema } from '@/validation';
+import { updateReviewValidationSchema } from '@/validation/review/updateReviewValidation';
+import { NextFunction, Request, Response } from 'express';
 import { ReviewEntity } from '../model/review.entity';
 
 // @desc Get all Review
@@ -17,23 +17,67 @@ import { ReviewEntity } from '../model/review.entity';
 export const getReviews = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getReviews ${req.method} ${req.url}`);
 
+  const { page, limit, productId } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(ReviewEntity);
 
+  const whereClause: any = {};
+  if (productId) {
+    whereClause.productId = productId;
+  }
+
+  const relationsConfig = {
+    product: true,
+  };
+
+  const selectConfig: any = {
+    id: true,
+    rating: true,
+    comment: true,
+    userName: true,
+    createdAt: true,
+    product: {
+      id: true,
+      name: true,
+    },
+  };
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: whereClause,
+      relations: relationsConfig,
+      select: selectConfig,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Review',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
   const result = await repository.find({
-    relations: {
-      product: true,
-    },
-    select: {
-      product: {
-        name: true,
-      },
-    },
+    where: whereClause,
+    relations: relationsConfig,
+    select: selectConfig,
+    order: { createdAt: 'DESC' },
   });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Review',
+    total: result.length,
     data: result,
   });
 });

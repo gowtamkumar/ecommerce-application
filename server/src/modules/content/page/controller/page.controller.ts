@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
 import { createPageValidation } from '@/validation/page/createPageValidation';
 import { updatePageValidation } from '@/validation/page/updatePageValidation';
+import { NextFunction, Request, Response } from 'express';
 import { PageEntity } from '../model/page.entity';
 
 // @desc Get all Pages
@@ -12,7 +12,7 @@ import { PageEntity } from '../model/page.entity';
 // @access Public
 export const getPages = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getPages ${req.method} ${req.url}`);
-  const { status } = req.query;
+  const { status, page, limit } = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(PageEntity);
 
@@ -21,10 +21,36 @@ export const getPages = asyncHandler(async (req: Request, res: Response) => {
     customQuery.status = status;
   }
 
-  const result = await repository.find({ where: customQuery });
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: customQuery,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Pages',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    where: customQuery,
+    order: { createdAt: 'DESC' },
+  });
   return res.status(200).json({
     success: true,
     message: 'Get all Pages',
+    total: result.length,
     data: result,
   });
 });

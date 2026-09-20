@@ -16,14 +16,22 @@ export async function saveBanner(data: any) {
 
 export async function getBanners(params?: any) {
   const searchParams = new URLSearchParams();
-  console.log("🚀 ~ params:", params);
 
   if (params?.type) {
     searchParams.append("type", params.type);
   }
+  if (params?.page) {
+    searchParams.append("page", params.page.toString());
+  }
+  if (params?.limit) {
+    searchParams.append("limit", params.limit.toString());
+  }
+  if (params?.active !== undefined) {
+    searchParams.append("active", params.active.toString());
+  }
 
   const res = await fetch(
-    `${appConfig.apiUrl}/banners?${searchParams.toString()}`
+    `${appConfig.apiUrl}/banners?${searchParams.toString()}`,
   );
 
   return await handleResponse(res);

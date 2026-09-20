@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { leadValidationSchema } from '@/validation';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
+import { leadValidationSchema } from '@/validation';
+import { NextFunction, Request, Response } from 'express';
 import { LeadEntity } from '../model/lead.entity';
 
 // @desc Get all Lead
@@ -15,13 +15,40 @@ import { LeadEntity } from '../model/lead.entity';
 export const getLeads = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getLeads ${req.method} ${req.url}`);
 
+  const { page, limit } = req.query;
+
   const connection = await getDBConnection();
   const repository = connection.getRepository(LeadEntity);
-  const result = await repository.find();
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Lead',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    order: { createdAt: 'DESC' },
+  });
 
   return res.status(200).json({
     success: true,
     message: 'Get all Lead',
+    total: result.length,
     data: result,
   });
 });

@@ -1,29 +1,61 @@
-import { Request, Response, NextFunction } from 'express';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
-import { BannerEntity } from '../model/banner.entity';
+import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { logger } from '@/middlewares/logger';
 import { bannerValidationSchema } from '@/validation';
 import { updateBannerValidationSchema } from '@/validation/banner/updateBannerValidation';
-import { logger } from '@/middlewares/logger';
-import { CustomRequest } from '@/enums/custom-request-type';
+import { NextFunction, Request, Response } from 'express';
+import { BannerEntity } from '../model/banner.entity';
 
 // @desc Get all Banner
 // @route GET /api/v1/Banner
 // @access Public
 export const getBanners = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getBanners ${req.method} ${req.url}`);
-  const { type } = req.query;
+  const { type, page, limit, active } = req.query;
   const connection = await getDBConnection();
   const repository = connection.getRepository(BannerEntity);
 
-  const customQuery = { active: true } as any;
+  const customQuery: any = {};
+  if (active !== undefined) {
+    customQuery.active = active === 'true';
+  } else {
+    customQuery.active = true;
+  }
   if (type) {
     customQuery.type = type;
   }
-  const result = await repository.find({ where: customQuery });
+
+  if (page || limit) {
+    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
+    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+
+    const [result, total] = await repository.findAndCount({
+      where: customQuery,
+      order: { createdAt: 'DESC' },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Get all Banner',
+      total,
+      page: pageNum,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+      data: result,
+    });
+  }
+
+  const result = await repository.find({
+    where: customQuery,
+    order: { createdAt: 'DESC' },
+  });
   return res.status(200).json({
     success: true,
     message: 'Get all Banner',
+    total: result.length,
     data: result,
   });
 });
