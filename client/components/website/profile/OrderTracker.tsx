@@ -2,7 +2,7 @@
 
 import { ActionType, paymentMethods } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
-import { getOrderQuery } from "@/lib/apis/orders";
+import { getOrderQuery, getUserOrders } from "@/lib/apis/orders";
 import { onlinePayment } from "@/lib/apis/payment";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
@@ -27,6 +27,7 @@ import {
     FiArrowRight,
     FiCalendar,
     FiCheck,
+    FiCheckCircle,
     FiClock,
     FiCopy,
     FiCreditCard,
@@ -38,7 +39,7 @@ import {
     FiRefreshCw,
     FiRotateCcw,
     FiSearch,
-    FiTruck,
+    FiTruck
 } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import ReturnRequestAllOrder from "./ReturnRequestAllOrder";
@@ -69,7 +70,7 @@ const ORDER_STAGES = [
   { key: "Pending", label: "Placed", icon: FiFileText },
   { key: "Processing", label: "Processing", icon: FiRefreshCw },
   { key: "Shipped", label: "Shipped", icon: FiTruck },
-  { key: "Delivered", label: "Delivered", icon: FiCheck },
+  { key: "Delivered", label: "Delivered", icon: FiCheckCircle },
 ];
 
 const getStageIndex = (status: string) => {
@@ -87,6 +88,7 @@ export default function OrderTracker() {
   const urlTrackingNo = searchParams.get("trackingNo");
 
   const [order, setOrder] = useState<any>({});
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [payMethod, setPayMethod] = useState("");
   const [tracker, setTracker] = useState<{ trackingNo: string }>({
     trackingNo: "",
@@ -97,6 +99,21 @@ export default function OrderTracker() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const { formatPrice } = useCurrency();
+
+  // Load recent orders for quick chip selection
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        const res = await getUserOrders({ limit: 5 });
+        if (res?.success && res?.data) {
+          setRecentOrders(res.data);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    fetchRecent();
+  }, []);
 
   const handleOrderTracking = useCallback(
     async (values: { trackingNo: string }) => {
@@ -130,11 +147,24 @@ export default function OrderTracker() {
     }
   }, [urlTrackingNo, form, handleOrderTracking]);
 
+  const handleSelectRecent = (trackingNo: string) => {
+    form.setFieldsValue({ trackingNo });
+    handleOrderTracking({ trackingNo });
+  };
+
   const handleCopyTracking = (e: React.MouseEvent, trackingNo: string) => {
     e.stopPropagation();
     navigator.clipboard.writeText(trackingNo);
     setCopiedId(trackingNo);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const getStageTimestamp = (stageKey: string) => {
+    if (!order.orderTrackings?.length) return null;
+    const item = order.orderTrackings.find(
+      (t: any) => t.status?.toLowerCase() === stageKey.toLowerCase()
+    );
+    return item ? dayjs(item.createdAt).format("MMM D, h:mm A") : null;
   };
 
   const handleOnlinePayment = async () => {
@@ -228,38 +258,50 @@ export default function OrderTracker() {
     {
       title: "Product",
       key: "product",
-      render: (_: any, record: OrderItemType) => (
-        <div className="flex items-center gap-3 py-2">
-          <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
-            <Image
-              src={getImageUrl(record.product?.thumbnailImage)}
-              alt={record.product?.name || "Product"}
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="space-y-1">
-            <p className="font-bold text-gray-900 text-xs sm:text-sm line-clamp-1">
-              {record.product?.name}
-            </p>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] text-gray-400">
-                Qty: {record.qty}
-              </span>
-              {(record.requestedQty ?? 0) > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">
-                  Return Requested: {record.requestedQty}
+      render: (_: any, record: OrderItemType) => {
+        const productUrl = record.product?.slug
+          ? `/products/${record.product.slug}`
+          : "/products";
+
+        return (
+          <div className="flex items-center gap-3 py-2">
+            <Link
+              href={productUrl}
+              className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0 block hover:opacity-90"
+            >
+              <Image
+                src={getImageUrl(record.product?.thumbnailImage)}
+                alt={record.product?.name || "Product"}
+                fill
+                className="object-cover"
+              />
+            </Link>
+            <div className="space-y-1">
+              <Link
+                href={productUrl}
+                className="font-bold text-gray-900 text-xs sm:text-sm line-clamp-1 hover:text-global-primary transition-colors"
+              >
+                {record.product?.name}
+              </Link>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] text-gray-400 font-medium">
+                  Qty: {record.qty}
                 </span>
-              )}
-              {(record.approvedQty ?? 0) > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  Return Approved: {record.approvedQty}
-                </span>
-              )}
+                {(record.requestedQty ?? 0) > 0 && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200">
+                    Return Requested: {record.requestedQty}
+                  </span>
+                )}
+                {(record.approvedQty ?? 0) > 0 && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    Return Approved: {record.approvedQty}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       title: "Unit Price",
@@ -296,16 +338,15 @@ export default function OrderTracker() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* ── Search Header Card ── */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-xs">
         <div className="max-w-xl mx-auto text-center space-y-2 mb-6">
           <h3 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
             Track Package & Order Status
           </h3>
-          <p className="text-xs sm:text-sm text-gray-400">
-            Enter your tracking number below to view real-time delivery
-            milestones, returns, and invoice details.
+          <p className="text-xs sm:text-sm text-gray-400 font-medium">
+            Enter your order tracking number to view real-time delivery milestones, courier updates, and item receipts.
           </p>
         </div>
 
@@ -339,8 +380,29 @@ export default function OrderTracker() {
             </div>
           </Form>
 
+          {/* Quick-Select Recent Orders Chips */}
+          {recentOrders.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-gray-100">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+                Quick Track Recent Orders:
+              </p>
+              <div className="flex items-center gap-2 flex-wrap">
+                {recentOrders.map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => handleSelectRecent(r.trackingNo)}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-50 hover:bg-amber-50 hover:text-global-primary border border-gray-200/80 transition-colors cursor-pointer"
+                  >
+                    <span className="font-mono font-bold">#{r.trackingNo}</span>
+                    <span className="text-[10px] text-gray-400">({r.status})</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <p className="text-center text-[11px] text-gray-400 mt-3">
-            Looking for past orders? Check your{" "}
+            Looking for all past orders? Check your{" "}
             <Link
               href="/profile?tab=orders"
               className="text-global-primary font-bold hover:underline"
@@ -354,7 +416,7 @@ export default function OrderTracker() {
 
       {/* ── Loading Skeleton ── */}
       {loading ? (
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-xs space-y-6">
           <div className="flex justify-between items-center">
             <Skeleton.Button active shape="round" className="w-40" />
             <Skeleton.Button active shape="round" className="w-24" />
@@ -367,7 +429,7 @@ export default function OrderTracker() {
           {/* Top Row: Progress & Grand Total Card */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Progress Stepper Card */}
-            <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-xs flex flex-col justify-between">
               <div>
                 {/* Tracking ID Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-100 mb-6">
@@ -405,12 +467,12 @@ export default function OrderTracker() {
                   </div>
                 </div>
 
-                {/* Visual Progress Stepper */}
+                {/* Visual Progress Stepper with Timestamps */}
                 {order.status !== "Canceled" ? (
                   <div className="bg-gray-50/80 rounded-xl p-4 sm:p-6 border border-gray-100 my-2">
                     <div className="relative flex items-center justify-between">
                       {/* Line */}
-                      <div className="absolute left-6 right-6 top-3 -translate-y-1/2 h-1 bg-gray-200 z-0">
+                      <div className="absolute left-6 right-6 top-3.5 -translate-y-1/2 h-1 bg-gray-200 z-0">
                         <div
                           className="h-full bg-global-primary transition-all duration-500 rounded-full"
                           style={{
@@ -432,6 +494,7 @@ export default function OrderTracker() {
                         const isPassed = currentIdx >= idx;
                         const isCurrent = currentIdx === idx;
                         const StageIcon = stage.icon;
+                        const stageTime = getStageTimestamp(stage.key);
 
                         return (
                           <div
@@ -464,6 +527,11 @@ export default function OrderTracker() {
                             >
                               {stage.label}
                             </span>
+                            {stageTime && (
+                              <span className="text-[9px] text-gray-400 mt-0.5 whitespace-nowrap hidden sm:block font-medium">
+                                {stageTime}
+                              </span>
+                            )}
                           </div>
                         );
                       })}
@@ -530,7 +598,7 @@ export default function OrderTracker() {
             </div>
 
             {/* Grand Total Summary Card */}
-            <div className="bg-gray-900 rounded-2xl p-6 text-white flex flex-col justify-between shadow-sm relative overflow-hidden">
+            <div className="bg-gray-900 rounded-2xl p-6 text-white flex flex-col justify-between shadow-xs relative overflow-hidden">
               <div className="relative z-10 space-y-4">
                 <div>
                   <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest block mb-1">
@@ -581,7 +649,7 @@ export default function OrderTracker() {
             {/* Items & Delivery (Left 2 Cols) */}
             <div className="lg:col-span-2 space-y-6">
               {/* Order Items Table Card */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                   <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900">
                     Ordered Items ({order.orderItems?.length})
@@ -609,7 +677,7 @@ export default function OrderTracker() {
               </div>
 
               {/* Delivery Destination Card */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-3">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100 text-sm font-bold uppercase tracking-wider text-gray-900">
                   <FiMapPin className="w-4 h-4 text-global-primary" />
                   <span>Delivery Destination</span>
@@ -629,6 +697,21 @@ export default function OrderTracker() {
                         {order.shippingAddress.phoneNo}
                       </p>
                     )}
+                    {order.deliveryMan?.name && (
+                      <div className="pt-2 border-t border-gray-100 mt-2">
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">
+                          Assigned Courier
+                        </span>
+                        <span className="font-bold text-gray-800">
+                          {order.deliveryMan.name}
+                        </span>
+                        {order.deliveryMan.phone && (
+                          <span className="text-gray-500 block text-[11px]">
+                            {order.deliveryMan.phone}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-1 text-xs">
@@ -639,7 +722,7 @@ export default function OrderTracker() {
                       {order.shippingAddress?.address || "No address specified"}
                     </p>
                     {order.shippingAddress?.type && (
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-[10px] font-semibold">
+                      <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700 text-[10px] font-bold">
                         {order.shippingAddress.type}
                       </span>
                     )}
@@ -651,7 +734,7 @@ export default function OrderTracker() {
             {/* Payment Summary & Timeline (Right Col) */}
             <div className="space-y-6">
               {/* Payment Summary Card */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100 text-sm font-bold uppercase tracking-wider text-gray-900">
                   <FiCreditCard className="w-4 h-4 text-global-primary" />
                   <span>Payment Breakdown</span>
@@ -742,7 +825,7 @@ export default function OrderTracker() {
               </div>
 
               {/* Activity Timeline Card */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100 text-sm font-bold uppercase tracking-wider text-gray-900">
                   <FiClock className="w-4 h-4 text-global-primary" />
                   <span>Activity History</span>
@@ -791,14 +874,14 @@ export default function OrderTracker() {
         /* ── Empty State: When Tracker is searched but not found ── */
         tracker.trackingNo &&
         !loading && (
-          <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm max-w-lg mx-auto flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 text-global-primary flex items-center justify-center mb-4">
+          <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-xs max-w-lg mx-auto flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 text-global-primary flex items-center justify-center mb-4 shadow-inner">
               <FiPackage className="w-8 h-8" />
             </div>
             <h4 className="text-base font-black text-gray-900 mb-1">
               Order Not Found
             </h4>
-            <p className="text-xs text-gray-400 mb-6">
+            <p className="text-xs text-gray-400 mb-6 leading-relaxed">
               We couldn&apos;t locate an order with tracking number &ldquo;
               <span className="font-mono font-bold text-gray-800">
                 {tracker.trackingNo}

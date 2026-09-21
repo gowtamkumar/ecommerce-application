@@ -1,6 +1,6 @@
-import express from 'express';
 import { AuthGuard, isAuthorize } from '@/middlewares/auth.middleware';
 import { RoleEnum } from '@/modules/user/auth/enums';
+import express from 'express';
 import {
   clearNotification,
   createNotification,
@@ -8,6 +8,7 @@ import {
   getNotification,
   getNotifications,
   getNotificationsForAdmin,
+  readAllNotifications,
   readNotification,
   sendPromotionalNotification,
   updateNotification,
@@ -15,6 +16,7 @@ import {
 
 const router = express.Router();
 
+router.route('/read-all').get(readAllNotifications);
 router.route('/read/:id').get(readNotification);
 router.route('/clear').get(clearNotification);
 router.route('/promote').post(AuthGuard, isAuthorize(RoleEnum.Admin), sendPromotionalNotification);

@@ -4,6 +4,8 @@ import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
 import { UserEntity } from '@/modules/user/auth/model/user.entity';
+import { ok } from '@/utils/apiResponse';
+import { parsePagination } from '@/utils/pagination';
 import { notificationValidationSchema } from '@/validation';
 import { NextFunction, Request, Response } from 'express';
 import { NotificationEntity } from '../model/notification.entity';
@@ -14,105 +16,130 @@ import { NotificationEntity } from '../model/notification.entity';
 export const getNotifications = asyncHandler(async (req: CustomRequest, res: Response) => {
   logger.info(`Service: getNotifications ${req.method} ${req.url}`);
 
-  const { page, limit, status, type } = req.query;
+  const { page, limit, perPage, status, isRead, type, search } = req.query as any;
 
   const connection = await getDBConnection();
   const repository = connection.getRepository(NotificationEntity);
 
-  const whereClause: any = { userId: req.id };
-  if (status) {
-    whereClause.status = status;
+  const qb = repository
+    .createQueryBuilder('notification')
+    .where('notification.userId = :userId', { userId: req.id });
+
+  if (status === 'read' || status === 'true' || isRead === 'true' || isRead === true) {
+    qb.andWhere('notification.isRead = :isRead', { isRead: true });
+  } else if (status === 'unread' || status === 'false' || isRead === 'false' || isRead === false) {
+    qb.andWhere('notification.isRead = :isRead', { isRead: false });
   }
+
   if (type) {
-    whereClause.type = type;
+    if (type.includes(',')) {
+      const types = type.split(',').map((t: string) => t.trim());
+      qb.andWhere('notification.type IN (:...types)', { types });
+    } else {
+      qb.andWhere('notification.type ILIKE :type', { type: `%${type}%` });
+    }
   }
 
-  if (page || limit) {
-    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
-    const pageSize = Math.max(1, parseInt((limit || '20') as string, 10));
-
-    const [result, total] = await repository.findAndCount({
-      where: whereClause,
-      order: { createdAt: 'DESC' },
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
+  if (search) {
+    qb.andWhere('(notification.title ILIKE :search OR notification.message ILIKE :search)', {
+      search: `%${search}%`,
     });
+  }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Get all Notification',
+  qb.orderBy('notification.createdAt', 'DESC').addOrderBy('notification.id', 'DESC');
+
+  if (page || limit || perPage) {
+    const pagination = parsePagination(req.query);
+    const [result, total] = await qb.skip(pagination.skip).take(pagination.take).getManyAndCount();
+
+    return ok(res, result, 'Get all Notification', 200, {
+      totalItem: total,
       total,
-      page: pageNum,
-      limit: pageSize,
-      totalPages: Math.ceil(total / pageSize),
-      data: result,
+      page: pagination.page,
+      limit: pagination.perPage,
+      perPage: pagination.perPage,
+      totalPages: Math.ceil(total / pagination.perPage),
     });
   }
 
-  const result = await repository.find({
-    where: whereClause,
-    order: { createdAt: 'DESC' },
-  });
+  const [result, total] = await qb.getManyAndCount();
 
-  return res.status(200).json({
-    success: true,
-    message: 'Get all Notification',
-    total: result.length,
-    data: result,
+  return ok(res, result, 'Get all Notification', 200, {
+    totalItem: total,
+    total,
+    page: 1,
+    limit: total,
+    perPage: total,
+    totalPages: 1,
   });
 });
 
-// @desc Get all Notification
-// @route GET /api/v1/Notification
-// @access Public
+// @desc Get all Notification for Admin
+// @route GET /api/v1/Notification/admin
+// @access Private (Admin)
 export const getNotificationsForAdmin = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: getNotifications ${req.method} ${req.url}`);
+  logger.info(`Service: getNotificationsForAdmin ${req.method} ${req.url}`);
 
-  const { page, limit, status, type } = req.query;
+  const { page, limit, perPage, status, isRead, type, search, userId } = req.query as any;
 
   const connection = await getDBConnection();
   const repository = connection.getRepository(NotificationEntity);
 
-  const whereClause: any = {};
-  if (status) {
-    whereClause.status = status;
+  const qb = repository
+    .createQueryBuilder('notification')
+    .leftJoinAndSelect('notification.user', 'user');
+
+  if (userId) {
+    qb.andWhere('notification.userId = :userId', { userId: Number(userId) });
   }
+
+  if (status === 'read' || status === 'true' || isRead === 'true' || isRead === true) {
+    qb.andWhere('notification.isRead = :isRead', { isRead: true });
+  } else if (status === 'unread' || status === 'false' || isRead === 'false' || isRead === false) {
+    qb.andWhere('notification.isRead = :isRead', { isRead: false });
+  }
+
   if (type) {
-    whereClause.type = type;
+    if (type.includes(',')) {
+      const types = type.split(',').map((t: string) => t.trim());
+      qb.andWhere('notification.type IN (:...types)', { types });
+    } else {
+      qb.andWhere('notification.type ILIKE :type', { type: `%${type}%` });
+    }
   }
 
-  if (page || limit) {
-    const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
-    const pageSize = Math.max(1, parseInt((limit || '20') as string, 10));
+  if (search) {
+    qb.andWhere(
+      '(notification.title ILIKE :search OR notification.message ILIKE :search OR user.name ILIKE :search OR user.email ILIKE :search)',
+      { search: `%${search}%` },
+    );
+  }
 
-    const [result, total] = await repository.findAndCount({
-      where: whereClause,
-      order: { createdAt: 'DESC' },
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-    });
+  qb.orderBy('notification.createdAt', 'DESC').addOrderBy('notification.id', 'DESC');
 
-    return res.status(200).json({
-      success: true,
-      message: 'Get all Notification',
+  if (page || limit || perPage) {
+    const pagination = parsePagination(req.query);
+    const [result, total] = await qb.skip(pagination.skip).take(pagination.take).getManyAndCount();
+
+    return ok(res, result, 'Get all Notification', 200, {
+      totalItem: total,
       total,
-      page: pageNum,
-      limit: pageSize,
-      totalPages: Math.ceil(total / pageSize),
-      data: result,
+      page: pagination.page,
+      limit: pagination.perPage,
+      perPage: pagination.perPage,
+      totalPages: Math.ceil(total / pagination.perPage),
     });
   }
 
-  const result = await repository.find({
-    where: whereClause,
-    order: { createdAt: 'DESC' },
-  });
+  const [result, total] = await qb.getManyAndCount();
 
-  return res.status(200).json({
-    success: true,
-    message: 'Get all Notification',
-    total: result.length,
-    data: result,
+  return ok(res, result, 'Get all Notification', 200, {
+    totalItem: total,
+    total,
+    page: 1,
+    limit: total,
+    perPage: total,
+    totalPages: 1,
   });
 });
 
@@ -148,7 +175,7 @@ export const readNotification = asyncHandler(async (req: Request, res: Response)
   const { id } = req.params;
   const connection = await getDBConnection();
   const repository = await connection.getRepository(NotificationEntity);
-  const result = await repository.findOneBy({ id });
+  const result = await repository.findOneBy({ id: Number(id) as any });
 
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
@@ -161,6 +188,22 @@ export const readNotification = asyncHandler(async (req: Request, res: Response)
     success: true,
     message: `Read a single Notification of id ${req.params.id}`,
     data: readData,
+  });
+});
+
+// @desc Mark all notifications as read for current user
+// @route GET /api/v1/Notification/read-all
+// @access Private
+export const readAllNotifications = asyncHandler(async (req: CustomRequest, res: Response) => {
+  logger.info(`Service: readAllNotifications ${req.method} ${req.url}`);
+  const connection = await getDBConnection();
+  const repository = connection.getRepository(NotificationEntity);
+
+  await repository.update({ userId: req.id, isRead: false }, { isRead: true });
+
+  return res.status(200).json({
+    success: true,
+    message: 'All notifications marked as read',
   });
 });
 

@@ -6,15 +6,24 @@ import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
 export async function getNotifications(params?: {
   page?: number;
   limit?: number;
+  perPage?: number;
   status?: string;
+  isRead?: boolean | string;
   type?: string;
+  search?: string;
 }) {
-  const { page, limit, status, type } = params || {};
-  let queryString = "";
-  if (page) queryString += `page=${page}&`;
-  if (limit) queryString += `limit=${limit}&`;
-  if (status) queryString += `status=${status}&`;
-  if (type) queryString += `type=${type}&`;
+  const query = new URLSearchParams();
+  if (params) {
+    if (params.page !== undefined) query.set("page", String(params.page));
+    if (params.limit !== undefined) query.set("limit", String(params.limit));
+    if (params.perPage !== undefined)
+      query.set("perPage", String(params.perPage));
+    if (params.status) query.set("status", String(params.status));
+    if (params.isRead !== undefined) query.set("isRead", String(params.isRead));
+    if (params.type) query.set("type", String(params.type));
+    if (params.search) query.set("search", String(params.search));
+  }
+  const queryString = query.toString();
 
   const headers = await getAuthHeaders();
   const res = await fetch(
@@ -31,8 +40,12 @@ export async function getNotifications(params?: {
 export async function getNotificationsForAdmin(params?: {
   page?: number;
   limit?: number;
+  perPage?: number;
   status?: string;
+  isRead?: boolean | string;
   type?: string;
+  search?: string;
+  userId?: number | string;
 }) {
   const headers: any = await getAuthHeaders();
 
@@ -46,12 +59,19 @@ export async function getNotificationsForAdmin(params?: {
     };
   }
 
-  const { page, limit, status, type } = params || {};
-  let queryString = "";
-  if (page) queryString += `page=${page}&`;
-  if (limit) queryString += `limit=${limit}&`;
-  if (status) queryString += `status=${status}&`;
-  if (type) queryString += `type=${type}&`;
+  const query = new URLSearchParams();
+  if (params) {
+    if (params.page !== undefined) query.set("page", String(params.page));
+    if (params.limit !== undefined) query.set("limit", String(params.limit));
+    if (params.perPage !== undefined)
+      query.set("perPage", String(params.perPage));
+    if (params.status) query.set("status", String(params.status));
+    if (params.isRead !== undefined) query.set("isRead", String(params.isRead));
+    if (params.type) query.set("type", String(params.type));
+    if (params.search) query.set("search", String(params.search));
+    if (params.userId !== undefined) query.set("userId", String(params.userId));
+  }
+  const queryString = query.toString();
 
   const res = await fetch(
     `${appConfig.apiUrl}/notifications/admin${queryString ? `?${queryString}` : ""}`,
@@ -77,6 +97,17 @@ export async function getNotification(id: string) {
 export async function readNotification({ id }: any) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/notifications/read/${id}`, {
+    method: "GET",
+    cache: "no-cache",
+    headers,
+  } as any);
+  return await handleResponse(res);
+}
+
+// Mark all notifications as read
+export async function readAllNotifications() {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${appConfig.apiUrl}/notifications/read-all`, {
     method: "GET",
     cache: "no-cache",
     headers,
