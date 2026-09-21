@@ -2,28 +2,28 @@
 import { ActionType } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import {
-  deleteShippingCharge,
-  getShippingCharges,
+    deleteShippingCharge,
+    getShippingCharges,
 } from "@/lib/apis/shipping-charge";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
-  setSearchedColumn,
-  setSearchText,
+    selectGlobal,
+    setAction,
+    setLoading,
+    setSearchedColumn,
+    setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  DeleteOutlined,
-  EditOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    QuestionCircleOutlined,
+    SearchOutlined,
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Input, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -41,34 +41,45 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const ShippingChargeList: React.FC = () => {
-  const [shippingCharges, setShippingCharge] = useState([] as any);
+  const [shippingCharges, setShippingCharge] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const { formatPrice } = useCurrency();
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (page: number, limit: number) => {
     dispatch(setLoading({ loading: true }));
     try {
-      const res = await getShippingCharges();
-      setShippingCharge(res.data);
+      const res = await getShippingCharges({ page, limit });
+      if (res?.data) {
+        setShippingCharge(res.data);
+        setTotal(res.total !== undefined ? res.total : res.data.length);
+      } else {
+        setShippingCharge([]);
+        setTotal(0);
+      }
     } catch (err: any) {
-      errorNotification({ message: err.message });
+      errorNotification({ message: err?.message || "Failed to load shipping charges" });
+      setShippingCharge([]);
+      setTotal(0);
     } finally {
       dispatch(setLoading({ loading: false }));
     }
   }, [dispatch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData, global.action]);
+    fetchData(currentPage, pageSize);
+  }, [fetchData, currentPage, pageSize, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ save: true }));
     try {
       await deleteShippingCharge(id);
       successNotification({ message: "Successfully deleted" });
-      fetchData();
+      fetchData(currentPage, pageSize);
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -263,21 +274,46 @@ const ShippingChargeList: React.FC = () => {
   ];
 
   return (
-    <Table
-      scroll={{ x: "auto" }}
-      loading={global.loading.loading}
-      columns={columns}
-      rowKey="id"
-      dataSource={shippingCharges}
-      pagination={{
-        pageSize: 10,
+    <div>
+      <Table
+        scroll={{ x: "auto" }}
+        loading={global.loading.loading}
+        columns={columns}
+        rowKey="id"
+        dataSource={shippingCharges}
+        pagination={false}
+        size="middle"
+        className="modern-table"
+        rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
+      />
 
-        showSizeChanger: true,
-      }}
-      size="middle"
-      className="modern-table"
-      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
-    />
+      <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-white">
+        <span className="text-xs text-gray-500 font-medium">
+          Showing{" "}
+          <strong>
+            {total === 0 ? 0 : (currentPage - 1) * pageSize + 1}
+            -
+            {Math.min(currentPage * pageSize, total)}
+          </strong>{" "}
+          of <strong>{total}</strong> shipping charges
+        </span>
+
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={total}
+          showSizeChanger
+          hideOnSinglePage={false}
+          pageSizeOptions={["5", "10", "20", "50", "100"]}
+          showQuickJumper
+          onChange={(page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+          }}
+          size="middle"
+        />
+      </div>
+    </div>
   );
 };
 

@@ -17,6 +17,10 @@ interface ApiResponse<T> {
   data?: T;
   message?: string;
   status?: string;
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
 }
 
 // Function to save a shipping charge
