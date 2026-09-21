@@ -1,6 +1,7 @@
 "use client";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getUserOrders } from "@/lib/apis/orders";
+import { getMe } from "@/lib/apis/user";
 import { getUserWishlists } from "@/lib/apis/wishlist";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
@@ -12,12 +13,29 @@ import {
     ShoppingOutlined,
     UserOutlined,
 } from "@ant-design/icons";
+import { Tooltip } from "antd";
+import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiCreditCard, FiHeart, FiShoppingBag } from "react-icons/fi";
+import {
+    FiArrowUpRight,
+    FiAward,
+    FiCalendar,
+    FiCamera,
+    FiCheck,
+    FiClock,
+    FiCopy,
+    FiCreditCard,
+    FiEdit2,
+    FiHeart,
+    FiMail,
+    FiPhone,
+    FiShield,
+    FiShoppingBag,
+} from "react-icons/fi";
 import "./notification.css";
 import NotificationsUser from "./NotificationsUser";
 import ChangePassword from "./PasswordChange";
@@ -46,6 +64,8 @@ const OrderTracker = dynamic(() => import("./OrderTracker"), { ssr: false });
 
 export default function Profile() {
   const [stats, setStats] = useState({ orders: 0, wishlist: 0, spending: 0 });
+  const [userData, setUserData] = useState<any>(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
   const searchQuery = useSearchParams();
   const categoryIdParams = searchQuery.get("tab");
   const route = useRouter();
@@ -53,19 +73,17 @@ export default function Profile() {
   const { formatPrice } = useCurrency();
 
   const tabKey = categoryIdParams ?? "my_account";
-  const userImage = session?.user?.image;
-  const userName = session?.user?.name || "User";
-  const userInitial = userName.charAt(0).toUpperCase();
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchStatsAndUser = async () => {
       try {
-        const [ordersRes, wishlistRes] = await Promise.all([
-          getUserOrders(""),
-          getUserWishlists(),
+        const [ordersRes, wishlistRes, userRes] = await Promise.all([
+          getUserOrders("").catch(() => ({ data: [] })),
+          getUserWishlists().catch(() => ({ data: [] })),
+          getMe().catch(() => null),
         ]);
-        const orders = ordersRes.data || [];
-        const wishlist = wishlistRes.data || [];
+        const orders = ordersRes?.data || [];
+        const wishlist = wishlistRes?.data || [];
         const totalSpending = orders
           .filter((o: any) => o.status === "Delivered")
           .reduce(
@@ -74,12 +92,33 @@ export default function Profile() {
             0
           );
         setStats({ orders: orders.length, wishlist: wishlist.length, spending: totalSpending });
+        if (userRes?.data) {
+          setUserData(userRes.data);
+        }
       } catch (err) {
-        console.error("Failed to fetch profile stats", err);
+        console.error("Failed to fetch profile stats and user data", err);
       }
     };
-    if (session) fetchStats();
+    if (session) fetchStatsAndUser();
   }, [session]);
+
+  const userImage = userData?.image || session?.user?.image;
+  const userName = userData?.name || session?.user?.name || "Customer";
+  const userEmail = userData?.email || session?.user?.email || "";
+  const userPhone = userData?.phone;
+  const userRole = userData?.role || "Member";
+  const memberSince = userData?.createdAt
+    ? dayjs(userData.createdAt).format("MMM YYYY")
+    : null;
+  const userInitial = userName.charAt(0).toUpperCase();
+
+  const handleCopyEmail = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!userEmail) return;
+    navigator.clipboard.writeText(userEmail);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2000);
+  };
 
   const menuItems = [
     { key: "my_account", label: "My Account", icon: <UserOutlined />, component: <MyAccount /> },
@@ -99,90 +138,230 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Hero Banner ── */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
-        {/* Amber accent top line */}
-        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-global-primary via-amber-300 to-global-primary" />
+      {/* ── Premium Hero Header ── */}
+      <div className="relative bg-[#0b1120] border-b border-gray-800/80 overflow-hidden">
+        {/* Amber brand accent top line */}
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-global-primary via-amber-300 to-global-primary" />
 
-        {/* Subtle dot pattern overlay */}
+        {/* Ambient atmospheric lighting */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-global-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Subtle dot matrix pattern overlay */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.05] pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
-            backgroundSize: "32px 32px",
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "28px 28px",
           }}
         />
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-14 relative z-10">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 relative z-10">
+          {/* Identity & Actions Bar */}
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6">
 
-            {/* Avatar */}
-            <div className="relative shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white/20 shadow-2xl overflow-hidden ring-4 ring-global-primary/40">
-                {userImage ? (
-                  <Image
-                    src={getImageUrl(userImage)}
-                    alt={userName}
-                    width={96}
-                    height={96}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-global-primary text-white text-2xl sm:text-3xl font-black">
-                    {userInitial}
-                  </div>
-                )}
+            {/* Left: Avatar & Identity Details */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5 sm:gap-6">
+              
+              {/* Avatar with status ring and edit trigger */}
+              <div className="relative group shrink-0">
+                <div className="w-22 h-22 sm:w-26 sm:h-26 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl ring-4 ring-global-primary/30 transition-all duration-300 group-hover:ring-global-primary/60 bg-gray-900">
+                  {userImage ? (
+                    <Image
+                      src={getImageUrl(userImage)}
+                      alt={userName}
+                      width={104}
+                      height={104}
+                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-500 to-amber-700 text-white text-3xl font-black shadow-inner">
+                      {userInitial}
+                    </div>
+                  )}
+
+                  {/* Hover Change Photo Overlay */}
+                  <button
+                    onClick={() => handleTabChange("my_account")}
+                    onClick={() => route.replace("/profile?tab=my_account&edit=true", { scroll: false })}
+                    className="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                    title="Change Photo"
+                  >
+                    <FiCamera className="text-lg mb-0.5 text-amber-300" />
+                    <span className="text-[10px] font-semibold tracking-wider uppercase">Edit Photo</span>
+                  </button>
+                </div>
+
+                {/* Online / Active status pulse */}
+                <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#0b1120]" />
+                </span>
               </div>
-              {/* Online dot */}
-              <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900" />
-            </div>
 
-            {/* User info + stat chips */}
-            <div className="flex-1 text-center sm:text-left">
-              <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">
-                Member Account
-              </p>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight mb-0.5">
-                {userName}
-              </h1>
-              <p className="text-white/60 text-xs sm:text-sm font-medium mb-5 sm:mb-6">
-                {session?.user?.email}
-              </p>
+              {/* Name, Badges & Meta */}
+              <div className="flex-1 min-w-0">
+                {/* Badges / Tier */}
+                <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap mb-1.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    Verified Customer
+                  </span>
 
-              {/* Stats */}
-              <div className="flex items-center justify-center sm:justify-start gap-3 flex-wrap">
-                <button
-                  onClick={() => handleTabChange("orders")}
-                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl px-3 sm:px-4 py-2 cursor-pointer transition-all duration-200"
-                >
-                  <FiShoppingBag className="text-global-primary text-sm shrink-0" />
-                  <div className="text-left">
-                    <p className="text-white font-black text-sm sm:text-base leading-none">{stats.orders}</p>
-                    <p className="text-white/50 text-[9px] font-semibold uppercase tracking-wider leading-none mt-0.5">Orders</p>
-                  </div>
-                </button>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                    <FiAward className="text-xs" />
+                    {userRole === "Admin" ? "Admin Member" : "Club Member"}
+                  </span>
+                </div>
 
-                <button
-                  onClick={() => handleTabChange("wishlist")}
-                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl px-3 sm:px-4 py-2 cursor-pointer transition-all duration-200"
-                >
-                  <FiHeart className="text-rose-400 text-sm shrink-0" />
-                  <div className="text-left">
-                    <p className="text-white font-black text-sm sm:text-base leading-none">{stats.wishlist}</p>
-                    <p className="text-white/50 text-[9px] font-semibold uppercase tracking-wider leading-none mt-0.5">Wishlist</p>
-                  </div>
-                </button>
+                {/* User Name */}
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight mb-1">
+                  {userName}
+                </h1>
 
-                <div className="flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-3 sm:px-4 py-2">
-                  <FiCreditCard className="text-green-400 text-sm shrink-0" />
-                  <div className="text-left">
-                    <p className="text-white font-black text-sm sm:text-base leading-none">{formatPrice(stats.spending)}</p>
-                    <p className="text-white/50 text-[9px] font-semibold uppercase tracking-wider leading-none mt-0.5">Total Spent</p>
-                  </div>
+                {/* Meta details: Email (clickable copy), Phone, Member Since */}
+                <div className="flex items-center justify-center sm:justify-start gap-3 sm:gap-4 flex-wrap text-xs text-gray-300/80 font-medium">
+                  {/* Email with copy */}
+                  {userEmail && (
+                    <Tooltip title={copiedEmail ? "Copied to clipboard!" : "Click to copy email"}>
+                      <button
+                        onClick={handleCopyEmail}
+                        className="inline-flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer group/email py-0.5"
+                      >
+                        <FiMail className="text-gray-400 group-hover/email:text-amber-400 transition-colors" />
+                        <span className="truncate max-w-[200px] sm:max-w-none">{userEmail}</span>
+                        {copiedEmail ? (
+                          <FiCheck className="text-emerald-400 text-xs shrink-0" />
+                        ) : (
+                          <FiCopy className="text-gray-500 group-hover/email:text-gray-300 text-xs shrink-0 transition-colors" />
+                        )}
+                      </button>
+                    </Tooltip>
+                  )}
+
+                  {/* Phone */}
+                  {userPhone && (
+                    <span className="inline-flex items-center gap-1.5 text-gray-300/80">
+                      <FiPhone className="text-gray-400" />
+                      <span>{userPhone}</span>
+                    </span>
+                  )}
+
+                  {/* Member Since */}
+                  {memberSince && (
+                    <span className="inline-flex items-center gap-1.5 text-gray-300/80">
+                      <FiCalendar className="text-gray-400" />
+                      <span>Member since {memberSince}</span>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
+
+            {/* Right: Quick Action CTAs */}
+            <div className="flex items-center gap-3 shrink-0 flex-wrap justify-center sm:justify-start">
+              <button
+                onClick={() => handleTabChange("my_account")}
+                onClick={() => route.replace("/profile?tab=my_account&edit=true", { scroll: false })}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/15 border border-white/15 hover:border-amber-400/40 shadow-sm transition-all duration-200 cursor-pointer backdrop-blur-sm"
+              >
+                <FiEdit2 className="text-amber-400 text-sm" />
+                <span>Edit Profile</span>
+              </button>
+
+              <button
+                onClick={() => handleTabChange("track_order")}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-gray-200 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 shadow-sm transition-all duration-200 cursor-pointer backdrop-blur-sm"
+              >
+                <FiClock className="text-gray-400 text-sm" />
+                <span>Track Order</span>
+              </button>
+            </div>
           </div>
+
+          {/* Bottom KPI Metric Cards Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-6 border-t border-white/10">
+            {/* Card 1: Orders */}
+            <button
+              onClick={() => handleTabChange("orders")}
+              className="group text-left p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-amber-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                  <FiShoppingBag />
+                </span>
+                <FiArrowUpRight className="text-gray-500 group-hover:text-amber-400 transition-colors text-base" />
+              </div>
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-white leading-none mb-1 tracking-tight">
+                  {stats.orders}
+                </p>
+                <p className="text-[11px] font-bold text-gray-300/80 uppercase tracking-wider">Total Orders</p>
+                <p className="text-[10px] text-gray-400 font-medium mt-0.5 hidden sm:block">View order history →</p>
+              </div>
+            </button>
+
+            {/* Card 2: Wishlist */}
+            <button
+              onClick={() => handleTabChange("wishlist")}
+              className="group text-left p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-rose-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-8 h-8 rounded-lg bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                  <FiHeart />
+                </span>
+                <FiArrowUpRight className="text-gray-500 group-hover:text-rose-400 transition-colors text-base" />
+              </div>
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-white leading-none mb-1 tracking-tight">
+                  {stats.wishlist}
+                </p>
+                <p className="text-[11px] font-bold text-gray-300/80 uppercase tracking-wider">Saved Wishlist</p>
+                <p className="text-[10px] text-gray-400 font-medium mt-0.5 hidden sm:block">Explore saved items →</p>
+              </div>
+            </button>
+
+            {/* Card 3: Spending */}
+            <button
+              onClick={() => handleTabChange("orders")}
+              className="group text-left p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                  <FiCreditCard />
+                </span>
+                <FiArrowUpRight className="text-gray-500 group-hover:text-emerald-400 transition-colors text-base" />
+              </div>
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-white leading-none mb-1 tracking-tight truncate">
+                  {formatPrice(stats.spending)}
+                </p>
+                <p className="text-[11px] font-bold text-gray-300/80 uppercase tracking-wider">Total Spent</p>
+                <p className="text-[10px] text-gray-400 font-medium mt-0.5 hidden sm:block">Delivered purchases</p>
+              </div>
+            </button>
+
+            {/* Card 4: Security & Status */}
+            <button
+              onClick={() => handleTabChange("change_password")}
+              className="group text-left p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-blue-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-400 border border-blue-500/30 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                  <FiShield />
+                </span>
+                <FiArrowUpRight className="text-gray-500 group-hover:text-blue-400 transition-colors text-base" />
+              </div>
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-emerald-400 leading-none mb-1 tracking-tight flex items-center gap-1.5">
+                  <span>Protected</span>
+                </p>
+                <p className="text-[11px] font-bold text-gray-300/80 uppercase tracking-wider">Account Security</p>
+                <p className="text-[10px] text-gray-400 font-medium mt-0.5 hidden sm:block">Manage password →</p>
+              </div>
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -244,6 +423,9 @@ export default function Profile() {
                   </h2>
                   <p className="text-[10px] text-gray-400 font-medium mt-0.5">
                     Manage your {activeItem?.label?.toLowerCase()}
+                    {tabKey === "my_account"
+                      ? "Manage your account details and preferences"
+                      : `Manage your ${activeItem?.label?.toLowerCase()}`}
                   </p>
                 </div>
               </div>
