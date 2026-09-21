@@ -12,9 +12,7 @@ import {
 } from "@/redux/features/global/globalSlice";
 import {
     CheckOutlined,
-    ClockCircleOutlined,
     DeleteOutlined,
-    EnvironmentOutlined,
     EyeOutlined,
     PrinterOutlined,
     QuestionCircleOutlined,
@@ -26,15 +24,13 @@ import {
     Badge,
     Button,
     Card,
-    Descriptions,
-    Divider,
     Input,
+    Pagination,
     Popconfirm,
-    Select,
     Space,
     Table,
+    Tabs,
     Tag,
-    Timeline,
     Tooltip,
     Typography
 } from "antd";
@@ -67,8 +63,11 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const Order = () => {
-  const [tabKey, setTabKey] = useState("Pending");
+  const [tabKey, setTabKey] = useState("All");
   const [orders, setOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [searchInput, setSearchInput] = useState(null) as any;
   const [selectedOrderForDrawer, setSelectedOrderForDrawer] = useState<any>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -82,15 +81,32 @@ const Order = () => {
   useEffect(() => {
     (async () => {
       dispatch(setLoading({ loading: true }));
-      const res = await getOrders({ status: tabKey });
-      const newOrders = res.data.map((items: any, idx: number) => ({
-        ...items,
-        key: idx.toString(),
-      }));
-      setOrders(newOrders);
-      dispatch(setLoading({ loading: false }));
+      try {
+        const res = await getOrders({
+          status: tabKey === "All" ? undefined : tabKey,
+          page: currentPage,
+          limit: pageSize,
+        });
+        if (res?.data) {
+          const newOrders = (res.data || []).map((items: any, idx: number) => ({
+            ...items,
+            key: items.id || idx.toString(),
+          }));
+          setOrders(newOrders);
+          setTotalOrders(res.total !== undefined ? res.total : newOrders.length);
+        } else {
+          setOrders([]);
+          setTotalOrders(0);
+        }
+      } catch (error) {
+        console.error("Failed to load orders", error);
+        setOrders([]);
+        setTotalOrders(0);
+      } finally {
+        dispatch(setLoading({ loading: false }));
+      }
     })();
-  }, [dispatch, tabKey, global.action]);
+  }, [dispatch, tabKey, currentPage, pageSize, global.action]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -109,6 +125,7 @@ const Order = () => {
 
   const onChange = (key: string) => {
     setTabKey(key);
+    setCurrentPage(1);
   };
 
   const handleSearch = (
@@ -198,276 +215,6 @@ const Order = () => {
         text
       ),
   });
-
-  const expandedRowRender = (value: any) => {
-    const { dabitTotal, creditTotal } = value.payments.reduce(
-      (acc: any, element: any) => {
-        if (element.paymentType === "Credit")
-          acc.creditTotal += +element.amount;
-        if (element.paymentType === "Debit") acc.dabitTotal += +element.amount;
-        return acc;
-      },
-      { dabitTotal: 0, creditTotal: 0 }
-    );
-
-    const paidAmount = dabitTotal - creditTotal;
-
-    const childColumns: any = [
-      {
-        title: "Product",
-        dataIndex: "product",
-        key: "product",
-        render: (v: { name: string }) => <span className="font-medium">{v.name}</span>,
-      },
-      {
-        title: "Color",
-        dataIndex: "productVariant",
-        render: (v: any) => {
-          return v?.color?.name ? (
-            <Tag color="blue">{v.color.name}</Tag>
-          ) : (
-            <span className="text-gray-400">-</span>
-          );
-        },
-      },
-      {
-        title: "Size",
-        dataIndex: "productVariant",
-        render: (v: any) => {
-          return v?.size?.name ? (
-            <Tag>{v.size.name}</Tag>
-          ) : (
-            <span className="text-gray-400">-</span>
-          );
-        },
-      },
-      {
-        title: "Material",
-        dataIndex: "material",
-        key: "material",
-        render: (text: string) => text || <span className="text-gray-400">-</span>,
-      },
-      {
-        title: "Purchase Price",
-        dataIndex: "purchasePrice",
-        key: "purchasePrice",
-        render: (value: number) => <span className="text-gray-600">{formatPrice(value)}</span>,
-      },
-      {
-        title: "Unit Price",
-        dataIndex: "unitPrice",
-        key: "unitPrice",
-        render: (value: number) => <span className="font-medium">{formatPrice(value)}</span>,
-      },
-      {
-        title: "Tax",
-        key: "taxAmount",
-        dataIndex: "taxAmount",
-        render: (value: number) => <span className="text-gray-600">{formatPrice(value)}</span>,
-      },
-      {
-        title: "Discount",
-        dataIndex: "totalDiscountAmount",
-        key: "totalDiscountAmount",
-        render: (value: number) =>
-          value > 0 ? (
-            <span className="text-red-600">-{formatPrice(value)}</span>
-          ) : (
-            <span className="text-gray-400">-</span>
-          ),
-      },
-      {
-        title: "Sale Price",
-        key: "salePrice",
-        render: (v: any) => {
-          return (
-            <span className="font-semibold text-green-600">
-              {formatPrice(+v.unitPrice - +v.totalDiscountAmount + +v.taxAmount)}
-            </span>
-          );
-        },
-      },
-      {
-        title: "Qty",
-        dataIndex: "qty",
-        key: "qty",
-        render: (text: number) => <span className="font-medium">×{text}</span>,
-      },
-      {
-        title: "Ret. Qty",
-        dataIndex: "approvedQty",
-        key: "approvedQty",
-        render: (text: number) => text > 0 ? <span className="text-orange-600">-{text}</span> : <span className="text-gray-400">0</span>,
-      },
-      {
-        title: "Net Qty",
-        key: "netQty",
-        render: (v: any) => <span className="font-bold">{(v.qty || 0) - (v.approvedQty || 0)}</span>,
-      },
-      {
-        title: "Sub Total",
-        key: "subTotal",
-        dataIndex: "subTotal",
-        render: (value: number, record: any) => {
-          const netQty = (record.qty || 1) - (record.approvedQty || 0);
-          const effectiveSubTotal = (Number(value) / (record.qty || 1)) * netQty;
-          return <span className="font-bold">{formatPrice(effectiveSubTotal)}</span>;
-        },
-      },
-    ];
-
-    return (
-      <div className="p-2 bg-gray-50">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Order Info */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Order Details Card */}
-            <Card className="shadow-sm" variant="borderless">
-              <div className="space-y-3">
-                {value.status === "Canceled" && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                    <Text strong className="text-red-700">Cancellation Reason: </Text>
-                    <Text className="text-red-600">{value.cancelResson}</Text>
-                  </div>
-                )}
-
-                <Descriptions column={1} size="small">
-                  <Descriptions.Item label={<Text strong>Order No</Text>}>
-                    <Text strong copyable className="text-lg">
-                      {value.trackingNo}
-                    </Text>
-                  </Descriptions.Item>
-                  {value.tranId && (
-                    <Descriptions.Item label={<Text strong>Transaction ID</Text>}>
-                      <Text copyable className="text-lg">
-                        {value.tranId}
-                      </Text>
-                    </Descriptions.Item>
-                  )}
-                  {value.returnedStatus && (
-                    <Descriptions.Item label={<Text strong>Return Status</Text>}>
-                      <Tag color="orange">{value.returnedStatus}</Tag>
-                    </Descriptions.Item>
-                  )}
-                  <Descriptions.Item label={<Text strong><EnvironmentOutlined /> Shipping Address</Text>}>
-                    <Text>{value.shippingAddress?.address}</Text>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={<Text strong><UserOutlined /> Delivery Man</Text>}>
-                    <Text>{value?.deliveryMan?.name || "Not assigned"}</Text>
-                  </Descriptions.Item>
-                </Descriptions>
-              </div>
-            </Card>
-
-            {/* Order Items Card */}
-            <Card title={<Title level={5} className="mb-0">Order Items</Title>} className="shadow-sm" variant="borderless">
-              <Table
-                columns={childColumns}
-                size="small"
-                scroll={{ x: "max-content" }}
-                dataSource={value.orderItems}
-                pagination={false}
-                className="border border-gray-100 rounded-lg overflow-hidden"
-              />
-            </Card>
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-6">
-            {/* Order Timeline Card */}
-            <Card title={<Title level={5} className="mb-0">Order History</Title>} className="shadow-sm" variant="borderless">
-              <Timeline
-                items={(value?.orderTrackings || []).map(
-                  (timeline: any, idx: number) => ({
-                    dot: <ClockCircleOutlined className="text-blue-500" />,
-                    color: "blue",
-                    children: (
-                      <div key={idx} className="pb-2">
-                        <Text strong className="block">{timeline.status}</Text>
-                        <Text type="secondary" className="text-xs block">
-                          {dayjs(timeline.createdAt).format("MMMM D, YYYY h:mm A")}
-                        </Text>
-                        {timeline.location && (
-                          <Text type="secondary" className="text-xs block">
-                            <EnvironmentOutlined /> {timeline.location}
-                          </Text>
-                        )}
-                      </div>
-                    ),
-                  })
-                )}
-              />
-            </Card>
-
-            {/* Payment Summary Card */}
-            <Card title={<Title level={5} className="mb-0">Payment Summary</Title>} className="shadow-sm" variant="borderless">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Text type="secondary">Total Qty</Text>
-                  <Text strong>{value.totalQty}</Text>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <Text type="secondary">Net Amount</Text>
-                  <Text strong>{formatPrice(+value.subTotal)}</Text>
-                </div>
-
-                {+value.totalItemsDiscount > 0 && (
-                  <div className="flex justify-between items-center">
-                    <Text type="secondary">Product Discount</Text>
-                    <Text className="text-red-600">-{formatPrice(value.totalItemsDiscount)}</Text>
-                  </div>
-                )}
-
-                {+value.couponDiscount > 0 && (
-                  <div className="flex justify-between items-center">
-                    <Text type="secondary">Coupon Discount</Text>
-                    <Text className="text-red-600">-{formatPrice(value.couponDiscount)}</Text>
-                  </div>
-                )}
-
-                <div className="flex justify-between items-center">
-                  <Text type="secondary">Tax Amount</Text>
-                  <Text>{formatPrice(value.totalTax)}</Text>
-                </div>
-
-                {+value.totalReturned > 0 && (
-                  <div className="flex justify-between items-center">
-                    <Text type="secondary" className="text-orange-600 font-bold">Returned Amount</Text>
-                    <Text className="text-orange-600 font-bold">-{formatPrice(value.totalReturned)}</Text>
-                  </div>
-                )}
-
-                {paidAmount > 0 && (
-                  <div className="flex justify-between items-center">
-                    <Text type="secondary">Paid Amount</Text>
-                    <Text className="text-green-600">{formatPrice(paidAmount)}</Text>
-                  </div>
-                )}
-
-                {+value.shippingCharge > 0 && (
-                  <div className="flex justify-between items-center">
-                    <Text type="secondary">Shipping</Text>
-                    <Text>{formatPrice(value.shippingCharge)}</Text>
-                  </div>
-                )}
-
-                <Divider className="my-3" />
-
-                <div className="flex justify-between items-center bg-gray-50 -mx-6 -mb-6 p-4 rounded-b-lg">
-                  <Text strong className="text-lg">Balance Due</Text>
-                  <Text strong className="text-lg text-green-600">
-                    {formatPrice(+value.grandTotal - +value.totalReturned - paidAmount)}
-                  </Text>
-                </div>
-              </div>
-            </Card>
-
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const columns: TableColumnsType<DataType> = [
     {
@@ -628,11 +375,20 @@ const Order = () => {
 
   const items: TabsProps["items"] = [
     {
+      key: "All",
+      label: (
+        <span className="flex items-center gap-2">
+          All Orders
+          <Badge count={tabKey === "All" ? totalOrders : 0} showZero={false} />
+        </span>
+      ),
+    },
+    {
       key: "Pending",
       label: (
         <span className="flex items-center gap-2">
           Pending
-          <Badge count={tabKey === "Pending" ? orders.length : 0} showZero={false} />
+          <Badge count={tabKey === "Pending" ? totalOrders : 0} showZero={false} />
         </span>
       ),
     },
@@ -641,7 +397,7 @@ const Order = () => {
       label: (
         <span className="flex items-center gap-2">
           Processing
-          <Badge count={tabKey === "Processing" ? orders.length : 0} showZero={false} />
+          <Badge count={tabKey === "Processing" ? totalOrders : 0} showZero={false} />
         </span>
       ),
     },
@@ -650,7 +406,7 @@ const Order = () => {
       label: (
         <span className="flex items-center gap-2">
           Shipped
-          <Badge count={tabKey === "Shipped" ? orders.length : 0} showZero={false} />
+          <Badge count={tabKey === "Shipped" ? totalOrders : 0} showZero={false} />
         </span>
       ),
     },
@@ -659,17 +415,16 @@ const Order = () => {
       label: (
         <span className="flex items-center gap-2">
           Canceled
-          <Badge count={tabKey === "Canceled" ? orders.length : 0} showZero={false} />
+          <Badge count={tabKey === "Canceled" ? totalOrders : 0} showZero={false} />
         </span>
       ),
     },
-
     {
       key: "Delivered",
       label: (
         <span className="flex items-center gap-2">
           Delivered
-          <Badge count={tabKey === "Delivered" ? orders.length : 0} showZero={false} />
+          <Badge count={tabKey === "Delivered" ? totalOrders : 0} showZero={false} />
         </span>
       ),
     },
@@ -689,37 +444,76 @@ const Order = () => {
 
       {/* Tabs & Table Card */}
       <Card className="shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white">
-          <Title level={5} className="mb-0">Order List</Title>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-sm">Filter by Status:</span>
-            <Select
-              defaultValue="Pending"
-              value={tabKey}
-              onChange={onChange}
-              style={{ width: 200 }}
-              options={items.map((item: any) => ({
-                label: item.label,
-                value: item.key,
-              }))}
-            />
+        <div className="px-6 pt-4 border-b border-gray-100 bg-white">
+          <div className="flex justify-between items-center mb-1">
+            <Title level={5} className="mb-0">Order List</Title>
+            <span className="text-xs text-gray-500 font-medium">
+              Total Orders: <strong>{totalOrders}</strong>
+            </span>
           </div>
+          <Tabs
+            activeKey={tabKey}
+            onChange={onChange}
+            items={items}
+            className="order-status-tabs -mb-[1px]"
+          />
         </div>
+
         <Table
           scroll={{ x: "auto" }}
           dataSource={orders}
           columns={columns}
-          expandable={{ expandedRowRender }}
           loading={global.loading.loading}
-          pagination={{
-            pageSize: 10,
-
-            showSizeChanger: true,
-          }}
+          rowKey="id"
+          pagination={false}
           size="middle"
           className="modern-table"
           rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
+          onRow={(record: any) => ({
+            onClick: (e) => {
+              const target = e.target as HTMLElement;
+              if (
+                target.closest("button") ||
+                target.closest(".ant-popconfirm") ||
+                target.closest(".ant-popover") ||
+                target.closest(".ant-tooltip") ||
+                target.closest(".ant-select")
+              ) {
+                return;
+              }
+              setSelectedOrderForDrawer(record);
+              setDrawerOpen(true);
+            },
+          })}
         />
+
+        {/* Dedicated Modern Pagination Bar */}
+        <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-white">
+          <span className="text-xs text-gray-500 font-medium">
+            Showing{" "}
+            <strong>
+              {totalOrders === 0 ? 0 : (currentPage - 1) * pageSize + 1}
+              -
+              {Math.min(currentPage * pageSize, totalOrders)}
+            </strong>{" "}
+            of <strong>{totalOrders}</strong> orders
+          </span>
+
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalOrders}
+            showSizeChanger
+            hideOnSinglePage={false}
+            pageSizeOptions={["5", "10", "20", "50", "100"]}
+            showQuickJumper
+            onChange={(page, size) => {
+              setCurrentPage(page);
+              setPageSize(size);
+            }}
+            size="middle"
+          />
+        </div>
       </Card>
 
       {global.action.orderStatusUpdate && <OrderStatusChange />}
