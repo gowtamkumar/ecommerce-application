@@ -57,9 +57,22 @@ export async function getOrderQuery(params: {
   return await handleResponse(res);
 }
 
-export async function getUserOrders(status: string) {
+export async function getUserOrders(
+  params?: { status?: string; page?: number; limit?: number } | string,
+) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/orders/user?status=${status}`, {
+  let url = `${appConfig.apiUrl}/orders/user`;
+  if (typeof params === "string") {
+    if (params) url += `?status=${params}`;
+  } else if (params) {
+    const query = new URLSearchParams();
+    if (params.status) query.append("status", params.status);
+    if (params.page) query.append("page", String(params.page));
+    if (params.limit) query.append("limit", String(params.limit));
+    const qs = query.toString();
+    if (qs) url += `?${qs}`;
+  }
+  const res = await fetch(url, {
     method: "GET",
     cache: "no-cache",
     headers,

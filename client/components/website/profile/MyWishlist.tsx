@@ -12,7 +12,7 @@ import {
     selectGlobal,
     setAction,
 } from "@/redux/features/global/globalSlice";
-import { Input, Rate, Tooltip } from "antd";
+import { Input, Pagination, Rate, Select, Tooltip } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -21,7 +21,7 @@ import {
     FiHeart,
     FiSearch,
     FiShoppingBag,
-    FiTrash2,
+    FiTrash2
 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -51,7 +51,13 @@ export default function MyWishlist() {
   const [wishlists, setWishlists] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<string>("recent");
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
 
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
@@ -102,13 +108,60 @@ export default function MyWishlist() {
     }
   };
 
-  const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return wishlists;
-    const q = searchQuery.toLowerCase().trim();
-    return wishlists.filter((item) =>
-      item.name?.toLowerCase().includes(q)
-    );
-  }, [wishlists, searchQuery]);
+  // Filter & Sort
+  const filteredAndSortedItems = useMemo(() => {
+    let result = [...wishlists];
+
+    // Search query filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(
+        (item) =>
+          item.name?.toLowerCase().includes(q) ||
+          item.brand?.name?.toLowerCase().includes(q)
+      );
+    }
+
+    // In-Stock only filter
+    if (inStockOnly) {
+      result = result.filter(
+        (item) => item.stockQty === undefined || item.stockQty > 0
+      );
+    }
+
+    // Sorting
+    if (sortBy === "price_asc") {
+      result.sort((a, b) => Number(a.finalPrice || 0) - Number(b.finalPrice || 0));
+    } else if (sortBy === "price_desc") {
+      result.sort((a, b) => Number(b.finalPrice || 0) - Number(a.finalPrice || 0));
+    } else if (sortBy === "rating") {
+      result.sort((a, b) => Number(b.avgRating || 0) - Number(a.avgRating || 0));
+    }
+
+    return result;
+  }, [wishlists, searchQuery, inStockOnly, sortBy]);
+
+  // Paginated items
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredAndSortedItems.slice(startIndex, startIndex + pageSize);
+  }, [filteredAndSortedItems, currentPage, pageSize]);
+
+  // Reset page when filters change
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (val: string) => {
+    setSortBy(val);
+    setCurrentPage(1);
+  };
+
+  const handleToggleInStock = () => {
+    setInStockOnly((prev) => !prev);
+    setCurrentPage(1);
+  };
 
   // ── Skeleton Loader ──
   if (loading) {
@@ -126,7 +179,7 @@ export default function MyWishlist() {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-2xl p-3.5 border border-gray-100 space-y-3 shadow-sm"
+              className="bg-white rounded-2xl p-3.5 border border-gray-100 space-y-3 shadow-xs"
             >
               <div className="aspect-square bg-gray-100 rounded-xl animate-pulse" />
               <div className="space-y-2 pt-1">
@@ -148,15 +201,15 @@ export default function MyWishlist() {
   // ── Empty State ──
   if (!loading && !wishlists.length) {
     return (
-      <div className="min-h-[420px] flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-gray-100 shadow-sm text-center">
-        <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center text-3xl mb-5 shadow-sm">
+      <div className="min-h-[440px] flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-gray-100 shadow-xs text-center">
+        <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center text-3xl mb-5 shadow-inner">
           <FiHeart className="w-9 h-9" />
         </div>
-        <h3 className="text-xl font-black text-gray-900 mb-1.5">
+        <h3 className="text-xl font-black text-gray-900 mb-1.5 tracking-tight">
           Your Wishlist is Empty
         </h3>
         <p className="text-xs sm:text-sm text-gray-400 max-w-sm mb-6 leading-relaxed">
-          Explore our collection, discover products you love, and tap the heart
+          Explore our collection, discover items you love, and tap the heart
           icon to save them for later!
         </p>
         <Link
@@ -173,56 +226,93 @@ export default function MyWishlist() {
 
   return (
     <div className="space-y-6">
-      {/* ── Header Strip & Search ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+      {/* ── Header Title & Controls ── */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-gray-100">
         <div>
           <div className="flex items-center gap-2.5">
             <h3 className="text-base sm:text-lg font-black text-gray-900 leading-tight">
               My Saved Items
             </h3>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-50 text-amber-700 border border-amber-200/80">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-50 text-amber-800 border border-amber-200/80">
               {wishlists.length} {wishlists.length === 1 ? "item" : "items"}
             </span>
           </div>
-          <p className="text-xs text-gray-400 mt-0.5">
-            Items you have bookmarked to review or purchase later
+          <p className="text-xs text-gray-400 mt-0.5 font-medium">
+            Monitor price drops, compare saved favorites, and quickly move items into your cart.
           </p>
         </div>
 
-        {wishlists.length > 2 && (
-          <div className="w-full sm:w-64">
+        {/* Filter Controls Bar */}
+        <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+          {/* Search */}
+          <div className="w-full sm:w-56">
             <Input
               prefix={<FiSearch className="text-gray-400 mr-1" />}
               placeholder="Search wishlist..."
               allowClear
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="rounded-xl h-10 text-xs border-gray-200 focus:border-global-primary"
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="rounded-xl h-10 text-xs border-gray-200 hover:border-global-primary focus:border-global-primary"
             />
           </div>
-        )}
+
+          {/* Sort Selector */}
+          <Select
+            value={sortBy}
+            onChange={handleSortChange}
+            className="w-40 sm:w-44 h-10 [&_.ant-select-selector]:rounded-xl! text-xs font-semibold"
+            options={[
+              { value: "recent", label: "Recently Added" },
+              { value: "price_asc", label: "Price: Low to High" },
+              { value: "price_desc", label: "Price: High to Low" },
+              { value: "rating", label: "Highest Rated" },
+            ]}
+          />
+
+          {/* In-Stock Toggle */}
+          <button
+            onClick={handleToggleInStock}
+            className={`inline-flex items-center gap-1.5 px-3.5 h-10 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+              inStockOnly
+                ? "bg-emerald-50 text-emerald-700 border-emerald-300 shadow-xs"
+                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                inStockOnly ? "bg-emerald-500" : "bg-gray-300"
+              }`}
+            />
+            <span>In Stock</span>
+          </button>
+        </div>
       </div>
 
-      {/* ── No Search Results ── */}
-      {filteredItems.length === 0 ? (
-        <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-gray-100">
-          <p className="text-sm font-semibold text-gray-700 mb-1">
-            No items matching &ldquo;{searchQuery}&rdquo;
+      {/* ── No Search / Filter Results ── */}
+      {filteredAndSortedItems.length === 0 ? (
+        <div className="p-10 text-center bg-gray-50/50 rounded-2xl border border-gray-100">
+          <FiHeart className="mx-auto text-3xl text-gray-300 mb-2" />
+          <p className="text-sm font-bold text-gray-800 mb-1">
+            No matching saved items
           </p>
-          <p className="text-xs text-gray-400 mb-3">
-            Try a different search keyword to find saved items.
+          <p className="text-xs text-gray-400 mb-4">
+            No wishlist items match your active search or filter criteria.
           </p>
           <button
-            onClick={() => setSearchQuery("")}
-            className="text-xs font-bold text-global-primary hover:underline cursor-pointer"
+            onClick={() => {
+              setSearchQuery("");
+              setInStockOnly(false);
+              setSortBy("recent");
+            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-global-primary font-bold text-xs rounded-xl border border-amber-300 shadow-2xs hover:bg-amber-50 transition-colors cursor-pointer"
           >
-            Clear Search
+            Clear Filters
           </button>
         </div>
       ) : (
         /* ── Product Grid ── */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredItems.map((item) => {
+          {paginatedItems.map((item) => {
             const { thumbnailUrl, hoverUrl } = getProductImageUrls(
               item.thumbnailImage,
               item.hoverImage
@@ -234,10 +324,15 @@ export default function MyWishlist() {
             const isDeleting =
               deletingId === (item.wishlistId || item.id);
 
+            const savings =
+              item.salePrice && Number(item.salePrice) > Number(item.finalPrice)
+                ? Number(item.salePrice) - Number(item.finalPrice)
+                : 0;
+
             return (
               <div
                 key={item.wishlistId || item.id}
-                className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full shadow-sm"
+                className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/50 transition-all duration-300 flex flex-col h-full shadow-xs"
               >
                 {/* ── Image Container ── */}
                 <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
@@ -276,7 +371,7 @@ export default function MyWishlist() {
                   {/* Discount / Stock Badges */}
                   <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5 pointer-events-none">
                     {discountVal > 0 && (
-                      <span className="bg-rose-600 text-white px-2 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wide shadow-sm">
+                      <span className="bg-rose-600 text-white px-2 py-0.5 rounded-full font-extrabold text-[10px] uppercase tracking-wide shadow-sm">
                         -{item.discountValue}
                         {item.discountStrategy === "Percentage"
                           ? "%"
@@ -285,7 +380,7 @@ export default function MyWishlist() {
                       </span>
                     )}
                     {isOutOfStock && (
-                      <span className="bg-gray-900/90 text-white px-2 py-0.5 rounded-full font-bold text-[10px] uppercase tracking-wide shadow-sm">
+                      <span className="bg-gray-900/90 text-white px-2.5 py-0.5 rounded-full font-extrabold text-[10px] uppercase tracking-wider shadow-sm backdrop-blur-xs">
                         Out of Stock
                       </span>
                     )}
@@ -308,13 +403,13 @@ export default function MyWishlist() {
                 <div className="p-3.5 sm:p-4 flex flex-col flex-1 gap-2 bg-white">
                   {/* Brand tag if available */}
                   {item.brand?.name && (
-                    <span className="inline-block bg-gray-100 text-gray-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full truncate max-w-[120px]">
+                    <span className="inline-block bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full truncate max-w-[120px]">
                       {item.brand.name}
                     </span>
                   )}
 
                   {/* Title */}
-                  <h4 className="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-gray-700 transition-colors line-clamp-2 min-h-[2.5rem] leading-snug">
+                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-global-primary transition-colors line-clamp-2 min-h-[2.5rem] leading-snug">
                     <Link href={`/products/${item.slug}`}>{item.name}</Link>
                   </h4>
 
@@ -330,14 +425,19 @@ export default function MyWishlist() {
                     </span>
                   </div>
 
-                  {/* Price Row */}
-                  <div className="flex items-baseline gap-1.5 flex-wrap mt-auto pt-1">
-                    <span className="text-sm sm:text-[15px] font-bold text-gray-900 tracking-tight">
+                  {/* Price Row & Savings */}
+                  <div className="flex items-baseline gap-2 flex-wrap mt-auto pt-1">
+                    <span className="text-sm sm:text-base font-black text-gray-900 tracking-tight">
                       {formatPrice(item.finalPrice)}
                     </span>
                     {discountVal > 0 && item.salePrice && (
                       <span className="text-[11px] text-gray-400 line-through font-medium">
                         {formatPrice(item.salePrice)}
+                      </span>
+                    )}
+                    {savings > 0 && (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60">
+                        Save {formatPrice(savings)}
                       </span>
                     )}
                   </div>
@@ -346,13 +446,36 @@ export default function MyWishlist() {
                   <div className="pt-1.5">
                     <AddToCartButton
                       item={{ ...item, qty: 1 }}
-                      className="h-9 sm:h-10 rounded-xl text-[11px] sm:text-xs font-semibold tracking-wide"
+                      className="h-9 sm:h-10 rounded-xl text-[11px] sm:text-xs font-bold tracking-wide"
                     />
                   </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* ── Pagination Bar ── */}
+      {filteredAndSortedItems.length > pageSize && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-100">
+          <p className="text-xs text-gray-500 font-medium">
+            Showing {(currentPage - 1) * pageSize + 1} -{" "}
+            {Math.min(currentPage * pageSize, filteredAndSortedItems.length)} of{" "}
+            {filteredAndSortedItems.length} items
+          </p>
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={filteredAndSortedItems.length}
+            onChange={(page, size) => {
+              setCurrentPage(page);
+              setPageSize(size);
+            }}
+            showSizeChanger
+            pageSizeOptions={["8", "16", "32", "48"]}
+            size="small"
+          />
         </div>
       )}
     </div>

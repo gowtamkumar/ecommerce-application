@@ -407,6 +407,8 @@ export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Respon
       status: status.toString().split(','),
     });
 
+  qb.orderBy('order.id', 'DESC');
+
   if (page || limit) {
     const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
     const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));

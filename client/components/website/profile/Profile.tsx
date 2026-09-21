@@ -182,7 +182,6 @@ export default function Profile() {
 
                   {/* Hover Change Photo Overlay */}
                   <button
-                    onClick={() => handleTabChange("my_account")}
                     onClick={() => route.replace("/profile?tab=my_account&edit=true", { scroll: false })}
                     className="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
                     title="Change Photo"
@@ -261,7 +260,6 @@ export default function Profile() {
             {/* Right: Quick Action CTAs */}
             <div className="flex items-center gap-3 shrink-0 flex-wrap justify-center sm:justify-start">
               <button
-                onClick={() => handleTabChange("my_account")}
                 onClick={() => route.replace("/profile?tab=my_account&edit=true", { scroll: false })}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-white/10 hover:bg-white/15 border border-white/15 hover:border-amber-400/40 shadow-sm transition-all duration-200 cursor-pointer backdrop-blur-sm"
               >
@@ -422,7 +420,6 @@ export default function Profile() {
                     {activeItem?.label}
                   </h2>
                   <p className="text-[10px] text-gray-400 font-medium mt-0.5">
-                    Manage your {activeItem?.label?.toLowerCase()}
                     {tabKey === "my_account"
                       ? "Manage your account details and preferences"
                       : `Manage your ${activeItem?.label?.toLowerCase()}`}
