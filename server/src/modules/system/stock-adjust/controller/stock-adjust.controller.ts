@@ -184,7 +184,7 @@ export const createStockAdjust = asyncHandler(async (req: CustomRequest, res: Re
 
     return res.status(201).json({
       success: true,
-      message: 'Stock adjustments created successfully',
+      message: 'Stock adjustments applied successfully',
       data: savedStockAdjustments,
     });
   } catch (error: any) {

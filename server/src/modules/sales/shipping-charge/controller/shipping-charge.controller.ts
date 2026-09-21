@@ -117,7 +117,7 @@ export const createShippingCharge = asyncHandler(async (req: CustomRequest, res:
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new shippingCharge',
+    message: 'Shipping charge created successfully',
     data: save,
   });
 });
@@ -156,7 +156,7 @@ export const updateShippingCharge = asyncHandler(async (req: Request, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: `Update a single shippingCharge of id ${req.params.id}`,
+    message: 'Shipping charge updated successfully',
     data: updateData,
   });
 });

@@ -1,35 +1,35 @@
-import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
-import { join } from 'path';
-import 'reflect-metadata';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import {
+  getRefreshToken,
   getResetSignJwtToken,
   getResetVerifyJwtToken,
   getSignJwtToken,
-  getRefreshToken,
   hashedPassword,
   matchPassword,
   sendCookiesResponse,
 } from '@/middlewares/auth.middleware';
-import jwt from 'jsonwebtoken';
 import { logger } from '@/middlewares/logger';
+import { FileEntity } from '@/modules/system/other/file/model/file.entity';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { cacheService, CacheService } from '@/utils/cache.service';
 import { sendEmail } from '@/utils/sendMail';
 import { updateUserValidationSchema, userValidationSchema } from '@/validation';
 import { forgotPasswordValidationSchema } from '@/validation/user/forgotPasswordValidation';
 import { loginValidationSchema } from '@/validation/user/loginValidation';
 import { resetPasswordValidationSchema } from '@/validation/user/resetPasswordValidation';
 import { updatePasswordValidationSchema } from '@/validation/user/updatePasswordValidation';
-import { FileEntity } from '@/modules/system/other/file/model/file.entity';
-import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import { join } from 'path';
+import 'reflect-metadata';
 import { RoleEnum } from '../enums/role.enum';
 import { UserActivityEntity } from '../model/user-activity.entity';
 import { UserEntity } from '../model/user.entity';
 import { userService } from '../service/user.service';
-import { cacheService, CacheService } from '@/utils/cache.service';
 
 // @desc Register User
 // @route POST /api/v1/auth/register
@@ -219,7 +219,7 @@ export const getUserByEmail = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: 'user create by email successfully',
+      message: 'Account created successfully. Welcome aboard!',
       data: { ...user, accessToken: token, refreshToken: refreshToken },
     });
   },
@@ -433,7 +433,7 @@ export const refreshAccessToken = asyncHandler(
     try {
       const decoded = jwt.verify(
         refreshToken,
-        process.env.JWT_REFRESH_SECRET || (process.env.JWT_SECRET! + '_refresh'),
+        process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET! + '_refresh',
       ) as any;
 
       const connection = await getDBConnection();
@@ -696,7 +696,7 @@ export const updatePassword = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: 'Update password',
+      message: 'Password updated successfully',
     });
   },
 );
@@ -756,12 +756,12 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response, next:
     const directory = join(process.cwd(), '/public/uploads');
     const filePath = `${directory}/${user.image}`;
     const deleteFile = await repository.findOne({ where: { filename: user.image } });
-    
+
     if (deleteFile) {
-        await Promise.all([
-            repository.remove(deleteFile),
-            fs.promises.unlink(filePath).catch(err => logger.error(`File unlink failed: ${err}`))
-        ]);
+      await Promise.all([
+        repository.remove(deleteFile),
+        fs.promises.unlink(filePath).catch((err) => logger.error(`File unlink failed: ${err}`)),
+      ]);
     }
   }
 

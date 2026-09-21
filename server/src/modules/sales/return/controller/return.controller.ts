@@ -478,7 +478,7 @@ export const singleProductReturn = asyncHandler(async (req: CustomRequest, res: 
 
     return res.status(200).json({
       success: true,
-      message: `Updated return request for ID ${result.id}`,
+      message: 'Return request updated successfully',
       data: updatedReturn,
     });
   } catch (error) {
@@ -646,7 +646,7 @@ export const updateReturn = asyncHandler(async (req: CustomRequest, res: Respons
 
     return res.status(200).json({
       success: true,
-      message: `Updated return request for ID ${id}`,
+      message: 'Return request updated successfully',
       data: updated,
     });
   } catch (error) {

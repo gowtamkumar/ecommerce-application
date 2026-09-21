@@ -1,12 +1,12 @@
 import fs from 'fs';
 
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { DistrictEntity } from '@/modules/system/other/geo-location/districts/model/district.entity';
 import { UnionEntity } from '@/modules/system/other/geo-location/unions/model/union.entity';
 import { UpazilaEntity } from '@/modules/system/other/geo-location/upazilas/model/upazila.entity';
+import { NextFunction, Request, Response } from 'express';
 import { DivisionEntity } from '../model/division.entity';
 
 // @desc Get all Division
@@ -303,7 +303,7 @@ export const createDivision = asyncHandler(async (req: CustomRequest, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Division',
+    message: 'Geographic data seeded successfully',
     data: save,
   });
 });

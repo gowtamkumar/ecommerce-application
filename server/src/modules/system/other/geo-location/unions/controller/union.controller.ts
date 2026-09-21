@@ -1,9 +1,9 @@
-import fs from 'fs';
-import { Request, Response, NextFunction } from 'express';
-import { UnionEntity } from '../model/union.entity';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import { UnionEntity } from '../model/union.entity';
 
 // @desc Get all Union
 // @route GET /api/v1/Union
@@ -83,7 +83,7 @@ export const createUnion = asyncHandler(async (req: CustomRequest, res: Response
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Union',
+    message: 'Geographic data seeded successfully',
     data: save,
   });
 });

@@ -1,9 +1,9 @@
-import fs from 'fs';
-import { Request, Response, NextFunction } from 'express';
-import { UpazilaEntity } from '../model/upazila.entity';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import { UpazilaEntity } from '../model/upazila.entity';
 
 // @desc Get all Upazila
 // @route GET /api/v1/Upazila
@@ -82,7 +82,7 @@ export const createUpazila = asyncHandler(async (req: CustomRequest, res: Respon
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new Upazila',
+    message: 'Geographic data seeded successfully',
     data: save,
   });
 });

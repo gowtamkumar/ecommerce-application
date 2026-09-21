@@ -1,10 +1,10 @@
 import fs from 'fs';
 
-import { Request, Response, NextFunction } from 'express';
-import { DistrictEntity } from '../model/district.entity';
-import { asyncHandler } from '@/middlewares/async.middleware';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
+import { asyncHandler } from '@/middlewares/async.middleware';
+import { NextFunction, Request, Response } from 'express';
+import { DistrictEntity } from '../model/district.entity';
 
 // @desc Get all District
 // @route GET /api/v1/District
@@ -73,7 +73,7 @@ export const createDistrict = asyncHandler(async (req: CustomRequest, res: Respo
 
   return res.status(200).json({
     success: true,
-    message: 'Create a new District',
+    message: 'Geographic data seeded successfully',
     data: save,
   });
 });
