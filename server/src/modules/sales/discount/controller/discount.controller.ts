@@ -38,8 +38,13 @@ export const getDiscounts = asyncHandler(async (req: Request, res: Response) => 
   if (endDate) {
     whereClause.endDate = MoreThan(endDate);
   }
+  const hasPagination =
+    req.query.page !== undefined ||
+    req.query.perPage !== undefined ||
+    req.query.limit !== undefined;
   const page = Number(req.query.page) || 1;
-  const perPage = Number(req.query.perPage) || Number(req.query.limit) || 10;
+  const perPage =
+    Number(req.query.perPage) || Number(req.query.limit) || (hasPagination ? 10 : 100);
   const skip = (page - 1) * perPage;
 
   const [result, total] = await repository.findAndCount({
@@ -66,16 +71,27 @@ export const getDiscounts = asyncHandler(async (req: Request, res: Response) => 
 export const getDiscount = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   logger.info(`Service: getDiscount ${req.method} ${req.url}`);
   const { id } = req.params;
+
+  if (!id || isNaN(Number(id))) {
+    return res.status(400).json({
+      success: false,
+      message: `Invalid discount ID: ${id}`,
+    });
+  }
+
   const connection = await getDBConnection();
   const repository = await connection.getRepository(DiscountEntity);
 
   const result = await repository.findOne({
-    where: { id },
+    where: { id: Number(id) as any },
     relations: ['applicableProducts', 'applicableBrands', 'applicableCategories'],
   });
 
   if (!result) {
-    throw new Error(`Resource not found of id #${req.params.id}`);
+    return res.status(404).json({
+      success: false,
+      message: `Discount with ID ${id} not found`,
+    });
   }
 
   return res.status(200).json({
@@ -91,18 +107,48 @@ export const getDiscountDetails = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     logger.info(`Service: getDiscountDetails ${req.method} ${req.url}`);
     const { id } = req.params;
+
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid discount ID: ${id}`,
+      });
+    }
+
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const perPage = req.query.perPage
+      ? Number(req.query.perPage)
+      : req.query.limit
+        ? Number(req.query.limit)
+        : undefined;
+    const search = req.query.search ? String(req.query.search) : undefined;
+
     const connection = await getDBConnection();
-    const { query, values } = await singleDiscountQuery(id as string);
+    const { query, values } = singleDiscountQuery(id as string, page, perPage, search);
     const result = await connection.query(query, values);
 
     if (!result || !result[0]) {
-      throw new Error(`Resource not found of id #${req.params.id}`);
+      return res.status(404).json({
+        success: false,
+        message: `Discount with ID ${id} not found`,
+      });
     }
+
+    const data = result[0];
+    const totalProducts =
+      data.totalProducts !== undefined
+        ? Number(data.totalProducts)
+        : Array.isArray(data.products)
+          ? data.products.length
+          : 0;
 
     return res.status(200).json({
       success: true,
       message: `Get a single Discount of id ${req.params.id}`,
-      data: result[0],
+      totalProducts,
+      page: page || 1,
+      perPage: perPage || totalProducts,
+      data,
     });
   },
 );

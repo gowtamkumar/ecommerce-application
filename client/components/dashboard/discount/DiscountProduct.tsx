@@ -1,21 +1,24 @@
-import appConfig from "@/appConfig";
+import { getDiscountDetails } from "@/lib/apis/discount";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
-  selectGlobal,
-  setSearchedColumn,
-  setSearchText,
+    selectGlobal,
+    setSearchedColumn,
+    setSearchText,
 } from "@/redux/features/global/globalSlice";
 import { SearchOutlined } from "@ant-design/icons";
 import {
-  Button,
-  Input,
-  Space,
-  Table,
-  TableColumnsType,
-  TableColumnType,
+    Button,
+    Card,
+    Input,
+    Space,
+    Table,
+    TableColumnsType,
+    TableColumnType,
+    Tag,
 } from "antd";
 import { FilterDropdownProps } from "antd/es/table/interface";
 import Image from "next/image";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -40,6 +43,56 @@ export default function DiscountProduct({ discount }: any) {
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
   const [searchInput, setSearchInput] = React.useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [products, setProducts] = useState<any[]>(discount?.products || []);
+  const [total, setTotal] = useState<number>(
+    discount?.totalProducts !== undefined
+      ? Number(discount.totalProducts)
+      : discount?.products?.length || 0
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (discount?.products) {
+      setProducts(discount.products);
+      setTotal(
+        discount.totalProducts !== undefined
+          ? Number(discount.totalProducts)
+          : discount.products.length
+      );
+      setCurrentPage(1);
+    }
+  }, [discount?.id, discount?.products, discount?.totalProducts]);
+
+  const fetchProducts = useCallback(
+    async (page: number, limit: number, search?: string) => {
+      if (!discount?.id) return;
+      setLoading(true);
+      try {
+        const res = await getDiscountDetails(discount.id, {
+          page,
+          perPage: limit,
+          search,
+        });
+        if (res?.data) {
+          setProducts(res.data.products || []);
+          const totalCount =
+            res.data.totalProducts !== undefined
+              ? Number(res.data.totalProducts)
+              : res.totalProducts !== undefined
+              ? Number(res.totalProducts)
+              : res.data.products?.length || 0;
+          setTotal(totalCount);
+        }
+      } catch (error) {
+        console.error("Failed to load discount products:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [discount?.id]
+  );
 
   type DataIndex = keyof DataType;
 
@@ -49,13 +102,19 @@ export default function DiscountProduct({ discount }: any) {
     dataIndex: DataIndex
   ) => {
     confirm();
-    dispatch(setSearchText(selectedKeys[0]));
+    const query = selectedKeys[0] || "";
+    dispatch(setSearchText(query));
     dispatch(setSearchedColumn(dataIndex));
+    setCurrentPage(1);
+    fetchProducts(1, pageSize, query);
   };
 
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
     dispatch(setSearchText(""));
+    setSearchInput("");
+    setCurrentPage(1);
+    fetchProducts(1, pageSize, "");
   };
 
   const getColumnSearchProps = (
@@ -128,10 +187,12 @@ export default function DiscountProduct({ discount }: any) {
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
+      Boolean(
+        record[dataIndex]
+          ?.toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase())
+      ),
     filterDropdownProps: {
       onOpenChange: (visible) => {
         if (visible) {
@@ -155,22 +216,25 @@ export default function DiscountProduct({ discount }: any) {
   const columns: TableColumnsType<any> = [
     {
       ...getColumnSearchProps("name"),
-      title: "Name",
+      title: "Product Name",
+      dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
-      render: (value) => {
+      sorter: (a, b) => (a.name || "").localeCompare(b.name || ""),
+      render: (_, record: any) => {
+        const imageUrl = getImageUrl(
+          record.thumbnailImage || record.image || record.Image,
+          "/default-placeholder.png"
+        );
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Image
-              width={50}
-              height={50}
-              alt={discount.name}
-              src={`${appConfig.baseApiUrl}/uploads/${
-                value.Image || "no-data.png"
-              }`}
-              className="w-10 h-10 rounded-lg"
+              width={40}
+              height={40}
+              alt={record.name || "Product"}
+              src={imageUrl}
+              className="w-10 h-10 rounded-lg object-cover border border-gray-100 shadow-sm"
             />
-            <span>{value.name}</span>
+            <span className="font-medium text-gray-800">{record.name}</span>
           </div>
         );
       },
@@ -180,20 +244,66 @@ export default function DiscountProduct({ discount }: any) {
       title: "Variant",
       dataIndex: "variant",
       key: "variant",
-      render: (value) => (value ? <span>Yes</span> : <span>No</span>),
+      width: 120,
+      align: "center",
+      render: (value) =>
+        value ? (
+          <Tag color="processing" className="rounded-full px-2.5">
+            Yes
+          </Tag>
+        ) : (
+          <Tag color="default" className="rounded-full px-2.5">
+            No
+          </Tag>
+        ),
     },
   ];
 
   return (
-    <Table
-      scroll={{ x: "auto" }}
-      loading={global.loading.loading}
-      rowKey="id"
-      dataSource={discount.products}
-      columns={columns}
-      pagination={{ pageSize: 10 }}
-      bordered
-      size="small"
-    />
+    <Card
+      title={
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-gray-800 text-sm">
+            Applicable Products
+          </span>
+          <Tag color="blue" className="rounded-full px-2">
+            {total}
+          </Tag>
+        </div>
+      }
+      className="shadow-sm border-gray-100 rounded-xl overflow-hidden mt-4"
+      styles={{ body: { padding: 0 } }}
+    >
+      <Table
+        scroll={{ x: "auto" }}
+        loading={loading || global.loading.loading}
+        rowKey={(record: any, index?: number) =>
+          record.id || record.productId || record.slug || String(index ?? 0)
+        }
+        dataSource={products}
+        columns={columns}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: total,
+          showSizeChanger: true,
+          hideOnSinglePage: false,
+          pageSizeOptions: ["5", "10", "20", "50"],
+          showQuickJumper: true,
+          showTotal: (totalCount, range) => (
+            <span className="text-xs text-gray-500 font-medium">
+              Showing <strong>{range[0]}-{range[1]}</strong> of <strong>{totalCount}</strong> products
+            </span>
+          ),
+          onChange: (page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+            fetchProducts(page, size, searchInput);
+          },
+          className: "p-3",
+        }}
+        size="middle"
+      />
+    </Card>
   );
 }

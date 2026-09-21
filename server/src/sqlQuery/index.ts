@@ -562,8 +562,28 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
   return { query, values };
 };
 
-export const singleDiscountQuery = (id: string) => {
+export const singleDiscountQuery = (
+  id: string,
+  page?: number,
+  perPage?: number,
+  search?: string,
+) => {
   const values: any[] = [parseInt(id)];
+  let searchCondition = '';
+  if (search && search.trim() !== '') {
+    values.push(`%${search.trim().toLowerCase()}%`);
+    searchCondition = `AND LOWER(p.name) LIKE $${values.length}`;
+  }
+
+  let limitOffsetClause = '';
+  if (page && perPage) {
+    values.push(perPage);
+    const limitParam = `$${values.length}`;
+    values.push((page - 1) * perPage);
+    const offsetParam = `$${values.length}`;
+    limitOffsetClause = `LIMIT ${limitParam} OFFSET ${offsetParam}`;
+  }
+
   const query = `
     WITH product_variants_dedup AS (
         SELECT DISTINCT ON (pv.product_id)
@@ -609,9 +629,19 @@ export const singleDiscountQuery = (id: string) => {
         FROM discountInfo d
         JOIN productTable p ON
             (d.scope = 'Global')
-            OR (d.scope = 'Products' AND EXISTS (SELECT 1 FROM applicable_products ap WHERE ap.discount_id = d.id AND ap.product_id = p.product_id))
+            OR ((d.scope = 'Products' OR d.scope = 'Product') AND EXISTS (SELECT 1 FROM applicable_products ap WHERE ap.discount_id = d.id AND ap.product_id = p.product_id))
             OR (d.scope = 'Brand' AND EXISTS (SELECT 1 FROM applicable_brands ab WHERE ab.discount_id = d.id AND ab.brand_id = p.brand_id))
             OR (d.scope = 'Category' AND EXISTS (SELECT 1 FROM applicable_categories ac WHERE ac.discount_id = d.id AND ac.category_id = p.category_id))
+        WHERE 1=1 ${searchCondition}
+    ),
+    targetProductsCount AS (
+        SELECT COUNT(*) AS total_products FROM targetProducts
+    ),
+    paginatedProducts AS (
+        SELECT tp.*
+        FROM targetProducts tp
+        ORDER BY tp.product_id DESC
+        ${limitOffsetClause}
     )
     SELECT 
         d.id AS "id",
@@ -631,6 +661,7 @@ export const singleDiscountQuery = (id: string) => {
         d.description,
         d.discount_strategy AS "discountStrategy",
         d.created_at AS "createdAt",
+        COALESCE((SELECT total_products FROM targetProductsCount), 0)::int AS "totalProducts",
         COALESCE(
             (SELECT JSONB_AGG(JSONB_BUILD_OBJECT(
                 'id', tp.product_id,
@@ -640,7 +671,7 @@ export const singleDiscountQuery = (id: string) => {
                 'variant', tp.variant,
                 'reviewsCount', rt.reviews_count,
                 'avgRating', rt.average_rating
-            )) FROM targetProducts tp
+            )) FROM paginatedProducts tp
             LEFT JOIN reviewsTable rt ON rt.product_id = tp.product_id), '[]'
         ) AS products
     FROM discountInfo d;

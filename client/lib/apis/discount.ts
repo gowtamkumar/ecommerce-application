@@ -68,13 +68,29 @@ export async function getDiscountBySlug(slug: string) {
   return handleResponse(res);
 }
 
-export async function getDiscountDetails(id: string) {
+export async function getDiscountDetails(
+  id: string,
+  params?: { page?: number; perPage?: number; limit?: number; search?: string },
+) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/discounts/details/${id}`, {
-    method: "GET",
-    cache: "no-cache",
-    headers,
-  });
+  const queryParams = new URLSearchParams();
+  if (params?.page) queryParams.set("page", params.page.toString());
+  if (params?.perPage || params?.limit) {
+    const limitVal = (params?.perPage || params?.limit)!.toString();
+    queryParams.set("perPage", limitVal);
+    queryParams.set("limit", limitVal);
+  }
+  if (params?.search) queryParams.set("search", params.search);
+
+  const queryString = queryParams.toString();
+  const res = await fetch(
+    `${appConfig.apiUrl}/discounts/details/${id}${queryString ? `?${queryString}` : ""}`,
+    {
+      method: "GET",
+      cache: "no-cache",
+      headers,
+    },
+  );
   return await handleResponse(res);
 }
 

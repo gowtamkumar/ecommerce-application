@@ -33,7 +33,7 @@ export default function DiscountDetails() {
       setLoading(false);
       return;
     }
-    const res = await getDiscountDetails(id);
+    const res = await getDiscountDetails(id, { page: 1, perPage: 5 });
     if (res.error) {
       message.error("Error");
       return;
