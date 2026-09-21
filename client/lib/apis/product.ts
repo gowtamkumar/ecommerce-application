@@ -109,12 +109,25 @@ export async function getPublicProduct(id: string) {
   });
   return await handleResponse(res);
 }
-export async function getDashboardProducts() {
+export async function getDashboardProducts(params?: {
+  perPage?: number;
+  page?: number;
+  search?: string;
+}) {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/products/dashboard`, {
-    method: "GET",
-    headers,
-  });
+  const query = new URLSearchParams();
+  if (params?.perPage) query.append("perPage", params.perPage.toString());
+  if (params?.page) query.append("page", params.page.toString());
+  if (params?.search) query.append("search", params.search);
+  const queryString = query.toString() ? `?${query.toString()}` : "";
+
+  const res = await fetch(
+    `${appConfig.apiUrl}/products/dashboard${queryString}`,
+    {
+      method: "GET",
+      headers,
+    },
+  );
   return await handleResponse(res);
 }
 
@@ -132,7 +145,7 @@ export async function getProductBySlug(params: any) {
       method: "GET",
       cache: "no-cache",
       headers,
-    }
+    },
   );
   return await handleResponse(res);
 }

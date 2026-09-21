@@ -14,7 +14,7 @@ interface CurrencyContextType {
   selectedCurrency: Currency | null;
   changeCurrency: (currency: Currency) => void;
   convertPrice: (price: number) => number;
-  formatPrice: (price: number) => string;
+  formatPrice: (price: number | string | undefined | null) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(
@@ -79,9 +79,13 @@ export const CurrencyProvider = ({
     return price / selectedCurrency.exchangeRate;
   };
 
-  const formatPrice = (price: number) => {
-    if (!selectedCurrency) return price.toString();
-    const converted = convertPrice(price);
+  const formatPrice = (price: number | string | undefined | null) => {
+    if (price === undefined || price === null || price === "" || isNaN(Number(price))) {
+      return "-";
+    }
+    const numPrice = Number(price);
+    if (!selectedCurrency) return numPrice.toString();
+    const converted = convertPrice(numPrice);
     return `${selectedCurrency.symbol}${converted.toFixed(2)}`;
   };
 

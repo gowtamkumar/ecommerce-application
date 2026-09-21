@@ -3,13 +3,13 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { getDashboardProducts } from "@/lib/apis/product";
 import { saveStockAdjust } from "@/lib/apis/stock-adjust";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
+    selectGlobal,
+    setAction,
+    setLoading,
 } from "@/redux/features/global/globalSlice";
 import { MinusCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import { Button, Form, Input, InputNumber, Modal, Select, Space, Tag } from "antd";
@@ -17,7 +17,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const AddStockAdjust = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const global = useSelector(selectGlobal);
   const { payload, type, stockAdjust } = global.action;
   // hook
@@ -30,16 +31,36 @@ const AddStockAdjust = () => {
     fetchData();
   }, [global.action]);
 
+  useEffect(() => {
+    if (payload?.productId && products.length > 0) {
+      const prod = products.find((item: any) => item.id === payload.productId);
+      setSelectedProduct(prod || null);
+    }
+  }, [payload, products]);
+
   const fetchData = async () => {
-    const products = await getDashboardProducts();
-    setProducts(products.data);
+    try {
+      const res = await getDashboardProducts({ perPage: 1000 });
+      setProducts(res?.data || []);
+    } catch (err: any) {
+      console.error("Failed to fetch products", err);
+    }
   };
 
   const handleSubmit = async (values: any) => {
     try {
       dispatch(setLoading({ save: true }));
 
-      const res = await saveStockAdjust(values);
+      const formattedValues = {
+        ...values,
+        productId: Number(values.productId),
+        productVariants: (values.productVariants || []).map((vItem: any) => ({
+          id: Number(vItem.id),
+          qty: Number(vItem.qty),
+        })),
+      };
+
+      const res = await saveStockAdjust(formattedValues);
 
       if (!res.success) {
         errorNotification({ message: res.message });
@@ -59,13 +80,18 @@ const AddStockAdjust = () => {
     dispatch(setAction({}));
     dispatch(setLoading({}));
     form.resetFields();
+    setSelectedProduct(null);
   };
 
   const resetFormData = () => {
     if (payload?.id) {
       form.setFieldsValue(payload);
+      if (payload.productId && products.length > 0) {
+        setSelectedProduct(products.find((item: any) => item.id === payload.productId) || null);
+      }
     } else {
       form.resetFields();
+      setSelectedProduct(null);
       dispatch(setLoading({ loading: false }));
     }
   };
@@ -185,7 +211,30 @@ const AddStockAdjust = () => {
                 }
                 onChange={(v) => {
                   const findProduct = products.find((item: any) => item.id === v);
-                  form.setFieldsValue(findProduct ?? { productVariants: [] });
+                  setSelectedProduct(findProduct || null);
+                  if (!findProduct) {
+                    form.setFieldsValue({
+                      productId: undefined,
+                      productVariants: [],
+                    });
+                    return;
+                  }
+
+                  const variants = (findProduct.productVariants || []).map((vItem: any) => ({
+                    id: vItem.id,
+                    sku: vItem.sku,
+                    color: vItem.color,
+                    size: vItem.size,
+                    unitPrice: vItem.unitPrice,
+                    purchasePrice: vItem.purchasePrice,
+                    stockQty: vItem.stockQty ?? 0,
+                    qty: undefined,
+                  }));
+
+                  form.setFieldsValue({
+                    productId: v,
+                    productVariants: variants,
+                  });
                 }}
               >
                 {(products || []).map((item: any) => (
@@ -227,16 +276,27 @@ const AddStockAdjust = () => {
                           <Form.Item {...restField} name={[name, "id"]} className="mb-0">
                             <Input />
                           </Form.Item>
+                          <Form.Item {...restField} name={[name, "unitPrice"]} className="mb-0">
+                            <Input />
+                          </Form.Item>
+                          <Form.Item {...restField} name={[name, "purchasePrice"]} className="mb-0">
+                            <Input />
+                          </Form.Item>
                         </td>
 
                         {/* Read-only display values */}
                         <td className="p-4">
                           <Form.Item {...restField} name={[name, "color"]} className="mb-0">
                             <div className="flex items-center gap-2">
-                              {productVariants?.[name]?.color?.colorCode && (
+                              {(productVariants?.[name]?.color?.colorCode ||
+                                productVariants?.[name]?.color?.color) && (
                                 <span
                                   className="w-4 h-4 rounded-full border border-gray-200 shadow-sm"
-                                  style={{ backgroundColor: productVariants[name].color.colorCode }}
+                                  style={{
+                                    backgroundColor:
+                                      productVariants[name].color.colorCode ||
+                                      productVariants[name].color.color,
+                                  }}
                                 />
                               )}
                               <span className="font-medium text-gray-700">
@@ -256,8 +316,24 @@ const AddStockAdjust = () => {
 
                         <td className="p-4">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-xs text-gray-400">Unit: <span className="text-gray-700 font-medium">{formatPrice(productVariants?.[name]?.unitPrice) ?? "-"}</span></span>
-                            <span className="text-xs text-gray-400">Pur.: <span className="text-gray-700 font-medium">{formatPrice(productVariants?.[name]?.purchasePrice) ?? "-"}</span></span>
+                            <span className="text-xs text-gray-400">
+                              Unit:{" "}
+                              <span className="text-gray-700 font-medium">
+                                {formatPrice(
+                                  productVariants?.[name]?.unitPrice ??
+                                    selectedProduct?.productVariants?.[name]?.unitPrice
+                                )}
+                              </span>
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              Pur.:{" "}
+                              <span className="text-gray-700 font-medium">
+                                {formatPrice(
+                                  productVariants?.[name]?.purchasePrice ??
+                                    selectedProduct?.productVariants?.[name]?.purchasePrice
+                                )}
+                              </span>
+                            </span>
                           </div>
                         </td>
 
@@ -265,9 +341,13 @@ const AddStockAdjust = () => {
                           <Form.Item {...restField} name={[name, "stockQty"]} className="mb-0">
                             <div className="inline-flex flex-col items-center">
                               <span className="text-lg font-bold text-gray-800 leading-tight">
-                                {productVariants?.[name]?.stockQty ?? "0"}
+                                {productVariants?.[name]?.stockQty ??
+                                  selectedProduct?.productVariants?.[name]?.stockQty ??
+                                  "0"}
                               </span>
-                              <span className="text-[10px] text-gray-400 uppercase tracking-tight">Units</span>
+                              <span className="text-[10px] text-gray-400 uppercase tracking-tight">
+                                {selectedProduct?.unit?.name || "Units"}
+                              </span>
                             </div>
                           </Form.Item>
                         </td>

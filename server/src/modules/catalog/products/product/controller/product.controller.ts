@@ -418,6 +418,8 @@ export const getProduct = asyncHandler(async (req: Request, res: Response, next:
     'user.name',
     'brand.id',
     'brand.name',
+    'unit.id',
+    'unit.name',
     'reviews.id',
     'reviews.rating',
     'reviews.comment',
@@ -427,13 +429,17 @@ export const getProduct = asyncHandler(async (req: Request, res: Response, next:
     'productCategories',
     'category.id',
     'category.name',
+    'size.id',
     'size.name',
+    'color.id',
     'color.name',
+    'color.color',
     'discount.discountStrategy',
     'discount.value',
   ]);
   qb.leftJoin('product.user', 'user');
   qb.leftJoin('product.brand', 'brand');
+  qb.leftJoin('product.unit', 'unit');
   qb.leftJoin('product.reviews', 'reviews');
   qb.leftJoin('product.tax', 'tax');
   qb.leftJoin('product.discount', 'discount');
@@ -737,6 +743,8 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
       'user.name',
       'brand.id',
       'brand.name',
+      'unit.id',
+      'unit.name',
       'reviews.id',
       'reviews.rating',
       'reviews.comment',
@@ -746,13 +754,17 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
       'productCategories',
       'category.id',
       'category.name',
+      'size.id',
       'size.name',
+      'color.id',
       'color.name',
+      'color.color',
       'discount.discountStrategy',
       'discount.value',
     ]);
     qb.leftJoin('product.user', 'user');
     qb.leftJoin('product.brand', 'brand');
+    qb.leftJoin('product.unit', 'unit');
     qb.leftJoin('product.reviews', 'reviews');
     qb.leftJoin('product.tax', 'tax');
     qb.leftJoin('product.discount', 'discount');
