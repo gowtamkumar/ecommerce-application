@@ -6,6 +6,7 @@ import { BannerEntity } from '@/modules/content/banner/model/banner.entity';
 import { PostStatus } from '@/modules/content/blog/post/enums';
 import { PostEntity } from '@/modules/content/blog/post/model/post.entity';
 import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
+import { getPublicFileUrl } from '@/services/minio.service';
 import { productsQuery, topSellingProductQuery } from '@/sqlQuery';
 import { Request, Response } from 'express';
 
@@ -20,9 +21,14 @@ export const getHome = asyncHandler(async (req: Request, res: Response) => {
 
   const result = await connection.getRepository(SettingEntity).find();
 
-  const banners = await connection.getRepository(BannerEntity).find({
+  const rawBanners = await connection.getRepository(BannerEntity).find({
     where: { active: true },
   });
+
+  const banners = rawBanners.map((banner: any) => ({
+    ...banner,
+    image: banner.image ? getPublicFileUrl(banner.image) : banner.image,
+  }));
 
   const categories = await connection.getRepository(CategoriesEntity).find({
     where: {

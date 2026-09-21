@@ -8,6 +8,8 @@ import {
   handlePreviewCancel,
   normFile,
 } from "@/lib/utils/commonFunctions";
+import { imageSetFile } from "@/lib/utils/imageSetFile";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import {
   selectGlobal,
@@ -43,6 +45,9 @@ const AddBanner = () => {
 
   useEffect(() => {
     const newData = { ...global.action.payload };
+    if (newData.image) {
+      newData.fileList = [imageSetFile(newData.image)];
+    }
     form.setFieldsValue(newData);
     setFormValues(newData);
     return () => {
@@ -54,6 +59,10 @@ const AddBanner = () => {
   const handleSubmit = async (values: any) => {
     const newData = { ...values };
 
+    if (newData.image) {
+      newData.image = getImageUrl(newData.image);
+    }
+
     const result = newData.id
       ? () => updateBanner(newData)
       : () => saveBanner(newData);
@@ -64,15 +73,16 @@ const AddBanner = () => {
   const customUploadRequest = async (options: any) => {
     const result = await handleGlobalUpload(options);
     if (result) {
-      const { newFile, newFileName } = result;
+      const { newFile, newFileUrl, newFileName } = result;
+      const finalImage = newFileUrl || newFileName;
       form.setFieldsValue({
         fileList: [newFile],
-        image: newFileName,
+        image: finalImage,
       });
       setFormValues((prev: any) => ({
         ...prev,
         fileList: [newFile],
-        image: newFileName,
+        image: finalImage,
       }));
     }
   };
@@ -257,11 +267,12 @@ const AddBanner = () => {
                 name="image"
                 listType="picture-card"
                 fileList={formValues?.fileList || []}
-                onRemove={async (v) => {
-                  if (v.fileName) {
+                onRemove={async (v: any) => {
+                  const filenameToDelete = v.fileName || v.name;
+                  if (filenameToDelete) {
                     form.setFieldsValue({ image: null, fileList: [] });
                     setFormValues({ image: null, fileList: [] });
-                    const params = { filename: v.fileName };
+                    const params = { filename: filenameToDelete };
                     await fileDeleteWithPhoto(params);
                   }
                 }}

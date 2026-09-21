@@ -2,6 +2,7 @@ import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { getPublicFileUrl, removeFileFromMinio } from '@/services/minio.service';
 import { bannerValidationSchema } from '@/validation';
 import { updateBannerValidationSchema } from '@/validation/banner/updateBannerValidation';
 import { NextFunction, Request, Response } from 'express';
@@ -17,10 +18,8 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
   const repository = connection.getRepository(BannerEntity);
 
   const customQuery: any = {};
-  if (active !== undefined) {
+  if (active !== undefined && active !== 'all') {
     customQuery.active = active === 'true';
-  } else {
-    customQuery.active = true;
   }
   if (type) {
     customQuery.type = type;
@@ -37,6 +36,11 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
       take: pageSize,
     });
 
+    const normalizedResult = result.map((banner: any) => ({
+      ...banner,
+      image: banner.image ? getPublicFileUrl(banner.image) : banner.image,
+    }));
+
     return res.status(200).json({
       success: true,
       message: 'Get all Banner',
@@ -44,7 +48,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
       page: pageNum,
       limit: pageSize,
       totalPages: Math.ceil(total / pageSize),
-      data: result,
+      data: normalizedResult,
     });
   }
 
@@ -52,11 +56,17 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
     where: customQuery,
     order: { createdAt: 'DESC' },
   });
+
+  const normalizedResult = result.map((banner: any) => ({
+    ...banner,
+    image: banner.image ? getPublicFileUrl(banner.image) : banner.image,
+  }));
+
   return res.status(200).json({
     success: true,
     message: 'Get all Banner',
     total: result.length,
-    data: result,
+    data: normalizedResult,
   });
 });
 
@@ -74,10 +84,15 @@ export const getBanner = asyncHandler(async (req: Request, res: Response, next: 
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
+  const normalizedResult = {
+    ...result,
+    image: result.image ? getPublicFileUrl(result.image) : result.image,
+  };
+
   return res.status(200).json({
     success: true,
     message: `Get a single Banner of id ${req.params.id}`,
-    data: result,
+    data: normalizedResult,
   });
 });
 
@@ -106,13 +121,21 @@ export const createBanner = asyncHandler(async (req: CustomRequest, res: Respons
 
   const repository = connection.getRepository(BannerEntity);
 
-  const newBanner = repository.create(validation.data);
+  const bannerData = {
+    ...validation.data,
+    image: validation.data.image ? getPublicFileUrl(validation.data.image) : validation.data.image,
+  };
+
+  const newBanner = repository.create(bannerData);
   const save = await repository.save(newBanner);
 
   return res.status(200).json({
     success: true,
     message: 'Banner created successfully',
-    data: save,
+    data: {
+      ...save,
+      image: save.image ? getPublicFileUrl(save.image) : save.image,
+    },
   });
 });
 
@@ -146,14 +169,27 @@ export const updateBanner = asyncHandler(async (req: Request, res: Response) => 
     throw new Error(`Banner Not found`);
   }
 
-  const updateData = await repository.merge(result, req.body);
+  const updateBody = { ...req.body };
+  if (updateBody.image) {
+    const newImageUrl = getPublicFileUrl(updateBody.image);
+    // If the image changed, remove the old one from MinIO
+    if (result.image && result.image !== newImageUrl && result.image !== updateBody.image) {
+      await removeFileFromMinio(result.image);
+    }
+    updateBody.image = newImageUrl;
+  }
+
+  const updateData = await repository.merge(result, updateBody);
 
   await repository.save(updateData);
 
   return res.status(200).json({
     success: true,
     message: 'Banner updated successfully',
-    data: updateData,
+    data: {
+      ...updateData,
+      image: updateData.image ? getPublicFileUrl(updateData.image) : updateData.image,
+    },
   });
 });
 
@@ -171,11 +207,16 @@ export const deleteBanner = asyncHandler(async (req: Request, res: Response) => 
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
+  // Delete image from MinIO
+  if (result.image) {
+    await removeFileFromMinio(result.image);
+  }
+
   await repository.delete({ id });
 
   return res.status(200).json({
     success: true,
-    message: `Delete a single Banner of id ${req.params.id}`,
+    message: `Banner deleted successfully`,
     data: result,
   });
 });

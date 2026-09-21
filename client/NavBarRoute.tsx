@@ -150,7 +150,7 @@ const navbarRoute = [
           {
             key: "brands",
             icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-            label: <Link href="/dashboard/other-modules?tab=brand">Brands</Link>,
+            label: <Link href="/dashboard/brand">Brands</Link>,
             route: "true",
           },
           {
@@ -192,13 +192,13 @@ const navbarRoute = [
           {
             key: "leads",
             icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-            label: <Link href="/dashboard/other-modules?tab=leads">Leads</Link>,
+            label: <Link href="/dashboard/leads">Leads</Link>,
             route: "true",
           },
           {
             key: "currencies",
             icon: <FaRegCircle className="h-4 w-2 text-blue-500" />,
-            label: <Link href="/dashboard/other-modules?tab=currencies">Currencies</Link>,
+            label: <Link href="/dashboard/currency">Currencies</Link>,
             route: "true",
           },
         ],

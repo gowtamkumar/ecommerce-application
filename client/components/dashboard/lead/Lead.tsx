@@ -1,11 +1,11 @@
 "use client";
-import dynamic from 'next/dynamic'
-import React, { useState } from "react";
-import { Button, Card, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import { ActionType } from "@/constants/constants";
-import { useDispatch } from "react-redux";
 import { setAction } from "@/redux/features/global/globalSlice";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Typography } from "antd";
+import dynamic from 'next/dynamic';
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const { Title, Text } = Typography;
 

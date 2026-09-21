@@ -1,4 +1,4 @@
-import StockAdjust from "@/components/dashboard/other-modules/stock-adjust/StockAdjust";
+import StockAdjust from "@/components/dashboard/stock-adjust/StockAdjust";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

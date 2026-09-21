@@ -179,10 +179,11 @@ const BannerList: React.FC = () => {
       width: 100,
       render: (value) => (
         <Image
-          width={60}
-          height={40}
-          alt={value}
+          width={70}
+          height={42}
+          alt={value || "Banner"}
           src={getImageUrl(value)}
+          fallback="/default-placeholder.png"
           className="rounded-lg object-cover border border-gray-200"
         />
       ),
