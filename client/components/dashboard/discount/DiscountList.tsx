@@ -1,34 +1,35 @@
 import { ActionType } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import { deleteDiscount, getDiscounts } from "@/lib/apis/discount";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
-  setSearchedColumn,
-  setSearchText,
+    selectGlobal,
+    setAction,
+    setLoading,
+    setSearchedColumn,
+    setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
-  GlobalOutlined,
-  AppstoreOutlined,
-  ShoppingOutlined,
-  TagsOutlined,
-  SkinOutlined,
-  PercentageOutlined,
-  DollarOutlined,
-  CalendarOutlined
+    AppstoreOutlined,
+    CalendarOutlined,
+    DeleteOutlined,
+    DollarOutlined,
+    EditOutlined,
+    EyeOutlined,
+    GlobalOutlined,
+    PercentageOutlined,
+    QuestionCircleOutlined,
+    SearchOutlined,
+    ShoppingOutlined,
+    SkinOutlined,
+    TagsOutlined
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Image, Input, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,7 @@ import { useDispatch, useSelector } from "react-redux";
 interface DataType {
   key: string;
   name: string;
+  image?: string;
   discountStrategy: string;
   value: number;
   slug: string;
@@ -53,39 +55,56 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const DiscountList: React.FC = () => {
-  const [discounts, setDiscounts] = useState([] as any);
+  const [discounts, setDiscounts] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [searchInput, setSearchInput] = useState<string>("");
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
   const { formatPrice } = useCurrency();
 
-  const fetchData = useCallback(async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const res = await getDiscounts();
-      if (res.error) {
-        errorNotification({ message: res.error });
-        return;
+  const fetchData = useCallback(
+    async (page: number, limit: number) => {
+      dispatch(setLoading({ loading: true }));
+      try {
+        const res = await getDiscounts({ page, perPage: limit });
+        if (res?.error) {
+          errorNotification({ message: res.error });
+          setDiscounts([]);
+          setTotal(0);
+          return;
+        }
+        setDiscounts(res?.data || []);
+        const totalCount =
+          res?.totalItem !== undefined
+            ? res.totalItem
+            : res?.total !== undefined
+            ? res.total
+            : res?.data?.length || 0;
+        setTotal(totalCount);
+      } catch (err: any) {
+        errorNotification({ message: err?.message || "Failed to load discounts" });
+        setDiscounts([]);
+        setTotal(0);
+      } finally {
+        dispatch(setLoading({ loading: false }));
       }
-      setDiscounts(res?.data);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchData(currentPage, pageSize);
+  }, [fetchData, currentPage, pageSize, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ delete: true }));
     try {
       await deleteDiscount(id);
       successNotification({ message: "Successfully deleted" });
-      fetchData();
+      fetchData(currentPage, pageSize);
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -158,10 +177,12 @@ const DiscountList: React.FC = () => {
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
-        ?.toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
+      Boolean(
+        record[dataIndex]
+          ?.toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase())
+      ),
     filterDropdownProps: {
       onOpenChange: (visible) => {
         if (visible) {
@@ -183,6 +204,27 @@ const DiscountList: React.FC = () => {
   });
 
   const columns: TableColumnsType<DataType> = [
+    {
+      title: "Banner",
+      dataIndex: "image",
+      key: "image",
+      width: 90,
+      render: (image: string) =>
+        image ? (
+          <Image
+            width={64}
+            height={38}
+            alt="Discount Banner"
+            src={getImageUrl(image)}
+            fallback="/default-placeholder.png"
+            className="rounded-lg object-cover border border-gray-200 shadow-sm"
+          />
+        ) : (
+          <div className="w-16 h-9 bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-xs">
+            No image
+          </div>
+        ),
+    },
     {
       ...getColumnSearchProps("name"),
       title: "Discount Name",
@@ -384,21 +426,46 @@ const DiscountList: React.FC = () => {
   ];
 
   return (
-    <Table
-      scroll={{ x: "auto" }}
-      loading={global.loading.loading}
-      columns={columns}
-      rowKey="id"
-      dataSource={discounts}
-      pagination={{
-        pageSize: 10,
+    <div>
+      <Table
+        scroll={{ x: "auto" }}
+        loading={global.loading.loading}
+        columns={columns}
+        rowKey="id"
+        dataSource={discounts}
+        pagination={false}
+        size="middle"
+        className="modern-table"
+        rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
+      />
 
-        showSizeChanger: true,
-      }}
-      size="middle"
-      className="modern-table"
-      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
-    />
+      <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-white">
+        <span className="text-xs text-gray-500 font-medium">
+          Showing{" "}
+          <strong>
+            {total === 0 ? 0 : (currentPage - 1) * pageSize + 1}
+            -
+            {Math.min(currentPage * pageSize, total)}
+          </strong>{" "}
+          of <strong>{total}</strong> discounts
+        </span>
+
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={total}
+          showSizeChanger
+          hideOnSinglePage={false}
+          pageSizeOptions={["5", "10", "20", "50", "100"]}
+          showQuickJumper
+          onChange={(page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+          }}
+          size="middle"
+        />
+      </div>
+    </div>
   );
 };
 

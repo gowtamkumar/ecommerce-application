@@ -14,31 +14,34 @@ export async function saveDiscount(data: any) {
   return await handleResponse(res);
 }
 
-export async function getDiscounts(params?: { scope?: string; status?: string; endDate?: string }) {
-  const scope = params?.scope;
-  const status = params?.status;
-  // const startDate = params?.startDate;
-  const endDate = params?.endDate;
+export async function getDiscounts(params?: {
+  scope?: string;
+  status?: string;
+  endDate?: string;
+  page?: number;
+  perPage?: number;
+  limit?: number;
+}) {
   const headers = await getAuthHeaders();
+  const queryParams = new URLSearchParams();
 
-  let queryString = "";
-
-  if (scope) {
-    queryString += `scope=${scope}`;
-  }
-  if (status) {
-    queryString += `&status=${status}`;
-  }
-  // if (startDate) {
-  //   queryString += `&startDate=${startDate}`;
-  // }
-  if (endDate) {
-    queryString += `&endDate=${endDate}`;
+  if (params?.scope) queryParams.set("scope", params.scope);
+  if (params?.status) queryParams.set("status", params.status);
+  if (params?.endDate) queryParams.set("endDate", params.endDate);
+  if (params?.page) queryParams.set("page", params.page.toString());
+  if (params?.perPage || params?.limit) {
+    const limitVal = (params?.perPage || params?.limit)!.toString();
+    queryParams.set("perPage", limitVal);
+    queryParams.set("limit", limitVal);
   }
 
-  const res = await fetch(`${appConfig.apiUrl}/discounts?${queryString}`, {
-    headers,
-  });
+  const queryString = queryParams.toString();
+  const res = await fetch(
+    `${appConfig.apiUrl}/discounts${queryString ? `?${queryString}` : ""}`,
+    {
+      headers,
+    },
+  );
 
   return await handleResponse(res);
 }
@@ -55,7 +58,7 @@ export async function getDiscount(id: string) {
 
 export async function getDiscountBySlug(slug: string) {
   console.log("slug auth", slug);
-  
+
   // const headers = await getAuthHeaders();
   const res = await fetch(`${appConfig.apiUrl}/discounts/slug/${slug}`, {
     method: "GET",

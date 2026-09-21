@@ -2,7 +2,7 @@
 import uploadButton from "@/components/share-component/uploadButton";
 import { getProducts } from "@/lib/apis/admin/product";
 import { getBrands, type Brand } from "@/lib/apis/brand";
-import { getCategories, Category } from "@/lib/apis/categories";
+import { Category, getCategories } from "@/lib/apis/categories";
 import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/lib/utils/commonFunctions";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { imageSetFile } from "@/lib/utils/imageSetFile";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
     AlignLeftOutlined,
@@ -86,9 +87,13 @@ const AddDiscount = () => {
         (item: any) => item.categoryId
       );
 
-      discountData.fileList = [
-        imageSetFile(discountData?.image),
-      ];
+      if (discountData?.image) {
+        discountData.fileList = [
+          imageSetFile(discountData.image),
+        ];
+      } else {
+        discountData.fileList = [];
+      }
 
       form.setFieldsValue({
         ...discountData,
@@ -187,6 +192,10 @@ const AddDiscount = () => {
       newData.applicableCategories = [];
     }
 
+    if (newData.image) {
+      newData.image = getImageUrl(newData.image);
+    }
+
     const result = newData.id
       ? () => updateDiscount(newData)
       : () => saveDiscount(newData);
@@ -203,11 +212,16 @@ const AddDiscount = () => {
     initialize();
 
     if (newData?.id) {
+      if (newData.image) {
+        newData.fileList = [imageSetFile(newData.image)];
+      } else {
+        newData.fileList = [];
+      }
       form.setFieldsValue(newData);
       setFormValues(newData);
     } else {
       form.resetFields();
-      setFormValues(form.getFieldsValue());
+      setFormValues({ fileList: [] });
     }
   };
 
@@ -216,15 +230,16 @@ const AddDiscount = () => {
   const customUploadRequest = async (options: any) => {
     const result = await handleGlobalUpload(options);
     if (result) {
-      const { newFile, newFileName } = result;
+      const { newFile, newFileUrl, newFileName } = result;
+      const finalImage = newFileUrl || newFileName;
       form.setFieldsValue({
         fileList: [newFile],
-        image: newFileName,
+        image: finalImage,
       });
       setFormValues((prev: any) => ({
         ...prev,
         fileList: [newFile],
-        image: newFileName,
+        image: finalImage,
       }));
     }
   };
@@ -528,11 +543,15 @@ const AddDiscount = () => {
                 name="image"
                 listType="picture-card"
                 fileList={formValues?.fileList || []}
-                onRemove={async (v) => {
-                  if (v.fileName) {
-                    form.setFieldsValue({ image: null, fileList: [] });
-                    setFormValues({ image: null, fileList: [] });
-                    const params = { filename: v.fileName };
+                onRemove={async (v: any) => {
+                  const filenameToDelete = v.fileName || v.name || form.getFieldValue("image");
+                  form.setFieldsValue({ image: null, fileList: [] });
+                  setFormValues((prev: any) => ({ ...prev, image: null, fileList: [] }));
+                  if (filenameToDelete) {
+                    const cleanKey = decodeURIComponent(
+                      filenameToDelete.split("/").pop() || filenameToDelete
+                    );
+                    const params = { filename: cleanKey };
                     await fileDeleteWithPhoto(params);
                   }
                 }}

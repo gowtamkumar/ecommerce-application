@@ -1,18 +1,18 @@
-import appConfig from "@/appConfig";
 import { ActionType } from "@/constants/constants";
 import { getDiscountDetails } from "@/lib/apis/discount";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
 import { Card, Descriptions, message, Modal, Spin, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useCallback, useEffect } from "react";
 import {
-  FiCalendar,
-  FiClock,
-  FiDollarSign,
-  FiPackage,
-  FiPercent,
-  FiTag
+    FiCalendar,
+    FiClock,
+    FiDollarSign,
+    FiPackage,
+    FiPercent,
+    FiTag
 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import DiscountProduct from "./DiscountProduct";
@@ -130,7 +130,7 @@ export default function DiscountDetails() {
                     fill
                     className="rounded-xl object-cover shadow-md border border-gray-100"
                     alt={discount.name || 'Discount'}
-                    src={`${appConfig.baseApiUrl}/uploads/${discount.image || "no-data.png"}`}
+                    src={getImageUrl(discount.image, "/default-placeholder.png")}
                   />
                 </div>
               </div>
