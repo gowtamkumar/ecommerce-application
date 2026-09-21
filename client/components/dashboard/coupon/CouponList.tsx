@@ -3,30 +3,30 @@ import { ActionType } from "@/constants/constants";
 import { useCurrency } from "@/context/CurrencyContext";
 import { deleteCoupon, getCoupons } from "@/lib/apis/admin/coupon";
 import {
-  errorNotification,
-  successNotification,
+    errorNotification,
+    successNotification,
 } from "@/lib/utils/notification";
 import {
-  selectGlobal,
-  setAction,
-  setLoading,
-  setSearchedColumn,
-  setSearchText,
+    selectGlobal,
+    setAction,
+    setLoading,
+    setSearchedColumn,
+    setSearchText,
 } from "@/redux/features/global/globalSlice";
 import {
-  BarcodeOutlined,
-  CalendarOutlined,
-  DeleteOutlined,
-  DollarOutlined,
-  EditOutlined,
-  EyeOutlined,
-  PercentageOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
-  TeamOutlined
+    BarcodeOutlined,
+    CalendarOutlined,
+    DeleteOutlined,
+    DollarOutlined,
+    EditOutlined,
+    EyeOutlined,
+    PercentageOutlined,
+    QuestionCircleOutlined,
+    SearchOutlined,
+    TeamOutlined
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Input, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -54,35 +54,56 @@ interface DataType {
 type DataIndex = keyof DataType;
 
 const CouponList: React.FC = () => {
-  const [coupons, setCoupons] = useState([] as any);
+  const [coupons, setCoupons] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const searchInput = React.useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
   const { formatPrice } = useCurrency();
 
-  const fetchData = useCallback(async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const res = await getCoupons();
-      setCoupons(res.data);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  }, [dispatch]);
+  const fetchData = useCallback(
+    async (page: number, limit: number) => {
+      dispatch(setLoading({ loading: true }));
+      try {
+        const res = await getCoupons({ page, limit });
+        if (res?.error) {
+          errorNotification({ message: res.error });
+          setCoupons([]);
+          setTotal(0);
+          return;
+        }
+        setCoupons(res?.data || []);
+        const totalCount =
+          res?.total !== undefined
+            ? res.total
+            : res?.totalItem !== undefined
+            ? res.totalItem
+            : res?.data?.length || 0;
+        setTotal(totalCount);
+      } catch (err: any) {
+        errorNotification({ message: err?.message || "Failed to load coupons" });
+        setCoupons([]);
+        setTotal(0);
+      } finally {
+        dispatch(setLoading({ loading: false }));
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData, global.action]);
+    fetchData(currentPage, pageSize);
+  }, [fetchData, currentPage, pageSize, global.action]);
 
   const handleDelete = async (id: string) => {
     dispatch(setLoading({ save: true }));
     try {
       await deleteCoupon(id);
       successNotification({ message: "Successfully deleted" });
-      fetchData();
+      fetchData(currentPage, pageSize);
     } catch (error: any) {
       errorNotification({ message: error.message });
     } finally {
@@ -158,10 +179,12 @@ const CouponList: React.FC = () => {
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
+      Boolean(
+        record[dataIndex]
+          ?.toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase())
+      ),
     filterDropdownProps: {
       onOpenChange: (visible) => {
         if (visible) {
@@ -351,20 +374,46 @@ const CouponList: React.FC = () => {
   ];
 
   return (
-    <Table
-      scroll={{ x: "auto" }}
-      loading={global.loading.loading}
-      columns={columns}
-      rowKey="id"
-      dataSource={coupons}
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-      }}
-      size="middle"
-      className="modern-table"
-      rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
-    />
+    <div>
+      <Table
+        scroll={{ x: "auto" }}
+        loading={global.loading.loading}
+        columns={columns}
+        rowKey="id"
+        dataSource={coupons}
+        pagination={false}
+        size="middle"
+        className="modern-table"
+        rowClassName="hover:bg-gray-50 transition-colors cursor-pointer"
+      />
+
+      <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-white">
+        <span className="text-xs text-gray-500 font-medium">
+          Showing{" "}
+          <strong>
+            {total === 0 ? 0 : (currentPage - 1) * pageSize + 1}
+            -
+            {Math.min(currentPage * pageSize, total)}
+          </strong>{" "}
+          of <strong>{total}</strong> coupons
+        </span>
+
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={total}
+          showSizeChanger
+          hideOnSinglePage={false}
+          pageSizeOptions={["5", "10", "20", "50", "100"]}
+          showQuickJumper
+          onChange={(page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+          }}
+          size="middle"
+        />
+      </div>
+    </div>
   );
 };
 

@@ -16,13 +16,19 @@ export async function getCoupons(params?: {
   type?: string;
   page?: number;
   limit?: number;
+  perPage?: number;
 }) {
-  const { type, page, limit } = params || {};
-  let queryString = "";
-  if (type) queryString += `type=${type}&`;
-  if (page) queryString += `page=${page}&`;
-  if (limit) queryString += `limit=${limit}&`;
+  const { type, page, limit, perPage } = params || {};
+  const queryParams = new URLSearchParams();
+  if (type) queryParams.set("type", type);
+  if (page) queryParams.set("page", page.toString());
+  const limitVal = limit || perPage;
+  if (limitVal) {
+    queryParams.set("limit", limitVal.toString());
+    queryParams.set("perPage", limitVal.toString());
+  }
 
+  const queryString = queryParams.toString();
   const res = await fetch(
     `${appConfig.apiUrl}/coupons${queryString ? `?${queryString}` : ""}`,
     {

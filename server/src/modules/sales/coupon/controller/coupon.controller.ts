@@ -12,20 +12,22 @@ import { CouponEntity } from '../model/coupon.entity';
 export const getCoupons = asyncHandler(async (req: Request, res: Response) => {
   logger.info(`Service: getCoupons ${req.method} ${req.url}`);
 
-  const { type, page, limit } = req.query;
+  const { type, page, limit, perPage } = req.query as any;
   const connection = await getDBConnection();
   const repository = connection.getRepository(CouponEntity);
   const newQuery = {} as any;
   if (type) newQuery.type = type;
 
-  if (page || limit) {
+  const pageSizeParam = limit || perPage;
+
+  if (page || pageSizeParam) {
     const pageNum = Math.max(1, parseInt((page || '1') as string, 10));
-    const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
+    const pageSize = Math.max(1, parseInt((pageSizeParam || '10') as string, 10));
 
     const [result, total] = await repository.findAndCount({
       where: newQuery,
       relations: ['products'],
-      order: { createdAt: 'DESC' },
+      order: { id: 'DESC' },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
@@ -34,8 +36,10 @@ export const getCoupons = asyncHandler(async (req: Request, res: Response) => {
       success: true,
       message: 'Get all Coupons',
       total,
+      totalItem: total,
       page: pageNum,
       limit: pageSize,
+      perPage: pageSize,
       totalPages: Math.ceil(total / pageSize),
       data: result,
     });
@@ -44,12 +48,13 @@ export const getCoupons = asyncHandler(async (req: Request, res: Response) => {
   const result = await repository.find({
     where: newQuery,
     relations: ['products'],
-    order: { createdAt: 'DESC' },
+    order: { id: 'DESC' },
   });
   return res.status(200).json({
     success: true,
     message: 'Get all Coupons',
     total: result.length,
+    totalItem: result.length,
     data: result,
   });
 });
