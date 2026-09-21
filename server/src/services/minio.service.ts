@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 import path from 'path';
 import { Client } from 'minio';
+import { Repository } from 'typeorm';
 import { logger } from '@/middlewares/logger';
+import { FileEntity } from '@/modules/system/other/file/model/file.entity';
 
 const bucketName = process.env.MINIO_BUCKET || 'ecommerce';
 
@@ -44,6 +46,29 @@ export const getPublicFileUrl = (filename: string): string => {
   return `${base}/${bucketName}/${filename}`;
 };
 
+// Extract the object key from a full MinIO/public URL, or return the value as-is
+export const getObjectKey = (value: string): string => {
+  if (!value || typeof value !== 'string') return value;
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      return decodeURIComponent(value.split('/').pop() || value);
+    } catch {
+      return value;
+    }
+  }
+  return value;
+};
+
+// Find a FileEntity by its object key OR its stored public URL
+export const findFileEntity = async (
+  repository: Repository<FileEntity>,
+  value: string,
+): Promise<FileEntity | null> => {
+  return repository.findOne({
+    where: [{ filename: getObjectKey(value) }, { path: value }],
+  });
+};
+
 // Upload a multer file (buffer) to MinIO and return metadata for the files table
 export const uploadFileToMinio = async (file: {
   fieldname: string;
@@ -69,15 +94,16 @@ export const uploadFileToMinio = async (file: {
   };
 };
 
-// Delete an object from MinIO (missing objects are not an error)
+// Delete an object from MinIO (accepts an object key or a full public URL; missing objects are not an error)
 export const removeFileFromMinio = async (filename: string): Promise<void> => {
   if (!filename) return;
+  const objectKey = getObjectKey(filename);
   try {
-    await minioClient().removeObject(bucketName, filename);
-    logger.info(`Removed file from MinIO: ${bucketName}/${filename}`);
+    await minioClient().removeObject(bucketName, objectKey);
+    logger.info(`Removed file from MinIO: ${bucketName}/${objectKey}`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    logger.warn(`MinIO remove failed for ${filename}: ${message}`);
+    logger.warn(`MinIO remove failed for ${objectKey}: ${message}`);
   }
 };
 

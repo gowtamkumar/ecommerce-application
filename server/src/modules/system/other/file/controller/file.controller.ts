@@ -5,7 +5,12 @@ import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { removeFileFromMinio, uploadFileToMinio } from '@/services/minio.service';
+import {
+  findFileEntity,
+  getObjectKey,
+  removeFileFromMinio,
+  uploadFileToMinio,
+} from '@/services/minio.service';
 import { fileValidationSchema } from '@/validation';
 import { FileEntity } from '../model/file.entity';
 
@@ -210,8 +215,8 @@ export const deleteFileWithPhoto = asyncHandler(async (req: Request, res: Respon
   const repository = connection.getRepository(FileEntity);
 
   try {
-    // Find the file entity in the database and delete it from MinIO concurrently
-    const deleteFile = await repository.findOne({ where: { filename } });
+    // Find the file entity in the database (by object key OR public URL) and delete it from MinIO concurrently
+    const deleteFile = await findFileEntity(repository, filename);
 
     if (!deleteFile) {
       return res.status(404).json({
@@ -256,9 +261,9 @@ export const deleteMultipleFilesWithPhoto = asyncHandler(async (req: Request, re
   const repository = connection.getRepository(FileEntity);
 
   try {
-    // Find all files in DB that match provided filenames
+    // Find all files in DB that match provided filenames (object key or public URL)
     const filesToDelete = await repository.find({
-      where: filenames.map((filename) => ({ filename })),
+      where: filenames.map((fn) => [{ filename: getObjectKey(fn) }, { path: fn }]),
     });
 
     if (filesToDelete.length === 0) {

@@ -120,15 +120,15 @@ const AddCategory = () => {
   const customUploadRequest = async (options: any) => {
     const result = await handleGlobalUpload(options);
     if (result) {
-      const { newFile, newFileName } = result;
+      const { newFile, newFileUrl } = result;
       form.setFieldsValue({
         fileList: [newFile],
-        image: newFileName,
+        image: newFileUrl,
       });
       setFormValues((prev: any) => ({
         ...prev,
         fileList: [newFile],
-        image: newFileName,
+        image: newFileUrl,
       }));
     }
   };

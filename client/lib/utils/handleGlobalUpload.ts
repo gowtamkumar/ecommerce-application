@@ -18,21 +18,16 @@ export const handleGlobalUpload = async ({
       throw new Error(res?.message || res?.error || "Invalid response format");
     }
     const uploadedFilename = res.data[0].filename;
-    
-    // const newFile = {
-    //   uid: Math.random() * 1000 + "",
-    //   name: `photo ${Math.random() * 10000 + ""}`,
-    //   status: "done",
-    //   fileName: uploadedFilename,
-    //   url: getUploadImageUrl(uploadedFilename),
-    // };
+    const uploadedPublicUrl = res.data[0].path; // MinIO public URL
+
     const newFile = imageSetFile(uploadedFilename);
+    newFile.url = uploadedPublicUrl; // preview straight from MinIO (no server redirect)
 
     const newFileName = res.data.length ? uploadedFilename : null;
 
     if (onSuccess) onSuccess("Ok");
 
-    return { newFile, newFileName };
+    return { newFile, newFileName, newFileUrl: uploadedPublicUrl };
   } catch (err) {
     console.error("🚀 ~ Upload error:", err);
     if (onError) onError({ err });

@@ -1,7 +1,7 @@
 import { getDBConnection } from '@/config/db';
 import { logger } from '@/middlewares/logger';
 import { FileEntity } from '@/modules/system/other/file/model/file.entity';
-import { removeFileFromMinio } from '@/services/minio.service';
+import { findFileEntity, removeFileFromMinio } from '@/services/minio.service';
 
 export const fileDeleteFunction = async (images: any) => {
   const connection = await getDBConnection();
@@ -10,15 +10,13 @@ export const fileDeleteFunction = async (images: any) => {
   // Use Promise.all to handle multiple file deletions in parallel
   const fileDeletions = images.map(async (item: any) => {
     try {
-      // Find and remove file record from the database
-      const fileRecord = await repository.findOne({
-        where: { filename: item },
-      });
+      // Find and remove file record from the database (by object key or public URL)
+      const fileRecord = await findFileEntity(repository, item);
       if (fileRecord) {
         await repository.remove(fileRecord); // Remove from DB
       }
 
-      // Delete the file from MinIO
+      // Delete the object from MinIO
       await removeFileFromMinio(item);
     } catch (error: any) {
       logger.error(`Failed to delete file ${item}: ${error.message}`);

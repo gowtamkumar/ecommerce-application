@@ -5,7 +5,7 @@ import { logger } from '@/middlewares/logger';
 import { FileEntity } from '@/modules/system/other/file/model/file.entity';
 import { categoriesValidationSchema } from '@/validation/categories/categoriesValidation';
 import { NextFunction, Request, Response } from 'express';
-import { removeFileFromMinio } from '@/services/minio.service';
+import { findFileEntity, removeFileFromMinio } from '@/services/minio.service';
 import { CategoriesEntity } from '../model/categories.entity';
 
 // @desc Get all Categorys
@@ -309,8 +309,11 @@ export const deleteCategory = asyncHandler(async (req: Request, res: Response) =
 
   if (result.image) {
     const repository = connection.getRepository(FileEntity);
-    const deleteFile = await repository.findOne({ where: { filename: result.image } });
-    await Promise.all([repository.remove(deleteFile), removeFileFromMinio(result.image)]);
+    const deleteFile = await findFileEntity(repository, result.image);
+    await Promise.all([
+      deleteFile && repository.remove(deleteFile),
+      removeFileFromMinio(result.image),
+    ]);
   }
 
   await repository.delete({ id });
