@@ -150,16 +150,39 @@ export async function getHeaders({ method }: { method: string }): Promise<Reques
 }
 
 // Function to handle API responses
-export async function handleResponse(res: Response) {
+// Note: returns `any` on purpose - the response body shape of legacy endpoints
+// varies; typed modules use the `http` client's generics instead.
+export async function handleResponse(res: Response): Promise<any> {
   if (res.status === 401) {
     return {
       success: false,
       message: "Session expired. Please login again.",
       status: 401,
-      data: null
+      data: null,
     };
   }
-  return res.json();
+
+  // A non-JSON body (proxy 502, HTML error page...) is not a parseable API envelope.
+  const contentType = res.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    return {
+      success: false,
+      message: `Request failed (${res.status}). Please try again.`,
+      status: res.status,
+      data: null,
+    };
+  }
+
+  try {
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      message: `Request failed (${res.status}). Server returned an invalid response.`,
+      status: res.status,
+      data: null,
+    };
+  }
 }
 
 // image Preview

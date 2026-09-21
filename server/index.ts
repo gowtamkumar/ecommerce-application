@@ -83,20 +83,23 @@ app.use(auditLogMiddleware);
 
 //main route
 setupRoutes(app);
-// error Handler
-app.use(errorHandler);
 
 //root route
 app.get('/', (req, res) => {
   res.send('Welcome to nodejs server!');
 });
 
-// app.use(logger)
-
-// not found route
-app.get('*', (req, res) => {
-  res.send('Not found route, Please right route hite');
+// not found route - JSON envelope for every method/path (mounted AFTER routes)
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    status: 404,
+    message: `Cannot ${req.method} ${req.originalUrl}`,
+  });
 });
+
+// error Handler (must be last)
+app.use(errorHandler);
 
 // Port
 const PORT = process.env.PORT || 3900;
