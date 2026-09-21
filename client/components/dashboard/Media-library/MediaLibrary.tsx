@@ -1,8 +1,8 @@
 "use client";
 import { ActionType } from "@/constants/constants";
 import {
-  deleteMultipleFilesWithPhoto,
-  fileDeleteWithPhoto,
+    deleteMultipleFilesWithPhoto,
+    fileDeleteWithPhoto,
 } from "@/lib/apis/file";
 import { setAction, setLoading } from "@/redux/features/global/globalSlice";
 import { AppstoreOutlined, BarsOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -45,7 +45,8 @@ const MediaLibrary = ({ files }: any) => {
   const handleDelete = async (img: any) => {
     try {
       dispatch(setLoading({ delete: true }));
-      const params = { filename: img.filename };
+      const targetFilename = img.filename || img.fileName || img.name || img.path;
+      const params = { filename: targetFilename };
       const res = await fileDeleteWithPhoto(params);
 
       if (!res.success) {
@@ -53,7 +54,12 @@ const MediaLibrary = ({ files }: any) => {
       }
 
       setFiles((prevFile: any[]) =>
-        prevFile.filter((file: { id: number | string }) => file.id !== img.id)
+        prevFile.filter(
+          (file: any) =>
+            file.id !== img.id &&
+            file.filename !== targetFilename &&
+            file.path !== targetFilename
+        )
       );
     } catch (error: any) {
       console.log("error", error);
@@ -65,9 +71,9 @@ const MediaLibrary = ({ files }: any) => {
   };
 
   const deleteMultipleFilesHandle = async (selected: any) => {
-    const filenames = selected?.map(
-      (item: { filename: string }) => item.filename
-    );
+    const filenames = selected
+      ?.map((item: any) => item.filename || item.fileName || item.name || item.path)
+      .filter(Boolean);
 
     try {
       dispatch(setLoading({ delete: true }));
@@ -77,7 +83,11 @@ const MediaLibrary = ({ files }: any) => {
         return;
       }
       setFiles((prevFile: any[]) =>
-        prevFile.filter((file: any) => !filenames.includes(file.filename))
+        prevFile.filter(
+          (file: any) =>
+            !filenames.includes(file.filename) &&
+            !filenames.includes(file.path)
+        )
       );
     } catch (error: any) {
       console.log("error", error);

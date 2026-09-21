@@ -1,22 +1,22 @@
-import appConfig from "@/appConfig";
 import { ActionType } from "@/constants/constants";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
 import { Modal, Tooltip } from "antd";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+    FiCalendar,
+    FiCheck,
+    FiCopy,
+    FiFileText,
+    FiFilm,
+    FiHardDrive,
+    FiImage,
+    FiMaximize2,
+    FiMusic,
+    FiX
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import FileViewer from "./FileViewer";
-import { 
-  FiCopy, 
-  FiCheck, 
-  FiX, 
-  FiFileText, 
-  FiImage, 
-  FiFilm, 
-  FiMusic, 
-  FiCalendar, 
-  FiHardDrive, 
-  FiMaximize2 
-} from "react-icons/fi";
 
 export default function MediaDetails() {
   const [copied, setCopied] = useState(false);
@@ -24,6 +24,11 @@ export default function MediaDetails() {
   const global = useSelector(selectGlobal);
   const { payload, type, media } = global.action;
   const dispatch = useDispatch();
+
+  const filePublicUrl =
+    payload?.path ||
+    (payload?.filename ? getImageUrl(payload.filename) : "") ||
+    "";
 
   useEffect(() => {
     if (media && type === ActionType.VIEW) {
@@ -42,9 +47,7 @@ export default function MediaDetails() {
 
   const copyToClipboard = () => {
     setCopied(true);
-    navigator.clipboard.writeText(
-      `${appConfig.baseApiClientUrl}/uploads/${payload?.filename}`
-    );
+    navigator.clipboard.writeText(filePublicUrl);
     setTimeout(() => {
       setCopied(false);
     }, 2000);
@@ -229,7 +232,7 @@ export default function MediaDetails() {
                 <div className="relative bg-white border border-gray-200 rounded-xl p-1 flex items-center shadow-sm group-hover:border-indigo-300 transition-colors duration-300">
                   <div className="flex-1 px-3 py-2 overflow-hidden">
                     <p className="text-xs text-gray-500 truncate font-mono select-all">
-                      {`${appConfig.baseApiClientUrl}/uploads/${payload?.filename}`}
+                      {filePublicUrl}
                     </p>
                   </div>
                   <Tooltip title={copied ? "Copied!" : "Copy URL"}>

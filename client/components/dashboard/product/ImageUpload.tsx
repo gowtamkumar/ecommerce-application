@@ -12,54 +12,61 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
 
-  const customUploadRequest = async (options: any) => {
-    const { filename } = options;
-    const result = await handleGlobalUpload(options);
+  const handleCustomUpload =
+    (fieldName: "thumbnailImage" | "hoverImage" | "images") =>
+    async (options: any) => {
+      const result = await handleGlobalUpload({
+        ...options,
+        filename: fieldName,
+      });
 
-    if (result) {
-      const { newFile, newFileName } = result;
-      const newFiles = [newFile];
+      if (result) {
+        const { newFile, newFileName, newFileUrl } = result;
+        const imageValue = newFileUrl || newFileName;
+        const newFiles = [newFile];
 
-      if (filename === "images") {
-        form.setFieldsValue({
-          ...form.getFieldsValue(),
-          fileList: [...(form.getFieldsValue().fileList || []), ...newFiles],
-          images: [...(form.getFieldsValue().images || []), newFileName],
-        });
-        setFormValues({
-          ...formValues,
-          fileList: [...(formValues.fileList || []), ...newFiles],
-          images: [...(formValues.images || []), newFileName],
-        });
+        if (fieldName === "images") {
+          const currentFileList = form.getFieldValue("fileList") || [];
+          const currentImages = form.getFieldValue("images") || [];
+          const updatedFileList = [...currentFileList, ...newFiles];
+          const updatedImages = [...currentImages, imageValue];
+
+          form.setFieldsValue({
+            fileList: updatedFileList,
+            images: updatedImages,
+          });
+          setFormValues((prev: any) => ({
+            ...prev,
+            fileList: updatedFileList,
+            images: updatedImages,
+          }));
+        }
+
+        if (fieldName === "thumbnailImage") {
+          form.setFieldsValue({
+            fileThumbnailList: newFiles,
+            thumbnailImage: imageValue,
+          });
+          setFormValues((prev: any) => ({
+            ...prev,
+            fileThumbnailList: newFiles,
+            thumbnailImage: imageValue,
+          }));
+        }
+
+        if (fieldName === "hoverImage") {
+          form.setFieldsValue({
+            fileHoverList: newFiles,
+            hoverImage: imageValue,
+          });
+          setFormValues((prev: any) => ({
+            ...prev,
+            fileHoverList: newFiles,
+            hoverImage: imageValue,
+          }));
+        }
       }
-
-      if (filename === "thumbnailImage") {
-        form.setFieldsValue({
-          ...form.getFieldsValue(),
-          fileThumbnailList: newFiles,
-          thumbnailImage: newFileName,
-        });
-        setFormValues({
-          ...formValues,
-          fileThumbnailList: newFiles,
-          thumbnailImage: newFileName,
-        });
-      }
-
-      if (filename === "hoverImage") {
-        form.setFieldsValue({
-          ...form.getFieldsValue(),
-          fileHoverList: newFiles,
-          hoverImage: newFileName,
-        });
-        setFormValues({
-          ...formValues,
-          fileHoverList: newFiles,
-          hoverImage: newFileName,
-        });
-      }
-    }
-  };
+    };
 
   return (
     <div className="space-y-5">
@@ -84,24 +91,24 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               name="thumbnailImage"
               listType="picture-card"
               fileList={formValues?.fileThumbnailList || []}
-              onRemove={async (v) => {
-                if (v.fileName) {
-                  form.setFieldsValue({
-                    ...form.getFieldsValue(),
-                    thumbnailImage: null,
-                    fileThumbnailList: [],
-                  });
-                  setFormValues({
-                    ...formValues,
-                    thumbnailImage: null,
-                    fileThumbnailList: [],
-                  });
-                  await fileDeleteWithPhoto({ filename: v.fileName });
+              onRemove={async (v: any) => {
+                const targetKey = v.fileName || v.name || v.url;
+                form.setFieldsValue({
+                  thumbnailImage: null,
+                  fileThumbnailList: [],
+                });
+                setFormValues((prev: any) => ({
+                  ...prev,
+                  thumbnailImage: null,
+                  fileThumbnailList: [],
+                }));
+                if (targetKey) {
+                  await fileDeleteWithPhoto({ filename: targetKey });
                 }
               }}
               className="avatar-uploader"
               onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
+              customRequest={handleCustomUpload("thumbnailImage")}
               maxCount={1}
             >
               {!formValues.thumbnailImage && uploadButton}
@@ -134,24 +141,24 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               name="hoverImage"
               listType="picture-card"
               fileList={formValues?.fileHoverList || []}
-              onRemove={async (v) => {
-                if (v.fileName) {
-                  form.setFieldsValue({
-                    ...form.getFieldsValue(),
-                    hoverImage: null,
-                    fileHoverList: [],
-                  });
-                  setFormValues({
-                    ...formValues,
-                    hoverImage: null,
-                    fileHoverList: [],
-                  });
-                  await fileDeleteWithPhoto({ filename: v.fileName });
+              onRemove={async (v: any) => {
+                const targetKey = v.fileName || v.name || v.url;
+                form.setFieldsValue({
+                  hoverImage: null,
+                  fileHoverList: [],
+                });
+                setFormValues((prev: any) => ({
+                  ...prev,
+                  hoverImage: null,
+                  fileHoverList: [],
+                }));
+                if (targetKey) {
+                  await fileDeleteWithPhoto({ filename: targetKey });
                 }
               }}
               className="avatar-uploader"
               onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
+              customRequest={handleCustomUpload("hoverImage")}
               maxCount={1}
             >
               {!formValues.hoverImage && uploadButton}
@@ -186,26 +193,36 @@ export default function ImageUpload({ formValues, form, setFormValues }: any) {
               name="images"
               listType="picture-card"
               fileList={formValues?.fileList || []}
-              onRemove={async (v) => {
-                const find = (form.getFieldValue("images") || []).filter(
-                  (item: string) => item !== v.fileName
+              onRemove={async (v: any) => {
+                const targetKey = v.fileName || v.name || v.url;
+                const currentImages = form.getFieldValue("images") || [];
+                const currentFileList = form.getFieldValue("fileList") || [];
+
+                const find = currentImages.filter(
+                  (item: string) =>
+                    item !== targetKey &&
+                    item !== v.fileName &&
+                    item !== v.url
                 );
-                const newfind = (form.getFieldValue("fileList") || []).filter(
-                  (item: { fileName: string }) => item.fileName !== v.fileName
+                const newfind = currentFileList.filter(
+                  (item: any) =>
+                    item.uid !== v.uid &&
+                    item.fileName !== v.fileName &&
+                    item.url !== v.url
                 );
                 form.setFieldsValue({ images: find, fileList: newfind });
-                setFormValues({
-                  ...formValues,
+                setFormValues((prev: any) => ({
+                  ...prev,
                   images: find,
                   fileList: newfind,
-                });
-                if (v.fileName) {
-                  await fileDeleteWithPhoto({ filename: v.fileName });
+                }));
+                if (targetKey) {
+                  await fileDeleteWithPhoto({ filename: targetKey });
                 }
               }}
               className="avatar-uploader"
               onPreview={(file) => handlePreview(file, dispatch)}
-              customRequest={customUploadRequest}
+              customRequest={handleCustomUpload("images")}
               maxCount={5}
             >
               {uploadButton}

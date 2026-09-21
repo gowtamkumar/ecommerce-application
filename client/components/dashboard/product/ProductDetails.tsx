@@ -73,6 +73,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
           <Card className="overflow-hidden">
             <Image
               src={getUploadImageUrl(product.thumbnailImage)}
+              fallback="/default-placeholder.png"
               alt={product.name}
               className="w-full object-cover rounded-lg"
             />
@@ -82,6 +83,7 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
               <div key={idx} className="border rounded-lg overflow-hidden">
                 <Image
                   src={getUploadImageUrl(img)}
+                  fallback="/default-placeholder.png"
                   alt={`${product.name} - ${idx}`}
                   className="w-full h-full object-cover"
                 />

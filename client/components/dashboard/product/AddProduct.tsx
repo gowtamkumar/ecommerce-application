@@ -8,7 +8,7 @@ import {
 import { ProductType } from "@/lib/types/product";
 import { handleAsyncAction } from "@/lib/utils/commonFunctions";
 import { generateFile } from "@/lib/utils/imageSetFile";
-import { getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Button, Form, Input, Skeleton } from "antd";
 import dynamic from "next/dynamic";
@@ -196,6 +196,25 @@ const AddProduct = ({
     delete newData.fileThumbnailList;
     delete newData.fileHoverList;
 
+    if (newData.images) {
+      if (Array.isArray(newData.images)) {
+        newData.images = newData.images.filter(Boolean).map((img: any) => getImageUrl(String(img)));
+      } else if (typeof newData.images === "string") {
+        newData.images = [getImageUrl(newData.images)];
+      } else {
+        newData.images = [];
+      }
+    } else {
+      newData.images = [];
+    }
+
+    if (newData.thumbnailImage) {
+      newData.thumbnailImage = getImageUrl(newData.thumbnailImage);
+    }
+    if (newData.hoverImage) {
+      newData.hoverImage = getImageUrl(newData.hoverImage);
+    }
+
     if (!newData.variant) {
       const productVariants = {
         purchasePrice: +newData.purchasePrice,
@@ -221,39 +240,25 @@ const AddProduct = ({
 
   const setFormData = (value: any) => {
     const newData = { ...value };
-    if (newData.images) {
-      const file = (newData.images || []).map((item: string, idx: number) => ({
-        uid: Math.random() * 1000 + "",
-        name: `photo ${idx}`,
-        status: "done",
-        fileName: item,
-        url: getUploadImageUrl(item),
-      }));
-      newData.fileList = file;
+    if (newData.images && Array.isArray(newData.images)) {
+      newData.fileList = newData.images.map((item: string, idx: number) =>
+        generateFile(item, idx)
+      );
     }
 
     if (newData.thumbnailImage) {
-      const newfileThumbnail = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: newData.thumbnailImage,
-        url: getUploadImageUrl(newData.thumbnailImage),
-      };
-      newData.fileThumbnailList = [newfileThumbnail];
+      newData.fileThumbnailList = [
+        generateFile(newData.thumbnailImage, "thumbnail"),
+      ];
     }
 
     if (newData.hoverImage) {
-      const newfileHover = {
-        uid: Math.random() * 1000 + "",
-        name: `photo ${Math.random() * 10000 + ""}`,
-        status: "done",
-        fileName: newData.hoverImage,
-        url: getUploadImageUrl(newData.hoverImage),
-      };
-      newData.fileHoverList = [newfileHover];
+      newData.fileHoverList = [
+        generateFile(newData.hoverImage, "hover"),
+      ];
     }
 
+    form.setFieldsValue(newData);
     setFormValues(form.getFieldsValue());
   };
 

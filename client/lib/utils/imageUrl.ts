@@ -1,5 +1,3 @@
-import appConfig from "@/appConfig";
-
 /**
  * Get the full URL for an uploaded image
  * @param filename - The filename of the image (e.g., "image-123.jpg")
@@ -8,17 +6,37 @@ import appConfig from "@/appConfig";
  */
 export const getImageUrl = (
   filename: string | null | undefined,
-  fallback: string = "/default-placeholder.png"
+  fallback: string = "/default-placeholder.png",
 ): string => {
   if (!filename || filename === "null" || filename === "undefined") {
     return fallback;
   }
-  if (filename.startsWith("http") || filename.startsWith("https") || filename.startsWith("blob:")) {
+  if (filename.startsWith("blob:") || filename.startsWith("data:")) {
     return filename;
   }
-  
-  const baseUrl = appConfig.baseApiClientUrl || "";
-  return `${baseUrl}/uploads/${filename}`;
+
+  const minioBase = (
+    process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL || "http://localhost:9010"
+  ).replace(/\/$/, "");
+  const minioBucket = process.env.NEXT_PUBLIC_MINIO_BUCKET || "ecommerce";
+  const minioPrefix = `${minioBase}/${minioBucket}`;
+
+  if (filename.startsWith("http://") || filename.startsWith("https://")) {
+    if (filename.startsWith(minioPrefix)) {
+      return filename;
+    }
+    if (filename.includes("/uploads/")) {
+      const cleanKey = decodeURIComponent(
+        filename.split("/uploads/").pop() || "",
+      );
+      return `${minioPrefix}/${cleanKey}`;
+    }
+    return filename;
+  }
+
+  // Strip any leading slashes or "uploads/"
+  const cleanFilename = filename.replace(/^(\/?uploads\/|\/)/, "");
+  return `${minioPrefix}/${cleanFilename}`;
 };
 
 /**
@@ -28,7 +46,7 @@ export const getImageUrl = (
  */
 export const getUploadImageUrl = (
   filename: string | null | undefined,
-  fallback: string = "/default-placeholder.png"
+  fallback: string = "/default-placeholder.png",
 ): string => {
   return getImageUrl(filename, fallback);
 };
@@ -43,7 +61,7 @@ export const getUploadImageUrl = (
 export const getProductImageUrls = (
   thumbnailImage: string | null | undefined,
   hoverImage: string | null | undefined,
-  fallback: string = "/default-placeholder.png"
+  fallback: string = "/default-placeholder.png",
 ) => {
   return {
     thumbnailUrl: getImageUrl(thumbnailImage, fallback),

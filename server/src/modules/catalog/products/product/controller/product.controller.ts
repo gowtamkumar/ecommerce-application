@@ -4,6 +4,7 @@ import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
 import { ProductCategoryEntity } from '@/modules/catalog/products/product-category/model/product-category.entity';
 import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { getPublicFileUrl } from '@/services/minio.service';
 import { productDetailQuery, productsQuery } from '@/sqlQuery';
 import { fileDeleteFunction } from '@/utils/fileDeleteFunction';
 import { productValidationSchema } from '@/validation';
@@ -49,6 +50,16 @@ export const createProduct = asyncHandler(async (req: CustomRequest, res: Respon
     .trim()
     .split(' ')
     .join('-');
+
+  if (restData.thumbnailImage) {
+    restData.thumbnailImage = getPublicFileUrl(restData.thumbnailImage);
+  }
+  if (restData.hoverImage) {
+    restData.hoverImage = getPublicFileUrl(restData.hoverImage);
+  }
+  if (Array.isArray(restData.images)) {
+    restData.images = restData.images.map((img: string) => (img ? getPublicFileUrl(img) : img));
+  }
 
   // Create product entity
   const product = productRepository.create(restData);
@@ -336,13 +347,24 @@ export const getProducts = async (req: Request, res: Response) => {
 
     const [results, total] = await qb.getManyAndCount();
 
+    const normalizedResults = results.map((product: any) => ({
+      ...product,
+      thumbnailImage: product.thumbnailImage
+        ? getPublicFileUrl(product.thumbnailImage)
+        : product.thumbnailImage,
+      hoverImage: product.hoverImage ? getPublicFileUrl(product.hoverImage) : product.hoverImage,
+      images: Array.isArray(product.images)
+        ? product.images.map((img: string) => (img ? getPublicFileUrl(img) : img))
+        : product.images,
+    }));
+
     res.status(200).json({
       success: true,
       message: 'Fetched products successfully',
       totalItem: total,
       page: Number(page),
       perPage: Number(perPage),
-      data: results,
+      data: normalizedResults,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -433,10 +455,21 @@ export const getProduct = asyncHandler(async (req: Request, res: Response, next:
     });
   }
 
+  const normalizedResult = {
+    ...result,
+    thumbnailImage: result.thumbnailImage
+      ? getPublicFileUrl(result.thumbnailImage)
+      : result.thumbnailImage,
+    hoverImage: result.hoverImage ? getPublicFileUrl(result.hoverImage) : result.hoverImage,
+    images: Array.isArray(result.images)
+      ? result.images.map((img: string) => (img ? getPublicFileUrl(img) : img))
+      : result.images,
+  };
+
   return res.status(200).json({
     success: true,
     message: `Fetched product with id #${id}`,
-    data: result,
+    data: normalizedResult,
   });
 });
 
@@ -781,13 +814,24 @@ export const getDashboardProducts = async (req: Request, res: Response) => {
 
     const [results, total] = await qb.getManyAndCount();
 
+    const normalizedResults = results.map((product: any) => ({
+      ...product,
+      thumbnailImage: product.thumbnailImage
+        ? getPublicFileUrl(product.thumbnailImage)
+        : product.thumbnailImage,
+      hoverImage: product.hoverImage ? getPublicFileUrl(product.hoverImage) : product.hoverImage,
+      images: Array.isArray(product.images)
+        ? product.images.map((img: string) => (img ? getPublicFileUrl(img) : img))
+        : product.images,
+    }));
+
     res.status(200).json({
       success: true,
       message: 'Fetched products successfully',
       totalItem: total,
       page,
       perPage,
-      data: results,
+      data: normalizedResults,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -820,6 +864,16 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
   }
 
   const { productVariants, productCategories, ...restData } = validation.data;
+
+  if (restData.thumbnailImage) {
+    restData.thumbnailImage = getPublicFileUrl(restData.thumbnailImage);
+  }
+  if (restData.hoverImage) {
+    restData.hoverImage = getPublicFileUrl(restData.hoverImage);
+  }
+  if (Array.isArray(restData.images)) {
+    restData.images = restData.images.map((img: string) => (img ? getPublicFileUrl(img) : img));
+  }
 
   // Get DB connection
   const connection = await getDBConnection();
@@ -888,6 +942,26 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
   // Merge and save the updated product data
   const updatedProduct = repository.merge(product, restData);
   await repository.save(updatedProduct);
+
+  // Clean up replaced images from MinIO and storage
+  const removedImages: string[] = [];
+  if (
+    restData.thumbnailImage &&
+    product.thumbnailImage &&
+    restData.thumbnailImage !== product.thumbnailImage
+  ) {
+    removedImages.push(product.thumbnailImage);
+  }
+  if (restData.hoverImage && product.hoverImage && restData.hoverImage !== product.hoverImage) {
+    removedImages.push(product.hoverImage);
+  }
+  if (Array.isArray(restData.images) && Array.isArray(product.images)) {
+    const unreferenced = product.images.filter((img: string) => !restData.images.includes(img));
+    removedImages.push(...unreferenced);
+  }
+  if (removedImages.length > 0) {
+    await fileDeleteFunction(removedImages);
+  }
 
   return res.status(200).json({
     success: true,
@@ -966,9 +1040,20 @@ export const deleteProduct = asyncHandler(async (req: Request, res: Response) =>
     throw new Error(`Product not found with id #${id}`);
   }
 
-  // If there are images associated with the product, delete them
-  if (product.images && product.images.length > 0) {
-    fileDeleteFunction(product.images);
+  // Collect all images associated with the product to delete from MinIO
+  const imagesToDelete: string[] = [];
+  if (product.thumbnailImage) {
+    imagesToDelete.push(product.thumbnailImage);
+  }
+  if (product.hoverImage) {
+    imagesToDelete.push(product.hoverImage);
+  }
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    imagesToDelete.push(...product.images);
+  }
+
+  if (imagesToDelete.length > 0) {
+    await fileDeleteFunction(imagesToDelete);
   }
 
   // Delete the product

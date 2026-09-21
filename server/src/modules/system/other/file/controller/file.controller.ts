@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { ILike } from 'typeorm';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
@@ -12,6 +11,7 @@ import {
   uploadFileToMinio,
 } from '@/services/minio.service';
 import { fileValidationSchema } from '@/validation';
+import { ILike } from 'typeorm';
 import { FileEntity } from '../model/file.entity';
 
 // @desc Get all Files
@@ -190,12 +190,15 @@ export const deleteFile = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = await connection.getRepository(FileEntity);
 
-  const result = await repository.findOneBy({ id });
+  const result = await repository.findOneBy({ id: Number(id) as any });
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  await repository.delete({ id });
+  await Promise.all([
+    repository.delete({ id: Number(id) as any }),
+    removeFileFromMinio(result.filename || result.path || ''),
+  ]);
 
   return res.status(200).json({
     success: true,
@@ -263,7 +266,7 @@ export const deleteMultipleFilesWithPhoto = asyncHandler(async (req: Request, re
   try {
     // Find all files in DB that match provided filenames (object key or public URL)
     const filesToDelete = await repository.find({
-      where: filenames.map((fn) => [{ filename: getObjectKey(fn) }, { path: fn }]),
+      where: filenames.flatMap((fn) => [{ filename: getObjectKey(fn) }, { path: fn }]),
     });
 
     if (filesToDelete.length === 0) {
@@ -274,8 +277,8 @@ export const deleteMultipleFilesWithPhoto = asyncHandler(async (req: Request, re
     }
 
     // Prepare MinIO removal promises for existing files
-    const removePromises = filesToDelete.map((file: { filename: string }) =>
-      removeFileFromMinio(file.filename),
+    const removePromises = filesToDelete.map((file: { filename?: string; path?: string }) =>
+      removeFileFromMinio(file.filename || file.path || ''),
     );
 
     // Run MinIO removal + DB delete in parallel

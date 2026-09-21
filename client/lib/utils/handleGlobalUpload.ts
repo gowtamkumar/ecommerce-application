@@ -8,7 +8,7 @@ export const handleGlobalUpload = async ({
   onError,
 }: any) => {
   const formData = new FormData();
-  formData.append(filename, file);
+  formData.append(filename || "image", file);
 
   try {
     const res = await uploadFile(formData);
@@ -27,7 +27,13 @@ export const handleGlobalUpload = async ({
 
     if (onSuccess) onSuccess("Ok");
 
-    return { newFile, newFileName, newFileUrl: uploadedPublicUrl };
+    return {
+      newFile,
+      newFileName,
+      newFileUrl: uploadedPublicUrl,
+      entity: res.data[0],
+      data: res.data,
+    };
   } catch (err) {
     console.error("🚀 ~ Upload error:", err);
     if (onError) onError({ err });

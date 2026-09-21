@@ -1,9 +1,9 @@
-import crypto from 'crypto';
-import path from 'path';
-import { Client } from 'minio';
-import { Repository } from 'typeorm';
 import { logger } from '@/middlewares/logger';
 import { FileEntity } from '@/modules/system/other/file/model/file.entity';
+import crypto from 'crypto';
+import { Client } from 'minio';
+import path from 'path';
+import { Repository } from 'typeorm';
 
 const bucketName = process.env.MINIO_BUCKET || 'ecommerce';
 
@@ -40,10 +40,19 @@ export const ensureBucket = async (): Promise<void> => {
 
 // Public URL for an object inside the (public) bucket
 export const getPublicFileUrl = (filename: string): string => {
+  if (!filename || typeof filename !== 'string') return filename;
   const base = (
     process.env.MINIO_PUBLIC_URL || `http://localhost:${process.env.MINIO_PORT || '9000'}`
   ).replace(/\/$/, '');
-  return `${base}/${bucketName}/${filename}`;
+  if (/^https?:\/\//i.test(filename)) {
+    if (filename.startsWith(`${base}/${bucketName}/`)) {
+      return filename;
+    }
+    const key = getObjectKey(filename);
+    return `${base}/${bucketName}/${key}`;
+  }
+  const cleanKey = filename.replace(/^(\/?uploads\/|\/)/, '');
+  return `${base}/${bucketName}/${cleanKey}`;
 };
 
 // Extract the object key from a full MinIO/public URL, or return the value as-is
@@ -107,4 +116,4 @@ export const removeFileFromMinio = async (filename: string): Promise<void> => {
   }
 };
 
-export { minioClient, bucketName };
+export { bucketName, minioClient };
