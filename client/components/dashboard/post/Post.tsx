@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
-import { getCategories } from "@/lib/apis/categories";
+import { getCategories, Category } from "@/lib/apis/categories";
 
 const AddPost = dynamic(() => import('./AddPost'), { ssr: false })
 const PostList = dynamic(() => import('./PostList'), { ssr: false })
@@ -14,7 +14,7 @@ const PostList = dynamic(() => import('./PostList'), { ssr: false })
 
 export default function Post() {
   const [tabKey, setTabKey] = useState("post_list");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);

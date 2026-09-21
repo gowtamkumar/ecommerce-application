@@ -1,165 +1,80 @@
-import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
-import { FileEntity } from '@/modules/system/other/file/model/file.entity';
+import { failValidation, ok } from '@/utils/apiResponse';
+import { parsePagination } from '@/utils/pagination';
 import { brandValidationSchema } from '@/validation';
 import { updateBrandValidationSchema } from '@/validation/brand/updateBrandValidation';
-import { NextFunction, Request, Response } from 'express';
-import { findFileEntity, removeFileFromMinio } from '@/services/minio.service';
-import { BrandEntity } from '../model/brand.entity';
+import { Request, Response } from 'express';
+import { brandsService } from '../service/brand.service';
+import { CreateBrandInput, UpdateBrandInput } from '../types/brand.types';
 
-// @desc Get all Brands
-// @route GET /api/v1/Brands
+const log = (fn: string, req: Request) => logger.info(`Service: ${fn} ${req.method} ${req.url}`);
+
+// @desc  Get all Brands (paginated)
+// @route GET /api/v1/brands
 // @access Public
 export const getBrands = asyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Service: getBrands ${req.method} ${req.url}`);
-  const connection = await getDBConnection();
-  const repository = connection.getRepository(BrandEntity);
-
-  const page = Number(req.query.page) || 1;
-  const perPage = Number(req.query.perPage) || 10;
-  const skip = (page - 1) * perPage;
-
-  const [result, total] = await repository.findAndCount({
-    skip,
-    take: perPage,
-  });
-
-  return res.status(200).json({
-    success: true,
-    message: 'Get all Brands',
-    totalItem: total,
-    page,
-    perPage,
-    data: result,
-  });
+  log('getBrands', req);
+  const { data, total, page, perPage } = await brandsService.getAll(parsePagination(req.query));
+  return ok(res, data, 'Get all Brands', 200, { totalItem: total, page, perPage });
 });
 
-// @desc Get a single Brand
-// @route GET /api/v1/Brands/:id
+// @desc  Get a single Brand
+// @route GET /api/v1/brands/:id
 // @access Public
-export const getBrand = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  logger.info(`Service: getBrand ${req.method} ${req.url}`);
-  const { id } = req.params;
-  const connection = await getDBConnection();
-  const repository = await connection.getRepository(BrandEntity);
-  const result = await repository.findOneBy({ id });
-
-  if (!result) {
-    throw new Error(`Resource not found of id #${req.params.id}`);
-  }
-
-  return res.status(200).json({
-    success: true,
-    message: `Get a single Brand of id ${req.params.id}`,
-    data: result,
-  });
+export const getBrand = asyncHandler(async (req: Request, res: Response) => {
+  log('getBrand', req);
+  const data = await brandsService.getById(String(req.params.id));
+  return ok(res, data, `Get a single Brand of id ${req.params.id}`);
 });
 
-// @desc Create a single Brand
-// @route POST /api/v1/Brands
-// @access Public
+// @desc  Create a Brand
+// @route POST /api/v1/brands
+// @access Private
 export const createBrand = asyncHandler(async (req: CustomRequest, res: Response) => {
-  logger.info(`Service: createBrand ${req.method} ${req.url}`);
-  const connection = await getDBConnection();
+  log('createBrand', req);
 
-  const validation = brandValidationSchema.safeParse({
-    ...req.body,
-    userId: req.id,
-  });
-
+  const validation = brandValidationSchema.safeParse({ ...req.body, userId: req.id });
   if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
+    const issues = validation.error.issues.map((issue) => ({
       path: issue.path.join('.'),
       message: issue.message,
     }));
-
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
-    });
+    return failValidation(res, issues);
   }
-  const repository = connection.getRepository(BrandEntity);
 
-  const slug = validation.data.name.toLowerCase().trim().split(' ').join('-');
-
-  const newBrand = repository.create({ ...validation.data, slug });
-  const save = await repository.save(newBrand);
-
-  return res.status(200).json({
-    success: true,
-    message: 'Brand created successfully',
-    data: save,
-  });
+  const data = await brandsService.create(validation.data as CreateBrandInput);
+  return ok(res, data, 'Brand created successfully', 200);
 });
 
-// @desc Update a single Brand
-// @route PUT /api/v1/Brands/:id
-// @access Public
-export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Service: updateBrand ${req.method} ${req.url}`);
-  const { id } = req.params;
-  const connection = await getDBConnection();
+// @desc  Update a Brand
+// @route PATCH /api/v1/brands/:id
+// @access Private
+export const updateBrand = asyncHandler(async (req: CustomRequest, res: Response) => {
+  log('updateBrand', req);
 
-  const validation = updateBrandValidationSchema.safeParse({
-    ...req.body,
-  });
-
+  const validation = updateBrandValidationSchema.safeParse(req.body);
   if (!validation.success) {
-    const formattedErrors = validation.error.issues.map((issue) => ({
+    const issues = validation.error.issues.map((issue) => ({
       path: issue.path.join('.'),
       message: issue.message,
     }));
-
-    return res.status(400).json({
-      success: false,
-      issues: formattedErrors,
-    });
+    return failValidation(res, issues);
   }
 
-  const repository = await connection.getRepository(BrandEntity);
-  const result = await repository.findOneBy({ id });
-  if (!result) {
-    throw new Error(`Resource not found of id #${req.params.id}`);
-  }
-  const updateData = await repository.merge(result, validation.data);
-  await repository.save(updateData);
-
-  return res.status(200).json({
-    success: true,
-    message: 'Brand updated successfully',
-    data: updateData,
-  });
+  const data = await brandsService.update(
+    String(req.params.id),
+    validation.data as UpdateBrandInput,
+  );
+  return ok(res, data, 'Brand updated successfully', 200);
 });
 
-// @desc Delete a single Brand
-// @route DELETE /api/v1/Brands/:id
-// @access Public
+// @desc  Delete a Brand
+// @route DELETE /api/v1/brands/:id
+// @access Private
 export const deleteBrand = asyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Service: deleteBrand ${req.method} ${req.url}`);
-  const { id } = req.params;
-  const connection = await getDBConnection();
-  const repository = await connection.getRepository(BrandEntity);
-
-  const result = await repository.findOneBy({ id });
-  if (!result) {
-    throw new Error(`Resource not found of id #${req.params.id}`);
-  }
-
-  if (result.image) {
-    const repository = connection.getRepository(FileEntity);
-    const deleteFile = await findFileEntity(repository, result.image);
-    await Promise.all([
-      deleteFile && repository.remove(deleteFile),
-      removeFileFromMinio(result.image),
-    ]);
-  }
-  await repository.delete({ id });
-
-  return res.status(200).json({
-    success: true,
-    message: `Delete a single Brand of id ${req.params.id}`,
-    data: result,
-  });
+  log('deleteBrand', req);
+  const data = await brandsService.remove(String(req.params.id));
+  return ok(res, data, `Delete a single Brand of id ${req.params.id}`);
 });

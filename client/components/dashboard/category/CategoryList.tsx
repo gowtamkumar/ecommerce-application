@@ -1,88 +1,37 @@
-'use client'
-import { ActionType } from "@/constants/constants";
-import { deleteCategory, getAntdCategories } from "@/lib/apis/categories";
-import { imageSetFile } from "@/lib/utils/imageSetFile";
-import { getImageUrl, getUploadImageUrl } from "@/lib/utils/imageUrl";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+"use client";
+import { CategoryTreeRow } from "@/lib/apis/categories";
+import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import type { TableColumnsType } from "antd";
+import { TableColumnsType } from "antd";
 import { Button, Image, Input, Popconfirm, Table, Tag } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useMemo, useState } from "react";
 
-interface DataType {
-  key: React.ReactNode;
-  label: string;
-  slug: string;
-  image: string;
-  active: boolean;
-  isFeatured: boolean;
-  children?: DataType[];
+interface CategoryListProps {
+  categories: CategoryTreeRow[];
+  loading: boolean;
+  deletingId?: number | null;
+  onEdit: (record: CategoryTreeRow) => void;
+  onDelete: (id: number) => void;
 }
 
-const CategoryList: React.FC = () => {
-  const [categories, setCategories] = useState<DataType[]>([]);
+const CategoryList = ({ categories, loading, deletingId, onEdit, onDelete }: CategoryListProps) => {
   const [searchText, setSearchText] = useState("");
-  const global = useSelector(selectGlobal);
-  const dispatch = useDispatch();
 
-  const fetchData = useCallback(async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const categories = await getAntdCategories();
-      setCategories(categories.data);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleDelete = async (id: string) => {
-    dispatch(setLoading({ delete: true }));
-    try {
-      await deleteCategory(id);
-      successNotification({ message: "Successfully deleted" });
-      fetchData();
-    } catch (error: any) {
-      errorNotification({ message: error.message });
-    } finally {
-      dispatch(setLoading({ delete: false }));
-      dispatch(setAction({}));
-    }
-  };
-
-  // Basic client-side filtering (if API doesn't support search params directly effectively or for small datasets)
-  // The original code used column-based filtering. Replacing with a global client-side filter for simplicity and UX.
-  const filteredCategories = categories.filter((item) =>
-    item.label.toLowerCase().includes(searchText.toLowerCase())
+  const filteredCategories = useMemo(
+    () => categories.filter((item) => item.label.toLowerCase().includes(searchText.toLowerCase())),
+    [categories, searchText],
   );
 
-
-
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<CategoryTreeRow> = [
     {
       title: "Category Name",
       dataIndex: "label",
       key: "label",
       render: (text, record) => (
-
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
             <Image
@@ -90,27 +39,28 @@ const CategoryList: React.FC = () => {
               height={48}
               src={getImageUrl(record.image)}
               alt={text}
-
               className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
             />
           </div>
           <span className="font-semibold text-gray-900">{text}</span>
         </div>
-      )
+      ),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (text) => <span className="text-gray-500 line-clamp-1">{text || "-"}</span>
+      render: (text) => <span className="text-gray-500 line-clamp-1">{text || "-"}</span>,
     },
     {
       title: "Status",
       key: "active",
       dataIndex: "active",
       render: (active: boolean) => (
-        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-green-500' : 'bg-red-500'}`}></span>
+        <div
+          className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${active ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
+        >
+          <span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-green-500" : "bg-red-500"}`}></span>
           {active ? "Active" : "Inactive"}
         </div>
       ),
@@ -119,19 +69,22 @@ const CategoryList: React.FC = () => {
       title: "Featured",
       key: "isFeatured",
       dataIndex: "isFeatured",
-      render: (value: boolean) => (
+      render: (value: boolean) =>
         value ? (
-          <Tag color="cyan" className="rounded-full px-2 border-0 bg-cyan-50 text-cyan-700">Yes</Tag>
+          <Tag color="cyan" className="rounded-full px-2 border-0 bg-cyan-50 text-cyan-700">
+            Yes
+          </Tag>
         ) : (
-          <Tag color="red" className="rounded-full px-2 border-0 bg-red-50 text-red-700">No</Tag>
-        )
-      ),
+          <Tag color="red" className="rounded-full px-2 border-0 bg-red-50 text-red-700">
+            No
+          </Tag>
+        ),
     },
     {
       title: "Action",
       key: "action",
       width: 100,
-      render: (value) => (
+      render: (_value, record) => (
         <div className="flex items-center justify-end gap-2">
           <Button
             type="text"
@@ -139,24 +92,12 @@ const CategoryList: React.FC = () => {
             icon={<EditOutlined className="text-gray-500" />}
             className="hover:text-global-primary hover:bg-global-primary/5"
             title="Edit"
-            onClick={() => {
-              const newData = { ...value };
-              if (newData.image) {
-
-                newData.fileList = [imageSetFile(newData.image)];
-              }
-              dispatch(
-                setAction({
-                  type: ActionType.UPDATE,
-                  payload: newData,
-                })
-              );
-            }}
+            onClick={() => onEdit(record)}
           />
           <Popconfirm
             title="Delete Category"
             description="Are you sure you want to delete this category?"
-            onConfirm={() => handleDelete(value.id)}
+            onConfirm={() => onDelete(record.id)}
             okText="Yes"
             cancelText="No"
             okButtonProps={{ danger: true }}
@@ -165,7 +106,7 @@ const CategoryList: React.FC = () => {
               type="text"
               size="small"
               danger
-              loading={global.loading?.delete}
+              loading={deletingId === record.id}
               icon={<DeleteOutlined />}
               className="hover:bg-red-50"
             />
@@ -177,7 +118,6 @@ const CategoryList: React.FC = () => {
 
   return (
     <div className="p-4">
-      {/* Toolbar */}
       <div className="mb-4">
         <Input
           prefix={<SearchOutlined className="text-gray-400" />}
@@ -189,13 +129,13 @@ const CategoryList: React.FC = () => {
       </div>
 
       <Table
-        loading={global.loading.loading}
+        loading={loading}
         columns={columns}
         dataSource={filteredCategories}
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
-          position: ["bottomRight"]
+          position: ["bottomRight"],
         }}
         size="middle"
         scroll={{ x: 800 }}

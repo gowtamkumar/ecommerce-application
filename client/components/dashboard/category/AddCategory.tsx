@@ -1,29 +1,15 @@
-import {
-  getAntdCategories,
-  saveCategory,
-  updateCategory,
-} from "@/lib/apis/categories";
+"use client";
+import { saveCategory, updateCategory, CategoryTreeRow } from "@/lib/apis/categories";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
-import {
-  handlePreview,
-  handlePreviewCancel,
-  normFile,
-} from "@/lib/utils/commonFunctions";
+import { handlePreview, handlePreviewCancel, normFile } from "@/lib/utils/commonFunctions";
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
-import {
-  errorNotification,
-  successNotification,
-} from "@/lib/utils/notification";
-import {
-  selectGlobal,
-  setAction,
-  setLoading,
-} from "@/redux/features/global/globalSlice";
+import { errorNotification, successNotification } from "@/lib/utils/notification";
+import { selectGlobal } from "@/redux/features/global/globalSlice";
 import {
   FolderOutlined,
   SaveOutlined,
   UndoOutlined,
-  UploadOutlined
+  UploadOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -40,130 +26,102 @@ import {
 } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionType } from "../../../constants/constants";
 
-const AddCategory = () => {
-  const [categories, setCategories] = useState([]);
-  const [formValues, setFormValues] = useState({
-    fileList: [],
-  }) as any;
+interface AddCategoryProps {
+  open: boolean;
+  mode: "create" | "update";
+  payload: CategoryTreeRow | null;
+  /** Reused tree from the list fetch - feeds the parent TreeSelect (no second API call). */
+  treeData: any[];
+  onCancel: () => void;
+  onSaved: () => void;
+}
 
-  const global = useSelector(selectGlobal);
+const AddCategory = ({ open, mode, payload, treeData, onCancel, onSaved }: AddCategoryProps) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { payload, type } = global.action;
+  const global = useSelector(selectGlobal);
+  const [formValues, setFormValues] = useState<any>({ fileList: [] });
+  const [submitting, setSubmitting] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    dispatch(setLoading({ loading: true }));
-    try {
-      const newData = { ...payload };
-      const categories = await getAntdCategories();
-      setCategories(categories.data);
-      form.setFieldsValue(newData);
-      setFormValues(newData);
-    } catch (err: any) {
-      errorNotification({ message: err.message });
-    } finally {
-      dispatch(setLoading({ loading: false }));
-    }
-  }, [dispatch, payload, form]);
-
+  // Populate the form whenever the modal for a record opens; reset otherwise.
   useEffect(() => {
-    fetchData();
-  }, [fetchData, global.action]);
-
-  const handleSubmit = async (values: any) => {
-    dispatch(setLoading({ save: true }));
-
-    try {
-      const res = values.id
-        ? await updateCategory(values)
-        : await saveCategory(values);
-
-      if (!res?.success) {
-        errorNotification({ message: res?.message || "Operation failed" });
-        return null;
-      }
-
-      dispatch(setAction({}));
-      form.resetFields();
-      successNotification({ message: res.message });
-      return res;
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred";
-      errorNotification({ message: errorMessage });
-      return null;
-    } finally {
-      dispatch(setLoading({ save: false }));
-    }
-  };
-
-  const handleClose = () => {
-    dispatch(setAction({}));
-    dispatch(setLoading({}));
-    form.resetFields();
-  };
-
-  const resetFormData = (value: any) => {
-    if (value?.id) {
-      form.setFieldsValue(value);
-      setFormValues(form.getFieldsValue());
+    if (open) {
+      const initial = { ...(payload ?? {}) };
+      form.setFieldsValue(initial);
+      setFormValues(initial);
     } else {
       form.resetFields();
-      setFormValues(form.getFieldsValue());
+      setFormValues({ fileList: [] });
     }
-  };
+  }, [open, payload, form]);
+
+  const handleSubmit = useCallback(
+    async (values: any) => {
+      setSubmitting(true);
+      try {
+        const res = values.id ? await updateCategory(values) : await saveCategory(values);
+
+        if (!res?.success) {
+          errorNotification({ message: res?.message || "Operation failed" });
+          return;
+        }
+
+        successNotification({ message: res.message || "Category saved successfully" });
+        onSaved();
+      } catch (error: any) {
+        errorNotification({
+          message: error?.response?.data?.message || error?.message || "An unexpected error occurred",
+        });
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [onSaved],
+  );
+
+  const resetFormData = useCallback(() => {
+    if (payload?.id) {
+      form.setFieldsValue(payload);
+      setFormValues(payload);
+    } else {
+      form.resetFields();
+      setFormValues({ fileList: [] });
+    }
+  }, [form, payload]);
 
   const customUploadRequest = async (options: any) => {
     const result = await handleGlobalUpload(options);
     if (result) {
       const { newFile, newFileUrl } = result;
-      form.setFieldsValue({
-        fileList: [newFile],
-        image: newFileUrl,
-      });
-      setFormValues((prev: any) => ({
-        ...prev,
-        fileList: [newFile],
-        image: newFileUrl,
-      }));
+      form.setFieldsValue({ fileList: [newFile], image: newFileUrl });
+      setFormValues((prev: any) => ({ ...prev, fileList: [newFile], image: newFileUrl }));
     }
   };
 
-  const isEditMode = type === ActionType.UPDATE;
+  const isEditMode = mode === "update";
 
   return (
     <Modal
       title={
         <div className="flex items-center gap-3 pb-4">
-          <div
-            className={`w-10 h-10 rounded-lg flex items-center justify-center ${isEditMode ? "bg-blue-50" : "bg-green-50"
-              }`}
-          >
-            <FolderOutlined
-              className={`text-xl ${isEditMode ? "text-blue-600" : "text-green-600"
-                }`}
-            />
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isEditMode ? "bg-blue-50" : "bg-green-50"}`}>
+            <FolderOutlined className={`text-xl ${isEditMode ? "text-blue-600" : "text-green-600"}`} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 m-0">
               {isEditMode ? "Edit Category" : "Create New Category"}
             </h3>
             <p className="text-sm text-gray-500 m-0">
-              {isEditMode
-                ? "Update category information"
-                : "Add a new category to your store"}
+              {isEditMode ? "Update category information" : "Add a new category to your store"}
             </p>
           </div>
         </div>
       }
       width={700}
       zIndex={1050}
-      open={type === ActionType.CREATE || type === ActionType.UPDATE}
-      onCancel={handleClose}
+      open={open}
+      onCancel={onCancel}
       forceRender
       footer={null}
       className="modern-modal"
@@ -188,31 +146,16 @@ const AddCategory = () => {
         {/* Category Name */}
         <Form.Item
           name="name"
-          label={
-            <span className="font-semibold text-gray-700">Category Name</span>
-          }
-          rules={[
-            {
-              required: true,
-              message: "Please enter category name",
-            },
-          ]}
+          label={<span className="font-semibold text-gray-700">Category Name</span>}
+          rules={[{ required: true, message: "Please enter category name" }]}
         >
-          <Input
-            placeholder="e.g., Electronics, Fashion, Home & Garden"
-            size="large"
-            className="rounded-lg"
-          />
+          <Input placeholder="e.g., Electronics, Fashion, Home & Garden" size="large" className="rounded-lg" />
         </Form.Item>
 
         {/* Parent Category */}
         <Form.Item
           name="parentId"
-          label={
-            <span className="font-semibold text-gray-700">
-              Parent Category (Optional)
-            </span>
-          }
+          label={<span className="font-semibold text-gray-700">Parent Category (Optional)</span>}
           extra="Leave empty for top-level category"
         >
           <TreeSelect
@@ -223,7 +166,7 @@ const AddCategory = () => {
             placeholder="Select parent category"
             allowClear
             treeDefaultExpandAll
-            treeData={categories}
+            treeData={treeData}
             className="rounded-lg"
           />
         </Form.Item>
@@ -231,28 +174,15 @@ const AddCategory = () => {
         {/* Description */}
         <Form.Item
           name="description"
-          label={
-            <span className="font-semibold text-gray-700">Description</span>
-          }
+          label={<span className="font-semibold text-gray-700">Description</span>}
         >
-          <Input.TextArea
-            placeholder="Brief description of this category..."
-            rows={3}
-            className="rounded-lg"
-          />
+          <Input.TextArea placeholder="Brief description of this category..." rows={3} className="rounded-lg" />
         </Form.Item>
 
         {/* Status & Featured in One Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Form.Item
-            name="active"
-            label={<span className="font-semibold text-gray-700">Status</span>}
-          >
-            <Select
-              placeholder="Select status"
-              size="large"
-              className="rounded-lg"
-            >
+          <Form.Item name="active" label={<span className="font-semibold text-gray-700">Status</span>}>
+            <Select placeholder="Select status" size="large" className="rounded-lg">
               <Select.Option value={true}>
                 <Tag color="success">Active</Tag>
               </Select.Option>
@@ -265,9 +195,7 @@ const AddCategory = () => {
           <Form.Item
             name="isFeatured"
             valuePropName="checked"
-            label={
-              <span className="font-semibold text-gray-700">Featured</span>
-            }
+            label={<span className="font-semibold text-gray-700">Featured</span>}
           >
             <Checkbox className="mt-2">
               <span className="text-sm">Display in featured section</span>
@@ -284,39 +212,31 @@ const AddCategory = () => {
             <span className="font-semibold text-gray-700">Category Image</span>
           </div>
 
-          <Form.Item
-            name="fileList"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            className="mb-0"
-          >
+          <Form.Item name="fileList" valuePropName="fileList" getValueFromEvent={normFile} className="mb-0">
             <Upload
               name="image"
               listType="picture-card"
               fileList={formValues?.fileList || []}
               onRemove={async (v) => {
-                  if (v.fileName) {
-                    form.setFieldsValue({ image: null, fileList: [] });
-                    setFormValues({ image: null, fileList: [] });
-                    const params = { filename: v.fileName };
-                    await fileDeleteWithPhoto(params);
-                  }
-                }}
-                className="category-uploader"
-                onPreview={(file) => handlePreview(file, dispatch)}
-                customRequest={customUploadRequest}
-                maxCount={1}
-              >
-                {formValues?.fileList?.length >= 1 ? null : (
-                  <div className="flex flex-col items-center justify-center p-4">
-                    <UploadOutlined className="text-3xl text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-500">Upload Image</span>
-                    <span className="text-xs text-gray-400 mt-1">
-                      Square format recommended
-                    </span>
-                  </div>
-                )}
-              </Upload>
+                if ((v as any).fileName) {
+                  form.setFieldsValue({ image: null, fileList: [] });
+                  setFormValues({ image: null, fileList: [] });
+                  await fileDeleteWithPhoto({ filename: (v as any).fileName });
+                }
+              }}
+              className="category-uploader"
+              onPreview={(file) => handlePreview(file, dispatch)}
+              customRequest={customUploadRequest}
+              maxCount={1}
+            >
+              {formValues?.fileList?.length >= 1 ? null : (
+                <div className="flex flex-col items-center justify-center p-4">
+                  <UploadOutlined className="text-3xl text-gray-400 mb-2" />
+                  <span className="text-sm text-gray-500">Upload Image</span>
+                  <span className="text-xs text-gray-400 mt-1">Square format recommended</span>
+                </div>
+              )}
+            </Upload>
           </Form.Item>
           <Form.Item name="image" hidden>
             <Input />
@@ -342,22 +262,16 @@ const AddCategory = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-3 mt-6 pt-6">
-          <Button
-            size="large"
-            icon={<UndoOutlined />}
-            onClick={() => resetFormData(payload)}
-            className="rounded-lg"
-          >
+          <Button size="large" icon={<UndoOutlined />} onClick={resetFormData} className="rounded-lg">
             Reset
           </Button>
-
           <Button
             size="large"
             type="primary"
             htmlType="submit"
             icon={<SaveOutlined />}
-            disabled={global.loading.save}
-            loading={global.loading.save}
+            disabled={submitting}
+            loading={submitting}
             className="rounded-lg min-w-[120px]"
           >
             {payload?.id ? "Update" : "Create"} Category

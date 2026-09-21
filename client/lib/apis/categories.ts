@@ -1,75 +1,77 @@
 "use server";
-import appConfig from "@/appConfig";
-import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
+import http from "../api/http";
+import type { ApiResponse } from "../utils/commonFunctions";
 
-export async function getPublicCategories() {
-  const res = await fetch(`${appConfig.apiUrl}/categories/all`, {
-    next: { revalidate: 30 },
-  });
-
-  return await handleResponse(res);
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  image?: string | null;
+  level?: number;
+  description?: string | null;
+  active: boolean;
+  isFeatured: boolean;
+  parentId?: number | null;
+  userId: number;
+  createdAt?: string;
+  updatedAt?: string;
+  children?: Category[] | null;
 }
 
-export async function getAntdCategories() {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/categories/antd`, {
-    cache: "no-cache",
-    headers,
-  });
-
-  return await handleResponse(res);
+/** Row shape returned by the /categories/antd endpoint (list table + parent TreeSelect). */
+export interface CategoryTreeRow extends Category {
+  key: string;
+  value: number;
+  label: string;
+  title: string;
 }
 
-
-export async function getCategoriesForMenu() {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/categories/menu`, {
-    cache: "no-cache",
-    headers,
-  });
-
-  return await handleResponse(res);
+export interface PaginatedCategories {
+  success: boolean;
+  message?: string;
+  totalItem: number;
+  page: number;
+  perPage: number;
+  data: Category[];
 }
 
-export async function getCategories() {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/categories`, {
-    cache: "no-cache",
-    headers,
-  });
-
-  return await handleResponse(res);
-}
-export async function saveCategory(data: any) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/categories`, {
-    method: "POST",
-    cache: "no-cache",
-    headers,
-    body: JSON.stringify(data),
-  });
-
-  return await handleResponse(res);
+export interface CreateCategoryInput {
+  name: string;
+  parentId?: number | null;
+  image?: string | null;
+  description?: string | null;
+  active?: boolean;
+  isFeatured?: boolean;
 }
 
-export async function updateCategory(data: any) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/categories/${data.id}`, {
-    method: "PUT",
-    cache: "no-cache",
-    headers,
-    body: JSON.stringify(data),
-  });
-  return await handleResponse(res);
+export interface UpdateCategoryInput extends CreateCategoryInput {
+  id: number;
 }
 
-export async function deleteCategory(id: string) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/categories/${id}`, {
-    method: "DELETE",
-    cache: "no-cache",
-    headers,
-  });
+export async function getPublicCategories(): Promise<PaginatedCategories> {
+  return http.get<PaginatedCategories>("/categories/all", { auth: false, next: { revalidate: 30 } });
+}
 
-  return await handleResponse(res);
+export async function getAntdCategories(): Promise<ApiResponse<CategoryTreeRow[]>> {
+  return http.get<ApiResponse<CategoryTreeRow[]>>("/categories/antd");
+}
+
+export async function getCategoriesForMenu(): Promise<ApiResponse<Category[]>> {
+  return http.get<ApiResponse<Category[]>>("/categories/menu");
+}
+
+export async function getCategories(): Promise<PaginatedCategories> {
+  return http.get<PaginatedCategories>("/categories");
+}
+
+export async function saveCategory(data: CreateCategoryInput): Promise<ApiResponse<Category>> {
+  return http.post<ApiResponse<Category>>("/categories", data);
+}
+
+export async function updateCategory(data: UpdateCategoryInput): Promise<ApiResponse<Category>> {
+  return http.put<ApiResponse<Category>>(`/categories/${data.id}`, data);
+}
+
+export async function deleteCategory(id: number): Promise<ApiResponse<Category>> {
+  return http.remove<ApiResponse<Category>>(`/categories/${id}`);
 }

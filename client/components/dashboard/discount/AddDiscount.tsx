@@ -1,8 +1,8 @@
 "use client";
 import uploadButton from "@/components/share-component/uploadButton";
 import { getProducts } from "@/lib/apis/admin/product";
-import { getBrands } from "@/lib/apis/brand";
-import { getCategories } from "@/lib/apis/categories";
+import { getBrands, type Brand } from "@/lib/apis/brand";
+import { getCategories, Category } from "@/lib/apis/categories";
 import { getDiscount, saveDiscount, updateDiscount } from "@/lib/apis/discount";
 import { fileDeleteWithPhoto } from "@/lib/apis/file";
 import {
@@ -46,8 +46,8 @@ const { Title, Text } = Typography;
 const AddDiscount = () => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [formValues, setFormValues] = useState({
     fileList: [],
   }) as any;
@@ -140,7 +140,7 @@ const AddDiscount = () => {
       ]);
 
       setCategories(categoriesRes.data);
-      setBrands(brandsRes.data);
+      setBrands(brandsRes.data ?? []);
       setProducts(productsRes.data);
     } catch (error) {
       console.error("Failed to fetch initial data:", error);

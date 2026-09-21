@@ -1,51 +1,47 @@
 "use server";
-import appConfig from "@/appConfig";
-import { getAuthHeaders, handleResponse } from "../utils/commonFunctions";
+import http from "../api/http";
+import type { ApiResponse } from "../utils/commonFunctions";
 
-export async function saveBrand(data: any) {
-  const headers = await getAuthHeaders();
-  const res = await fetch(`${appConfig.apiUrl}/brands`, {
-    method: "POST",
-    cache: "no-cache",
-    headers,
-    body: JSON.stringify(data),
-  });
-
-  return await handleResponse(res);
+export interface Brand {
+  id: number;
+  name: string;
+  slug: string;
+  image: string | null;
+  description: string | null;
+  status: "Active" | "Inactive";
+  userId: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export async function getBrands() {
-  const headers = await getAuthHeaders();
-
-  const res = await fetch(`${appConfig.apiUrl}/brands`, {
-    cache: "no-cache",
-    headers,
-  });
-
-  return await handleResponse(res);
+export interface PaginatedBrands {
+  success: boolean;
+  message?: string;
+  totalItem: number;
+  page: number;
+  perPage: number;
+  data: Brand[];
 }
 
-export async function updateBrand(data: any) {
-  const headers = await getAuthHeaders();
-
-  const res = await fetch(`${appConfig.apiUrl}/brands/${data.id}`, {
-    method: "PATCH",
-    cache: "no-cache",
-    headers,
-    body: JSON.stringify(data),
-  });
-
-  return await handleResponse(res);
+export interface SaveBrandInput {
+  id?: number;
+  name: string;
+  image?: string | null;
+  status?: string;
 }
 
-export async function deleteBrand(id: string) {
-  const headers = await getAuthHeaders();
+export async function getBrands(): Promise<ApiResponse<Brand[]>> {
+  return http.get<ApiResponse<Brand[]>>("/brands");
+}
 
-  const res = await fetch(`${appConfig.apiUrl}/brands/${id}`, {
-    method: "DELETE",
-    cache: "no-cache",
-    headers,
-  });
+export async function saveBrand(data: SaveBrandInput): Promise<ApiResponse<Brand>> {
+  return http.post<ApiResponse<Brand>>("/brands", data);
+}
 
-  return await handleResponse(res);
+export async function updateBrand(data: SaveBrandInput): Promise<ApiResponse<Brand>> {
+  return http.patch<ApiResponse<Brand>>(`/brands/${data.id}`, data);
+}
+
+export async function deleteBrand(id: number): Promise<ApiResponse<Brand>> {
+  return http.remove<ApiResponse<Brand>>(`/brands/${id}`);
 }

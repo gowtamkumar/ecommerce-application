@@ -6,14 +6,14 @@ import { Button, Drawer, Tabs } from "antd";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCategories } from "@/lib/apis/categories";
+import { getCategories, Category } from "@/lib/apis/categories";
 
 const PostList = dynamic(() => import("@/components/dashboard/post/PostList"), { ssr: false });
 const AddPost = dynamic(() => import("@/components/dashboard/post/AddPost"), { ssr: false });
 
 export default function Page() {
   const [tabKey, setTabKey] = useState("post_list");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const dispatch = useDispatch();
   const global = useSelector(selectGlobal);
 
