@@ -8,6 +8,7 @@ export interface PaginationQuery {
 export interface PaginationParams {
   page?: unknown;
   perPage?: unknown;
+  limit?: unknown;
 }
 
 export const DEFAULT_PER_PAGE = 10;
@@ -21,7 +22,7 @@ export const parsePagination = (
   defaultPerPage = DEFAULT_PER_PAGE,
 ): PaginationQuery => {
   const page = Math.max(1, Number(query.page) || 1);
-  const perPage = Math.max(1, Number(query.perPage) || defaultPerPage);
+  const perPage = Math.max(1, Number(query.perPage || query.limit) || defaultPerPage);
 
   return { page, perPage, skip: (page - 1) * perPage, take: perPage };
 };

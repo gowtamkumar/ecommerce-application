@@ -67,9 +67,30 @@ export class CategoriesRepository {
       .getMany();
   }
 
-  async findManyPaginated(skip: number, take: number): Promise<[CategoriesEntity[], number]> {
+  async findManyPaginated(
+    skip?: number,
+    take?: number,
+    search?: string,
+  ): Promise<[CategoriesEntity[], number]> {
     const repository = await this.getRepository();
-    return repository.findAndCount({ skip, take, order: { id: 'ASC' } });
+    const queryBuilder = repository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.parent', 'parent')
+      .orderBy('category.id', 'DESC');
+
+    if (search && search.trim()) {
+      const q = `%${search.trim().toLowerCase()}%`;
+      queryBuilder.andWhere(
+        '(LOWER(category.name) LIKE :q OR LOWER(category.slug) LIKE :q OR LOWER(category.description) LIKE :q)',
+        { q },
+      );
+    }
+
+    if (skip !== undefined && take !== undefined) {
+      queryBuilder.skip(skip).take(take);
+    }
+
+    return queryBuilder.getManyAndCount();
   }
 
   async findById(id: string | number): Promise<CategoriesEntity | null> {

@@ -1,6 +1,12 @@
 "use client";
 import { ActionType } from "@/constants/constants";
-import { deleteCategory, getAntdCategories, CategoryTreeRow } from "@/lib/apis/categories";
+import {
+    CategoryTreeRow,
+    deleteCategory,
+    getAntdCategories,
+    getCategories,
+    PaginatedCategories,
+} from "@/lib/apis/categories";
 import { useAsyncData } from "@/lib/hooks/useAsyncData";
 import { imageSetFile } from "@/lib/utils/imageSetFile";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
@@ -12,20 +18,27 @@ import { useCallback, useMemo, useState } from "react";
 const CategoryList = dynamic(() => import("@/components/dashboard/category/CategoryList"), { ssr: false });
 const AddCategory = dynamic(() => import("@/components/dashboard/category/AddCategory"), { ssr: false });
 
-interface CategoryListResponse {
-  success: boolean;
-  data?: CategoryTreeRow[];
-}
-
 export interface CategoryAction {
   type: string;
   payload?: CategoryTreeRow;
 }
 
 export default function Category() {
-  // Single source of truth: one fetch feeds both the table and the parent TreeSelect.
-  const { data, loading, refresh } = useAsyncData<CategoryListResponse>(getAntdCategories);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState("");
+
+  const { data, loading, refresh } = useAsyncData<PaginatedCategories>(
+    () => getCategories({ page, perPage: pageSize, search: search || undefined }),
+    `${page}-${pageSize}-${search}`,
+  );
+
+  // Full tree for parent category TreeSelect in AddCategory modal
+  const { data: antdTreeData, refresh: refreshTree } = useAsyncData(getAntdCategories);
+  const treeData = useMemo(() => antdTreeData?.data ?? [], [antdTreeData]);
+
   const categories = useMemo(() => data?.data ?? [], [data]);
+  const totalItem = useMemo(() => data?.totalItem ?? data?.total ?? 0, [data]);
 
   const [action, setAction] = useState<CategoryAction | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -43,25 +56,46 @@ export default function Category() {
 
   const handleSaved = useCallback(() => {
     refresh();
+    refreshTree();
     setAction(null);
-  }, [refresh]);
+  }, [refresh, refreshTree]);
 
-  const handleDelete = useCallback(async (id: number) => {
-    setDeletingId(id);
-    try {
-      const res = await deleteCategory(id);
-      if (!res?.success) {
-        errorNotification({ message: res?.message || "Delete failed" });
-        return;
+  const handleDelete = useCallback(
+    async (id: number) => {
+      setDeletingId(id);
+      try {
+        const res = await deleteCategory(id);
+        if (!res?.success) {
+          errorNotification({ message: res?.message || "Delete failed" });
+          return;
+        }
+        successNotification({ message: "Successfully deleted" });
+        refresh();
+        refreshTree();
+      } catch (error: any) {
+        errorNotification({ message: error.message });
+      } finally {
+        setDeletingId(null);
       }
-      successNotification({ message: "Successfully deleted" });
-      refresh();
-    } catch (error: any) {
-      errorNotification({ message: error.message });
-    } finally {
-      setDeletingId(null);
-    }
-  }, [refresh]);
+    },
+    [refresh, refreshTree],
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number, newPageSize: number) => {
+      setPage(newPage);
+      if (newPageSize !== pageSize) {
+        setPageSize(newPageSize);
+        setPage(1);
+      }
+    },
+    [pageSize],
+  );
+
+  const handleSearch = useCallback((newSearch: string) => {
+    setSearch(newSearch);
+    setPage(1);
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6">
@@ -86,8 +120,14 @@ export default function Category() {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <CategoryList
           categories={categories}
+          totalItem={totalItem}
           loading={loading}
+          page={page}
+          pageSize={pageSize}
+          search={search}
           deletingId={deletingId}
+          onPageChange={handlePageChange}
+          onSearch={handleSearch}
           onEdit={openEdit}
           onDelete={handleDelete}
         />
@@ -97,7 +137,7 @@ export default function Category() {
         open={action !== null}
         mode={action?.type === ActionType.UPDATE ? "update" : "create"}
         payload={action?.payload ?? null}
-        treeData={categories}
+        treeData={treeData}
         onCancel={closeForm}
         onSaved={handleSaved}
       />

@@ -1,13 +1,16 @@
 import { isForeignKeyViolation } from '@/utils/dbErrors';
 import ErrorResponse from '@/utils/errorResponse';
 import { fileDeleteFunction } from '@/utils/fileDeleteFunction';
-import type { PaginationQuery } from '@/utils/pagination';
 import { createSlug } from '@/utils/slugify';
 import { toAntdTreeRows } from '@/utils/tree';
 import { CategoriesEntity } from '../model/categories.entity';
 import { categoriesRepository } from '../repository/categories.repository';
-import { MAX_DEPTH, PaginatedResult, CreateCategoryInput } from '../types/categories.types';
-import { UpdateCategoryInput } from '../types/categories.types';
+import {
+  CreateCategoryInput,
+  MAX_DEPTH,
+  PaginatedResult,
+  UpdateCategoryInput,
+} from '../types/categories.types';
 
 /**
  * Business-logic layer: orchestrates repositories + shared services,
@@ -15,12 +18,22 @@ import { UpdateCategoryInput } from '../types/categories.types';
  * No express / HTTP types here - fully unit-testable.
  */
 export class CategoriesService {
-  async getAll(pagination: PaginationQuery): Promise<PaginatedResult> {
+  async getAll(
+    pagination?: { page?: number; perPage?: number; skip?: number; take?: number },
+    search?: string,
+  ): Promise<PaginatedResult> {
     const [data, total] = await categoriesRepository.findManyPaginated(
-      pagination.skip,
-      pagination.take,
+      pagination?.skip,
+      pagination?.take,
+      search,
     );
-    return { data, total, page: pagination.page, perPage: pagination.perPage };
+    const rows = toAntdTreeRows(data);
+    return {
+      data: rows as any,
+      total,
+      page: pagination?.page ?? 1,
+      perPage: pagination?.perPage ?? total,
+    };
   }
 
   /** Admin tree used by the antd table + parent select - single endpoint, both consumers. */

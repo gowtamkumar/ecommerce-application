@@ -18,8 +18,36 @@ const log = (fn: string, req: Request) => logger.info(`Service: ${fn} ${req.meth
 // @access Public
 export const getPublicCategories = asyncHandler(async (req: Request, res: Response) => {
   log('getPublicCategories', req);
-  const { data, total, page, perPage } = await categoriesService.getAll(parsePagination(req.query));
-  return ok(res, data, 'Get all categories', 200, { totalItem: total, page, perPage });
+  const search = typeof req.query.search === 'string' ? req.query.search : undefined;
+  const { page, perPage, limit } = req.query;
+
+  if (page || perPage || limit) {
+    const pagination = parsePagination(req.query);
+    const {
+      data,
+      total,
+      page: curPage,
+      perPage: curPerPage,
+    } = await categoriesService.getAll(pagination, search);
+    return ok(res, data, 'Get all categories', 200, {
+      totalItem: total,
+      total,
+      page: curPage,
+      perPage: curPerPage,
+      limit: curPerPage,
+      totalPages: Math.ceil(total / curPerPage),
+    });
+  }
+
+  const { data, total } = await categoriesService.getAll(undefined, search);
+  return ok(res, data, 'Get all categories', 200, {
+    totalItem: total,
+    total,
+    page: 1,
+    perPage: total,
+    limit: total,
+    totalPages: 1,
+  });
 });
 
 // @desc  Admin tree for the antd table + parent select (single fetch)
@@ -45,8 +73,36 @@ export const getCategoriesForMenu = asyncHandler(async (req: Request, res: Respo
 // @access Private
 export const getCategories = asyncHandler(async (req: Request, res: Response) => {
   log('getCategories', req);
-  const { data, total, page, perPage } = await categoriesService.getAll(parsePagination(req.query));
-  return ok(res, data, 'Get all categories', 200, { totalItem: total, page, perPage });
+  const search = typeof req.query.search === 'string' ? req.query.search : undefined;
+  const { page, perPage, limit } = req.query;
+
+  if (page || perPage || limit) {
+    const pagination = parsePagination(req.query);
+    const {
+      data,
+      total,
+      page: curPage,
+      perPage: curPerPage,
+    } = await categoriesService.getAll(pagination, search);
+    return ok(res, data, 'Get all categories', 200, {
+      totalItem: total,
+      total,
+      page: curPage,
+      perPage: curPerPage,
+      limit: curPerPage,
+      totalPages: Math.ceil(total / curPerPage),
+    });
+  }
+
+  const { data, total } = await categoriesService.getAll(undefined, search);
+  return ok(res, data, 'Get all categories', 200, {
+    totalItem: total,
+    total,
+    page: 1,
+    perPage: total,
+    limit: total,
+    totalPages: 1,
+  });
 });
 
 // @desc  Get a single category
