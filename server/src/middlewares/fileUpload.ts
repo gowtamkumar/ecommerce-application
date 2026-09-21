@@ -1,40 +1,22 @@
 import multer from 'multer';
-import path, { extname } from 'path';
 
-// Set up storage for uploaded files
-const storage = multer.diskStorage({
-  destination: (req, file, callback: any) => {
-    if (!file) return callback(new Error('Upload file error'), null);
-    return callback(null, 'public/uploads');
-  },
+// Store uploaded files in memory; the controller pushes the buffer to MinIO
+const storage = multer.memoryStorage();
 
-  filename: (req: any, file: any, callback: any) => {
-    if (file) {
-      const imagePattern = /(jpg|jpeg|png|webp)/gi;
-      const mathExt = extname(file.originalname).replace('.', '');
+const fileFilter = (req: any, file: any, callback: any) => {
+  const imagePattern = /(jpg|jpeg|png|webp)/gi;
+  const mathExt = (file.originalname.split('.').pop() || '').replace('.', '');
 
-      if (!imagePattern.test(mathExt)) {
-        return callback(new Error('Error: Images only! (jpeg, jpg, png, webp)'), null);
-      }
-      const imageName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
-      return callback(null, imageName);
-    }
-  },
-});
-
-// const fileFilter = (req,file,callback) => {
-//   const supportedFiles = ['image/jpeg', 'image/png'];
-//   if (supportedFiles.includes(file.mimetype)) {
-//     return callback(null, true);
-//   } else {
-//     //reject file
-//     return callback('Unsupported file format', false);
-//   }
-// };
+  if (!imagePattern.test(mathExt)) {
+    return callback(new Error('Error: Images only! (jpeg, jpg, png, webp)'), null);
+  }
+  return callback(null, true);
+};
 
 export const upload = multer({
   limits: {
     fileSize: (Number(process.env.MAX_FILE_UPLOAD) || 5) * 1024 * 1024,
   },
   storage: storage,
+  fileFilter: fileFilter,
 });

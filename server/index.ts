@@ -16,6 +16,7 @@ import { initCronJobs } from '@/services/cron.service';
 import compression from 'compression';
 import { rateLimit } from 'express-rate-limit';
 import path from 'path';
+import { getPublicFileUrl } from '@/services/minio.service';
 
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 
@@ -30,6 +31,14 @@ if (process.env.NODE_ENV === 'development') {
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '..', 'public')));
 }
+
+// Legacy /uploads/:filename links now redirect to the MinIO public URL
+// (keeps old stored filenames working once files live in the object storage)
+app.get('/uploads/:filename', (req, res) => {
+  const { filename } = req.params;
+  if (!filename) return res.status(404).send('Not found');
+  return res.redirect(302, getPublicFileUrl(filename));
+});
 
 // Connect to database
 if (process.env.NODE_ENV !== 'test') {

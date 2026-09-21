@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 
-import fs from 'fs';
-import { join } from 'path';
 import { ILike } from 'typeorm';
 import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { removeFileFromMinio, uploadFileToMinio } from '@/services/minio.service';
 import { fileValidationSchema } from '@/validation';
 import { FileEntity } from '../model/file.entity';
 
@@ -121,14 +120,28 @@ export const fileUpload = asyncHandler(async (req: CustomRequest, res: Response)
   //   const validation = fileValidationSchema.safeParse(req.files);
   // console.log("🚀 ~ req.files:", req.files);
 
-  const newarray: any = [];
+  const newarray: Express.Multer.File[] = [];
 
-  Object.entries(req.files).forEach(([item, currfile]) => {
-    const newFiles: any = currfile;
+  Object.entries(req.files).forEach(([, currfile]) => {
+    const newFiles = currfile as Express.Multer.File[];
     newarray.push(...newFiles);
   });
 
-  const newFile = repository.create(newarray);
+  // Upload every file to MinIO and build the entity records
+  const uploaded = await Promise.all(
+    newarray.map(async (file: Express.Multer.File) => {
+      const meta = await uploadFileToMinio(file);
+      return {
+        ...meta,
+        fieldname: file.fieldname,
+        originalname: file.originalname,
+        encoding: file.encoding,
+        mimetype: file.mimetype,
+      };
+    }),
+  );
+
+  const newFile = repository.create(uploaded);
   const save = await repository.save(newFile);
   return res.status(200).json({
     success: true,
@@ -195,15 +208,10 @@ export const deleteFileWithPhoto = asyncHandler(async (req: Request, res: Respon
   const { filename } = req.body;
   const connection = await getDBConnection();
   const repository = connection.getRepository(FileEntity);
-  const directory = join(process.cwd(), '/public/uploads');
-  const filePath = `${directory}/${filename}`;
 
   try {
-    // Find the file entity in the database and unlink the file concurrently
-    const [deleteFile] = await Promise.all([
-      repository.findOne({ where: { filename } }),
-      fs.promises.unlink(filePath),
-    ]);
+    // Find the file entity in the database and delete it from MinIO concurrently
+    const deleteFile = await repository.findOne({ where: { filename } });
 
     if (!deleteFile) {
       return res.status(404).json({
@@ -212,8 +220,8 @@ export const deleteFileWithPhoto = asyncHandler(async (req: Request, res: Respon
       });
     }
 
-    // Remove the file entity from the database
-    await repository.remove(deleteFile);
+    // Remove the file entity from the database and the object from MinIO
+    await Promise.all([repository.remove(deleteFile), removeFileFromMinio(filename)]);
 
     return res.status(200).json({
       success: true,
@@ -246,7 +254,6 @@ export const deleteMultipleFilesWithPhoto = asyncHandler(async (req: Request, re
 
   const connection = await getDBConnection();
   const repository = connection.getRepository(FileEntity);
-  const directory = join(process.cwd(), '/public/uploads');
 
   try {
     // Find all files in DB that match provided filenames
@@ -261,18 +268,13 @@ export const deleteMultipleFilesWithPhoto = asyncHandler(async (req: Request, re
       });
     }
 
-    // Prepare unlink promises for existing files
-    const unlinkPromises = filesToDelete.map((file: { filename: string }) => {
-      const filePath = `${directory}/${file.filename}`;
-      return fs.promises.unlink(filePath).catch((err) => {
-        // Log missing file but continue deletion
-        logger.warn(`File not found or already deleted: ${file.filename}`);
-        return null;
-      });
-    });
+    // Prepare MinIO removal promises for existing files
+    const removePromises = filesToDelete.map((file: { filename: string }) =>
+      removeFileFromMinio(file.filename),
+    );
 
-    // Run unlink + DB delete in parallel
-    await Promise.all([Promise.all(unlinkPromises), repository.remove(filesToDelete)]);
+    // Run MinIO removal + DB delete in parallel
+    await Promise.all([Promise.all(removePromises), repository.remove(filesToDelete)]);
 
     return res.status(200).json({
       success: true,

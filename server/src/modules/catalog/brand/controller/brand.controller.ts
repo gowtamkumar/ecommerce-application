@@ -6,8 +6,7 @@ import { FileEntity } from '@/modules/system/other/file/model/file.entity';
 import { brandValidationSchema } from '@/validation';
 import { updateBrandValidationSchema } from '@/validation/brand/updateBrandValidation';
 import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
-import { join } from 'path';
+import { removeFileFromMinio } from '@/services/minio.service';
 import { BrandEntity } from '../model/brand.entity';
 
 // @desc Get all Brands
@@ -150,13 +149,8 @@ export const deleteBrand = asyncHandler(async (req: Request, res: Response) => {
 
   if (result.image) {
     const repository = connection.getRepository(FileEntity);
-    const directory = join(process.cwd(), '/public/uploads');
-    const filePath = `${directory}/${result.image}`;
-    const [deleteFile] = await Promise.all([
-      repository.findOne({ where: { filename: result.image } }),
-      fs.promises.unlink(filePath),
-    ]);
-    await repository.remove(deleteFile);
+    const deleteFile = await repository.findOne({ where: { filename: result.image } });
+    await Promise.all([repository.remove(deleteFile), removeFileFromMinio(result.image)]);
   }
   await repository.delete({ id });
 

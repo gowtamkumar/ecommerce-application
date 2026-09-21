@@ -15,6 +15,7 @@ import { logger } from '@/middlewares/logger';
 import { FileEntity } from '@/modules/system/other/file/model/file.entity';
 import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
 import { cacheService, CacheService } from '@/utils/cache.service';
+import { removeFileFromMinio } from '@/services/minio.service';
 import { sendEmail } from '@/utils/sendMail';
 import { updateUserValidationSchema, userValidationSchema } from '@/validation';
 import { forgotPasswordValidationSchema } from '@/validation/user/forgotPasswordValidation';
@@ -22,9 +23,7 @@ import { loginValidationSchema } from '@/validation/user/loginValidation';
 import { resetPasswordValidationSchema } from '@/validation/user/resetPasswordValidation';
 import { updatePasswordValidationSchema } from '@/validation/user/updatePasswordValidation';
 import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
 import jwt from 'jsonwebtoken';
-import { join } from 'path';
 import 'reflect-metadata';
 import { RoleEnum } from '../enums/role.enum';
 import { UserActivityEntity } from '../model/user-activity.entity';
@@ -753,14 +752,12 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response, next:
   if (user.image) {
     const connection = await getDBConnection();
     const repository = connection.getRepository(FileEntity);
-    const directory = join(process.cwd(), '/public/uploads');
-    const filePath = `${directory}/${user.image}`;
     const deleteFile = await repository.findOne({ where: { filename: user.image } });
 
     if (deleteFile) {
       await Promise.all([
         repository.remove(deleteFile),
-        fs.promises.unlink(filePath).catch((err) => logger.error(`File unlink failed: ${err}`)),
+        removeFileFromMinio(user.image).catch((err) => logger.error(`MinIO remove failed: ${err}`)),
       ]);
     }
   }
