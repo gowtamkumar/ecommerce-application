@@ -1,4 +1,5 @@
 "use client";
+
 import Breadcrumb from "@/components/share-component/Breadcrumb";
 import { getProductBySlug } from "@/lib/apis/product";
 import { errorNotification } from "@/lib/utils/notification";
@@ -14,12 +15,19 @@ import { useDispatch, useSelector } from "react-redux";
 const ReviewTable = dynamic(() => import("./review-rating/ReviewTable"), {
   ssr: false,
 });
-const ProductCard = dynamic(() => import("./ProductCard"), { ssr: false });
-const RatingProduct = dynamic(() => import("./RatingProducts"), { ssr: false });
+const NewReview = dynamic(() => import("./review-rating/NewReview"), {
+  ssr: false,
+});
+const RatingProduct = dynamic(() => import("./RatingProducts"), {
+  ssr: false,
+});
 const ProductDescription = dynamic(() => import("./ProductDescription"), {
   ssr: false,
 });
 const ProductDetails = dynamic(() => import("./ProductDetails"), {
+  ssr: false,
+});
+const RelatedProducts = dynamic(() => import("./RelatedProducts"), {
   ssr: false,
 });
 
@@ -44,16 +52,17 @@ export default function SingleProduct({
         slug: slug?.toString(),
         productVariantId: selectVariant.productVariantId,
       });
-      const { productVariants, variant } = newProduct.data;
 
-      if (newProduct?.success) {
-        const findVariantProduct = productVariants.find(
+      if (newProduct?.success && newProduct.data) {
+        const { productVariants, variant } = newProduct.data;
+
+        const findVariantProduct = productVariants?.find(
           (item: { default: boolean }) => item.default
         );
 
         const defaultProduct = variant
           ? findVariantProduct
-          : productVariants[0];
+          : productVariants?.[0];
 
         dispatch(
           setProduct({
@@ -63,7 +72,9 @@ export default function SingleProduct({
           })
         );
 
-        setCheckStock(defaultProduct?.stockQty || 0);
+        setCheckStock(
+          defaultProduct?.stockQty ?? newProduct.data.stockQty ?? 0
+        );
       }
     } catch (error: any) {
       errorNotification({ message: error.message });
@@ -86,15 +97,16 @@ export default function SingleProduct({
         rating4: number;
         rating5: number;
       },
-      curr: { rating: string }
+      curr: { rating: string | number }
     ) => {
+      const r = Number(curr.rating);
       return {
-        totalReview: +pre.totalReview + +curr.rating,
-        rating1: +curr.rating === 1 ? +pre.rating1 + 1 : pre.rating1,
-        rating2: +curr.rating === 2 ? +pre.rating2 + 1 : pre.rating2,
-        rating3: +curr.rating === 3 ? +pre.rating3 + 1 : pre.rating3,
-        rating4: +curr.rating === 4 ? +pre.rating4 + 1 : pre.rating4,
-        rating5: +curr.rating === 5 ? +pre.rating5 + 1 : pre.rating5,
+        totalReview: +pre.totalReview + r,
+        rating1: r === 1 ? +pre.rating1 + 1 : pre.rating1,
+        rating2: r === 2 ? +pre.rating2 + 1 : pre.rating2,
+        rating3: r === 3 ? +pre.rating3 + 1 : pre.rating3,
+        rating4: r === 4 ? +pre.rating4 + 1 : pre.rating4,
+        rating5: r === 5 ? +pre.rating5 + 1 : pre.rating5,
       };
     },
     {
@@ -105,65 +117,73 @@ export default function SingleProduct({
       rating4: 0,
       rating5: 0,
     }
-  );
+  ) || {
+    totalReview: 0,
+    rating1: 0,
+    rating2: 0,
+    rating3: 0,
+    rating4: 0,
+    rating5: 0,
+  };
 
+  const primaryCategory =
+    product?.productCategories?.[0]?.category || product?.category;
 
   return (
-    <div className="bg-[#FDFDFD]">
-        {/* Global Breadcrumb */}
+    <div className="bg-slate-50/50 min-h-screen">
+      {/* Global Breadcrumb */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <Breadcrumb
           items={[
             { label: "Home", href: "/" },
             { label: "Products", href: "/products" },
-            ...(product?.category?.name
+            ...(primaryCategory?.name
               ? [
                   {
-                    label: product.category.name,
-                    href: `/products?categoryId=${product.category.id}`,
+                    label: primaryCategory.name,
+                    href: `/products?categoryId=${primaryCategory.id}`,
                   },
                 ]
               : []),
             { label: product?.name || "Product Details" },
           ]}
+          variant="clean"
         />
+      </div>
 
-       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          {/* Main Product Hero Section */}
-          <div className="mb-20 sm:mb-28">
-            <ProductDetails
-              setSelectVariant={setSelectVariant}
-              productRating={productRating}
-              checkStock={checkStock}
-              setCheckStock={setCheckStock}
-            />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        {/* Main Product Hero Section */}
+        <div className="mb-14 sm:mb-20">
+          <ProductDetails
+            setSelectVariant={setSelectVariant}
+            productRating={productRating}
+            checkStock={checkStock}
+            setCheckStock={setCheckStock}
+          />
+        </div>
+
+        {/* Product Description, Specs & Info */}
+        <div className="max-w-5xl mx-auto space-y-16">
+          <div id="description">
+            <ProductDescription />
           </div>
 
-          {/* Product Description & Info */}
-          <div className="max-w-5xl mx-auto space-y-20">
-            <div id="description">
-              <ProductDescription />
-            </div>
-            
-            <div id="reviews" className="scroll-mt-24">
-               {product.reviews && <RatingProduct productRating={productRating} />}
-               <ReviewTable />
-            </div>
+          <div id="reviews" className="scroll-mt-24">
+            <RatingProduct productRating={productRating} />
+            <ReviewTable />
           </div>
+        </div>
 
-          {/* Related Products */}
-          <section className="mt-32 pt-20 border-t border-gray-100">
-             <div className="flex flex-col sm:flex-row justify-between items-end gap-4 mb-12">
-                <div>
-                   <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Discovery</h3>
-                   <h2 className="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight">You Might Also Like</h2>
-                </div>
-                <div className="hidden sm:block pb-2">
-                   <div className="h-0.5 w-24 bg-gray-900"></div>
-                </div>
-             </div>
-             <ProductCard />
-          </section>
-       </div>
+        {/* Curated Related Products */}
+        <RelatedProducts
+          categoryId={primaryCategory?.id}
+          categoryName={primaryCategory?.name}
+          currentProductId={product?.id}
+        />
+      </div>
+
+      {/* Review Submission Modal */}
+      <NewReview />
     </div>
   );
 }

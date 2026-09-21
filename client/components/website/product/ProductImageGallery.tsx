@@ -1,8 +1,8 @@
 "use client";
 import { getImageUrl, getUploadImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
-import { useState, useRef, MouseEvent } from "react";
-import { FaExpand, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { MouseEvent, useState } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 // import Zoom from "react-medium-image-zoom"; // Removed in favor of hover zoom
 // import "react-medium-image-zoom/dist/styles.css";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
@@ -112,16 +112,16 @@ const ProductImageGallery = ({ images }: { images: string }) => {
               return (
                 <SwiperSlide
                   key={idx}
-                  className={`w-full h-20 lg:h-24 cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${
+                  className={`w-full h-20 lg:h-24 cursor-pointer rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
                     isActive
-                      ? 'border-global-primary opacity-100 ring-1 ring-global-primary'
-                      : 'border-transparent opacity-60 hover:opacity-100 hover:border-global-header-text/20'
+                      ? 'border-amber-500 opacity-100 ring-2 ring-amber-500/20 shadow-sm'
+                      : 'border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-400'
                   }`}
                 >
                   <div className="relative w-full h-full bg-white">
                     {hasError ? (
-                       <div className="flex items-center justify-center h-full bg-gray-50">
-                          <span className="text-[10px] text-gray-400">N/A</span>
+                       <div className="flex items-center justify-center h-full bg-slate-50">
+                          <span className="text-[10px] text-slate-400 font-bold">N/A</span>
                        </div>
                     ) : (
                       <Image
@@ -142,26 +142,28 @@ const ProductImageGallery = ({ images }: { images: string }) => {
       )}
 
       {/* Main Gallery Display */}
-      <div className="flex-1 relative group rounded-2xl overflow-hidden bg-white border border-gray-100">
+      <div className="flex-1 relative group rounded-3xl overflow-hidden bg-white border border-slate-200/80 shadow-sm">
         
         {/* Navigation Overlays */}
         {newimages.length > 1 && (
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-20 pointer-events-none">
             <button
-              className="gallery-prev pointer-events-auto w-10 h-10 flex items-center justify-center bg-global-bg/80 backdrop-blur text-global-text rounded-full shadow-md hover:bg-global-primary hover:text-global-button-text transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
+              className="gallery-prev pointer-events-auto w-10 h-10 flex items-center justify-center bg-slate-900/80 backdrop-blur text-white rounded-full shadow-md hover:bg-amber-500 hover:text-slate-950 transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 cursor-pointer"
+              aria-label="Previous image"
             >
-              <FaChevronLeft size={16} />
+              <FaChevronLeft size={14} />
             </button>
             <button
-              className="gallery-next pointer-events-auto w-10 h-10 flex items-center justify-center bg-global-bg/80 backdrop-blur text-global-text rounded-full shadow-md hover:bg-global-primary hover:text-global-button-text transition-all opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0"
+              className="gallery-next pointer-events-auto w-10 h-10 flex items-center justify-center bg-slate-900/80 backdrop-blur text-white rounded-full shadow-md hover:bg-amber-500 hover:text-slate-950 transition-all opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 cursor-pointer"
+              aria-label="Next image"
             >
-              <FaChevronRight size={16} />
+              <FaChevronRight size={14} />
             </button>
           </div>
         )}
 
         {/* Counter Badge */}
-        <div className="absolute bottom-5 right-5 z-20 px-3 py-1 bg-global-text/5 backdrop-blur-sm rounded-full border border-global-text/10 text-xs font-bold text-global-text">
+        <div className="absolute bottom-5 right-5 z-20 px-3 py-1 bg-slate-950/70 backdrop-blur-md rounded-full border border-white/20 text-xs font-bold text-white shadow-sm">
             {selectedIndex + 1} / {newimages.length}
         </div>
 

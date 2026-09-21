@@ -1,7 +1,12 @@
 "use client";
+
+import { ActionType } from "@/constants/constants";
+import { setProductRating, setUnAuthorize } from "@/redux/features/global/globalSlice";
 import { selectProduct } from "@/redux/features/products/productSlice";
-import { Rate, Progress } from "antd";
-import { useSelector } from "react-redux";
+import { Rate } from "antd";
+import { useSession } from "next-auth/react";
+import { FiEdit3, FiStar } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 
 interface ProductRating {
   totalReview: number;
@@ -12,84 +17,117 @@ interface ProductRating {
   rating5: number;
 }
 
-const RatingProduct = ({ productRating }: { productRating: ProductRating }) => {
+export default function RatingProduct({
+  productRating,
+}: {
+  productRating: ProductRating;
+}) {
+  const dispatch = useDispatch();
+  const session = useSession();
   const products = useSelector(selectProduct);
-  const { reviews } = products.product;
+  const { reviews, avgRating, id, name } = products?.product || {};
   const { totalReview, rating1, rating2, rating3, rating4, rating5 } =
-    productRating;
+    productRating || {};
 
-  const averageRating = ((totalReview || 0) / (reviews?.length || 1) || 0).toFixed(1);
+  const reviewCount = reviews?.length || 0;
+  const averageRating =
+    reviewCount > 0
+      ? (Number(totalReview || 0) / reviewCount).toFixed(1)
+      : avgRating
+      ? Number(avgRating).toFixed(1)
+      : "5.0";
+
+  const handleWriteReview = () => {
+    if (session.status === "unauthenticated") {
+      dispatch(setUnAuthorize(true));
+      return;
+    }
+
+    dispatch(
+      setProductRating({
+        type: ActionType.CREATE,
+        payload: {
+          productId: id,
+          product: { name },
+        },
+      })
+    );
+  };
 
   return (
-    <div className="mt-16 sm:mt-24 p-6 sm:p-10 rounded-[2.5rem] bg-white border border-gray-100 shadow-xl shadow-gray-100/50">
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
-        
+    <div className="mt-16 sm:mt-24 p-6 sm:p-10 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-slate-100/50">
+      <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center lg:items-start">
         {/* Overall Score */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-4">
-           <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400">Customer Reviews</h3>
-           <div className="flex items-baseline gap-2">
-              <span className="text-7xl sm:text-8xl font-black text-gray-900 tracking-tighter">{averageRating}</span>
-              <span className="text-2xl font-bold text-gray-300">/ 5</span>
-           </div>
-           <div className="space-y-1">
-              <Rate
-                allowHalf
-                value={+averageRating}
-                disabled
-                className="text-amber-400 text-2xl"
-              />
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest pt-2">Based on {reviews?.length || 0} global ratings</p>
-           </div>
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-3 shrink-0">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-700 text-xs font-bold uppercase tracking-wider">
+            <FiStar className="w-3.5 h-3.5 fill-amber-400" />
+            <span>Customer Rating</span>
+          </div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-6xl sm:text-7xl font-black text-slate-900 tracking-tight">
+              {averageRating}
+            </span>
+            <span className="text-xl font-bold text-slate-300">/ 5.0</span>
+          </div>
+
+          <div className="space-y-2">
+            <Rate
+              allowHalf
+              value={+averageRating}
+              disabled
+              className="text-amber-400 text-lg"
+            />
+            <p className="text-xs font-semibold text-slate-400">
+              Based on {reviewCount} verified {reviewCount === 1 ? "review" : "reviews"}
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={handleWriteReview}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md shadow-slate-900/10 transition-all cursor-pointer"
+            >
+              <FiEdit3 className="w-3.5 h-3.5" />
+              <span>Write a Review</span>
+            </button>
+          </div>
         </div>
 
-        {/* Breakdown */}
-        <div className="flex-1 space-y-4">
+        {/* Breakdown Progress Bars */}
+        <div className="flex-1 w-full space-y-3.5">
           {[
-            { star: 5, count: rating5, label: 'Excellent' },
-            { star: 4, count: rating4, label: 'Very Good' },
-            { star: 3, count: rating3, label: 'Good' },
-            { star: 2, count: rating2, label: 'Fair' },
-            { star: 1, count: rating1, label: 'Poor' },
+            { star: 5, count: rating5, label: "5 Stars" },
+            { star: 4, count: rating4, label: "4 Stars" },
+            { star: 3, count: rating3, label: "3 Stars" },
+            { star: 2, count: rating2, label: "2 Stars" },
+            { star: 1, count: rating1, label: "1 Star" },
           ].map((item) => {
-            const total = reviews?.length || 1;
-            const percent = (item.count / total) * 100;
+            const total = reviewCount || 1;
+            const percent =
+              reviewCount > 0 ? (Number(item.count || 0) / total) * 100 : 0;
+
             return (
-              <div key={item.star} className="flex items-center gap-4 group">
-                <div className="w-16 sm:w-20 text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900 transition-colors">
+              <div key={item.star} className="flex items-center gap-3.5 group">
+                <span className="w-16 text-xs font-bold text-slate-600 group-hover:text-slate-900 transition-colors">
                   {item.label}
-                </div>
-                <div className="flex-1 h-3 bg-gray-50 rounded-full overflow-hidden border border-gray-100 p-[1px]">
+                </span>
+
+                <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden p-0.5">
                   <div
-                    className="h-full bg-gray-900 rounded-full transition-all duration-1000 ease-out shadow-sm"
+                    className="h-full bg-amber-500 rounded-full transition-all duration-700 ease-out"
                     style={{ width: `${percent}%` }}
                   />
                 </div>
-                <div className="w-10 text-right text-[10px] font-black text-gray-900">
-                  {Math.round(percent)}%
-                </div>
-              </div>
-            )
-          })}
-        </div>
 
-        {/* Feature Ratings (Optional Placeholder for now) */}
-        <div className="hidden xl:flex flex-col justify-center space-y-6 border-l border-gray-50 pl-12">
-           <div className="space-y-1">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Quality</div>
-              <Progress percent={95} size="small" showInfo={false} strokeColor="#111827" />
-           </div>
-           <div className="space-y-1">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Value</div>
-              <Progress percent={88} size="small" showInfo={false} strokeColor="#111827" />
-           </div>
-           <div className="space-y-1">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Delivery</div>
-              <Progress percent={92} size="small" showInfo={false} strokeColor="#111827" />
-           </div>
+                <span className="w-10 text-right text-xs font-bold text-slate-500">
+                  {Math.round(percent)}%
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
   );
-};
-
-export default RatingProduct;
+}
