@@ -18,6 +18,8 @@ interface getParams {
   perPage?: number;
   page?: number;
   discountSlug?: string;
+  featured?: boolean;
+  isNewArrival?: boolean;
 }
 
 export async function getPublicProducts(params: getParams) {
@@ -34,6 +36,8 @@ export async function getPublicProducts(params: getParams) {
     discount,
     discountId,
     discountSlug,
+    featured,
+    isNewArrival,
     perPage,
     page,
   }: getParams = params;
@@ -93,6 +97,14 @@ export async function getPublicProducts(params: getParams) {
 
   if (search) {
     queryString += `search=${search}&`;
+  }
+
+  if (featured !== undefined) {
+    queryString += `featured=${featured}&`;
+  }
+
+  if (isNewArrival !== undefined) {
+    queryString += `isNewArrival=${isNewArrival}&`;
   }
 
   const res = await fetch(`${appConfig.apiUrl}/products?${queryString}`);

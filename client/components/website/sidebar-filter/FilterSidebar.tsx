@@ -1,26 +1,26 @@
 "use client";
+
 import { getBrands } from "@/lib/apis/brand";
 import { getPublicCategories } from "@/lib/apis/categories";
 import { getColors } from "@/lib/apis/color";
 import { setProductFilter } from "@/redux/features/global/globalSlice";
 import { setOpen } from "@/redux/features/layout/layoutSlice";
 import {
-  CaretRightOutlined,
-  CheckOutlined,
+    CaretRightOutlined,
+    CheckOutlined,
+    FilterOutlined,
 } from "@ant-design/icons";
 import {
-  Button,
-  Checkbox,
-  Collapse,
-  ConfigProvider,
-  InputNumber,
-  Slider,
+    Button,
+    Checkbox,
+    Collapse,
+    ConfigProvider,
+    InputNumber,
+    Slider,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import "./index.css";
-
-
 
 interface Category {
   name: string;
@@ -91,38 +91,43 @@ export default function FilterSidebar() {
   ).length;
 
   const collapseTheme = {
+    token: {
+      colorPrimary: "#f7aa0e",
+    },
     components: {
       Collapse: {
-        headerPadding: '14px 0',
-        contentPadding: '12px 0',
-        headerBg: 'transparent',
+        headerPadding: "14px 0",
+        contentPadding: "12px 0",
+        headerBg: "transparent",
       },
     },
   };
 
   return (
-    <aside className="bg-white rounded-lg shadow-sm border border-gray-200 h-full flex flex-col sticky top-4">
-
+    <aside className="bg-white rounded-2xl sm:rounded-3xl shadow-xs border border-gray-100/90 h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+      <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <FilterOutlined className="text-amber-500 text-sm" />
+          <h3 className="text-base font-black text-gray-900 tracking-tight">Faceted Filters</h3>
+        </div>
         <button
           onClick={filterClear}
-          className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 font-medium transition-colors"
+          className="text-xs text-amber-600 hover:text-amber-700 font-bold hover:underline transition-colors cursor-pointer"
         >
-          Clear All
+          Reset All
         </button>
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-2">
         <ConfigProvider theme={collapseTheme}>
           <Collapse
-            defaultActiveKey={['price', 'category', 'brand', 'color']}
+            defaultActiveKey={["price", "category", "brand", "color"]}
             expandIcon={({ isActive }) => (
               <CaretRightOutlined
                 rotate={isActive ? 90 : 0}
-                className="text-xs text-gray-500"
+                className="text-xs text-gray-400"
               />
             )}
             ghost
@@ -130,7 +135,7 @@ export default function FilterSidebar() {
             items={[
               {
                 key: "price",
-                label: <span className="font-medium text-gray-800">Price Range</span>,
+                label: <span className="font-bold text-xs uppercase tracking-wider text-gray-800">Price Range</span>,
                 className: "border-b border-gray-100",
                 children: (
                   <div className="space-y-4">
@@ -151,16 +156,16 @@ export default function FilterSidebar() {
                         placeholder="Min"
                         value={filterData.minPrice}
                         onChange={(val) => handleChange(val, "minPrice")}
-                        className="flex-1"
+                        className="flex-1 rounded-xl"
                         controls={false}
                         prefix="$"
                       />
-                      <span className="text-gray-400">—</span>
+                      <span className="text-gray-300 font-bold">—</span>
                       <InputNumber
                         placeholder="Max"
                         value={filterData.maxPrice}
                         onChange={(val) => handleChange(val, "maxPrice")}
-                        className="flex-1"
+                        className="flex-1 rounded-xl"
                         controls={false}
                         prefix="$"
                       />
@@ -170,14 +175,14 @@ export default function FilterSidebar() {
               },
               {
                 key: "category",
-                label: <span className="font-medium text-gray-800">Category</span>,
+                label: <span className="font-bold text-xs uppercase tracking-wider text-gray-800">Department</span>,
                 className: "border-b border-gray-100",
                 children: (
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
                     {categories.map((item) => (
                       <label
                         key={item.id}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
+                        className="flex items-center gap-2.5 cursor-pointer hover:bg-amber-500/[0.04] p-2 rounded-xl transition-colors"
                       >
                         <Checkbox
                           checked={filterData.categoryId?.includes(item.id.toString())}
@@ -190,7 +195,7 @@ export default function FilterSidebar() {
                             handleChange(next, "categoryId");
                           }}
                         />
-                        <span className="text-sm text-gray-700">{item.name}</span>
+                        <span className="text-xs sm:text-sm font-semibold text-gray-700">{item.name}</span>
                       </label>
                     ))}
                   </div>
@@ -198,14 +203,14 @@ export default function FilterSidebar() {
               },
               {
                 key: "brand",
-                label: <span className="font-medium text-gray-800">Brand</span>,
+                label: <span className="font-bold text-xs uppercase tracking-wider text-gray-800">Brands</span>,
                 className: "border-b border-gray-100",
                 children: (
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
                     {brands.map((item) => (
                       <label
                         key={item.id}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded transition-colors"
+                        className="flex items-center gap-2.5 cursor-pointer hover:bg-amber-500/[0.04] p-2 rounded-xl transition-colors"
                       >
                         <Checkbox
                           checked={filterData.brandId?.includes(item.id.toString())}
@@ -218,7 +223,7 @@ export default function FilterSidebar() {
                             handleChange(next, "brandId");
                           }}
                         />
-                        <span className="text-sm text-gray-700">{item.name}</span>
+                        <span className="text-xs sm:text-sm font-semibold text-gray-700">{item.name}</span>
                       </label>
                     ))}
                   </div>
@@ -226,10 +231,10 @@ export default function FilterSidebar() {
               },
               {
                 key: "color",
-                label: <span className="font-medium text-gray-800">Color</span>,
+                label: <span className="font-bold text-xs uppercase tracking-wider text-gray-800">Color Palette</span>,
                 className: "border-b border-gray-100",
                 children: (
-                  <div className="grid grid-cols-5 gap-3">
+                  <div className="grid grid-cols-5 gap-2.5 pt-1">
                     {colors.map((item) => {
                       const isSelected = filterData.colorId?.includes(item.id.toString());
                       return (
@@ -238,24 +243,27 @@ export default function FilterSidebar() {
                           className="flex flex-col items-center gap-1"
                         >
                           <button
+                            type="button"
                             onClick={() => handleColorSelect(item.id.toString())}
-                            className={`w-10 h-10 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${isSelected
-                              ? 'border-gray-900 shadow-md'
-                              : 'border-gray-300 hover:border-gray-400'
-                              }`}
+                            className={`w-9 h-9 rounded-full border-2 transition-all duration-200 flex items-center justify-center cursor-pointer ${
+                              isSelected
+                                ? "border-amber-500 shadow-md scale-105"
+                                : "border-gray-200 hover:border-gray-400"
+                            }`}
                             style={{ backgroundColor: item.color }}
                             title={item.name}
                           >
                             {isSelected && (
                               <CheckOutlined
-                                className={`text-xs ${['white', '#ffffff', '#fff'].includes(item.color.toLowerCase())
-                                  ? 'text-gray-900'
-                                  : 'text-white'
-                                  }`}
+                                className={`text-xs ${
+                                  ["white", "#ffffff", "#fff"].includes(item.color.toLowerCase())
+                                    ? "text-gray-900"
+                                    : "text-white drop-shadow-md"
+                                }`}
                               />
                             )}
                           </button>
-                          <span className="text-[10px] text-gray-600 text-center leading-tight">
+                          <span className="text-[10px] text-gray-500 font-medium text-center truncate w-full">
                             {item.name}
                           </span>
                         </div>
@@ -266,21 +274,22 @@ export default function FilterSidebar() {
               },
               {
                 key: "discount",
-                label: <span className="font-medium text-gray-800">Discount</span>,
+                label: <span className="font-bold text-xs uppercase tracking-wider text-gray-800">Minimum Discount</span>,
                 children: (
-                  <Slider
-                    min={0}
-                    max={100}
-                    marks={{
-                      0: '0%',
-                      25: '25%',
-                      50: '50%',
-                      75: '75%',
-                      100: '100%',
-                    }}
-                    value={filterData.discount || 0}
-                    onChange={(value) => handleChange(value, "discount")}
-                  />
+                  <div className="pt-2">
+                    <Slider
+                      min={0}
+                      max={100}
+                      marks={{
+                        0: "0%",
+                        25: "25%",
+                        50: "50%",
+                        75: "75%",
+                      }}
+                      value={filterData.discount || 0}
+                      onChange={(value) => handleChange(value, "discount")}
+                    />
+                  </div>
                 ),
               },
             ]}
@@ -289,17 +298,17 @@ export default function FilterSidebar() {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-5 border-t border-gray-100">
         <Button
           type="primary"
           block
           size="large"
           onClick={handleFilter}
-          className="h-11 font-medium"
+          className="h-12 rounded-xl font-bold bg-global-primary hover:bg-amber-600 border-none shadow-md shadow-amber-500/20 text-white"
         >
           Apply Filters
           {filterCount > 0 && (
-            <span className="ml-2 bg-white text-global-primary px-2 py-0.5 rounded-full text-xs font-semibold">
+            <span className="ml-2 bg-white text-slate-900 px-2 py-0.5 rounded-full text-xs font-black">
               {filterCount}
             </span>
           )}
