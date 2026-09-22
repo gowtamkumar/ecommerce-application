@@ -94,7 +94,7 @@ const StockAlert = ({ productAlertStockReport }: StockAlertProps) => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-global-primary/30 shadow-sm flex flex-col justify-between h-full transition-colors">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:border-global-primary/30 shadow-sm flex flex-col justify-between h-full transition-colors">
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -140,6 +140,7 @@ const StockAlert = ({ productAlertStockReport }: StockAlertProps) => {
             }}
             columns={columns}
             size="small"
+            scroll={{ x: 450 }}
             rowKey={(record, idx) => record.id || record.name || (idx ?? 0).toString()}
             dataSource={productAlertStockReport || []}
             className="overflow-x-auto"

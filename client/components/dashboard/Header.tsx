@@ -73,7 +73,7 @@ export default function DashboardHeader() {
   return (
     <Header className="bg-white/95 backdrop-blur-md px-3 sm:px-6 h-16 sticky top-0 z-[100] flex items-center justify-between border-b border-gray-200/80 shadow-2xs leading-normal">
       {/* ── Left: Sidebar Toggle & Breadcrumb ── */}
-      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+      <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
         <Tooltip
           title={layout.collapsed ? "Expand sidebar" : "Collapse sidebar"}
           placement="bottom"
@@ -91,6 +91,13 @@ export default function DashboardHeader() {
             )}
           </button>
         </Tooltip>
+
+        {/* Mobile Page Title Indicator */}
+        <div className="flex items-center gap-1.5 min-w-0 md:hidden">
+          <span className="font-bold text-sm text-gray-900 capitalize truncate max-w-[130px] sm:max-w-[200px]">
+            {currentModule}
+          </span>
+        </div>
 
         {/* Breadcrumb Path & Page Title */}
         <div className="min-w-0 hidden md:flex items-center gap-1.5 text-xs">
@@ -126,6 +133,10 @@ export default function DashboardHeader() {
 
       {/* ── Right: Action Buttons & Profile ── */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* Mobile Quick Search */}
+        <div className="md:hidden">
+          <DashboardQuickSearch />
+        </div>
         {/* View Live Store */}
         <Tooltip title="View customer-facing storefront" placement="bottom">
           <Link

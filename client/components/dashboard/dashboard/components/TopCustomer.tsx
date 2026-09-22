@@ -90,7 +90,7 @@ const TopCustomer: React.FC<TopCustomerProps> = ({ topCustomers }) => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-global-primary/30 shadow-sm flex flex-col justify-between h-full transition-colors">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:border-global-primary/30 shadow-sm flex flex-col justify-between h-full transition-colors">
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -121,6 +121,7 @@ const TopCustomer: React.FC<TopCustomerProps> = ({ topCustomers }) => {
             size: "small",
           }}
           columns={columns}
+          scroll={{ x: 450 }}
           dataSource={topCustomers || []}
           rowKey={(record, idx) =>
             record.customer_id || record.customer_name || (idx ?? 0).toString()

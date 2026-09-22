@@ -127,7 +127,7 @@ export default function RevenueAnalyticsChart({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* Left: Interactive Fulfillment Distribution Chart (8 cols) */}
-      <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+      <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
         <div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
             <div>
@@ -221,7 +221,7 @@ export default function RevenueAnalyticsChart({
       </div>
 
       {/* Right: Payment Gateways & Collections (4 cols) */}
-      <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+      <div className="lg:col-span-4 bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900 tracking-tight">

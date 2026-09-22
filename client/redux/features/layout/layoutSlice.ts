@@ -11,7 +11,7 @@ export interface LayoutState {
 const initialState: LayoutState = {
   open: false,
   collapsed: false,
-  screenWidth: 0,
+  screenWidth: typeof window !== "undefined" ? window.innerWidth : 1200,
 };
 
 export const layoutSlice = createSlice({
@@ -35,6 +35,6 @@ export const layoutSlice = createSlice({
 
 export const { setOpen, setCollapsed, setScreenWidth } = layoutSlice.actions;
 // Other code such as selectors can use the imported `RootState` type
-export const selectLayout = (state: { layout: any; }) => state.layout;
+export const selectLayout = (state: { layout: any }) => state.layout;
 
 export default layoutSlice.reducer;

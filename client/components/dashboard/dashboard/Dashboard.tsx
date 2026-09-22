@@ -132,20 +132,20 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
       {/* ========================================================================= */}
       {/* 1. Header with Executive Title, Presets, and Date Controls */}
       {/* ========================================================================= */}
-      <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-5 sm:p-6 space-y-4">
+      <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-4 sm:p-6 space-y-4">
         {/* ── Tier 1: Page Title, Live Storefront Indicator & Actions ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-11 h-11 rounded-2xl bg-global-primary/10 text-global-primary flex items-center justify-center text-xl shrink-0 shadow-2xs">
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-global-primary/10 text-global-primary flex items-center justify-center text-lg sm:text-xl shrink-0 shadow-2xs">
               <FiTrendingUp />
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="text-lg sm:text-2xl font-black text-gray-900 tracking-tight leading-tight m-0 truncate">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-base sm:text-2xl font-black text-gray-900 tracking-tight leading-tight m-0">
                   Store Performance & Operations
                 </h1>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0">
@@ -165,11 +165,11 @@ const Dashboard = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end shrink-0">
             <Link
               href="/"
               target="_blank"
-              className="h-9.5 px-3.5 rounded-xl border border-gray-200 hover:border-global-primary hover:text-global-primary text-gray-700 font-bold text-xs inline-flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer group"
+              className="flex-1 sm:flex-none justify-center h-9.5 px-3.5 rounded-xl border border-gray-200 hover:border-global-primary hover:text-global-primary text-gray-700 font-bold text-xs inline-flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer group"
               title="Open storefront in new tab"
             >
               <ShopOutlined className="text-sm text-gray-400 group-hover:text-global-primary transition-colors" />
@@ -180,7 +180,7 @@ const Dashboard = () => {
             <Button
               onClick={() => fetchReports(dateRange[0], dateRange[1], true)}
               disabled={loading || refreshing}
-              className="h-9.5 px-3.5 rounded-xl border border-gray-200 hover:border-global-primary hover:text-global-primary text-gray-700 font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+              className="flex-1 sm:flex-none justify-center h-9.5 px-3.5 rounded-xl border border-gray-200 hover:border-global-primary hover:text-global-primary text-gray-700 font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
             >
               <FiRefreshCw
                 className={`text-sm ${refreshing ? "animate-spin text-global-primary" : ""}`}
@@ -193,7 +193,7 @@ const Dashboard = () => {
         {/* ── Tier 2: Filter Toolbar (Period Presets & Custom Precision RangePicker) ── */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-0.5">
           {/* Quick Filter Presets */}
-          <div className="flex items-center gap-1 bg-gray-50/90 p-1.5 rounded-xl border border-gray-100 overflow-x-auto">
+          <div className="flex items-center gap-1 bg-gray-50/90 p-1.5 rounded-xl border border-gray-100 overflow-x-auto max-w-full">
             <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 px-2 select-none shrink-0">
               Period:
             </span>
@@ -224,8 +224,8 @@ const Dashboard = () => {
           </div>
 
           {/* Precision Range Picker */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 font-medium whitespace-nowrap hidden sm:inline select-none">
+          <div className="flex items-center gap-2 w-full lg:w-auto">
+            <span className="text-xs text-gray-400 font-medium whitespace-nowrap hidden sm:inline select-none shrink-0">
               Custom Range:
             </span>
             <RangePicker

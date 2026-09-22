@@ -227,7 +227,7 @@ export default function DashboardQuickSearch() {
 
   return (
     <>
-      {/* Trigger Button in Header */}
+      {/* Trigger Button in Header (Desktop) */}
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -244,6 +244,16 @@ export default function DashboardQuickSearch() {
         </span>
       </button>
 
+      {/* Trigger Button in Header (Mobile) */}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="md:hidden w-9.5 h-9.5 inline-flex items-center justify-center rounded-xl bg-gray-50/80 hover:bg-gray-100 border border-gray-200/80 text-gray-600 hover:text-gray-900 transition-all cursor-pointer shadow-2xs"
+        aria-label="Quick Search"
+      >
+        <SearchOutlined className="text-base" />
+      </button>
+
       {/* Command Palette Modal */}
       <Modal
         open={open}
@@ -253,7 +263,8 @@ export default function DashboardQuickSearch() {
         }}
         footer={null}
         closable={false}
-        width={580}
+        width="92%"
+        style={{ maxWidth: 580 }}
         centered
         destroyOnClose
         className="command-palette-modal [&_.ant-modal-content]:!p-0 [&_.ant-modal-content]:!rounded-2xl [&_.ant-modal-content]:overflow-hidden"

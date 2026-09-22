@@ -86,7 +86,7 @@ const TopSellingProduct = ({ topSellingProduct }: TopSellingProductProps) => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-global-primary/30 shadow-sm flex flex-col justify-between h-full transition-colors">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 hover:border-global-primary/30 shadow-sm flex flex-col justify-between h-full transition-colors">
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -118,6 +118,7 @@ const TopSellingProduct = ({ topSellingProduct }: TopSellingProductProps) => {
           }}
           columns={columns}
           size="small"
+          scroll={{ x: 450 }}
           rowKey={(record, idx) => record.product_id || (idx ?? 0).toString()}
           dataSource={topSellingProduct || []}
           className="overflow-x-auto"

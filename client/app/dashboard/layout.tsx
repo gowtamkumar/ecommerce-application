@@ -35,25 +35,27 @@ export default function DashboardLayout({
   }
 
   // Calculate marginLeft based on sidebar state
-  const marginLeft = layoutSite.screenWidth > 820
-    ? (layoutSite.collapsed ? 80 : 260)
-    : 0;
+  const isDesktop = typeof window !== "undefined"
+    ? window.innerWidth > 820
+    : (layoutSite.screenWidth > 820);
+  const marginLeft = isDesktop ? (layoutSite.collapsed ? 80 : 260) : 0;
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh" }} className="overflow-x-hidden">
       <Sidebar />
       <Layout
+        className="transition-all duration-200 min-w-0 max-w-full overflow-x-hidden"
         style={{
           marginLeft: `${marginLeft}px`,
-          transition: 'margin-left 0.2s',
+          transition: 'margin-left 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <DashboardHeader />
-        <Content className="px-3 sm:px-6 min-h-[calc(100vh-64px-70px)] bg-gray-50/50">
-          <div className="pt-3">
+        <Content className="px-3 sm:px-6 min-h-[calc(100vh-64px-70px)] bg-gray-50/50 max-w-full overflow-x-hidden">
+          <div className="pt-2 sm:pt-3">
             <BreadCrumb />
           </div>
-          <div className="py-4 sm:py-6">
+          <div className="py-3 sm:py-6">
             {children}
           </div>
         </Content>

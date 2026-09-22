@@ -7,8 +7,8 @@ import {
 } from "@/redux/features/layout/layoutSlice";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { Drawer, Input, Layout, Menu } from "antd";
-import { useRouter } from "next/navigation";
-import { useLayoutEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import HeaderLogo from "../website/header/Logo";
 
@@ -18,8 +18,14 @@ const Sidebar = () => {
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
   const route = useRouter();
+  const pathname = usePathname();
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Automatically close mobile drawer when navigating to a new route
+  useEffect(() => {
+    dispatch(setOpen(false));
+  }, [pathname, dispatch]);
 
   useLayoutEffect(() => {
     function updateScreenWidth() {
@@ -112,14 +118,14 @@ const Sidebar = () => {
         placement="left"
         onClose={onClose}
         open={layout.open}
+        width={280}
         styles={{
-          body: { margin: 0, padding: 0 },
+          body: { margin: 0, padding: 0, display: "flex", flexDirection: "column" },
           header: {
             borderBottom: "1px solid #f0f0f0",
-            padding: "16px 24px",
+            padding: "16px 20px",
           },
         }}
-        size={280}
         closeIcon={<CloseOutlined />}
         title={
           <div
@@ -133,18 +139,32 @@ const Sidebar = () => {
           </div>
         }
       >
-        <Menu
-          style={{
-            margin: 0,
-            padding: 0,
-            border: "none",
-          }}
-          theme="light"
-          mode="inline"
-          onClick={onClose}
-          items={filteredChildren as any}
-          className="sidebar-menu"
-        />
+        {/* Mobile Menu Search */}
+        <div className="p-3 bg-gray-50 border-b border-gray-100">
+          <Input
+            placeholder="Search menu..."
+            prefix={<SearchOutlined className="text-gray-400" />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            allowClear
+            className="rounded-xl text-xs bg-white"
+          />
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          <Menu
+            style={{
+              margin: 0,
+              padding: 0,
+              border: "none",
+            }}
+            theme="light"
+            mode="inline"
+            onClick={onClose}
+            items={filteredChildren as any}
+            className="sidebar-menu"
+          />
+        </div>
       </Drawer>
 
       {/* Desktop Sidebar */}
