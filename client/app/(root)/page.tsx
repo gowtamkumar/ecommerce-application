@@ -119,9 +119,12 @@ const SectionHeader = ({
 );
 
 export default async function Home() {
-  const [home] = await Promise.all([
+  const [home, settingRes] = await Promise.all([
     getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
+    getSettings(),
   ]);
+
+  const setting = settingRes?.data || {};
 
   const { banners, posts, categories, products, topSellingProducts } =
     home?.data || {};
@@ -148,7 +151,7 @@ export default async function Home() {
         <BannerSection banners={banners || []} layout={bannerLayout} />
       </div>
     ),
-    trust_bar: () => <TrustBar />,
+    trust_bar: () => <TrustBar setting={setting} />,
     categories: () =>
       categories?.length > 0 ? (
         <section className="py-12 sm:py-16 bg-white border-b border-gray-100">
