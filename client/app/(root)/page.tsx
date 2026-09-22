@@ -5,6 +5,7 @@ import CustomerReviews from "@/components/website/home/CustomerReviews";
 import FlashDealSection from "@/components/website/home/FlashDealSection";
 import NewsletterSection from "@/components/website/home/NewsletterSection";
 import TrustBar from "@/components/website/home/TrustBar";
+import { getDiscounts } from "@/lib/apis/discount";
 import { getHome } from "@/lib/apis/home";
 import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
@@ -119,9 +120,12 @@ const SectionHeader = ({
 );
 
 export default async function Home() {
-  const [home] = await Promise.all([
+  const [home, discountsRes] = await Promise.all([
     getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
+    getDiscounts({ status: "Active" }),
   ]);
+
+  const activeDiscounts = discountsRes?.data && Array.isArray(discountsRes.data) ? discountsRes.data : [];
 
   const { banners, posts, categories, products, topSellingProducts } =
     home?.data || {};
@@ -177,7 +181,7 @@ export default async function Home() {
           </div>
         </section>
       ) : null,
-    flash_deal: () => <FlashDealSection />,
+    flash_deal: () => <FlashDealSection initialDiscounts={activeDiscounts} />,
     promo_banners: () => {
       const availableBanners = HomeBanners.filter(
         (item: any) => !usedPromoIds.has(item.id)

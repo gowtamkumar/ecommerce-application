@@ -39,6 +39,7 @@ export async function getDiscounts(params?: {
   const res = await fetch(
     `${appConfig.apiUrl}/discounts${queryString ? `?${queryString}` : ""}`,
     {
+      cache: "no-cache",
       headers,
     },
   );
