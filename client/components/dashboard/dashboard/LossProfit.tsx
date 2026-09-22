@@ -54,7 +54,7 @@ export default function LossProfit({ value }: LossProfitProps) {
             Net Realized Profit
           </span>
           <div
-            className={`text-2xl font-black mt-1 ${
+            className={`text-xl sm:text-2xl font-black mt-1 truncate ${
               isProfitable ? "text-global-primary" : "text-rose-600"
             }`}
           >

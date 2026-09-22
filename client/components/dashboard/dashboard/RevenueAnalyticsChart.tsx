@@ -240,7 +240,7 @@ export default function RevenueAnalyticsChart({
             <span className="text-xs font-semibold text-white/90 uppercase tracking-wider block">
               Total Realized Collections
             </span>
-            <div className="text-2xl font-black mt-1">
+            <div className="text-xl sm:text-2xl font-black mt-1 truncate">
               {formatPrice(totalCollections)}
             </div>
             <div className="text-[11px] text-white/80 mt-1 flex items-center gap-1">
@@ -252,12 +252,12 @@ export default function RevenueAnalyticsChart({
           <div className="space-y-4">
             {/* SSLCommerz / Digital */}
             <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/50">
-              <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+              <div className="flex flex-wrap items-center justify-between gap-1 text-xs font-bold text-gray-800">
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
                   SSLCommerz (Online Gateway)
                 </span>
-                <span>{formatPrice(sslAmount)}</span>
+                <span className="truncate">{formatPrice(sslAmount)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
                 <span>Share of collections</span>
@@ -273,12 +273,12 @@ export default function RevenueAnalyticsChart({
 
             {/* Cash on Delivery (COD) */}
             <div className="p-3.5 rounded-xl border border-gray-100 bg-gray-50/50">
-              <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+              <div className="flex flex-wrap items-center justify-between gap-1 text-xs font-bold text-gray-800">
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-global-primary" />
                   Cash on Delivery (COD)
                 </span>
-                <span>{formatPrice(codAmount)}</span>
+                <span className="truncate">{formatPrice(codAmount)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
                 <span>Share of collections</span>

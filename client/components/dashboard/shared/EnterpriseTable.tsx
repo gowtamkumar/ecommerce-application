@@ -148,7 +148,7 @@ export default function EnterpriseTable<T extends object = any>({
       <div className="p-4 sm:p-5 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           {title && (
-            <div className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
+            <div className="text-sm sm:text-base md:text-lg font-black text-gray-900 tracking-tight">
               {title}
             </div>
           )}
@@ -223,7 +223,7 @@ export default function EnterpriseTable<T extends object = any>({
               ? false
               : {
                   showTotal: (total, range) => (
-                    <span className="text-xs text-gray-400 font-medium">
+                    <span className="text-[11px] sm:text-xs text-gray-400 font-medium">
                       Showing {range[0]}-{range[1]} of {total} records
                     </span>
                   ),

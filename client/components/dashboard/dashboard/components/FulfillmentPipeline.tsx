@@ -175,15 +175,15 @@ export default function FulfillmentPipeline({
                 </div>
 
                 <div className="mt-3">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-black text-gray-900">
+                  <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+                    <span className="text-xl sm:text-2xl font-black text-gray-900">
                       {stage.count}
                     </span>
-                    <span className="text-xs text-gray-500 font-medium">
+                    <span className="text-[11px] sm:text-xs text-gray-500 font-medium truncate">
                       orders ({stage.items} items)
                     </span>
                   </div>
-                  <div className="text-xs font-bold text-gray-700 mt-1">
+                  <div className="text-xs sm:text-sm font-bold text-gray-700 mt-1 truncate">
                     {formatPrice(stage.amount)}
                   </div>
                 </div>
@@ -223,14 +223,14 @@ export default function FulfillmentPipeline({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 font-medium border border-amber-200">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
+          <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-amber-50 text-amber-800 font-medium border border-amber-200">
             Requested: <strong>&nbsp;{total_return_requested_count}</strong>
           </span>
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 font-medium border border-blue-200">
+          <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-blue-50 text-blue-800 font-medium border border-blue-200">
             Processing: <strong>&nbsp;{total_return_processing_count}</strong>
           </span>
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-global-primary/10 text-global-primary font-bold border border-global-primary/25">
+          <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-global-primary/10 text-global-primary font-bold border border-global-primary/25">
             Completed: <strong>&nbsp;{total_return_completed_count}</strong>
           </span>
           <span className="font-semibold text-gray-700">
