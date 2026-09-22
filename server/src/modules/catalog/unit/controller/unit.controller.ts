@@ -20,7 +20,7 @@ export const getUnits = asyncHandler(async (req: Request, res: Response) => {
     const pageSize = Math.max(1, parseInt((limit || '10') as string, 10));
 
     const [result, total] = await repository.findAndCount({
-      order: { createdAt: 'DESC' },
+      order: { id: 'DESC' },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
@@ -37,7 +37,7 @@ export const getUnits = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const result = await repository.find({
-    order: { createdAt: 'DESC' },
+    order: { id: 'DESC' },
   });
 
   return res.status(200).json({

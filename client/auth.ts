@@ -21,7 +21,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const user = await res.json();
         try {
           if (res.ok && user.data) {
-            const newuser = { ...user.data, accessToken: user.accessToken, refreshToken: user.refreshToken };
+            const newuser = {
+              ...user.data,
+              accessToken: user.accessToken,
+              refreshToken: user.refreshToken,
+            };
             return newuser;
           } else {
             throw new Error("Invalid Login Credentials");
@@ -41,7 +45,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         // Check if profile.sub exists
         if (!profile.sub) {
           throw new Error(
-            "Profile id is missing in Google OAuth profile response"
+            "Profile id is missing in Google OAuth profile response",
           );
         }
         const newUser = {
@@ -100,8 +104,13 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   callbacks: {
     async session({ session, token }: any) {
       if (token) {
-        session.user = token.user;
+        session.user = {
+          ...token.user,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+        };
         session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
         session.error = token.error;
       }
       return session;
@@ -109,11 +118,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async jwt({ token, user, account }: any) {
       // Initial sign in
       if (user && account) {
+        const accessTokenExpires = getTokenExpiry(user.accessToken);
         return {
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
-          accessTokenExpires: Date.now() + 15 * 60 * 1000, // 15 minutes
-          user,
+          accessTokenExpires,
+          user: {
+            ...user,
+            accessToken: user.accessToken,
+            refreshToken: user.refreshToken,
+          },
         };
       }
 
@@ -128,33 +142,119 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   },
 });
 
-async function refreshAccessToken(token: any) {
+function getTokenExpiry(jwtToken?: string): number {
+  if (!jwtToken) return Date.now() + 15 * 60 * 1000;
   try {
-    const response = await fetch(`${appConfig.apiUrl}/auth/refresh-token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refreshToken: token.refreshToken,
-      }),
-    });
-
-    const refreshedTokens = await response.json();
-
-    if (!response.ok) {
-      throw refreshedTokens;
+    const parts = jwtToken.split(".");
+    if (parts.length === 3) {
+      const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const decodedJson = JSON.parse(
+        typeof window === "undefined"
+          ? Buffer.from(payloadBase64, "base64").toString("utf-8")
+          : atob(payloadBase64),
+      );
+      if (decodedJson.exp) {
+        // Expire 2 minutes before actual JWT expiration to avoid boundary race conditions
+        return decodedJson.exp * 1000 - 2 * 60 * 1000;
+      }
     }
+  } catch (err) {
+    console.error("Error parsing JWT exp:", err);
+  }
+  return Date.now() + 23 * 60 * 60 * 1000;
+}
 
+const pendingRefreshes = new Map<string, Promise<any>>();
+
+async function refreshAccessToken(token: any) {
+  const currentRefreshToken = token.refreshToken;
+  if (!currentRefreshToken) {
     return {
       ...token,
-      accessToken: refreshedTokens.accessToken,
-      accessTokenExpires: Date.now() + 15 * 60 * 1000,
-      refreshToken: refreshedTokens.refreshToken ?? token.refreshToken, // Fallback to old refresh token
+      error: "RefreshAccessTokenError",
+    };
+  }
+
+  // Deduplicate concurrent refresh requests for the same refresh token
+  if (pendingRefreshes.has(currentRefreshToken)) {
+    try {
+      const result = await pendingRefreshes.get(currentRefreshToken);
+      return {
+        ...token,
+        ...result,
+      };
+    } catch (err) {
+      return {
+        ...token,
+        error: "RefreshAccessTokenError",
+      };
+    }
+  }
+
+  const refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${appConfig.apiUrl}/auth/refresh-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refreshToken: currentRefreshToken,
+        }),
+      });
+
+      const refreshedTokens = await response.json();
+
+      if (!response.ok) {
+        throw refreshedTokens;
+      }
+
+      const newAccessToken = refreshedTokens.accessToken;
+      const newRefreshToken =
+        refreshedTokens.refreshToken ?? currentRefreshToken;
+      const newExpiry = getTokenExpiry(newAccessToken);
+
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        accessTokenExpires: newExpiry,
+        user: {
+          ...token.user,
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        },
+        error: undefined,
+      };
+    } catch (error: any) {
+      console.error("RefreshAccessTokenError", error);
+
+      // If it's a network error or server 5xx issue, avoid immediately dropping the user's session
+      if (
+        error instanceof TypeError ||
+        (error?.status && error.status >= 500)
+      ) {
+        return {
+          accessTokenExpires: Date.now() + 30 * 1000, // Retry in 30 seconds
+        };
+      }
+
+      throw error;
+    } finally {
+      setTimeout(() => {
+        pendingRefreshes.delete(currentRefreshToken);
+      }, 2000);
+    }
+  })();
+
+  pendingRefreshes.set(currentRefreshToken, refreshPromise);
+
+  try {
+    const result = await refreshPromise;
+    return {
+      ...token,
+      ...result,
     };
   } catch (error) {
-    console.error("RefreshAccessTokenError", error);
-
     return {
       ...token,
       error: "RefreshAccessTokenError",

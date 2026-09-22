@@ -40,7 +40,7 @@ export const getReturns = asyncHandler(async (req: Request, res: Response) => {
 
     const [result, total] = await repository.findAndCount({
       where: whereClause,
-      order: { createdAt: 'DESC' },
+      order: { requestedAt: 'DESC' },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
@@ -58,7 +58,7 @@ export const getReturns = asyncHandler(async (req: Request, res: Response) => {
 
   const result = await repository.find({
     where: whereClause,
-    order: { createdAt: 'DESC' },
+    order: { requestedAt: 'DESC' },
   });
 
   return res.status(200).json({

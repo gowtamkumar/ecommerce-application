@@ -1,9 +1,9 @@
 import {
-    setAction,
-    setLoading,
-    setPreviewImage,
-    setPreviewOpen,
-    setPreviewTitle,
+  setAction,
+  setLoading,
+  setPreviewImage,
+  setPreviewOpen,
+  setPreviewTitle,
 } from "@/redux/features/global/globalSlice";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../authOption";
@@ -32,7 +32,7 @@ export type AsyncActionOptions = {
 export const handleAsyncAction = async <T>(
   asyncFn: () => Promise<ApiResponse<T>>,
   dispatch: any,
-  options: AsyncActionOptions = {}
+  options: AsyncActionOptions = {},
 ): Promise<T | null> => {
   const {
     loadingKey = "save",
@@ -84,14 +84,16 @@ export const handleAsyncAction = async <T>(
 export const handleAsyncDeleteAction = async (
   asyncFn: () => Promise<ApiResponse<any>>,
   successMessage: string,
-  dispatch: any
+  dispatch: any,
 ) => {
   try {
     dispatch(setLoading({ delete: true }));
     const res = await asyncFn();
 
     if (res.success) {
-      successNotification({ message: successMessage || res.message || "Deleted successfully" });
+      successNotification({
+        message: successMessage || res.message || "Deleted successfully",
+      });
       dispatch(setAction({}));
     } else {
       errorNotification({ message: res.message || "Delete failed" });
@@ -107,14 +109,15 @@ export const handleAsyncDeleteAction = async (
 
 export async function getAuthHeaders(): Promise<Record<string, string>> {
   const session = await auth();
-  if (!session?.user?.accessToken) {
+  const token = (session as any)?.accessToken || session?.user?.accessToken;
+  if (!token) {
     return {
       "Content-Type": "application/json",
     };
   }
   return {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${session?.user?.accessToken}`,
+    Authorization: `Bearer ${token}`,
   };
 }
 
@@ -126,25 +129,31 @@ export async function getPostPutHeaders({
   body: any;
 }): Promise<RequestInit> {
   const session = await auth();
+  const token = (session as any)?.accessToken || session?.user?.accessToken;
   return {
     method,
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(body),
   };
 }
 
-export async function getHeaders({ method }: { method: string }): Promise<RequestInit> {
+export async function getHeaders({
+  method,
+}: {
+  method: string;
+}): Promise<RequestInit> {
   const session = await auth();
+  const token = (session as any)?.accessToken || session?.user?.accessToken;
   return {
     method,
     cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.user?.accessToken}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   };
 }
@@ -194,8 +203,8 @@ export const handlePreview = async (file: any, dispatch: any) => {
   dispatch(setPreviewOpen(true));
   dispatch(
     setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    )
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1),
+    ),
   );
 };
 

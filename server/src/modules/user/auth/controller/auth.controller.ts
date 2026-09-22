@@ -14,8 +14,8 @@ import {
 import { logger } from '@/middlewares/logger';
 import { FileEntity } from '@/modules/system/other/file/model/file.entity';
 import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
-import { cacheService, CacheService } from '@/utils/cache.service';
 import { findFileEntity, removeFileFromMinio } from '@/services/minio.service';
+import { cacheService, CacheService } from '@/utils/cache.service';
 import { sendEmail } from '@/utils/sendMail';
 import { updateUserValidationSchema, userValidationSchema } from '@/validation';
 import { forgotPasswordValidationSchema } from '@/validation/user/forgotPasswordValidation';
@@ -26,6 +26,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import 'reflect-metadata';
 import { RoleEnum } from '../enums/role.enum';
+import { StatusEnum } from '../enums/status.enum';
 import { UserActivityEntity } from '../model/user-activity.entity';
 import { UserEntity } from '../model/user.entity';
 import { userService } from '../service/user.service';
@@ -430,6 +431,18 @@ export const refreshAccessToken = asyncHandler(
     }
 
     try {
+      // Grace period check: if this refresh token was rotated within the last 60 seconds,
+      // return the cached new tokens so concurrent requests don't fail with 401.
+      const cacheKey = `rotated_rt_${refreshToken}`;
+      const cached = cacheService.get<{ accessToken: string; refreshToken: string }>(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          success: true,
+          accessToken: cached.accessToken,
+          refreshToken: cached.refreshToken,
+        });
+      }
+
       const decoded = jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET! + '_refresh',
@@ -439,7 +452,31 @@ export const refreshAccessToken = asyncHandler(
       const userRepository = connection.getRepository(UserEntity);
       const user = await userRepository.findOne({ where: { id: decoded.id } });
 
-      if (!user || user.refreshToken !== refreshToken) {
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'User not found' });
+      }
+
+      if (user.status !== StatusEnum.Active) {
+        return res.status(401).json({ success: false, message: 'User account is inactive' });
+      }
+
+      if (user.blockUntil && new Date(user.blockUntil) > new Date()) {
+        return res.status(403).json({ success: false, message: 'Account is temporarily locked' });
+      }
+
+      if (user.lastLogout) {
+        const tokenIssuedAt = (decoded.iat || 0) * 1000;
+        const logoutAt = new Date(user.lastLogout).getTime();
+        if (tokenIssuedAt < logoutAt - 5000) {
+          return res.status(401).json({ success: false, message: 'Session expired due to logout' });
+        }
+      }
+
+      if (!user.refreshToken) {
+        return res.status(401).json({ success: false, message: 'Session has been invalidated' });
+      }
+
+      if (user.refreshToken !== refreshToken) {
         return res.status(401).json({ success: false, message: 'Invalid refresh token' });
       }
 
@@ -449,6 +486,13 @@ export const refreshAccessToken = asyncHandler(
       // Rotate refresh token
       user.refreshToken = newRefreshToken;
       await userRepository.save(user);
+
+      // Cache rotation for 60 seconds grace period
+      cacheService.set(
+        cacheKey,
+        { accessToken: newAccessToken, refreshToken: newRefreshToken },
+        60 * 1000,
+      );
 
       sendCookiesResponse(res, newAccessToken, newRefreshToken);
 

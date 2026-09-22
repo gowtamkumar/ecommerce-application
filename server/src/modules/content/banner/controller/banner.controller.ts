@@ -31,7 +31,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
 
     const [result, total] = await repository.findAndCount({
       where: customQuery,
-      order: { createdAt: 'DESC' },
+      order: { id: 'DESC' },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
@@ -54,7 +54,7 @@ export const getBanners = asyncHandler(async (req: Request, res: Response) => {
 
   const result = await repository.find({
     where: customQuery,
-    order: { createdAt: 'DESC' },
+    order: { id: 'DESC' },
   });
 
   const normalizedResult = result.map((banner: any) => ({
