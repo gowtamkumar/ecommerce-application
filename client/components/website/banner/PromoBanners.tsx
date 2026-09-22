@@ -1,6 +1,5 @@
 "use client";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
-import { ArrowRightOutlined } from "@ant-design/icons";
 import Link from "next/link";
 
 export default function PromoBanners({ banners }: { banners: any[] }) {
@@ -12,43 +11,30 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
       ? "grid grid-cols-1"
       : count === 2
         ? "grid grid-cols-1 md:grid-cols-2"
-        : "grid grid-cols-1 md:grid-cols-3";
+        : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+
+  const cardAspect =
+    count === 1
+      ? "aspect-[2.8/1] sm:aspect-[3/1]"
+      : count === 2
+        ? "aspect-[2.5/1] sm:aspect-[2.7/1]"
+        : "aspect-[2.3/1] sm:aspect-[2.5/1] lg:aspect-[2.7/1]";
 
   return (
     <div className="w-full">
-      <div className={`${gridClass} gap-4 md:gap-6`}>
+      <div className={`${gridClass} gap-4 lg:gap-5 xl:gap-6`}>
         {banners.map((item: any, index: number) => (
           <Link
             key={index}
             href={item.url ? `/offers${item.url}` : "/products"}
-            className="group relative h-75 sm:h-85 rounded-xl overflow-hidden block"
+            className={`group relative ${cardAspect} rounded-2xl overflow-hidden block ring-1 ring-black/5 shadow-sm hover:shadow-lg transition-all duration-300`}
           >
             <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
               style={{
                 backgroundImage: `url(${getUploadImageUrl(item.image)})`,
               }}
             />
-
-            {/* <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/25 to-transparent" /> */}
-
-            <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 flex flex-col items-start gap-3">
-              {/* <div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white leading-snug">
-                  {item.title}
-                </h3>
-                {item.description ? (
-                  <p className="mt-1.5 text-sm text-white/80 line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-                ) : null}
-              </div> */}
-
-              <span className="inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-white/40 pb-0.5 group-hover:border-global-primary group-hover:text-global-primary transition-colors duration-300">
-                Shop now
-                <ArrowRightOutlined className="text-[10px] transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </div>
           </Link>
         ))}
       </div>
