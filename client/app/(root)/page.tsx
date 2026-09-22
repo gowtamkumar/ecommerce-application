@@ -1,11 +1,5 @@
 import appConfig from "@/appConfig";
 import { resolveBannerGroups } from "@/components/website/banner/bannerGroups";
-import CategoryTab from "@/components/website/home/CategoryTab";
-import CustomerReviews from "@/components/website/home/CustomerReviews";
-import FlashDealSection from "@/components/website/home/FlashDealSection";
-import NewsletterSection from "@/components/website/home/NewsletterSection";
-import TrustBar from "@/components/website/home/TrustBar";
-import { getDiscounts } from "@/lib/apis/discount";
 import { getHome } from "@/lib/apis/home";
 import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
@@ -27,6 +21,11 @@ const FeaturedProduct = dynamic(
   () => import("@/components/website/home/FeaturedProduct")
 );
 const BlogTab = dynamic(() => import("@/components/website/home/BlogSection"));
+const TrustBar = dynamic(() => import("@/components/website/home/TrustBar"));
+const NewsletterSection = dynamic(() => import("@/components/website/home/NewsletterSection"));
+const FlashDealSection = dynamic(() => import("@/components/website/home/FlashDealSection"));
+const CustomerReviews = dynamic(() => import("@/components/website/home/CustomerReviews"));
+const CategoryTab = dynamic(() => import("@/components/website/home/CategoryTab"));
 
 export async function generateMetadata(): Promise<Metadata> {
   const settingRes = await getSettings();
@@ -120,12 +119,9 @@ const SectionHeader = ({
 );
 
 export default async function Home() {
-  const [home, discountsRes] = await Promise.all([
+  const [home] = await Promise.all([
     getHome({ page: 1, perPage: 16, featured: true, isNewArrival: true }),
-    getDiscounts({ status: "Active" }),
   ]);
-
-  const activeDiscounts = discountsRes?.data && Array.isArray(discountsRes.data) ? discountsRes.data : [];
 
   const { banners, posts, categories, products, topSellingProducts } =
     home?.data || {};
@@ -181,7 +177,7 @@ export default async function Home() {
           </div>
         </section>
       ) : null,
-    flash_deal: () => <FlashDealSection initialDiscounts={activeDiscounts} />,
+    flash_deal: () => <FlashDealSection />,
     promo_banners: () => {
       const availableBanners = HomeBanners.filter(
         (item: any) => !usedPromoIds.has(item.id)

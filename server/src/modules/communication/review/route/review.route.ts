@@ -1,20 +1,21 @@
+import { AuthGuard } from '@/middlewares/auth.middleware';
 import express from 'express';
 import {
   createReview,
   deleteReview,
   getReview,
   getReviews,
-  updateReview,
-  reviewLike,
   reviewDisLike,
+  reviewLike,
+  updateReview,
 } from '../controller/review.controller';
 
 const router = express.Router();
 
-router.route('/').get(getReviews).post(createReview);
+router.route('/').get(getReviews).post(AuthGuard, createReview);
 
-router.route('/:id').get(getReview).patch(updateReview).delete(deleteReview);
-router.route('/like/:id').patch(reviewLike);
-router.route('/dislike/:id').patch(reviewDisLike);
+router.route('/:id').get(getReview).patch(AuthGuard, updateReview).delete(AuthGuard, deleteReview);
+router.route('/like/:id').patch(AuthGuard, reviewLike);
+router.route('/dislike/:id').patch(AuthGuard, reviewDisLike);
 
 export default router;

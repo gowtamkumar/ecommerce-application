@@ -29,17 +29,26 @@ export const getReviews = asyncHandler(async (req: Request, res: Response) => {
 
   const relationsConfig = {
     product: true,
+    user: true,
   };
 
   const selectConfig: any = {
     id: true,
     rating: true,
     comment: true,
-    userName: true,
+    like: true,
+    disLike: true,
     createdAt: true,
+    user: {
+      id: true,
+      name: true,
+      image: true,
+    },
     product: {
       id: true,
       name: true,
+      slug: true,
+      thumbnailImage: true,
     },
   };
 
