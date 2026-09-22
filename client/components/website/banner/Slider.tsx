@@ -74,7 +74,7 @@ export default function Slider({ banners, heightClass, className }: any) {
               description: string;
               url: string;
             },
-            index: number
+            index: number,
           ) => (
             <SwiperSlide key={`${image || "slide"}-${index}`}>
               <div className="relative w-full h-full bg-slate-900">
@@ -90,54 +90,25 @@ export default function Slider({ banners, heightClass, className }: any) {
                 )}
 
                 {/* Sophisticated Multi-Stage Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
+                {/* <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent" /> */}
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-black/20" />  */}
 
-                <div className="relative z-10 h-full container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-end items-start pb-20 sm:pb-24 lg:pb-28">
+                <div className="relative z-10 h-full container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-end items-start pb-8 sm:pb-8 lg:pb-8">
                   <div className="max-w-2xl space-y-4 md:space-y-5">
-                    {/* Eyebrow Chip */}
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-widest shadow-xs">
-                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                      <span>Curated Season Collection</span>
-                    </div>
-
-                    {index === 0 ? (
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black text-white leading-[1.08] tracking-tight break-words drop-shadow-md">
-                        {title}
-                      </h1>
-                    ) : (
-                      <h2 className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black text-white leading-[1.08] tracking-tight break-words drop-shadow-md">
-                        {title}
-                      </h2>
-                    )}
-
-                    {description ? (
-                      <p className="text-sm sm:text-base md:text-lg text-slate-200 font-normal max-w-xl leading-relaxed">
-                        {description}
-                      </p>
-                    ) : null}
-
                     <div className="pt-2 sm:pt-3 flex flex-wrap items-center gap-3.5">
                       <Link
                         href={url || "/products"}
                         className="inline-flex items-center gap-2.5 h-12 md:h-13 px-7 md:px-8 rounded-full bg-global-primary hover:bg-amber-600 text-white text-sm md:text-base font-bold shadow-lg shadow-amber-500/25 ring-1 ring-white/20 hover:shadow-xl hover:shadow-amber-500/35 hover:-translate-y-0.5 transition-all duration-300"
                       >
-                        <span>Explore Collection</span>
+                        <span>Shop now</span>
                         <ArrowRightOutlined className="text-xs" />
-                      </Link>
-
-                      <Link
-                        href="/products?featured=true"
-                        className="inline-flex items-center gap-2 h-12 md:h-13 px-6 md:px-7 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/25 text-white text-sm md:text-base font-semibold hover:-translate-y-0.5 transition-all duration-300"
-                      >
-                        <span>Featured Drops</span>
                       </Link>
                     </div>
                   </div>
                 </div>
               </div>
             </SwiperSlide>
-          )
+          ),
         )}
 
         {slides.length > 1 && (

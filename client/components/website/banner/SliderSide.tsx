@@ -53,7 +53,7 @@ export default function SliderSide({ sliderBanners, sideBanners }: any) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
                   <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 flex flex-col items-start gap-1">
-                    <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-white/75">
+                    {/* <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-white/75">
                       <span className="h-1 w-4 rounded-full bg-global-primary" />
                       {item.type || "Featured"}
                     </span>
@@ -64,7 +64,7 @@ export default function SliderSide({ sliderBanners, sideBanners }: any) {
                       <p className="text-xs text-white/75 line-clamp-2 leading-relaxed hidden sm:block">
                         {item.description}
                       </p>
-                    ) : null}
+                    ) : null} */}
 
                     <span className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-semibold text-white/90 border-b border-white/30 pb-0.5 group-hover:text-global-primary group-hover:border-global-primary transition-colors duration-300">
                       Shop now

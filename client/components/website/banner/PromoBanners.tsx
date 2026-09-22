@@ -21,7 +21,7 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
           <Link
             key={index}
             href={item.url ? `/offers${item.url}` : "/products"}
-            className="group relative h-[300px] sm:h-[340px] rounded-xl overflow-hidden block"
+            className="group relative h-75 sm:h-85 rounded-xl overflow-hidden block"
           >
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
@@ -30,10 +30,10 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
               }}
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+            {/* <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/25 to-transparent" /> */}
 
             <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 flex flex-col items-start gap-3">
-              <div>
+              {/* <div>
                 <h3 className="text-xl sm:text-2xl font-semibold text-white leading-snug">
                   {item.title}
                 </h3>
@@ -42,7 +42,7 @@ export default function PromoBanners({ banners }: { banners: any[] }) {
                     {item.description}
                   </p>
                 ) : null}
-              </div>
+              </div> */}
 
               <span className="inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-white/40 pb-0.5 group-hover:border-global-primary group-hover:text-global-primary transition-colors duration-300">
                 Shop now

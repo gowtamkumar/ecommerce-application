@@ -174,7 +174,7 @@ export default async function Home() {
               title="Featured Collections"
               subtitle="Handcrafted pieces engineered for quality, longevity, and comfort"
               eyebrow="CURATED DROPS"
-              link="/products?featured=true"
+              link="/products"
             />
             <FeaturedProduct products={featuredProducts} />
           </div>
