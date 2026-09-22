@@ -40,7 +40,7 @@ export default function NewsletterSection() {
 
   return (
     <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-white/10 shadow-2xl p-8 sm:p-12 lg:p-16 text-white">
+      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 border border-white/10 shadow-2xl p-8 sm:p-12 lg:p-16 text-white">
         {/* Subtle Warm Ambient Glow */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -54,7 +54,7 @@ export default function NewsletterSection() {
 
           {/* High-Contrast Clear Heading */}
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.12]"
+            className="text-3xl sm:text-4xl lg:text-5xl  tracking-tight leading-[1.12]"
             style={{ color: "#ffffff" }}
           >
             Join the VIP Club & Receive{" "}
