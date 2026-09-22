@@ -17,7 +17,7 @@ import {
 import { Swiper, SwiperSlide } from "swiper/react";
 
 const DEFAULT_HEIGHT_CLASS =
-  "h-[200px] sm:h-[260px] md:h-[320px] lg:h-[400px] xl:h-[460px]";
+  "w-full aspect-[2.5/1] sm:aspect-[2.8/1] md:aspect-[3/1] min-h-[170px]";
 
 export default function Slider({ banners, heightClass, className }: any) {
   // Graceful luxury fallback if no banners exist yet

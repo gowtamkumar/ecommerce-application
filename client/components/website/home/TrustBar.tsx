@@ -107,7 +107,7 @@ export default function TrustBar({ setting: initialSetting }: TrustBarProps) {
   ];
 
   return (
-    <section className="relative z-10 -mt-6 sm:-mt-8 mb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative z-10 mt-6 sm:mt-8 mb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100/80 shadow-xl shadow-gray-200/50 p-5 sm:p-7 lg:p-8 backdrop-blur-xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
           {trustItems.map((item, idx) => {

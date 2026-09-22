@@ -21,5 +21,11 @@ export default function BannerSection({ banners, layout }: any) {
     );
   }
 
-  return <Slider banners={sliderBanners} />;
+  return (
+    <div className="w-full bg-white">
+      <div className="w-full max-w-[1920px] mx-auto">
+        <Slider banners={sliderBanners} />
+      </div>
+    </div>
+  );
 }
