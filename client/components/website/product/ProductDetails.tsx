@@ -229,34 +229,33 @@ export default function ProductDetails({
         </div>
 
         {/* RIGHT: EXECUTIVE PURCHASING MODULE */}
-        <div className="col-span-1 lg:col-span-5 flex flex-col space-y-6">
-          {/* Top Brand Pill & Smooth Review Anchor */}
+        <div className="col-span-1 lg:col-span-5 flex flex-col space-y-5">
+          {/* Top Brand & Category Pill */}
           <div className="flex items-center justify-between flex-wrap gap-2">
-            {brand?.name ? (
-              <Link
-                href={`/brand/${brand.slug || brand.name.toLowerCase()}`}
-                className="group inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-amber-500 hover:text-slate-950 transition-all"
-              >
-                <span>{brand.name}</span>
-                <FiChevronRight className="w-3 h-3 opacity-60 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-            ) : primaryCategory?.name ? (
-              <Link
-                href={`/products?categoryId=${primaryCategory.id}`}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
-              >
-                {primaryCategory.name}
-              </Link>
-            ) : (
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Premium Collection
-              </span>
-            )}
+            <div className="flex items-center gap-2 flex-wrap">
+              {brand?.name && (
+                <Link
+                  href={`/brand/${brand.slug || brand.name.toLowerCase()}`}
+                  className="group inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-amber-500 hover:text-slate-950 transition-all shadow-xs"
+                >
+                  <span>{brand.name}</span>
+                  <FiChevronRight className="w-3 h-3 opacity-60 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              )}
+              {primaryCategory?.name && (
+                <Link
+                  href={`/products?categoryId=${primaryCategory.id}`}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold tracking-wide hover:bg-slate-200 transition-colors"
+                >
+                  {primaryCategory.name}
+                </Link>
+              )}
+            </div>
 
             {/* Review Score */}
             <a
               href="#reviews"
-              className="flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-amber-600 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-amber-600 transition-colors cursor-pointer"
             >
               <Rate
                 disabled
@@ -264,7 +263,7 @@ export default function ProductDetails({
                 value={+averageRating}
                 className="text-amber-500 text-xs"
               />
-              <span className="font-black text-slate-900">{averageRating}</span>
+              <span className="font-bold text-slate-900">{averageRating}</span>
               <span className="text-slate-400 font-medium">
                 ({totalReviewsDisplay} {totalReviewsDisplay === 1 ? "review" : "reviews"})
               </span>
@@ -273,23 +272,23 @@ export default function ProductDetails({
 
           {/* Product Title */}
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight tracking-tight mb-3">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 leading-snug tracking-tight mb-2.5">
               {name}
             </h1>
             <div className="flex items-center gap-3 flex-wrap">
               {/* Live Inventory Status */}
               {checkStock > 5 ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   In Stock ({checkStock} units available)
                 </span>
               ) : checkStock > 0 ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-300">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
                   Low Stock — Only {checkStock} left
                 </span>
               ) : (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
                   Currently Out of Stock
                 </span>
               )}
@@ -301,52 +300,56 @@ export default function ProductDetails({
             </div>
           </div>
 
-          {/* Executive Pricing Box */}
-          <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 text-white shadow-xl shadow-slate-950/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-            <div className="relative z-10 space-y-2">
-              <div className="flex items-baseline gap-3 flex-wrap">
-                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
-                  {formatPrice(effectiveFinalPrice)}
+          {/* Executive Clean Pricing Card */}
+          <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-50 to-slate-100/90 border border-slate-200/80 space-y-2">
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                {formatPrice(effectiveFinalPrice)}
+              </span>
+              {effectiveOriginalPrice > effectiveFinalPrice && (
+                <span className="text-base sm:text-lg text-slate-400 line-through font-semibold">
+                  {formatPrice(effectiveOriginalPrice)}
                 </span>
-                {effectiveOriginalPrice > effectiveFinalPrice && (
-                  <span className="text-base sm:text-lg text-slate-400 line-through font-semibold">
-                    {formatPrice(effectiveOriginalPrice)}
-                  </span>
-                )}
-                {calculatedSavings > 0 && (
-                  <span className="px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-wider">
-                    Save {formatPrice(calculatedSavings)}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2 text-xs text-slate-300 pt-1">
-                <FiCheck className="text-amber-400 w-3.5 h-3.5" />
-                <span>All taxes included</span>
-                <span className="text-slate-600">•</span>
-                <span className="text-amber-400 font-medium">Free express shipping eligible</span>
-              </div>
+              )}
+              {calculatedSavings > 0 && (
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300/80 text-xs font-bold uppercase tracking-wider">
+                  Save {formatPrice(calculatedSavings)} {discountPercentDisplay ? `(${discountPercentDisplay} OFF)` : ""}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-xs text-slate-500 pt-1 flex-wrap">
+              <span className="inline-flex items-center gap-1 font-medium text-emerald-700">
+                <FiCheck className="w-3.5 h-3.5 text-emerald-600" />
+                All taxes & VAT included
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-600 font-medium">
+                Free express shipping eligible
+              </span>
             </div>
           </div>
 
-          {/* Short Description */}
+          {/* Short Description & Key Specifications */}
           {shortDescription && (
-            <div
-              className="text-slate-600 text-sm leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: shortDescription }}
-            />
+            <div className="p-4 rounded-xl bg-slate-50/60 border border-slate-200/60 text-slate-600 text-xs sm:text-sm leading-relaxed">
+              <div
+                className="prose prose-slate max-w-none text-xs sm:text-sm text-slate-600"
+                dangerouslySetInnerHTML={{ __html: shortDescription }}
+              />
+            </div>
           )}
 
           {/* Variants Selection */}
           {variant && productVariants && productVariants.length > 0 && (
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3 pt-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-900">
-                  Select Specification / Variant
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                  Select Option / Variant
                 </span>
                 <button
+                  type="button"
                   onClick={() => setIsSizeGuideOpen(true)}
-                  className="text-xs font-bold text-amber-600 hover:text-amber-700 underline uppercase tracking-wider cursor-pointer"
+                  className="text-xs font-semibold text-amber-600 hover:text-amber-700 underline uppercase tracking-wider cursor-pointer"
                 >
                   Size Guide
                 </button>
@@ -376,9 +379,9 @@ export default function ProductDetails({
                         );
                         setCheckStock(item.stockQty);
                       }}
-                      className={`relative p-3 rounded-2xl border-2 transition-all duration-200 text-left overflow-hidden cursor-pointer ${
+                      className={`relative p-3 rounded-xl border-2 transition-all duration-200 text-left overflow-hidden cursor-pointer ${
                         isSelected
-                          ? "border-slate-900 bg-amber-50/40 shadow-sm"
+                          ? "border-slate-900 bg-amber-50/40 shadow-xs"
                           : "border-slate-200 bg-white hover:border-slate-300"
                       } ${isSoldOut ? "opacity-40 grayscale cursor-not-allowed" : ""}`}
                     >
@@ -390,10 +393,10 @@ export default function ProductDetails({
                           />
                         )}
                         <div className="min-w-0">
-                          <div className="text-xs font-black text-slate-900 truncate">
+                          <div className="text-xs font-bold text-slate-900 truncate">
                             {variantLabel}
                           </div>
-                          <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                          <div className="text-[10px] font-medium text-slate-400">
                             {isSoldOut ? "Sold Out" : `${item.stockQty} in stock`}
                           </div>
                         </div>
@@ -411,24 +414,26 @@ export default function ProductDetails({
           )}
 
           {/* Quantity & Dual High-Impact Action Buttons */}
-          <div className="space-y-4 pt-4 border-t border-slate-100">
+          <div className="space-y-4 pt-3 border-t border-slate-100">
             <div className="flex flex-col sm:flex-row items-stretch gap-3">
               {/* Quantity Stepper */}
-              <div className="flex items-center justify-between p-1 bg-slate-100 rounded-2xl w-full sm:w-36 border border-slate-200">
+              <div className="flex items-center justify-between p-1 bg-slate-100 rounded-xl w-full sm:w-36 border border-slate-200">
                 <button
+                  type="button"
                   onClick={() => setQty((pre) => Math.max(1, pre - 1))}
-                  className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-xs text-slate-800 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 cursor-pointer"
+                  className="w-10 h-10 flex items-center justify-center bg-white rounded-lg shadow-2xs text-slate-800 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 cursor-pointer"
                   disabled={qty <= 1}
                   aria-label="Decrease quantity"
                 >
                   <HiOutlineMinus size={14} />
                 </button>
-                <span className="font-black text-base text-slate-900 w-8 text-center">
+                <span className="font-bold text-base text-slate-900 w-8 text-center">
                   {qty}
                 </span>
                 <button
+                  type="button"
                   onClick={() => setQty((pre) => pre + 1)}
-                  className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-xs text-slate-800 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 cursor-pointer"
+                  className="w-10 h-10 flex items-center justify-center bg-white rounded-lg shadow-2xs text-slate-800 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 cursor-pointer"
                   disabled={qty >= checkStock}
                   aria-label="Increase quantity"
                 >
@@ -439,7 +444,7 @@ export default function ProductDetails({
               {/* Add to Cart CTA */}
               <div className="flex-1">
                 <AddToCartButton
-                  className="h-12 sm:h-12 rounded-2xl text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white border-none shadow-md shadow-slate-900/15"
+                  className="!h-12 !rounded-xl !text-xs !font-bold !uppercase !tracking-wider !bg-slate-900 hover:!bg-slate-800 !text-white !border-none !shadow-md !shadow-slate-900/15 cursor-pointer"
                   item={{
                     ...product,
                     productVariantId: defaultProduct?.id,
@@ -451,9 +456,10 @@ export default function ProductDetails({
               {/* High Conversion "Buy Now" CTA */}
               <div className="flex-1">
                 <button
+                  type="button"
                   onClick={handleBuyNow}
                   disabled={buyNowLoading || checkStock <= 0}
-                  className="w-full h-12 rounded-2xl text-xs font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 border-none shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-12 rounded-xl text-xs font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 border-none shadow-md shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FiZap className="w-4 h-4" />
                   <span>{buyNowLoading ? "Preparing..." : "Buy Now"}</span>
@@ -464,13 +470,14 @@ export default function ProductDetails({
             {/* Wishlist & Share Bar */}
             <div className="flex items-center justify-between gap-4 pt-1">
               <button
+                type="button"
                 onClick={handleWishlist}
-                className="inline-flex items-center gap-2 group text-xs font-bold text-slate-600 hover:text-rose-600 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 group text-xs font-semibold text-slate-600 hover:text-rose-600 transition-colors cursor-pointer"
               >
                 <div
-                  className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${
+                  className={`w-9 h-9 rounded-lg border flex items-center justify-center transition-all ${
                     isWishlisted
-                      ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
+                      ? "bg-rose-50 border-rose-200 text-rose-600 shadow-2xs"
                       : "bg-white border-slate-200 text-slate-400 group-hover:border-rose-200 group-hover:text-rose-600 group-hover:bg-rose-50"
                   }`}
                 >
@@ -483,7 +490,7 @@ export default function ProductDetails({
                 <span>{isWishlisted ? "Saved to Wishlist" : "Save to Wishlist"}</span>
               </button>
 
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
                 <Share
                   value={{
                     url: `${appConfig.publicUrl}/products/${slug}`,
@@ -494,60 +501,60 @@ export default function ProductDetails({
             </div>
           </div>
 
-          {/* Assurance & Value Guarantees Grid */}
-          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100/80">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-700 flex items-center justify-center shrink-0">
-                <FiTruck className="w-4 h-4" />
+          {/* Assurance & Value Guarantees Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-slate-100">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
+              <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200/60 text-amber-600 flex items-center justify-center shrink-0">
+                <FiTruck className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <h4 className="text-xs font-black text-slate-900 leading-snug">
-                  Express Delivery
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                  Fast Delivery
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Ships in 24–48 hours with live tracking
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  24–48h Dispatch
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100/80">
-              <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-200/80 text-indigo-700 flex items-center justify-center shrink-0">
-                <FiShield className="w-4 h-4" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
+              <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-200/60 text-indigo-600 flex items-center justify-center shrink-0">
+                <FiShield className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <h4 className="text-xs font-black text-slate-900 leading-snug">
-                  100% Authentic
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                  100% Genuine
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Direct from certified distributors
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  Direct from Brand
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100/80">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shrink-0">
-                <FiRotateCcw className="w-4 h-4" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200/60 text-emerald-600 flex items-center justify-center shrink-0">
+                <FiRotateCcw className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <h4 className="text-xs font-black text-slate-900 leading-snug">
-                  30-Day Easy Returns
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                  Easy Returns
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Prepaid return labels & instant refund
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  30-Day Guarantee
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100/80">
-              <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 flex items-center justify-center shrink-0">
-                <FiLock className="w-4 h-4" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
+              <div className="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200/60 text-slate-700 flex items-center justify-center shrink-0">
+                <FiLock className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <h4 className="text-xs font-black text-slate-900 leading-snug">
-                  Secure Checkout
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-slate-900 leading-tight">
+                  SSL Secure
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Bank-grade 256-bit SSL encryption
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  Safe Checkout
                 </p>
               </div>
             </div>

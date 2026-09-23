@@ -1,5 +1,13 @@
 import { Form, Input, Tooltip } from "antd";
-import { FiInfo } from "react-icons/fi";
+import { FiInfo, FiRefreshCw } from "react-icons/fi";
+
+const formatSlug = (text: string) =>
+  (text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 
 export default function ProductTopSecton({ form }: any) {
   return (
@@ -19,12 +27,10 @@ export default function ProductTopSecton({ form }: any) {
             placeholder="e.g. Premium Cotton T-Shirt"
             size="large"
             onChange={(e) => {
-              const slug = e.target.value
-                .toLowerCase()
-                .trim()
-                .split(" ")
-                .join("-");
-              form.setFieldsValue({ slug });
+              const isEditing = !!form.getFieldValue("id");
+              if (!isEditing || !form.getFieldValue("slug")) {
+                form.setFieldsValue({ slug: formatSlug(e.target.value) });
+              }
             }}
           />
         </Form.Item>
@@ -34,7 +40,7 @@ export default function ProductTopSecton({ form }: any) {
           label={
             <span className="flex items-center gap-1 font-medium text-global-primary text-sm">
               URL Slug <span className="text-red-500">*</span>
-              <Tooltip title="Auto-generated from the product name. Used in the product URL. Edit if needed.">
+              <Tooltip title="Used in the product URL (/products/[slug]). You can freely edit this, or click the sync icon to regenerate it from the product name.">
                 <FiInfo className="w-3.5 h-3.5 text-global-secondary cursor-help" />
               </Tooltip>
             </span>
@@ -42,9 +48,33 @@ export default function ProductTopSecton({ form }: any) {
           rules={[{ required: true, message: "Slug is required" }]}
         >
           <Input
-            placeholder="auto-generated-from-name"
+            placeholder="e.g. premium-cotton-t-shirt"
             size="large"
-            className="text-global-secondary"
+            className="text-global-secondary font-mono text-sm"
+            onChange={(e) => {
+              const formatted = e.target.value
+                .toLowerCase()
+                .replace(/\s+/g, "-");
+              form.setFieldsValue({ slug: formatted });
+            }}
+            suffix={
+              <Tooltip title="Regenerate slug from product name">
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => {
+                    const name = form.getFieldValue("name");
+                    if (name) {
+                      form.setFieldsValue({ slug: formatSlug(name) });
+                    }
+                  }}
+                  className="p-1 text-slate-400 hover:text-slate-800 transition-colors cursor-pointer"
+                  aria-label="Regenerate slug"
+                >
+                  <FiRefreshCw className="w-3.5 h-3.5" />
+                </button>
+              </Tooltip>
+            }
           />
         </Form.Item>
       </div>

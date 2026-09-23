@@ -898,6 +898,23 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
     throw new Error(`Product not found`);
   }
 
+  // Handle slug update
+  if (restData.slug) {
+    restData.slug = restData.slug.toLowerCase().trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+
+    if (restData.slug !== product.slug) {
+      const existingProductWithSlug = await repository.findOneBy({ slug: restData.slug });
+      if (existingProductWithSlug && existingProductWithSlug.id !== product.id) {
+        return res.status(400).json({
+          success: false,
+          message: `Product with slug '${restData.slug}' already exists. Please choose a unique slug.`,
+        });
+      }
+    }
+  } else if (restData.slug === null || restData.slug === '') {
+    delete restData.slug;
+  }
+
   // Handle product variants
   let productVariantPromise = Promise.resolve();
   if (productVariants.length) {

@@ -4,6 +4,7 @@ export const updateProductValidationSchema = z.object({
   name: z.string({
     required_error: 'name is required',
   }),
+  slug: z.string().optional().nullable(),
   taxId: z.number({
     required_error: 'Tax is required',
   }),
