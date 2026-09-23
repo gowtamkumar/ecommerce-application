@@ -248,17 +248,19 @@ const NotificationDropdown = ({ variant = "default", className }: NotificationDr
             <BellOutlined className="text-base" />
           </button>
         ) : (
-          <Button
-            type="primary"
+          <button
+            type="button"
+            aria-label="Notifications"
             className={`
-              w-10 h-10 flex items-center justify-center rounded-global-button-radius border-0
-              bg-global-button-primary text-global-button-text
-              transition-all duration-300 transform active:scale-95 shadow-md hover:shadow-lg
-              hover:bg-global-button-hover hover:scale-105
-              ${open ? "scale-105 shadow-lg" : ""}
+              relative w-10 h-10 flex items-center justify-center rounded-full
+              border border-gray-200 bg-white text-gray-700
+              transition-all duration-200 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50/20 cursor-pointer shadow-2xs
+              ${open ? "border-amber-400 text-amber-600 bg-amber-50/30 ring-2 ring-amber-400/20" : ""}
+              ${className || ""}
             `}
-            icon={<BellOutlined style={{ fontSize: "20px" }} />}
-          />
+          >
+            <BellOutlined className="text-lg" />
+          </button>
         )}
       </Badge>
     </Popover>

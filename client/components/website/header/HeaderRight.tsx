@@ -49,8 +49,8 @@ export default function HeaderRight() {
       >
         <div
           className="relative w-10 h-10 flex items-center justify-center rounded-full
-                     border border-gray-200 bg-white text-gray-700
-                     transition-colors duration-200 hover:border-global-primary hover:text-global-primary"
+                     border border-gray-200 bg-white text-gray-700 shadow-2xs
+                     transition-all duration-200 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50/20"
         >
           <CiHeart size={22} />
         </div>
@@ -62,14 +62,14 @@ export default function HeaderRight() {
           onClick={showLoading}
           aria-label="Shopping cart"
           className="relative w-10 h-10 flex items-center justify-center rounded-full
-                   border border-gray-200 bg-white text-gray-700
-                   transition-colors duration-200 hover:border-global-primary hover:text-global-primary"
+                   border border-gray-200 bg-white text-gray-700 shadow-2xs cursor-pointer
+                   transition-all duration-200 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50/20"
         >
           <FiShoppingBag size={18} />
 
           {cartCount > 0 && (
             <span
-              className="absolute -top-1 -right-1 bg-global-primary text-white text-[10px] font-semibold min-w-[18px] h-[18px]
+              className="absolute -top-1 -right-1 bg-amber-500 text-white text-[10px] font-semibold min-w-[18px] h-[18px]
                            flex items-center justify-center rounded-full border-2 border-white"
             >
               {cartCount > 99 ? "99+" : cartCount}
@@ -102,7 +102,8 @@ export default function HeaderRight() {
       {session.status === "authenticated" && (
         <>
           <NotificationDropdown />
-          <ProfileDropdown profileImage={profileImage} />
+          <div className="w-px h-6 bg-gray-200/80 mx-0.5" />
+          <ProfileDropdown user={session.data?.user} profileImage={profileImage} />
         </>
       )}
     </div>
