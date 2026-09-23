@@ -149,7 +149,7 @@ export default function ReportPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 print:p-0">
+    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 print:p-0">
       {/* 1. Header with Controls */}
       <div className="print:hidden">
         <ReportHeader

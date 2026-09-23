@@ -1,11 +1,10 @@
 "use client";
 
-import { Button, Select, Tooltip } from "antd";
+import { Button, Select } from "antd";
 import dayjs from "dayjs";
 import {
     FiBell,
     FiCheckCircle,
-    FiClock,
     FiRefreshCw,
     FiSend,
     FiShield,
@@ -35,90 +34,83 @@ export default function NotificationHeader({
   lastUpdated,
 }: NotificationHeaderProps) {
   return (
-    <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4">
-      {/* Title, Live Badge, and Last Synced indicator */}
-      <div>
+    <div className="bg-white rounded-xl border border-gray-200/80 p-3 sm:p-4 shadow-2xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
+        {/* Left: Title, Live Status & Unread Count */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-global-primary/10 text-global-primary flex items-center justify-center text-xl shadow-xs shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center text-base shrink-0">
             <FiBell />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight break-words m-0">
-                Notification & Alert Center
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight m-0">
+                Notifications
               </h1>
               {autoRefreshInterval > 0 ? (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Live Sync ({autoRefreshInterval}s)
+                  Live ({autoRefreshInterval}s)
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gray-100 text-gray-600 border border-gray-200">
-                  Manual Mode
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-600 border border-gray-200/60">
+                  Manual
                 </span>
               )}
               {unreadCount > 0 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
                   {unreadCount} Unread
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-500 mt-1 m-0 flex items-center gap-2 flex-wrap">
-              <span>Real-time operational alerts, automated warnings, and customer promotional broadcasts.</span>
-              {lastUpdated && (
-                <span className="text-gray-400 font-medium flex items-center gap-1">
-                  <FiClock className="text-[10px]" />
-                  <span>Synced {dayjs(lastUpdated).format("h:mm:ss A")}</span>
-                </span>
-              )}
+            <p className="text-[11px] text-gray-500 m-0 font-medium">
+              System alerts & broadcasts
+              {lastUpdated ? ` • Synced ${dayjs(lastUpdated).format("h:mm:ss A")}` : ""}
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Navigation Switcher & Action Controls */}
-      <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto">
-        {/* Tab Selector Segment */}
-        <div className="inline-flex rounded-xl bg-gray-100 p-1 border border-gray-200 text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => onTabChange("history")}
-            className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-              activeTab === "history"
-                ? "bg-white text-gray-900 shadow-xs font-bold"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            <FiShield className="text-xs" />
-            <span>Alerts History</span>
-            {unreadCount > 0 && (
-              <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px] font-bold">
-                {unreadCount}
-              </span>
-            )}
-          </button>
+        {/* Right: Navigation Tabs, Sync Interval & Actions */}
+        <div className="flex items-center flex-wrap gap-2">
+          {/* Segmented Tab Switcher */}
+          <div className="inline-flex items-center bg-gray-100/90 p-0.5 rounded-lg border border-gray-200/60">
+            <button
+              type="button"
+              onClick={() => onTabChange("history")}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                activeTab === "history"
+                  ? "bg-white text-gray-900 shadow-2xs"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              <FiShield className="text-xs" />
+              <span>History</span>
+              {unreadCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px] font-bold">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => onTabChange("broadcast")}
-            className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-              activeTab === "broadcast"
-                ? "bg-global-primary text-white shadow-xs font-bold"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            <FiSend className="text-xs" />
-            <span>Broadcast Studio</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => onTabChange("broadcast")}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                activeTab === "broadcast"
+                  ? "bg-white text-gray-900 shadow-2xs"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              <FiSend className="text-xs" />
+              <span>Broadcast</span>
+            </button>
+          </div>
 
-        {/* Sync Frequency Dropdown Selector */}
-        <Tooltip title="Configure background polling frequency to optimize server API calls">
+          {/* Sync Frequency Dropdown Selector */}
           <Select
-            size="middle"
+            size="small"
             value={autoRefreshInterval}
             onChange={onIntervalChange}
-            className="w-36 h-9"
+            className="!h-8 w-26 text-xs"
             options={[
               { value: 0, label: "Sync: Off" },
               { value: 30, label: "Sync: 30s" },
@@ -126,29 +118,34 @@ export default function NotificationHeader({
               { value: 120, label: "Sync: 2m" },
             ]}
           />
-        </Tooltip>
 
-        {/* Global Action Buttons */}
-        {unreadCount > 0 && activeTab === "history" && (
-          <Button
-            type="default"
-            icon={<FiCheckCircle className="text-emerald-600" />}
-            onClick={onMarkAllRead}
-            className="rounded-xl text-xs font-semibold h-9 border-gray-200 hover:border-emerald-500 hover:text-emerald-600"
-          >
-            Mark All Read
-          </Button>
-        )}
+          <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
+            {/* Mark All Read Button */}
+            {unreadCount > 0 && activeTab === "history" && (
+              <Button
+                onClick={onMarkAllRead}
+                className="!h-8 px-2.5 rounded-lg border-gray-200 hover:border-emerald-500 hover:text-emerald-600 text-gray-600 font-medium text-xs inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                title="Mark all notifications as read"
+              >
+                <FiCheckCircle className="text-xs text-emerald-600" />
+                <span className="hidden sm:inline">Mark All Read</span>
+              </Button>
+            )}
 
-        <Button
-          type="default"
-          icon={<FiRefreshCw className={loading ? "animate-spin text-global-primary" : "text-gray-600"} />}
-          onClick={onRefresh}
-          loading={loading}
-          className="rounded-xl text-xs font-semibold h-9 border-gray-200 hover:border-global-primary hover:text-global-primary"
-        >
-          Refresh
-        </Button>
+            {/* Refresh Button */}
+            <Button
+              onClick={onRefresh}
+              disabled={loading}
+              className="!h-8 px-2.5 rounded-lg border-gray-200 hover:border-global-primary hover:text-global-primary text-gray-600 font-medium text-xs inline-flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              title="Refresh notifications"
+            >
+              <FiRefreshCw
+                className={`text-xs ${loading ? "animate-spin text-global-primary" : ""}`}
+              />
+              <span className="hidden sm:inline">{loading ? "Syncing..." : "Refresh"}</span>
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

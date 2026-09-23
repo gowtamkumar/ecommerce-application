@@ -392,7 +392,7 @@ export default function AuditLogList() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
       {/* 1. Header with Controls & Presets */}
       <AuditLogHeader
         activePreset={activePreset}
