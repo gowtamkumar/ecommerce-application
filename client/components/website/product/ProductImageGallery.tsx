@@ -1,5 +1,5 @@
 "use client";
-import { getImageUrl, getUploadImageUrl } from "@/lib/utils/imageUrl";
+import { getUploadImageUrl } from "@/lib/utils/imageUrl";
 import Image from "next/image";
 import { MouseEvent, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -85,65 +85,9 @@ const ProductImageGallery = ({ images }: { images: string }) => {
   };
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row gap-4 w-full h-[600px] lg:h-[700px] font-sans">
-      
-      {/* Thumbnails (Left on Desktop, Bottom on Mobile) */}
-      {newimages.length > 1 && (
-        <div className="w-full lg:w-24 h-24 lg:h-full flex-shrink-0">
-          <Swiper
-            onSwiper={(swiper) => setThumbsSwiper(swiper)}
-            direction="vertical"
-            spaceBetween={12}
-            slidesPerView={5}
-            freeMode={true}
-            watchSlidesProgress={true}
-            modules={[FreeMode, Navigation, Thumbs]}
-            className="h-full w-full thumbs-swiper-vertical"
-            breakpoints={{
-                0: { direction: 'horizontal', slidesPerView: 4, spaceBetween: 10 },
-                1024: { direction: 'vertical', slidesPerView: 'auto', spaceBetween: 12 }
-            }}
-          >
-            {newimages.map((item: string, idx: number) => {
-              const image = getUploadImageUrl(item, "/default-placeholder.png");
-              const isActive = selectedIndex === idx;
-              const hasError = imageError.has(idx);
-
-              return (
-                <SwiperSlide
-                  key={idx}
-                  className={`w-full h-20 lg:h-24 cursor-pointer rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
-                    isActive
-                      ? 'border-amber-500 opacity-100 ring-2 ring-amber-500/20 shadow-sm'
-                      : 'border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-400'
-                  }`}
-                >
-                  <div className="relative w-full h-full bg-white">
-                    {hasError ? (
-                       <div className="flex items-center justify-center h-full bg-slate-50">
-                          <span className="text-[10px] text-slate-400 font-bold">N/A</span>
-                       </div>
-                    ) : (
-                      <Image
-                        alt={`Thumb ${idx}`}
-                        fill
-                        sizes="100px"
-                        className="object-cover"
-                        src={image}
-                        onError={() => handleImageError(idx)}
-                      />
-                    )}
-                  </div>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        </div>
-      )}
-
+    <div className="flex flex-col gap-3.5 w-full font-sans">
       {/* Main Gallery Display */}
-      <div className="flex-1 relative group rounded-3xl overflow-hidden bg-white border border-slate-200/80 shadow-sm">
-        
+      <div className="relative w-full aspect-square max-h-[580px] rounded-3xl overflow-hidden bg-white border border-slate-200/80 shadow-sm group">
         {/* Navigation Overlays */}
         {newimages.length > 1 && (
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-20 pointer-events-none">
@@ -163,15 +107,15 @@ const ProductImageGallery = ({ images }: { images: string }) => {
         )}
 
         {/* Counter Badge */}
-        <div className="absolute bottom-5 right-5 z-20 px-3 py-1 bg-slate-950/70 backdrop-blur-md rounded-full border border-white/20 text-xs font-bold text-white shadow-sm">
-            {selectedIndex + 1} / {newimages.length}
+        <div className="absolute bottom-4 right-4 z-20 px-3 py-1 bg-slate-950/70 backdrop-blur-md rounded-full border border-white/20 text-xs font-bold text-white shadow-sm">
+          {selectedIndex + 1} / {newimages.length}
         </div>
 
         <Swiper
           loop={newimages.length >= 2}
           spaceBetween={0}
           className="h-full w-full"
-          thumbs={{ swiper: thumbsSwiper }}
+          thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
           modules={[FreeMode, Navigation, Thumbs]}
           onSlideChange={(swiper) => setSelectedIndex(swiper.realIndex)}
           navigation={{
@@ -180,25 +124,75 @@ const ProductImageGallery = ({ images }: { images: string }) => {
           }}
         >
           {newimages.map((item: string, idx: number) => {
-            const image = getImageUrl(item, "/pos_software.png");
+            const image = getUploadImageUrl(item, "/default-placeholder.png");
             const hasError = imageError.has(idx);
 
             return (
-              <SwiperSlide key={idx} className="bg-white flex items-center justify-center relative z-10 p-4">
-                 {/* Only apply magnifier if no error */}
-                 <div className="w-full h-full relative">
-                    <MagnifierImage 
-                        src={image} 
-                        alt={`Product image ${idx + 1}`} 
-                        hasError={hasError}
-                        onErrorHandler={() => handleImageError(idx)}
-                    />
-                 </div>
+              <SwiperSlide key={idx} className="bg-white flex items-center justify-center relative z-10 p-3 sm:p-5">
+                {/* Only apply magnifier if no error */}
+                <div className="w-full h-full relative">
+                  <MagnifierImage
+                    src={image}
+                    alt={`Product image ${idx + 1}`}
+                    hasError={hasError}
+                    onErrorHandler={() => handleImageError(idx)}
+                  />
+                </div>
               </SwiperSlide>
             );
           })}
         </Swiper>
       </div>
+
+      {/* Thumbnails (Down / Below Main Image) */}
+      {newimages.length > 1 && (
+        <div className="w-full flex-shrink-0 pt-1">
+          <Swiper
+            onSwiper={(swiper) => setThumbsSwiper(swiper)}
+            direction="horizontal"
+            spaceBetween={10}
+            slidesPerView="auto"
+            freeMode={true}
+            watchSlidesProgress={true}
+            modules={[FreeMode, Navigation, Thumbs]}
+            className="w-full thumbs-swiper-horizontal"
+          >
+            {newimages.map((item: string, idx: number) => {
+              const image = getUploadImageUrl(item, "/default-placeholder.png");
+              const isActive = selectedIndex === idx;
+              const hasError = imageError.has(idx);
+
+              return (
+                <SwiperSlide
+                  key={idx}
+                  className={`!w-20 !h-20 sm:!w-22 sm:!h-22 cursor-pointer rounded-2xl overflow-hidden border-2 transition-all duration-200 shrink-0 ${
+                    isActive
+                      ? "border-amber-500 ring-2 ring-amber-500/20 shadow-xs opacity-100"
+                      : "border-slate-200/90 hover:border-slate-400 opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  <div className="relative w-full h-full bg-white">
+                    {hasError ? (
+                      <div className="flex items-center justify-center h-full bg-slate-50">
+                        <span className="text-[10px] text-slate-400 font-bold">N/A</span>
+                      </div>
+                    ) : (
+                      <Image
+                        alt={`Thumb ${idx}`}
+                        fill
+                        sizes="90px"
+                        className="object-cover"
+                        src={image}
+                        onError={() => handleImageError(idx)}
+                      />
+                    )}
+                  </div>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </div>
+      )}
     </div>
   );
 };
