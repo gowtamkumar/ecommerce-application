@@ -44,7 +44,7 @@ const MainMenu = () => {
         onOpenChange={setIsOpen}
         trigger={["click"]}
         placement="bottomLeft"
-        dropdownRender={() => (
+        popupRender={() => (
           <div className="w-80 sm:w-88 bg-white rounded-2xl shadow-2xl border border-gray-100 ring-1 ring-black/5 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Header */}
             <div className="p-3.5 border-b border-gray-100 bg-slate-50/70 flex items-center justify-between">

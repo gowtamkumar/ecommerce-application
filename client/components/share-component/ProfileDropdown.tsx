@@ -42,7 +42,7 @@ export default function ProfileDropdown({
       onOpenChange={setOpen}
       placement="bottomRight"
       trigger={["click"]}
-      dropdownRender={() => (
+      popupRender={() => (
         <div className="w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 ring-1 ring-black/5 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           {/* User Header Profile Card */}
           <div className="p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
