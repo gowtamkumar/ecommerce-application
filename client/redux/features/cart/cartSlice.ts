@@ -26,6 +26,55 @@ const initialState: CartState = {
       : {},
 };
 
+const calculateCartSummary = (cartList: any[], existingSummary: any = {}) => {
+  if (!Array.isArray(cartList) || cartList.length === 0) {
+    return {
+      totalQty: 0,
+      subTotal: "0.00",
+      totalItemsDiscount: "0.00",
+      couponDiscount: "0.00",
+      totalDiscount: "0.00",
+      couponId: null,
+      totalTax: "0.00",
+      shippingCharge: "0.00",
+      grandTotal: "0.00",
+    };
+  }
+
+  let totalQty = 0;
+  let subTotal = 0;
+  let totalTax = 0;
+  let totalItemsDiscount = 0;
+
+  for (const item of cartList) {
+    const qty = Number(item.qty) || 0;
+    const itemSubTotal = Number(item.subTotal) || 0;
+    const itemTax = Number(item.taxAmount) || 0;
+    const itemDiscount = Number(item.totalDiscountAmount) || 0;
+
+    totalQty += qty;
+    subTotal += itemSubTotal;
+    totalTax += itemTax;
+    totalItemsDiscount += itemDiscount;
+  }
+
+  const couponDiscount = Number(existingSummary?.couponDiscount) || 0;
+  const shippingCharge = Number(existingSummary?.shippingCharge) || 0;
+  const grandTotal = Math.max(0, subTotal - couponDiscount + shippingCharge);
+
+  return {
+    ...existingSummary,
+    totalQty,
+    subTotal: subTotal.toFixed(2),
+    totalTax: totalTax.toFixed(2),
+    totalItemsDiscount: totalItemsDiscount.toFixed(2),
+    couponDiscount: couponDiscount.toFixed(2),
+    totalDiscount: (totalItemsDiscount + couponDiscount).toFixed(2),
+    grandTotal: grandTotal.toFixed(2),
+    shippingCharge: shippingCharge.toFixed(2),
+  };
+};
+
 export const cartSlice = createSlice({
   name: "cart",
   // `createSlice` will infer the state type from the `initialState` argument
@@ -37,13 +86,13 @@ export const cartSlice = createSlice({
     },
     addCart: (state, action: PayloadAction<any>): any => {
       const { id } = action.payload;
-      const existingProductIndex = state.carts.cartList.findIndex(
+      const existingProductIndex = state.carts?.cartList?.findIndex(
         (item: any) => item.id === id,
       );
 
-      if (existingProductIndex !== -1) {
+      if (existingProductIndex !== undefined && existingProductIndex !== -1) {
         state.carts.cartList[existingProductIndex].qty++;
-      } else {
+      } else if (Array.isArray(state.carts)) {
         state.carts.push(action.payload);
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
@@ -54,6 +103,8 @@ export const cartSlice = createSlice({
     },
 
     incrementCart: (state, action: PayloadAction<any>): any => {
+      if (!state.carts?.cartList || !Array.isArray(state.carts.cartList))
+        return;
       const existingProductIndex = state.carts.cartList.findIndex(
         (item: any) => item.id === action.payload.id,
       );
@@ -62,17 +113,28 @@ export const cartSlice = createSlice({
         const oldQty = item.qty || 1;
         item.qty++;
         if (item.subTotal) {
-          const unitPrice = item.subTotal / oldQty;
-          item.subTotal = unitPrice * item.qty;
-          if (state.carts.cartSummary?.subTotal !== undefined) {
-            state.carts.cartSummary.subTotal += unitPrice;
-          }
+          const unitPrice = Number(item.subTotal) / oldQty;
+          item.subTotal = (unitPrice * item.qty).toFixed(2);
         }
+        if (item.taxAmount) {
+          const unitTax = Number(item.taxAmount) / oldQty;
+          item.taxAmount = (unitTax * item.qty).toFixed(2);
+        }
+        if (item.totalDiscountAmount) {
+          const unitDiscount = Number(item.totalDiscountAmount) / oldQty;
+          item.totalDiscountAmount = (unitDiscount * item.qty).toFixed(2);
+        }
+        state.carts.cartSummary = calculateCartSummary(
+          state.carts.cartList,
+          state.carts.cartSummary,
+        );
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
 
     decrementCart: (state, action: PayloadAction<any>): any => {
+      if (!state.carts?.cartList || !Array.isArray(state.carts.cartList))
+        return;
       const existingProductIndex = state.carts.cartList.findIndex(
         (item: any) => item.id === action.payload.id,
       );
@@ -82,26 +144,33 @@ export const cartSlice = createSlice({
         if (item.qty > 1) {
           item.qty--;
           if (item.subTotal) {
-            const unitPrice = item.subTotal / oldQty;
-            item.subTotal = unitPrice * item.qty;
-            if (state.carts.cartSummary?.subTotal !== undefined) {
-              state.carts.cartSummary.subTotal = Math.max(
-                0,
-                state.carts.cartSummary.subTotal - unitPrice,
-              );
-            }
+            const unitPrice = Number(item.subTotal) / oldQty;
+            item.subTotal = (unitPrice * item.qty).toFixed(2);
           }
+          if (item.taxAmount) {
+            const unitTax = Number(item.taxAmount) / oldQty;
+            item.taxAmount = (unitTax * item.qty).toFixed(2);
+          }
+          if (item.totalDiscountAmount) {
+            const unitDiscount = Number(item.totalDiscountAmount) / oldQty;
+            item.totalDiscountAmount = (unitDiscount * item.qty).toFixed(2);
+          }
+          state.carts.cartSummary = calculateCartSummary(
+            state.carts.cartList,
+            state.carts.cartSummary,
+          );
         }
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));
     },
     removeCart: (state, action: PayloadAction<any>): any => {
-      const findProduct = state.carts.cartList.find(
-        (item: any) => item.id === action.payload.id,
-      );
-      if (findProduct) {
+      if (state.carts?.cartList && Array.isArray(state.carts.cartList)) {
         state.carts.cartList = state.carts.cartList.filter(
-          (item: any) => item.id !== findProduct.id,
+          (item: any) => item.id !== action.payload.id,
+        );
+        state.carts.cartSummary = calculateCartSummary(
+          state.carts.cartList,
+          state.carts.cartSummary,
         );
       }
       localStorage.setItem("carts", JSON.stringify(state.carts));

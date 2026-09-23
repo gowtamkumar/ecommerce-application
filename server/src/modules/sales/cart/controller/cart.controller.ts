@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from 'express';
 import { getDBConnection } from '@/config/db';
 import { CouponType } from '@/enums/coupon-type.enum';
 import { CustomRequest } from '@/enums/custom-request-type';
@@ -6,14 +5,15 @@ import { DiscountType } from '@/enums/discount-type.enum';
 import { NotificationType } from '@/enums/notification-type.enum';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { AppliedCouponEntity } from '@/modules/sales/coupon/model/applied-coupon.entity';
+import { CouponEntity } from '@/modules/sales/coupon/model/coupon.entity';
+import { ShippingChargeEntity } from '@/modules/sales/shipping-charge/model/shipping-charge.entity';
+import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
+import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
 import { cartValidationSchema } from '@/validation';
 import { cartIncrementDecrementValidationSchema } from '@/validation/cart/cartIncrementDecrementValidationSchema';
 import { updateCartValidationSchema } from '@/validation/cart/updateCartValidation';
-import { AppliedCouponEntity } from '@/modules/sales/coupon/model/applied-coupon.entity';
-import { CouponEntity } from '@/modules/sales/coupon/model/coupon.entity';
-import { NotificationEntity } from '@/modules/system/other/notification/model/notification.entity';
-import { SettingEntity } from '@/modules/system/other/setting/model/setting.entity';
-import { ShippingChargeEntity } from '@/modules/sales/shipping-charge/model/shipping-charge.entity';
+import { NextFunction, Request, Response } from 'express';
 import { incrementDecrementType } from '../enums/increment-decrement-type.enum';
 import { CartEntity } from '../model/cart.entity';
 
@@ -410,7 +410,7 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
   if (!cart.length) {
     // return res.status(400).json({ success: false, message: "Cart is empty" });
     return res.status(200).json({
-      success: false,
+      success: true,
       message: 'Cart is empty',
       data: {
         cartList: cart,

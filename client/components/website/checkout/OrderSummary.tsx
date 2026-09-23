@@ -1,26 +1,27 @@
 "use client";
 import { useCurrency } from "@/context/CurrencyContext";
 import {
-  deleteCart,
-  getCartLists,
-  incrementDecrementCart,
+    deleteCart,
+    getCartLists,
+    incrementDecrementCart,
 } from "@/lib/apis/cart";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
 import {
-  decrementCart,
-  incrementCart,
-  replaceCart,
-  selectCart,
+    decrementCart,
+    incrementCart,
+    removeCart,
+    replaceCart,
+    selectCart,
 } from "@/redux/features/cart/cartSlice";
 import { selectGlobal, setLoading } from "@/redux/features/global/globalSlice";
 import { Popconfirm, Tag, Tooltip } from "antd";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
+import { HiOutlineMinus } from "react-icons/hi";
 import { MdDelete, MdInfoOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { HiOutlineMinus } from "react-icons/hi";
-import { AiOutlinePlus } from "react-icons/ai";
 
 export default function OrderSummary() {
   const dispatch = useDispatch();
@@ -45,18 +46,23 @@ export default function OrderSummary() {
         errorNotification({ message: res.message });
       }
       const getCartList = await getCartLists();
-      dispatch(replaceCart(getCartList.data));
+      if (getCartList?.data) {
+        dispatch(replaceCart(getCartList.data));
+      }
     }, 500); 
   }, []);
 
   async function removeItemCart(id: string) {
     try {
       dispatch(setLoading({ remove: true }));
+      dispatch(removeCart({ id }));
       const removeCartRes = await deleteCart(id);
 
-      if (removeCartRes.success) {
+      if (removeCartRes?.success) {
         const getCartList = await getCartLists();
-        dispatch(replaceCart(getCartList.data));
+        if (getCartList?.data) {
+          dispatch(replaceCart(getCartList.data));
+        }
       }
 
       setTimeout(async () => {

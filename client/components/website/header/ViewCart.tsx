@@ -48,12 +48,13 @@ export default function ViewCart() {
     if (timerRef.current[id]) clearTimeout(timerRef.current[id]);
     delete pendingQtyRef.current[id];
     dispatch(removeCart({ id }));
+    
     try {
       const res = await deleteCart(id);
-      if (res.success) {
+      if (res?.success) {
         const getCartList = await getCartLists();
-        if (getCartList?.success) {
-          dispatch(replaceCart(getCartList.data || []));
+        if (getCartList?.data) {
+          dispatch(replaceCart(getCartList.data));
         }
       }
     } catch (err) {
@@ -100,8 +101,8 @@ export default function ViewCart() {
           errorNotification({ message: res?.message || "Failed to update quantity" });
         }
         const getCartList = await getCartLists();
-        if (getCartList?.success) {
-          dispatch(replaceCart(getCartList.data || []));
+        if (getCartList?.data) {
+          dispatch(replaceCart(getCartList.data));
         }
       } catch (err) {
         console.error("Cart sync error:", err);
