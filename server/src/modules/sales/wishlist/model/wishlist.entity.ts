@@ -1,16 +1,19 @@
+import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
 
+@Index('idx_wishlists_user_id', ['userId'])
+@Index('idx_wishlists_user_product', ['userId', 'productId'], { unique: true })
 @Entity('wishlists')
 export class WishListEntity {
   @PrimaryGeneratedColumn()

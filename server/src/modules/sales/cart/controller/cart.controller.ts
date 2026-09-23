@@ -263,35 +263,51 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
   // Step 2: Fetch the cart details
   const cart = await connection.query(
     `
-        WITH selectedDiscounts AS (
-        SELECT DISTINCT ON (p.id) 
-            p.id AS product_id,  
+    WITH userCartProducts AS (
+        SELECT DISTINCT c.product_id
+        FROM carts c
+        WHERE c.user_id = $1
+    ),
+    validDiscounts AS (
+        SELECT 
             d.id AS discount_id,
             d.discount_strategy,
             d.value AS discount_value,
             d.scope,
+            d.promotion_type,
+            d.priority
+        FROM discounts d
+        WHERE d.status = 'Active'
+          AND d.start_date <= NOW() 
+          AND d.end_date >= NOW()
+    ),
+    selectedDiscounts AS (
+        SELECT DISTINCT ON (p.id) 
+            p.id AS product_id,  
+            d.discount_id,
+            d.discount_strategy,
+            d.discount_value,
+            d.scope,
             d.promotion_type
         FROM products p
-        LEFT JOIN discounts d ON (
+        JOIN userCartProducts ucp ON ucp.product_id = p.id
+        LEFT JOIN validDiscounts d ON (
             (d.scope = 'Products' AND EXISTS (
-                SELECT 1 FROM applicable_products ap WHERE ap.product_id = p.id AND ap.discount_id = d.id
+                SELECT 1 FROM applicable_products ap WHERE ap.product_id = p.id AND ap.discount_id = d.discount_id
             )) OR
             (d.scope = 'Category' AND EXISTS (
                 SELECT 1 FROM product_categories pc WHERE pc.product_id = p.id 
                 AND pc.category_id IN (
-                    SELECT category_id FROM applicable_categories WHERE discount_id = d.id
+                    SELECT category_id FROM applicable_categories WHERE discount_id = d.discount_id
                 )
             )) OR
             (d.scope = 'Brand' AND EXISTS (
-                SELECT 1 FROM applicable_brands ab WHERE ab.brand_id = p.brand_id AND ab.discount_id = d.id
+                SELECT 1 FROM applicable_brands ab WHERE ab.brand_id = p.brand_id AND ab.discount_id = d.discount_id
             )) OR
             (d.scope = 'Global') OR
-            (d.scope = 'Product' AND p.discount_id = d.id) 
+            (d.scope = 'Product' AND p.discount_id = d.discount_id) 
         )   
-        WHERE 
-            ((d.start_date <= NOW() AND d.end_date >= NOW()) OR d.id = p.discount_id)
-            AND d.status = 'Active'
-        ORDER BY p.id, d.priority DESC, d.value DESC
+        ORDER BY p.id, d.priority DESC, d.discount_value DESC
     )
     SELECT 
         carts.id,
@@ -306,24 +322,24 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
         pv.unit_price AS "unitPrice",
         pv.purchase_price AS "purchasePrice",
 
-            -- ✅ Calculate Sale Price
+        -- Calculate Sale Price
         ROUND(
-            ((pv.unit_price) + 
+            (pv.unit_price + 
             ((CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     pv.unit_price - sd.discount_value
                 ELSE 
                     pv.unit_price
-            END) * COALESCE(t.value, 0) / 100)), 
+            END) * COALESCE(t.value, 0) / 100.0)), 
         2) AS "salePrice",
 
-        -- ✅ Calculate Discounted Price per unit
+        -- Calculate Discounted Price per unit
         ROUND(
             CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     pv.unit_price - sd.discount_value
                 ELSE 
@@ -331,11 +347,11 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
             END, 
         2) AS "discountedUnitPrice",
 
-        -- ✅ Calculate Total Discounted Price for all quantities
+        -- Calculate Total Discounted Price for all quantities
         ROUND(
             (CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     pv.unit_price - sd.discount_value
                 ELSE 
@@ -343,11 +359,11 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
             END) * carts.qty, 
         2) AS "totalDiscountedPrice",
 
-        -- ✅ Calculate Discount Amount per unit
+        -- Calculate Discount Amount per unit
         ROUND(
             CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    (pv.unit_price * sd.discount_value / 100)
+                    (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     sd.discount_value
                 ELSE 
@@ -355,11 +371,11 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
             END, 
         2) AS "discountAmountPerUnit",
 
-        -- ✅ Calculate Total Discount Amount for all quantities
+        -- Calculate Total Discount Amount for all quantities
         ROUND(
             (CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    (pv.unit_price * sd.discount_value / 100)
+                    (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     sd.discount_value
                 ELSE 
@@ -367,36 +383,28 @@ export const cartListApplyCoupon = asyncHandler(async (req: CustomRequest, res: 
             END) * carts.qty, 
         2) AS "totalDiscountAmount",
 
-        -- ✅ Calculate tax amount based on the discounted price
+        -- Calculate tax amount based on the discounted price
         ROUND(
             ((CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     pv.unit_price - sd.discount_value
                 ELSE 
                     pv.unit_price
-            END) * COALESCE(t.value, 0) / 100) * carts.qty, 
+            END) * COALESCE(t.value, 0) / 100.0) * carts.qty, 
         2) AS "taxAmount",
 
-        -- ✅ Calculate subtotal (discounted price + tax) * quantity
+        -- Calculate subtotal (discounted price + tax) * quantity
         ROUND(
             ((CASE 
                 WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
+                    pv.unit_price - (pv.unit_price * sd.discount_value / 100.0)
                 WHEN sd.discount_strategy = 'Fixed' THEN 
                     pv.unit_price - sd.discount_value
                 ELSE 
                     pv.unit_price
-            END) + 
-            ((CASE 
-                WHEN sd.discount_strategy = 'Percentage' THEN 
-                    pv.unit_price - (pv.unit_price * sd.discount_value / 100)
-                WHEN sd.discount_strategy = 'Fixed' THEN 
-                    pv.unit_price - sd.discount_value
-                ELSE 
-                    pv.unit_price
-            END) * COALESCE(t.value, 0) / 100)) * carts.qty, 
+            END) * (1.0 + COALESCE(t.value, 0) / 100.0)) * carts.qty, 
         2) AS "subTotal"
     FROM carts 
     LEFT JOIN products AS p ON p.id = carts.product_id

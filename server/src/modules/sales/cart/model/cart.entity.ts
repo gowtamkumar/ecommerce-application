@@ -1,17 +1,20 @@
+import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
+import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
-import { ProductVariantEntity } from '@/modules/catalog/products/product-variant/model/product-variant.entity';
-import { ProductEntity } from '@/modules/catalog/products/product/model/product.entity';
 
+@Index('idx_carts_user_id', ['userId'])
+@Index('idx_carts_user_product_variant', ['userId', 'productId', 'productVariantId'])
 @Entity('carts')
 export class CartEntity {
   @PrimaryGeneratedColumn()
