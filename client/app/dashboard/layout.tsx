@@ -12,9 +12,6 @@ const { Content } = Layout;
 const FooterOption = dynamic(() => import("@/components/dashboard/Footer"), {
   ssr: false,
 });
-const BreadCrumb = dynamic(() => import("@/components/dashboard/BreadCrumb"), {
-  ssr: false,
-});
 const DashboardHeader = dynamic(() => import("@/components/dashboard/Header"), {
   ssr: false,
 });
@@ -52,9 +49,6 @@ export default function DashboardLayout({
       >
         <DashboardHeader />
         <Content className="px-3 sm:px-6 min-h-[calc(100vh-64px-70px)] bg-gray-50/50 max-w-full overflow-x-hidden">
-          <div className="pt-2 sm:pt-3">
-            <BreadCrumb />
-          </div>
           <div className="py-3 sm:py-6">
             {children}
           </div>

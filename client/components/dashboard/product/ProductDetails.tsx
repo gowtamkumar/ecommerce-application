@@ -52,15 +52,16 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <Title level={2} className="mb-0">{product.name}</Title>
-          <Text type="secondary">Product Slug: {product.slug}</Text>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="min-w-0 flex-1">
+          <Title level={2} className="!mb-1 break-words !text-xl sm:!text-2xl font-bold">{product.name}</Title>
+          <Text type="secondary" className="break-all text-xs">Product Slug: {product.slug}</Text>
         </div>
         <Button
           type="primary"
           icon={<EditOutlined />}
           onClick={() => router.push(`/dashboard/product/${productId}/edit`)}
+          className="shrink-0"
           style={{ borderRadius: "var(--button-border-radius)" }}
         >
           Edit Product

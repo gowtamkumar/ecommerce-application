@@ -231,16 +231,16 @@ export default function DashboardQuickSearch() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="hidden md:flex items-center gap-2.5 px-3 py-1.5 bg-gray-50/90 hover:bg-gray-100 border border-gray-200/80 hover:border-gray-300 rounded-xl transition-all cursor-pointer w-56 lg:w-72 shadow-2xs group text-left"
+        className="hidden md:flex items-center gap-2.5 px-3 bg-gray-50/90 hover:bg-gray-100 border border-gray-200/80 hover:border-gray-300 rounded-xl transition-all cursor-pointer w-56 lg:w-72 shadow-2xs group text-left h-9 leading-normal"
         aria-label="Quick Search"
       >
         <SearchOutlined className="text-gray-400 group-hover:text-global-primary transition-colors text-sm shrink-0" />
         <span className="text-xs text-gray-400 group-hover:text-gray-600 transition-colors truncate flex-1 select-none">
           Search pages & actions...
         </span>
-        <span className="flex items-center gap-0.5 text-[10px] font-semibold text-gray-400 bg-white px-1.5 py-0.5 rounded-md border border-gray-200 shadow-2xs shrink-0 select-none">
-          <kbd>⌘</kbd>
-          <kbd>K</kbd>
+        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-gray-500 bg-white px-1.5 rounded-md border border-gray-200 shadow-2xs shrink-0 select-none leading-none h-5">
+          <kbd className="leading-none text-[9px] font-sans">⌘</kbd>
+          <kbd className="leading-none text-[9px] font-sans">K</kbd>
         </span>
       </button>
 

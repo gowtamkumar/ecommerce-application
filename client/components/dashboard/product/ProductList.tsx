@@ -226,14 +226,14 @@ const ProductList = () => {
       title: "Product",
       dataIndex: "name",
       key: "name",
-      width: 280,
+      width: 320,
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (text, record) => (
         <div
-          className="flex items-center gap-3 group cursor-pointer"
+          className="flex items-start gap-3 group cursor-pointer max-w-md min-w-0 py-1"
           onClick={() => route.push(`/dashboard/product/${record.id}`)}
         >
-          <div className="w-11 h-11 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
+          <div className="w-11 h-11 rounded-xl overflow-hidden border border-gray-100 shrink-0 bg-gray-50 mt-0.5">
             <Image
               width={44}
               height={44}
@@ -244,11 +244,13 @@ const ProductList = () => {
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="font-semibold text-gray-900 group-hover:text-gray-700 transition-colors truncate">
-              {text}
-            </span>
-            <span className="text-xs text-gray-400 mt-0.5">
+          <div className="flex flex-col min-w-0 flex-1">
+            <Tooltip title={text} placement="topLeft" mouseEnterDelay={0.2}>
+              <span className="font-semibold text-gray-900 group-hover:text-global-primary transition-colors text-sm leading-snug line-clamp-2 break-words">
+                {text}
+              </span>
+            </Tooltip>
+            <span className="text-xs text-gray-400 mt-1">
               {record.variant ? "Has Variants" : "Simple Product"}
             </span>
           </div>
@@ -496,7 +498,7 @@ const ProductList = () => {
             className: "px-5 py-3",
           }}
           size="middle"
-          scroll={{ x: 700 }}
+          scroll={{ x: 800 }}
           rowClassName="hover:bg-gray-50/60 transition-colors cursor-default"
           locale={{
             emptyText: (
