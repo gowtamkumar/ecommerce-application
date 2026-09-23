@@ -16,11 +16,14 @@ import {
 import {
     AppstoreOutlined,
     CalendarOutlined,
+    CopyOutlined,
     DeleteOutlined,
     DollarOutlined,
     EditOutlined,
+    ExportOutlined,
     EyeOutlined,
     GlobalOutlined,
+    LinkOutlined,
     PercentageOutlined,
     QuestionCircleOutlined,
     SearchOutlined,
@@ -29,7 +32,7 @@ import {
     TagsOutlined
 } from "@ant-design/icons";
 import type { TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Image, Input, message, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -236,6 +239,44 @@ const DiscountList: React.FC = () => {
       ),
     },
     {
+      title: "Offer URL",
+      key: "offerUrl",
+      width: 200,
+      render: (_, record: any) => {
+        const slug = record.slug;
+        if (!slug) return <span className="text-gray-400 text-xs">—</span>;
+        const offerSlugPath = slug.startsWith("/") ? slug : `/${slug}`;
+        const offerFullPath = `/offers${offerSlugPath}`;
+        return (
+          <div className="flex items-center gap-1.5 max-w-[210px]">
+            <a
+              href={offerFullPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-900 border border-blue-200/80 text-xs font-mono font-medium transition-colors max-w-[160px] truncate"
+              title={`Visit ${offerFullPath}`}
+            >
+              <LinkOutlined className="text-blue-500 shrink-0 text-xs" />
+              <span className="truncate">{offerSlugPath}</span>
+              <ExportOutlined className="text-[10px] text-blue-400 shrink-0" />
+            </a>
+            <Tooltip title="Copy offer URL">
+              <Button
+                type="text"
+                size="small"
+                icon={<CopyOutlined className="text-xs text-gray-500 hover:text-gray-800" />}
+                onClick={() => {
+                  navigator.clipboard.writeText(offerSlugPath);
+                  message.success(`Copied: ${offerSlugPath}`);
+                }}
+                className="shrink-0 h-7 w-7 flex items-center justify-center rounded-md hover:bg-gray-100"
+              />
+            </Tooltip>
+          </div>
+        );
+      },
+    },
+    {
       title: "Scope",
       dataIndex: "scope",
       key: "scope",
@@ -347,9 +388,21 @@ const DiscountList: React.FC = () => {
       title: "Action",
       key: "action",
       fixed: "right",
-      width: 180,
+      width: 210,
       render: (value) => (
         <div className="flex gap-2 justify-end">
+          {value.slug && (
+            <Tooltip title="Open Public Offer Page">
+              <Button
+                size="middle"
+                type="text"
+                icon={<ExportOutlined className="text-indigo-500" />}
+                className="hover:bg-indigo-50"
+                onClick={() => window.open(`/offers/${value.slug}`, "_blank")}
+              />
+            </Tooltip>
+          )}
+
           <Tooltip title="View Details">
             <Button
               size="middle"

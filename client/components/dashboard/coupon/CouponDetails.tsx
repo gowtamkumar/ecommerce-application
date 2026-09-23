@@ -1,28 +1,31 @@
 import { ActionType } from "@/constants/constants";
+import { useCurrency } from "@/context/CurrencyContext";
 import { getCoupon } from "@/lib/apis/admin/coupon";
 import { selectGlobal, setAction } from "@/redux/features/global/globalSlice";
-import { Modal, Spin, Tag, Card, Descriptions, Typography } from "antd";
+import { Card, Descriptions, message, Modal, Spin, Tag, Tooltip, Typography } from "antd";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+    FiCalendar,
+    FiCheck,
+    FiClock,
+    FiCopy,
+    FiDollarSign,
+    FiPercent,
+    FiShoppingCart,
+    FiTag,
+    FiTrendingUp,
+    FiUsers,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import CouponProduct from "./CouponProduct";
-import {
-  FiTag,
-  FiPercent,
-  FiDollarSign,
-  FiCalendar,
-  FiUsers,
-  FiShoppingCart,
-  FiTrendingUp,
-  FiClock,
-} from "react-icons/fi";
-import { useCurrency } from "@/context/CurrencyContext";
 
 const { Title, Text } = Typography;
 
 export default function CouponDetails() {
   const [loading, setLoading] = React.useState(false);
   const [coupon, setCoupon] = React.useState<any>({});
+  const [copied, setCopied] = useState(false);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const {formatPrice} = useCurrency();
@@ -82,8 +85,24 @@ export default function CouponDetails() {
                 <div className="flex items-center gap-2">
                   <FiTag className="w-4 h-4" />
                   <Text className="text-white/90 font-mono text-lg font-bold">
-                    {coupon.code}
+                    {coupon.code || "N/A"}
                   </Text>
+                  {coupon.code && (
+                    <Tooltip title={copied ? "Copied!" : "Copy Coupon Code"}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(coupon.code);
+                          setCopied(true);
+                          message.success(`Copied: ${coupon.code}`);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer flex items-center justify-center ml-1"
+                      >
+                        {copied ? <FiCheck className="w-4 h-4 text-emerald-300" /> : <FiCopy className="w-4 h-4" />}
+                      </button>
+                    </Tooltip>
+                  )}
                 </div>
               </div>
               <Tag

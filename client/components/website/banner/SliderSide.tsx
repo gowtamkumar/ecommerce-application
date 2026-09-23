@@ -36,20 +36,28 @@ export default function SliderSide({ sliderBanners, sideBanners }: any) {
 
           {slices.length ? (
             <div className={sideWrapClass}>
-              {slices.map((item: any, index: number) => (
-                <Link
-                  key={`side-${index}`}
-                  href={item.url ? `/offers${item.url}` : "/products"}
-                  className={`group relative overflow-hidden rounded-2xl ring-1 ring-black/5 shadow-sm hover:shadow-lg transition-all duration-300 block ${sideCardClass}`}
-                >
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                    style={{
-                      backgroundImage: `url(${getUploadImageUrl(item.image)})`,
-                    }}
-                  />
-                </Link>
-              ))}
+              {slices.map((item: any, index: number) => {
+                const targetHref = item.url
+                  ? item.url.startsWith("http") || item.url.startsWith("/offers")
+                    ? item.url
+                    : `/offers${item.url.startsWith("/") ? item.url : `/${item.url}`}`
+                  : "/products";
+
+                return (
+                  <Link
+                    key={`side-${index}`}
+                    href={targetHref}
+                    className={`group relative overflow-hidden rounded-2xl ring-1 ring-black/5 shadow-sm hover:shadow-lg transition-all duration-300 block ${sideCardClass}`}
+                  >
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                      style={{
+                        backgroundImage: `url(${getUploadImageUrl(item.image)})`,
+                      }}
+                    />
+                  </Link>
+                );
+              })}
             </div>
           ) : null}
         </div>

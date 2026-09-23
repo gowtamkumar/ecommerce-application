@@ -3,13 +3,11 @@
 import Breadcrumb from "@/components/share-component/Breadcrumb";
 import Card from "@/components/share-component/Card";
 import ScrollToCart from "@/components/share-component/ScrollToCart";
-import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
     AppstoreOutlined,
     CalendarOutlined,
     CheckCircleFilled,
     ClockCircleOutlined,
-    CopyOutlined,
     DeploymentUnitOutlined,
     FireFilled,
     GlobalOutlined,
@@ -18,10 +16,9 @@ import {
     SortAscendingOutlined,
     TagsOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Select, Tooltip, message } from "antd";
-import Image from "next/image";
+import { Button, Input, Select } from "antd";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface OfferDetailViewProps {
   discount: any;
@@ -85,11 +82,40 @@ export default function OfferDetailView({
     return list;
   }, [initialProducts, searchQuery, selectedCategory, sortBy]);
 
-  // Copy code handler
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    message.success(`Coupon code "${code}" copied to clipboard!`);
-  };
+  // Live countdown timer based on offer.endDate
+  const [timeLeft, setTimeLeft] = useState<{
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+    isExpired: boolean;
+  }>({ days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: false });
+
+  useEffect(() => {
+    if (!offer?.endDate) return;
+
+    const calculateRemaining = () => {
+      const target = new Date(offer.endDate).getTime();
+      const now = Date.now();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true });
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      setTimeLeft({ days, hours, minutes, seconds, isExpired: false });
+    };
+
+    calculateRemaining();
+    const interval = setInterval(calculateRemaining, 1000);
+    return () => clearInterval(interval);
+  }, [offer?.endDate]);
 
   // 1. EXPIRED OR INVALID OFFER VIEW
   if (!isAvailable) {
@@ -188,146 +214,164 @@ export default function OfferDetailView({
         className="mb-0 border-b border-gray-200/60 bg-white"
       />
 
-      {/* 2. High-Converting Hero Campaign Banner */}
-      <section className="relative bg-white border-b border-gray-200/70 overflow-hidden">
-        {/* Subtle theme radial glow */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-global-primary/5 rounded-full blur-3xl pointer-events-none -z-0" />
-        <div className="absolute bottom-0 left-10 w-80 h-80 bg-global-hover/5 rounded-full blur-3xl pointer-events-none -z-0" />
+      {/* 2. Full-Width Hero Campaign Banner (only if image exists) */}
+      {/* {offer.image && (
+        <section className="w-full bg-white border-b border-gray-200/70 overflow-hidden">
+          <img
+            src={getImageUrl(offer.image)}
+            alt={offer.name || "Special Offer Banner"}
+            className="w-full h-auto block"
+          />
+        </section>
+      )} */}
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Content Column */}
-            <div className={offer.image ? "lg:col-span-7 space-y-6" : "lg:col-span-12 max-w-4xl mx-auto text-center space-y-6"}>
+      {/* 3. Campaign Header & Live Countdown Section */}
+      <section className="relative bg-gradient-to-b from-white via-gray-50/40 to-[#fafbfc] border-b border-gray-200/70 overflow-hidden py-8 sm:py-10">
+        {/* Subtle decorative radial ambient glow */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-global-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-global-hover/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="bg-white border border-gray-200/80 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-sm relative overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
-              {/* Top Badges Row */}
-              <div className={`flex flex-wrap items-center gap-2.5 ${offer.image ? "justify-start" : "justify-center"}`}>
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-global-primary/10 text-global-primary border border-global-primary/20 shadow-2xs">
-                  <FireFilled className="text-global-primary" />
-                  <span>{offer.promotionType || "Limited-Time Deal"}</span>
-                </span>
+              {/* Left Content Column */}
+              <div className="lg:col-span-7 space-y-6">
+                {/* Top Badges Row */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-global-primary/10 text-global-primary border border-global-primary/20 shadow-2xs">
+                    <FireFilled className="text-global-primary" />
+                    <span>{offer.promotionType || "Limited-Time Deal"}</span>
+                  </span>
 
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100/90 text-gray-700 border border-gray-200/80">
-                  {scopeBadge.icon}
-                  <span>{scopeBadge.label}</span>
-                </span>
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200/80">
+                    {scopeBadge.icon}
+                    <span>{scopeBadge.label}</span>
+                  </span>
 
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Active Promotion</span>
-                </span>
-              </div>
-
-              {/* Huge Savings Badge & Title */}
-              <div className="space-y-3">
-                <div className={`inline-flex items-center gap-3 ${offer.image ? "" : "justify-center"}`}>
-                  <div className="bg-global-primary text-global-button-text font-black text-2xl sm:text-3xl px-5 py-2 rounded-2xl shadow-lg shadow-global-primary/20 tracking-tight flex items-center gap-2">
-                    <span>{savingsText}</span>
-                  </div>
-                  {offer.discountStrategy && (
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
-                      {offer.discountStrategy} Discount
-                    </span>
-                  )}
-                </div>
-
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.15]">
-                  {offer.name}
-                </h1>
-              </div>
-
-              {/* Description */}
-              {offer.description && (
-                <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl font-normal">
-                  {offer.description}
-                </p>
-              )}
-
-              {/* Offer Details / Highlights Chips */}
-              <div className={`flex flex-wrap items-center gap-3 pt-2 ${offer.image ? "justify-start" : "justify-center"}`}>
-                {offer.endDate && (
-                  <div className="inline-flex items-center gap-2 bg-gray-50/90 border border-gray-200/90 px-3.5 py-2 rounded-xl text-xs font-medium text-gray-700 shadow-2xs">
-                    <CalendarOutlined className="text-global-primary text-sm" />
-                    <span>
-                      Valid until{" "}
-                      <strong>
-                        {new Date(offer.endDate).toLocaleDateString(undefined, {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </strong>
-                    </span>
-                  </div>
-                )}
-
-                <div className="inline-flex items-center gap-2 bg-gray-50/90 border border-gray-200/90 px-3.5 py-2 rounded-xl text-xs font-medium text-gray-700 shadow-2xs">
-                  <ShoppingOutlined className="text-global-primary text-sm" />
-                  <span>
-                    <strong>{initialProducts.length}</strong> eligible product{initialProducts.length === 1 ? "" : "s"}
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Active Promotion</span>
                   </span>
                 </div>
 
-                <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200/80 px-3.5 py-2 rounded-xl text-xs font-medium text-emerald-800 shadow-2xs">
-                  <CheckCircleFilled className="text-emerald-600 text-sm" />
-                  <span>Auto-applied at checkout</span>
-                </div>
-              </div>
-
-              {/* Promo Code Pill (if key exists) */}
-              {offer.key && (
-                <div className={`pt-2 flex items-center ${offer.image ? "justify-start" : "justify-center"}`}>
-                  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50/70 border border-amber-200/90 rounded-2xl p-2.5 sm:px-4 shadow-2xs">
-                    <div className="text-xs font-semibold text-amber-900">
-                      Campaign Code:
+                {/* Savings Badge & Title */}
+                <div className="space-y-3">
+                  <div className="inline-flex items-center gap-3">
+                    <div className="bg-global-primary text-global-button-text font-black text-2xl sm:text-3xl px-5 py-2 rounded-2xl shadow-lg shadow-global-primary/20 tracking-tight flex items-center gap-2">
+                      <span>{savingsText}</span>
                     </div>
-                    <code className="font-mono font-bold text-sm sm:text-base text-global-primary bg-white px-3 py-1 rounded-lg border border-amber-200 shadow-2xs tracking-wider">
-                      {offer.key}
-                    </code>
-                    <Tooltip title="Copy Campaign Code">
-                      <button
-                        type="button"
-                        onClick={() => handleCopyCode(offer.key)}
-                        className="p-1.5 text-gray-500 hover:text-global-primary transition-colors cursor-pointer rounded-md hover:bg-white"
-                        aria-label="Copy campaign code"
-                      >
-                        <CopyOutlined className="text-base" />
-                      </button>
-                    </Tooltip>
+                    {offer.discountStrategy && (
+                      <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3.5 py-2 rounded-xl border border-gray-200/80">
+                        {offer.discountStrategy} Discount
+                      </span>
+                    )}
                   </div>
+
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.15]">
+                    {offer.name}
+                  </h1>
                 </div>
-              )}
-            </div>
 
-            {/* Right Media Column */}
-            {offer.image && (
-              <div className="lg:col-span-5">
-                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-gray-200/80 bg-gray-100 group">
-                  <Image
-                    src={getImageUrl(offer.image)}
-                    alt={offer.name || "Special Offer Banner"}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 42vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    priority
-                  />
-                  {/* Subtle vignette overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />
+                {/* Description */}
+                {offer.description && (
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
+                    {offer.description}
+                  </p>
+                )}
 
-                  {/* Floating badge */}
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs font-bold z-10">
-                    <span className="bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 shadow-sm flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-global-primary" />
-                      Official Campaign
+                {/* Offer Details / Highlights Chips */}
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  {offer.endDate && (
+                    <div className="inline-flex items-center gap-2 bg-gray-50/90 border border-gray-200/90 px-3.5 py-2 rounded-xl text-xs font-medium text-gray-700 shadow-2xs">
+                      <CalendarOutlined className="text-global-primary text-sm" />
+                      <span>
+                        Valid until{" "}
+                        <strong>
+                          {new Date(offer.endDate).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </strong>
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="inline-flex items-center gap-2 bg-gray-50/90 border border-gray-200/90 px-3.5 py-2 rounded-xl text-xs font-medium text-gray-700 shadow-2xs">
+                    <ShoppingOutlined className="text-global-primary text-sm" />
+                    <span>
+                      <strong>{initialProducts.length}</strong> eligible product{initialProducts.length === 1 ? "" : "s"}
                     </span>
-                    <span className="bg-global-primary text-global-button-text px-3.5 py-1.5 rounded-full shadow-md font-extrabold">
-                      {savingsText}
-                    </span>
+                  </div>
+
+                  <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200/80 px-3.5 py-2 rounded-xl text-xs font-medium text-emerald-800 shadow-2xs">
+                    <CheckCircleFilled className="text-emerald-600 text-sm" />
+                    <span>Auto-applied at checkout</span>
                   </div>
                 </div>
               </div>
-            )}
 
+              {/* Right Column: Deals Expire In Countdown Clock */}
+              <div className="lg:col-span-5 flex justify-center lg:justify-end">
+                {offer.endDate ? (
+                  <div className="w-full max-w-sm bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-gray-800/90 relative overflow-hidden space-y-5">
+                    {/* Subtle amber radial glow */}
+                    <div className="absolute -top-12 -right-12 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+                    <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-global-primary/15 rounded-full blur-2xl pointer-events-none" />
+
+                    <div className="relative z-10 space-y-5">
+                      {/* Countdown Header */}
+                      <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
+                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400">
+                          <ClockCircleOutlined className="text-sm" />
+                          <span>{timeLeft.isExpired ? "Campaign Concluded" : "Deals Expire In"}</span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+                          Limited Time
+                        </span>
+                      </div>
+
+                      {/* Countdown Tiles */}
+                      <div className="grid grid-cols-4 gap-2.5 sm:gap-3 text-center">
+                        {[
+                          { label: "Days", val: String(timeLeft.days).padStart(2, "0") },
+                          { label: "Hours", val: String(timeLeft.hours).padStart(2, "0") },
+                          { label: "Mins", val: String(timeLeft.minutes).padStart(2, "0") },
+                          { label: "Secs", val: String(timeLeft.seconds).padStart(2, "0") },
+                        ].map((slot, i) => (
+                          <div key={i} className="flex flex-col items-center">
+                            <div className="w-full aspect-square rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center text-xl sm:text-2xl font-black text-white shadow-inner">
+                              <span>{slot.val}</span>
+                            </div>
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-400 mt-2">
+                              {slot.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Assurance Footer */}
+                      <div className="pt-2 border-t border-white/10 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>Instant discount applied at checkout</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full max-w-sm bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-3xl p-6 sm:p-7 shadow-lg border border-gray-700/60 text-center space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-global-primary/20 text-global-primary flex items-center justify-center mx-auto text-2xl">
+                      <ShoppingOutlined />
+                    </div>
+                    <h3 className="text-base font-bold text-white">Exclusive Offer</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed">
+                      Shop from the eligible products below and enjoy automatic discounts at checkout.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+            </div>
           </div>
         </div>
       </section>

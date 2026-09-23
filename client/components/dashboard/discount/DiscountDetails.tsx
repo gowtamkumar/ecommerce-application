@@ -9,7 +9,10 @@ import React, { useCallback, useEffect } from "react";
 import {
     FiCalendar,
     FiClock,
+    FiCopy,
     FiDollarSign,
+    FiExternalLink,
+    FiLink,
     FiPackage,
     FiPercent,
     FiTag
@@ -221,6 +224,44 @@ export default function DiscountDetails() {
                   }
                 >
                   <Text type="secondary">{discount.updatedAt}</Text>
+                </Descriptions.Item>
+
+                <Descriptions.Item
+                  label={
+                    <span className="flex items-center gap-2 text-gray-600">
+                      <FiLink className="w-4 h-4" /> Offer URL
+                    </span>
+                  }
+                  span={2}
+                >
+                  {discount.slug ? (
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`/offers${discount.slug.startsWith("/") ? discount.slug : `/${discount.slug}`}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 hover:text-indigo-800 font-mono text-xs underline flex items-center gap-1"
+                        title={`Visit /offers${discount.slug.startsWith("/") ? discount.slug : `/${discount.slug}`}`}
+                      >
+                        <span>{discount.slug.startsWith("/") ? discount.slug : `/${discount.slug}`}</span>
+                        <FiExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const slugPath = discount.slug.startsWith("/") ? discount.slug : `/${discount.slug}`;
+                          navigator.clipboard.writeText(slugPath);
+                          message.success(`Copied: ${slugPath}`);
+                        }}
+                        className="p-1 text-gray-500 hover:text-indigo-600 cursor-pointer rounded hover:bg-gray-100 transition-colors"
+                        title="Copy offer URL"
+                      >
+                        <FiCopy className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <Text type="secondary">—</Text>
+                  )}
                 </Descriptions.Item>
               </Descriptions>
             </Card>

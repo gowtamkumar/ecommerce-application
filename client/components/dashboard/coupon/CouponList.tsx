@@ -16,6 +16,8 @@ import {
 import {
     BarcodeOutlined,
     CalendarOutlined,
+    CheckOutlined,
+    CopyOutlined,
     DeleteOutlined,
     DollarOutlined,
     EditOutlined,
@@ -26,7 +28,7 @@ import {
     TeamOutlined
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Input, message, Pagination, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -58,11 +60,21 @@ const CouponList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const searchInput = React.useRef<InputRef>(null);
   const global = useSelector(selectGlobal);
   const dispatch = useDispatch();
   const route = useRouter();
   const { formatPrice } = useCurrency();
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    message.success(`Copied coupon code: ${code}`);
+    setTimeout(() => {
+      setCopiedCode(null);
+    }, 2000);
+  };
 
   const fetchData = useCallback(
     async (page: number, limit: number) => {
@@ -210,16 +222,48 @@ const CouponList: React.FC = () => {
       title: "Coupon Code",
       dataIndex: "code",
       key: "code",
-      sorter: (a, b) => a.code.length - b.code.length,
+      width: 220,
+      sorter: (a, b) => (a.code || "").localeCompare(b.code || ""),
       ...getColumnSearchProps("code"),
-      render: (text) => (
-        <div className="flex items-center gap-2">
-          <BarcodeOutlined className="text-gray-400" />
-          <span className="font-mono px-2 py-1 bg-gray-100 rounded border border-gray-200 text-purple-700 font-bold uppercase tracking-wider text-xs">
-            {text}
-          </span>
-        </div>
-      ),
+      render: (text, record: any) => {
+        const couponCode =
+          text ||
+          record?.code ||
+          record?.couponCode ||
+          record?.coupon_code ||
+          record?.coupon;
+
+        if (!couponCode) {
+          return <span className="text-gray-400 text-xs italic">—</span>;
+        }
+
+        return (
+          <div className="flex items-center gap-2 max-w-[210px]">
+            <span className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 bg-purple-50 rounded-lg border border-purple-200 text-purple-700 font-bold uppercase tracking-wider text-xs shadow-xs truncate">
+              <BarcodeOutlined className="text-purple-500 text-sm shrink-0" />
+              <span className="truncate">{couponCode}</span>
+            </span>
+            <Tooltip title={copiedCode === couponCode ? "Copied!" : "Copy code"}>
+              <Button
+                type="text"
+                size="small"
+                icon={
+                  copiedCode === couponCode ? (
+                    <CheckOutlined className="text-xs text-green-600" />
+                  ) : (
+                    <CopyOutlined className="text-xs text-gray-500 hover:text-purple-600" />
+                  )
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCopyCode(couponCode);
+                }}
+                className="shrink-0 h-7 w-7 flex items-center justify-center rounded-md hover:bg-purple-50 transition-colors"
+              />
+            </Tooltip>
+          </div>
+        );
+      },
     },
     {
       title: "Type",
