@@ -1,6 +1,7 @@
 import appConfig from "@/appConfig";
 import { BreadcrumbSchema } from "@/components/seo";
-import Caregory from "@/components/website/categories/Caregory";
+import Breadcrumb from "@/components/share-component/Breadcrumb";
+import CategoriesPageClient from "@/components/website/categories/CategoriesPageClient";
 import { getPublicCategories } from "@/lib/apis/categories";
 import { getSettings } from "@/lib/apis/setting";
 import type { Metadata } from "next";
@@ -46,13 +47,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-import Breadcrumb from "@/components/share-component/Breadcrumb";
-
 export default async function Categories() {
   const categories = await getPublicCategories();
 
   return (
-    <div>
+    <div className="w-full bg-[#fafbfc]">
       <Breadcrumb
         items={[
           { label: "Home", href: "/" },
@@ -65,9 +64,7 @@ export default async function Categories() {
           { name: "Categories", url: "/categories" },
         ]}
       />
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <Caregory categories={categories.data} />
-      </div>
+      <CategoriesPageClient categories={categories?.data || []} />
     </div>
   );
 }
