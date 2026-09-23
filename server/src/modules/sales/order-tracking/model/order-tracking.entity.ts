@@ -1,16 +1,18 @@
+import { OrderEntity } from '@/modules/sales/order/model/order.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OrderEntity } from '@/modules/sales/order/model/order.entity';
 import { OrderTrackingStatusEnum } from '../enums/order-tracking-status.enum';
 
+@Index('idx_order_trackings_order_id', ['orderId'])
 @Entity('order_trackings')
 export class OrderTrackingEntity {
   @PrimaryGeneratedColumn()

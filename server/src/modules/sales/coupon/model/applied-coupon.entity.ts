@@ -1,16 +1,18 @@
+import { OrderEntity } from '@/modules/sales/order/model/order.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
-import { OrderEntity } from '@/modules/sales/order/model/order.entity';
 
+@Index('idx_applied_coupons_order_id', ['orderId'])
+@Index('idx_applied_coupons_user_coupon', ['userId', 'couponId'])
 @Entity('applied_coupons')
 export class AppliedCouponEntity {
   @PrimaryGeneratedColumn()

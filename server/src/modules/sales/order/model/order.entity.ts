@@ -22,6 +22,10 @@ import { OrderStatus } from '../enums/order-status.enum';
 import { OrderItemEntity } from './order-item.entity';
 
 @Index('idx_orders_created_at_status', ['createdAt', 'status'])
+@Index('idx_orders_user_id', ['userId'])
+@Index('idx_orders_user_id_id', ['userId', 'id'])
+@Index('idx_orders_tracking_no', ['trackingNo'])
+@Index('idx_orders_delivery_id', ['deliveryId'])
 @Entity('orders')
 export class OrderEntity {
   @PrimaryGeneratedColumn()

@@ -20,7 +20,7 @@ import {
   orderUpdateValidationSchema,
 } from '@/validation';
 import { Request, Response } from 'express';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { OrderStatus, PaymentMethod, PaymentStatus } from '../enums';
 import { OrderItemEntity } from '../model/order-item.entity';
 import { OrderEntity } from '../model/order.entity';
@@ -77,8 +77,14 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
     const { shippingCharge, subTotal, paymentMethod, orderItems, ...orderData } = validation.data;
 
     const repository = queryRunner.manager.getRepository(OrderEntity);
-    const count = (await repository.count()) + 1;
-    const trackingNo = `TRK-${count.toString().padStart(10, '0')}`;
+    const lastOrder = await repository
+      .createQueryBuilder('order')
+      .select(['order.id'])
+      .orderBy('order.id', 'DESC')
+      .limit(1)
+      .getOne();
+    const nextId = (lastOrder?.id || 0) + 1;
+    const trackingNo = `TRK-${nextId.toString().padStart(10, '0')}`;
 
     const newOrder = repository.create({
       shippingCharge,
@@ -104,16 +110,15 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
       );
       await repoOrderItems.save(newOrderItems);
 
-      // clear cart
+      // clear cart directly using atomic delete
       const cartRepo = queryRunner.manager.getRepository(CartEntity);
-      const cartsList = await cartRepo.find({ where: { userId } });
-      await cartRepo.remove(cartsList);
+      await cartRepo.delete({ userId: Number(userId) });
 
       // order tracking
       const newOrderTracking = {
         status: savedOrder.status,
         orderId,
-        userId,
+        userId: Number(userId),
         location: 'অর্ডারটি গ্রহন করা হয়েছে। কনফার্মেশনের জন্য অপেক্ষমান।',
       } as OrderTracking;
       const orderTrackingRepo = queryRunner.manager.getRepository(OrderTrackingEntity);
@@ -125,48 +130,51 @@ export const createOrder = asyncHandler(async (req: CustomRequest, res: Response
         const couponRepo = queryRunner.manager.getRepository(AppliedCouponEntity);
         const newCouponApplied = couponRepo.create({
           orderId: savedOrder.id,
-          userId,
+          userId: Number(userId),
           discountAmount: validation.data.couponDiscount,
           couponId: validation.data.couponId,
         });
         await couponRepo.save(newCouponApplied);
       }
 
-      // notification to User
-      const notification: Notification = {
+      // notification to User (within transaction)
+      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+      const userNotification = notificationRepo.create({
         type: NotificationType.OrderPlaced,
         title: 'Order Placed',
         message: `Your order has been placed successfully. Order Tracking No: ${trackingNo}`,
-        userId,
+        userId: Number(userId),
         orderId: savedOrder.id,
-      };
-      await sendOrderNotification(notification);
+      });
+      await notificationRepo.save(userNotification);
 
       // Notification to Admins
       const userRepository = queryRunner.manager.getRepository(UserEntity);
-      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-      const adminNotifications = admins.map((admin: any) => ({
-        type: NotificationType.AdminNewOrder,
-        title: 'New Order Received',
-        message: `New order #${savedOrder.id} received from User ${userId}. Tracking No: ${trackingNo}`,
-        userId: admin.id,
-        orderId: savedOrder.id,
-      }));
-
-      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
-      const createdNotifications = notificationRepo.create(adminNotifications as any); // Cast slightly to match if needed, or loop
-      await notificationRepo.save(createdNotifications);
-
-      // Check for High Value Order (e.g. > 10000)
-      if (savedOrder.grandTotal > 10000) {
-        const highValueNotifications = admins.map((admin: UserEntity) => ({
-          type: NotificationType.AdminHighValueOrder,
-          title: 'High Value Order Alert',
-          message: `High value order #${savedOrder.id} received. Total: ${savedOrder.grandTotal}`,
+      const admins = await userRepository.find({
+        where: { role: RoleEnum.Admin },
+        select: ['id'],
+      });
+      if (admins.length > 0) {
+        const adminNotifications = admins.map((admin: any) => ({
+          type: NotificationType.AdminNewOrder,
+          title: 'New Order Received',
+          message: `New order #${savedOrder.id} received from User ${userId}. Tracking No: ${trackingNo}`,
           userId: admin.id,
           orderId: savedOrder.id,
         }));
-        await notificationRepo.save(notificationRepo.create(highValueNotifications as any));
+        await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+
+        // Check for High Value Order (e.g. > 10000)
+        if (savedOrder.grandTotal > 10000) {
+          const highValueNotifications = admins.map((admin: UserEntity) => ({
+            type: NotificationType.AdminHighValueOrder,
+            title: 'High Value Order Alert',
+            message: `High value order #${savedOrder.id} received. Total: ${savedOrder.grandTotal}`,
+            userId: admin.id,
+            orderId: savedOrder.id,
+          }));
+          await notificationRepo.save(notificationRepo.create(highValueNotifications as any));
+        }
       }
     }
 
@@ -401,11 +409,15 @@ export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Respon
   qb.leftJoin('order.user', 'user');
   qb.leftJoin('order.payments', 'payments');
   qb.leftJoin('order.shippingAddress', 'shippingAddress');
-  if (userId) qb.where({ userId });
-  if (status)
-    qb.andWhere('order.status IN (:...status)', {
-      status: status.toString().split(','),
-    });
+  if (userId) {
+    qb.where('order.userId = :userId', { userId: Number(userId) });
+  }
+  if (status) {
+    const statusList = status.toString().split(',').filter(Boolean);
+    if (statusList.length > 0) {
+      qb.andWhere('order.status IN (:...status)', { status: statusList });
+    }
+  }
 
   qb.orderBy('order.id', 'DESC');
 
@@ -441,8 +453,15 @@ export const getUserOrders = asyncHandler(async (req: CustomRequest, res: Respon
 // @route GET /api/v1/orders/query?id=1
 // @access Public
 export const getOrderQuery = asyncHandler(async (req: Request, res: Response) => {
-  const { id, trackingNo } = req.query; // Assuming the order ID will be passed in the URL as a parameter (e.g., /orders/:id)
+  const { id, trackingNo } = req.query;
   logger.info(`Service: getOrderQuery ${req.method} ${req.url}`);
+
+  if (!id && !trackingNo) {
+    return res.status(400).json({
+      success: false,
+      message: 'Order ID or tracking number is required.',
+    });
+  }
 
   const connection = await getDBConnection();
   const orderRepository = connection.getRepository(OrderEntity);
@@ -474,48 +493,32 @@ export const getOrderQuery = asyncHandler(async (req: Request, res: Response) =>
   qb.leftJoin('order.payments', 'payments');
   qb.leftJoin('order.shippingAddress', 'shippingAddress');
 
-  qb.addSelect(
-    (subQuery: any) =>
-      subQuery
-        .select('COALESCE(SUM(p.amount), 0)', 'totalCredit')
-        .from('payments', 'p')
-        .where('p.order_id = order.id')
-        .andWhere('p.payment_type = :credit', { credit: 'Credit' }),
-    'order_totalCredit',
-  );
+  if (id) {
+    qb.where('order.id = :id', { id: Number(id) });
+  } else {
+    qb.where('order.trackingNo = :trackingNo', { trackingNo: String(trackingNo) });
+  }
 
-  qb.addSelect(
-    (subQuery: any) =>
-      subQuery
-        .select('COALESCE(SUM(p.amount), 0)', 'totalDebit')
-        .from('payments', 'p')
-        .where('p.order_id = order.id')
-        .andWhere('p.payment_type = :debit', { debit: 'Debit' }),
-    'order_totalDebit',
-  );
+  const order = await qb.getOne();
 
-  // Filter to get a single order by ID
-  qb.where('order.id = :id', { id });
-  qb.orWhere('order.trackingNo = :trackingNo', { trackingNo });
-
-  const results = await qb.getRawAndEntities();
-
-  if (!results.entities.length) {
+  if (!order) {
     return res.status(404).json({
       success: false,
-      message: `Order with ID ${id} not found.`,
+      message: `Order not found with provided ${id ? `ID #${id}` : `Tracking No #${trackingNo}`}.`,
     });
   }
 
-  const raw = results.raw[0];
-  const order = results.entities[0];
+  const totalCredit = (order.payments || [])
+    .filter((p: any) => p.paymentType === 'Credit')
+    .reduce((acc: number, p: any) => acc + (Number(p.amount) || 0), 0);
 
-  const totalCredit = Number(raw.order_totalCredit) || 0;
-  const totalDebit = Number(raw.order_totalDebit) || 0;
+  const totalDebit = (order.payments || [])
+    .filter((p: any) => p.paymentType === 'Debit')
+    .reduce((acc: number, p: any) => acc + (Number(p.amount) || 0), 0);
 
   return res.status(200).json({
     success: true,
-    message: `Order with ID ${id} retrieved successfully`,
+    message: `Order with ID ${order.id} retrieved successfully`,
     data: {
       ...order,
       totalCredit,
@@ -684,7 +687,7 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
 
   const repository = queryRunner.manager.getRepository(OrderEntity);
   const result = await repository.findOne({
-    where: { id },
+    where: { id: Number(id) },
     relations: ['orderItems'],
   });
 
@@ -718,32 +721,39 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
     });
 
     const message = `Your order has been ${status}. Order Tracking No: ${result.trackingNo}`;
-    const userRepository = await connection.getRepository(UserEntity);
-    const getuser = await userRepository.findOne({ where: { id: userId } });
-    const ssmsRes = await sendSms(getuser.phone, message);
+    const targetUserId = result.userId || userId;
+    const userRepository = queryRunner.manager.getRepository(UserEntity);
+    const getuser = await userRepository.findOne({
+      where: { id: targetUserId },
+      select: ['phone'],
+    });
+    if (getuser?.phone) {
+      await sendSms(getuser.phone, message);
+    }
 
     let notificationType = NotificationType.Order;
     if (status === OrderStatus.Shipped) notificationType = NotificationType.OrderShipped;
     if (status === OrderStatus.Delivered) notificationType = NotificationType.OrderDelivered;
     if (status === OrderStatus.Canceled) notificationType = NotificationType.OrderCanceled;
 
-    const notification: Notification = {
+    const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
+    const customerNotification = notificationRepo.create({
       type: notificationType,
       title: status,
       message,
-      userId,
+      userId: targetUserId,
       orderId: result.id,
-    };
+    });
+    await notificationRepo.save(customerNotification);
 
     // Notification: Request Review on Delivery
     if (status === OrderStatus.Delivered) {
-      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
       await notificationRepo.save(
         notificationRepo.create({
           type: NotificationType.ReviewRequest,
           title: 'How was your order?',
           message: `Your order #${result.id} has been delivered. We'd love to hear your feedback!`,
-          userId,
+          userId: targetUserId,
           orderId: result.id,
           isRead: false,
         }),
@@ -753,30 +763,29 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
     const newOrderTracking = {
       status: status,
       orderId: result.id,
-      userId,
+      userId: targetUserId,
       location,
     } as OrderTracking;
 
     const orderTrackingRepo = queryRunner.manager.getRepository(OrderTrackingEntity);
-
     await orderTracking(newOrderTracking, orderTrackingRepo);
-
-    await sendOrderNotification(notification);
 
     // Notify Admins if Order is Canceled
     if (status === OrderStatus.Canceled) {
-      const userRepository = queryRunner.manager.getRepository(UserEntity);
-      const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
-      const adminNotifications = admins.map((admin: UserEntity) => ({
-        type: NotificationType.AdminOrderCanceled,
-        title: 'Order Canceled',
-        message: `Order #${result.id} has been canceled.`,
-        userId: admin.id,
-        orderId: result.id,
-      }));
-
-      const notificationRepo = queryRunner.manager.getRepository(NotificationEntity);
-      await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+      const admins = await userRepository.find({
+        where: { role: RoleEnum.Admin },
+        select: ['id'],
+      });
+      if (admins.length > 0) {
+        const adminNotifications = admins.map((admin: any) => ({
+          type: NotificationType.AdminOrderCanceled,
+          title: 'Order Canceled',
+          message: `Order #${result.id} has been canceled.`,
+          userId: admin.id,
+          orderId: result.id,
+        }));
+        await notificationRepo.save(notificationRepo.create(adminNotifications as any));
+      }
     }
 
     await queryRunner.commitTransaction();
@@ -802,17 +811,25 @@ async function adjustStock(
   isStockIncrease: boolean,
   productVariantRepo: Repository<ProductVariantEntity>,
 ) {
+  if (!orderItems || orderItems.length === 0) return;
+
+  const variantIds = orderItems.map((item) => item.productVariantId).filter(Boolean);
+  if (variantIds.length === 0) return;
+
+  const variants = await productVariantRepo.findBy({ id: In(variantIds) });
+  const variantMap = new Map(variants.map((v) => [v.id, v]));
+
+  const lowStockVariants: { id: number; stockQty: number }[] = [];
+  const variantsToUpdate: ProductVariantEntity[] = [];
+
   for (const item of orderItems) {
-    const findProductVariant: any = await productVariantRepo.findOne({
-      where: { id: item.productVariantId },
-    });
+    const variant = variantMap.get(item.productVariantId);
+    if (!variant) continue;
 
-    if (!findProductVariant) continue;
+    const currentStock = +(variant.stockQty ?? 0);
+    const itemQty = +(item.qty ?? 0);
 
-    const currentStock = +findProductVariant.stockQty || 0;
-    const itemQty = +item.qty || 0;
-
-    // ❗Check if stock is enough before reducing
+    // Check if stock is enough before reducing
     if (!isStockIncrease && currentStock < itemQty) {
       throw new Error(
         `Insufficient stock for product variant ID ${item.productVariantId}. Required: ${itemQty}, Available: ${currentStock}`,
@@ -820,41 +837,41 @@ async function adjustStock(
     }
 
     const newStockQty = isStockIncrease ? currentStock + itemQty : currentStock - itemQty;
+    variant.stockQty = newStockQty;
+    variantsToUpdate.push(variant);
 
-    await productVariantRepo.save({
-      id: findProductVariant.id,
-      stockQty: newStockQty,
-    });
-
-    // Check for Low Stock
     if (newStockQty < 5) {
-      // We need a way to send notification here. Since this might be inside a transaction,
-      // and we don't have direct access to queryRunner here easily without passing it,
-      // or we can use a separate connection/repository if strictly needed,
-      // but typically we should pass the manager or repository.
-      // Ideally trigger an event or just do it here.
-      // Let's assume we can get connection or use the repo's manager if possible.
-      // For simplicity, we'll fetch admins and save notification using the repo's manager if available or get new connection.
-      // Note: productVariantRepo belongs to the transaction manager passed in.
+      lowStockVariants.push({ id: variant.id, stockQty: newStockQty });
+    }
+  }
 
-      try {
-        const manager = productVariantRepo.manager;
-        const userRepository = manager.getRepository(UserEntity);
-        const admins = await userRepository.find({ where: { role: RoleEnum.Admin } });
+  if (variantsToUpdate.length > 0) {
+    await productVariantRepo.save(variantsToUpdate);
+  }
+
+  if (lowStockVariants.length > 0) {
+    try {
+      const manager = productVariantRepo.manager;
+      const userRepository = manager.getRepository(UserEntity);
+      const admins = await userRepository.find({
+        where: { role: RoleEnum.Admin },
+        select: ['id'],
+      });
+
+      if (admins.length > 0) {
         const notificationRepo = manager.getRepository(NotificationEntity);
-
-        const adminNotifications = admins.map((admin: UserEntity) => ({
-          type: NotificationType.AdminLowStock,
-          title: 'Low Stock Alert',
-          message: `Product Variant (ID: ${findProductVariant.id}) is running low. Current Stock: ${newStockQty}`,
-          userId: admin.id,
-          //  orderId: null, // Optional, might not be linked to specific order in schema directly if not nullable
-        }));
-        // Casting to any to avoid strict type checks if orderId is missing/nullable
+        const adminNotifications = admins.flatMap((admin: any) =>
+          lowStockVariants.map((item) => ({
+            type: NotificationType.AdminLowStock,
+            title: 'Low Stock Alert',
+            message: `Product Variant (ID: ${item.id}) is running low. Current Stock: ${item.stockQty}`,
+            userId: admin.id,
+          })),
+        );
         await notificationRepo.save(notificationRepo.create(adminNotifications as any));
-      } catch (err) {
-        console.error('Failed to send low stock notification', err);
       }
+    } catch (err) {
+      console.error('Failed to send low stock notification', err);
     }
   }
 }
@@ -869,12 +886,12 @@ export const deleteOrder = asyncHandler(async (req: Request, res: Response) => {
   const connection = await getDBConnection();
   const repository = await connection.getRepository(OrderEntity);
 
-  const result = await repository.findOneBy({ id });
+  const result = await repository.findOneBy({ id: Number(id) });
   if (!result) {
     throw new Error(`Resource not found of id #${req.params.id}`);
   }
 
-  await repository.delete({ id });
+  await repository.delete({ id: Number(id) });
 
   return res.status(200).json({
     success: true,
