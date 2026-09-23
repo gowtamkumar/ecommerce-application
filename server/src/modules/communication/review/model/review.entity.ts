@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { reviewStatusEnum } from '../enums/review.status.enum';
 
+@Index('idx_reviews_product_id_status', ['productId', 'status'])
 @Entity('reviews')
 export class ReviewEntity {
   @PrimaryGeneratedColumn()

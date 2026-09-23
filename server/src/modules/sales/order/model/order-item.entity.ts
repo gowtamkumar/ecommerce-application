@@ -18,6 +18,7 @@ export class OrderItemEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Index('idx_order_items_order_id')
   @Column({ name: 'order_id' })
   orderId!: number;
   @ManyToOne((_type) => OrderEntity, (order) => order.orderItems, {
