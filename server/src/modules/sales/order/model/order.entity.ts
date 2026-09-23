@@ -21,6 +21,7 @@ import { ReturnStatus } from '@/modules/sales/return/enums/return-status.enum';
 import { OrderStatus } from '../enums/order-status.enum';
 import { OrderItemEntity } from './order-item.entity';
 
+@Index('idx_orders_created_at_status', ['createdAt', 'status'])
 @Entity('orders')
 export class OrderEntity {
   @PrimaryGeneratedColumn()

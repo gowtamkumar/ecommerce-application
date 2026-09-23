@@ -16,8 +16,10 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
   const { status = OrderStatus.Pending, startDate, endDate }: any = req.query;
   const connection = await getDBConnection();
 
-  const fromDate = dayjs(startDate).toISOString();
-  const toDate = dayjs(endDate).toISOString();
+  const fromDate = startDate
+    ? dayjs(startDate).toISOString()
+    : dayjs().subtract(30, 'day').startOf('day').toISOString();
+  const toDate = endDate ? dayjs(endDate).toISOString() : dayjs().endOf('day').toISOString();
 
   const orderRepository = connection.getRepository(OrderEntity);
   const qb = orderRepository.createQueryBuilder('order');
@@ -30,33 +32,48 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
     'user.name',
   ]);
   qb.leftJoin('order.user', 'user');
-
-  if (status) qb.where({ status });
-  qb.andWhere(`order.createdAt BETWEEN '${fromDate}' AND '${toDate}'`);
+  qb.where('order.createdAt BETWEEN :fromDate AND :toDate', { fromDate, toDate });
+  if (status) {
+    qb.andWhere('order.status = :status', { status });
+  }
   qb.orderBy('order.trackingNo', 'DESC');
-  const orders = await qb.getMany();
-  // user info
-  const user = await connection.query(
-    `SELECT
+
+  const [
+    orders,
+    user,
+    payments,
+    results,
+    top_selling_product,
+    top_customers,
+    product_alert_stock_report,
+    loss_profit,
+  ] = await Promise.all([
+    qb.getMany(),
+
+    // user info
+    connection.query(
+      `SELECT
           SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS total_active_user,
           SUM(CASE WHEN status = 'Inactive' THEN 1 ELSE 0 END) AS total_inactive_user,
           SUM(CASE WHEN status = 'Block' THEN 1 ELSE 0 END) AS total_block_user
       FROM users`,
-  );
+    ),
 
-  const payments = await connection.query(
-    `SELECT
-        SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount,
-        SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_debit_amount,
-        SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_credit_amount,
-        SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_credit_amount
-      FROM payments
-      WHERE created_at BETWEEN '${fromDate}' AND '${toDate}'`,
-  );
+    // payments summary
+    connection.query(
+      `SELECT
+          SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_debit_amount,
+          SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Debit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_debit_amount,
+          SUM(CASE WHEN payment_method = 'SSLCOMMERZ' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS ssl_credit_amount,
+          SUM(CASE WHEN payment_method = 'Cash' AND payment_type = 'Credit' THEN COALESCE(amount, 0) ELSE 0 END) AS cash_credit_amount
+        FROM payments
+        WHERE created_at BETWEEN $1 AND $2`,
+      [fromDate, toDate],
+    ),
 
-  // order sale, count etc,
-  const results = await connection.query(`
-      SELECT
+    // order sale, count etc.
+    connection.query(
+      `SELECT
           SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) AS total_processing_order_count,
           SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS total_shipped_order_count,
           SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS total_pending_order_count,
@@ -92,13 +109,14 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
           SUM(CASE WHEN returned_status = 'Approved' THEN (COALESCE(requested_qty,0)) ELSE 0 END) AS total_return_approved_product_count,
           SUM(CASE WHEN returned_status = 'Rejected' THEN (COALESCE(requested_qty,0)) ELSE 0 END) AS total_return_rejected_product_count,
           SUM(CASE WHEN returned_status = 'Completed' THEN (COALESCE(approved_qty,0)) ELSE 0 END) AS total_return_completed_product_count
+      FROM orders
+      WHERE created_at BETWEEN $1 AND $2`,
+      [fromDate, toDate],
+    ),
 
-
-      FROM orders where created_at BETWEEN '${fromDate}' AND '${toDate}'
-  `);
-
-  const top_selling_product = await connection.query(
-    `with orderItems as (
+    // top selling products
+    connection.query(
+      `WITH orderItems AS (
           SELECT 
             oi.product_id AS product_id,
             SUM(
@@ -108,29 +126,29 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
             SUM(COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0)) AS sale_qty
           FROM 
             order_items oi
-          LEFT JOIN 
+          INNER JOIN 
             orders ON orders.id = oi.order_id
           WHERE 
             orders.status = 'Delivered'
-            AND orders.created_at BETWEEN '${fromDate}' AND '${toDate}'
+            AND orders.created_at BETWEEN $1 AND $2
           GROUP BY 
             oi.product_id
-          )
-      select
-        oI.product_id,
-        oI.total_sale_amount,
-        oI.sale_qty,
-        products.name,
-        products.alert_qty
-      from orderItems oI
-      LEFT JOIN products ON products.id = oI.product_id
-      order by oI.total_sale_amount DESC;
-    `,
-  );
+        )
+        SELECT
+          oI.product_id,
+          oI.total_sale_amount,
+          oI.sale_qty,
+          products.name,
+          products.alert_qty
+        FROM orderItems oI
+        LEFT JOIN products ON products.id = oI.product_id
+        ORDER BY oI.total_sale_amount DESC;`,
+      [fromDate, toDate],
+    ),
 
-  const top_customers = await connection.query(
-    `
-        WITH customerSales AS (
+    // top customers
+    connection.query(
+      `WITH customerSales AS (
           SELECT 
               users.id AS customer_id,
               users.name AS customer_name,
@@ -141,13 +159,13 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
               SUM(COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0)) AS total_qty
           FROM 
               order_items oi
-          LEFT JOIN 
+          INNER JOIN 
               orders ON orders.id = oi.order_id
-          LEFT JOIN 
+          INNER JOIN 
               users ON users.id = orders.user_id
           WHERE 
               orders.status = 'Delivered'
-              AND orders.created_at BETWEEN '${fromDate}' AND '${toDate}'
+              AND orders.created_at BETWEEN $1 AND $2
           GROUP BY 
               users.id, users.name
         )
@@ -157,67 +175,67 @@ export const getDashboardReport = asyncHandler(async (req: Request, res: Respons
             cs.total_sale_amount,
             cs.total_qty
         FROM customerSales cs
-        ORDER BY cs.total_sale_amount DESC;
-    `,
-  );
+        ORDER BY cs.total_sale_amount DESC;`,
+      [fromDate, toDate],
+    ),
 
-  const product_alert_stock_report = await connection.query(
-    `
-     WITH productVariants AS (
+    // product alert stock report
+    connection.query(
+      `WITH productVariants AS (
+          SELECT 
+              product_id,
+              SUM(COALESCE(stock_qty, 0)) AS stock_qty
+          FROM 
+              product_variants 
+          GROUP BY 
+              product_id
+        )
         SELECT 
-            product_id,
-            SUM(COALESCE(stock_qty, 0)) AS stock_qty
+            products.name AS name,
+            products.alert_qty AS alert_qty,
+            productVariants.stock_qty AS stock_qty
         FROM 
-            product_variants 
-        GROUP BY 
-            product_id
-      )
-      SELECT 
-          products.name AS name,
-          products.alert_qty AS alert_qty,
-          productVariants.stock_qty AS stock_qty
-      FROM 
-          productVariants
-      LEFT JOIN 
-          products ON products.id = productVariants.product_id
-      WHERE products.alert_qty > productVariants.stock_qty
-      ORDER BY 
-          productVariants.stock_qty ASC
-    `,
-  );
-
-  const loss_profit = await connection.query(
-    `
-      with orderItems as (
-      SELECT 
-            oi.product_id AS product_id,
-            SUM(
-                COALESCE(oi.sub_total, 0) * 
-                ( CAST(COALESCE(oi.qty, 1) - COALESCE(oi.approved_qty, 0) AS NUMERIC) / NULLIF(CAST(COALESCE(oi.qty, 1) AS NUMERIC), 0) )
-            ) AS total_sale_amount,
-
-            SUM(
-                COALESCE(oi.purchase_price, 0) * 
-                ( COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0) )
-            ) AS total_purchase_amount
-        FROM 
-            order_items oi
+            productVariants
         LEFT JOIN 
-            orders ON orders.id = oi.order_id
-        WHERE orders.created_at BETWEEN '${fromDate}' AND '${toDate}' AND orders.status = 'Delivered'
-        GROUP BY 
-            oi.product_id
-      )
-            
-      select
-        oI.product_id,
-        oI.total_sale_amount,
-        oI.total_purchase_amount,
-        products.name
-      from orderItems oI
-      LEFT JOIN products ON products.id = oI.product_id 
-    `,
-  );
+            products ON products.id = productVariants.product_id
+        WHERE products.alert_qty > productVariants.stock_qty
+        ORDER BY 
+            productVariants.stock_qty ASC;`,
+    ),
+
+    // loss & profit report
+    connection.query(
+      `WITH orderItems AS (
+          SELECT 
+              oi.product_id AS product_id,
+              SUM(
+                  COALESCE(oi.sub_total, 0) * 
+                  ( CAST(COALESCE(oi.qty, 1) - COALESCE(oi.approved_qty, 0) AS NUMERIC) / NULLIF(CAST(COALESCE(oi.qty, 1) AS NUMERIC), 0) )
+              ) AS total_sale_amount,
+              SUM(
+                  COALESCE(oi.purchase_price, 0) * 
+                  ( COALESCE(oi.qty, 0) - COALESCE(oi.approved_qty, 0) )
+              ) AS total_purchase_amount
+          FROM 
+              order_items oi
+          INNER JOIN 
+              orders ON orders.id = oi.order_id
+          WHERE 
+              orders.status = 'Delivered'
+              AND orders.created_at BETWEEN $1 AND $2
+          GROUP BY 
+              oi.product_id
+        )
+        SELECT
+          oI.product_id,
+          oI.total_sale_amount,
+          oI.total_purchase_amount,
+          products.name
+        FROM orderItems oI
+        LEFT JOIN products ON products.id = oI.product_id;`,
+      [fromDate, toDate],
+    ),
+  ]);
 
   return res.status(200).json({
     success: true,

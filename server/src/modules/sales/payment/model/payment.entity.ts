@@ -1,18 +1,21 @@
+import { PaymentMethod } from '@/modules/sales/order/enums';
+import { OrderEntity } from '@/modules/sales/order/model/order.entity';
+import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import 'reflect-metadata';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OrderEntity } from '@/modules/sales/order/model/order.entity';
-import { PaymentMethod } from '@/modules/sales/order/enums';
-import { UserEntity } from '@/modules/user/auth/model/user.entity';
 import { PaymentType } from '../enums/payment-type.enum';
 
+@Index('idx_payments_created_at', ['createdAt'])
+@Index('idx_payments_order_id', ['orderId'])
 @Entity('payments')
 export class PaymentEntity {
   @PrimaryGeneratedColumn()
