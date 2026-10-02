@@ -13,6 +13,7 @@ import {
 import {
     DeleteOutlined,
     EditOutlined,
+    ExportOutlined,
     PlusOutlined,
     SearchOutlined,
 } from "@ant-design/icons";
@@ -57,6 +58,7 @@ interface DataType {
   alertQty: number;
   discount: Discount;
   status: string;
+  slug?: string;
   thumbnailImage?: string;
 }
 
@@ -336,6 +338,20 @@ const ProductList = () => {
       width: 80,
       render: (_, record) => (
         <div className="flex gap-1 justify-end">
+          {record.slug && (
+            <Tooltip title="View FB/Instagram Ads Landing Page">
+              <Button
+                type="text"
+                size="small"
+                icon={<ExportOutlined className="text-rose-500" />}
+                className="hover:text-rose-600 hover:bg-rose-50"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(`/landing/${record.slug}`, "_blank");
+                }}
+              />
+            </Tooltip>
+          )}
           <Tooltip title="Edit">
             <Button
               type="text"

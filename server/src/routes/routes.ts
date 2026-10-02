@@ -18,6 +18,7 @@ import couponRoute from '@/modules/sales/coupon/route/coupon.route';
 import discountRoutes from '@/modules/sales/discount/route/discount.route';
 import orderTrackingRoutes from '@/modules/sales/order-tracking/route/order-tracking.route';
 import orderRoutes from '@/modules/sales/order/route/order.route';
+import landingOrderRoute from '@/modules/sales/order/route/landing-order.route';
 import paymentRoute from '@/modules/sales/payment/route/payment.route';
 import refundRoute from '@/modules/sales/refund/route/refund.route';
 import returnsRoute from '@/modules/sales/return/route/return.route';
@@ -86,5 +87,6 @@ export const setupRoutes = (app: any) => {
   app.use('/api/v1/unions', unionsRoute);
   app.use('/api/v1/contacts', contactsRoute);
   app.use('/api/v1/pages', pageRoute);
+  app.use('/api/v1/landing', landingOrderRoute);
   app.use('/api/v1/audit-logs', AuthGuard, isAuthorize(['Admin', 'SuperAdmin']), auditLogRoute);
 };

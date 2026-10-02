@@ -27,8 +27,7 @@ export interface CreateRefundInput {
 export const createPendingRefundRecord = async (
   input: CreateRefundInput,
 ): Promise<RefundEntity> => {
-  const manager =
-    input.manager ?? (await getDBConnection()).manager;
+  const manager = input.manager ?? (await getDBConnection()).manager;
   const refundRepository = manager.getRepository(RefundEntity);
 
   const paymentMethod =
@@ -53,7 +52,9 @@ export const createPendingRefundRecord = async (
  * Cash/COD stays Pending for manual completion in the admin dashboard.
  * Failed auto attempts stay Failed/Pending so admin can complete manually.
  */
-export const attemptAutoRefundAfterCommit = async (refundId: number): Promise<RefundEntity | null> => {
+export const attemptAutoRefundAfterCommit = async (
+  refundId: number,
+): Promise<RefundEntity | null> => {
   const connection = await getDBConnection();
   const refundRepository = connection.getRepository(RefundEntity);
   const orderRepository = connection.getRepository(OrderEntity);
@@ -73,9 +74,7 @@ export const attemptAutoRefundAfterCommit = async (refundId: number): Promise<Re
     return refund;
   }
 
-  const order =
-    refund.order ||
-    (await orderRepository.findOne({ where: { id: refund.orderId } }));
+  const order = refund.order || (await orderRepository.findOne({ where: { id: refund.orderId } }));
 
   if (!order) {
     logger.error(`attemptAutoRefundAfterCommit: order #${refund.orderId} not found`);

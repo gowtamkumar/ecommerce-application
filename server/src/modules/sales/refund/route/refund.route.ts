@@ -1,9 +1,5 @@
 import express from 'express';
-import {
-  getRefunds,
-  getRefund,
-  completeRefund,
-} from '../controller/refund.controller';
+import { getRefunds, getRefund, completeRefund } from '../controller/refund.controller';
 
 const router = express.Router();
 

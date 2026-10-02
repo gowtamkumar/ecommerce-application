@@ -84,11 +84,11 @@ const sendCookiesResponse = (res: Response, accessToken: string, refreshToken?: 
   // If numeric, assume hours. If string with unit, let cookie handle it OR parse it.
   // For simplicity, we'll assume JWT_EXPIRES is in hours if it's numeric.
   const isNumeric = (val: string) => /^\d+$/.test(val);
-  
-  const accessTokenMaxAge = isNumeric(jwtExpires) 
-    ? Number(jwtExpires) * 60 * 60 * 1000 
+
+  const accessTokenMaxAge = isNumeric(jwtExpires)
+    ? Number(jwtExpires) * 60 * 60 * 1000
     : 15 * 60 * 1000; // Default access token to 15 mins if not numeric (recommended)
-    
+
   const refreshTokenMaxAge = 7 * 24 * 60 * 60 * 1000; // Default refresh token to 7 days
 
   const cookieOptions = {
@@ -114,8 +114,10 @@ const sendCookiesResponse = (res: Response, accessToken: string, refreshToken?: 
 
 // Function to generate signed JWT token
 const getSignJwtToken = (user: any): string => {
-  const expiresIn = process.env.JWT_EXPIRES 
-    ? ( /^\d+$/.test(process.env.JWT_EXPIRES) ? process.env.JWT_EXPIRES + 'h' : process.env.JWT_EXPIRES )
+  const expiresIn = process.env.JWT_EXPIRES
+    ? /^\d+$/.test(process.env.JWT_EXPIRES)
+      ? process.env.JWT_EXPIRES + 'h'
+      : process.env.JWT_EXPIRES
     : '1h';
 
   return jwt.sign(
@@ -137,7 +139,7 @@ const getSignJwtToken = (user: any): string => {
 const getRefreshToken = (user: any): string => {
   return jwt.sign(
     { id: user.id },
-    process.env.JWT_REFRESH_SECRET || (process.env.JWT_SECRET! + '_refresh'),
+    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET! + '_refresh',
     {
       expiresIn: process.env.JWT_REFRESH_EXPIRES || '7d',
     } as jwt.SignOptions,

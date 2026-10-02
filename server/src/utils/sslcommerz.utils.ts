@@ -136,10 +136,7 @@ export const initiateSSLCommerzRefund = async (
   const apiConnect = String(result?.APIConnect || '').toUpperCase();
   const status = String(result?.status || '').toLowerCase();
 
-  if (
-    apiConnect.includes('INVALID_SOURCE') ||
-    apiConnect.includes('REQUEST_FROM_INVALID_SOURCE')
-  ) {
+  if (apiConnect.includes('INVALID_SOURCE') || apiConnect.includes('REQUEST_FROM_INVALID_SOURCE')) {
     return {
       success: false,
       status,

@@ -4,7 +4,11 @@ import { userRepository } from '../repository/user.repository';
 import { ILike } from 'typeorm';
 
 export class UserService {
-  async getAllUsers(page: number = 1, limit: number = 10, filters?: { role?: string; search?: string }) {
+  async getAllUsers(
+    page: number = 1,
+    limit: number = 10,
+    filters?: { role?: string; search?: string },
+  ) {
     const skip = (page - 1) * limit;
     const take = limit;
 

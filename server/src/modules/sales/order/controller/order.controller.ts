@@ -806,7 +806,7 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
   }
 });
 
-async function adjustStock(
+export async function adjustStock(
   orderItems: OrderItemEntity[],
   isStockIncrease: boolean,
   productVariantRepo: Repository<ProductVariantEntity>,

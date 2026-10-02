@@ -11,6 +11,7 @@ export * from './envfileValidation';
 export * from './wishlist/wishlistValidation';
 export * from './brand/brandValidation';
 export * from './order/onlineCreateOrderValidation';
+export * from './order/directOrderValidation';
 export * from './order/orderUpdateValidation';
 export * from './order/orderDeliveryManAsingValidation';
 export * from './order/orderStatusUpdate';
