@@ -84,6 +84,15 @@ export class SettingEntity {
   @Column({ name: 'return_setting', type: 'simple-json', nullable: true })
   returnSetting!: any;
 
+  @Column({ name: 'landing_setting', type: 'simple-json', nullable: true })
+  landingSetting!: {
+    freeDeliveryMinQty?: number | null;
+    freeDeliveryMinAmount?: number | null;
+    insideDhakaCharge?: number;
+    outsideDhakaCharge?: number;
+    isFreeDeliveryActive?: boolean;
+  };
+
   // @CreateDateColumn({ name: "created_at",type: "timestamp" })
   // createdAt?: string;
 

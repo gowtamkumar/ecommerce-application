@@ -19,6 +19,8 @@ interface LandingPageClientProps {
     insideDhaka: number;
     outsideDhaka: number;
   };
+  freeDeliveryMinQty?: number | null;
+  freeDeliveryMinAmount?: number | null;
   storeSetting?: {
     siteName?: string;
     phone?: string;
@@ -30,6 +32,8 @@ interface LandingPageClientProps {
 export default function LandingPageClient({
   product,
   deliveryCharges = { insideDhaka: 60, outsideDhaka: 120 },
+  freeDeliveryMinQty = 2,
+  freeDeliveryMinAmount = null,
   storeSetting,
 }: LandingPageClientProps) {
   const searchParams = useSearchParams();
@@ -144,6 +148,7 @@ export default function LandingPageClient({
         <LandingBundleOffers
           unitPrice={effectiveUnitPrice}
           quantity={quantity}
+          freeDeliveryMinQty={freeDeliveryMinQty}
           onSelectQuantity={(qty) => {
             setQuantity(qty);
             scrollToOrderForm();
@@ -178,6 +183,8 @@ export default function LandingPageClient({
           quantity={quantity}
           onQuantityChange={setQuantity}
           deliveryCharges={deliveryCharges}
+          freeDeliveryMinQty={freeDeliveryMinQty}
+          freeDeliveryMinAmount={freeDeliveryMinAmount}
           utmData={utmData}
           onOrderSuccess={(orderData) => {
             setPlacedOrderData(orderData);

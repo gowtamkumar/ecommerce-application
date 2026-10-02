@@ -30,4 +30,5 @@ export const settingValidationSchema = z.object({
   marketing: z.any().optional(),
   appearance: z.any().optional(),
   returnSetting: z.any().optional(),
+  landingSetting: z.any().optional(),
 });

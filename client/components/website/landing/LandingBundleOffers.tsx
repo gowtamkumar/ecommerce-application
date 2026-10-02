@@ -7,14 +7,23 @@ interface LandingBundleOffersProps {
   unitPrice: number;
   quantity: number;
   onSelectQuantity: (qty: number) => void;
+  freeDeliveryMinQty?: number | null;
 }
 
 export default function LandingBundleOffers({
   unitPrice,
   quantity,
   onSelectQuantity,
+  freeDeliveryMinQty = 2,
 }: LandingBundleOffersProps) {
   const { formatPrice } = useCurrency();
+
+  const isFree = (qty: number) => {
+    if (freeDeliveryMinQty === null || freeDeliveryMinQty === undefined || freeDeliveryMinQty <= 0) {
+      return false;
+    }
+    return qty >= freeDeliveryMinQty;
+  };
 
   const bundles = [
     {
@@ -23,18 +32,18 @@ export default function LandingBundleOffers({
       title: "১টি পিস",
       description: "সিঙ্গেল পিস ট্রাই করতে চান",
       totalPrice: unitPrice,
-      deliveryPerk: "ডেলিভারি চার্জ প্রযোজ্য",
-      isFreeDelivery: false,
+      deliveryPerk: isFree(1) ? "ডেলিভারি সম্পূর্ণ ফ্রি! 🚚" : "ডেলিভারি চার্জ প্রযোজ্য",
+      isFreeDelivery: isFree(1),
       popular: false,
     },
     {
       qty: 2,
-      badge: "সবচেয়ে জনপ্রিয় 🔥",
+      badge: isFree(2) ? "সবচেয়ে জনপ্রিয় 🔥" : "২ পিস প্যাক",
       title: "২টি পিস কম্বো",
       description: "বেস্ট ভ্যালু প্যাক",
       totalPrice: unitPrice * 2,
-      deliveryPerk: "ডেলিভারি সম্পূর্ণ ফ্রি! 🚚",
-      isFreeDelivery: true,
+      deliveryPerk: isFree(2) ? "ডেলিভারি সম্পূর্ণ ফ্রি! 🚚" : "ডেলিভারি চার্জ প্রযোজ্য",
+      isFreeDelivery: isFree(2),
       popular: true,
     },
     {
@@ -43,8 +52,8 @@ export default function LandingBundleOffers({
       title: "৩টি পিস ফ্যামিলি প্যাক",
       description: "অতিরিক্ত ৳১০০ ডিসকাউন্ট",
       totalPrice: Math.max(0, unitPrice * 3 - 100),
-      deliveryPerk: "ফ্রি হোম ডেলিভারি + স্পেশাল গিফট 🎁",
-      isFreeDelivery: true,
+      deliveryPerk: isFree(3) ? "ফ্রি হোম ডেলিভারি + স্পেশাল গিফট 🎁" : "স্পেশাল গিফট 🎁",
+      isFreeDelivery: isFree(3),
       popular: false,
     },
   ];
@@ -56,7 +65,9 @@ export default function LandingBundleOffers({
           স্পেশাল প্যাকেজ ডিল
         </span>
         <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-          কম্বো অফারে অর্ডার করুন ও ডেলিভারি ফ্রি পান!
+          {freeDeliveryMinQty && freeDeliveryMinQty > 0
+            ? "কম্বো অফারে অর্ডার করুন ও ডেলিভারি ফ্রি পান!"
+            : "কম্বো অফারে অর্ডার করুন ও অতিরিক্ত সাশ্রয় পান!"}
         </h2>
       </div>
 

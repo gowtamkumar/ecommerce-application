@@ -31,6 +31,8 @@ interface LandingOrderFormProps {
     insideDhaka: number;
     outsideDhaka: number;
   };
+  freeDeliveryMinQty?: number | null;
+  freeDeliveryMinAmount?: number | null;
   utmData?: {
     utmSource?: string;
     utmMedium?: string;
@@ -48,6 +50,8 @@ export default function LandingOrderForm({
   quantity,
   onQuantityChange,
   deliveryCharges,
+  freeDeliveryMinQty = 2,
+  freeDeliveryMinAmount = null,
   utmData,
   onOrderSuccess,
 }: LandingOrderFormProps) {
@@ -83,8 +87,11 @@ export default function LandingOrderForm({
   const unitPrice = Number(selectedVariant?.price || product?.finalPrice || product?.unitPrice || 0);
   const subTotal = unitPrice * quantity;
 
-  // Free delivery for 2 or more pieces
-  const isFreeDelivery = quantity >= 2;
+  // Free delivery rule: controlled by freeDeliveryMinQty or freeDeliveryMinAmount
+  const isFreeDelivery = Boolean(
+    (freeDeliveryMinQty && freeDeliveryMinQty > 0 && quantity >= freeDeliveryMinQty) ||
+      (freeDeliveryMinAmount && freeDeliveryMinAmount > 0 && subTotal >= freeDeliveryMinAmount),
+  );
   const standardShipping =
     deliveryZone === "inside_dhaka"
       ? deliveryCharges.insideDhaka || 60

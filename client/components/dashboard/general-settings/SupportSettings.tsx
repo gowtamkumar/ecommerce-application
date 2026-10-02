@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Card, Collapse, Divider, Empty, Form, Input, InputNumber, Typography } from "antd";
+import { Button, Card, Collapse, Divider, Empty, Form, Input, InputNumber, Switch, Typography } from "antd";
 import { 
     CaretRightOutlined, DeleteOutlined, PlusOutlined, QuestionCircleOutlined,
     WalletOutlined, RollbackOutlined, SafetyCertificateOutlined, FileProtectOutlined,
@@ -27,6 +27,10 @@ const SupportSettings = () => {
         ...global.setting?.whatsAppWidget,
         faq: global.setting?.faq || [],
         orderFreeShippingAmount: global.setting?.orderFreeShippingAmount,
+        landingFreeDeliveryMinQty: global.setting?.landingSetting?.freeDeliveryMinQty !== undefined ? global.setting?.landingSetting?.freeDeliveryMinQty : 2,
+        landingInsideDhakaCharge: global.setting?.landingSetting?.insideDhakaCharge ?? 60,
+        landingOutsideDhakaCharge: global.setting?.landingSetting?.outsideDhakaCharge ?? 120,
+        landingFreeDeliveryActive: global.setting?.landingSetting?.isFreeDeliveryActive !== undefined ? global.setting?.landingSetting?.isFreeDeliveryActive : true,
     }), [global.setting]);
 
     useEffect(() => {
@@ -35,13 +39,30 @@ const SupportSettings = () => {
 
     const handleSubmit = async (values: any) => {
         setLoading(true);
-        const { id, faq, phone, message, orderFreeShippingAmount, ...helpSupportFields } = values;
+        const {
+            id,
+            faq,
+            phone,
+            message,
+            orderFreeShippingAmount,
+            landingFreeDeliveryMinQty,
+            landingInsideDhakaCharge,
+            landingOutsideDhakaCharge,
+            landingFreeDeliveryActive,
+            ...helpSupportFields
+        } = values;
 
         const payload = {
             id,
             faq,
             orderFreeShippingAmount,
             whatsAppWidget: { phone, message },
+            landingSetting: {
+                freeDeliveryMinQty: landingFreeDeliveryMinQty !== undefined ? landingFreeDeliveryMinQty : 2,
+                insideDhakaCharge: landingInsideDhakaCharge !== undefined ? landingInsideDhakaCharge : 60,
+                outsideDhakaCharge: landingOutsideDhakaCharge !== undefined ? landingOutsideDhakaCharge : 120,
+                isFreeDeliveryActive: landingFreeDeliveryActive !== undefined ? landingFreeDeliveryActive : true,
+            },
             helpSupport: {
                 cashDelivery: helpSupportFields.cashDelivery,
                 returnSupport: helpSupportFields.returnSupport,
@@ -106,23 +127,84 @@ const SupportSettings = () => {
 
                         {/* Order & Shipping Section */}
                         <div className="space-y-4">
-                            <SettingsHeader title="Shipping Configurations" description="Set up threshold rules for order shipping capabilities." />
-                            <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-100">
-                                <Form.Item
-                                  name="orderFreeShippingAmount"
-                                  label={<span className="text-base font-medium">Free Shipping Threshold</span>}
-                                  className="mb-0 max-w-sm"
-                                  extra="Orders above this cart subtotal will automatically get free shipping."
-                                >
-                                  <InputNumber
-                                    size="large"
-                                    placeholder="e.g. 500"
-                                    className="w-full"
-                                    min={0}
-                                    addonBefore={<CarOutlined className="text-gray-400" />}
-                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                                  />
-                                </Form.Item>
+                            <SettingsHeader title="Shipping Configurations" description="Set up threshold rules for general website orders and FB/Instagram Ads landing pages." />
+                            <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-100 space-y-6">
+                                <div>
+                                    <div className="text-sm font-bold text-gray-800 mb-1">General Store Free Shipping</div>
+                                    <Form.Item
+                                      name="orderFreeShippingAmount"
+                                      label={<span className="text-sm font-medium">Cart Free Shipping Threshold (Amount)</span>}
+                                      className="mb-0 max-w-sm"
+                                      extra="Orders above this cart subtotal will automatically get free shipping on the main website."
+                                    >
+                                      <InputNumber
+                                        size="large"
+                                        placeholder="e.g. 2000"
+                                        className="w-full"
+                                        min={0}
+                                        addonBefore={<CarOutlined className="text-gray-400" />}
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                      />
+                                    </Form.Item>
+                                </div>
+
+                                <Divider className="my-2" />
+
+                                <div>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div>
+                                            <div className="text-sm font-bold text-gray-800">Landing Page (Ads) Delivery Rules</div>
+                                            <div className="text-xs text-gray-500">Configure delivery charges and bundle free delivery rules for Facebook/Instagram landing pages.</div>
+                                        </div>
+                                        <Form.Item name="landingFreeDeliveryActive" valuePropName="checked" className="mb-0">
+                                            <Switch checkedChildren="Free Delivery Promo ON" unCheckedChildren="Promo OFF" />
+                                        </Form.Item>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <Form.Item
+                                          name="landingFreeDeliveryMinQty"
+                                          label={<span className="text-sm font-medium">Min Quantity for Free Delivery</span>}
+                                          extra="Default: 2 (Buy 2+ get Free Delivery). Set 0 to disable."
+                                        >
+                                          <InputNumber
+                                            size="large"
+                                            placeholder="2"
+                                            className="w-full"
+                                            min={0}
+                                            max={99}
+                                          />
+                                        </Form.Item>
+
+                                        <Form.Item
+                                          name="landingInsideDhakaCharge"
+                                          label={<span className="text-sm font-medium">Inside Dhaka Delivery Fee</span>}
+                                          extra="Default: ৳60"
+                                        >
+                                          <InputNumber
+                                            size="large"
+                                            placeholder="60"
+                                            className="w-full"
+                                            min={0}
+                                            prefix="৳"
+                                          />
+                                        </Form.Item>
+
+                                        <Form.Item
+                                          name="landingOutsideDhakaCharge"
+                                          label={<span className="text-sm font-medium">Outside Dhaka Delivery Fee</span>}
+                                          extra="Default: ৳120"
+                                        >
+                                          <InputNumber
+                                            size="large"
+                                            placeholder="120"
+                                            className="w-full"
+                                            min={0}
+                                            prefix="৳"
+                                          />
+                                        </Form.Item>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

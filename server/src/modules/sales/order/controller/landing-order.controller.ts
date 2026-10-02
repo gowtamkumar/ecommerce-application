@@ -67,9 +67,51 @@ export const getLandingProduct = asyncHandler(async (req: Request, res: Response
     }
   }
 
-  // 3. Fetch store settings (phone, whatsapp, site name, logo)
+  // 3. Fetch store settings (phone, whatsapp, site name, logo, delivery settings)
   const settingRepo = connection.getRepository(SettingEntity);
   const storeSetting = await settingRepo.findOne({ order: { id: 'DESC' } });
+
+  // Extract landing delivery configuration from store settings
+  const landingConfig = (storeSetting?.landingSetting as any) || {};
+
+  const finalInsideDhaka =
+    landingConfig.insideDhakaCharge !== undefined && landingConfig.insideDhakaCharge !== null && landingConfig.insideDhakaCharge !== ''
+      ? Number(landingConfig.insideDhakaCharge)
+      : insideDhakaCharge;
+
+  const finalOutsideDhaka =
+    landingConfig.outsideDhakaCharge !== undefined && landingConfig.outsideDhakaCharge !== null && landingConfig.outsideDhakaCharge !== ''
+      ? Number(landingConfig.outsideDhakaCharge)
+      : outsideDhakaCharge;
+
+  const isFreeDeliveryActive =
+    landingConfig.isFreeDeliveryActive !== undefined
+      ? Boolean(landingConfig.isFreeDeliveryActive)
+      : true;
+
+  // Free delivery quantity rule:
+  // If isFreeDeliveryActive is false -> null (disabled)
+  // Else if landingConfig.freeDeliveryMinQty is explicitly configured (e.g. 2, 3, or null/0 to disable) -> use it
+  // Else default to 2
+  let freeDeliveryMinQty: number | null = 2;
+  if (!isFreeDeliveryActive) {
+    freeDeliveryMinQty = null;
+  } else if (landingConfig.freeDeliveryMinQty !== undefined) {
+    freeDeliveryMinQty =
+      landingConfig.freeDeliveryMinQty === null || landingConfig.freeDeliveryMinQty === '' || Number(landingConfig.freeDeliveryMinQty) <= 0
+        ? null
+        : Number(landingConfig.freeDeliveryMinQty);
+  }
+
+  // Free delivery minimum order amount rule
+  let freeDeliveryMinAmount: number | null = null;
+  if (isFreeDeliveryActive) {
+    if (landingConfig.freeDeliveryMinAmount !== undefined && landingConfig.freeDeliveryMinAmount !== null && landingConfig.freeDeliveryMinAmount !== '') {
+      freeDeliveryMinAmount = Number(landingConfig.freeDeliveryMinAmount) > 0 ? Number(landingConfig.freeDeliveryMinAmount) : null;
+    } else if (storeSetting?.orderFreeShippingAmount) {
+      freeDeliveryMinAmount = Number(storeSetting.orderFreeShippingAmount) > 0 ? Number(storeSetting.orderFreeShippingAmount) : null;
+    }
+  }
 
   return res.status(200).json({
     success: true,
@@ -77,8 +119,15 @@ export const getLandingProduct = asyncHandler(async (req: Request, res: Response
     data: {
       product: result[0],
       deliveryCharges: {
-        insideDhaka: insideDhakaCharge,
-        outsideDhaka: outsideDhakaCharge,
+        insideDhaka: finalInsideDhaka,
+        outsideDhaka: finalOutsideDhaka,
+      },
+      deliverySettings: {
+        insideDhaka: finalInsideDhaka,
+        outsideDhaka: finalOutsideDhaka,
+        freeDeliveryMinQty,
+        freeDeliveryMinAmount,
+        isFreeDeliveryActive,
       },
       storeSetting: {
         siteName: storeSetting?.siteName || 'Fashion Store',
