@@ -20,6 +20,7 @@ const AppearanceSettings = dynamic(() => import("./AppearanceSettings"), { ssr: 
 const MarketingAndSeo = dynamic(() => import("./MarketingAndSeo"), { ssr: false });
 const SupportSettings = dynamic(() => import("./SupportSettings"), { ssr: false });
 const PageLayoutSettings = dynamic(() => import("./PageLayoutSettings"), { ssr: false });
+const LandingPageSettings = dynamic(() => import("./LandingPageSettings"), { ssr: false });
 
 const GeneralSettings = dynamic(() => import("./GeneralSettings"), {
   ssr: false,
@@ -138,6 +139,11 @@ export default function Index() {
             label: "Page Layout",
             key: "page_layout",
             children: <PageLayoutSettings />,
+          },
+          {
+            label: "Landing Page (Ads)",
+            key: "landing_page",
+            children: <LandingPageSettings />,
           },
           {
             label: "Advanced (Geo)",

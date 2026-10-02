@@ -9,48 +9,66 @@ import {
   FiTruck,
 } from "react-icons/fi";
 
-export default function LandingFeatures() {
-  const features = [
+interface LandingFeatureItem {
+  icon?: any;
+  title: string;
+  description: string;
+}
+
+interface LandingFeaturesProps {
+  features?: LandingFeatureItem[];
+  title?: string;
+  subtitle?: string;
+}
+
+export default function LandingFeatures({
+  features: customFeatures,
+  title,
+  subtitle,
+}: LandingFeaturesProps) {
+  const defaultFeatures: LandingFeatureItem[] = [
     {
       icon: <FiStar className="text-amber-500 text-2xl" />,
-      title: "১০০% প্রিমিয়াম কোয়ালিটি",
-      description: "সর্বোচ্চ মানের টেকসই ও আরামদায়ক ফেব্রিক দ্বারা প্রস্তুতকৃত।",
+      title: "100% Premium Quality / প্রিমিয়াম কোয়ালিটি",
+      description: "Crafted with durable, high-grade materials and export-quality fine stitching.",
     },
     {
       icon: <FiDollarSign className="text-emerald-500 text-2xl" />,
-      title: "ক্যাশ অন ডেলিভারি",
-      description: "কোনো অগ্রিম পেমেন্ট ছাড়াই পণ্য হাতে পেয়ে টাকা পরিশোধ করুন।",
+      title: "Cash On Delivery / ক্যাশ অন ডেলিভারি",
+      description: "Zero advance payment required. Inspect and pay safely at your doorstep.",
     },
     {
       icon: <FiCheckCircle className="text-blue-500 text-2xl" />,
-      title: "দেখে চেক করে নেওয়ার সুযোগ",
-      description: "ডেলিভারি ম্যানের সামনে পণ্য দেখে সন্তুষ্ট হয়ে মূল্য দিন।",
+      title: "Open Box Inspection / দেখে নেওয়ার সুযোগ",
+      description: "Check product quality and fitting in front of the delivery agent before paying.",
     },
     {
       icon: <FiTruck className="text-rose-500 text-2xl" />,
-      title: "সারা দেশে দ্রুত ডেলিভারি",
-      description: "ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা এবং ঢাকার বাইরে ২-৩ দিনে হোম ডেলিভারি।",
+      title: "Fast Worldwide Delivery / দ্রুত ডেলিভারি",
+      description: "24-48 hours domestic express and nationwide door-to-door delivery.",
     },
     {
       icon: <FiRepeat className="text-purple-500 text-2xl" />,
-      title: "সহজ রিটার্ন ও এক্সচেঞ্জ",
-      description: "সাইজ বা কালার সমস্যা হলে ৩ দিনের মধ্যে পরিবর্তনের সুবিধা।",
+      title: "Easy Exchange & Return / সহজ রিটার্ন",
+      description: "Hassle-free replacement policy if you need a different size or color.",
     },
     {
       icon: <FiHeadphones className="text-cyan-500 text-2xl" />,
-      title: "২৪/৭ কাস্টমার সাপোর্ট",
-      description: "অর্ডার বা পণ্যের যেকোনো তথ্যের জন্য আমাদের কল বা হোয়াটসঅ্যাপ করুন।",
+      title: "24/7 Dedicated Support / সার্বক্ষণিক সাপোর্ট",
+      description: "Prompt customer assistance anytime via WhatsApp, phone, or live chat.",
     },
   ];
+
+  const features = customFeatures && customFeatures.length > 0 ? customFeatures : defaultFeatures;
 
   return (
     <div className="w-full bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
       <div className="text-center space-y-1">
         <span className="text-xs uppercase tracking-widest font-black text-global-primary">
-          আমাদের বিশেষত্ব
+          {subtitle || "আমাদের বিশেষত্ব"}
         </span>
         <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-          কেন আমাদের পণ্যটি কিনবেন?
+          {title || "কেন আমাদের পণ্যটি কিনবেন?"}
         </h2>
       </div>
 

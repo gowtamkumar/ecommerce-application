@@ -30,9 +30,16 @@ interface LandingOrderFormProps {
   deliveryCharges: {
     insideDhaka: number;
     outsideDhaka: number;
+    zone1Name?: string;
+    zone1Time?: string;
+    zone2Name?: string;
+    zone2Time?: string;
   };
   freeDeliveryMinQty?: number | null;
   freeDeliveryMinAmount?: number | null;
+  title?: string;
+  subtitle?: string;
+  ctaButtonText?: string;
   utmData?: {
     utmSource?: string;
     utmMedium?: string;
@@ -52,6 +59,9 @@ export default function LandingOrderForm({
   deliveryCharges,
   freeDeliveryMinQty = 2,
   freeDeliveryMinAmount = null,
+  title,
+  subtitle,
+  ctaButtonText,
   utmData,
   onOrderSuccess,
 }: LandingOrderFormProps) {
@@ -198,10 +208,10 @@ export default function LandingOrderForm({
           ক্যাশ অন ডেলিভারি (Cash on Delivery)
         </span>
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-black">
-          অর্ডারটি কনফার্ম করতে নিচের ফর্মটি পূরণ করুন
+          {title || "অর্ডারটি কনফার্ম করতে নিচের ফর্মটি পূরণ করুন"}
         </h2>
         <p className="text-white/85 text-xs sm:text-sm">
-          পণ্য হাতে পেয়ে দেখে টাকা পরিশোধ করার সুবিধা
+          {subtitle || "পণ্য হাতে পেয়ে দেখে টাকা পরিশোধ করার সুবিধা"}
         </p>
       </div>
 
@@ -366,11 +376,11 @@ export default function LandingOrderForm({
           <div className="space-y-2">
             <label className="text-xs sm:text-sm font-extrabold text-gray-800 flex items-center gap-1.5">
               <FiTruck className="text-global-primary text-base" />
-              <span>ডেলিভারি এলাকা নির্বাচন করুন <span className="text-global-primary">*</span></span>
+              <span>ডেলিভারি এলাকা নির্বাচন করুন (Delivery Area) <span className="text-global-primary">*</span></span>
             </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Inside Dhaka */}
+              {/* Inside Dhaka / Zone 1 */}
               <div
                 onClick={() => setDeliveryZone("inside_dhaka")}
                 className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between ${
@@ -393,17 +403,19 @@ export default function LandingOrderForm({
                   </div>
                   <div>
                     <div className="text-xs sm:text-sm font-bold text-gray-900">
-                      ঢাকার ভিতরে
+                      {deliveryCharges.zone1Name || "ঢাকার ভিতরে (Inside Dhaka)"}
                     </div>
-                    <div className="text-[11px] text-gray-500">২৪-৪৮ ঘণ্টার মধ্যে</div>
+                    <div className="text-[11px] text-gray-500">
+                      {deliveryCharges.zone1Time || "২৪-৪৮ ঘণ্টার মধ্যে (24-48 Hours)"}
+                    </div>
                   </div>
                 </div>
                 <div className="text-xs sm:text-sm font-black text-global-primary">
-                  {isFreeDelivery ? "ফ্রি" : formatPrice(deliveryCharges.insideDhaka || 60)}
+                  {isFreeDelivery ? "ফ্রি (FREE)" : formatPrice(deliveryCharges.insideDhaka || 60)}
                 </div>
               </div>
 
-              {/* Outside Dhaka */}
+              {/* Outside Dhaka / Zone 2 */}
               <div
                 onClick={() => setDeliveryZone("outside_dhaka")}
                 className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between ${
@@ -426,13 +438,15 @@ export default function LandingOrderForm({
                   </div>
                   <div>
                     <div className="text-xs sm:text-sm font-bold text-gray-900">
-                      ঢাকার বাইরে
+                      {deliveryCharges.zone2Name || "ঢাকার বাইরে (Outside Dhaka)"}
                     </div>
-                    <div className="text-[11px] text-gray-500">২-৩ কার্যদিবস</div>
+                    <div className="text-[11px] text-gray-500">
+                      {deliveryCharges.zone2Time || "২-৩ কার্যদিবস (2-3 Business Days)"}
+                    </div>
                   </div>
                 </div>
                 <div className="text-xs sm:text-sm font-black text-global-primary">
-                  {isFreeDelivery ? "ফ্রি" : formatPrice(deliveryCharges.outsideDhaka || 120)}
+                  {isFreeDelivery ? "ফ্রি (FREE)" : formatPrice(deliveryCharges.outsideDhaka || 120)}
                 </div>
               </div>
             </div>
@@ -571,7 +585,11 @@ export default function LandingOrderForm({
           ) : (
             <>
               <FiShoppingBag className="text-2xl" />
-              <span>অর্ডার কনফার্ম করুন - {formatPrice(grandTotal)}</span>
+              <span>
+                {ctaButtonText
+                  ? `${ctaButtonText} - ${formatPrice(grandTotal)}`
+                  : `অর্ডার কনফার্ম করুন - ${formatPrice(grandTotal)}`}
+              </span>
             </>
           )}
         </button>

@@ -96,6 +96,7 @@ export default async function LandingPage({ params }: PageProps) {
     outsideDhaka: 120,
   };
   let deliverySettings = landingRes?.data?.deliverySettings;
+  let landingSetting = landingRes?.data?.landingSetting;
   let storeSetting = landingRes?.data?.storeSetting;
 
   // Fallback to general product endpoint if landing product endpoint is unavailable
@@ -138,6 +139,7 @@ export default async function LandingPage({ params }: PageProps) {
           : 2
       }
       freeDeliveryMinAmount={deliverySettings?.freeDeliveryMinAmount ?? null}
+      landingSetting={landingSetting}
       storeSetting={storeSetting}
     />
   );

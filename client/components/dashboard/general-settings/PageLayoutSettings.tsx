@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Card, Divider, InputNumber, Radio, Space, Switch, Table, Tabs, Typography } from "antd";
+import { Button, Card, Divider, Input, InputNumber, Radio, Space, Switch, Table, Tabs, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { saveSetting, updateSetting } from "@/lib/apis/setting";
 import { errorNotification, successNotification } from "@/lib/utils/notification";
@@ -53,6 +53,14 @@ const DEFAULT_SECTIONS = {
         { slug: "support_options", name: "Support Options", sequence: 2, status: true },
         { slug: "faqs", name: "FAQ Section", sequence: 3, status: true },
         { slug: "contact_form", name: "Contact Form", sequence: 4, status: true },
+    ],
+    landing: [
+        { slug: "hero", name: "Product Hero & Urgency Scarcity", sequence: 1, status: true },
+        { slug: "features", name: "Value Proposition & Trust Badges", sequence: 2, status: true },
+        { slug: "bundle_offers", name: "Combo / Bundle Quantity Deals", sequence: 3, status: true },
+        { slug: "size_guide", name: "Clothing Size Measurement Guide", sequence: 4, status: true },
+        { slug: "reviews", name: "Customer Testimonials & Social Proof", sequence: 5, status: true },
+        { slug: "order_form", name: "1-Page Fast Checkout Form", sequence: 6, status: true },
     ]
 };
 
@@ -63,7 +71,7 @@ const PageLayoutSettings = () => {
     const [activeTab, setActiveTab] = useState("home");
 
     const getSectionsForPage = useCallback((pageKey: string) => {
-        const pageData = global.setting?.[pageKey === 'support' ? 'helpSupport' : `${pageKey}Page`];
+        const pageData = global.setting?.[pageKey === 'support' ? 'helpSupport' : pageKey === 'landing' ? 'landingSetting' : `${pageKey}Page`];
         const existingSections = pageData?.sections || [];
         
         // Merge with defaults to ensure all sections are present
@@ -79,10 +87,18 @@ const PageLayoutSettings = () => {
         about: getSectionsForPage("about"),
         contact: getSectionsForPage("contact"),
         support: getSectionsForPage("support"),
+        landing: getSectionsForPage("landing"),
     });
 
     const [bannerLayout, setBannerLayout] = useState<string>(
         global.setting?.homePage?.bannerLayout || "slider"
+    );
+
+    const [landingUrgencyText, setLandingUrgencyText] = useState<string>(
+        global.setting?.landingSetting?.urgencyText || "সীমিত সময়ের ধামাকা অফার! স্টক শেষ হওয়ার আগেই অর্ডার করুন।"
+    );
+    const [landingCtaText, setLandingCtaText] = useState<string>(
+        global.setting?.landingSetting?.ctaButtonText || "অর্ডার করতে এখানে ক্লিক করুন"
     );
 
     useEffect(() => {
@@ -91,8 +107,11 @@ const PageLayoutSettings = () => {
             about: getSectionsForPage("about"),
             contact: getSectionsForPage("contact"),
             support: getSectionsForPage("support"),
+            landing: getSectionsForPage("landing"),
         });
         setBannerLayout(global.setting?.homePage?.bannerLayout || "slider");
+        setLandingUrgencyText(global.setting?.landingSetting?.urgencyText || "সীমিত সময়ের ধামাকা অফার! স্টক শেষ হওয়ার আগেই অর্ডার করুন।");
+        setLandingCtaText(global.setting?.landingSetting?.ctaButtonText || "অর্ডার করতে এখানে ক্লিক করুন");
     }, [getSectionsForPage, global.setting]);
 
     const handleUpdateSection = (pageKey: string, slug: string, field: string, value: any) => {
@@ -113,6 +132,12 @@ const PageLayoutSettings = () => {
         payload.aboutPage = { ...global.setting?.aboutPage, sections: sections.about };
         payload.contactPage = { ...global.setting?.contactPage, sections: sections.contact };
         payload.helpSupport = { ...global.setting?.helpSupport, sections: sections.support };
+        payload.landingSetting = {
+            ...global.setting?.landingSetting,
+            sections: sections.landing,
+            urgencyText: landingUrgencyText,
+            ctaButtonText: landingCtaText,
+        };
 
         try {
             const res = id ? await updateSetting(payload) : await saveSetting(payload);
@@ -285,6 +310,48 @@ const PageLayoutSettings = () => {
                                         size="middle"
                                         className="border-x border-t border-gray-100 rounded-xl overflow-hidden shadow-sm"
                                     />
+                                </div>
+                            )
+                        },
+                        {
+                            label: "Landing Page (FB/Ads)",
+                            key: "landing",
+                            children: (
+                                <div className="py-4 space-y-6">
+                                    <div className="p-5 rounded-xl border border-gray-100 bg-gray-50/50 space-y-4">
+                                        <div className="font-semibold text-gray-900 text-sm">Landing Page Promotional Content</div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-semibold text-gray-600 block mb-1">Top Urgency Headline Banner</label>
+                                                <Input
+                                                    value={landingUrgencyText}
+                                                    onChange={(e) => setLandingUrgencyText(e.target.value)}
+                                                    placeholder="সীমিত সময়ের ধামাকা অফার! স্টক শেষ হওয়ার আগেই অর্ডার করুন।"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-semibold text-gray-600 block mb-1">Main Action CTA Button Text</label>
+                                                <Input
+                                                    value={landingCtaText}
+                                                    onChange={(e) => setLandingCtaText(e.target.value)}
+                                                    placeholder="অর্ডার করতে এখানে ক্লিক করুন"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div className="font-semibold text-gray-900 text-sm mb-3">Section Sequence & Visibility</div>
+                                        <Table 
+                                            dataSource={sections.landing} 
+                                            columns={columns("landing")} 
+                                            pagination={false} 
+                                            rowKey="slug"
+                                            bordered
+                                            size="middle"
+                                            className="border-x border-t border-gray-100 rounded-xl overflow-hidden shadow-sm"
+                                        />
+                                    </div>
                                 </div>
                             )
                         }

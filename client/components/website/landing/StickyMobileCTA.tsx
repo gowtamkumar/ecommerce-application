@@ -8,12 +8,14 @@ interface StickyMobileCTAProps {
   price: number;
   quantity: number;
   onOrderClick: () => void;
+  ctaButtonText?: string;
 }
 
 export default function StickyMobileCTA({
   price,
   quantity,
   onOrderClick,
+  ctaButtonText,
 }: StickyMobileCTAProps) {
   const { formatPrice } = useCurrency();
   const [show, setShow] = useState(false);
@@ -51,7 +53,7 @@ export default function StickyMobileCTA({
           className="flex-1 py-3 px-5 rounded-2xl bg-global-primary hover:bg-global-hover active:scale-95 text-white font-black text-sm shadow-lg shadow-global-primary/30 flex items-center justify-center gap-2 cursor-pointer transition-all animate-pulse"
         >
           <FiShoppingBag className="text-lg" />
-          <span>অর্ডার করতে ক্লিক করুন</span>
+          <span>{ctaButtonText || "অর্ডার করতে ক্লিক করুন"}</span>
         </button>
       </div>
     </div>

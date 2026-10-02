@@ -129,6 +129,36 @@ export const getLandingProduct = asyncHandler(async (req: Request, res: Response
         freeDeliveryMinAmount,
         isFreeDeliveryActive,
       },
+      landingSetting: {
+        insideDhakaCharge: finalInsideDhaka,
+        outsideDhakaCharge: finalOutsideDhaka,
+        zone1Name: landingConfig.zone1Name || 'Inside Dhaka (Standard Delivery)',
+        zone1Time: landingConfig.zone1Time || '24-48 Hours',
+        zone2Name: landingConfig.zone2Name || 'Outside Dhaka (Express Delivery)',
+        zone2Time: landingConfig.zone2Time || '2-3 Business Days',
+        freeDeliveryMinQty,
+        freeDeliveryMinAmount,
+        isFreeDeliveryActive,
+        urgencyText:
+          landingConfig.urgencyText ||
+          'Special Limited-Time Deal! Order now before stock runs out.',
+        countdownEnabled: landingConfig.countdownEnabled !== false,
+        countdownHours: Number(landingConfig.countdownHours) || 3,
+        scarcityEnabled: landingConfig.scarcityEnabled !== false,
+        ctaButtonText: landingConfig.ctaButtonText || 'Order Now (Cash on Delivery)',
+        ctaSubtext:
+          landingConfig.ctaSubtext ||
+          'Fast Dispatch • Cash on Delivery • 100% Satisfaction Guarantee',
+        orderFormTitle: landingConfig.orderFormTitle || 'Complete Your Order Below',
+        orderFormSubtitle:
+          landingConfig.orderFormSubtitle ||
+          'Fill in your delivery address to place your order instantly.',
+        featuresTitle: landingConfig.featuresTitle || 'Why Choose Our Products?',
+        featuresSubtitle: landingConfig.featuresSubtitle || 'PREMIUM QUALITY GUARANTEED',
+        features: landingConfig.features || null,
+        bundles: landingConfig.bundles || null,
+        sections: landingConfig.sections || null,
+      },
       storeSetting: {
         siteName: storeSetting?.siteName || 'Fashion Store',
         phone: storeSetting?.phone || '',

@@ -8,6 +8,9 @@ interface LandingBundleOffersProps {
   quantity: number;
   onSelectQuantity: (qty: number) => void;
   freeDeliveryMinQty?: number | null;
+  title?: string;
+  subtitle?: string;
+  customBundles?: any[];
 }
 
 export default function LandingBundleOffers({
@@ -15,6 +18,9 @@ export default function LandingBundleOffers({
   quantity,
   onSelectQuantity,
   freeDeliveryMinQty = 2,
+  title,
+  subtitle,
+  customBundles,
 }: LandingBundleOffersProps) {
   const { formatPrice } = useCurrency();
 
@@ -25,49 +31,62 @@ export default function LandingBundleOffers({
     return qty >= freeDeliveryMinQty;
   };
 
-  const bundles = [
-    {
-      qty: 1,
-      badge: "রেগুলার অফার",
-      title: "১টি পিস",
-      description: "সিঙ্গেল পিস ট্রাই করতে চান",
-      totalPrice: unitPrice,
-      deliveryPerk: isFree(1) ? "ডেলিভারি সম্পূর্ণ ফ্রি! 🚚" : "ডেলিভারি চার্জ প্রযোজ্য",
-      isFreeDelivery: isFree(1),
-      popular: false,
-    },
-    {
-      qty: 2,
-      badge: isFree(2) ? "সবচেয়ে জনপ্রিয় 🔥" : "২ পিস প্যাক",
-      title: "২টি পিস কম্বো",
-      description: "বেস্ট ভ্যালু প্যাক",
-      totalPrice: unitPrice * 2,
-      deliveryPerk: isFree(2) ? "ডেলিভারি সম্পূর্ণ ফ্রি! 🚚" : "ডেলিভারি চার্জ প্রযোজ্য",
-      isFreeDelivery: isFree(2),
-      popular: true,
-    },
-    {
-      qty: 3,
-      badge: "সর্বোচ্চ সাশ্রয়ী 💥",
-      title: "৩টি পিস ফ্যামিলি প্যাক",
-      description: "অতিরিক্ত ৳১০০ ডিসকাউন্ট",
-      totalPrice: Math.max(0, unitPrice * 3 - 100),
-      deliveryPerk: isFree(3) ? "ফ্রি হোম ডেলিভারি + স্পেশাল গিফট 🎁" : "স্পেশাল গিফট 🎁",
-      isFreeDelivery: isFree(3),
-      popular: false,
-    },
-  ];
+  const bundles =
+    customBundles && customBundles.length > 0
+      ? customBundles.map((b: any) => ({
+          qty: Number(b.qty) || 1,
+          badge: b.badge || "Special Deal",
+          title: b.title || `${b.qty} Items Pack`,
+          description: b.description || "Combo deal",
+          totalPrice: Math.max(0, unitPrice * (Number(b.qty) || 1) - (Number(b.discountAmount) || 0)),
+          deliveryPerk: isFree(Number(b.qty)) ? "Free Delivery Included 🚚" : "Standard Delivery",
+          isFreeDelivery: isFree(Number(b.qty)),
+          popular: Boolean(b.popular),
+        }))
+      : [
+          {
+            qty: 1,
+            badge: "Regular Offer",
+            title: "1 Piece (Single Pack)",
+            description: "Try out a single piece",
+            totalPrice: unitPrice,
+            deliveryPerk: isFree(1) ? "Free Delivery Included 🚚" : "Standard Delivery",
+            isFreeDelivery: isFree(1),
+            popular: false,
+          },
+          {
+            qty: 2,
+            badge: isFree(2) ? "Most Popular 🔥" : "Duo Pack",
+            title: "2 Pieces (Best Value Duo)",
+            description: "Best selling customer favorite",
+            totalPrice: unitPrice * 2,
+            deliveryPerk: isFree(2) ? "Free Delivery Included 🚚" : "Standard Delivery",
+            isFreeDelivery: isFree(2),
+            popular: true,
+          },
+          {
+            qty: 3,
+            badge: "Best Value 💥",
+            title: "3 Pieces (Family Pack)",
+            description: "Extra savings bundle",
+            totalPrice: Math.max(0, unitPrice * 3 - 100),
+            deliveryPerk: isFree(3) ? "Free Delivery + Extra Gift 🎁" : "Special Gift 🎁",
+            isFreeDelivery: isFree(3),
+            popular: false,
+          },
+        ];
 
   return (
     <div className="w-full bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
       <div className="text-center space-y-1">
         <span className="text-xs uppercase tracking-widest font-black text-global-primary">
-          স্পেশাল প্যাকেজ ডিল
+          {subtitle || "SPECIAL PACKAGE DEALS"}
         </span>
         <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-          {freeDeliveryMinQty && freeDeliveryMinQty > 0
-            ? "কম্বো অফারে অর্ডার করুন ও ডেলিভারি ফ্রি পান!"
-            : "কম্বো অফারে অর্ডার করুন ও অতিরিক্ত সাশ্রয় পান!"}
+          {title ||
+            (freeDeliveryMinQty && freeDeliveryMinQty > 0
+              ? "Order Combo Deals & Get Free Delivery!"
+              : "Order Combo Deals & Save More!")}
         </h2>
       </div>
 
