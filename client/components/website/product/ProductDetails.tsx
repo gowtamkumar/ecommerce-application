@@ -4,6 +4,7 @@ import appConfig from "@/appConfig";
 import AddToCartButton from "@/components/share-component/AddToCartButton";
 import { useCurrency } from "@/context/CurrencyContext";
 import { getCartLists, saveCart } from "@/lib/apis/cart";
+import { getSettings } from "@/lib/apis/setting";
 import { saveWishlist } from "@/lib/apis/wishlist";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/lib/utils/notification";
 import { replaceCart, selectCart } from "@/redux/features/cart/cartSlice";
 import {
+    selectGlobal,
     setResponse,
     setUnAuthorize,
 } from "@/redux/features/global/globalSlice";
@@ -29,6 +31,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import {
     FiCheck,
     FiChevronRight,
+    FiHeadphones,
     FiHeart,
     FiLock,
     FiRotateCcw,
@@ -82,6 +85,74 @@ export default function ProductDetails({
 
   const product = products?.product?.id ? products.product : (initialProduct || products?.product);
   const { formatPrice, selectedCurrency } = useCurrency();
+
+  const global = useSelector(selectGlobal);
+  const [storeSetting, setStoreSetting] = useState<any>(global?.setting || null);
+
+  useEffect(() => {
+    if (!storeSetting && !global?.setting?.id) {
+      getSettings()
+        .then((res) => {
+          if (res?.data) {
+            setStoreSetting(res.data);
+          }
+        })
+        .catch(() => {});
+    } else if (!storeSetting && global?.setting?.id) {
+      setStoreSetting(global.setting);
+    }
+  }, [global?.setting, storeSetting]);
+
+  const activeSetting = storeSetting || global?.setting || {};
+  const helpSupport = activeSetting?.helpSupport || {};
+  const returnSetting = activeSetting?.returnSetting || {};
+  const freeShipping = activeSetting?.orderFreeShippingAmount;
+  const phone = activeSetting?.whatsAppWidget?.phone || activeSetting?.phone;
+
+  // 1. Delivery Guarantee
+  const deliveryTitle = helpSupport?.cashDelivery
+    ? helpSupport.cashDelivery
+    : "Fast Delivery";
+  const deliveryDesc =
+    helpSupport?.cashDeliveryDesc ||
+    (freeShipping && Number(freeShipping) > 0
+      ? `Free over ${formatPrice(freeShipping)}`
+      : "24–48h Dispatch");
+
+  // 2. Authenticity Guarantee
+  const guaranteeTitle =
+    helpSupport?.originalProduct && helpSupport?.originalProduct !== "Original Product"
+      ? helpSupport.originalProduct
+      : helpSupport?.guarantee && helpSupport?.originalProduct
+      ? `${helpSupport.guarantee} ${helpSupport.originalProduct}`
+      : helpSupport?.originalProduct || "100% Genuine";
+  const guaranteeDesc =
+    helpSupport?.originalProductDesc ||
+    "Direct from Brand";
+
+  // 3. Return Policy
+  const returnDays = returnSetting?.returnWindowDays;
+  const returnTitle = returnDays
+    ? `${returnDays}-Day ${helpSupport?.returnSupport || "Easy Returns"}`
+    : helpSupport?.returnSupport || "Easy Returns";
+  const returnDesc =
+    helpSupport?.returnSupportDesc ||
+    (returnDays
+      ? `${returnDays}-Day Guarantee`
+      : "30-Day Guarantee");
+
+  // 4. Guarantee / Support / Secure Checkout
+  const isSupportBadge =
+    Boolean(helpSupport?.guarantee && helpSupport?.guarantee !== "100% Guarantee");
+  const supportTitle =
+    isSupportBadge
+      ? helpSupport.guarantee
+      : "SSL Secure";
+  const supportDesc =
+    helpSupport?.guaranteeDesc ||
+    (isSupportBadge
+      ? (phone ? `Call ${phone}` : "24/7 Live Support")
+      : "Safe Checkout");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -452,7 +523,7 @@ export default function ProductDetails({
               {/* Add to Cart CTA */}
               <div className="flex-1">
                 <AddToCartButton
-                  className="!h-12 !rounded-xl !text-xs !font-bold !uppercase !tracking-wider !bg-slate-900 hover:!bg-slate-800 !text-white !border-none !shadow-md !shadow-slate-900/15 cursor-pointer"
+                  className="h-12!rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-900 hover:!bg-slate-800 text-white border-none shadow-md shadow-slate-900/15 cursor-pointer"
                   item={{
                     ...product,
                     productVariantId: defaultProduct?.id,
@@ -510,17 +581,17 @@ export default function ProductDetails({
           </div>
 
           {/* Assurance & Value Guarantees Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-slate-100">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
             <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
               <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200/60 text-amber-600 flex items-center justify-center shrink-0">
                 <FiTruck className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0">
                 <h4 className="text-xs font-bold text-slate-900 leading-tight">
-                  Fast Delivery
+                  {deliveryTitle}
                 </h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  24–48h Dispatch
+                <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
+                  {deliveryDesc}
                 </p>
               </div>
             </div>
@@ -531,10 +602,10 @@ export default function ProductDetails({
               </div>
               <div className="min-w-0">
                 <h4 className="text-xs font-bold text-slate-900 leading-tight">
-                  100% Genuine
+                  {guaranteeTitle}
                 </h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  Direct from Brand
+                <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
+                  {guaranteeDesc}
                 </p>
               </div>
             </div>
@@ -545,24 +616,28 @@ export default function ProductDetails({
               </div>
               <div className="min-w-0">
                 <h4 className="text-xs font-bold text-slate-900 leading-tight">
-                  Easy Returns
+                  {returnTitle}
                 </h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  30-Day Guarantee
+                <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
+                  {returnDesc}
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
               <div className="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200/60 text-slate-700 flex items-center justify-center shrink-0">
-                <FiLock className="w-3.5 h-3.5" />
+                {isSupportBadge ? (
+                  <FiHeadphones className="w-3.5 h-3.5" />
+                ) : (
+                  <FiLock className="w-3.5 h-3.5" />
+                )}
               </div>
               <div className="min-w-0">
                 <h4 className="text-xs font-bold text-slate-900 leading-tight">
-                  SSL Secure
+                  {supportTitle}
                 </h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  Safe Checkout
+                <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
+                  {supportDesc}
                 </p>
               </div>
             </div>

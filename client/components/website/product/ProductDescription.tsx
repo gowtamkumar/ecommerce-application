@@ -3,13 +3,12 @@
 import { selectProduct } from "@/redux/features/products/productSlice";
 import { useState } from "react";
 import {
-    FiCheckCircle,
     FiFileText,
     FiHelpCircle,
     FiPackage,
     FiRotateCcw,
     FiShield,
-    FiTruck,
+    FiTruck
 } from "react-icons/fi";
 import { useSelector } from "react-redux";
 
@@ -98,44 +97,7 @@ export default function ProductDescription() {
               </p>
             )}
 
-            {/* Feature Highlights Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-100">
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <FiCheckCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs font-black text-slate-900">
-                    Premium Soft Touch
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                    Breathable, hypoallergenic fabrics engineered for skin sensitivity.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <FiCheckCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs font-black text-slate-900">
-                    Reinforced Stitching
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                    High-stress seam reinforcement ensures shape retention wash after wash.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <FiCheckCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs font-black text-slate-900">
-                    Easy Wash Care
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                    Colorfast dye technology resists fading over continuous laundering.
-                  </p>
-                </div>
-              </div>
-            </div>
+           
           </div>
         )}
 
@@ -160,23 +122,23 @@ export default function ProductDescription() {
                 </span>
               </div>
 
-              <div className="flex justify-between py-3.5 px-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+              {/* <div className="flex justify-between py-3.5 px-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
                 <span className="font-bold text-slate-400 uppercase tracking-wider">
                   Material
                 </span>
                 <span className="font-black text-slate-900">
                   100% Breathable Combed Cotton
                 </span>
-              </div>
+              </div> */}
 
-              <div className="flex justify-between py-3.5 px-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+              {/* <div className="flex justify-between py-3.5 px-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
                 <span className="font-bold text-slate-400 uppercase tracking-wider">
                   Fit Type
                 </span>
                 <span className="font-black text-slate-900">
                   Relaxed Comfort Fit
                 </span>
-              </div>
+              </div> */}
 
               <div className="flex justify-between py-3.5 px-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
                 <span className="font-bold text-slate-400 uppercase tracking-wider">
