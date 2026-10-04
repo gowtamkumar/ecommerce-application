@@ -14,7 +14,7 @@ import { Button, Form, Input, Skeleton } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { FiBox, FiRefreshCw, FiSave } from "react-icons/fi";
+import { FiBox, FiExternalLink, FiRefreshCw, FiSave } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
 const ProductRightTopSection = dynamic(
@@ -300,7 +300,32 @@ const AddProduct = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              {isEditing && product?.slug && (
+                <>
+                  <Button
+                    size="large"
+                    icon={<FiExternalLink className="w-4 h-4" />}
+                    href={`/products/${product.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="border-gray-300 text-global-secondary hover:border-gray-400 hover:text-global-primary flex items-center gap-1.5"
+                    style={{ borderRadius: "var(--button-border-radius)" }}
+                  >
+                    View Product
+                  </Button>
+                  <Button
+                    size="large"
+                    href={`/landing/${product.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100 flex items-center gap-1.5 font-medium"
+                    style={{ borderRadius: "var(--button-border-radius)" }}
+                  >
+                    Ads Landing Page
+                  </Button>
+                </>
+              )}
               <Button
                 size="large"
                 icon={<FiRefreshCw className="w-4 h-4" />}

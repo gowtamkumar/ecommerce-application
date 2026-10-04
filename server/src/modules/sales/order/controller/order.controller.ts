@@ -727,6 +727,7 @@ export const orderStatusUpdate = asyncHandler(async (req: CustomRequest, res: Re
       where: { id: targetUserId },
       select: ['phone'],
     });
+
     if (getuser?.phone) {
       await sendSms(getuser.phone, message);
     }

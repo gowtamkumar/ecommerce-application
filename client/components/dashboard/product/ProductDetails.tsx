@@ -3,7 +3,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { getProduct } from "@/lib/apis/admin/product";
 import { ProductType } from "@/lib/types/product";
 import { getUploadImageUrl } from "@/lib/utils/imageUrl";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, RocketOutlined } from "@ant-design/icons";
 import { Button, Card, Descriptions, Image, Spin, Tag, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -55,17 +55,46 @@ const ProductDetails = ({ productId }: ProductDetailsProps) => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="min-w-0 flex-1">
           <Title level={2} className="!mb-1 break-words !text-xl sm:!text-2xl font-bold">{product.name}</Title>
-          <Text type="secondary" className="break-all text-xs">Product Slug: {product.slug}</Text>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <Text type="secondary" className="break-all text-xs">Product Slug: {product.slug}</Text>
+           
+          </div>
         </div>
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => router.push(`/dashboard/product/${productId}/edit`)}
-          className="shrink-0"
-          style={{ borderRadius: "var(--button-border-radius)" }}
-        >
-          Edit Product
-        </Button>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {product.slug && (
+            <>
+              <Button
+                icon={<EyeOutlined />}
+                href={`/products/${product.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1"
+                style={{ borderRadius: "var(--button-border-radius)" }}
+              >
+                View Live Product
+              </Button>
+              <Button
+                icon={<RocketOutlined />}
+                href={`/landing/${product.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 border-amber-300 text-amber-700 hover:!border-amber-400 hover:!text-amber-800 bg-amber-50"
+                style={{ borderRadius: "var(--button-border-radius)" }}
+              >
+                Ads Landing Page
+              </Button>
+            </>
+          )}
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => router.push(`/dashboard/product/${productId}/edit`)}
+            className="shrink-0"
+            style={{ borderRadius: "var(--button-border-radius)" }}
+          >
+            Edit Product
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
