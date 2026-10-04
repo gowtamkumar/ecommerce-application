@@ -12,6 +12,7 @@ import {
 import { handleGlobalUpload } from "@/lib/utils/handleGlobalUpload";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { errorNotification } from "@/lib/utils/notification";
+import { slugify } from "@/lib/utils/slug";
 import { selectGlobal, setAction, setLoading } from "@/redux/features/global/globalSlice";
 import { Button, Form, Image, Input, Modal, Select, Tag, Upload } from "antd";
 import { useRouter } from "next/navigation";
@@ -202,11 +203,7 @@ const AddPost = ({ categories = [] }: AddPostProps) => {
                   placeholder="Enter post title"
                   size="large"
                   onChange={(value) => {
-                    const slug = value.target.value
-                      .toLowerCase()
-                      .trim()
-                      .split(" ")
-                      .join("-");
+                    const slug = slugify(value.target.value);
                     form.setFieldsValue({ slug });
                   }}
                 />

@@ -151,8 +151,11 @@ export async function getProductBySlug(params: any) {
     queryString += `productVariantId=${productVariantId}`;
   }
   const headers = await getAuthHeaders();
+  const safeSlug = slug
+    ? encodeURIComponent(decodeURIComponent(String(slug)))
+    : "";
   const res = await fetch(
-    `${appConfig.apiUrl}/products/slug/${slug}?${queryString}`,
+    `${appConfig.apiUrl}/products/slug/${safeSlug}?${queryString}`,
     {
       method: "GET",
       cache: "no-cache",

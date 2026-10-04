@@ -2,6 +2,7 @@ import { getDBConnection } from '@/config/db';
 import { CustomRequest } from '@/enums/custom-request-type';
 import { asyncHandler } from '@/middlewares/async.middleware';
 import { logger } from '@/middlewares/logger';
+import { createSlug } from '@/utils/slugify';
 import { postValidationSchema } from '@/validation';
 import { updatePostValidationSchema } from '@/validation/post/updatePostValidation';
 import { Request, Response } from 'express';
@@ -122,13 +123,19 @@ export const createPost = asyncHandler(async (req: CustomRequest, res: Response)
     const { postCategories, ...resetData } = validation.data;
     const repository = queryRunner.manager.getRepository(PostEntity);
 
-    // const slug = resetData.title.toLowerCase().trim().split(" ").join("-");
+    const rawSlug = resetData.slug ? resetData.slug : resetData.title;
+    let baseSlug = createSlug(rawSlug);
+    if (!baseSlug) {
+      baseSlug = `post-${Date.now()}`;
+    }
 
-    resetData.slug = (resetData.slug ? resetData.slug : resetData.title)
-      .toLowerCase()
-      .trim()
-      .split(' ')
-      .join('-');
+    let uniqueSlug = baseSlug;
+    let counter = 1;
+    while (await repository.findOneBy({ slug: uniqueSlug })) {
+      uniqueSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+    resetData.slug = uniqueSlug;
 
     const newPost = repository.create(resetData);
 

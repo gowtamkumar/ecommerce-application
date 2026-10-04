@@ -7,6 +7,7 @@ import { ProductVariantEntity } from '@/modules/catalog/products/product-variant
 import { getPublicFileUrl } from '@/services/minio.service';
 import { productDetailQuery, productsQuery } from '@/sqlQuery';
 import { fileDeleteFunction } from '@/utils/fileDeleteFunction';
+import { createSlug } from '@/utils/slugify';
 import { productValidationSchema } from '@/validation';
 import { updateProductValidationSchema } from '@/validation/products/product/updateProductValidation';
 import { NextFunction, Request, Response } from 'express';
@@ -45,11 +46,20 @@ export const createProduct = asyncHandler(async (req: CustomRequest, res: Respon
   // const count = (await productRepository.count()) + 1;
   // const sku = `SKU-${count.toString().padStart(6, "0")}`;
 
-  restData.slug = (restData.slug ? restData.slug : restData.name)
-    .toLowerCase()
-    .trim()
-    .split(' ')
-    .join('-');
+  const rawSlug = restData.slug ? restData.slug : restData.name;
+  let baseSlug = createSlug(rawSlug);
+  if (!baseSlug) {
+    baseSlug = `product-${Date.now()}`;
+  }
+
+  // Ensure unique slug: if exists, append -1, -2, etc.
+  let uniqueSlug = baseSlug;
+  let counter = 1;
+  while (await productRepository.findOneBy({ slug: uniqueSlug })) {
+    uniqueSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  restData.slug = uniqueSlug;
 
   if (restData.thumbnailImage) {
     restData.thumbnailImage = getPublicFileUrl(restData.thumbnailImage);
@@ -900,7 +910,14 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
 
   // Handle slug update
   if (restData.slug) {
-    restData.slug = restData.slug.toLowerCase().trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+    const formattedSlug = createSlug(restData.slug);
+    if (!formattedSlug) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid slug. Please enter a valid URL-friendly slug.',
+      });
+    }
+    restData.slug = formattedSlug;
 
     if (restData.slug !== product.slug) {
       const existingProductWithSlug = await repository.findOneBy({ slug: restData.slug });

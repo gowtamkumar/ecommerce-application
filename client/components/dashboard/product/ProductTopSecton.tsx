@@ -1,12 +1,12 @@
+import { slugify } from "@/lib/utils/slug";
 import { Form, Input, Tooltip } from "antd";
 import { FiInfo, FiRefreshCw } from "react-icons/fi";
 
-const formatSlug = (text: string) =>
+const formatSlugInput = (text: string) =>
   (text || "")
     .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
+    .replace(/[\s_]+/g, "-")
+    .replace(/[^\p{L}\p{M}\p{N}-]/gu, "")
     .replace(/-+/g, "-");
 
 export default function ProductTopSecton({ form }: any) {
@@ -29,7 +29,7 @@ export default function ProductTopSecton({ form }: any) {
             onChange={(e) => {
               const isEditing = !!form.getFieldValue("id");
               if (!isEditing || !form.getFieldValue("slug")) {
-                form.setFieldsValue({ slug: formatSlug(e.target.value) });
+                form.setFieldsValue({ slug: slugify(e.target.value) });
               }
             }}
           />
@@ -40,7 +40,7 @@ export default function ProductTopSecton({ form }: any) {
           label={
             <span className="flex items-center gap-1 font-medium text-global-primary text-sm">
               URL Slug <span className="text-red-500">*</span>
-              <Tooltip title="Used in the product URL (/products/[slug]). You can freely edit this, or click the sync icon to regenerate it from the product name.">
+              <Tooltip title="Used in the product URL (/products/[slug]). Supports Bengali, English, numbers, and dashes. You can freely edit this, or click the sync icon to regenerate it from the product name.">
                 <FiInfo className="w-3.5 h-3.5 text-global-secondary cursor-help" />
               </Tooltip>
             </span>
@@ -52,10 +52,11 @@ export default function ProductTopSecton({ form }: any) {
             size="large"
             className="text-global-secondary font-mono text-sm"
             onChange={(e) => {
-              const formatted = e.target.value
-                .toLowerCase()
-                .replace(/\s+/g, "-");
+              const formatted = formatSlugInput(e.target.value);
               form.setFieldsValue({ slug: formatted });
+            }}
+            onBlur={(e) => {
+              form.setFieldsValue({ slug: slugify(e.target.value) });
             }}
             suffix={
               <Tooltip title="Regenerate slug from product name">
@@ -65,7 +66,7 @@ export default function ProductTopSecton({ form }: any) {
                   onClick={() => {
                     const name = form.getFieldValue("name");
                     if (name) {
-                      form.setFieldsValue({ slug: formatSlug(name) });
+                      form.setFieldsValue({ slug: slugify(name) });
                     }
                   }}
                   className="p-1 text-slate-400 hover:text-slate-800 transition-colors cursor-pointer"
