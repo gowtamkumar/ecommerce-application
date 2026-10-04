@@ -567,6 +567,7 @@ export default function ProductDetails({
               </div>
             </div>
           </div>
+          
         </div>
       </div>
 

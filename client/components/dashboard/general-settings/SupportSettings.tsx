@@ -64,10 +64,15 @@ const SupportSettings = () => {
                 isFreeDeliveryActive: landingFreeDeliveryActive !== undefined ? landingFreeDeliveryActive : true,
             },
             helpSupport: {
+                ...(global.setting?.helpSupport || {}),
                 cashDelivery: helpSupportFields.cashDelivery,
+                cashDeliveryDesc: helpSupportFields.cashDeliveryDesc,
                 returnSupport: helpSupportFields.returnSupport,
+                returnSupportDesc: helpSupportFields.returnSupportDesc,
                 originalProduct: helpSupportFields.originalProduct,
+                originalProductDesc: helpSupportFields.originalProductDesc,
                 guarantee: helpSupportFields.guarantee,
+                guaranteeDesc: helpSupportFields.guaranteeDesc,
             },
         };
 
@@ -95,20 +100,63 @@ const SupportSettings = () => {
                     <div className="space-y-10">
                         {/* Help & Support Features */}
                         <div className="space-y-4">
-                            <SettingsHeader title="Store Promises & Badges" description="Configure the core guarantees displayed to customers (e.g., in the footer)." />
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-xl border border-gray-100">
-                                <Form.Item name="cashDelivery" label={<span className="text-base font-medium">Cash on Delivery</span>} className="mb-0" extra="e.g. Pay on arrival">
-                                    <Input size="large" prefix={<WalletOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
-                                </Form.Item>
-                                <Form.Item name="returnSupport" label={<span className="text-base font-medium">Return Policy</span>} className="mb-0" extra="e.g. 7-day easy returns">
-                                    <Input size="large" prefix={<RollbackOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
-                                </Form.Item>
-                                <Form.Item name="originalProduct" label={<span className="text-base font-medium">Product Authenticity</span>} className="mb-0" extra="e.g. 100% Genuine">
-                                    <Input size="large" prefix={<SafetyCertificateOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
-                                </Form.Item>
-                                <Form.Item name="guarantee" label={<span className="text-base font-medium">Guarantee/Warranty</span>} className="mb-0" extra="e.g. 1 Year Warranty">
-                                    <Input size="large" prefix={<FileProtectOutlined className="text-gray-400 mr-1" />} placeholder="Enter text" />
-                                </Form.Item>
+                            <SettingsHeader title="Store Promises & Badges (Trust Bar & Footer)" description="Configure the core guarantees, badges, and descriptions displayed to customers in the website Trust Bar and Footer." />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Cash on Delivery / Delivery Badge */}
+                                <div className="bg-gray-50/70 p-5 rounded-xl border border-gray-200/70 space-y-4">
+                                    <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm border-b border-gray-200/60 pb-2">
+                                        <WalletOutlined className="text-amber-500 text-base" />
+                                        <span>Delivery & Payment Badge</span>
+                                    </div>
+                                    <Form.Item name="cashDelivery" label={<span className="text-sm font-medium">Title</span>} className="mb-0">
+                                        <Input size="large" placeholder="e.g. Express Delivery or Cash on Delivery" />
+                                    </Form.Item>
+                                    <Form.Item name="cashDeliveryDesc" label={<span className="text-sm font-medium">Description</span>} className="mb-0" extra="Leave blank to use default delivery & free-shipping threshold text">
+                                        <Input.TextArea rows={2} placeholder="e.g. Free fast shipping with live order tracking straight to your door" />
+                                    </Form.Item>
+                                </div>
+
+                                {/* Return Policy */}
+                                <div className="bg-gray-50/70 p-5 rounded-xl border border-gray-200/70 space-y-4">
+                                    <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm border-b border-gray-200/60 pb-2">
+                                        <RollbackOutlined className="text-blue-500 text-base" />
+                                        <span>Return Policy Badge</span>
+                                    </div>
+                                    <Form.Item name="returnSupport" label={<span className="text-sm font-medium">Title</span>} className="mb-0">
+                                        <Input size="large" placeholder="e.g. 30-Day Easy Returns" />
+                                    </Form.Item>
+                                    <Form.Item name="returnSupportDesc" label={<span className="text-sm font-medium">Description</span>} className="mb-0" extra="Leave blank to use default return policy duration text">
+                                        <Input.TextArea rows={2} placeholder="e.g. Hassle-free 1-click return requests with instant refunds" />
+                                    </Form.Item>
+                                </div>
+
+                                {/* Product Authenticity */}
+                                <div className="bg-gray-50/70 p-5 rounded-xl border border-gray-200/70 space-y-4">
+                                    <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm border-b border-gray-200/60 pb-2">
+                                        <SafetyCertificateOutlined className="text-emerald-500 text-base" />
+                                        <span>Authenticity Badge</span>
+                                    </div>
+                                    <Form.Item name="originalProduct" label={<span className="text-sm font-medium">Title</span>} className="mb-0">
+                                        <Input size="large" placeholder="e.g. 100% Authentic Guarantee" />
+                                    </Form.Item>
+                                    <Form.Item name="originalProductDesc" label={<span className="text-sm font-medium">Description</span>} className="mb-0" extra="Leave blank to use default authenticity text">
+                                        <Input.TextArea rows={2} placeholder="e.g. Directly sourced and brand-certified original merchandise" />
+                                    </Form.Item>
+                                </div>
+
+                                {/* Guarantee / Customer Support */}
+                                <div className="bg-gray-50/70 p-5 rounded-xl border border-gray-200/70 space-y-4">
+                                    <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm border-b border-gray-200/60 pb-2">
+                                        <FileProtectOutlined className="text-purple-500 text-base" />
+                                        <span>Customer Support & Guarantee Badge</span>
+                                    </div>
+                                    <Form.Item name="guarantee" label={<span className="text-sm font-medium">Title</span>} className="mb-0">
+                                        <Input size="large" placeholder="e.g. 24/7 Priority Support or 1 Year Warranty" />
+                                    </Form.Item>
+                                    <Form.Item name="guaranteeDesc" label={<span className="text-sm font-medium">Description</span>} className="mb-0" extra="Leave blank to use default contact phone/WhatsApp/email text">
+                                        <Input.TextArea rows={2} placeholder="e.g. Dedicated expert support ready to assist you anytime" />
+                                    </Form.Item>
+                                </div>
                             </div>
                         </div>
 

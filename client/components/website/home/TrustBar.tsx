@@ -47,33 +47,47 @@ export default function TrustBar({ setting: initialSetting }: TrustBarProps) {
     ? helpSupport.cashDelivery
     : "Express Delivery";
   const deliveryDesc =
-    freeShipping && Number(freeShipping) > 0
+    helpSupport?.cashDeliveryDesc ||
+    (freeShipping && Number(freeShipping) > 0
       ? `Free fast shipping on all orders over ${formatPrice(freeShipping)} with live tracking`
-      : "Free fast shipping with live order tracking straight to your door";
+      : "Free fast shipping with live order tracking straight to your door");
 
   // 2. Authenticity Guarantee
   const guaranteeTitle =
-    helpSupport?.guarantee && helpSupport?.originalProduct
+    helpSupport?.originalProduct && helpSupport?.originalProduct !== "Original Product"
+      ? helpSupport.originalProduct
+      : helpSupport?.guarantee && helpSupport?.originalProduct
       ? `${helpSupport.guarantee} ${helpSupport.originalProduct}`
-      : helpSupport?.originalProduct || helpSupport?.guarantee || "100% Authentic Guarantee";
-  const guaranteeDesc = "Directly sourced and brand-certified original merchandise";
+      : helpSupport?.originalProduct || "100% Authentic Guarantee";
+  const guaranteeDesc =
+    helpSupport?.originalProductDesc ||
+    "Directly sourced and brand-certified original merchandise";
 
   // 3. Return Policy
   const returnDays = returnSetting?.returnWindowDays;
   const returnTitle = returnDays
     ? `${returnDays}-Day ${helpSupport?.returnSupport || "Easy Returns"}`
     : helpSupport?.returnSupport || "30-Day Easy Returns";
-  const returnDesc = returnDays
-    ? `Hassle-free ${returnDays}-day return requests with instant refunds`
-    : "Hassle-free 1-click return requests with instant refunds";
+  const returnDesc =
+    helpSupport?.returnSupportDesc ||
+    (returnDays
+      ? `Hassle-free ${returnDays}-day return requests with instant refunds`
+      : "Hassle-free 1-click return requests with instant refunds");
 
   // 4. Priority Concierge / Support
-  const supportTitle = phone ? "24/7 Priority Support" : "24/7 Priority Concierge";
-  const supportDesc = phone
-    ? `Dedicated expert support ready at ${phone} or WhatsApp`
-    : email
-    ? `Dedicated expert support ready to assist you at ${email}`
-    : "Dedicated expert support ready to assist you anytime";
+  const supportTitle =
+    helpSupport?.guarantee && helpSupport?.guarantee !== "100% Guarantee"
+      ? helpSupport.guarantee
+      : phone
+      ? "24/7 Priority Support"
+      : "24/7 Priority Concierge";
+  const supportDesc =
+    helpSupport?.guaranteeDesc ||
+    (phone
+      ? `Dedicated expert support ready at ${phone} or WhatsApp`
+      : email
+      ? `Dedicated expert support ready to assist you at ${email}`
+      : "Dedicated expert support ready to assist you anytime");
 
   const trustItems = [
     {
