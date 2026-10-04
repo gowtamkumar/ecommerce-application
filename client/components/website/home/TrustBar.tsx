@@ -19,10 +19,22 @@ interface TrustBarProps {
 export default function TrustBar({ setting: initialSetting }: TrustBarProps) {
   const global = useSelector(selectGlobal);
   const { formatPrice } = useCurrency();
-  const [setting, setSetting] = useState<any>(initialSetting || global?.setting || null);
+
+  const hasValidSetting = (s: any) =>
+    Boolean(s && (s.id || s.returnSetting || s.helpSupport || s.siteName));
+
+  const [setting, setSetting] = useState<any>(() => {
+    if (hasValidSetting(initialSetting)) return initialSetting;
+    if (hasValidSetting(global?.setting)) return global.setting;
+    return null;
+  });
 
   useEffect(() => {
-    if (!setting && !global?.setting?.id) {
+    if (hasValidSetting(initialSetting)) {
+      setSetting(initialSetting);
+    } else if (hasValidSetting(global?.setting)) {
+      setSetting(global.setting);
+    } else if (!hasValidSetting(setting)) {
       getSettings()
         .then((res) => {
           if (res?.data) {
@@ -30,12 +42,16 @@ export default function TrustBar({ setting: initialSetting }: TrustBarProps) {
           }
         })
         .catch(() => {});
-    } else if (!setting && global?.setting?.id) {
-      setSetting(global.setting);
     }
-  }, [global?.setting, setting]);
+  }, [initialSetting, global?.setting]);
 
-  const activeSetting = setting || global?.setting || {};
+  const activeSetting = hasValidSetting(setting)
+    ? setting
+    : hasValidSetting(global?.setting)
+    ? global.setting
+    : hasValidSetting(initialSetting)
+    ? initialSetting
+    : {};
   const helpSupport = activeSetting?.helpSupport || {};
   const returnSetting = activeSetting?.returnSetting || {};
   const freeShipping = activeSetting?.orderFreeShippingAmount;

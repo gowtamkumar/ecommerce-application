@@ -4,6 +4,7 @@ import {
     ProductSchema,
 } from "@/components/seo";
 import { getProductBySlug } from "@/lib/apis/product";
+import { getSettings } from "@/lib/apis/setting";
 import { getImageUrl } from "@/lib/utils/imageUrl";
 import { stripHtml } from "@/lib/utils/seo";
 import type { Metadata } from "next";
@@ -88,8 +89,12 @@ export default async function ProductPage({
     );
   }
 
-  const productRes = await getProductBySlug({ slug });
+  const [productRes, settingRes] = await Promise.all([
+    getProductBySlug({ slug }),
+    getSettings(),
+  ]);
   const product = productRes?.data;
+  const setting = settingRes?.data;
   const baseUrl = (appConfig.baseUrl || "").replace(/\/$/, "");
   const canonicalUrl = `${baseUrl}/products/${slug}`;
 
@@ -138,7 +143,7 @@ export default async function ProductPage({
           />
         </>
       )}
-      <SingleProduct slug={slug} initialProduct={product} />
+      <SingleProduct slug={slug} initialProduct={product} setting={setting} />
     </div>
   );
 }

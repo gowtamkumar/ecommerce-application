@@ -61,6 +61,7 @@ interface ProductDetailsProps {
   productRating: any;
   checkStock: number;
   setCheckStock: (stock: number) => void;
+  setting?: any;
 }
 
 export default function ProductDetails({
@@ -69,6 +70,7 @@ export default function ProductDetails({
   productRating,
   checkStock,
   setCheckStock,
+  setting: propSetting,
 }: ProductDetailsProps) {
   const [qty, setQty] = useState(1);
   const [showStickyBar, setShowStickyBar] = useState(false);
@@ -87,10 +89,22 @@ export default function ProductDetails({
   const { formatPrice, selectedCurrency } = useCurrency();
 
   const global = useSelector(selectGlobal);
-  const [storeSetting, setStoreSetting] = useState<any>(global?.setting || null);
+
+  const hasValidSetting = (s: any) =>
+    Boolean(s && (s.id || s.returnSetting || s.helpSupport || s.siteName));
+
+  const [storeSetting, setStoreSetting] = useState<any>(() => {
+    if (hasValidSetting(propSetting)) return propSetting;
+    if (hasValidSetting(global?.setting)) return global.setting;
+    return null;
+  });
 
   useEffect(() => {
-    if (!storeSetting && !global?.setting?.id) {
+    if (hasValidSetting(propSetting)) {
+      setStoreSetting(propSetting);
+    } else if (hasValidSetting(global?.setting)) {
+      setStoreSetting(global.setting);
+    } else if (!hasValidSetting(storeSetting)) {
       getSettings()
         .then((res) => {
           if (res?.data) {
@@ -98,12 +112,16 @@ export default function ProductDetails({
           }
         })
         .catch(() => {});
-    } else if (!storeSetting && global?.setting?.id) {
-      setStoreSetting(global.setting);
     }
-  }, [global?.setting, storeSetting]);
+  }, [propSetting, global?.setting]);
 
-  const activeSetting = storeSetting || global?.setting || {};
+  const activeSetting = hasValidSetting(storeSetting)
+    ? storeSetting
+    : hasValidSetting(global?.setting)
+    ? global.setting
+    : hasValidSetting(propSetting)
+    ? propSetting
+    : {};
   const helpSupport = activeSetting?.helpSupport || {};
   const returnSetting = activeSetting?.returnSetting || {};
   const freeShipping = activeSetting?.orderFreeShippingAmount;

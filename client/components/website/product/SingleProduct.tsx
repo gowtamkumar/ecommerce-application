@@ -3,7 +3,7 @@
 import Breadcrumb from "@/components/share-component/Breadcrumb";
 import { getProductBySlug } from "@/lib/apis/product";
 import { errorNotification } from "@/lib/utils/notification";
-import { setLoading } from "@/redux/features/global/globalSlice";
+import { selectGlobal, setLoading, setSetting } from "@/redux/features/global/globalSlice";
 import {
     selectProduct,
     setProduct,
@@ -34,9 +34,11 @@ const RelatedProducts = dynamic(() => import("./RelatedProducts"), {
 export default function SingleProduct({
   slug,
   initialProduct,
+  setting,
 }: {
   slug: string;
   initialProduct?: any;
+  setting?: any;
 }) {
   const [selectVariant, setSelectVariant] = useState<any>({});
   const [checkStock, setCheckStock] = useState(
@@ -46,8 +48,15 @@ export default function SingleProduct({
     0
   );
   const dispatch = useDispatch();
+  const global = useSelector(selectGlobal);
   const products = useSelector(selectProduct);
   const product = products?.product?.id ? products.product : initialProduct;
+
+  useEffect(() => {
+    if (setting && (setting.id || setting.returnSetting) && !global?.setting?.id) {
+      dispatch(setSetting(setting));
+    }
+  }, [setting, global?.setting?.id, dispatch]);
 
   useEffect(() => {
     if (initialProduct?.id && !products?.product?.id) {
@@ -180,13 +189,14 @@ export default function SingleProduct({
             productRating={productRating}
             checkStock={checkStock}
             setCheckStock={setCheckStock}
+            setting={setting}
           />
         </div>
 
         {/* Product Description, Specs & Info */}
         <div className="max-w-5xl mx-auto space-y-16">
           <div id="description">
-            <ProductDescription />
+            <ProductDescription product={product} setting={setting} />
           </div>
 
           <div id="reviews" className="scroll-mt-24">

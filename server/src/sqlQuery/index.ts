@@ -494,6 +494,7 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
             p.limit_purchase_qty,
             p.alert_qty,
             p.tags,
+            p.is_returnable,
             sd.discount_strategy,
             sd.discount_value,
             COALESCE(ra.reviews_count, 0) AS reviews_count,
@@ -505,12 +506,14 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
                 ELSE p.selected_unit_price
             END AS discounted_price,
             t.name AS tax_name, t.value AS tax_value,
-            b.id AS brand_id, b.name AS brand_name, b.slug AS brand_slug, b.image AS brand_image, b.status AS brand_status
+            b.id AS brand_id, b.name AS brand_name, b.slug AS brand_slug, b.image AS brand_image, b.status AS brand_status,
+            u.id AS unit_id, u.name AS unit_name
         FROM productTable p
         LEFT JOIN selectedDiscount sd ON true
         LEFT JOIN reviewsAggregation ra ON true
         LEFT JOIN taxs t ON t.id = p.tax_id
         LEFT JOIN brands b ON b.id = p.brand_id
+        LEFT JOIN units u ON u.id = p.unit_id
     )
     SELECT 
         bp.id,
@@ -527,6 +530,9 @@ export const productDetailQuery = (slug: string, productVariantId: number | null
         bp.limit_purchase_qty AS "limitPurchaseQty",
         bp.alert_qty AS "alertQty",
         bp.tags,
+        bp.is_returnable AS "isReturnable",
+        bp.is_returnable,
+        CASE WHEN bp.unit_id IS NOT NULL THEN JSONB_BUILD_OBJECT('id', bp.unit_id, 'name', bp.unit_name) ELSE NULL END AS "unit",
         bp.discount_strategy AS "discountStrategy",
         bp.discount_value AS "discountValue",
         bp.reviews_count AS "reviewsCount",
