@@ -1,5 +1,5 @@
 export interface ProductCategory {
-  category: { name: string };
+  category: { id?: number; name: string };
 }
 
 export interface ProductVariant {
@@ -7,8 +7,10 @@ export interface ProductVariant {
   unitPrice: number;
   purchasePrice: number;
   productId: number;
-
-  sizeId: number;
+  sizeId?: number;
+  colorId?: number;
+  size?: { id?: number; name: string };
+  color?: { id?: number; name: string; color?: string };
   stockQty: number;
 }
 
@@ -17,12 +19,19 @@ export interface ProductType {
   name: string;
   slug: string;
   type: string;
-  tax: { name: string };
-  unit: { name: string };
-  images: string[]; // Assuming this is an array of image URLs
+  taxId?: number;
+  tax?: { id?: number; name: string; value?: number };
+  unit?: { id?: number; name: string };
+  images: string[];
   thumbnailImage: string;
-  brand: { name: string };
-  discountId: number;
+  brand?: { id?: number; name: string };
+  discountId?: number;
+  discount?: {
+    id?: number;
+    name?: string;
+    discountStrategy?: "Percentage" | "Fixed" | string;
+    value?: number;
+  };
   alertQty: number;
   limitPurchaseQty: number;
   tags: string[];
@@ -33,3 +42,4 @@ export interface ProductType {
   productVariants: ProductVariant[];
   productCategories: ProductCategory[];
 }
+

@@ -433,6 +433,7 @@ export const getProduct = asyncHandler(async (req: Request, res: Response, next:
     'reviews.id',
     'reviews.rating',
     'reviews.comment',
+    'tax.id',
     'tax.name',
     'tax.value',
     'productVariants',
@@ -444,6 +445,8 @@ export const getProduct = asyncHandler(async (req: Request, res: Response, next:
     'color.id',
     'color.name',
     'color.color',
+    'discount.id',
+    'discount.name',
     'discount.discountStrategy',
     'discount.value',
   ]);
