@@ -39,10 +39,30 @@ export default function SingleProduct({
   initialProduct?: any;
 }) {
   const [selectVariant, setSelectVariant] = useState<any>({});
-  const [checkStock, setCheckStock] = useState(0);
+  const [checkStock, setCheckStock] = useState(
+    initialProduct?.defaultProduct?.stockQty ??
+    initialProduct?.productVariants?.[0]?.stockQty ??
+    initialProduct?.stockQty ??
+    0
+  );
   const dispatch = useDispatch();
   const products = useSelector(selectProduct);
-  const product = products?.product || initialProduct;
+  const product = products?.product?.id ? products.product : initialProduct;
+
+  useEffect(() => {
+    if (initialProduct?.id && !products?.product?.id) {
+      const defaultVariant =
+        initialProduct?.productVariants?.find((v: any) => v.default) ||
+        initialProduct?.productVariants?.[0];
+      dispatch(
+        setProduct({
+          ...initialProduct,
+          qty: 1,
+          defaultProduct: defaultVariant,
+        })
+      );
+    }
+  }, [initialProduct, dispatch, products?.product?.id]);
 
   const fetchProductData = useCallback(async () => {
     dispatch(setLoading({ loading: true }));
@@ -155,6 +175,7 @@ export default function SingleProduct({
         {/* Main Product Hero Section */}
         <div className="mb-14 sm:mb-20">
           <ProductDetails
+            initialProduct={product}
             setSelectVariant={setSelectVariant}
             productRating={productRating}
             checkStock={checkStock}

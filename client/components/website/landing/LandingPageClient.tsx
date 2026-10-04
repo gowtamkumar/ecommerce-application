@@ -99,6 +99,7 @@ export default function LandingPageClient({
   const images = useMemo(() => {
     const list: string[] = [];
     if (product?.thumbnailImage) list.push(product.thumbnailImage);
+    if (product?.hoverImage) list.push(product.hoverImage);
 
     if (typeof product?.images === "string") {
       const splitImgs = product.images.split(",").filter(Boolean);

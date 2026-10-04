@@ -53,6 +53,7 @@ export interface ProductVariant {
 }
 
 interface ProductDetailsProps {
+  initialProduct?: any;
   setSelectVariant: (v: any) => void;
   productRating: any;
   checkStock: number;
@@ -60,6 +61,7 @@ interface ProductDetailsProps {
 }
 
 export default function ProductDetails({
+  initialProduct,
   setSelectVariant,
   productRating,
   checkStock,
@@ -78,7 +80,7 @@ export default function ProductDetails({
   const products = useSelector(selectProduct);
   const cart = useSelector(selectCart);
 
-  const { product } = products;
+  const product = products?.product?.id ? products.product : (initialProduct || products?.product);
   const { formatPrice, selectedCurrency } = useCurrency();
 
   useEffect(() => {
@@ -98,6 +100,8 @@ export default function ProductDetails({
     id,
     slug,
     name,
+    thumbnailImage,
+    hoverImage,
     defaultProduct,
     reviews,
     reviewsCount,
@@ -214,7 +218,11 @@ export default function ProductDetails({
         {/* LEFT: GALLERY SECTION */}
         <div className="col-span-1 lg:col-span-7 sticky top-28">
           <div className="relative group">
-            <ProductImageGallery images={images} />
+            <ProductImageGallery
+              images={images}
+              thumbnailImage={thumbnailImage}
+              hoverImage={hoverImage}
+            />
 
             {/* Floating Discount Pill */}
             {discountPercentDisplay && (
