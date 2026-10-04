@@ -1,7 +1,10 @@
 "use client";
 
 import { ActionType } from "@/constants/constants";
-import { setProductRating, setUnAuthorize } from "@/redux/features/global/globalSlice";
+import {
+    setProductRating,
+    setUnAuthorize,
+} from "@/redux/features/global/globalSlice";
 import { selectProduct } from "@/redux/features/products/productSlice";
 import { Rate } from "antd";
 import { useSession } from "next-auth/react";
@@ -33,9 +36,9 @@ export default function RatingProduct({
   const averageRating =
     reviewCount > 0
       ? (Number(totalReview || 0) / reviewCount).toFixed(1)
-      : avgRating
-      ? Number(avgRating).toFixed(1)
-      : "5.0";
+      : avgRating && Number(avgRating) > 0
+        ? Number(avgRating).toFixed(1)
+        : "0.0";
 
   const handleWriteReview = () => {
     if (session.status === "unauthenticated") {
@@ -50,9 +53,46 @@ export default function RatingProduct({
           productId: id,
           product: { name },
         },
-      })
+      }),
     );
   };
+
+  if (reviewCount === 0) {
+    return (
+      <div className="mt-16 sm:mt-24 p-8 sm:p-12 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-slate-100/50">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-8 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-amber-50 border border-amber-200/60 text-amber-500 flex items-center justify-center shrink-0 shadow-xs">
+              <FiStar className="w-8 h-8 sm:w-10 sm:h-10 fill-amber-400" />
+            </div>
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-700 text-xs font-bold uppercase tracking-wider">
+                <FiStar className="w-3.5 h-3.5 fill-amber-400" />
+                <span>Customer Rating</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                No Customer Reviews Yet
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 max-w-md leading-relaxed">
+                Have you purchased or tried this product? Share your experience
+                and help other shoppers make the right choice!
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0">
+            <button
+              onClick={handleWriteReview}
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-sm font-bold bg-global-primary hover:bg-global-hover text-white shadow-lg shadow-global-primary/25 transition-all cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <FiEdit3 className="w-4 h-4" />
+              <span>Write the First Review</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-16 sm:mt-24 p-6 sm:p-10 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-slate-100/50">
@@ -79,14 +119,15 @@ export default function RatingProduct({
               className="text-amber-400 text-lg"
             />
             <p className="text-xs font-semibold text-slate-400">
-              Based on {reviewCount} verified {reviewCount === 1 ? "review" : "reviews"}
+              Based on {reviewCount} verified{" "}
+              {reviewCount === 1 ? "review" : "reviews"}
             </p>
           </div>
 
           <div className="pt-2">
             <button
               onClick={handleWriteReview}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md shadow-slate-900/10 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold bg-global-primary hover:bg-global-hover text-white shadow-md shadow-global-primary/25 transition-all cursor-pointer"
             >
               <FiEdit3 className="w-3.5 h-3.5" />
               <span>Write a Review</span>

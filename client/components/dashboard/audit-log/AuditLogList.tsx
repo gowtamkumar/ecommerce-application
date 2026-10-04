@@ -406,7 +406,6 @@ export default function AuditLogList() {
         loading={loading}
         refreshing={refreshing}
         autoRefresh={autoRefresh}
-        onToggleAutoRefresh={setAutoRefresh}
         totalLogs={stats.totalLogs || total}
       />
 

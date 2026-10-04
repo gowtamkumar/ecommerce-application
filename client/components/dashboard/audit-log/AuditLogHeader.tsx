@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, DatePicker, Switch } from "antd";
+import { Button, DatePicker } from "antd";
 import type { Dayjs } from "dayjs";
-import { FiClock, FiRefreshCw, FiShield } from "react-icons/fi";
+import { FiRefreshCw, FiShield } from "react-icons/fi";
 
 const { RangePicker } = DatePicker;
 
@@ -17,7 +17,6 @@ interface AuditLogHeaderProps {
   loading: boolean;
   refreshing: boolean;
   autoRefresh: boolean;
-  onToggleAutoRefresh: (checked: boolean) => void;
   totalLogs: number;
 }
 
@@ -30,7 +29,6 @@ export default function AuditLogHeader({
   loading,
   refreshing,
   autoRefresh,
-  onToggleAutoRefresh,
   totalLogs,
 }: AuditLogHeaderProps) {
   const presets: { label: string; value: AuditDatePreset }[] = [
@@ -111,23 +109,7 @@ export default function AuditLogHeader({
           />
 
           <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
-            {/* Auto Refresh Toggle */}
-            <div
-              className="flex items-center gap-1.5 bg-gray-50/90 hover:bg-gray-100 px-2.5 rounded-lg border border-gray-200 text-xs shadow-2xs h-8 transition-all cursor-pointer"
-              onClick={() => onToggleAutoRefresh(!autoRefresh)}
-              title="Toggle Live Auto-Sync"
-            >
-              <FiClock className="text-gray-500 text-xs" />
-              <span className="font-medium text-gray-600 hidden sm:inline select-none">
-                Auto-Sync
-              </span>
-              <Switch
-                size="small"
-                checked={autoRefresh}
-                onChange={onToggleAutoRefresh}
-                className={autoRefresh ? "bg-global-primary" : ""}
-              />
-            </div>
+        
 
             {/* Refresh Button */}
             <Button

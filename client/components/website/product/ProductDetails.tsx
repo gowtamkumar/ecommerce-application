@@ -275,14 +275,16 @@ export default function ProductDetails({
     }
   }
 
+  const totalReviewsDisplay = Number(reviewsCount || reviews?.length || 0);
+
   const averageRating =
     reviews?.length > 0
       ? (Number(productRating?.totalReview || 0) / reviews.length).toFixed(1)
-      : product?.avgRating
+      : product?.avgRating && Number(product.avgRating) > 0
       ? Number(product.avgRating).toFixed(1)
+      : totalReviewsDisplay === 0
+      ? "0.0"
       : "5.0";
-
-  const totalReviewsDisplay = Number(reviewsCount || reviews?.length || 0);
 
   // Price calculations
   const effectiveFinalPrice = Number(finalPrice || unitPrice || 0);
@@ -357,10 +359,12 @@ export default function ProductDetails({
               <Rate
                 disabled
                 allowHalf
-                value={+averageRating}
+                value={totalReviewsDisplay > 0 ? +averageRating : 0}
                 className="text-amber-500 text-xs"
               />
-              <span className="font-bold text-slate-900">{averageRating}</span>
+              <span className="font-bold text-slate-900">
+                {totalReviewsDisplay > 0 ? averageRating : "0.0"}
+              </span>
               <span className="text-slate-400 font-medium">
                 ({totalReviewsDisplay} {totalReviewsDisplay === 1 ? "review" : "reviews"})
               </span>

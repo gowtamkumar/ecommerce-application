@@ -2,7 +2,7 @@
 
 import { Button, DatePicker } from "antd";
 import type { Dayjs } from "dayjs";
-import { FiPrinter, FiRefreshCw } from "react-icons/fi";
+import { FiRefreshCw } from "react-icons/fi";
 import { TbReportAnalytics } from "react-icons/tb";
 
 const { RangePicker } = DatePicker;
@@ -95,8 +95,7 @@ export default function ReportHeader({
           />
 
           <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
-            {/* Print Button */}
-            <Button
+            {/* <Button
               onClick={() => {
                 if (typeof window !== "undefined") {
                   window.print();
@@ -107,7 +106,7 @@ export default function ReportHeader({
             >
               <FiPrinter className="text-xs" />
               <span className="hidden sm:inline">Print</span>
-            </Button>
+            </Button> */}
 
             {/* Refresh Button */}
             <Button

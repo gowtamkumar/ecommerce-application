@@ -12,7 +12,6 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
 import { BiDislike, BiLike } from "react-icons/bi";
-import { FiEdit3 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 dayjs.extend(relativeTime);
 
@@ -69,10 +68,13 @@ const ReviewTable = () => {
     }
   }
 
+  if (!reviews || reviews.length === 0) {
+    return null;
+  }
+
   return (
     <div className="space-y-8 mt-12 sm:mt-16">
-      {reviews && reviews.length > 0 ? (
-        reviews.map((review, idx) => {
+      {reviews.map((review, idx) => {
           const { user, rating, comment, createdAt, like, disLike } = review;
 
           return (
@@ -131,30 +133,8 @@ const ReviewTable = () => {
                   </div>
                </div>
             </div>
-          )
-        })
-      ) : (
-        <div className="text-center py-16 sm:py-20 bg-slate-50/60 rounded-3xl border-2 border-dashed border-slate-200/80 p-6 space-y-4">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto shadow-sm border border-slate-100 text-amber-500">
-            <FiEdit3 size={28} />
-          </div>
-          <div className="space-y-1">
-            <h4 className="text-base font-black text-slate-900">No reviews yet</h4>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              Have you purchased this item? Be the first to share your experience with other shoppers.
-            </p>
-          </div>
-          <div>
-            <button
-              onClick={handleWriteReview}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-white shadow-md shadow-slate-900/15 transition-all cursor-pointer"
-            >
-              <FiEdit3 className="w-3.5 h-3.5" />
-              <span>Write the First Review</span>
-            </button>
-          </div>
-        </div>
-      )}
+          );
+        })}
     </div>
   );
 };
